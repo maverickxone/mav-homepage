@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>第五章 · 缓存 — Claude Code 使用指南</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" id="hljs-light" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+<link rel="stylesheet" id="hljs-dark" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" media="not all">
+</head>
+<body>
+
+<div class="progress-bar" id="progress-bar"></div>
+
+<nav class="topnav" id="topnav">
+  <div class="topnav-inner">
+    <a class="brand" href="../index.html">Claude Code 指南</a>
+    <div class="nav-links">
+      <a href="01-what-is.html">01</a>
+      <a href="02-daily.html">02</a>
+      <a href="03-power.html">03</a>
+      <a href="04-mental.html">04</a>
+      <a href="05-cache.html" class="active">05</a>
+      <a href="06-easter-eggs.html">06</a>
+      <a href="reference.html">Ref</a>
+    </div>
+    <div class="nav-controls">
+      <button class="nav-btn" id="search-btn" aria-label="搜索 (Ctrl+K)">⌘K</button>
+      <button class="nav-btn" id="settings-btn" aria-label="阅读设置">Aa</button>
+      <a class="nav-btn" href="../../index.html" aria-label="返回知识库">← 知识库</a>
+    </div>
+  </div>
+</nav>
+
+<div class="settings-pop" id="settings-pop">
+  <h5>主题</h5>
+  <div class="row">
+    <button class="seg" data-theme-set="light">明亮</button>
+    <button class="seg" data-theme-set="dark">暗色</button>
+  </div>
+  <h5>字号</h5>
+  <div class="row">
+    <button class="seg" data-size-set="s">小</button>
+    <button class="seg" data-size-set="m">中</button>
+    <button class="seg" data-size-set="l">大</button>
+  </div>
+</div>
+
+<div class="with-sidebar">
+  <aside class="sidebar">
+    <div class="chapter-num">Chapter 05</div>
+    <div class="chapter-name">缓存</div>
+    <h4>本章目录</h4>
+    <ul>
+      <li><a href="#analogy">先打个比方</a></li>
+      <li><a href="#everywhere">计算机里到处都是缓存</a></li>
+      <li><a href="#why-llm">为什么 LLM 也要缓存</a></li>
+      <li><a href="#prompt-cache">Prompt Cache 是什么</a></li>
+      <li><a href="#hit-miss">命中和不命中</a></li>
+      <li><a href="#observe">怎么看缓存有没有命中</a></li>
+      <li><a href="#improve">怎么提高命中率</a></li>
+      <li><a href="#math">算一笔账</a></li>
+      <li><a href="#kv-cache">KV Cache 是另一回事</a></li>
+      <li><a href="#takeaway">最后一段话</a></li>
+    </ul>
+  </aside>
+
+  <article class="chapter-body">
+
+    <header class="chapter-head">
+      <div class="chapter-head-meta">
+        <span class="num">Chapter 05 / 06</span>
+        <span>≈ 18 min</span>
+      </div>
+      <div class="chapter-eyebrow">第五章</div>
+      <h1>缓存</h1>
+      <p class="sub">
+        理解为什么有时候 Claude 几乎不要钱，有时候同一句话却贵得离谱——以及怎么把账单永远控制在前者。
+      </p>
+    </header>
+
+    <h2 id="analogy" data-num="§ 5.1">先打个比方</h2>
+
+    <p>
+      你每天点同一家外卖。第一次下单，要填地址、电话、楼层、单元号——填得很烦。第二次再来，App 弹出一条「使用上次地址？」，你点「是」，三秒下单。
+    </p>
+
+    <p>
+      那条「上次地址」就是缓存。它把你已经做过的工作存了起来，下次同样的场景直接复用，不用从头来一遍。<strong>本质就这么简单。</strong>
+    </p>
+
+    <p>
+      LLM 的缓存也是这样。你和 Claude 的每一次对话，前面那一大段历史不会凭空消失——它每次都跟你的新消息一起送回服务器。如果两次请求的开头长得一模一样，服务器没必要把同样的内容重新「读」一遍——直接拿上次算好的中间结果接着用就行。这一步省下来的，就是钱和时间。
+    </p>
+
+    <h2 id="everywhere" data-num="§ 5.2">计算机里到处都是缓存</h2>
+
+    <p>
+      在认真讲 LLM 的缓存之前，先看看缓存这个概念有多普遍。它不是 AI 时代的发明——它几乎和计算机一样古老。
+    </p>
+
+    <div class="table-wrap">
+    <table>
+      <thead><tr><th>层级</th><th>缓存什么</th><th>为什么</th></tr></thead>
+      <tbody>
+        <tr><td>CPU L1/L2/L3</td><td>最近用过的内存数据</td><td>读 RAM 比读 cache 慢 100 倍</td></tr>
+        <tr><td>操作系统</td><td>最近读过的文件</td><td>读硬盘比读内存慢 1000 倍</td></tr>
+        <tr><td>浏览器</td><td>下载过的图片、JS、CSS</td><td>本地读取比走网络快</td></tr>
+        <tr><td>CDN（如 Cloudflare）</td><td>热门网页的副本</td><td>用户离 CDN 边缘节点比离源站近</td></tr>
+        <tr><td>Redis / Memcached</td><td>数据库查询的结果</td><td>跑一次复杂 SQL 比读 Redis 慢 10–100 倍</td></tr>
+      </tbody>
+    </table>
+    </div>
+
+    <p>
+      所有这些，背后是同一个思路：<strong>用空间换时间</strong>。我多占一点存储，把算过、读过、传过的东西存下来，下次就不用再算/读/传一遍。
+    </p>
+
+    <p>
+      LLM 的缓存——尤其是我们这章主角「Prompt Cache」——是这个传统在 AI 时代的延续。原理一脉相承，只是缓存的对象从「文件、数据」变成了「模型对一段文字已经做过的处理」。
+    </p>
+
+    <h2 id="why-llm" data-num="§ 5.3">为什么 LLM 也要缓存</h2>
+
+    <p>
+      要理解 LLM 缓存为什么省钱，先看一次请求里到底发生了什么。
+    </p>
+
+    <p>
+      你以为你只发了一句「帮我看看这个文件」，但实际送到 Anthropic 服务器的是一大坨：
+    </p>
+
+    <pre><code>[系统提示词]        Claude Code 自带的几千 token 的「使用说明」
+[CLAUDE.md]         你项目的规则、技术栈、代码约定
+[对话历史]          前面 20 轮的来回，包括工具调用结果
+[本次消息]          你刚打的那句话</code></pre>
+
+    <p>
+      这一整坨是 <strong>input</strong>，是收费的。Claude 每次回答前都要把它从头到尾「读」一遍——专业说法叫<em>预填充（prefill）</em>，也就是把这些 token 一个个喂进模型，让模型形成对当前对话的理解，然后才能开始生成回复。
+    </p>
+
+    <p>
+      问题来了：你下一句话发出去时，前面那一坨<strong>几乎完全一样</strong>。系统提示词没变、CLAUDE.md 没变、前 20 轮历史也没变——只是末尾多了你刚才那句新的而已。
+    </p>
+
+    <p>
+      「几乎完全一样」加上「每次都要重读」，这就是浪费。Anthropic 的工程师当然也想到了：能不能<strong>把上一次预填充得到的中间状态存下来</strong>，下次发现前缀一样，直接接着用？
+    </p>
+
+    <p>能。这就是 Prompt Cache。</p>
+
+    <h2 id="prompt-cache" data-num="§ 5.4">Prompt Cache 是什么</h2>
+
+    <p>
+      Prompt Cache 是 Anthropic API 提供的一项功能：服务器把你 prompt 的某段前缀「记住」一段时间，下次同样的前缀来了，直接复用之前的计算结果。
+    </p>
+
+    <p>它有两个关键性质：</p>
+
+    <div class="dl">
+      <dt>计费便宜很多</dt>
+      <dd>命中缓存的 input token 价格是普通 input 的 1/10。也就是说，你发同样长度的 prompt，命中缓存的那部分相当于打一折。</dd>
+
+      <dt>响应也变快</dt>
+      <dd>预填充本来是要花时间的——前缀越长越慢。缓存命中相当于跳过了这步计算，所以你看到的「Claude 思考中」会比第一次更快开始出字。</dd>
+
+      <dt>但要付一次「写入费」</dt>
+      <dd>第一次把内容写进缓存时，反而要多收一点钱（约普通 input 价格的 1.25 倍）。所以缓存只在<strong>之后会被复用多次</strong>时划算。读 1 次写 1 次没意义；读 5 次写 1 次就开始赚了。</dd>
+
+      <dt>有时间限制</dt>
+      <dd>默认 5 分钟内不活跃就过期。也就是说，你打开 Claude Code 后离开去吃饭，回来发现「为什么这次回复又变慢了又贵了」——缓存已经凉了。Anthropic 也提供 1 小时的「长缓存」，但价格更高。</dd>
+    </div>
+
+    <h2 id="hit-miss" data-num="§ 5.5">命中和不命中</h2>
+
+    <p>
+      缓存命中（cache hit）= 服务器发现你的 prompt 前缀和缓存里的一模一样，直接复用。<br>
+      缓存未命中（cache miss）= 没找到匹配，得从头做完整的预填充。
+    </p>
+
+    <p><strong>命中要求严格：前缀必须完全一致。</strong>哪怕只改一个字符，缓存都会失效。</p>
+
+    <p>「前缀一致」这个限制，决定了什么会让缓存失效：</p>
+
+    <ul>
+      <li>改了 CLAUDE.md——整个对话从此都得重新建缓存。</li>
+      <li>切了模型（Sonnet → Opus）——缓存按模型分开存，不通用。</li>
+      <li>用了 <code>/compact</code>——把对话历史压缩重写了，前缀全变了。</li>
+      <li>用了 <code>/clear</code>——直接开新会话，缓存彻底没了。</li>
+      <li>5 分钟没动——超时自动清理。</li>
+      <li>设置变了（系统提示、温度、tools 列表等）——任何一项改动都会让缓存按「另一个 prompt」处理。</li>
+    </ul>
+
+    <p>
+      听起来很脆弱，但实际用下来 Claude Code 已经替你做了不少优化——它会把那些「应该稳定不变」的部分（系统提示、CLAUDE.md、工具定义）单独标记为可缓存，让你的对话历史天然分层。
+    </p>
+
+    <div class="callout callout-tip">
+      <p class="callout-title">直觉小例子</p>
+      <p>
+        想象服务器在缓存里存了一张你上次的「书签」，记录了它读到 prompt 的第 8000 个字符时的状态。下次你来，它先比对你 prompt 的前 8000 个字符是否和书签处一致——一致就直接从书签往后读，不一致就只能从头再读一遍。
+      </p>
+    </div>
+
+    <h2 id="observe" data-num="§ 5.6">怎么看缓存有没有命中</h2>
+
+    <p>
+      Claude Code 在 <code>/usage</code> 里直接告诉你。打开看到的会是这样的几行：
+    </p>
+
+    <pre><code>> /usage
+
+  Session
+    Input tokens                     12,453
+    Cached input tokens              48,720    (cache read)
+    Cache creation tokens             2,180    (cache write)
+    Output tokens                     1,837
+
+  Cache hit rate                     94%
+  Estimated cost                     $0.038</code></pre>
+
+    <p>读懂这几行就够了：</p>
+
+    <div class="dl">
+      <dt>Input tokens</dt>
+      <dd>本次会话里没命中缓存的 input，按全价收费。这部分越少越好。</dd>
+
+      <dt>Cached input tokens（cache read）</dt>
+      <dd>命中缓存复用的 input，按 1/10 价收费。这部分越大占比越高，越省钱。</dd>
+
+      <dt>Cache creation tokens（cache write）</dt>
+      <dd>第一次写入缓存的 input，按 1.25 倍价收费。这是「投资」——只有后续被复用了才回本。</dd>
+
+      <dt>Output tokens</dt>
+      <dd>Claude 生成的回复字数。这部分和缓存没关系，按 output 价收费（一般是 input 的 5 倍贵）。</dd>
+
+      <dt>Cache hit rate</dt>
+      <dd>命中率 = cached input / (cached input + 普通 input)。健康的长会话能稳定到 90% 以上。</dd>
+    </div>
+
+    <p>
+      命中率低于 50% 就值得检查了：是不是频繁改了 CLAUDE.md、是不是过度 <code>/compact</code>、是不是会话太碎（每问一个问题就开新会话）。
+    </p>
+
+    <h2 id="improve" data-num="§ 5.7">怎么提高命中率</h2>
+
+    <p>
+      具体到日常操作，能做的事就这些：
+    </p>
+
+    <ol>
+      <li>
+        <strong>不要频繁改 CLAUDE.md。</strong>它在每次请求里都会被发送，是缓存最稳定的「锚点」。改一个字，整条缓存链路都得重建。如果要调，集中调，别每聊几句就动它。
+      </li>
+      <li>
+        <strong>少用 <code>/compact</code>。</strong>压缩会重写历史，把前缀彻底打乱。除非上下文真的快满了，不然让它自然增长——每加一句新对话只会让<em>缓存的前缀更长</em>，命中越多越赚。
+      </li>
+      <li>
+        <strong>长会话比开很多短会话便宜。</strong>每开一次新会话，前几句都是 cache write（1.25 倍价）。同一个任务保持在一个会话里跑，是最省钱的姿势。
+      </li>
+      <li>
+        <strong>5 分钟内保持活跃。</strong>哪怕发个 <code>/status</code> 也能让缓存续一秒。如果你知道自己要去开 30 分钟会，回来缓存肯定凉了——不用纠结。
+      </li>
+      <li>
+        <strong>不要随便切模型。</strong>Sonnet 和 Opus 的缓存分开存。来回切意味着两边都要重建缓存。如果一定要切，尽量切完留在新模型上跑一段时间。
+      </li>
+      <li>
+        <strong>批量任务用 Haiku + <code>/goal</code>。</strong>Haiku 本身就便宜，加上缓存复用，一组重复性高的任务（比如「给这 30 个函数加 JSDoc」）跑下来几乎免费。
+      </li>
+      <li>
+        <strong>大文件不要反复 <code>@</code>。</strong>每次 <code>@</code> 一个大文件，它的内容会被塞进对话里。第一次 <code>@</code> 之后 Claude 已经看过了，后续再问相关问题不用再 <code>@</code> 一遍——它还记得。
+      </li>
+    </ol>
+
+    <h2 id="math" data-num="§ 5.8">算一笔账</h2>
+
+    <p>
+      抽象的「省 90%」没有感觉。来个具体数字。
+    </p>
+
+    <p>
+      场景：用 Sonnet 做一个 1 小时的功能开发任务，期间和 Claude 来回 40 轮。每轮发出去的总 input 大约 30k token（含历史），output 大约 800 token。
+    </p>
+
+    <p>
+      Sonnet 当前单价（2026 年 5 月）：
+    </p>
+
+    <ul>
+      <li>普通 input：$3 / 1M token</li>
+      <li>缓存 input（read）：$0.30 / 1M token</li>
+      <li>缓存 input（write）：$3.75 / 1M token</li>
+      <li>output：$15 / 1M token</li>
+    </ul>
+
+    <div class="table-wrap">
+    <table>
+      <thead><tr><th>方式</th><th>计费 input（按 40 轮 × 30k 计）</th><th>output</th><th>总计</th></tr></thead>
+      <tbody>
+        <tr>
+          <td>无缓存</td>
+          <td>1,200,000 全价 → $3.60</td>
+          <td>32,000 → $0.48</td>
+          <td><strong>$4.08</strong></td>
+        </tr>
+        <tr>
+          <td>有缓存（命中率 90%）</td>
+          <td>120,000 全价 → $0.36<br>1,080,000 缓存读 → $0.32<br>30,000 缓存写 → $0.11</td>
+          <td>32,000 → $0.48</td>
+          <td><strong>$1.27</strong></td>
+        </tr>
+      </tbody>
+    </table>
+    </div>
+
+    <p>
+      同样一小时的活，账单差三倍。一个月按 20 个工作日算，每天一小时——前者 $80，后者 $25。一年差一千多刀。这还只是个人用，团队规模乘上去更夸张。
+    </p>
+
+    <p>
+      所以「让缓存命中」这件事，长期看不是一个可选的优化，是<strong>账单会不会失控</strong>的关键变量。
+    </p>
+
+    <div class="callout callout-warn">
+      <p class="callout-title">不要为了省钱牺牲思考</p>
+      <p>
+        看到上面这个对比，可能会有人想「那我永远不 <code>/compact</code>、永远不开新会话」。别这样——上下文一旦真的满了，模型质量会下降，那时候省下的几毛钱抵不过一次错误决策的成本。缓存是顺手优化，不是核心目标。
+      </p>
+    </div>
+
+    <h2 id="kv-cache" data-num="§ 5.9">KV Cache 是另一回事</h2>
+
+    <p>
+      你如果在论文或者博客里见过 「KV Cache」这个词，会觉得「咦，是不是同一个东西」？严格说，<strong>不是</strong>。它们都叫缓存、都和 LLM 有关，但层级完全不同。
+    </p>
+
+    <div class="table-wrap">
+    <table>
+      <thead><tr><th></th><th>Prompt Cache</th><th>KV Cache</th></tr></thead>
+      <tbody>
+        <tr><td>在哪一层</td><td>API / 计费层</td><td>模型推理引擎内部</td></tr>
+        <tr><td>解决什么问题</td><td>跨请求复用，省钱</td><td>单次请求中加速生成，省时间</td></tr>
+        <tr><td>谁来管</td><td>Anthropic 服务器</td><td>每次跑模型时自动有</td></tr>
+        <tr><td>用户能感知吗</td><td>能（账单 + 命中率）</td><td>感知不到（只能看到回复变快）</td></tr>
+        <tr><td>类比</td><td>外卖 App 记住你的地址</td><td>你大脑读句子时记住前几个字</td></tr>
+      </tbody>
+    </table>
+    </div>
+
+    <p>
+      简单说：<strong>KV Cache 让一次回复变快，Prompt Cache 让多次回复变便宜。</strong>这本书你不需要懂 KV Cache 的实现细节——它是模型推理的内部机制，自动开启，无需配置。但下次有人在 AI 群里聊起这两个，你大概知道他们是在说不同层的事。
+    </p>
+
+    <h2 id="takeaway" data-num="§ 5.10">最后一段话</h2>
+
+    <p>
+      缓存这个概念，归根到底就一句话：<strong>不变的部分，别再让它从头算一遍。</strong>
+    </p>
+
+    <p>
+      在 LLM 的语境里，这意味着：让那些理应稳定的内容（系统提示、项目规则、对话历史）保持稳定。Claude Code 替你处理了大部分细节——CLAUDE.md 自动进缓存层、对话历史按层级分块——你只需要做一件事：<em>不要主动破坏它</em>。
+    </p>
+
+    <p>
+      下次看到 <code>/usage</code> 里的 cache hit rate 是 94%，你应该感到一种平静的满足感——账单稳了，响应快了，整个系统在以你期望的方式运转。如果某天突然掉到 30%，你也知道该去查什么：是不是改了 CLAUDE.md、是不是过度 compact、是不是会话开太碎。
+    </p>
+
+    <p>
+      缓存不是 Claude Code 的某个功能——它是这一整代 LLM 应用得以「负担得起」的底层逻辑。读完这一章，你看 Anthropic 计费页面、看自家 API 调用日志、甚至看其他 AI 工具，应该都能用同一套眼光去理解。
+    </p>
+
+    <nav class="pager" aria-label="章节导航">
+      <a href="04-mental.html" class="pager-link pager-prev">
+        <span class="pager-dir">← 上一章</span>
+        <span class="pager-title">04 · 心智模型与边界</span>
+      </a>
+      <a href="06-easter-eggs.html" class="pager-link pager-next">
+        <span class="pager-dir">下一章 →</span>
+        <span class="pager-title">06 · 彩蛋与冷知识</span>
+      </a>
+    </nav>
+
+  </article>
+</div>
+
+<footer>
+  <div class="set"><span>第 5 / 6 章</span><span>关于 Claude Code，你应该了解的一切</span></div>
+  <div class="set"><span>≈ 18 MIN</span></div>
+</footer>
+
+<!-- Search Overlay -->
+<div class="search-backdrop" id="search-overlay" role="dialog" aria-modal="true" aria-label="搜索" hidden>
+  <div class="search-modal">
+    <div class="search-input-wrap">
+      <input type="search" class="search-input" placeholder="搜索命令、主题..." aria-label="搜索内容" autocomplete="off">
+      <kbd>ESC</kbd>
+    </div>
+    <div class="search-results" role="listbox" aria-label="搜索结果"></div>
+  </div>
+</div>
+
+<div class="modal-backdrop" id="cmd-modal" role="dialog" aria-modal="true" aria-label="命令详情">
+  <div class="modal">
+    <button class="modal-close">关闭 ESC</button>
+    <span class="tag"></span>
+    <h3></h3>
+    <p class="summary"></p>
+    <div class="modal-body"></div>
+  </div>
+</div>
+
+<button class="mtoc-fab" id="mtoc-fab" aria-label="目录">目录</button>
+<div class="mtoc-drawer" id="mtoc-drawer">
+  <div class="mtoc-content"></div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/bash.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/typescript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/yaml.min.js"></script>
+<script src="../assets/commands.js"></script>
+<script src="../assets/script.js"></script>
+</body>
+</html>

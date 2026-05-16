@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>2026 年的 Rust 现状——它在哪里，走向哪里 — Rust</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" id="hljs-light" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+<link rel="stylesheet" id="hljs-dark" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" media="not all">
+</head>
+<body>
+
+<div class="progress-bar" id="progress-bar"></div>
+
+<nav class="topnav" id="topnav">
+  <div class="topnav-inner">
+    <a class="brand" href="../index.html">Rust</a>
+    <div class="nav-links">
+      <a href="01-why-rust.html">01</a>
+      <a href="02-core-philosophy.html">02</a>
+      <a href="03-syntax.html">03</a>
+      <a href="04-where-rust.html">04</a>
+      <a href="05-public-opinion.html">05</a>
+      <a href="06-rust-2026.html" class="active">06</a>
+      <a href="07-should-i-learn.html">07</a>
+    </div>
+    <div class="nav-controls">
+      <button class="nav-btn" id="search-btn" aria-label="搜索 (Ctrl+K)">⌘K</button>
+      <button class="nav-btn" id="settings-btn" aria-label="阅读设置">Aa</button>
+      <a class="nav-btn" href="../../index.html" aria-label="返回知识库">← 知识库</a>
+    </div>
+  </div>
+</nav>
+<div class="settings-pop" id="settings-pop">
+  <h5>主题</h5>
+  <div class="row">
+    <button class="seg" data-theme-set="light">明亮</button>
+    <button class="seg" data-theme-set="dark">暗色</button>
+  </div>
+  <h5>字号</h5>
+  <div class="row">
+    <button class="seg" data-size-set="s">小</button>
+    <button class="seg" data-size-set="m">中</button>
+    <button class="seg" data-size-set="l">大</button>
+  </div>
+</div>
+
+<div class="with-sidebar">
+  <aside class="sidebar">
+  <div class="chapter-num">CHAPTER 06</div>
+  <div class="chapter-name">2026 年的 Rust 现状——它在哪里，走向哪里</div>
+  <h4>目录</h4>
+  <ul>
+    <li><a href="#61-站在2026年看rust">6.1 站在2026年看Rust</a></li>
+    <li><a href="#62-linux内核已经落地正在扩展">6.2 Linux内核：已经落地，正在扩展</a></li>
+    <li><a href="#63-windows微软的rust化进程">6.3 Windows：微软的Rust化进程</a></li>
+    <li><a href="#64-android和chromegoogle的rust版图">6.4 Android和Chrome：Google的Rust版图</a></li>
+    <li><a href="#65-2026年的明星项目">6.5 2026年的明星项目</a></li>
+    <li><a href="#66-rust基金会和社区生态">6.6 Rust基金会和社区生态</a></li>
+    <li><a href="#67-下一个十年会成为下一个c吗">6.7 下一个十年：会成为下一个C吗</a></li>
+  </ul>
+</aside>
+  <article class="chapter-body">
+    <header class="chapter-head">
+  <div class="chapter-head-meta">
+    <span class="num">CHAPTER 06</span>
+    <span>≈ 16 MIN READ</span>
+  </div>
+  <h1>2026 年的 Rust 现状——它在哪里，走向哪里</h1>
+</header>
+    <h2 id="61-站在2026年看rust">6.1 站在2026年看Rust</h2>
+<p>写这一章的时候是2026年，Rust 1.0发布已经过了十一年。十一年对一门编程语言来说不算长，但Rust的发展速度远超一般语言的成熟曲线。</p>
+<p>从技术上说，Rust核心语言已经相当稳定，大的变化主要集中在标准库的完善、异步编程模型的成熟、以及编译速度的持续优化。从生态上说，crates.io（Rust的包注册中心）上的crate数量已经超过15万，常见的应用场景基本都有可用的库。</p>
+<p>下面我们逐一看2026年各个战场的现状。</p>
+<h2 id="62-linux内核已经落地正在扩展">6.2 Linux内核：已经落地，正在扩展</h2>
+<h4 id="621-从linux-61到现在">6.2.1 从Linux 6.1到现在</h4>
+<p>Linux 6.1（2022年12月）是Rust正式进入Linux主线的起点，但那时候的Rust支持非常基础——只是基础设施，没有什么实际的内核代码是用Rust写的。</p>
+<p>之后几个版本里，Rust的基础设施逐步完善。到2024-2025年，第一批用Rust写的实际内核驱动开始合并进主线。其中最值得关注的是Nova项目——用Rust重写NVIDIA GPU驱动的初始实现（不是完整驱动，是一个从零开始的开源替代，和NVIDIA的私有驱动独立）。</p>
+<h4 id="622-内核rust的现状和争议">6.2.2 内核Rust的现状和争议</h4>
+<p>进展不如乐观者预期，争议也没有消失。</p>
+<p>有几位内核老手明确表示不满，主要是对&quot;Rust代码加进来但维护责任不清晰&quot;的担忧。有一位内核维护者甚至在2024年以&quot;对Rust支持不满&quot;为由退出了维护团队，引发了较大讨论。</p>
+<p>但反过来，有Google、ARM等公司的工程师持续提交Rust相关的补丁，内核Rust基础设施在每个版本都有进步。Linus自己表示&quot;Rust在内核里的进展比我预期的慢，但这是正常的，内核不应该激进&quot;。</p>
+<p>内核里的Rust目前还是少数派，核心代码全部是C，Rust代码只存在于一些新的驱动和实验性的基础设施里。这个情况在未来五年内大概率不会有根本性变化——内核保守主义是有道理的，稳定性比引入新技术重要。</p>
+<h4 id="623-真正的影响示范效应">6.2.3 真正的影响：示范效应</h4>
+<p>Linux内核引入Rust的最大意义，在前面提到过，是<strong>示范效应</strong>。它让很多保守的组织觉得&quot;连Linux内核都用了，我们也可以考虑&quot;。这种心理效应难以量化，但真实存在。</p>
+<h2 id="63-windows微软的rust化进程">6.3 Windows：微软的Rust化进程</h2>
+<h4 id="631-已经完成的部分">6.3.1 已经完成的部分</h4>
+<p>微软在Windows里引入Rust的速度比Linux快，原因是微软可以内部决策，不需要开放式社区的共识。</p>
+<p>Windows内核（ntoskrnl.exe）的部分模块已经有Rust代码，字体渲染引擎、DNS客户端库的部分实现被重写了。最重要的是，<strong>Windows驱动程序框架（WDF）提供了Rust绑定</strong>，第三方开发者现在可以用Rust写Windows驱动了。</p>
+<h4 id="632-rust-for-windows的开发者工具">6.3.2 Rust for Windows的开发者工具</h4>
+<p>微软维护了<code>windows</code>这个Rust crate，它提供了对Windows API的完整访问，包括Win32、WinRT、COM接口。这是目前体积最大的单一Rust crate之一，自动从Windows SDK生成绑定。</p>
+<pre data-label="rust"><code class="language-rust">// 用Rust调用Windows API的示例
+use windows::Win32::UI::WindowsAndMessaging::MessageBoxW;
+use windows::core::w;
+
+fn main() {
+    unsafe {
+        MessageBoxW(None, w!("Hello from Rust!"), w!("Demo"), Default::default());
+    }
+}</code></pre>
+<p>这段代码需要<code>unsafe</code>因为Win32 API本身没有安全保证，但这比用C写同样的代码要方便很多——<code>windows</code> crate自动处理了类型转换和调用约定。</p>
+<h4 id="633-azure基础设施">6.3.3 Azure基础设施</h4>
+<p>Azure（微软云）后端的很多新组件是Rust写的，尤其是需要高性能和高可靠性的那些，比如部分存储服务的内部组件。微软没有公开太多细节，但从他们在Rust工具链上的投入和招聘方向可以看出方向。</p>
+<h2 id="64-android和chromegoogle的rust版图">6.4 Android和Chrome：Google的Rust版图</h2>
+<h4 id="641-android里的150万行rust代码">6.4.1 Android里的150万行Rust代码</h4>
+<p>Google在2021年开始向Android添加Rust代码，到2023年已经有约150万行Rust。这些代码主要集中在：</p>
+<ul>
+<li><strong>Bluetooth栈（Gabeldorsche）</strong>：Android 12引入的新蓝牙协议栈，主要用Rust写</li>
+<li><strong>DNS解析器</strong></li>
+<li><strong>各种媒体处理组件</strong></li>
+<li><strong>部分keystore服务</strong></li>
+</ul>
+<p>Google发布的数据：在Android里，Rust代码的内存安全漏洞密度（每行代码的漏洞数）显著低于C/C++代码。这个数据被引用了很多次，成为&quot;Rust确实有效果&quot;的实证。</p>
+<h4 id="642-chromium里的rust">6.4.2 Chromium里的Rust</h4>
+<p>Chromium（Chrome的基础）从2023年开始允许引入第三方Rust库，之后逐步扩展到允许在Chromium自己的代码里写Rust。这个过程很谨慎，但方向是确定的。</p>
+<p>Chrome的一些安全性敏感组件（URL解析、媒体编解码接口等）有Rust实现。Chromium项目文档里现在有专门的Rust指南，解释什么情况下应该优先用Rust。</p>
+<h2 id="65-2026年的明星项目">6.5 2026年的明星项目</h2>
+<h4 id="651-zed编辑器领域的标杆">6.5.1 Zed：编辑器领域的标杆</h4>
+<p>Zed在2024年开源（之前是闭源产品），开源之后社区贡献爆发，扩展生态快速成长。2025年Zed加入了AI代码补全和对话功能，但保持了性能优先的设计原则——AI功能用流式传输，不阻塞编辑器主线程。</p>
+<p>Zed目前仍然主要是macOS和Linux用户的选择，Windows版本2024年进入测试，功能比较完整但性能优化还在进行中。作为一个从头Rust实现的编辑器，它的代码库本身就是一个很好的Rust大型项目学习材料。</p>
+<h4 id="652-uvpython工具链的颠覆者">6.5.2 uv：Python工具链的颠覆者</h4>
+<p>uv（由Astral开发，同一家公司也做了Ruff——Python的极速linter）在2024年发布，迅速成为Python包管理领域的热门话题。它用Rust实现了pip兼容的包解析和安装，速度比pip快10-100倍，这不是夸张，是可以在任何机器上复现的基准测试结果。</p>
+<p>uv正在试图统一Python的依赖管理工具链（pip、pip-tools、virtualenv、poetry……Python依赖管理的历史是一段痛史），有没有成功还要看后续，但它的出现证明了一点：<strong>即使是Python生态，也在用Rust解决性能痛点</strong>。</p>
+<h4 id="653-pingoracloudflare的nginx替代">6.5.3 Pingora：Cloudflare的NGINX替代</h4>
+<p>Cloudflare的Pingora在2024年开源，它是Cloudflare内部替换NGINX的HTTP代理库，处理的流量规模是全球前几位的CDN级别。Pingora的设计目标是支持每秒数千万请求，同时内存使用比原来的NGINX架构低很多。</p>
+<p>Pingora的架构很有意思，它用Rust的异步运行时（tokio）处理并发，用共享连接池代替NGINX的多进程模型，这使得同等流量下的内存消耗大大降低（Cloudflare报告减少了约75%）。</p>
+<h4 id="654-deno和bunjs运行时的rust渗透">6.5.4 Deno和Bun：JS运行时的Rust渗透</h4>
+<p>Deno（Node.js创始人Ryan Dahl的新项目）用Rust写了其核心运行时组件，JavaScript引擎本身用的是V8，但围绕V8的所有&quot;胶水&quot;代码是Rust。Deno的文件系统、网络、权限系统都是Rust实现。</p>
+<p>Bun更进一步，用Zig写了JavaScript引擎（JavaScriptCore），但核心的包管理器和模块解析有Rust参与。Bun 1.0在2023年发布，在Node.js兼容性和速度上都有很好的表现。</p>
+<p>这两个项目展示了一个有趣的模式：新一代开发者工具正在用Rust（或Zig等系统语言）替换传统上用C/C++写的组件，追求兼顾安全和性能。</p>
+<h4 id="655-rust在ai基础设施里">6.5.5 Rust在AI基础设施里</h4>
+<p>这一点和尾声有交叉，先在这里铺垫：Rust在AI基础设施里的存在是间接的但真实的。</p>
+<p>HuggingFace的<code>tokenizers</code>库——几乎所有NLP模型训练和推理都要用到的分词器——核心逻辑是Rust写的，Python是它的绑定层。这个选择让tokenizers的速度比纯Python实现快几十倍，对大规模训练数据预处理来说差距非常明显。</p>
+<p>PyTorch的部分算子在向Rust迁移，TensorRT（NVIDIA的推理优化库）的周边工具有Rust实现。AI编译器领域（MLIR、Triton等）也有Rust的参与。</p>
+<p>Rust不会成为AI建模语言——那是Python的地盘，根深蒂固。但在&quot;AI基础设施的底层&quot;，Rust正在占据越来越多的位置。</p>
+<h2 id="66-rust基金会和社区生态">6.6 Rust基金会和社区生态</h2>
+<h4 id="661-rust基金会">6.6.1 Rust基金会</h4>
+<p>2021年，Rust基金会正式成立，Mozilla把Rust的相关商标和资产移交给基金会。创始赞助商包括微软、Google、AWS、华为、Facebook（Meta）。这标志着Rust的治理从&quot;Mozilla的项目&quot;变成了&quot;行业共同体的项目&quot;。</p>
+<p>基金会的主要工作是：资助Rust工具链的基础设施（crates.io的服务器费用、持续集成等）、支持核心团队成员的工作、管理商标许可、组织RustConf等社区活动。</p>
+<p>核心语言的设计决策仍然由RFC（Request For Comments）流程完成，任何人都可以提提案，核心团队负责审核，这保证了Rust的开放性。</p>
+<h4 id="662-cratesio生态">6.6.2 crates.io生态</h4>
+<p>crates.io是Rust的包注册中心，类比Python的PyPI、JavaScript的npm。截至2026年，crates.io上有超过16万个crate，每周下载量超过10亿次。</p>
+<p>这个数字在数量上不如npm（几百万个包），但质量上Rust生态的特点是：<strong>关键领域有几个高质量、被广泛使用的库，而不是几十个质量参差的选项</strong>。比如：</p>
+<ul>
+<li><strong>异步运行时</strong>：<code>tokio</code>占据主导，<code>async-std</code>有少量市场，<code>smol</code>在嵌入式场景有优势</li>
+<li><strong>Web框架</strong>：<code>axum</code>（tokio团队出品）是目前主流，<code>actix-web</code>在性能基准测试中很强</li>
+<li><strong>序列化</strong>：<code>serde</code>几乎是垄断级别的存在，几乎所有需要序列化的库都支持serde</li>
+<li><strong>HTTP客户端</strong>：<code>reqwest</code>是事实标准</li>
+<li><strong>命令行解析</strong>：<code>clap</code>是主流</li>
+</ul>
+<p>这种&quot;有主流、有竞争&quot;的格局比Python或JS更清晰，新手面对的&quot;选择困难症&quot;相对小一些。</p>
+<h4 id="663-rust的版次edition系统">6.6.3 Rust的版次（Edition）系统</h4>
+<p>Rust有一个聪明的版本管理机制叫Edition（版次）。每隔几年发一个Edition（目前有2015、2018、2021），在新Edition里可以做不向后兼容的语法改动，但旧代码可以在同一个编译器下继续用旧Edition编译。不同Edition的代码可以在同一个项目里共存（crate级别的版次设定）。</p>
+<p>这个设计解决了语言演进和向后兼容之间的矛盾——Python 2到Python 3的痛苦就是没有这种机制。Rust 2024 Edition在2024年末发布，做了一些小的语法改进，迁移成本很低。</p>
+<h2 id="67-下一个十年会成为下一个c吗">6.7 下一个十年：会成为下一个C吗</h2>
+<h4 id="671-quot下一个cquot是一个很高的标准">6.7.1 &quot;下一个C&quot;是一个很高的标准</h4>
+<p>C的地位不只是因为它快，而是因为：<strong>几乎任何系统都能运行C代码，几乎任何语言都能和C互操作</strong>。Python可以调用C库，Java可以通过JNI调用C，Go可以通过cgo调用C，几乎所有语言都把&quot;C ABI兼容&quot;作为FFI的基础。</p>
+<p>C这个地位是几十年历史积累的，不可能被短期替代。更现实的问题是：<strong>Rust能成为新项目的默认选择吗？</strong></p>
+<h4 id="672-乐观的理由">6.7.2 乐观的理由</h4>
+<p><strong>行业趋势是真实的</strong>。政府监管（美国的ONCD报告、欧盟的网络弹性法案对安全要求的提升）在把软件行业往&quot;内存安全语言&quot;推。这个力量是外部的，不依赖于Rust社区自己的布道。</p>
+<p><strong>替代选项有限</strong>。想要同时满足&quot;无GC&quot;、&quot;接近C性能&quot;、&quot;内存安全&quot;这三个条件的语言，2026年可以认真考虑的只有Rust。Go没有做到接近C的性能（有GC），Zig没有Rust那样的安全保证体系（更接近&quot;更好的C&quot;），Ada太小众且有历史包袱。Rust在这个生态位上基本是唯一选项。</p>
+<p><strong>开发者偏好是可持续的</strong>。连续多年的&quot;最受喜爱&quot;不是偶然，用过Rust的工程师愿意推荐它、愿意在新项目里用它。这种自发的传播是最持久的增长引擎。</p>
+<h4 id="673-悲观的理由">6.7.3 悲观的理由</h4>
+<p><strong>学习曲线没有明显降低</strong>。Rust努力改善错误信息、改善文档，但所有权系统本质上是一个新的思维模型，这个门槛没有被完全消除。很多组织无法接受让工程师花几个月时间真正掌握Rust。</p>
+<p><strong>遗留代码不会消失</strong>。世界上大量的系统代码是C/C++写的，这些代码不会因为Rust存在就重写。重写的成本和风险在很多场景下超过了安全收益。Rust更可能是&quot;新项目的选择&quot;，而不是&quot;旧项目的替代&quot;。</p>
+<p><strong>AI辅助编程改变了游戏规则</strong>。GitHub Copilot、Claude等AI工具大大降低了写Python、JS等动态语言的门槛，但对Rust的帮助相对有限——Rust的核心难点（所有权、生命周期）需要工程师真正理解，AI生成的代码在这里的错误率比动态语言更高。如果AI把&quot;快速原型&quot;的效率再提高一倍，Rust相对于Python的劣势会进一步放大。</p>
+<h4 id="674-claude的猜测">6.7.4 Claude的猜测</h4>
+<p>不会成为&quot;下一个C&quot;，但会成为&quot;新一代系统软件的标准语言选项之一&quot;。</p>
+<p>更具体地说：十年后的图景可能是——操作系统新模块、驱动程序、CLI工具、高性能网络服务、WebAssembly的首选语言就是Rust；老的C/C++代码库继续存在，但新建的同类项目会优先考虑Rust；AI/ML的计算层继续在C/CUDA，但工具链层越来越多是Rust；业务后端、数据科学、脚本领域，Python/Go/JS继续统治。</p>
+<p>这个图景里的Rust，比今天的Rust覆盖面要大，但远没有C那种无处不在的地位。这是一个现实的、值得期待的未来。</p>
+
+    <nav class="pager">  <a href="05-public-opinion.html">
+    <span class="label">← 上一章</span>
+    <span class="title">世界怎么看 Rust——舆论的演变史</span>
+  </a>  <a href="07-should-i-learn.html" class="next">
+    <span class="label">下一章 →</span>
+    <span class="title">我要不要学 Rust</span>
+  </a></nav>
+  </article>
+</div>
+
+<footer>
+  <div class="set">
+    <span>RUST</span>
+    <span>2026 · ZH-CN</span>
+  </div>
+  <div class="set">
+    <span>Mav</span>
+  </div>
+</footer>
+<div class="search-backdrop" id="search-overlay" role="dialog" aria-modal="true" aria-label="搜索" hidden>
+  <div class="search-modal">
+    <div class="search-input-wrap">
+      <input type="search" class="search-input" placeholder="搜索内容..." aria-label="搜索内容" autocomplete="off">
+      <kbd>ESC</kbd>
+    </div>
+    <div class="search-results" role="listbox" aria-label="搜索结果"></div>
+  </div>
+</div>
+
+<!-- Mobile TOC -->
+<button class="mtoc-fab" id="mtoc-fab" aria-label="目录">TOC</button>
+<div class="mtoc-drawer" id="mtoc-drawer">
+  <div class="mtoc-content"></div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/bash.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/typescript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/yaml.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/javascript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/json.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/python.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/css.min.js"></script>
+<script src="../assets/script.js"></script>
+</body>
+</html>

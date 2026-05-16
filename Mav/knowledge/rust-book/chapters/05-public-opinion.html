@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>世界怎么看 Rust——舆论的演变史 — Rust</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" id="hljs-light" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+<link rel="stylesheet" id="hljs-dark" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" media="not all">
+</head>
+<body>
+
+<div class="progress-bar" id="progress-bar"></div>
+
+<nav class="topnav" id="topnav">
+  <div class="topnav-inner">
+    <a class="brand" href="../index.html">Rust</a>
+    <div class="nav-links">
+      <a href="01-why-rust.html">01</a>
+      <a href="02-core-philosophy.html">02</a>
+      <a href="03-syntax.html">03</a>
+      <a href="04-where-rust.html">04</a>
+      <a href="05-public-opinion.html" class="active">05</a>
+      <a href="06-rust-2026.html">06</a>
+      <a href="07-should-i-learn.html">07</a>
+    </div>
+    <div class="nav-controls">
+      <button class="nav-btn" id="search-btn" aria-label="搜索 (Ctrl+K)">⌘K</button>
+      <button class="nav-btn" id="settings-btn" aria-label="阅读设置">Aa</button>
+      <a class="nav-btn" href="../../index.html" aria-label="返回知识库">← 知识库</a>
+    </div>
+  </div>
+</nav>
+<div class="settings-pop" id="settings-pop">
+  <h5>主题</h5>
+  <div class="row">
+    <button class="seg" data-theme-set="light">明亮</button>
+    <button class="seg" data-theme-set="dark">暗色</button>
+  </div>
+  <h5>字号</h5>
+  <div class="row">
+    <button class="seg" data-size-set="s">小</button>
+    <button class="seg" data-size-set="m">中</button>
+    <button class="seg" data-size-set="l">大</button>
+  </div>
+</div>
+
+<div class="with-sidebar">
+  <aside class="sidebar">
+  <div class="chapter-num">CHAPTER 05</div>
+  <div class="chapter-name">世界怎么看 Rust——舆论的演变史</div>
+  <h4>目录</h4>
+  <ul>
+    <li><a href="#51-这是一部比技术本身更有趣的历史">5.1 这是一部比技术本身更有趣的历史</a></li>
+    <li><a href="#52-20102015年从实验室到10">5.2 2010–2015年：从实验室到1.0</a></li>
+    <li><a href="#53-20162019年小圈子狂热">5.3 2016–2019年：小圈子狂热</a></li>
+    <li><a href="#54-2020年linux内核里的那场争论">5.4 2020年：Linux内核里的那场争论</a></li>
+    <li><a href="#55-2022年巨头集体站台">5.5 2022年：巨头集体站台</a></li>
+    <li><a href="#56-20232026年从quot值得尝试quot到部分领域的事实标准">5.6 2023–2026年：从&quot;值得尝试&quot;到部分领域的事实标准</a></li>
+    <li><a href="#57-quot最受喜爱quot背后的深层逻辑">5.7 &quot;最受喜爱&quot;背后的深层逻辑</a></li>
+  </ul>
+</aside>
+  <article class="chapter-body">
+    <header class="chapter-head">
+  <div class="chapter-head-meta">
+    <span class="num">CHAPTER 05</span>
+    <span>≈ 14 MIN READ</span>
+  </div>
+  <h1>世界怎么看 Rust——舆论的演变史</h1>
+</header>
+    <h2 id="51-这是一部比技术本身更有趣的历史">5.1 这是一部比技术本身更有趣的历史</h2>
+<p>一门编程语言的技术特性只是故事的一半，另一半是这门语言怎么在人心中建立地位。Rust在过去十年里经历了从&quot;玩具项目&quot;到&quot;事实标准&quot;的演变，这个过程充满了戏剧性，值得细细梳理。</p>
+<p>我特别喜欢观察这种演变，因为它揭示的不只是Rust，而是整个技术社区是如何做集体决策的——哪些因素真正影响了工程师的选择，哪些是媒体炒作，哪些是真正的技术判断。</p>
+<h2 id="52-20102015年从实验室到10">5.2 2010–2015年：从实验室到1.0</h2>
+<h4 id="521-mozilla的内部项目">5.2.1 Mozilla的内部项目</h4>
+<p>Rust的起源可以追溯到2006年，Mozilla员工Graydon Hoare的个人项目。2009年Mozilla正式赞助，目标是为Firefox的渲染引擎Servo提供一门更安全的语言。</p>
+<p>这个阶段的Rust和后来的Rust差别极大。语言设计在快速迭代，很多特性加了又删，所有权系统的形态也和最终版本不同。早期的Rust有垃圾回收、有goroutine风格的任务系统，很多现在觉得理所当然的特性那时候都不存在。</p>
+<p>这不是贬义——这是正常的研究性语言开发。但这也意味着在这个阶段，关注Rust需要很高的风险承受能力，你写的代码可能下一个版本就无法编译了。</p>
+<h4 id="522-2015年10发布承诺稳定性">5.2.2 2015年：1.0发布，承诺稳定性</h4>
+<p>2015年5月，Rust 1.0正式发布。这是一个里程碑，不是因为Rust语言在那一刻突然变好了，而是因为Rust团队做出了一个重要承诺：<strong>向后兼容性</strong>。从1.0开始，能在Rust 1.0上编译的代码，在后续版本上也应当能编译（除非你用了被显式标记为不稳定的特性）。</p>
+<p>这个承诺对于生产级使用至关重要。没有人愿意在一门每隔几个月就破坏性更新的语言上建设关键基础设施。</p>
+<p>1.0发布的时候，反应很平淡。技术媒体报了一下，Hacker News上有一些讨论，然后就过去了。没有人知道未来它会受到这么大的关注。</p>
+<h2 id="53-20162019年小圈子狂热">5.3 2016–2019年：小圈子狂热</h2>
+<h4 id="531-quot最受喜爱语言quot的连续登顶">5.3.1 &quot;最受喜爱语言&quot;的连续登顶</h4>
+<p>Stack Overflow每年做开发者调查，其中有一项是&quot;最受喜爱的语言&quot;（Most Loved Language）——注意，不是&quot;用得最多&quot;，而是&quot;用过之后最喜欢&quot;。</p>
+<p>Rust从2016年开始连续霸榜。这个数据本身需要谨慎解读：喜爱度高不代表使用率高，早期喜欢Rust的人大多是那些专门去探索这门语言的技术狂热分子，样本有偏差。</p>
+<p>但这个数据也揭示了一件事：<strong>用过Rust的人，大多数都很喜欢它</strong>。这种口碑在技术社区里是稀缺的——大多数语言用过之后要么中性要么有人爱有人恨，Rust的喜爱率异常地高。</p>
+<h4 id="532-rustacean文化的形成">5.3.2 Rustacean文化的形成</h4>
+<p>这个阶段，Rust社区形成了一种独特的文化——Rustacean（Rust用户自称，取螃蟹形象，因为Rust的吉祥物是一只螃蟹）。这个群体的特点是：技术上非常认真、讨论质量高、对语言设计有浓厚兴趣、彼此之间有一种&quot;我们在做一件重要的事&quot;的使命感。</p>
+<p>Rust社区的行为准则（Code of Conduct）写得很详细，明确要求包容和友好，这和某些技术社区的&quot;精英主义&quot;文化形成对比。Rust的文档质量也在这个阶段建立了口碑——《Rust程序设计语言》（也叫&quot;The Book&quot;）被公认为开源项目文档的标杆。</p>
+<h4 id="533-第一批重量级采用者">5.3.3 第一批重量级采用者</h4>
+<p><strong>npm</strong>：2019年，npm（Node.js的包管理器注册中心）宣布用Rust重写了CPU密集型的部分。具体来说是<code>@npmcli/arborist</code>的一部分逻辑。这是一个信号——工业界开始在真实的、影响数百万开发者的系统里用Rust。</p>
+<p><strong>Dropbox</strong>：Dropbox用Rust重写了其存储后端的核心同步引擎。原先是Python实现，面对海量文件同步时性能瓶颈明显。Rust实现在性能和内存使用上都有显著提升。</p>
+<p><strong>Discord</strong>：Discord在2020年发布了一篇著名的博客文章《Why Discord is switching from Go to Rust》，讲述了他们把处理消息读取状态的服务从Go换成Rust的经历。Go版本有定期的延迟峰值，因为GC在清理时会暂停。Rust版本没有GC，延迟更稳定，内存使用也更低。这篇文章在技术圈广泛传播，让很多人第一次认真考虑Rust。</p>
+<h2 id="54-2020年linux内核里的那场争论">5.4 2020年：Linux内核里的那场争论</h2>
+<h4 id="541-quotrust进linux内核quot的提案">5.4.1 &quot;Rust进Linux内核&quot;的提案</h4>
+<p>2020年，一个名叫Nick Desaulniers的谷歌工程师在Linux内核邮件列表上提出了将Rust作为Linux内核的第二语言的想法。Linux内核几十年来只用C（和少量汇编），引入任何第二语言都是极其敏感的决定。</p>
+<p>这件事在Linux社区引发了激烈争论。</p>
+<h4 id="542-反对的声音">5.4.2 反对的声音</h4>
+<p>反对意见是有道理的，不是保守主义情绪：</p>
+<p><strong>学习成本</strong>：Linux内核有数千名贡献者，让所有人都学Rust是不现实的。Rust的学习曲线远比C陡峭，尤其是对习惯了C风格的内核开发者。</p>
+<p><strong>工具链稳定性</strong>：C的工具链（GCC）极其成熟，Rust的工具链（rustc/LLVM）相对年轻。内核对工具链的稳定性要求极高。</p>
+<p><strong>FFI边界的安全性</strong>：Rust和C代码的互操作需要<code>unsafe</code>块，边界处的安全性保证比纯Rust代码弱。如果大量代码在Rust和C之间互调，安全收益可能不如预期。</p>
+<p><strong>维护责任</strong>：谁来维护内核里的Rust代码？如果原作者离开了，能找到足够多的懂Rust的内核开发者接手吗？</p>
+<h4 id="543-linus的态度转变">5.4.3 Linus的态度转变</h4>
+<p>Linus Torvalds的态度很有意思。他早期对Rust进内核持保留态度，但不是极端反对。他的原话大意是：如果Rust真的能解决实际问题，我愿意看，但要证明这一点，不能只是口头上说&quot;Rust更安全&quot;。</p>
+<p>经过两年的讨论和实验，Linux 6.1（2022年12月发布）正式把Rust支持合并进主线。这不是说内核代码都改成Rust了，而是内核构建系统开始支持编译Rust代码，为未来的Rust驱动和内核模块提供基础。Linus在采访中说，他个人不会写Rust，但他看到了它的价值。</p>
+<p>这件事的象征意义远大于实际影响。Linux内核接受Rust，等于是世界上最保守的大型C项目给Rust盖了章，这对整个行业的信号是：<strong>Rust不是玩具，是可以用于极端严肃场景的语言</strong>。</p>
+<h2 id="55-2022年巨头集体站台">5.5 2022年：巨头集体站台</h2>
+<h4 id="551-微软">5.5.1 微软</h4>
+<p>2022年，微软在多个公开场合表态支持Rust。微软安全响应中心（MSRC）的工程师发表文章，指出Windows历史上70%的安全漏洞是内存安全问题，而Rust是解决这个问题的有力工具。</p>
+<p>微软不只是嘴上说说。他们开始把Windows的部分组件用Rust重写，包括一些字体处理代码、部分网络栈组件，以及最值得关注的：Windows驱动开发框架开始提供Rust支持。微软还雇佣了多位Rust核心开发者，对Rust工具链本身进行贡献。</p>
+<h4 id="552-google">5.5.2 Google</h4>
+<p>Google是Rust进Android的主要推动者。Google安全博客的数据显示：在Android里，C/C++代码的内存安全漏洞发现率远高于Rust代码。2021年开始，Android新增的native代码越来越多用Rust写。到2023年，Android里大约有150万行Rust代码。</p>
+<p>Google还在Chromium（Chrome的开源基础）里开始引入Rust，并为Rust工具链（特别是编译速度的改进）贡献了大量工程投入。</p>
+<h4 id="553-nsa">5.5.3 NSA</h4>
+<p>美国国家安全局（NSA）在2022年发布了一份技术报告，明确推荐使用内存安全语言，Rust被列为推荐选项之一。这份报告的受众是美国政府和军事机构的IT部门，代表着&quot;安全机构的官方背书&quot;，在保守的政府IT采购圈里有一定影响力。</p>
+<p>这个画面有点魔幻：一家浏览器公司（Mozilla）发明的语言，被国家安全局推荐给政府机构使用。</p>
+<h4 id="554-awsmetacloudflare">5.5.4 AWS、Meta、Cloudflare</h4>
+<p>AWS（亚马逊云服务）长期是Rust的大用户，Firecracker（用于Lambda和Fargate的轻量级虚拟化层）就是Rust写的。Meta在其内部基础设施里大量使用Rust，并对<code>rustfmt</code>（Rust代码格式化工具）等工具链项目有贡献。Cloudflare用Rust重写了Pingora（一个HTTP代理库，替代NGINX在Cloudflare内部的使用），并把它开源。</p>
+<p>这些公司的共同点是：<strong>超大规模、对性能和可靠性极度敏感</strong>。他们不是因为Rust&quot;时髦&quot;而选它，是因为在他们的规模下，内存安全问题和性能问题的代价是以亿美元计的。</p>
+<h2 id="56-20232026年从quot值得尝试quot到部分领域的事实标准">5.6 2023–2026年：从&quot;值得尝试&quot;到部分领域的事实标准</h2>
+<h4 id="561-白宫的报告">5.6.1 白宫的报告</h4>
+<p>2024年2月，美国白宫国家网络主任办公室（ONCD）发布了一份报告，题为《Back to the Building Blocks: A Path Toward Secure and Measurable Software》，明确呼吁开发者转向内存安全语言，并点名Rust。</p>
+<p>政府报告通常是行业趋势的滞后指标而不是先行指标，但这份报告的意义在于它正式把&quot;内存安全&quot;提升到了国家安全的层面，这对政府采购合同、安全法规、行业标准都会产生实际影响。</p>
+<h4 id="562-stack-overflow调查数据的意义">5.6.2 Stack Overflow调查：数据的意义</h4>
+<p>Stack Overflow的&quot;最受喜爱语言&quot;调查，Rust从2016年到2023年连续八年第一。2024年调查改了问法，用&quot;Admired&quot;替代&quot;Loved&quot;，Rust依然排名第一，以80%的比例遥遥领先。</p>
+<p>这个数据的意义在2024-2025年已经有了变化：<strong>使用Rust的人越来越多，样本不再只是狂热爱好者</strong>。2023年Stack Overflow调查里，Rust用户里有约13%是&quot;在工作中大量使用&quot;，相比2019年的约5%已经提升很多，但相比Python（约49%）还有很大差距。喜爱度高、使用率相对低，这个格局在2026年仍然存在，但差距在缩小。</p>
+<h4 id="563-quot重写成rustquot成为一种文化现象">5.6.3 &quot;重写成Rust&quot;成为一种文化现象</h4>
+<p>&quot;Rewrite it in Rust&quot;（缩写RIIR，有时候也被自嘲为一种宗教狂热）成为了技术社区的梗。每当一个性能不好的工具被提起，就有人说&quot;该用Rust重写了&quot;。</p>
+<p>这个梗很有意思，因为它承载了真实的工程判断和轻度的自嘲。确实有很多工具重写成Rust之后效果很好（前面列的那些CLI工具），也确实有人把&quot;Rust&quot;当成了银弹而不是工具。</p>
+<h4 id="564-培训和招聘市场的变化">5.6.4 培训和招聘市场的变化</h4>
+<p>到2025-2026年，Rust开发者的薪资在各平台的统计里持续偏高，供需缺口明显——会Rust的工程师少，需要Rust的岗位在增长。这是一个经典的新兴技术扩散现象：早期采用者获得溢价，随着人才供给增加，溢价会逐渐收窄。</p>
+<p>大学课程开始出现Rust，一些计算机系把原来的系统编程课（用C/C++）改成用Rust教，理由是&quot;相同的概念，更好的即时反馈&quot;——借用检查器给出的错误信息帮助学生理解内存管理，比C的&quot;运行崩溃了但你不知道为什么&quot;更有教育价值。</p>
+<h2 id="57-quot最受喜爱quot背后的深层逻辑">5.7 &quot;最受喜爱&quot;背后的深层逻辑</h2>
+<h4 id="571-为什么工程师喜欢rust">5.7.1 为什么工程师喜欢Rust</h4>
+<p>喜欢Rust的工程师通常能说出几个具体原因，不是&quot;感觉好&quot;，是真实的体验：</p>
+<p><strong>&quot;编译通过就基本对了&quot;</strong>。这句话出现在大量Rust用户的回忆里。Rust的类型系统和借用检查器极其严格，如果你的代码能编译，它通常能正确运行，没有意外的空指针，没有数据竞争，没有内存泄漏。这种感觉和Python、JS的开发体验截然不同——后者是&quot;先跑起来，运行时再发现问题&quot;。</p>
+<p><strong>错误信息是顶级的</strong>。Rust的编译器错误信息在所有主流语言里是最友好的，没有之一。它不只是告诉你&quot;这里有错误&quot;，它会解释为什么错、可能的原因是什么、应该怎么修。很多人第一次用Rust时被这个惊到，因为他们太习惯C++那种令人绝望的模板错误信息了。</p>
+<p><strong>工具链集成度高</strong>。<code>cargo</code>（Rust的包管理器和构建工具）把依赖管理、编译、测试、文档生成、发布到crates.io全部集成在一个工具里，而且这些功能开箱即用，不需要配置。相比Python的<code>pip+venv+setup.py+poetry+...</code>的碎片化状态，cargo的体验不知道好多少。</p>
+<h4 id="572-为什么不喜欢rust的人不喜欢">5.7.2 为什么不喜欢Rust的人不喜欢</h4>
+<p><strong>学习曲线</strong>。所有权系统对新手是真实的障碍。&quot;跟借用检查器搏斗&quot;是一种普遍的初学体验，有些人度过了，有些人在这里放弃了。</p>
+<p><strong>开发速度</strong>。在Rust里做一件事通常比Python慢3-5倍（开发时间，不是运行时间）。如果项目对开发速度的要求高于对运行速度的要求，这是一个真实的劣势。</p>
+<p><strong>Rust社区的布道文化</strong>。有些Rust用户有点……过分热情，每当有人说&quot;我在用Python&quot;，就会有人跳出来说&quot;为什么不用Rust？&quot;。这种文化让一部分人对Rust产生了本能的抵触。Rust核心团队意识到了这个问题，在文档和社区指南里明确提到Rust不是所有问题的解决方案。</p>
+
+    <nav class="pager">  <a href="04-where-rust.html">
+    <span class="label">← 上一章</span>
+    <span class="title">Rust 在哪里出没——它的边界和地盘</span>
+  </a>  <a href="06-rust-2026.html" class="next">
+    <span class="label">下一章 →</span>
+    <span class="title">2026 年的 Rust 现状——它在哪里，走向哪里</span>
+  </a></nav>
+  </article>
+</div>
+
+<footer>
+  <div class="set">
+    <span>RUST</span>
+    <span>2026 · ZH-CN</span>
+  </div>
+  <div class="set">
+    <span>Mav</span>
+  </div>
+</footer>
+<div class="search-backdrop" id="search-overlay" role="dialog" aria-modal="true" aria-label="搜索" hidden>
+  <div class="search-modal">
+    <div class="search-input-wrap">
+      <input type="search" class="search-input" placeholder="搜索内容..." aria-label="搜索内容" autocomplete="off">
+      <kbd>ESC</kbd>
+    </div>
+    <div class="search-results" role="listbox" aria-label="搜索结果"></div>
+  </div>
+</div>
+
+<!-- Mobile TOC -->
+<button class="mtoc-fab" id="mtoc-fab" aria-label="目录">TOC</button>
+<div class="mtoc-drawer" id="mtoc-drawer">
+  <div class="mtoc-content"></div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/bash.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/typescript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/yaml.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/javascript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/json.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/python.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/css.min.js"></script>
+<script src="../assets/script.js"></script>
+</body>
+</html>

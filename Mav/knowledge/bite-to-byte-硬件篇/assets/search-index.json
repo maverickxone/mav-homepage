@@ -1,0 +1,3068 @@
+{
+  "documents": [
+    {
+      "id": "00-preface",
+      "title": "开篇：那些你每天都在经历，但从未真正理解的事",
+      "chapter": "01",
+      "chapterTitle": "开篇：那些你每天都在经历，但从未真正理解的事",
+      "url": "chapters/00-preface.html",
+      "body": "\n    《电脑怎么工作的——给大一新生的计算机原理课》  \n\n      \n\n   场景引入\n\n你刚从高考的硝烟中走出来，拿着录取通知书和家里给的预算，站在电脑城（或者更可能是京东的搜索框前），准备买一台属于自己的电脑。\n\n你看到了这样一串参数：\n\n    Intel Core i7 13700H / 16GB DDR5 5600MHz / 512GB NVMe SSD / RTX 4060 8GB / 15.6\" 2.5K 165Hz  \n\n你的内心OS大概是：\"i7好像比i5好？16GB够不够？SSD是什么？RTX 4060能干嘛？2.5K和1080P差多少？\"\n\n别慌。这本书就是为了让你彻底看懂这些东西而写的。\n\n不只是看懂参数——我们要搞明白，这些数字背后的  原理  是什么。为什么CPU要分核心和线程？为什么内存和硬盘是两个东西？为什么显卡对游戏那么重要，但写Word的时候根本用不上？\n\n这一章是全书的\"预告片\"。我会抛出五个你日常一定遇到过的困惑，每一个都会简单拆解，但  不会展开太深  ——因为后面的每一章，都会专门回来讲透它们。\n\n      \n\n   本章目标\n\n读完这一章，你将会：\n\n1. 理解双击一个程序后，电脑内部发生的基本流程\n2. 明白\"内存\"和\"存储\"为什么是两回事\n3. 知道电脑参数表里每个数字大概在说什么\n4. 初步理解GPU为什么对游戏和AI如此重要\n5. 了解当下（2025 2026年）硬件市场正在发生什么\n\n  预计阅读时间  ：25 30分钟\n\n      \n\n      \n\n   0.1 双击图标后的0.5秒，发生了什么？\n\n    从一个日常动作说起\n\n大一开学第一周，你下载了Steam，双击图标，屏幕上出现了加载动画。也许你还顺手打开了QQ音乐，后台挂着微信，浏览器里开了十几个标签页。\n\n这一切看起来稀松平常——你甚至可能在等加载的时候刷了两条朋友圈。\n\n但如果我告诉你，就在你双击鼠标到Steam窗口出现的那不到一秒钟里，你的电脑至少完成了以下这些事情：\n\n1.   鼠标信号传输  ：鼠标捕捉到你的点击，通过USB或蓝牙将电信号传给主板\n2.   操作系统响应  ：Windows接收到\"双击\"事件，查找这个图标对应的程序路径\n3.   硬盘读取  ：操作系统从SSD（固态硬盘）中找到Steam的可执行文件（ steam.exe ），把它读入内存\n4.   内存加载  ：程序的代码和初始数据被加载到内存（RAM）中，准备执行\n5.   CPU执行  ：CPU开始一条一条地执行程序指令，初始化Steam的各个模块\n6.   GPU渲染  ：Steam的界面需要显示出来——文字、图标、动画，这些像素最终由GPU渲染并输出到屏幕\n7.   网络请求  ：Steam尝试连接服务器，检查你的账号状态和游戏更新\n\n这七步，在不到一秒内完成。每一步都涉及不同的硬件组件，而它们之间的协作，全靠一个你看不见的\"管家\"——  操作系统（Operating System, OS）  ——来调度。\n\n    核心概念：计算机的基本工作流\n\n我们可以用一个餐厅的类比来理解这个过程：\n\n想象一家餐厅：\n\n    硬盘  就像餐厅的  食材仓库  ——所有食材都存在这里，容量大，但你不能直接在仓库里炒菜\n    内存  就像厨房里的  操作台（工作台）  ——大厨做菜时，需要把食材从仓库搬到操作台上，操作台空间有限但取用方便\n    CPU  就是  大厨  ——真正干活的人，一次处理一道菜（一条指令），但动作极快\n    GPU  就是一排  流水线工人  ——不如大厨全能，但可以同时干很多重复性工作（比如同时切一百根土豆丝）\n    操作系统  就是  餐厅经理  ——决定先做哪道菜、给哪桌上菜、谁来负责什么\n\n所以，双击Steam这个动作，本质上就是你（用户）对餐厅经理（操作系统）说：\"我要一份Steam套餐\"，然后经理安排大厨（CPU）从仓库（硬盘）取出食材放到操作台（内存）上开始制作，最后由流水线工人（GPU）把成品端到你面前（显示在屏幕上）。\n\n这个类比会贯穿全书。后面每一章深入一个\"角色\"，你会发现这家餐厅的运作比你想象的精妙得多。\n\n现在，让我们把这个过程稍微量化一下。当Steam从硬盘加载到内存时，涉及到的数据传输速度大概是多少？\n\n  一块典型的NVMe SSD（比如三星990 Pro）的顺序读取速度约为 $7000 \\text  MB/s $\n  Steam客户端的安装包大约是 $300\\text   500 \\text  MB $\n  所以理论上，读取整个Steam到内存只需要 $\\frac 500  7000  \\approx 0.07$ 秒\n\n但实际加载时间远不止0.07秒——因为"
+    },
+    {
+      "id": "00-preface-场景引入",
+      "title": "场景引入",
+      "chapter": "01",
+      "chapterTitle": "开篇：那些你每天都在经历，但从未真正理解的事",
+      "url": "chapters/00-preface.html#场景引入",
+      "body": ""
+    },
+    {
+      "id": "00-preface-本章目标",
+      "title": "本章目标",
+      "chapter": "01",
+      "chapterTitle": "开篇：那些你每天都在经历，但从未真正理解的事",
+      "url": "chapters/00-preface.html#本章目标",
+      "body": ""
+    },
+    {
+      "id": "00-preface-01-双击图标后的05秒发生了什么",
+      "title": "0.1 双击图标后的0.5秒，发生了什么？",
+      "chapter": "01",
+      "chapterTitle": "开篇：那些你每天都在经历，但从未真正理解的事",
+      "url": "chapters/00-preface.html#01-双击图标后的05秒发生了什么",
+      "body": ""
+    },
+    {
+      "id": "00-preface-从一个日常动作说起",
+      "title": "从一个日常动作说起",
+      "chapter": "01",
+      "chapterTitle": "开篇：那些你每天都在经历，但从未真正理解的事",
+      "url": "chapters/00-preface.html#从一个日常动作说起",
+      "body": ""
+    },
+    {
+      "id": "00-preface-核心概念计算机的基本工作流",
+      "title": "核心概念：计算机的基本工作流",
+      "chapter": "01",
+      "chapterTitle": "开篇：那些你每天都在经历，但从未真正理解的事",
+      "url": "chapters/00-preface.html#核心概念计算机的基本工作流",
+      "body": ""
+    },
+    {
+      "id": "00-preface-常见误区",
+      "title": "常见误区",
+      "chapter": "01",
+      "chapterTitle": "开篇：那些你每天都在经历，但从未真正理解的事",
+      "url": "chapters/00-preface.html#常见误区",
+      "body": ""
+    },
+    {
+      "id": "00-preface--动手试试",
+      "title": "🔧 动手试试",
+      "chapter": "01",
+      "chapterTitle": "开篇：那些你每天都在经历，但从未真正理解的事",
+      "url": "chapters/00-preface.html#-动手试试",
+      "body": ""
+    },
+    {
+      "id": "00-preface-本节要点",
+      "title": "本节要点",
+      "chapter": "01",
+      "chapterTitle": "开篇：那些你每天都在经历，但从未真正理解的事",
+      "url": "chapters/00-preface.html#本节要点",
+      "body": ""
+    },
+    {
+      "id": "00-preface-02-为什么同样16gb手机和电脑的价格差那么多",
+      "title": "0.2 为什么同样16GB，手机和电脑的价格差那么多？",
+      "chapter": "01",
+      "chapterTitle": "开篇：那些你每天都在经历，但从未真正理解的事",
+      "url": "chapters/00-preface.html#02-为什么同样16gb手机和电脑的价格差那么多",
+      "body": ""
+    },
+    {
+      "id": "00-preface-一个让你困惑的购物经历",
+      "title": "一个让你困惑的购物经历",
+      "chapter": "01",
+      "chapterTitle": "开篇：那些你每天都在经历，但从未真正理解的事",
+      "url": "chapters/00-preface.html#一个让你困惑的购物经历",
+      "body": ""
+    },
+    {
+      "id": "00-preface-核心概念存储-vs-内存两个完全不同的东西",
+      "title": "核心概念：存储 vs 内存——两个完全不同的东西",
+      "chapter": "01",
+      "chapterTitle": "开篇：那些你每天都在经历，但从未真正理解的事",
+      "url": "chapters/00-preface.html#核心概念存储-vs-内存两个完全不同的东西",
+      "body": ""
+    },
+    {
+      "id": "00-preface-那为什么价格差那么多",
+      "title": "那为什么价格差那么多？",
+      "chapter": "01",
+      "chapterTitle": "开篇：那些你每天都在经历，但从未真正理解的事",
+      "url": "chapters/00-preface.html#那为什么价格差那么多",
+      "body": ""
+    },
+    {
+      "id": "00-preface-一个有趣的现实2025-2026年的内存价格风暴",
+      "title": "一个有趣的现实：2025-2026年的内存价格风暴",
+      "chapter": "01",
+      "chapterTitle": "开篇：那些你每天都在经历，但从未真正理解的事",
+      "url": "chapters/00-preface.html#一个有趣的现实2025-2026年的内存价格风暴",
+      "body": ""
+    },
+    {
+      "id": "00-preface-00-preface-常见误区-2",
+      "title": "常见误区",
+      "chapter": "01",
+      "chapterTitle": "开篇：那些你每天都在经历，但从未真正理解的事",
+      "url": "chapters/00-preface.html#00-preface-常见误区-2",
+      "body": ""
+    },
+    {
+      "id": "00-preface-00-preface--动手试试-2",
+      "title": "🔧 动手试试",
+      "chapter": "01",
+      "chapterTitle": "开篇：那些你每天都在经历，但从未真正理解的事",
+      "url": "chapters/00-preface.html#00-preface--动手试试-2",
+      "body": ""
+    },
+    {
+      "id": "00-preface-00-preface-本节要点-2",
+      "title": "本节要点",
+      "chapter": "01",
+      "chapterTitle": "开篇：那些你每天都在经历，但从未真正理解的事",
+      "url": "chapters/00-preface.html#00-preface-本节要点-2",
+      "body": ""
+    },
+    {
+      "id": "00-preface-03-买电脑时的参数表到底在说什么",
+      "title": "0.3 买电脑时的参数表，到底在说什么？",
+      "chapter": "01",
+      "chapterTitle": "开篇：那些你每天都在经历，但从未真正理解的事",
+      "url": "chapters/00-preface.html#03-买电脑时的参数表到底在说什么",
+      "body": ""
+    },
+    {
+      "id": "00-preface-一张让人头大的配置单",
+      "title": "一张让人头大的配置单",
+      "chapter": "01",
+      "chapterTitle": "开篇：那些你每天都在经历，但从未真正理解的事",
+      "url": "chapters/00-preface.html#一张让人头大的配置单",
+      "body": ""
+    },
+    {
+      "id": "00-preface-核心概念逐行解读参数表",
+      "title": "核心概念：逐行解读参数表",
+      "chapter": "01",
+      "chapterTitle": "开篇：那些你每天都在经历，但从未真正理解的事",
+      "url": "chapters/00-preface.html#核心概念逐行解读参数表",
+      "body": ""
+    },
+    {
+      "id": "00-preface-一张quot翻译过的quot参数表",
+      "title": "一张&quot;翻译过的&quot;参数表",
+      "chapter": "01",
+      "chapterTitle": "开篇：那些你每天都在经历，但从未真正理解的事",
+      "url": "chapters/00-preface.html#一张quot翻译过的quot参数表",
+      "body": ""
+    },
+    {
+      "id": "00-preface-00-preface-常见误区-3",
+      "title": "常见误区",
+      "chapter": "01",
+      "chapterTitle": "开篇：那些你每天都在经历，但从未真正理解的事",
+      "url": "chapters/00-preface.html#00-preface-常见误区-3",
+      "body": ""
+    },
+    {
+      "id": "00-preface-00-preface--动手试试-3",
+      "title": "🔧 动手试试",
+      "chapter": "01",
+      "chapterTitle": "开篇：那些你每天都在经历，但从未真正理解的事",
+      "url": "chapters/00-preface.html#00-preface--动手试试-3",
+      "body": ""
+    },
+    {
+      "id": "00-preface-00-preface-本节要点-3",
+      "title": "本节要点",
+      "chapter": "01",
+      "chapterTitle": "开篇：那些你每天都在经历，但从未真正理解的事",
+      "url": "chapters/00-preface.html#00-preface-本节要点-3",
+      "body": ""
+    },
+    {
+      "id": "00-preface-04-为什么好的显卡才能跑游戏",
+      "title": "0.4 为什么好的显卡才能跑游戏？",
+      "chapter": "01",
+      "chapterTitle": "开篇：那些你每天都在经历，但从未真正理解的事",
+      "url": "chapters/00-preface.html#04-为什么好的显卡才能跑游戏",
+      "body": ""
+    },
+    {
+      "id": "00-preface-一个让风扇尖叫的下午",
+      "title": "一个让风扇尖叫的下午",
+      "chapter": "01",
+      "chapterTitle": "开篇：那些你每天都在经历，但从未真正理解的事",
+      "url": "chapters/00-preface.html#一个让风扇尖叫的下午",
+      "body": ""
+    },
+    {
+      "id": "00-preface-核心概念gpu是如何quot画quot出游戏画面的",
+      "title": "核心概念：GPU是如何&quot;画&quot;出游戏画面的",
+      "chapter": "01",
+      "chapterTitle": "开篇：那些你每天都在经历，但从未真正理解的事",
+      "url": "chapters/00-preface.html#核心概念gpu是如何quot画quot出游戏画面的",
+      "body": ""
+    },
+    {
+      "id": "00-preface-cpu-vs-gpu大厨-vs-流水线",
+      "title": "CPU vs GPU：大厨 vs 流水线",
+      "chapter": "01",
+      "chapterTitle": "开篇：那些你每天都在经历，但从未真正理解的事",
+      "url": "chapters/00-preface.html#cpu-vs-gpu大厨-vs-流水线",
+      "body": ""
+    },
+    {
+      "id": "00-preface-不只是游戏gpu的新舞台",
+      "title": "不只是游戏：GPU的新舞台",
+      "chapter": "01",
+      "chapterTitle": "开篇：那些你每天都在经历，但从未真正理解的事",
+      "url": "chapters/00-preface.html#不只是游戏gpu的新舞台",
+      "body": ""
+    },
+    {
+      "id": "00-preface-建议配图cpu-vs-gpu架构对比示意图",
+      "title": "【建议配图】CPU vs GPU架构对比示意图",
+      "chapter": "01",
+      "chapterTitle": "开篇：那些你每天都在经历，但从未真正理解的事",
+      "url": "chapters/00-preface.html#建议配图cpu-vs-gpu架构对比示意图",
+      "body": ""
+    },
+    {
+      "id": "00-preface-集成显卡-vs-独立显卡",
+      "title": "集成显卡 vs 独立显卡",
+      "chapter": "01",
+      "chapterTitle": "开篇：那些你每天都在经历，但从未真正理解的事",
+      "url": "chapters/00-preface.html#集成显卡-vs-独立显卡",
+      "body": ""
+    },
+    {
+      "id": "00-preface-00-preface-常见误区-4",
+      "title": "常见误区",
+      "chapter": "01",
+      "chapterTitle": "开篇：那些你每天都在经历，但从未真正理解的事",
+      "url": "chapters/00-preface.html#00-preface-常见误区-4",
+      "body": ""
+    },
+    {
+      "id": "00-preface-00-preface--动手试试-4",
+      "title": "🔧 动手试试",
+      "chapter": "01",
+      "chapterTitle": "开篇：那些你每天都在经历，但从未真正理解的事",
+      "url": "chapters/00-preface.html#00-preface--动手试试-4",
+      "body": ""
+    },
+    {
+      "id": "00-preface-00-preface-本节要点-4",
+      "title": "本节要点",
+      "chapter": "01",
+      "chapterTitle": "开篇：那些你每天都在经历，但从未真正理解的事",
+      "url": "chapters/00-preface.html#00-preface-本节要点-4",
+      "body": ""
+    },
+    {
+      "id": "00-preface-05-ai时代为什么内存价格飞起",
+      "title": "0.5 AI时代，为什么内存价格飞起？",
+      "chapter": "01",
+      "chapterTitle": "开篇：那些你每天都在经历，但从未真正理解的事",
+      "url": "chapters/00-preface.html#05-ai时代为什么内存价格飞起",
+      "body": ""
+    },
+    {
+      "id": "00-preface-一条让装机党崩溃的新闻",
+      "title": "一条让装机党崩溃的新闻",
+      "chapter": "01",
+      "chapterTitle": "开篇：那些你每天都在经历，但从未真正理解的事",
+      "url": "chapters/00-preface.html#一条让装机党崩溃的新闻",
+      "body": ""
+    },
+    {
+      "id": "00-preface-核心概念为什么ai需要这么多内存",
+      "title": "核心概念：为什么AI需要这么多内存？",
+      "chapter": "01",
+      "chapterTitle": "开篇：那些你每天都在经历，但从未真正理解的事",
+      "url": "chapters/00-preface.html#核心概念为什么ai需要这么多内存",
+      "body": ""
+    },
+    {
+      "id": "00-preface-供需失衡为什么你的内存涨价了",
+      "title": "供需失衡：为什么你的内存涨价了？",
+      "chapter": "01",
+      "chapterTitle": "开篇：那些你每天都在经历，但从未真正理解的事",
+      "url": "chapters/00-preface.html#供需失衡为什么你的内存涨价了",
+      "body": ""
+    },
+    {
+      "id": "00-preface-连锁反应电脑价格也在涨",
+      "title": "连锁反应：电脑价格也在涨",
+      "chapter": "01",
+      "chapterTitle": "开篇：那些你每天都在经历，但从未真正理解的事",
+      "url": "chapters/00-preface.html#连锁反应电脑价格也在涨",
+      "body": ""
+    },
+    {
+      "id": "00-preface-这和你有什么关系",
+      "title": "这和你有什么关系？",
+      "chapter": "01",
+      "chapterTitle": "开篇：那些你每天都在经历，但从未真正理解的事",
+      "url": "chapters/00-preface.html#这和你有什么关系",
+      "body": ""
+    },
+    {
+      "id": "00-preface-00-preface-常见误区-5",
+      "title": "常见误区",
+      "chapter": "01",
+      "chapterTitle": "开篇：那些你每天都在经历，但从未真正理解的事",
+      "url": "chapters/00-preface.html#00-preface-常见误区-5",
+      "body": ""
+    },
+    {
+      "id": "00-preface-00-preface--动手试试-5",
+      "title": "🔧 动手试试",
+      "chapter": "01",
+      "chapterTitle": "开篇：那些你每天都在经历，但从未真正理解的事",
+      "url": "chapters/00-preface.html#00-preface--动手试试-5",
+      "body": ""
+    },
+    {
+      "id": "00-preface-00-preface-本节要点-5",
+      "title": "本节要点",
+      "chapter": "01",
+      "chapterTitle": "开篇：那些你每天都在经历，但从未真正理解的事",
+      "url": "chapters/00-preface.html#00-preface-本节要点-5",
+      "body": ""
+    },
+    {
+      "id": "00-preface-本章回顾与展望",
+      "title": "本章回顾与展望",
+      "chapter": "01",
+      "chapterTitle": "开篇：那些你每天都在经历，但从未真正理解的事",
+      "url": "chapters/00-preface.html#本章回顾与展望",
+      "body": ""
+    },
+    {
+      "id": "00-preface-我们聊了什么",
+      "title": "我们聊了什么？",
+      "chapter": "01",
+      "chapterTitle": "开篇：那些你每天都在经历，但从未真正理解的事",
+      "url": "chapters/00-preface.html#我们聊了什么",
+      "body": ""
+    },
+    {
+      "id": "00-preface-下章预告",
+      "title": "【下章预告】",
+      "chapter": "01",
+      "chapterTitle": "开篇：那些你每天都在经历，但从未真正理解的事",
+      "url": "chapters/00-preface.html#下章预告",
+      "body": ""
+    },
+    {
+      "id": "00-preface-扩展资源",
+      "title": "扩展资源",
+      "chapter": "01",
+      "chapterTitle": "开篇：那些你每天都在经历，但从未真正理解的事",
+      "url": "chapters/00-preface.html#扩展资源",
+      "body": ""
+    },
+    {
+      "id": "00-preface-视频推荐",
+      "title": "视频推荐",
+      "chapter": "01",
+      "chapterTitle": "开篇：那些你每天都在经历，但从未真正理解的事",
+      "url": "chapters/00-preface.html#视频推荐",
+      "body": ""
+    },
+    {
+      "id": "00-preface-文章推荐",
+      "title": "文章推荐",
+      "chapter": "01",
+      "chapterTitle": "开篇：那些你每天都在经历，但从未真正理解的事",
+      "url": "chapters/00-preface.html#文章推荐",
+      "body": ""
+    },
+    {
+      "id": "01-storage",
+      "title": "第一章：存储的秘密——文件都去哪了？",
+      "chapter": "02",
+      "chapterTitle": "第一章：存储的秘密——文件都去哪了？",
+      "url": "chapters/01-storage.html",
+      "body": "\n     【上章回顾】   在开篇，我们提出了一系列让人困惑的问题：为什么同样16GB，手机内存和电脑内存价格差那么多？买电脑时的参数表为什么那么难懂？为什么AI时代内存价格飞起？这些问题的答案，都藏在\"存储\"这件事里。\n\n    【本章目标】   读完这一章，你会理解：\n \n    硬盘和内存到底是两种完全不同的东西，不能混淆\n    你的文件保存后，到底以什么形式 \"住\"在硬盘里\n    为什么打开软件时电脑会卡顿，内存满了会怎样\n    缓存是什么，为什么说它是计算机世界里最重要的设计思想之一\n    为什么文件\"删了\"其实没有真的消失\n\n    预计阅读时间  ：40分钟\n\n   \n\n   1.1 硬盘：你的数字仓库\n\n    场景：一个奇怪的误会\n\n你有没有遇到过这样的情况？\n\n帮家里人买电脑，销售员推荐一台\"16GB内存+512GB固态\"的笔记本，旁边的亲戚却突然发话：\"才512GB？存东西不够用啊，我手机都256GB了，感觉也没大太多。\"\n\n你感觉哪里不对，但又说不清楚。\n\n更常见的场景是：学长告诉你\"买电脑一定要16GB内存\"，你理解成了\"内存越大，存的东西越多\"——于是去买电脑，看到一台\"8GB内存+1TB硬盘\"的机器，心想：这内存好小啊，还不如我512GB手机大。\n\n这个小小的误解，背后是一个关于\"存储\"的根本性混淆——很多人把  内存  和  硬盘  当成同一种东西，只是大小不同。\n\n但实际上，它们是两种工作原理完全不同的部件，就像你把\"餐厅的桌子\"和\"餐厅的仓库\"当成一回事一样——都是\"装东西的地方\"，但一个是临时工作台，一个是长期储藏室，完全不同。\n\n这一节，我们先来搞清楚  硬盘  ——你的  数字仓库  。\n\n   \n\n    核心概念：硬盘是什么？\n\n  硬盘  ，英文叫 Hard Disk Drive，缩写   HDD  ，或者更广义地叫  存储设备（Storage）  。它是你电脑里负责  长期保存数据  的部件。\n\n\"长期\"是什么意思？就是  断电之后，数据还在  。\n\n你写了一篇论文，按下 Ctrl+S 保存，关电脑，第二天开机，论文还在——这是硬盘的功劳。你下载了一个游戏，安装完关机，下次开机游戏还在——也是硬盘。你的毕业照片、收藏的音乐、保存的代码——只要你点了\"保存\"，背后都是数据被写入了硬盘。\n\n     用餐厅来类比：硬盘就是餐厅后面的  储藏室  。食材（数据）平时放在那里，需要用的时候才拿出来。储藏室的特点是：\n\n  容量大：可以放很多食材\n  断电不丢：食材不会自己消失\n  取东西相对慢：要走过去拿，不是随手就能取到\n\n这三个特点，也正是硬盘的核心特征。\n\n   \n\n    机械硬盘（HDD）：转盘和磁头的物理魔法\n\n传统机械硬盘的工作原理非常直观——它字面上就是\"机械\"的。\n\n打开一块机械硬盘（别在家里轻易动手——空气中的灰尘会毁掉它），你会看到一叠圆形的  金属盘片（Platter）  ，表面涂了一层磁性材料（原理和磁带、磁条银行卡相似）。盘片以每分钟 5400 转或 7200 转的速度高速旋转，一个像留声机唱针一样的  磁头（Read/Write Head）  悬浮在盘片表面极近处——这个距离大约是人类头发丝直径的千分之一，大约   10纳米  （0.00001毫米）。\n\n磁头负责读取和写入数据。\n\n【建议配图】机械硬盘内部结构横截面示意图：\n   \n┌─────────────────────────────────────────────────┐\n│                  机械硬盘内部                     │\n│                                                 │\n│         ┌──── 盘片（Platter）                    │\n│         │   圆形磁性存储介质，可有多叠              │\n│         ▼                                       │\n│    ╔══════════╗                                 │\n│    ║  盘片 1  ║ ←── 磁头臂（Actuator Arm）        │\n│    ╠══════════╣                                 │\n│    ║  盘片 2  ║ ←── 磁头（Read/Write Head）       │\n│    ╠══════════╣                                 │\n│    ║  盘片 3  ║    悬"
+    },
+    {
+      "id": "01-storage-11-硬盘你的数字仓库",
+      "title": "1.1 硬盘：你的数字仓库",
+      "chapter": "02",
+      "chapterTitle": "第一章：存储的秘密——文件都去哪了？",
+      "url": "chapters/01-storage.html#11-硬盘你的数字仓库",
+      "body": ""
+    },
+    {
+      "id": "01-storage-场景一个奇怪的误会",
+      "title": "场景：一个奇怪的误会",
+      "chapter": "02",
+      "chapterTitle": "第一章：存储的秘密——文件都去哪了？",
+      "url": "chapters/01-storage.html#场景一个奇怪的误会",
+      "body": ""
+    },
+    {
+      "id": "01-storage-核心概念硬盘是什么",
+      "title": "核心概念：硬盘是什么？",
+      "chapter": "02",
+      "chapterTitle": "第一章：存储的秘密——文件都去哪了？",
+      "url": "chapters/01-storage.html#核心概念硬盘是什么",
+      "body": ""
+    },
+    {
+      "id": "01-storage-机械硬盘hdd转盘和磁头的物理魔法",
+      "title": "机械硬盘（HDD）：转盘和磁头的物理魔法",
+      "chapter": "02",
+      "chapterTitle": "第一章：存储的秘密——文件都去哪了？",
+      "url": "chapters/01-storage.html#机械硬盘hdd转盘和磁头的物理魔法",
+      "body": ""
+    },
+    {
+      "id": "01-storage-固态硬盘ssd用芯片替代转盘",
+      "title": "固态硬盘（SSD）：用芯片替代转盘",
+      "chapter": "02",
+      "chapterTitle": "第一章：存储的秘密——文件都去哪了？",
+      "url": "chapters/01-storage.html#固态硬盘ssd用芯片替代转盘",
+      "body": ""
+    },
+    {
+      "id": "01-storage-闪存的工作原理浮栅晶体管的魔法",
+      "title": "闪存的工作原理：浮栅晶体管的魔法",
+      "chapter": "02",
+      "chapterTitle": "第一章：存储的秘密——文件都去哪了？",
+      "url": "chapters/01-storage.html#闪存的工作原理浮栅晶体管的魔法",
+      "body": ""
+    },
+    {
+      "id": "01-storage-c盘和d盘分区的秘密",
+      "title": "C盘和D盘：分区的秘密",
+      "chapter": "02",
+      "chapterTitle": "第一章：存储的秘密——文件都去哪了？",
+      "url": "chapters/01-storage.html#c盘和d盘分区的秘密",
+      "body": ""
+    },
+    {
+      "id": "01-storage-文件系统硬盘上的quot图书馆管理系统quot",
+      "title": "文件系统：硬盘上的&quot;图书馆管理系统&quot;",
+      "chapter": "02",
+      "chapterTitle": "第一章：存储的秘密——文件都去哪了？",
+      "url": "chapters/01-storage.html#文件系统硬盘上的quot图书馆管理系统quot",
+      "body": ""
+    },
+    {
+      "id": "01-storage-数据碎片为什么机械硬盘要quot碎片整理quot",
+      "title": "数据碎片：为什么机械硬盘要&quot;碎片整理&quot;？",
+      "chapter": "02",
+      "chapterTitle": "第一章：存储的秘密——文件都去哪了？",
+      "url": "chapters/01-storage.html#数据碎片为什么机械硬盘要quot碎片整理quot",
+      "body": ""
+    },
+    {
+      "id": "01-storage-quot删除quot文件真的删除了吗",
+      "title": "&quot;删除&quot;文件，真的删除了吗？",
+      "chapter": "02",
+      "chapterTitle": "第一章：存储的秘密——文件都去哪了？",
+      "url": "chapters/01-storage.html#quot删除quot文件真的删除了吗",
+      "body": ""
+    },
+    {
+      "id": "01-storage-常见误区澄清",
+      "title": "常见误区澄清",
+      "chapter": "02",
+      "chapterTitle": "第一章：存储的秘密——文件都去哪了？",
+      "url": "chapters/01-storage.html#常见误区澄清",
+      "body": ""
+    },
+    {
+      "id": "01-storage-动手环节看看你电脑的硬盘",
+      "title": "动手环节：看看你电脑的硬盘",
+      "chapter": "02",
+      "chapterTitle": "第一章：存储的秘密——文件都去哪了？",
+      "url": "chapters/01-storage.html#动手环节看看你电脑的硬盘",
+      "body": ""
+    },
+    {
+      "id": "01-storage-本节要点",
+      "title": "本节要点",
+      "chapter": "02",
+      "chapterTitle": "第一章：存储的秘密——文件都去哪了？",
+      "url": "chapters/01-storage.html#本节要点",
+      "body": ""
+    },
+    {
+      "id": "01-storage-12-内存电脑的工作台",
+      "title": "1.2 内存：电脑的工作台",
+      "chapter": "02",
+      "chapterTitle": "第一章：存储的秘密——文件都去哪了？",
+      "url": "chapters/01-storage.html#12-内存电脑的工作台",
+      "body": ""
+    },
+    {
+      "id": "01-storage-场景打开太多标签页之后",
+      "title": "场景：打开太多标签页之后",
+      "chapter": "02",
+      "chapterTitle": "第一章：存储的秘密——文件都去哪了？",
+      "url": "chapters/01-storage.html#场景打开太多标签页之后",
+      "body": ""
+    },
+    {
+      "id": "01-storage-核心概念内存是什么",
+      "title": "核心概念：内存是什么？",
+      "chapter": "02",
+      "chapterTitle": "第一章：存储的秘密——文件都去哪了？",
+      "url": "chapters/01-storage.html#核心概念内存是什么",
+      "body": ""
+    },
+    {
+      "id": "01-storage-内存的速度为什么它比硬盘快这么多",
+      "title": "内存的速度：为什么它比硬盘快这么多？",
+      "chapter": "02",
+      "chapterTitle": "第一章：存储的秘密——文件都去哪了？",
+      "url": "chapters/01-storage.html#内存的速度为什么它比硬盘快这么多",
+      "body": ""
+    },
+    {
+      "id": "01-storage-内存的物理形态认识内存条",
+      "title": "内存的物理形态：认识内存条",
+      "chapter": "02",
+      "chapterTitle": "第一章：存储的秘密——文件都去哪了？",
+      "url": "chapters/01-storage.html#内存的物理形态认识内存条",
+      "body": ""
+    },
+    {
+      "id": "01-storage-虚拟内存用硬盘quot冒充quot内存",
+      "title": "虚拟内存：用硬盘&quot;冒充&quot;内存",
+      "chapter": "02",
+      "chapterTitle": "第一章：存储的秘密——文件都去哪了？",
+      "url": "chapters/01-storage.html#虚拟内存用硬盘quot冒充quot内存",
+      "body": ""
+    },
+    {
+      "id": "01-storage-内存的容量2026年多少才够",
+      "title": "内存的容量：2026年，多少才够？",
+      "chapter": "02",
+      "chapterTitle": "第一章：存储的秘密——文件都去哪了？",
+      "url": "chapters/01-storage.html#内存的容量2026年多少才够",
+      "body": ""
+    },
+    {
+      "id": "01-storage-ai时代为什么内存价格还这么坚挺",
+      "title": "AI时代为什么内存价格还这么“坚挺”？",
+      "chapter": "02",
+      "chapterTitle": "第一章：存储的秘密——文件都去哪了？",
+      "url": "chapters/01-storage.html#ai时代为什么内存价格还这么坚挺",
+      "body": ""
+    },
+    {
+      "id": "01-storage-01-storage-常见误区澄清-2",
+      "title": "常见误区澄清",
+      "chapter": "02",
+      "chapterTitle": "第一章：存储的秘密——文件都去哪了？",
+      "url": "chapters/01-storage.html#01-storage-常见误区澄清-2",
+      "body": ""
+    },
+    {
+      "id": "01-storage-动手环节实时观察内存使用情况",
+      "title": "动手环节：实时观察内存使用情况",
+      "chapter": "02",
+      "chapterTitle": "第一章：存储的秘密——文件都去哪了？",
+      "url": "chapters/01-storage.html#动手环节实时观察内存使用情况",
+      "body": ""
+    },
+    {
+      "id": "01-storage-01-storage-本节要点-2",
+      "title": "本节要点",
+      "chapter": "02",
+      "chapterTitle": "第一章：存储的秘密——文件都去哪了？",
+      "url": "chapters/01-storage.html#01-storage-本节要点-2",
+      "body": ""
+    },
+    {
+      "id": "01-storage-13-看不见的存储层缓存的魔法",
+      "title": "1.3 看不见的存储层：缓存的魔法",
+      "chapter": "02",
+      "chapterTitle": "第一章：存储的秘密——文件都去哪了？",
+      "url": "chapters/01-storage.html#13-看不见的存储层缓存的魔法",
+      "body": ""
+    },
+    {
+      "id": "01-storage-缓存世界上最聪明的图书馆员",
+      "title": "缓存：世界上最聪明的图书馆员",
+      "chapter": "02",
+      "chapterTitle": "第一章：存储的秘密——文件都去哪了？",
+      "url": "chapters/01-storage.html#缓存世界上最聪明的图书馆员",
+      "body": ""
+    },
+    {
+      "id": "01-storage-核心概念为什么需要缓存",
+      "title": "核心概念：为什么需要缓存？",
+      "chapter": "02",
+      "chapterTitle": "第一章：存储的秘密——文件都去哪了？",
+      "url": "chapters/01-storage.html#核心概念为什么需要缓存",
+      "body": ""
+    },
+    {
+      "id": "01-storage-存储金字塔从极速到海量",
+      "title": "存储金字塔：从极速到海量",
+      "chapter": "02",
+      "chapterTitle": "第一章：存储的秘密——文件都去哪了？",
+      "url": "chapters/01-storage.html#存储金字塔从极速到海量",
+      "body": ""
+    },
+    {
+      "id": "01-storage-cpu-缓存的详细解析l1l2l3-是什么",
+      "title": "CPU 缓存的详细解析：L1、L2、L3 是什么？",
+      "chapter": "02",
+      "chapterTitle": "第一章：存储的秘密——文件都去哪了？",
+      "url": "chapters/01-storage.html#cpu-缓存的详细解析l1l2l3-是什么",
+      "body": ""
+    },
+    {
+      "id": "01-storage-局部性原理缓存为什么有效",
+      "title": "局部性原理：缓存为什么有效？",
+      "chapter": "02",
+      "chapterTitle": "第一章：存储的秘密——文件都去哪了？",
+      "url": "chapters/01-storage.html#局部性原理缓存为什么有效",
+      "body": ""
+    },
+    {
+      "id": "01-storage-缓存友好-vs-缓存不友好一个小例子",
+      "title": "缓存友好 vs 缓存不友好：一个小例子",
+      "chapter": "02",
+      "chapterTitle": "第一章：存储的秘密——文件都去哪了？",
+      "url": "chapters/01-storage.html#缓存友好-vs-缓存不友好一个小例子",
+      "body": ""
+    },
+    {
+      "id": "01-storage-缓存替换策略缓存满了怎么办",
+      "title": "缓存替换策略：缓存满了怎么办？",
+      "chapter": "02",
+      "chapterTitle": "第一章：存储的秘密——文件都去哪了？",
+      "url": "chapters/01-storage.html#缓存替换策略缓存满了怎么办",
+      "body": ""
+    },
+    {
+      "id": "01-storage-无处不在的缓存系统级视角",
+      "title": "无处不在的缓存：系统级视角",
+      "chapter": "02",
+      "chapterTitle": "第一章：存储的秘密——文件都去哪了？",
+      "url": "chapters/01-storage.html#无处不在的缓存系统级视角",
+      "body": ""
+    },
+    {
+      "id": "01-storage-缓存一致性多核时代的复杂挑战",
+      "title": "缓存一致性：多核时代的复杂挑战",
+      "chapter": "02",
+      "chapterTitle": "第一章：存储的秘密——文件都去哪了？",
+      "url": "chapters/01-storage.html#缓存一致性多核时代的复杂挑战",
+      "body": ""
+    },
+    {
+      "id": "01-storage-01-storage-常见误区澄清-3",
+      "title": "常见误区澄清",
+      "chapter": "02",
+      "chapterTitle": "第一章：存储的秘密——文件都去哪了？",
+      "url": "chapters/01-storage.html#01-storage-常见误区澄清-3",
+      "body": ""
+    },
+    {
+      "id": "01-storage-动手环节感受缓存的存在",
+      "title": "动手环节：感受缓存的存在",
+      "chapter": "02",
+      "chapterTitle": "第一章：存储的秘密——文件都去哪了？",
+      "url": "chapters/01-storage.html#动手环节感受缓存的存在",
+      "body": ""
+    },
+    {
+      "id": "01-storage-01-storage-本节要点-3",
+      "title": "本节要点",
+      "chapter": "02",
+      "chapterTitle": "第一章：存储的秘密——文件都去哪了？",
+      "url": "chapters/01-storage.html#01-storage-本节要点-3",
+      "body": ""
+    },
+    {
+      "id": "01-storage-第一章总结",
+      "title": "第一章总结",
+      "chapter": "02",
+      "chapterTitle": "第一章：存储的秘密——文件都去哪了？",
+      "url": "chapters/01-storage.html#第一章总结",
+      "body": ""
+    },
+    {
+      "id": "01-storage-你现在理解了什么",
+      "title": "你现在理解了什么",
+      "chapter": "02",
+      "chapterTitle": "第一章：存储的秘密——文件都去哪了？",
+      "url": "chapters/01-storage.html#你现在理解了什么",
+      "body": ""
+    },
+    {
+      "id": "01-storage-这些数字值得记住",
+      "title": "这些数字，值得记住",
+      "chapter": "02",
+      "chapterTitle": "第一章：存储的秘密——文件都去哪了？",
+      "url": "chapters/01-storage.html#这些数字值得记住",
+      "body": ""
+    },
+    {
+      "id": "01-storage-你还剩下的疑问",
+      "title": "你还剩下的疑问",
+      "chapter": "02",
+      "chapterTitle": "第一章：存储的秘密——文件都去哪了？",
+      "url": "chapters/01-storage.html#你还剩下的疑问",
+      "body": ""
+    },
+    {
+      "id": "01-storage-延伸阅读与资源",
+      "title": "延伸阅读与资源",
+      "chapter": "02",
+      "chapterTitle": "第一章：存储的秘密——文件都去哪了？",
+      "url": "chapters/01-storage.html#延伸阅读与资源",
+      "body": ""
+    },
+    {
+      "id": "01-storage-视频推荐",
+      "title": "视频推荐",
+      "chapter": "02",
+      "chapterTitle": "第一章：存储的秘密——文件都去哪了？",
+      "url": "chapters/01-storage.html#视频推荐",
+      "body": ""
+    },
+    {
+      "id": "01-storage-文章和文档推荐",
+      "title": "文章和文档推荐",
+      "chapter": "02",
+      "chapterTitle": "第一章：存储的秘密——文件都去哪了？",
+      "url": "chapters/01-storage.html#文章和文档推荐",
+      "body": ""
+    },
+    {
+      "id": "01-storage-亲自动手",
+      "title": "亲自动手",
+      "chapter": "02",
+      "chapterTitle": "第一章：存储的秘密——文件都去哪了？",
+      "url": "chapters/01-storage.html#亲自动手",
+      "body": ""
+    },
+    {
+      "id": "02-storage-appendix",
+      "title": "第一章补充：术语速查与常见问题",
+      "chapter": "03",
+      "chapterTitle": "第一章补充：术语速查与常见问题",
+      "url": "chapters/02-storage-appendix.html",
+      "body": "\n   第一章额外补充\n\n    附录：本章关键术语速查\n\n本章涉及的专有名词较多，这里按照出现顺序整理成速查表，方便复习。\n\n    存储相关术语\n\n  术语       英文全称                      解释                                                    \n                                                                                                   \n  硬盘       Hard Disk Drive  HDD          长期存储数据的部件，机械结构，速度慢但价格低            \n  固态硬盘   Solid State Drive  SSD        基于闪存的存储设备，无活动部件，速度快                  \n  闪存       Flash Memory                  一种可在断电后保持数据的半导体存储器                    \n  NVMe       Non Volatile Memory Express   专为SSD设计的高速传输协议，走PCIe总线                   \n  SATA       Serial ATA                    较老的数据传输接口，机械硬盘和部分SSD使用               \n  M.2        —                             一种物理接口形状（不是传输协议），可承载SATA或NVMe协议  \n  分区       Partition                     将一块物理硬盘逻辑划分为多个独立区域                    \n  文件系统   File System                   组织和管理硬盘数据的系统（NTFS、APFS、ext4等）          \n  NTFS       New Technology File System    Windows主流文件系统                                     \n  APFS       Apple File System             苹果现代文件系统，专为SSD优化                           \n  FAT32      File Allocation Table 32      老旧文件系统，单文件最大4GB，兼容性好                   \n  exFAT      Extended FAT                  FAT32继承者，解除4GB限制，适合U盘                       \n  碎片化     Fragmentation                 文件存储不连续，影响机械硬盘读写速度                    \n  TBW        Total Bytes Written           SSD写入寿命指标，总可写入字节数                         \n  P/E循环    Program/Erase Cycle           闪存单元的读写擦除次数限制                              \n  寻道时间   Seek Time                     机械硬盘磁头移动到目标磁道所需时间                      \n  寄存器     Register                      CPU内部最快的存储单元，容量极小                         \n\n    内存相关术语\n\n  术语         英文全称               解释                                         \n                                                                                   \n  内存 / RAM   Random Access Memory   临时存放运行中程序数据，断电清空             \n  DRAM         Dynamic RAM            内存使用的技术，用电容存储，需定期刷新       \n  SRAM         Static RAM    "
+    },
+    {
+      "id": "02-storage-appendix-第一章额外补充",
+      "title": "第一章额外补充",
+      "chapter": "03",
+      "chapterTitle": "第一章补充：术语速查与常见问题",
+      "url": "chapters/02-storage-appendix.html#第一章额外补充",
+      "body": ""
+    },
+    {
+      "id": "02-storage-appendix-附录本章关键术语速查",
+      "title": "附录：本章关键术语速查",
+      "chapter": "03",
+      "chapterTitle": "第一章补充：术语速查与常见问题",
+      "url": "chapters/02-storage-appendix.html#附录本章关键术语速查",
+      "body": ""
+    },
+    {
+      "id": "02-storage-appendix-存储相关术语",
+      "title": "存储相关术语",
+      "chapter": "03",
+      "chapterTitle": "第一章补充：术语速查与常见问题",
+      "url": "chapters/02-storage-appendix.html#存储相关术语",
+      "body": ""
+    },
+    {
+      "id": "02-storage-appendix-内存相关术语",
+      "title": "内存相关术语",
+      "chapter": "03",
+      "chapterTitle": "第一章补充：术语速查与常见问题",
+      "url": "chapters/02-storage-appendix.html#内存相关术语",
+      "body": ""
+    },
+    {
+      "id": "02-storage-appendix-缓存相关术语",
+      "title": "缓存相关术语",
+      "chapter": "03",
+      "chapterTitle": "第一章补充：术语速查与常见问题",
+      "url": "chapters/02-storage-appendix.html#缓存相关术语",
+      "body": ""
+    },
+    {
+      "id": "02-storage-appendix-附录常见问题解答",
+      "title": "附录：常见问题解答",
+      "chapter": "03",
+      "chapterTitle": "第一章补充：术语速查与常见问题",
+      "url": "chapters/02-storage-appendix.html#附录常见问题解答",
+      "body": ""
+    },
+    {
+      "id": "02-storage-appendix-动手项目建立你自己的存储性能档案",
+      "title": "动手项目——建立你自己的存储性能档案",
+      "chapter": "03",
+      "chapterTitle": "第一章补充：术语速查与常见问题",
+      "url": "chapters/02-storage-appendix.html#动手项目建立你自己的存储性能档案",
+      "body": ""
+    },
+    {
+      "id": "02-storage-appendix-第一步记录你的存储配置",
+      "title": "第一步：记录你的存储配置",
+      "chapter": "03",
+      "chapterTitle": "第一章补充：术语速查与常见问题",
+      "url": "chapters/02-storage-appendix.html#第一步记录你的存储配置",
+      "body": ""
+    },
+    {
+      "id": "02-storage-appendix-第二步测试你的硬盘速度",
+      "title": "第二步：测试你的硬盘速度",
+      "chapter": "03",
+      "chapterTitle": "第一章补充：术语速查与常见问题",
+      "url": "chapters/02-storage-appendix.html#第二步测试你的硬盘速度",
+      "body": ""
+    },
+    {
+      "id": "02-storage-appendix-第三步测试内存速度",
+      "title": "第三步：测试内存速度",
+      "chapter": "03",
+      "chapterTitle": "第一章补充：术语速查与常见问题",
+      "url": "chapters/02-storage-appendix.html#第三步测试内存速度",
+      "body": ""
+    },
+    {
+      "id": "02-storage-appendix-第四步感受缓存效应",
+      "title": "第四步：感受缓存效应",
+      "chapter": "03",
+      "chapterTitle": "第一章补充：术语速查与常见问题",
+      "url": "chapters/02-storage-appendix.html#第四步感受缓存效应",
+      "body": ""
+    },
+    {
+      "id": "02-storage-appendix-深度拓展存储技术的演进历史",
+      "title": "深度拓展：存储技术的演进历史",
+      "chapter": "03",
+      "chapterTitle": "第一章补充：术语速查与常见问题",
+      "url": "chapters/02-storage-appendix.html#深度拓展存储技术的演进历史",
+      "body": ""
+    },
+    {
+      "id": "02-storage-appendix-从打孔卡到nvme人类如何存储信息",
+      "title": "从打孔卡到NVMe：人类如何存储信息",
+      "chapter": "03",
+      "chapterTitle": "第一章补充：术语速查与常见问题",
+      "url": "chapters/02-storage-appendix.html#从打孔卡到nvme人类如何存储信息",
+      "body": ""
+    },
+    {
+      "id": "02-storage-appendix-ai时代的新型存储技术",
+      "title": "AI时代的新型存储技术",
+      "chapter": "03",
+      "chapterTitle": "第一章补充：术语速查与常见问题",
+      "url": "chapters/02-storage-appendix.html#ai时代的新型存储技术",
+      "body": ""
+    },
+    {
+      "id": "02-storage-appendix-存储的未来几个值得关注的方向",
+      "title": "存储的未来：几个值得关注的方向",
+      "chapter": "03",
+      "chapterTitle": "第一章补充：术语速查与常见问题",
+      "url": "chapters/02-storage-appendix.html#存储的未来几个值得关注的方向",
+      "body": ""
+    },
+    {
+      "id": "02-storage-appendix-专题讨论为什么-ai-时代的内存需求爆炸了",
+      "title": "专题讨论：为什么 AI 时代的内存需求爆炸了？",
+      "chapter": "03",
+      "chapterTitle": "第一章补充：术语速查与常见问题",
+      "url": "chapters/02-storage-appendix.html#专题讨论为什么-ai-时代的内存需求爆炸了",
+      "body": ""
+    },
+    {
+      "id": "02-storage-appendix-大语言模型llm到底有多quot重quot",
+      "title": "大语言模型（LLM）到底有多&quot;重&quot;？",
+      "chapter": "03",
+      "chapterTitle": "第一章补充：术语速查与常见问题",
+      "url": "chapters/02-storage-appendix.html#大语言模型llm到底有多quot重quot",
+      "body": ""
+    },
+    {
+      "id": "02-storage-appendix-本地运行大模型需要什么配置",
+      "title": "本地运行大模型需要什么配置？",
+      "chapter": "03",
+      "chapterTitle": "第一章补充：术语速查与常见问题",
+      "url": "chapters/02-storage-appendix.html#本地运行大模型需要什么配置",
+      "body": ""
+    },
+    {
+      "id": "02-storage-appendix-为什么推理时内存带宽比计算能力更重要",
+      "title": "为什么推理时内存带宽比计算能力更重要？",
+      "chapter": "03",
+      "chapterTitle": "第一章补充：术语速查与常见问题",
+      "url": "chapters/02-storage-appendix.html#为什么推理时内存带宽比计算能力更重要",
+      "body": ""
+    },
+    {
+      "id": "02-storage-appendix-专题当你quot清理内存quot时真正发生了什么",
+      "title": "专题：当你&quot;清理内存&quot;时，真正发生了什么？",
+      "chapter": "03",
+      "chapterTitle": "第一章补充：术语速查与常见问题",
+      "url": "chapters/02-storage-appendix.html#专题当你quot清理内存quot时真正发生了什么",
+      "body": ""
+    },
+    {
+      "id": "02-storage-appendix-手机的quot内存清理quot",
+      "title": "手机的&quot;内存清理&quot;",
+      "chapter": "03",
+      "chapterTitle": "第一章补充：术语速查与常见问题",
+      "url": "chapters/02-storage-appendix.html#手机的quot内存清理quot",
+      "body": ""
+    },
+    {
+      "id": "02-storage-appendix-电脑的quot内存优化quot",
+      "title": "电脑的&quot;内存优化&quot;",
+      "chapter": "03",
+      "chapterTitle": "第一章补充：术语速查与常见问题",
+      "url": "chapters/02-storage-appendix.html#电脑的quot内存优化quot",
+      "body": ""
+    },
+    {
+      "id": "02-storage-appendix-专题数据恢复的可能性与局限",
+      "title": "专题：数据恢复的可能性与局限",
+      "chapter": "03",
+      "chapterTitle": "第一章补充：术语速查与常见问题",
+      "url": "chapters/02-storage-appendix.html#专题数据恢复的可能性与局限",
+      "body": ""
+    },
+    {
+      "id": "02-storage-appendix-什么情况下数据可以恢复",
+      "title": "什么情况下数据可以恢复？",
+      "chapter": "03",
+      "chapterTitle": "第一章补充：术语速查与常见问题",
+      "url": "chapters/02-storage-appendix.html#什么情况下数据可以恢复",
+      "body": ""
+    },
+    {
+      "id": "02-storage-appendix-如何真正销毁数据",
+      "title": "如何真正销毁数据？",
+      "chapter": "03",
+      "chapterTitle": "第一章补充：术语速查与常见问题",
+      "url": "chapters/02-storage-appendix.html#如何真正销毁数据",
+      "body": ""
+    },
+    {
+      "id": "03-cpu-gpu",
+      "title": "第二章：计算的大脑——CPU与GPU",
+      "chapter": "04",
+      "chapterTitle": "第二章：计算的大脑——CPU与GPU",
+      "url": "chapters/03-cpu-gpu.html",
+      "body": "\n  【上章回顾】上一章我们搞清楚了文件住在哪里——硬盘是仓库，内存是工作台，缓存是调料架。但我们一直绕开了一个问题：是谁在使用这张工作台？谁在发号施令，让数据流动起来？\n \n  【本章目标】这一章我们要揭开两块最重要的芯片的面纱：\n    理解 CPU 为什么被叫做\"中央处理器\"，核心数和主频到底意味着什么\n    理解指令集是怎么回事，为什么 ARM 和 x86 的程序不能互通\n    理解 GPU 凭什么跑游戏、跑 AI——它和 CPU 的根本区别在哪\n    理解 CPU 和 GPU 的分工哲学，以及为什么现代 AI 全都押注在 GPU 上\n \n    预计阅读时间  ：40 50 分钟\n\n   \n\n   2.1 CPU：真正的中央处理器\n\n    一个厨师的故事\n\n想象一家高档餐厅。厨房里只有一位大厨——他技艺精湛，什么菜都会做：炒、炖、烤、蒸，甚至还会做甜点。但他一次只能专注于一件事：要么在颠勺，要么在盯着火候，要么在调味。他速度极快，切一根葱只需要零点几秒，但他永远是串行工作的——一道菜一道菜地来。\n\n这位大厨，就是 CPU。\n\nCPU（Central Processing Unit，中央处理器）是计算机的核心指挥官，也是真正执行所有计算的地方。你打开一个网页、运行一段代码、甚至移动一下鼠标，本质上都是 CPU 在一步一步地执行一条条指令。\n\n它的特点是：  通用、精确、串行（或轻度并行）、极快  。\n\n   \n\n    核心概念：核心、线程、主频\n\n打开你电脑的任务管理器（Windows 按  Ctrl+Shift+Esc ，macOS 用活动监视器），点到\"性能 CPU\"选项卡，你会看到一堆数字：\n\n    逻辑处理器数  （如 16）\n    核心数  （如 8）\n    主频  （如 2.50 GHz，峰值 4.90 GHz）\n\n这三个数字到底是什么意思？\n\n     主频：大厨的做菜速度\n\n  主频（Clock Speed）  ，单位是 GHz（吉赫兹），表示 CPU 每秒钟执行多少次基本操作。1 GHz = 每秒 10 亿次时钟周期。\n\n但这里要注意：一次时钟周期不等于执行一条指令。现代 CPU 通过各种优化，可以在一个时钟周期内并发处理多条指令（这叫  流水线  和  超标量  ，我们不深入展开）。但粗略来说，  主频越高，CPU 处理单个任务的速度越快  。\n\n一个 5 GHz 的 CPU，每秒执行 50 亿次操作。这是什么概念？如果你一秒钟能打 5 个字，那 CPU 一秒钟能\"打\" 50 亿个字。它等待你敲一下键盘的时间，足够它做几十亿次计算。\n\n主频不是越高越好，因为：\n1. 提高主频会导致功耗和发热量急剧上升（大致与频率的三次方成正比）\n2. 单核性能的提升到了物理极限，靠堆主频的时代已经过去了\n\n所以 CPU 厂商转向了另一个方向——  多核心  。\n\n     核心数：雇了更多大厨\n\n  核心（Core）  ，可以理解为一个独立的计算单元。一个 8 核 CPU，相当于餐厅里有 8 位大厨，他们可以同时各自处理一道菜。\n\n多核心对于  多任务  和  可以并行化的程序  非常有用：\n  你一边下载文件，一边看视频，一边写文档——这三件事可以分别跑在不同核心上\n  编译代码（把你写的程序翻译成机器能执行的二进制）是典型的可以并行化的任务，16 核编译比 4 核快得多\n\n但也有个问题：  不是所有任务都能并行  。有些任务天生是串行的——第二步必须等第一步算完才能开始。在这类场景下，核心数再多也没用，反而是单核性能（主频和架构）更重要。\n\n这也是为什么打游戏的时候，你会看到\"单核性能\"这个词被反复强调——很多游戏的主线程是串行的，多核帮不上太大忙。\n\n     线程：大厨的多任务能力\n\n现代 CPU 普遍支持  超线程技术（Hyper Threading）  ，让一个物理核心可以伪装成两个逻辑处理器。\n\n怎么理解？还是大厨的比喻：一位大厨在等某道菜入锅之前，可以趁这个间隙去处理另一道菜的备料。虽然他本质上是一个人，但因为切换得很快、空闲时间被充分利用，对外表现得像两个人在同时工作。\n\n所以你的 8 核 16 线程处理器，意味着：8 个物理核心，每个核心对操作系统呈现为 2 个逻辑处理器，合计 16 个逻辑处理器。\n\n超线程能提升大约 15 30% 的多线程性能，但不能替代真正的物理核心。\n\n   \n\n    现实参数对照\n\n以 Intel 的 i7 13700H（2023年款，常见于中端笔记本）为例：\n\n  参数   数值  \n               \n  核心架构   6 性能核 + 8 能效核（共 14 核）  \n  线程数   20 线程  \n  基础频率   2.4 GHz  \n"
+    },
+    {
+      "id": "03-cpu-gpu-21-cpu真正的中央处理器",
+      "title": "2.1 CPU：真正的中央处理器",
+      "chapter": "04",
+      "chapterTitle": "第二章：计算的大脑——CPU与GPU",
+      "url": "chapters/03-cpu-gpu.html#21-cpu真正的中央处理器",
+      "body": ""
+    },
+    {
+      "id": "03-cpu-gpu-一个厨师的故事",
+      "title": "一个厨师的故事",
+      "chapter": "04",
+      "chapterTitle": "第二章：计算的大脑——CPU与GPU",
+      "url": "chapters/03-cpu-gpu.html#一个厨师的故事",
+      "body": ""
+    },
+    {
+      "id": "03-cpu-gpu-核心概念核心线程主频",
+      "title": "核心概念：核心、线程、主频",
+      "chapter": "04",
+      "chapterTitle": "第二章：计算的大脑——CPU与GPU",
+      "url": "chapters/03-cpu-gpu.html#核心概念核心线程主频",
+      "body": ""
+    },
+    {
+      "id": "03-cpu-gpu-现实参数对照",
+      "title": "现实参数对照",
+      "chapter": "04",
+      "chapterTitle": "第二章：计算的大脑——CPU与GPU",
+      "url": "chapters/03-cpu-gpu.html#现实参数对照",
+      "body": ""
+    },
+    {
+      "id": "03-cpu-gpu-cpu-是怎么执行指令的",
+      "title": "CPU 是怎么执行指令的",
+      "chapter": "04",
+      "chapterTitle": "第二章：计算的大脑——CPU与GPU",
+      "url": "chapters/03-cpu-gpu.html#cpu-是怎么执行指令的",
+      "body": ""
+    },
+    {
+      "id": "03-cpu-gpu-流水线让大厨永不空闲",
+      "title": "流水线：让大厨永不空闲",
+      "chapter": "04",
+      "chapterTitle": "第二章：计算的大脑——CPU与GPU",
+      "url": "chapters/03-cpu-gpu.html#流水线让大厨永不空闲",
+      "body": ""
+    },
+    {
+      "id": "03-cpu-gpu--常见误区澄清",
+      "title": "❌ 常见误区澄清",
+      "chapter": "04",
+      "chapterTitle": "第二章：计算的大脑——CPU与GPU",
+      "url": "chapters/03-cpu-gpu.html#-常见误区澄清",
+      "body": ""
+    },
+    {
+      "id": "03-cpu-gpu--动手环节观察你-cpu-的真实行为",
+      "title": "🔧 动手环节：观察你 CPU 的真实行为",
+      "chapter": "04",
+      "chapterTitle": "第二章：计算的大脑——CPU与GPU",
+      "url": "chapters/03-cpu-gpu.html#-动手环节观察你-cpu-的真实行为",
+      "body": ""
+    },
+    {
+      "id": "03-cpu-gpu--本节要点",
+      "title": "✓ 本节要点",
+      "chapter": "04",
+      "chapterTitle": "第二章：计算的大脑——CPU与GPU",
+      "url": "chapters/03-cpu-gpu.html#-本节要点",
+      "body": ""
+    },
+    {
+      "id": "03-cpu-gpu-22-指令集cpu-的quot方言quot",
+      "title": "2.2 指令集：CPU 的&quot;方言&quot;",
+      "chapter": "04",
+      "chapterTitle": "第二章：计算的大脑——CPU与GPU",
+      "url": "chapters/03-cpu-gpu.html#22-指令集cpu-的quot方言quot",
+      "body": ""
+    },
+    {
+      "id": "03-cpu-gpu-你的程序在外星球跑不了",
+      "title": "你的程序在外星球跑不了",
+      "chapter": "04",
+      "chapterTitle": "第二章：计算的大脑——CPU与GPU",
+      "url": "chapters/03-cpu-gpu.html#你的程序在外星球跑不了",
+      "body": ""
+    },
+    {
+      "id": "03-cpu-gpu-什么是指令集",
+      "title": "什么是指令集",
+      "chapter": "04",
+      "chapterTitle": "第二章：计算的大脑——CPU与GPU",
+      "url": "chapters/03-cpu-gpu.html#什么是指令集",
+      "body": ""
+    },
+    {
+      "id": "03-cpu-gpu-x86-和-arm两条不同的路",
+      "title": "x86 和 ARM：两条不同的路",
+      "chapter": "04",
+      "chapterTitle": "第二章：计算的大脑——CPU与GPU",
+      "url": "chapters/03-cpu-gpu.html#x86-和-arm两条不同的路",
+      "body": ""
+    },
+    {
+      "id": "03-cpu-gpu-建议配图x86-vs-arm-对比示意图",
+      "title": "【建议配图】x86 vs ARM 对比示意图",
+      "chapter": "04",
+      "chapterTitle": "第二章：计算的大脑——CPU与GPU",
+      "url": "chapters/03-cpu-gpu.html#建议配图x86-vs-arm-对比示意图",
+      "body": ""
+    },
+    {
+      "id": "03-cpu-gpu-为什么不统一成一种指令集",
+      "title": "为什么不统一成一种指令集？",
+      "chapter": "04",
+      "chapterTitle": "第二章：计算的大脑——CPU与GPU",
+      "url": "chapters/03-cpu-gpu.html#为什么不统一成一种指令集",
+      "body": ""
+    },
+    {
+      "id": "03-cpu-gpu-指令集编译器与你写的代码三层抽象",
+      "title": "指令集、编译器与你写的代码：三层抽象",
+      "chapter": "04",
+      "chapterTitle": "第二章：计算的大脑——CPU与GPU",
+      "url": "chapters/03-cpu-gpu.html#指令集编译器与你写的代码三层抽象",
+      "body": ""
+    },
+    {
+      "id": "03-cpu-gpu-03-cpu-gpu--常见误区澄清-2",
+      "title": "❌ 常见误区澄清",
+      "chapter": "04",
+      "chapterTitle": "第二章：计算的大脑——CPU与GPU",
+      "url": "chapters/03-cpu-gpu.html#03-cpu-gpu--常见误区澄清-2",
+      "body": ""
+    },
+    {
+      "id": "03-cpu-gpu--动手环节看看你的-cpu-是什么架构",
+      "title": "🔧 动手环节：看看你的 CPU 是什么架构",
+      "chapter": "04",
+      "chapterTitle": "第二章：计算的大脑——CPU与GPU",
+      "url": "chapters/03-cpu-gpu.html#-动手环节看看你的-cpu-是什么架构",
+      "body": ""
+    },
+    {
+      "id": "03-cpu-gpu-03-cpu-gpu--本节要点-2",
+      "title": "✓ 本节要点",
+      "chapter": "04",
+      "chapterTitle": "第二章：计算的大脑——CPU与GPU",
+      "url": "chapters/03-cpu-gpu.html#03-cpu-gpu--本节要点-2",
+      "body": ""
+    },
+    {
+      "id": "03-cpu-gpu-23-gpu平行宇宙的计算方式",
+      "title": "2.3 GPU：平行宇宙的计算方式",
+      "chapter": "04",
+      "chapterTitle": "第二章：计算的大脑——CPU与GPU",
+      "url": "chapters/03-cpu-gpu.html#23-gpu平行宇宙的计算方式",
+      "body": ""
+    },
+    {
+      "id": "03-cpu-gpu-为什么显卡能跑游戏",
+      "title": "为什么显卡能跑游戏？",
+      "chapter": "04",
+      "chapterTitle": "第二章：计算的大脑——CPU与GPU",
+      "url": "chapters/03-cpu-gpu.html#为什么显卡能跑游戏",
+      "body": ""
+    },
+    {
+      "id": "03-cpu-gpu-渲染一帧gpu-的日常工作",
+      "title": "渲染一帧：GPU 的日常工作",
+      "chapter": "04",
+      "chapterTitle": "第二章：计算的大脑——CPU与GPU",
+      "url": "chapters/03-cpu-gpu.html#渲染一帧gpu-的日常工作",
+      "body": ""
+    },
+    {
+      "id": "03-cpu-gpu-gpu-vs-cpu将军-vs-士兵",
+      "title": "GPU vs CPU：将军 vs 士兵",
+      "chapter": "04",
+      "chapterTitle": "第二章：计算的大脑——CPU与GPU",
+      "url": "chapters/03-cpu-gpu.html#gpu-vs-cpu将军-vs-士兵",
+      "body": ""
+    },
+    {
+      "id": "03-cpu-gpu-gpu-内部结构概念层面",
+      "title": "GPU 内部结构（概念层面）",
+      "chapter": "04",
+      "chapterTitle": "第二章：计算的大脑——CPU与GPU",
+      "url": "chapters/03-cpu-gpu.html#gpu-内部结构概念层面",
+      "body": ""
+    },
+    {
+      "id": "03-cpu-gpu-gpu-不只是用来打游戏的",
+      "title": "GPU 不只是用来打游戏的",
+      "chapter": "04",
+      "chapterTitle": "第二章：计算的大脑——CPU与GPU",
+      "url": "chapters/03-cpu-gpu.html#gpu-不只是用来打游戏的",
+      "body": ""
+    },
+    {
+      "id": "03-cpu-gpu-渲染管线gpu-到底是怎样画出一帧的",
+      "title": "渲染管线：GPU 到底是怎样画出一帧的",
+      "chapter": "04",
+      "chapterTitle": "第二章：计算的大脑——CPU与GPU",
+      "url": "chapters/03-cpu-gpu.html#渲染管线gpu-到底是怎样画出一帧的",
+      "body": ""
+    },
+    {
+      "id": "03-cpu-gpu-从游戏显卡到科学计算加速器gpu-的角色演变",
+      "title": "从游戏显卡到科学计算加速器：GPU 的角色演变",
+      "chapter": "04",
+      "chapterTitle": "第二章：计算的大脑——CPU与GPU",
+      "url": "chapters/03-cpu-gpu.html#从游戏显卡到科学计算加速器gpu-的角色演变",
+      "body": ""
+    },
+    {
+      "id": "03-cpu-gpu-03-cpu-gpu--常见误区澄清-3",
+      "title": "❌ 常见误区澄清",
+      "chapter": "04",
+      "chapterTitle": "第二章：计算的大脑——CPU与GPU",
+      "url": "chapters/03-cpu-gpu.html#03-cpu-gpu--常见误区澄清-3",
+      "body": ""
+    },
+    {
+      "id": "03-cpu-gpu--动手环节查看你的显卡信息",
+      "title": "🔧 动手环节：查看你的显卡信息",
+      "chapter": "04",
+      "chapterTitle": "第二章：计算的大脑——CPU与GPU",
+      "url": "chapters/03-cpu-gpu.html#-动手环节查看你的显卡信息",
+      "body": ""
+    },
+    {
+      "id": "03-cpu-gpu-03-cpu-gpu--本节要点-3",
+      "title": "✓ 本节要点",
+      "chapter": "04",
+      "chapterTitle": "第二章：计算的大脑——CPU与GPU",
+      "url": "chapters/03-cpu-gpu.html#03-cpu-gpu--本节要点-3",
+      "body": ""
+    },
+    {
+      "id": "03-cpu-gpu-24-cpu-与-gpu-的分工哲学",
+      "title": "2.4 CPU 与 GPU 的分工哲学",
+      "chapter": "04",
+      "chapterTitle": "第二章：计算的大脑——CPU与GPU",
+      "url": "chapters/03-cpu-gpu.html#24-cpu-与-gpu-的分工哲学",
+      "body": ""
+    },
+    {
+      "id": "03-cpu-gpu-两种思维方式",
+      "title": "两种思维方式",
+      "chapter": "04",
+      "chapterTitle": "第二章：计算的大脑——CPU与GPU",
+      "url": "chapters/03-cpu-gpu.html#两种思维方式",
+      "body": ""
+    },
+    {
+      "id": "03-cpu-gpu-延迟优化-vs-吞吐量优化",
+      "title": "延迟优化 vs 吞吐量优化",
+      "chapter": "04",
+      "chapterTitle": "第二章：计算的大脑——CPU与GPU",
+      "url": "chapters/03-cpu-gpu.html#延迟优化-vs-吞吐量优化",
+      "body": ""
+    },
+    {
+      "id": "03-cpu-gpu-异构计算让它们协同工作",
+      "title": "异构计算：让它们协同工作",
+      "chapter": "04",
+      "chapterTitle": "第二章：计算的大脑——CPU与GPU",
+      "url": "chapters/03-cpu-gpu.html#异构计算让它们协同工作",
+      "body": ""
+    },
+    {
+      "id": "03-cpu-gpu-ai-计算的分工方式",
+      "title": "AI 计算的分工方式",
+      "chapter": "04",
+      "chapterTitle": "第二章：计算的大脑——CPU与GPU",
+      "url": "chapters/03-cpu-gpu.html#ai-计算的分工方式",
+      "body": ""
+    },
+    {
+      "id": "03-cpu-gpu-专用加速器的崛起不只是-cpu-和-gpu",
+      "title": "专用加速器的崛起：不只是 CPU 和 GPU",
+      "chapter": "04",
+      "chapterTitle": "第二章：计算的大脑——CPU与GPU",
+      "url": "chapters/03-cpu-gpu.html#专用加速器的崛起不只是-cpu-和-gpu",
+      "body": ""
+    },
+    {
+      "id": "03-cpu-gpu-一个特殊情况苹果的统一内存架构",
+      "title": "一个特殊情况：苹果的统一内存架构",
+      "chapter": "04",
+      "chapterTitle": "第二章：计算的大脑——CPU与GPU",
+      "url": "chapters/03-cpu-gpu.html#一个特殊情况苹果的统一内存架构",
+      "body": ""
+    },
+    {
+      "id": "03-cpu-gpu-建议配图cpu-gpu-协同工作示意图",
+      "title": "【建议配图】CPU + GPU 协同工作示意图",
+      "chapter": "04",
+      "chapterTitle": "第二章：计算的大脑——CPU与GPU",
+      "url": "chapters/03-cpu-gpu.html#建议配图cpu-gpu-协同工作示意图",
+      "body": ""
+    },
+    {
+      "id": "03-cpu-gpu-边界在哪里什么时候用-cpu什么时候用-gpu",
+      "title": "边界在哪里：什么时候用 CPU，什么时候用 GPU",
+      "chapter": "04",
+      "chapterTitle": "第二章：计算的大脑——CPU与GPU",
+      "url": "chapters/03-cpu-gpu.html#边界在哪里什么时候用-cpu什么时候用-gpu",
+      "body": ""
+    },
+    {
+      "id": "03-cpu-gpu-03-cpu-gpu--常见误区澄清-4",
+      "title": "❌ 常见误区澄清",
+      "chapter": "04",
+      "chapterTitle": "第二章：计算的大脑——CPU与GPU",
+      "url": "chapters/03-cpu-gpu.html#03-cpu-gpu--常见误区澄清-4",
+      "body": ""
+    },
+    {
+      "id": "03-cpu-gpu--动手环节观察-cpu-和-gpu-的分工",
+      "title": "🔧 动手环节：观察 CPU 和 GPU 的分工",
+      "chapter": "04",
+      "chapterTitle": "第二章：计算的大脑——CPU与GPU",
+      "url": "chapters/03-cpu-gpu.html#-动手环节观察-cpu-和-gpu-的分工",
+      "body": ""
+    },
+    {
+      "id": "03-cpu-gpu-03-cpu-gpu--本节要点-4",
+      "title": "✓ 本节要点",
+      "chapter": "04",
+      "chapterTitle": "第二章：计算的大脑——CPU与GPU",
+      "url": "chapters/03-cpu-gpu.html#03-cpu-gpu--本节要点-4",
+      "body": ""
+    },
+    {
+      "id": "03-cpu-gpu-章节收尾",
+      "title": "章节收尾",
+      "chapter": "04",
+      "chapterTitle": "第二章：计算的大脑——CPU与GPU",
+      "url": "chapters/03-cpu-gpu.html#章节收尾",
+      "body": ""
+    },
+    {
+      "id": "03-cpu-gpu-本章知识图谱",
+      "title": "本章知识图谱",
+      "chapter": "04",
+      "chapterTitle": "第二章：计算的大脑——CPU与GPU",
+      "url": "chapters/03-cpu-gpu.html#本章知识图谱",
+      "body": ""
+    },
+    {
+      "id": "03-cpu-gpu-与其他章节的联系",
+      "title": "与其他章节的联系",
+      "chapter": "04",
+      "chapterTitle": "第二章：计算的大脑——CPU与GPU",
+      "url": "chapters/03-cpu-gpu.html#与其他章节的联系",
+      "body": ""
+    },
+    {
+      "id": "03-cpu-gpu-一个值得思考的问题",
+      "title": "一个值得思考的问题",
+      "chapter": "04",
+      "chapterTitle": "第二章：计算的大脑——CPU与GPU",
+      "url": "chapters/03-cpu-gpu.html#一个值得思考的问题",
+      "body": ""
+    },
+    {
+      "id": "03-cpu-gpu-摩尔定律的终结与后摩尔时代的应对",
+      "title": "摩尔定律的终结与后摩尔时代的应对",
+      "chapter": "04",
+      "chapterTitle": "第二章：计算的大脑——CPU与GPU",
+      "url": "chapters/03-cpu-gpu.html#摩尔定律的终结与后摩尔时代的应对",
+      "body": ""
+    },
+    {
+      "id": "03-cpu-gpu-下章预告",
+      "title": "【下章预告】",
+      "chapter": "04",
+      "chapterTitle": "第二章：计算的大脑——CPU与GPU",
+      "url": "chapters/03-cpu-gpu.html#下章预告",
+      "body": ""
+    },
+    {
+      "id": "03-cpu-gpu-扩展资源",
+      "title": "扩展资源",
+      "chapter": "04",
+      "chapterTitle": "第二章：计算的大脑——CPU与GPU",
+      "url": "chapters/03-cpu-gpu.html#扩展资源",
+      "body": ""
+    },
+    {
+      "id": "04-operating-system",
+      "title": "第三章：操作系统——看不见的管家",
+      "chapter": "05",
+      "chapterTitle": "第三章：操作系统——看不见的管家",
+      "url": "chapters/04-operating-system.html",
+      "body": "\n   \n\n  【上章回顾】上一章我们认识了 CPU 和 GPU——那个每秒能执行数十亿条指令的\"大厨\"，和那个靠流水线并行取胜的\"工厂车间\"。但你有没有想过：谁来决定 CPU 什么时候算哪件事？谁来分配内存给不同的程序？谁让你可以一边听歌一边写代码，还能随时切换窗口？\n \n  【本章目标】这一章，我们来认识那个\"看不见的管家\"——操作系统。它不会出现在你的桌面上，却决定了你电脑上发生的一切。\n\n   \n\n   章节引入：那 0.5 秒里谁在忙？\n\n你早上打开电脑，双击 Chrome 图标，0.5 秒后浏览器出现了。\n\n看起来平平无奇，对吧？\n\n但如果你仔细想想，就会发现这里面藏着一连串问题：\n\n  Chrome 的程序文件在硬盘上，谁把它\"搬\"到了内存里？\n  内存里同时还有你昨晚没关掉的 VS Code、QQ 音乐、微信——谁决定给 Chrome 分多少内存？\n  CPU 只有 8 个核心，但你有十几个程序在跑，谁来排队？\n  你一边下载文件一边刷微博，网络带宽是怎么分配的？\n\n这些问题，统统由同一个角色来回答——  操作系统（Operating System，简称 OS）  。\n\n  预计阅读时间  ：45 分钟\n\n  读完本章你会理解  ：\n  没有操作系统，硬件只是一堆废铜烂铁\n  操作系统如何用\"进程\"和\"线程\"来管理多任务\n  文件系统是什么，为什么格式化硬盘会\"丢数据\"\n  驱动程序为什么会让你的鼠标不灵、显卡不工作\n\n   \n\n   3.1 没有操作系统会怎样\n\n    想象一个没有服务员的餐厅\n\n假设你去一家餐厅吃饭，推开门发现——没有服务员，没有领位，没有厨师长协调出菜顺序。厨房里站着几个大厨（CPU），仓库里有食材（硬盘），桌上有餐具（内存），但你不知道该坐哪儿，没人接单，厨师们也不知道先做哪桌的菜，收银台也没人。\n\n这就是  没有操作系统的计算机  。\n\n硬件是有的：CPU 会算，内存能存，硬盘有数据。但没有一个角色来统筹协调，一切都是混乱的。\n\n每个想用这台电脑的程序，都得自己想办法：\n  自己写代码去读硬盘\n  自己管理内存，避开其他程序占用的地址\n  自己和显卡、网卡通信\n  还要防止自己和别的程序互相踩踏\n\n这在早期的计算机上确实是这样的。1940 1950 年代，程序员需要写\"裸机程序\"，直接控制硬件，每个程序都得解决所有底层问题。后来人们意识到，这些重复劳动可以被抽象成一个公共的\"中间层\"——操作系统就诞生了。\n\n    操作系统是什么\n\n  操作系统是硬件和应用程序之间的一层软件，负责管理资源、提供服务、保护安全。  \n\n你的电脑上跑着的，可能是 Windows 11、macOS Sequoia，或者某个 Linux 发行版（比如 Ubuntu）。手机上是 Android 或 iOS。这些，都是操作系统。\n\n操作系统做的事情可以分成三大类：\n\n  ① 资源管理  \n\n操作系统管理着计算机的所有资源：CPU 时间、内存空间、磁盘读写、网络带宽。每个应用程序需要这些资源时，不能自己去抢，而是  向操作系统申请  。操作系统统一调度，防止冲突。\n\n  ② 提供抽象  \n\n操作系统把复杂的硬件操作包装成简单的接口。你写代码时调用  open \"file.txt\"   就能打开文件——你不需要知道文件存在磁盘的第几个扇区、用的是什么文件系统。这就是操作系统提供的  抽象（Abstraction）  。\n\n  ③ 保护隔离  \n\n操作系统确保每个程序在自己的\"沙箱\"里运行，不能随意访问其他程序的内存，也不能绕过权限直接操作硬件。这就是为什么一个崩溃的程序通常不会把整个系统搞挂。\n\n    内核：操作系统的核心\n\n操作系统本身也是软件，分层结构如下：\n\n最核心的部分叫做  内核（Kernel）  ，它直接和硬件打交道。内核是权限最高的程序，它运行在\"内核态（Kernel Mode）\"，可以执行任意硬件指令。\n\n而普通应用程序（Chrome、微信、你写的 Python 脚本）运行在\"用户态（User Mode）\"，权限受限，不能直接访问硬件。想访问硬件，就得通过  系统调用（System Call）  请求内核代劳。\n\n   \n你的应用程序（Chrome、微信、VSCode）\n       ↕ 系统调用（System Call）\n操作系统内核（进程管理、内存管理、文件系统、驱动）\n       ↕ 驱动程序接口\n硬件（CPU、内存、硬盘、显卡、网卡……）\n   \n\n这个分层设计非常关键：一方面保证了安全（应用程序不能随便搞坏系统），另一方面简化了开发（程序员不用懂硬件细节）。\n\n    ❌ 常见误区澄清\n\n❌   \"操作系统就是桌面界面\"  \n→ ✅ 桌面（Windows 的 Explorer、macO"
+    },
+    {
+      "id": "04-operating-system-章节引入那-05-秒里谁在忙",
+      "title": "章节引入：那 0.5 秒里谁在忙？",
+      "chapter": "05",
+      "chapterTitle": "第三章：操作系统——看不见的管家",
+      "url": "chapters/04-operating-system.html#章节引入那-05-秒里谁在忙",
+      "body": ""
+    },
+    {
+      "id": "04-operating-system-31-没有操作系统会怎样",
+      "title": "3.1 没有操作系统会怎样",
+      "chapter": "05",
+      "chapterTitle": "第三章：操作系统——看不见的管家",
+      "url": "chapters/04-operating-system.html#31-没有操作系统会怎样",
+      "body": ""
+    },
+    {
+      "id": "04-operating-system-想象一个没有服务员的餐厅",
+      "title": "想象一个没有服务员的餐厅",
+      "chapter": "05",
+      "chapterTitle": "第三章：操作系统——看不见的管家",
+      "url": "chapters/04-operating-system.html#想象一个没有服务员的餐厅",
+      "body": ""
+    },
+    {
+      "id": "04-operating-system-操作系统是什么",
+      "title": "操作系统是什么",
+      "chapter": "05",
+      "chapterTitle": "第三章：操作系统——看不见的管家",
+      "url": "chapters/04-operating-system.html#操作系统是什么",
+      "body": ""
+    },
+    {
+      "id": "04-operating-system-内核操作系统的核心",
+      "title": "内核：操作系统的核心",
+      "chapter": "05",
+      "chapterTitle": "第三章：操作系统——看不见的管家",
+      "url": "chapters/04-operating-system.html#内核操作系统的核心",
+      "body": ""
+    },
+    {
+      "id": "04-operating-system--常见误区澄清",
+      "title": "❌ 常见误区澄清",
+      "chapter": "05",
+      "chapterTitle": "第三章：操作系统——看不见的管家",
+      "url": "chapters/04-operating-system.html#-常见误区澄清",
+      "body": ""
+    },
+    {
+      "id": "04-operating-system--动手观察看看你的系统在干什么",
+      "title": "🔧 动手观察：看看你的系统在干什么",
+      "chapter": "05",
+      "chapterTitle": "第三章：操作系统——看不见的管家",
+      "url": "chapters/04-operating-system.html#-动手观察看看你的系统在干什么",
+      "body": ""
+    },
+    {
+      "id": "04-operating-system--本节要点",
+      "title": "✓ 本节要点",
+      "chapter": "05",
+      "chapterTitle": "第三章：操作系统——看不见的管家",
+      "url": "chapters/04-operating-system.html#-本节要点",
+      "body": ""
+    },
+    {
+      "id": "04-operating-system-32-进程与线程任务管理器的秘密",
+      "title": "3.2 进程与线程：任务管理器的秘密",
+      "chapter": "05",
+      "chapterTitle": "第三章：操作系统——看不见的管家",
+      "url": "chapters/04-operating-system.html#32-进程与线程任务管理器的秘密",
+      "body": ""
+    },
+    {
+      "id": "04-operating-system-你真的quot同时quot在做多件事吗",
+      "title": "你真的&quot;同时&quot;在做多件事吗？",
+      "chapter": "05",
+      "chapterTitle": "第三章：操作系统——看不见的管家",
+      "url": "chapters/04-operating-system.html#你真的quot同时quot在做多件事吗",
+      "body": ""
+    },
+    {
+      "id": "04-operating-system-进程程序的运行实例",
+      "title": "进程：程序的运行实例",
+      "chapter": "05",
+      "chapterTitle": "第三章：操作系统——看不见的管家",
+      "url": "chapters/04-operating-system.html#进程程序的运行实例",
+      "body": ""
+    },
+    {
+      "id": "04-operating-system-线程进程内部的quot工人quot",
+      "title": "线程：进程内部的&quot;工人&quot;",
+      "chapter": "05",
+      "chapterTitle": "第三章：操作系统——看不见的管家",
+      "url": "chapters/04-operating-system.html#线程进程内部的quot工人quot",
+      "body": ""
+    },
+    {
+      "id": "04-operating-system-进程调度谁先上-cpu",
+      "title": "进程调度：谁先上 CPU？",
+      "chapter": "05",
+      "chapterTitle": "第三章：操作系统——看不见的管家",
+      "url": "chapters/04-operating-system.html#进程调度谁先上-cpu",
+      "body": ""
+    },
+    {
+      "id": "04-operating-system-进程状态不是每个进程都在quot跑quot",
+      "title": "进程状态：不是每个进程都在&quot;跑&quot;",
+      "chapter": "05",
+      "chapterTitle": "第三章：操作系统——看不见的管家",
+      "url": "chapters/04-operating-system.html#进程状态不是每个进程都在quot跑quot",
+      "body": ""
+    },
+    {
+      "id": "04-operating-system-04-operating-system--常见误区澄清-2",
+      "title": "❌ 常见误区澄清",
+      "chapter": "05",
+      "chapterTitle": "第三章：操作系统——看不见的管家",
+      "url": "chapters/04-operating-system.html#04-operating-system--常见误区澄清-2",
+      "body": ""
+    },
+    {
+      "id": "04-operating-system--动手观察进程状态的实时观察",
+      "title": "🔧 动手观察：进程状态的实时观察",
+      "chapter": "05",
+      "chapterTitle": "第三章：操作系统——看不见的管家",
+      "url": "chapters/04-operating-system.html#-动手观察进程状态的实时观察",
+      "body": ""
+    },
+    {
+      "id": "04-operating-system-04-operating-system--本节要点-2",
+      "title": "✓ 本节要点",
+      "chapter": "05",
+      "chapterTitle": "第三章：操作系统——看不见的管家",
+      "url": "chapters/04-operating-system.html#04-operating-system--本节要点-2",
+      "body": ""
+    },
+    {
+      "id": "04-operating-system-33-文件系统电脑如何记住一切",
+      "title": "3.3 文件系统：电脑如何记住一切",
+      "chapter": "05",
+      "chapterTitle": "第三章：操作系统——看不见的管家",
+      "url": "chapters/04-operating-system.html#33-文件系统电脑如何记住一切",
+      "body": ""
+    },
+    {
+      "id": "04-operating-system-quot删除quot之后数据去哪了",
+      "title": "&quot;删除&quot;之后数据去哪了？",
+      "chapter": "05",
+      "chapterTitle": "第三章：操作系统——看不见的管家",
+      "url": "chapters/04-operating-system.html#quot删除quot之后数据去哪了",
+      "body": ""
+    },
+    {
+      "id": "04-operating-system-文件系统是什么",
+      "title": "文件系统是什么",
+      "chapter": "05",
+      "chapterTitle": "第三章：操作系统——看不见的管家",
+      "url": "chapters/04-operating-system.html#文件系统是什么",
+      "body": ""
+    },
+    {
+      "id": "04-operating-system-目录树文件如何被组织",
+      "title": "目录树：文件如何被组织",
+      "chapter": "05",
+      "chapterTitle": "第三章：操作系统——看不见的管家",
+      "url": "chapters/04-operating-system.html#目录树文件如何被组织",
+      "body": ""
+    },
+    {
+      "id": "04-operating-system-索引节点inode文件的quot身份证quot",
+      "title": "索引节点（inode）：文件的&quot;身份证&quot;",
+      "chapter": "05",
+      "chapterTitle": "第三章：操作系统——看不见的管家",
+      "url": "chapters/04-operating-system.html#索引节点inode文件的quot身份证quot",
+      "body": ""
+    },
+    {
+      "id": "04-operating-system-quot删除quot文件到底发生了什么",
+      "title": "&quot;删除&quot;文件到底发生了什么",
+      "chapter": "05",
+      "chapterTitle": "第三章：操作系统——看不见的管家",
+      "url": "chapters/04-operating-system.html#quot删除quot文件到底发生了什么",
+      "body": ""
+    },
+    {
+      "id": "04-operating-system-文件碎片为什么硬盘越用越慢",
+      "title": "文件碎片：为什么硬盘越用越慢",
+      "chapter": "05",
+      "chapterTitle": "第三章：操作系统——看不见的管家",
+      "url": "chapters/04-operating-system.html#文件碎片为什么硬盘越用越慢",
+      "body": ""
+    },
+    {
+      "id": "04-operating-system-日志文件系统如何防止断电损坏",
+      "title": "日志文件系统：如何防止断电损坏",
+      "chapter": "05",
+      "chapterTitle": "第三章：操作系统——看不见的管家",
+      "url": "chapters/04-operating-system.html#日志文件系统如何防止断电损坏",
+      "body": ""
+    },
+    {
+      "id": "04-operating-system-04-operating-system--常见误区澄清-3",
+      "title": "❌ 常见误区澄清",
+      "chapter": "05",
+      "chapterTitle": "第三章：操作系统——看不见的管家",
+      "url": "chapters/04-operating-system.html#04-operating-system--常见误区澄清-3",
+      "body": ""
+    },
+    {
+      "id": "04-operating-system--动手观察查看你的硬盘分区和文件系统",
+      "title": "🔧 动手观察：查看你的硬盘分区和文件系统",
+      "chapter": "05",
+      "chapterTitle": "第三章：操作系统——看不见的管家",
+      "url": "chapters/04-operating-system.html#-动手观察查看你的硬盘分区和文件系统",
+      "body": ""
+    },
+    {
+      "id": "04-operating-system-04-operating-system--本节要点-3",
+      "title": "✓ 本节要点",
+      "chapter": "05",
+      "chapterTitle": "第三章：操作系统——看不见的管家",
+      "url": "chapters/04-operating-system.html#04-operating-system--本节要点-3",
+      "body": ""
+    },
+    {
+      "id": "04-operating-system-34-驱动程序硬件和软件的翻译官",
+      "title": "3.4 驱动程序：硬件和软件的翻译官",
+      "chapter": "05",
+      "chapterTitle": "第三章：操作系统——看不见的管家",
+      "url": "chapters/04-operating-system.html#34-驱动程序硬件和软件的翻译官",
+      "body": ""
+    },
+    {
+      "id": "04-operating-system-为什么插上新设备系统要quot安装驱动quot",
+      "title": "为什么插上新设备，系统要&quot;安装驱动&quot;？",
+      "chapter": "05",
+      "chapterTitle": "第三章：操作系统——看不见的管家",
+      "url": "chapters/04-operating-system.html#为什么插上新设备系统要quot安装驱动quot",
+      "body": ""
+    },
+    {
+      "id": "04-operating-system-驱动程序是什么",
+      "title": "驱动程序是什么",
+      "chapter": "05",
+      "chapterTitle": "第三章：操作系统——看不见的管家",
+      "url": "chapters/04-operating-system.html#驱动程序是什么",
+      "body": ""
+    },
+    {
+      "id": "04-operating-system-为什么驱动会出问题",
+      "title": "为什么驱动会出问题",
+      "chapter": "05",
+      "chapterTitle": "第三章：操作系统——看不见的管家",
+      "url": "chapters/04-operating-system.html#为什么驱动会出问题",
+      "body": ""
+    },
+    {
+      "id": "04-operating-system-通用驱动-vs-专用驱动",
+      "title": "通用驱动 vs 专用驱动",
+      "chapter": "05",
+      "chapterTitle": "第三章：操作系统——看不见的管家",
+      "url": "chapters/04-operating-system.html#通用驱动-vs-专用驱动",
+      "body": ""
+    },
+    {
+      "id": "04-operating-system-驱动签名安全机制",
+      "title": "驱动签名：安全机制",
+      "chapter": "05",
+      "chapterTitle": "第三章：操作系统——看不见的管家",
+      "url": "chapters/04-operating-system.html#驱动签名安全机制",
+      "body": ""
+    },
+    {
+      "id": "04-operating-system-linux-的驱动生态开源的两面性",
+      "title": "Linux 的驱动生态：开源的两面性",
+      "chapter": "05",
+      "chapterTitle": "第三章：操作系统——看不见的管家",
+      "url": "chapters/04-operating-system.html#linux-的驱动生态开源的两面性",
+      "body": ""
+    },
+    {
+      "id": "04-operating-system-macos-的驱动紧耦合的优雅",
+      "title": "macOS 的驱动：紧耦合的优雅",
+      "chapter": "05",
+      "chapterTitle": "第三章：操作系统——看不见的管家",
+      "url": "chapters/04-operating-system.html#macos-的驱动紧耦合的优雅",
+      "body": ""
+    },
+    {
+      "id": "04-operating-system-04-operating-system--常见误区澄清-4",
+      "title": "❌ 常见误区澄清",
+      "chapter": "05",
+      "chapterTitle": "第三章：操作系统——看不见的管家",
+      "url": "chapters/04-operating-system.html#04-operating-system--常见误区澄清-4",
+      "body": ""
+    },
+    {
+      "id": "04-operating-system--动手观察查看你的驱动状态",
+      "title": "🔧 动手观察：查看你的驱动状态",
+      "chapter": "05",
+      "chapterTitle": "第三章：操作系统——看不见的管家",
+      "url": "chapters/04-operating-system.html#-动手观察查看你的驱动状态",
+      "body": ""
+    },
+    {
+      "id": "04-operating-system-04-operating-system--本节要点-4",
+      "title": "✓ 本节要点",
+      "chapter": "05",
+      "chapterTitle": "第三章：操作系统——看不见的管家",
+      "url": "chapters/04-operating-system.html#04-operating-system--本节要点-4",
+      "body": ""
+    },
+    {
+      "id": "04-operating-system-35-系统调用应用程序和内核的边界补充节",
+      "title": "3.5 系统调用：应用程序和内核的边界（补充节）",
+      "chapter": "05",
+      "chapterTitle": "第三章：操作系统——看不见的管家",
+      "url": "chapters/04-operating-system.html#35-系统调用应用程序和内核的边界补充节",
+      "body": ""
+    },
+    {
+      "id": "04-operating-system-一次quot请求quot的旅程",
+      "title": "一次&quot;请求&quot;的旅程",
+      "chapter": "05",
+      "chapterTitle": "第三章：操作系统——看不见的管家",
+      "url": "chapters/04-operating-system.html#一次quot请求quot的旅程",
+      "body": ""
+    },
+    {
+      "id": "04-operating-system-为什么需要系统调用",
+      "title": "为什么需要系统调用",
+      "chapter": "05",
+      "chapterTitle": "第三章：操作系统——看不见的管家",
+      "url": "chapters/04-operating-system.html#为什么需要系统调用",
+      "body": ""
+    },
+    {
+      "id": "04-operating-system-系统调用的过程精简版",
+      "title": "系统调用的过程（精简版）",
+      "chapter": "05",
+      "chapterTitle": "第三章：操作系统——看不见的管家",
+      "url": "chapters/04-operating-system.html#系统调用的过程精简版",
+      "body": ""
+    },
+    {
+      "id": "04-operating-system-linux-上的系统调用一瞥",
+      "title": "Linux 上的系统调用一瞥",
+      "chapter": "05",
+      "chapterTitle": "第三章：操作系统——看不见的管家",
+      "url": "chapters/04-operating-system.html#linux-上的系统调用一瞥",
+      "body": ""
+    },
+    {
+      "id": "04-operating-system--动手用-strace-看系统调用linuxmacos",
+      "title": "🔧 动手：用 strace 看系统调用（Linux/macOS）",
+      "chapter": "05",
+      "chapterTitle": "第三章：操作系统——看不见的管家",
+      "url": "chapters/04-operating-system.html#-动手用-strace-看系统调用linuxmacos",
+      "body": ""
+    },
+    {
+      "id": "04-operating-system-04-operating-system--本节要点-5",
+      "title": "✓ 本节要点",
+      "chapter": "05",
+      "chapterTitle": "第三章：操作系统——看不见的管家",
+      "url": "chapters/04-operating-system.html#04-operating-system--本节要点-5",
+      "body": ""
+    },
+    {
+      "id": "04-operating-system-36-中断硬件怎么quot打断quotcpu",
+      "title": "3.6 中断：硬件怎么&quot;打断&quot;CPU",
+      "chapter": "05",
+      "chapterTitle": "第三章：操作系统——看不见的管家",
+      "url": "chapters/04-operating-system.html#36-中断硬件怎么quot打断quotcpu",
+      "body": ""
+    },
+    {
+      "id": "04-operating-system-键盘按下去cpu-怎么知道",
+      "title": "键盘按下去，CPU 怎么知道？",
+      "chapter": "05",
+      "chapterTitle": "第三章：操作系统——看不见的管家",
+      "url": "chapters/04-operating-system.html#键盘按下去cpu-怎么知道",
+      "body": ""
+    },
+    {
+      "id": "04-operating-system-什么是中断",
+      "title": "什么是中断",
+      "chapter": "05",
+      "chapterTitle": "第三章：操作系统——看不见的管家",
+      "url": "chapters/04-operating-system.html#什么是中断",
+      "body": ""
+    },
+    {
+      "id": "04-operating-system-中断的分类",
+      "title": "中断的分类",
+      "chapter": "05",
+      "chapterTitle": "第三章：操作系统——看不见的管家",
+      "url": "chapters/04-operating-system.html#中断的分类",
+      "body": ""
+    },
+    {
+      "id": "04-operating-system-定时器中断调度器的quot心跳quot",
+      "title": "定时器中断：调度器的&quot;心跳&quot;",
+      "chapter": "05",
+      "chapterTitle": "第三章：操作系统——看不见的管家",
+      "url": "chapters/04-operating-system.html#定时器中断调度器的quot心跳quot",
+      "body": ""
+    },
+    {
+      "id": "04-operating-system-中断和系统调用的区别",
+      "title": "中断和系统调用的区别",
+      "chapter": "05",
+      "chapterTitle": "第三章：操作系统——看不见的管家",
+      "url": "chapters/04-operating-system.html#中断和系统调用的区别",
+      "body": ""
+    },
+    {
+      "id": "04-operating-system-04-operating-system--本节要点-6",
+      "title": "✓ 本节要点",
+      "chapter": "05",
+      "chapterTitle": "第三章：操作系统——看不见的管家",
+      "url": "chapters/04-operating-system.html#04-operating-system--本节要点-6",
+      "body": ""
+    },
+    {
+      "id": "04-operating-system-章节综合把进程文件驱动串起来",
+      "title": "章节综合：把进程、文件、驱动串起来",
+      "chapter": "05",
+      "chapterTitle": "第三章：操作系统——看不见的管家",
+      "url": "chapters/04-operating-system.html#章节综合把进程文件驱动串起来",
+      "body": ""
+    },
+    {
+      "id": "04-operating-system-37-权限与安全操作系统的quot警卫quot",
+      "title": "3.7 权限与安全：操作系统的&quot;警卫&quot;",
+      "chapter": "05",
+      "chapterTitle": "第三章：操作系统——看不见的管家",
+      "url": "chapters/04-operating-system.html#37-权限与安全操作系统的quot警卫quot",
+      "body": ""
+    },
+    {
+      "id": "04-operating-system-为什么有些程序要quot管理员权限quot",
+      "title": "为什么有些程序要&quot;管理员权限&quot;？",
+      "chapter": "05",
+      "chapterTitle": "第三章：操作系统——看不见的管家",
+      "url": "chapters/04-operating-system.html#为什么有些程序要quot管理员权限quot",
+      "body": ""
+    },
+    {
+      "id": "04-operating-system-用户和权限的基础概念",
+      "title": "用户和权限的基础概念",
+      "chapter": "05",
+      "chapterTitle": "第三章：操作系统——看不见的管家",
+      "url": "chapters/04-operating-system.html#用户和权限的基础概念",
+      "body": ""
+    },
+    {
+      "id": "04-operating-system-沙箱更严格的隔离",
+      "title": "沙箱：更严格的隔离",
+      "chapter": "05",
+      "chapterTitle": "第三章：操作系统——看不见的管家",
+      "url": "chapters/04-operating-system.html#沙箱更严格的隔离",
+      "body": ""
+    },
+    {
+      "id": "04-operating-system-04-operating-system--常见误区澄清-5",
+      "title": "❌ 常见误区澄清",
+      "chapter": "05",
+      "chapterTitle": "第三章：操作系统——看不见的管家",
+      "url": "chapters/04-operating-system.html#04-operating-system--常见误区澄清-5",
+      "body": ""
+    },
+    {
+      "id": "04-operating-system--动手查看文件权限",
+      "title": "🔧 动手：查看文件权限",
+      "chapter": "05",
+      "chapterTitle": "第三章：操作系统——看不见的管家",
+      "url": "chapters/04-operating-system.html#-动手查看文件权限",
+      "body": ""
+    },
+    {
+      "id": "04-operating-system-04-operating-system--本节要点-7",
+      "title": "✓ 本节要点",
+      "chapter": "05",
+      "chapterTitle": "第三章：操作系统——看不见的管家",
+      "url": "chapters/04-operating-system.html#04-operating-system--本节要点-7",
+      "body": ""
+    },
+    {
+      "id": "04-operating-system-38-操作系统的启动从按下电源键到桌面",
+      "title": "3.8 操作系统的启动：从按下电源键到桌面",
+      "chapter": "05",
+      "chapterTitle": "第三章：操作系统——看不见的管家",
+      "url": "chapters/04-operating-system.html#38-操作系统的启动从按下电源键到桌面",
+      "body": ""
+    },
+    {
+      "id": "04-operating-system-那-30-秒里发生了什么",
+      "title": "那 30 秒里发生了什么",
+      "chapter": "05",
+      "chapterTitle": "第三章：操作系统——看不见的管家",
+      "url": "chapters/04-operating-system.html#那-30-秒里发生了什么",
+      "body": ""
+    },
+    {
+      "id": "04-operating-system-启动流程全景",
+      "title": "启动流程全景",
+      "chapter": "05",
+      "chapterTitle": "第三章：操作系统——看不见的管家",
+      "url": "chapters/04-operating-system.html#启动流程全景",
+      "body": ""
+    },
+    {
+      "id": "04-operating-system-第一步上电自检postpower-on-self-test",
+      "title": "第一步：上电自检（POST，Power-On Self Test）",
+      "chapter": "05",
+      "chapterTitle": "第三章：操作系统——看不见的管家",
+      "url": "chapters/04-operating-system.html#第一步上电自检postpower-on-self-test",
+      "body": ""
+    },
+    {
+      "id": "04-operating-system-第二步biosuefi-初始化",
+      "title": "第二步：BIOS/UEFI 初始化",
+      "chapter": "05",
+      "chapterTitle": "第三章：操作系统——看不见的管家",
+      "url": "chapters/04-operating-system.html#第二步biosuefi-初始化",
+      "body": ""
+    },
+    {
+      "id": "04-operating-system-第三步引导加载程序bootloader",
+      "title": "第三步：引导加载程序（Bootloader）",
+      "chapter": "05",
+      "chapterTitle": "第三章：操作系统——看不见的管家",
+      "url": "chapters/04-operating-system.html#第三步引导加载程序bootloader",
+      "body": ""
+    },
+    {
+      "id": "04-operating-system-第四步内核初始化",
+      "title": "第四步：内核初始化",
+      "chapter": "05",
+      "chapterTitle": "第三章：操作系统——看不见的管家",
+      "url": "chapters/04-operating-system.html#第四步内核初始化",
+      "body": ""
+    },
+    {
+      "id": "04-operating-system-第五步用户空间初始化",
+      "title": "第五步：用户空间初始化",
+      "chapter": "05",
+      "chapterTitle": "第三章：操作系统——看不见的管家",
+      "url": "chapters/04-operating-system.html#第五步用户空间初始化",
+      "body": ""
+    },
+    {
+      "id": "04-operating-system-04-operating-system--常见误区澄清-6",
+      "title": "❌ 常见误区澄清",
+      "chapter": "05",
+      "chapterTitle": "第三章：操作系统——看不见的管家",
+      "url": "chapters/04-operating-system.html#04-operating-system--常见误区澄清-6",
+      "body": ""
+    },
+    {
+      "id": "04-operating-system--动手查看启动时间分析",
+      "title": "🔧 动手：查看启动时间分析",
+      "chapter": "05",
+      "chapterTitle": "第三章：操作系统——看不见的管家",
+      "url": "chapters/04-operating-system.html#-动手查看启动时间分析",
+      "body": ""
+    },
+    {
+      "id": "04-operating-system-04-operating-system--本节要点-8",
+      "title": "✓ 本节要点",
+      "chapter": "05",
+      "chapterTitle": "第三章：操作系统——看不见的管家",
+      "url": "chapters/04-operating-system.html#04-operating-system--本节要点-8",
+      "body": ""
+    },
+    {
+      "id": "04-operating-system-深入一点操作系统的内存管理补充阅读",
+      "title": "深入一点：操作系统的内存管理（补充阅读）",
+      "chapter": "05",
+      "chapterTitle": "第三章：操作系统——看不见的管家",
+      "url": "chapters/04-operating-system.html#深入一点操作系统的内存管理补充阅读",
+      "body": ""
+    },
+    {
+      "id": "04-operating-system-虚拟内存内存quot变大quot的魔法",
+      "title": "虚拟内存：内存&quot;变大&quot;的魔法",
+      "chapter": "05",
+      "chapterTitle": "第三章：操作系统——看不见的管家",
+      "url": "chapters/04-operating-system.html#虚拟内存内存quot变大quot的魔法",
+      "body": ""
+    },
+    {
+      "id": "04-operating-system-内存分配malloc-背后的故事",
+      "title": "内存分配：malloc 背后的故事",
+      "chapter": "05",
+      "chapterTitle": "第三章：操作系统——看不见的管家",
+      "url": "chapters/04-operating-system.html#内存分配malloc-背后的故事",
+      "body": ""
+    },
+    {
+      "id": "04-operating-system-39-实战操作系统的日常维护与调优",
+      "title": "3.9 实战：操作系统的日常维护与调优",
+      "chapter": "05",
+      "chapterTitle": "第三章：操作系统——看不见的管家",
+      "url": "chapters/04-operating-system.html#39-实战操作系统的日常维护与调优",
+      "body": ""
+    },
+    {
+      "id": "04-operating-system-理解为什么电脑quot变慢quot了",
+      "title": "理解为什么电脑&quot;变慢&quot;了",
+      "chapter": "05",
+      "chapterTitle": "第三章：操作系统——看不见的管家",
+      "url": "chapters/04-operating-system.html#理解为什么电脑quot变慢quot了",
+      "body": ""
+    },
+    {
+      "id": "04-operating-system-内存使用诊断一次完整的分析",
+      "title": "内存使用诊断：一次完整的分析",
+      "chapter": "05",
+      "chapterTitle": "第三章：操作系统——看不见的管家",
+      "url": "chapters/04-operating-system.html#内存使用诊断一次完整的分析",
+      "body": ""
+    },
+    {
+      "id": "04-operating-system-进程管理找到消耗资源的罪魁祸首",
+      "title": "进程管理：找到消耗资源的罪魁祸首",
+      "chapter": "05",
+      "chapterTitle": "第三章：操作系统——看不见的管家",
+      "url": "chapters/04-operating-system.html#进程管理找到消耗资源的罪魁祸首",
+      "body": ""
+    },
+    {
+      "id": "04-operating-system-linux-下的进程管理工具",
+      "title": "Linux 下的进程管理工具",
+      "chapter": "05",
+      "chapterTitle": "第三章：操作系统——看不见的管家",
+      "url": "chapters/04-operating-system.html#linux-下的进程管理工具",
+      "body": ""
+    },
+    {
+      "id": "04-operating-system-磁盘健康监测",
+      "title": "磁盘健康监测",
+      "chapter": "05",
+      "chapterTitle": "第三章：操作系统——看不见的管家",
+      "url": "chapters/04-operating-system.html#磁盘健康监测",
+      "body": ""
+    },
+    {
+      "id": "04-operating-system-04-operating-system--本节要点-9",
+      "title": "✓ 本节要点",
+      "chapter": "05",
+      "chapterTitle": "第三章：操作系统——看不见的管家",
+      "url": "chapters/04-operating-system.html#04-operating-system--本节要点-9",
+      "body": ""
+    },
+    {
+      "id": "04-operating-system-操作系统家族小史拓展阅读",
+      "title": "操作系统家族小史（拓展阅读）",
+      "chapter": "05",
+      "chapterTitle": "第三章：操作系统——看不见的管家",
+      "url": "chapters/04-operating-system.html#操作系统家族小史拓展阅读",
+      "body": ""
+    },
+    {
+      "id": "04-operating-system-章节结尾联系与展望",
+      "title": "章节结尾：联系与展望",
+      "chapter": "05",
+      "chapterTitle": "第三章：操作系统——看不见的管家",
+      "url": "chapters/04-operating-system.html#章节结尾联系与展望",
+      "body": ""
+    },
+    {
+      "id": "04-operating-system-本章与前后章节的联系",
+      "title": "本章与前后章节的联系",
+      "chapter": "05",
+      "chapterTitle": "第三章：操作系统——看不见的管家",
+      "url": "chapters/04-operating-system.html#本章与前后章节的联系",
+      "body": ""
+    },
+    {
+      "id": "04-operating-system-扩展资源",
+      "title": "扩展资源",
+      "chapter": "05",
+      "chapterTitle": "第三章：操作系统——看不见的管家",
+      "url": "chapters/04-operating-system.html#扩展资源",
+      "body": ""
+    },
+    {
+      "id": "05-motherboard-soc",
+      "title": "第四章：完整拼图——主板、芯片组与融合架构",
+      "chapter": "06",
+      "chapterTitle": "第四章：完整拼图——主板、芯片组与融合架构",
+      "url": "chapters/05-motherboard-soc.html",
+      "body": "\n   \n\n【上章回顾】上一章，我们深入了操作系统这位\"看不见的管家\"——从进程调度到文件系统，从驱动程序到资源管理，你已经知道了软件层面是如何指挥硬件干活的。但我们留下了一个关键问题：CPU、内存、硬盘、GPU……这些部件物理上到底是怎么连在一起的？谁来决定它们的\"座位安排\"？\n\n【本章目标】这一章会解答：\n  主板上那些密密麻麻的插槽和接口，各自承担什么角色\n  芯片组到底是什么，为什么买主板要先看芯片组型号\n  苹果M系列芯片为什么能\"以小博大\"，SoC架构到底革命了什么\n  电源、散热、网卡这些\"配角\"为什么也能决定整机的命运\n\n  预计阅读时间：25分钟  \n\n   \n\n   4.1 主板：让一切连接的骨架\n\n    🎬 从一个装机翻车故事说起\n\n小张在某东下单了一套\"梦想配置\"：Intel Core i7 14700K处理器、32GB DDR5内存、RTX 4070显卡。零件到货，拆箱，兴奋地开始组装。CPU放进去——等等，放不进去。仔细一看，他买的主板是AMD AM5接口的，而i7 14700K需要Intel LGA 1700接口。\n\n这不像USB线插错口那么简单——CPU插座的物理形状和针脚数量都完全不同。小张花了三天退换货，从此记住了一个教训：  装电脑，第一步不是选CPU，而是理解主板  。\n\n主板（Motherboard），有时也叫\"主机板\"或者直接音译为\"母板\"，是电脑里最大的那块电路板。如果把整台电脑比作一座城市，那主板就是城市的  道路网络和基础设施  。CPU是市政府，内存是办公区，硬盘是仓库区，GPU是工厂区——但如果没有道路把它们连起来，这座城市就只是一堆孤立的建筑。\n\n    🔍 主板上都有什么？一次\"看图识板\"\n\n拿起一块主板（或者搜一张高清图），你会发现它上面零部件密密麻麻，初看很唬人。但其实主要部分就那么几块，我们逐个认识：\n\n     1. CPU插座（Socket）\n\n这是主板正中央最醒目的区域。一个方形的金属框架，通常有一个杠杆或盖板来固定CPU。\n\n  关键知识：每一代CPU都有自己对应的插座类型，物理上不兼容。  \n\n  插座类型   对应CPU   针脚数   备注  \n                                     \n  LGA 1700   Intel 12/13/14代酷睿   1700   2021 2024年主流  \n  LGA 1851   Intel Core Ultra 200S（Arrow Lake）   1851   2024年底推出  \n  AM5   AMD Ryzen 7000/8000/9000系列   1718   AMD承诺长期支持  \n  AM4   AMD Ryzen 1000 5000系列   1331   已停产但仍有大量存量  \n\n这里有一个关键区别：\n    Intel的LGA（Land Grid Array）  ：针脚在主板插座上，CPU底部是平坦的触点。\n    AMD的AM4用PGA（Pin Grid Array）  ：针脚在CPU上。但  AM5已经改用LGA  了。\n\n  为什么要纠结这个？因为PGA的针脚在CPU上，如果你手抖弯了一根针，你报废的是几千块的CPU。而LGA的针脚在主板上，虽然弯了也很麻烦，但主板通常比CPU便宜。所以AMD转向LGA也是一种务实的选择。\n\n这也解释了小张的悲剧——LGA 1700和AM5不仅针脚数不同（1700 vs 1718），连针脚的排列方式都完全不一样，物理上根本插不进去。  这是硬件设计故意为之——防止你把错误的CPU装到不兼容的主板上，损坏硬件。  \n\n     2. 内存插槽（DIMM Slots）\n\nCPU插座旁边，通常有2到4根长条形插槽，这就是内存条的家。\n\n现代主板的内存插槽分两种规格：\n    DDR4插槽  ：288针，缺口位置偏左\n    DDR5插槽  ：288针，但  缺口位置偏中间  \n\n虽然针脚数相同，但缺口位置不同意味着DDR4内存条物理上插不进DDR5插槽，反之亦然。又一个\"防呆设计\"。\n\n  双通道（Dual Channel）  ：大多数主板支持双通道内存模式。如果你有两根内存条，应该插在颜色相同的两个插槽中（通常是第1和第3，或第2和第4），这样可以让内存带宽翻倍。\n\n  ❌   常见误区  ：很多人以为4根8GB比2根16GB好，因为\"看起来更多条\"。\n \n  ✅   正确理解  ：对于消费级主板（双通道），2根16GB和4根16GB都只能实现双通道，但4根满插可能导致内存超频能力下降，因为内存控制器的负担增加了。大多数场景下，用  两根内存条  组双通道是最佳方案。\n\n     3. PCIe插槽——扩展的核心\n"
+    },
+    {
+      "id": "05-motherboard-soc-41-主板让一切连接的骨架",
+      "title": "4.1 主板：让一切连接的骨架",
+      "chapter": "06",
+      "chapterTitle": "第四章：完整拼图——主板、芯片组与融合架构",
+      "url": "chapters/05-motherboard-soc.html#41-主板让一切连接的骨架",
+      "body": ""
+    },
+    {
+      "id": "05-motherboard-soc--从一个装机翻车故事说起",
+      "title": "🎬 从一个装机翻车故事说起",
+      "chapter": "06",
+      "chapterTitle": "第四章：完整拼图——主板、芯片组与融合架构",
+      "url": "chapters/05-motherboard-soc.html#-从一个装机翻车故事说起",
+      "body": ""
+    },
+    {
+      "id": "05-motherboard-soc--主板上都有什么一次quot看图识板quot",
+      "title": "🔍 主板上都有什么？一次&quot;看图识板&quot;",
+      "chapter": "06",
+      "chapterTitle": "第四章：完整拼图——主板、芯片组与融合架构",
+      "url": "chapters/05-motherboard-soc.html#-主板上都有什么一次quot看图识板quot",
+      "body": ""
+    },
+    {
+      "id": "05-motherboard-soc--主板上的quot公路系统quot",
+      "title": "🛤️ 主板上的&quot;公路系统&quot;",
+      "chapter": "06",
+      "chapterTitle": "第四章：完整拼图——主板、芯片组与融合架构",
+      "url": "chapters/05-motherboard-soc.html#-主板上的quot公路系统quot",
+      "body": ""
+    },
+    {
+      "id": "05-motherboard-soc--动手环节认识你自己的主板",
+      "title": "🛠️ 动手环节：认识你自己的主板",
+      "chapter": "06",
+      "chapterTitle": "第四章：完整拼图——主板、芯片组与融合架构",
+      "url": "chapters/05-motherboard-soc.html#-动手环节认识你自己的主板",
+      "body": ""
+    },
+    {
+      "id": "05-motherboard-soc--本节要点",
+      "title": "✅ 本节要点",
+      "chapter": "06",
+      "chapterTitle": "第四章：完整拼图——主板、芯片组与融合架构",
+      "url": "chapters/05-motherboard-soc.html#-本节要点",
+      "body": ""
+    },
+    {
+      "id": "05-motherboard-soc-42-芯片组被忽视的协调者",
+      "title": "4.2 芯片组：被忽视的协调者",
+      "chapter": "06",
+      "chapterTitle": "第四章：完整拼图——主板、芯片组与融合架构",
+      "url": "chapters/05-motherboard-soc.html#42-芯片组被忽视的协调者",
+      "body": ""
+    },
+    {
+      "id": "05-motherboard-soc--一个困惑为什么同品牌的主板价格差好几倍",
+      "title": "🎬 一个困惑：为什么同品牌的主板价格差好几倍？",
+      "chapter": "06",
+      "chapterTitle": "第四章：完整拼图——主板、芯片组与融合架构",
+      "url": "chapters/05-motherboard-soc.html#-一个困惑为什么同品牌的主板价格差好几倍",
+      "body": ""
+    },
+    {
+      "id": "05-motherboard-soc--芯片组到底是什么",
+      "title": "🧠 芯片组到底是什么？",
+      "chapter": "06",
+      "chapterTitle": "第四章：完整拼图——主板、芯片组与融合架构",
+      "url": "chapters/05-motherboard-soc.html#-芯片组到底是什么",
+      "body": ""
+    },
+    {
+      "id": "05-motherboard-soc--简简历史从quot南北桥quot到quot单芯片quot",
+      "title": "📜 简简历史：从&quot;南北桥&quot;到&quot;单芯片&quot;",
+      "chapter": "06",
+      "chapterTitle": "第四章：完整拼图——主板、芯片组与融合架构",
+      "url": "chapters/05-motherboard-soc.html#-简简历史从quot南北桥quot到quot单芯片quot",
+      "body": ""
+    },
+    {
+      "id": "05-motherboard-soc--dmicpu和芯片组之间的quot专用通道quot",
+      "title": "🔗 DMI：CPU和芯片组之间的&quot;专用通道&quot;",
+      "chapter": "06",
+      "chapterTitle": "第四章：完整拼图——主板、芯片组与融合架构",
+      "url": "chapters/05-motherboard-soc.html#-dmicpu和芯片组之间的quot专用通道quot",
+      "body": ""
+    },
+    {
+      "id": "05-motherboard-soc--intel与amd的芯片组分级体系",
+      "title": "🏷️ Intel与AMD的芯片组分级体系",
+      "chapter": "06",
+      "chapterTitle": "第四章：完整拼图——主板、芯片组与融合架构",
+      "url": "chapters/05-motherboard-soc.html#-intel与amd的芯片组分级体系",
+      "body": ""
+    },
+    {
+      "id": "05-motherboard-soc--常见误区",
+      "title": "❌ 常见误区",
+      "chapter": "06",
+      "chapterTitle": "第四章：完整拼图——主板、芯片组与融合架构",
+      "url": "chapters/05-motherboard-soc.html#-常见误区",
+      "body": ""
+    },
+    {
+      "id": "05-motherboard-soc--芯片组与主板的关系",
+      "title": "🧩 芯片组与主板的关系",
+      "chapter": "06",
+      "chapterTitle": "第四章：完整拼图——主板、芯片组与融合架构",
+      "url": "chapters/05-motherboard-soc.html#-芯片组与主板的关系",
+      "body": ""
+    },
+    {
+      "id": "05-motherboard-soc--动手环节查看你的芯片组信息",
+      "title": "🛠️ 动手环节：查看你的芯片组信息",
+      "chapter": "06",
+      "chapterTitle": "第四章：完整拼图——主板、芯片组与融合架构",
+      "url": "chapters/05-motherboard-soc.html#-动手环节查看你的芯片组信息",
+      "body": ""
+    },
+    {
+      "id": "05-motherboard-soc-05-motherboard-soc--本节要点-2",
+      "title": "✅ 本节要点",
+      "chapter": "06",
+      "chapterTitle": "第四章：完整拼图——主板、芯片组与融合架构",
+      "url": "chapters/05-motherboard-soc.html#05-motherboard-soc--本节要点-2",
+      "body": ""
+    },
+    {
+      "id": "05-motherboard-soc-43-苹果的soc革命m系列芯片",
+      "title": "4.3 苹果的SoC革命：M系列芯片",
+      "chapter": "06",
+      "chapterTitle": "第四章：完整拼图——主板、芯片组与融合架构",
+      "url": "chapters/05-motherboard-soc.html#43-苹果的soc革命m系列芯片",
+      "body": ""
+    },
+    {
+      "id": "05-motherboard-soc--2020年一场quot不可能quot的发布会",
+      "title": "🎬 2020年，一场&quot;不可能&quot;的发布会",
+      "chapter": "06",
+      "chapterTitle": "第四章：完整拼图——主板、芯片组与融合架构",
+      "url": "chapters/05-motherboard-soc.html#-2020年一场quot不可能quot的发布会",
+      "body": ""
+    },
+    {
+      "id": "05-motherboard-soc--什么是soc为什么它那么厉害",
+      "title": "🧠 什么是SoC？为什么它那么厉害？",
+      "chapter": "06",
+      "chapterTitle": "第四章：完整拼图——主板、芯片组与融合架构",
+      "url": "chapters/05-motherboard-soc.html#-什么是soc为什么它那么厉害",
+      "body": ""
+    },
+    {
+      "id": "05-motherboard-soc--apple-m系列芯片的内部结构",
+      "title": "🏗️ Apple M系列芯片的内部结构",
+      "chapter": "06",
+      "chapterTitle": "第四章：完整拼图——主板、芯片组与融合架构",
+      "url": "chapters/05-motherboard-soc.html#-apple-m系列芯片的内部结构",
+      "body": ""
+    },
+    {
+      "id": "05-motherboard-soc--统一内存架构umam系列的核心秘密",
+      "title": "💡 统一内存架构（UMA）：M系列的核心秘密",
+      "chapter": "06",
+      "chapterTitle": "第四章：完整拼图——主板、芯片组与融合架构",
+      "url": "chapters/05-motherboard-soc.html#-统一内存架构umam系列的核心秘密",
+      "body": ""
+    },
+    {
+      "id": "05-motherboard-soc--arm指令集m芯片的另一个秘密武器",
+      "title": "🔬 ARM指令集：M芯片的另一个秘密武器",
+      "chapter": "06",
+      "chapterTitle": "第四章：完整拼图——主板、芯片组与融合架构",
+      "url": "chapters/05-motherboard-soc.html#-arm指令集m芯片的另一个秘密武器",
+      "body": ""
+    },
+    {
+      "id": "05-motherboard-soc--m系列-vs-传统pc实际对比",
+      "title": "📊 M系列 vs 传统PC：实际对比",
+      "chapter": "06",
+      "chapterTitle": "第四章：完整拼图——主板、芯片组与融合架构",
+      "url": "chapters/05-motherboard-soc.html#-m系列-vs-传统pc实际对比",
+      "body": ""
+    },
+    {
+      "id": "05-motherboard-soc--soc不只是苹果的专利",
+      "title": "🌍 SoC不只是苹果的专利",
+      "chapter": "06",
+      "chapterTitle": "第四章：完整拼图——主板、芯片组与融合架构",
+      "url": "chapters/05-motherboard-soc.html#-soc不只是苹果的专利",
+      "body": ""
+    },
+    {
+      "id": "05-motherboard-soc--动手环节如果你有mac来看看你的芯片",
+      "title": "🛠️ 动手环节：如果你有Mac，来看看你的芯片",
+      "chapter": "06",
+      "chapterTitle": "第四章：完整拼图——主板、芯片组与融合架构",
+      "url": "chapters/05-motherboard-soc.html#-动手环节如果你有mac来看看你的芯片",
+      "body": ""
+    },
+    {
+      "id": "05-motherboard-soc-05-motherboard-soc--本节要点-3",
+      "title": "✅ 本节要点",
+      "chapter": "06",
+      "chapterTitle": "第四章：完整拼图——主板、芯片组与融合架构",
+      "url": "chapters/05-motherboard-soc.html#05-motherboard-soc--本节要点-3",
+      "body": ""
+    },
+    {
+      "id": "05-motherboard-soc-44-其他关键部件电源散热网卡不起眼的quot救命稻草quot",
+      "title": "4.4 其他关键部件：电源、散热、网卡——不起眼的&quot;救命稻草&quot;",
+      "chapter": "06",
+      "chapterTitle": "第四章：完整拼图——主板、芯片组与融合架构",
+      "url": "chapters/05-motherboard-soc.html#44-其他关键部件电源散热网卡不起眼的quot救命稻草quot",
+      "body": ""
+    },
+    {
+      "id": "05-motherboard-soc--一个真实惨案突然黑屏的quot完美配置quot",
+      "title": "🎬 一个真实惨案：突然黑屏的&quot;完美配置&quot;",
+      "chapter": "06",
+      "chapterTitle": "第四章：完整拼图——主板、芯片组与融合架构",
+      "url": "chapters/05-motherboard-soc.html#-一个真实惨案突然黑屏的quot完美配置quot",
+      "body": ""
+    },
+    {
+      "id": "05-motherboard-soc--电源psu整台电脑的心脏",
+      "title": "⚡ 电源（PSU）：整台电脑的心脏",
+      "chapter": "06",
+      "chapterTitle": "第四章：完整拼图——主板、芯片组与融合架构",
+      "url": "chapters/05-motherboard-soc.html#-电源psu整台电脑的心脏",
+      "body": ""
+    },
+    {
+      "id": "05-motherboard-soc--散热把热量带走的关键",
+      "title": "🌬️ 散热：把热量带走的关键",
+      "chapter": "06",
+      "chapterTitle": "第四章：完整拼图——主板、芯片组与融合架构",
+      "url": "chapters/05-motherboard-soc.html#-散热把热量带走的关键",
+      "body": ""
+    },
+    {
+      "id": "05-motherboard-soc--网卡连接世界的窗口",
+      "title": "🌐 网卡：连接世界的窗口",
+      "chapter": "06",
+      "chapterTitle": "第四章：完整拼图——主板、芯片组与融合架构",
+      "url": "chapters/05-motherboard-soc.html#-网卡连接世界的窗口",
+      "body": ""
+    },
+    {
+      "id": "05-motherboard-soc--机箱不仅仅是一个盒子",
+      "title": "🖥️ 机箱：不仅仅是一个盒子",
+      "chapter": "06",
+      "chapterTitle": "第四章：完整拼图——主板、芯片组与融合架构",
+      "url": "chapters/05-motherboard-soc.html#-机箱不仅仅是一个盒子",
+      "body": ""
+    },
+    {
+      "id": "05-motherboard-soc--显示器接口hdmi-vs-displayport",
+      "title": "📺 显示器接口：HDMI vs DisplayPort",
+      "chapter": "06",
+      "chapterTitle": "第四章：完整拼图——主板、芯片组与融合架构",
+      "url": "chapters/05-motherboard-soc.html#-显示器接口hdmi-vs-displayport",
+      "body": ""
+    },
+    {
+      "id": "05-motherboard-soc-05-motherboard-soc--常见误区-2",
+      "title": "❌ 常见误区",
+      "chapter": "06",
+      "chapterTitle": "第四章：完整拼图——主板、芯片组与融合架构",
+      "url": "chapters/05-motherboard-soc.html#05-motherboard-soc--常见误区-2",
+      "body": ""
+    },
+    {
+      "id": "05-motherboard-soc--动手环节检查你的电源和散热状态",
+      "title": "🛠️ 动手环节：检查你的电源和散热状态",
+      "chapter": "06",
+      "chapterTitle": "第四章：完整拼图——主板、芯片组与融合架构",
+      "url": "chapters/05-motherboard-soc.html#-动手环节检查你的电源和散热状态",
+      "body": ""
+    },
+    {
+      "id": "05-motherboard-soc-05-motherboard-soc--本节要点-4",
+      "title": "✅ 本节要点",
+      "chapter": "06",
+      "chapterTitle": "第四章：完整拼图——主板、芯片组与融合架构",
+      "url": "chapters/05-motherboard-soc.html#05-motherboard-soc--本节要点-4",
+      "body": ""
+    },
+    {
+      "id": "05-motherboard-soc-本章总结从零散部件到完整系统",
+      "title": "本章总结：从零散部件到完整系统",
+      "chapter": "06",
+      "chapterTitle": "第四章：完整拼图——主板、芯片组与融合架构",
+      "url": "chapters/05-motherboard-soc.html#本章总结从零散部件到完整系统",
+      "body": ""
+    },
+    {
+      "id": "05-motherboard-soc-回顾这一章我们走过了什么",
+      "title": "回顾：这一章我们走过了什么",
+      "chapter": "06",
+      "chapterTitle": "第四章：完整拼图——主板、芯片组与融合架构",
+      "url": "chapters/05-motherboard-soc.html#回顾这一章我们走过了什么",
+      "body": ""
+    },
+    {
+      "id": "05-motherboard-soc-一个更宏观的视角",
+      "title": "一个更宏观的视角",
+      "chapter": "06",
+      "chapterTitle": "第四章：完整拼图——主板、芯片组与融合架构",
+      "url": "chapters/05-motherboard-soc.html#一个更宏观的视角",
+      "body": ""
+    },
+    {
+      "id": "05-motherboard-soc--扩展资源",
+      "title": "📚 扩展资源",
+      "chapter": "06",
+      "chapterTitle": "第四章：完整拼图——主板、芯片组与融合架构",
+      "url": "chapters/05-motherboard-soc.html#-扩展资源",
+      "body": ""
+    },
+    {
+      "id": "06-buying-guide",
+      "title": "第五章：实战选购——从需求到配置",
+      "chapter": "07",
+      "chapterTitle": "第五章：实战选购——从需求到配置",
+      "url": "chapters/06-buying-guide.html",
+      "body": "\n   \n\n【上章回顾】上一章我们拆解了主板、芯片组和 SoC 的世界，理解了这些\"骨架\"和\"协调者\"如何把 CPU、内存、硬盘串联成一台完整的电脑。但一个关键问题始终悬而未决：  知道了这些原理之后，我该怎么选电脑？  \n\n【本章目标】这一章会以实战为核心，带你从\"知道每个零件是什么\"走向\"知道该怎么买\"。我们不讨论玄学，只聊真实的需求匹配、真实的参数解读、真实的购买策略。\n\n   \n\n   本章引言\n\n你打开京东，搜索\"笔记本电脑\"，弹出来 5000 多个结果。\n\n轻薄本、全能本、游戏本、商务本、创作本——分类就有五六种。点进去一看，参数表密密麻麻：i7 14700H、RTX 4060 Laptop、16GB LPDDR5x 7467MHz、2560×1600 165Hz……每个词你可能都在前几章见过，但组合在一起，你依然不知道  这台机器适不适合你  。\n\n更要命的是，价格从 3000 到 30000，跨度十倍。贵的一定好吗？便宜的一定坑吗？\"性价比\"这三个字到底意味着什么？\n\n这一章的目标就是打通从\"理论\"到\"行动\"的最后一公里。\n\n  读完本章，你会理解：  \n  ✅ 轻薄本、游戏本与台式机各自的设计哲学和适用人群\n  ✅ Windows PC 与 Mac 的真实差异，以及选择背后的逻辑\n  ✅ 如何逐项拆解一份参数表，判断每个指标的价值\n  ✅ 品牌机、组装机和二手机的选购策略与避坑指南\n\n  预计阅读时间  ：35–40 分钟\n\n   \n\n   5.1 轻薄本 vs 游戏本 vs 台式机：选形态就是选生活方式\n\n    🎬 开场：一个大一新生的纠结\n\n开学前一个月，你的购物车里躺着三台电脑：\n\n  一台   1.2kg 的轻薄本  ，续航 15 小时，带去图书馆毫无压力，售价 5999 元；\n  一台   2.5kg 的游戏本  ，RTX 4060 显卡，能在宿舍畅玩《黑神话：悟空》，售价 7499 元；\n  一套   台式机配置单  ，同价位性能最强，但搬不进图书馆，售价 5500 元（不含显示器）。\n\n你妈问你：\"到底买哪个？\"你说：\"我也不知道。\"\n\n这不是一个技术问题，而是一个  生活方式问题  。让我们把三种形态的电脑放在解剖台上，看看它们的设计哲学到底有什么不同。\n\n   \n\n    📐 核心概念：三种形态的本质差异\n\n     理解一个根本矛盾：性能 vs 便携 vs 散热\n\n在第二章我们讲过，CPU 和 GPU 工作时会产生大量热量。在第四章我们提到，散热系统的设计直接决定了芯片能释放多少性能。现在，这个知识要派上用场了。\n\n电脑设计中有一个经典的\"不可能三角\"：\n\n   \n        性能\n       /    \\\n      /      \\\n   便携 ———— 散热\n   \n\n你不可能同时拥有极致的性能、极致的便携和极致的散热。每一种电脑形态，都是在这个三角形中选择了不同的平衡点。\n\n     轻薄本：便携优先，性能够用\n\n  设计哲学  ：把电脑做成\"随身工具\"，像课本一样塞进书包，全天候使用不需要找插座。\n\n  核心取舍  ：\n\n  维度   轻薄本的选择  \n :    :    \n  重量   1.0–1.5kg（含电源适配器约 1.5–2.0kg）  \n  厚度   12–16mm  \n  CPU   低功耗版（TDP 通常 15–28W），如 Intel Core Ultra 5 125U、AMD Ryzen 7 8840U  \n  GPU   核显（集成显卡）或入门级独显（如 MX 570A）  \n  续航   8–15 小时（日常使用）  \n  风扇噪音   日常使用几乎无声  \n  典型价格   4000–8000 元（2025 年主流价位）  \n\n  谁适合轻薄本？  \n\n  经常在教室、图书馆、咖啡厅之间迁移的同学\n  主要用途是写文档、做 PPT、浏览网页、看网课、写代码（非大型项目编译）\n  不玩大型 3A 游戏，或者可以接受\"游戏用别的设备\"\n  看重续航，讨厌随身带大号充电器\n\n  一个直观的类比  ：轻薄本就像一辆  城市代步车  ——油耗低、停车方便、堵车不慌，但你别指望它去越野或者拉货。\n\n  💡   关于\"全能本\"  ：近两年市场上出现了一个新品类叫\"全能本\"或\"高性能轻薄本\"，重量在 1.5–1.8kg，配备 RTX 4050/4060 级别独显，试图在轻薄和性能之间取一个折中。代表产品如联想小新 Pro 16、华硕无畏 Pro 系列等。它们确实是不错的选择，但请记住：物理规律不可违背，折中意味着两边都不会做到极致。\n\n     游戏本：性能优先，牺牲便携\n\n  设计哲学  ：在笔记本形态里塞入尽可能强的性能。你可以带着它移动，但它更像一"
+    },
+    {
+      "id": "06-buying-guide-本章引言",
+      "title": "本章引言",
+      "chapter": "07",
+      "chapterTitle": "第五章：实战选购——从需求到配置",
+      "url": "chapters/06-buying-guide.html#本章引言",
+      "body": ""
+    },
+    {
+      "id": "06-buying-guide-51-轻薄本-vs-游戏本-vs-台式机选形态就是选生活方式",
+      "title": "5.1 轻薄本 vs 游戏本 vs 台式机：选形态就是选生活方式",
+      "chapter": "07",
+      "chapterTitle": "第五章：实战选购——从需求到配置",
+      "url": "chapters/06-buying-guide.html#51-轻薄本-vs-游戏本-vs-台式机选形态就是选生活方式",
+      "body": ""
+    },
+    {
+      "id": "06-buying-guide--开场一个大一新生的纠结",
+      "title": "🎬 开场：一个大一新生的纠结",
+      "chapter": "07",
+      "chapterTitle": "第五章：实战选购——从需求到配置",
+      "url": "chapters/06-buying-guide.html#-开场一个大一新生的纠结",
+      "body": ""
+    },
+    {
+      "id": "06-buying-guide--核心概念三种形态的本质差异",
+      "title": "📐 核心概念：三种形态的本质差异",
+      "chapter": "07",
+      "chapterTitle": "第五章：实战选购——从需求到配置",
+      "url": "chapters/06-buying-guide.html#-核心概念三种形态的本质差异",
+      "body": ""
+    },
+    {
+      "id": "06-buying-guide--同等预算下的性能对比",
+      "title": "💰 同等预算下的性能对比",
+      "chapter": "07",
+      "chapterTitle": "第五章：实战选购——从需求到配置",
+      "url": "chapters/06-buying-guide.html#-同等预算下的性能对比",
+      "body": ""
+    },
+    {
+      "id": "06-buying-guide--常见误区",
+      "title": "❌ 常见误区",
+      "chapter": "07",
+      "chapterTitle": "第五章：实战选购——从需求到配置",
+      "url": "chapters/06-buying-guide.html#-常见误区",
+      "body": ""
+    },
+    {
+      "id": "06-buying-guide--动手环节评估你自己的需求",
+      "title": "🔧 动手环节：评估你自己的需求",
+      "chapter": "07",
+      "chapterTitle": "第五章：实战选购——从需求到配置",
+      "url": "chapters/06-buying-guide.html#-动手环节评估你自己的需求",
+      "body": ""
+    },
+    {
+      "id": "06-buying-guide--本节要点",
+      "title": "✅ 本节要点",
+      "chapter": "07",
+      "chapterTitle": "第五章：实战选购——从需求到配置",
+      "url": "chapters/06-buying-guide.html#-本节要点",
+      "body": ""
+    },
+    {
+      "id": "06-buying-guide-52-windows-pc-vs-mac不只是操作系统的战争",
+      "title": "5.2 Windows PC vs Mac：不只是操作系统的战争",
+      "chapter": "07",
+      "chapterTitle": "第五章：实战选购——从需求到配置",
+      "url": "chapters/06-buying-guide.html#52-windows-pc-vs-mac不只是操作系统的战争",
+      "body": ""
+    },
+    {
+      "id": "06-buying-guide--开场宿舍里的quot信仰之争quot",
+      "title": "🎬 开场：宿舍里的&quot;信仰之争&quot;",
+      "chapter": "07",
+      "chapterTitle": "第五章：实战选购——从需求到配置",
+      "url": "chapters/06-buying-guide.html#-开场宿舍里的quot信仰之争quot",
+      "body": ""
+    },
+    {
+      "id": "06-buying-guide--核心概念两条完全不同的技术路线",
+      "title": "📐 核心概念：两条完全不同的技术路线",
+      "chapter": "07",
+      "chapterTitle": "第五章：实战选购——从需求到配置",
+      "url": "chapters/06-buying-guide.html#-核心概念两条完全不同的技术路线",
+      "body": ""
+    },
+    {
+      "id": "06-buying-guide--实际使用体验对比",
+      "title": "💻 实际使用体验对比",
+      "chapter": "07",
+      "chapterTitle": "第五章：实战选购——从需求到配置",
+      "url": "chapters/06-buying-guide.html#-实际使用体验对比",
+      "body": ""
+    },
+    {
+      "id": "06-buying-guide--科大同学的特殊考量",
+      "title": "🎓 科大同学的特殊考量",
+      "chapter": "07",
+      "chapterTitle": "第五章：实战选购——从需求到配置",
+      "url": "chapters/06-buying-guide.html#-科大同学的特殊考量",
+      "body": ""
+    },
+    {
+      "id": "06-buying-guide--那么到底该选谁一张决策流程图",
+      "title": "🤔 那么到底该选谁？——一张决策流程图",
+      "chapter": "07",
+      "chapterTitle": "第五章：实战选购——从需求到配置",
+      "url": "chapters/06-buying-guide.html#-那么到底该选谁一张决策流程图",
+      "body": ""
+    },
+    {
+      "id": "06-buying-guide-06-buying-guide--常见误区-2",
+      "title": "❌ 常见误区",
+      "chapter": "07",
+      "chapterTitle": "第五章：实战选购——从需求到配置",
+      "url": "chapters/06-buying-guide.html#06-buying-guide--常见误区-2",
+      "body": ""
+    },
+    {
+      "id": "06-buying-guide--动手环节了解你现在的电脑",
+      "title": "🔧 动手环节：了解你现在的电脑",
+      "chapter": "07",
+      "chapterTitle": "第五章：实战选购——从需求到配置",
+      "url": "chapters/06-buying-guide.html#-动手环节了解你现在的电脑",
+      "body": ""
+    },
+    {
+      "id": "06-buying-guide-06-buying-guide--本节要点-2",
+      "title": "✅ 本节要点",
+      "chapter": "07",
+      "chapterTitle": "第五章：实战选购——从需求到配置",
+      "url": "chapters/06-buying-guide.html#06-buying-guide--本节要点-2",
+      "body": ""
+    },
+    {
+      "id": "06-buying-guide-53-看懂电脑参数表每一行都在说什么",
+      "title": "5.3 看懂电脑参数表：每一行都在说什么",
+      "chapter": "07",
+      "chapterTitle": "第五章：实战选购——从需求到配置",
+      "url": "chapters/06-buying-guide.html#53-看懂电脑参数表每一行都在说什么",
+      "body": ""
+    },
+    {
+      "id": "06-buying-guide--开场那张让人头疼的表",
+      "title": "🎬 开场：那张让人头疼的表",
+      "chapter": "07",
+      "chapterTitle": "第五章：实战选购——从需求到配置",
+      "url": "chapters/06-buying-guide.html#-开场那张让人头疼的表",
+      "body": ""
+    },
+    {
+      "id": "06-buying-guide--核心概念逐项解读参数表",
+      "title": "📐 核心概念：逐项解读参数表",
+      "chapter": "07",
+      "chapterTitle": "第五章：实战选购——从需求到配置",
+      "url": "chapters/06-buying-guide.html#-核心概念逐项解读参数表",
+      "body": ""
+    },
+    {
+      "id": "06-buying-guide--一张quot参数优先级quot速查表",
+      "title": "📋 一张&quot;参数优先级&quot;速查表",
+      "chapter": "07",
+      "chapterTitle": "第五章：实战选购——从需求到配置",
+      "url": "chapters/06-buying-guide.html#-一张quot参数优先级quot速查表",
+      "body": ""
+    },
+    {
+      "id": "06-buying-guide-06-buying-guide--常见误区-3",
+      "title": "❌ 常见误区",
+      "chapter": "07",
+      "chapterTitle": "第五章：实战选购——从需求到配置",
+      "url": "chapters/06-buying-guide.html#06-buying-guide--常见误区-3",
+      "body": ""
+    },
+    {
+      "id": "06-buying-guide--动手环节拆解你自己电脑的参数",
+      "title": "🔧 动手环节：拆解你自己电脑的参数",
+      "chapter": "07",
+      "chapterTitle": "第五章：实战选购——从需求到配置",
+      "url": "chapters/06-buying-guide.html#-动手环节拆解你自己电脑的参数",
+      "body": ""
+    },
+    {
+      "id": "06-buying-guide-06-buying-guide--本节要点-3",
+      "title": "✅ 本节要点",
+      "chapter": "07",
+      "chapterTitle": "第五章：实战选购——从需求到配置",
+      "url": "chapters/06-buying-guide.html#06-buying-guide--本节要点-3",
+      "body": ""
+    },
+    {
+      "id": "06-buying-guide-54-二手组装品牌机的选择钱怎么花最值",
+      "title": "5.4 二手、组装、品牌机的选择：钱怎么花最值",
+      "chapter": "07",
+      "chapterTitle": "第五章：实战选购——从需求到配置",
+      "url": "chapters/06-buying-guide.html#54-二手组装品牌机的选择钱怎么花最值",
+      "body": ""
+    },
+    {
+      "id": "06-buying-guide--开场三条路三种风险",
+      "title": "🎬 开场：三条路，三种风险",
+      "chapter": "07",
+      "chapterTitle": "第五章：实战选购——从需求到配置",
+      "url": "chapters/06-buying-guide.html#-开场三条路三种风险",
+      "body": ""
+    },
+    {
+      "id": "06-buying-guide--核心概念三种购买渠道的本质区别",
+      "title": "📐 核心概念：三种购买渠道的本质区别",
+      "chapter": "07",
+      "chapterTitle": "第五章：实战选购——从需求到配置",
+      "url": "chapters/06-buying-guide.html#-核心概念三种购买渠道的本质区别",
+      "body": ""
+    },
+    {
+      "id": "06-buying-guide--三种方式的决策对比",
+      "title": "🤔 三种方式的决策对比",
+      "chapter": "07",
+      "chapterTitle": "第五章：实战选购——从需求到配置",
+      "url": "chapters/06-buying-guide.html#-三种方式的决策对比",
+      "body": ""
+    },
+    {
+      "id": "06-buying-guide--购买渠道指南",
+      "title": "🛒 购买渠道指南",
+      "chapter": "07",
+      "chapterTitle": "第五章：实战选购——从需求到配置",
+      "url": "chapters/06-buying-guide.html#-购买渠道指南",
+      "body": ""
+    },
+    {
+      "id": "06-buying-guide-06-buying-guide--常见误区-4",
+      "title": "❌ 常见误区",
+      "chapter": "07",
+      "chapterTitle": "第五章：实战选购——从需求到配置",
+      "url": "chapters/06-buying-guide.html#06-buying-guide--常见误区-4",
+      "body": ""
+    },
+    {
+      "id": "06-buying-guide--动手环节模拟一次购买决策",
+      "title": "🔧 动手环节：模拟一次购买决策",
+      "chapter": "07",
+      "chapterTitle": "第五章：实战选购——从需求到配置",
+      "url": "chapters/06-buying-guide.html#-动手环节模拟一次购买决策",
+      "body": ""
+    },
+    {
+      "id": "06-buying-guide-06-buying-guide--本节要点-4",
+      "title": "✅ 本节要点",
+      "chapter": "07",
+      "chapterTitle": "第五章：实战选购——从需求到配置",
+      "url": "chapters/06-buying-guide.html#06-buying-guide--本节要点-4",
+      "body": ""
+    },
+    {
+      "id": "06-buying-guide-本章总结",
+      "title": "本章总结",
+      "chapter": "07",
+      "chapterTitle": "第五章：实战选购——从需求到配置",
+      "url": "chapters/06-buying-guide.html#本章总结",
+      "body": ""
+    },
+    {
+      "id": "06-buying-guide-从quot不懂参数quot到quot心中有数quot",
+      "title": "从&quot;不懂参数&quot;到&quot;心中有数&quot;",
+      "chapter": "07",
+      "chapterTitle": "第五章：实战选购——从需求到配置",
+      "url": "chapters/06-buying-guide.html#从quot不懂参数quot到quot心中有数quot",
+      "body": ""
+    },
+    {
+      "id": "06-buying-guide-与其他章节的联系",
+      "title": "与其他章节的联系",
+      "chapter": "07",
+      "chapterTitle": "第五章：实战选购——从需求到配置",
+      "url": "chapters/06-buying-guide.html#与其他章节的联系",
+      "body": ""
+    },
+    {
+      "id": "06-buying-guide-延伸资源",
+      "title": "延伸资源",
+      "chapter": "07",
+      "chapterTitle": "第五章：实战选购——从需求到配置",
+      "url": "chapters/06-buying-guide.html#延伸资源",
+      "body": ""
+    },
+    {
+      "id": "07-system-cloud",
+      "title": "第六章：系统视角——从单机到云端",
+      "chapter": "08",
+      "chapterTitle": "第六章：系统视角——从单机到云端",
+      "url": "chapters/07-system-cloud.html",
+      "body": "\n<aside  📋\n\n  【上章回顾】   第五章里，我们从实战角度出发，学会了如何根据自己的需求挑选一台合适的电脑——轻薄本、游戏本还是台式机，Windows 还是 Mac，品牌机还是自己组装。你已经掌握了看懂参数表的能力，也知道了不同硬件之间的取舍逻辑。\n\n但你有没有想过：这些部件买回来之后，它们到底是   怎么协同工作   的？从你按下电源键的那一刻，到屏幕上出现游戏画面，中间经历了哪些步骤？而且，如果我们把视野从你桌上这台电脑扩大到整个互联网——你打开的每一个网页、看的每一段视频、用的每一个 AI 工具，背后都有成千上万台电脑在协同运转。这些\"看不见的电脑\"是怎么工作的？\n\n  【本章目标】   这一章会解答：\n\n  ✅ 电脑从按下电源到运行游戏，完整经历了哪些步骤\n  ✅ 服务器和你的个人电脑到底有什么区别\n  ✅ \"云计算\"到底是什么，为什么它正在改变一切\n  ✅ 量子计算、Chiplet、RISC V 等前沿技术离我们还有多远\n\n  ⏱ 预计阅读时间：35 40 分钟  \n\n</aside \n\n      \n\n   6.1 完整流程回顾：开机到运行游戏\n\n    从一个周五晚上说起\n\n周五晚上十点，你终于写完了这周的线性代数作业。你长吁一口气，双击桌面上的 Steam 图标，准备来一把《黑神话：悟空》犒劳自己。点击\"开始游戏\"之后，加载画面出现，风扇呼呼地转了起来，几秒钟后，你已经操控着天命人在黑风山里大杀四方了。\n\n这整个过程看起来稀松平常，但如果我们拿前五章学过的知识来\"解剖\"这短短几秒钟，你会发现每一个部件都在各司其职——这是一场精密的协同演出。\n\n让我们从最开始说起：你按下电源键的那一刻。\n\n    第一幕：按下电源键——硬件自检\n\n你按下电源键，电源（PSU）开始向主板供电。但电脑并不会立刻\"活过来\"，它首先要做一件事：  自检  。\n\n这个过程叫做   POST  （Power On Self Test，加电自检）。你可以把它想象成一个餐厅早上开门前的检查流程——经理（主板上的固件）要确认：\n\n  厨房的煤气通了吗？（CPU 是否正常）\n  餐桌摆好了吗？（内存是否就位）\n  收银机能用吗？（基本 I/O 设备是否响应）\n\n负责执行这个检查的，是存储在主板上一块小芯片里的固件程序。在老电脑上，它叫   BIOS  （Basic Input/Output System，基本输入输出系统）；现在的电脑基本都用它的升级版——  UEFI  （Unified Extensible Firmware Interface，统一可扩展固件接口）。\n\nUEFI 比老式 BIOS 强大得多：它支持图形化界面（你可能见过那个可以用鼠标操作的蓝色/红色设置界面）、支持大容量硬盘启动、启动速度也更快。\n\n如果自检发现问题——比如内存没插好——电脑会发出\"滴滴滴\"的蜂鸣声报警，或者在屏幕上显示错误信息。如果一切正常，POST 通过，进入下一步。\n\n    第二幕：寻找操作系统——引导加载\n\nPOST 通过后，UEFI 要做一个关键决定：  从哪里加载操作系统？  \n\n回忆第一章的内容：你的文件都存在硬盘（SSD 或 HDD）上，操作系统本身也是一堆文件。UEFI 会按照预设的  启动顺序  （Boot Order）依次查找可用的启动设备——通常是你的 SSD。\n\n找到之后，UEFI 会加载硬盘上的一个小程序，叫做   引导加载程序  （Bootloader）。在 Windows 系统中，这个引导加载程序叫  bootmgr ；在 Linux 中，常见的是  GRUB 。\n\n引导加载程序的任务只有一个：  把操作系统的核心（内核，Kernel）从硬盘搬到内存里  。\n\n为什么要搬到内存？回忆第一章的类比：硬盘是仓库，内存是工作台。操作系统要高效运行，必须把自己放到速度快得多的\"工作台\"上。一块典型的 NVMe SSD 读取速度大约 3 7 GB/s，而 DDR5 内存的带宽可以达到 50 60 GB/s——差了将近一个数量级。\n\n    第三幕：操作系统接管——内核启动\n\n操作系统内核被加载到内存后，控制权从 UEFI 转交给了操作系统。这就像餐厅的晨检结束后，经理把大门钥匙交给了前台领班——从现在开始，由操作系统（第三章的\"管家\"）来管理一切。\n\n内核启动后，它会做这些事：\n\n1.   初始化硬件驱动   —— 让操作系统和各个硬件\"握手\"。第三章讲过，驱动程序是硬件和软件之间的翻译官。内核要加载显卡驱动、声卡驱动、网卡驱动、USB 控制器驱动等等。\n2.   建立虚拟内存系统   —— 第一章讲过，虚拟内存让每个程序都以为自己独占了整块内存。内核会设置好页表（Page Table），为后续的程序运行做准备。\n3.   启"
+    },
+    {
+      "id": "07-system-cloud-61-完整流程回顾开机到运行游戏",
+      "title": "6.1 完整流程回顾：开机到运行游戏",
+      "chapter": "08",
+      "chapterTitle": "第六章：系统视角——从单机到云端",
+      "url": "chapters/07-system-cloud.html#61-完整流程回顾开机到运行游戏",
+      "body": ""
+    },
+    {
+      "id": "07-system-cloud-从一个周五晚上说起",
+      "title": "从一个周五晚上说起",
+      "chapter": "08",
+      "chapterTitle": "第六章：系统视角——从单机到云端",
+      "url": "chapters/07-system-cloud.html#从一个周五晚上说起",
+      "body": ""
+    },
+    {
+      "id": "07-system-cloud-第一幕按下电源键硬件自检",
+      "title": "第一幕：按下电源键——硬件自检",
+      "chapter": "08",
+      "chapterTitle": "第六章：系统视角——从单机到云端",
+      "url": "chapters/07-system-cloud.html#第一幕按下电源键硬件自检",
+      "body": ""
+    },
+    {
+      "id": "07-system-cloud-第二幕寻找操作系统引导加载",
+      "title": "第二幕：寻找操作系统——引导加载",
+      "chapter": "08",
+      "chapterTitle": "第六章：系统视角——从单机到云端",
+      "url": "chapters/07-system-cloud.html#第二幕寻找操作系统引导加载",
+      "body": ""
+    },
+    {
+      "id": "07-system-cloud-第三幕操作系统接管内核启动",
+      "title": "第三幕：操作系统接管——内核启动",
+      "chapter": "08",
+      "chapterTitle": "第六章：系统视角——从单机到云端",
+      "url": "chapters/07-system-cloud.html#第三幕操作系统接管内核启动",
+      "body": ""
+    },
+    {
+      "id": "07-system-cloud-第四幕启动游戏一场全员动员",
+      "title": "第四幕：启动游戏——一场全员动员",
+      "chapter": "08",
+      "chapterTitle": "第六章：系统视角——从单机到云端",
+      "url": "chapters/07-system-cloud.html#第四幕启动游戏一场全员动员",
+      "body": ""
+    },
+    {
+      "id": "07-system-cloud-一次完整的帧渲染16毫秒的奇迹",
+      "title": "一次完整的帧渲染：16毫秒的奇迹",
+      "chapter": "08",
+      "chapterTitle": "第六章：系统视角——从单机到云端",
+      "url": "chapters/07-system-cloud.html#一次完整的帧渲染16毫秒的奇迹",
+      "body": ""
+    },
+    {
+      "id": "07-system-cloud-常见误区澄清",
+      "title": "常见误区澄清",
+      "chapter": "08",
+      "chapterTitle": "第六章：系统视角——从单机到云端",
+      "url": "chapters/07-system-cloud.html#常见误区澄清",
+      "body": ""
+    },
+    {
+      "id": "07-system-cloud-动手环节追踪一次游戏启动",
+      "title": "动手环节：追踪一次游戏启动",
+      "chapter": "08",
+      "chapterTitle": "第六章：系统视角——从单机到云端",
+      "url": "chapters/07-system-cloud.html#动手环节追踪一次游戏启动",
+      "body": ""
+    },
+    {
+      "id": "07-system-cloud-本节要点",
+      "title": "本节要点",
+      "chapter": "08",
+      "chapterTitle": "第六章：系统视角——从单机到云端",
+      "url": "chapters/07-system-cloud.html#本节要点",
+      "body": ""
+    },
+    {
+      "id": "07-system-cloud-62-超越个人电脑服务器与云计算",
+      "title": "6.2 超越个人电脑：服务器与云计算",
+      "chapter": "08",
+      "chapterTitle": "第六章：系统视角——从单机到云端",
+      "url": "chapters/07-system-cloud.html#62-超越个人电脑服务器与云计算",
+      "body": ""
+    },
+    {
+      "id": "07-system-cloud-你打开的每一个网页背后都有一台你看不见的电脑",
+      "title": "你打开的每一个网页，背后都有一台你看不见的电脑",
+      "chapter": "08",
+      "chapterTitle": "第六章：系统视角——从单机到云端",
+      "url": "chapters/07-system-cloud.html#你打开的每一个网页背后都有一台你看不见的电脑",
+      "body": ""
+    },
+    {
+      "id": "07-system-cloud-服务器不需要屏幕的电脑",
+      "title": "服务器：不需要屏幕的电脑",
+      "chapter": "08",
+      "chapterTitle": "第六章：系统视角——从单机到云端",
+      "url": "chapters/07-system-cloud.html#服务器不需要屏幕的电脑",
+      "body": ""
+    },
+    {
+      "id": "07-system-cloud-数据中心互联网的心脏",
+      "title": "数据中心：互联网的心脏",
+      "chapter": "08",
+      "chapterTitle": "第六章：系统视角——从单机到云端",
+      "url": "chapters/07-system-cloud.html#数据中心互联网的心脏",
+      "body": ""
+    },
+    {
+      "id": "07-system-cloud-云计算不买电脑租电脑",
+      "title": "云计算：不买电脑，租电脑",
+      "chapter": "08",
+      "chapterTitle": "第六章：系统视角——从单机到云端",
+      "url": "chapters/07-system-cloud.html#云计算不买电脑租电脑",
+      "body": ""
+    },
+    {
+      "id": "07-system-cloud-云计算的三种quot菜单quot",
+      "title": "云计算的三种&quot;菜单&quot;",
+      "chapter": "08",
+      "chapterTitle": "第六章：系统视角——从单机到云端",
+      "url": "chapters/07-system-cloud.html#云计算的三种quot菜单quot",
+      "body": ""
+    },
+    {
+      "id": "07-system-cloud-虚拟化一台电脑变成十台",
+      "title": "虚拟化：一台电脑变成十台",
+      "chapter": "08",
+      "chapterTitle": "第六章：系统视角——从单机到云端",
+      "url": "chapters/07-system-cloud.html#虚拟化一台电脑变成十台",
+      "body": ""
+    },
+    {
+      "id": "07-system-cloud-serverless连服务器都不用管了",
+      "title": "Serverless：连服务器都不用管了",
+      "chapter": "08",
+      "chapterTitle": "第六章：系统视角——从单机到云端",
+      "url": "chapters/07-system-cloud.html#serverless连服务器都不用管了",
+      "body": ""
+    },
+    {
+      "id": "07-system-cloud-边缘计算把云搬到你身边",
+      "title": "边缘计算：把云搬到你身边",
+      "chapter": "08",
+      "chapterTitle": "第六章：系统视角——从单机到云端",
+      "url": "chapters/07-system-cloud.html#边缘计算把云搬到你身边",
+      "body": ""
+    },
+    {
+      "id": "07-system-cloud-07-system-cloud-常见误区澄清-2",
+      "title": "常见误区澄清",
+      "chapter": "08",
+      "chapterTitle": "第六章：系统视角——从单机到云端",
+      "url": "chapters/07-system-cloud.html#07-system-cloud-常见误区澄清-2",
+      "body": ""
+    },
+    {
+      "id": "07-system-cloud-动手环节感受quot云quot的存在",
+      "title": "动手环节：感受&quot;云&quot;的存在",
+      "chapter": "08",
+      "chapterTitle": "第六章：系统视角——从单机到云端",
+      "url": "chapters/07-system-cloud.html#动手环节感受quot云quot的存在",
+      "body": ""
+    },
+    {
+      "id": "07-system-cloud-07-system-cloud-本节要点-2",
+      "title": "本节要点",
+      "chapter": "08",
+      "chapterTitle": "第六章：系统视角——从单机到云端",
+      "url": "chapters/07-system-cloud.html#07-system-cloud-本节要点-2",
+      "body": ""
+    },
+    {
+      "id": "07-system-cloud-63-前沿技术扫描",
+      "title": "6.3 前沿技术扫描",
+      "chapter": "08",
+      "chapterTitle": "第六章：系统视角——从单机到云端",
+      "url": "chapters/07-system-cloud.html#63-前沿技术扫描",
+      "body": ""
+    },
+    {
+      "id": "07-system-cloud-当你的电脑配置还没捂热新技术就来了",
+      "title": "当你的电脑配置还没捂热，新技术就来了",
+      "chapter": "08",
+      "chapterTitle": "第六章：系统视角——从单机到云端",
+      "url": "chapters/07-system-cloud.html#当你的电脑配置还没捂热新技术就来了",
+      "body": ""
+    },
+    {
+      "id": "07-system-cloud-chiplet不再追求quot一块大芯片quot",
+      "title": "Chiplet：不再追求&quot;一块大芯片&quot;",
+      "chapter": "08",
+      "chapterTitle": "第六章：系统视角——从单机到云端",
+      "url": "chapters/07-system-cloud.html#chiplet不再追求quot一块大芯片quot",
+      "body": ""
+    },
+    {
+      "id": "07-system-cloud-risc-v开源的-cpu-quot语言quot",
+      "title": "RISC-V：开源的 CPU &quot;语言&quot;",
+      "chapter": "08",
+      "chapterTitle": "第六章：系统视角——从单机到云端",
+      "url": "chapters/07-system-cloud.html#risc-v开源的-cpu-quot语言quot",
+      "body": ""
+    },
+    {
+      "id": "07-system-cloud-cxl让内存突破物理限制",
+      "title": "CXL：让内存突破物理限制",
+      "chapter": "08",
+      "chapterTitle": "第六章：系统视角——从单机到云端",
+      "url": "chapters/07-system-cloud.html#cxl让内存突破物理限制",
+      "body": ""
+    },
+    {
+      "id": "07-system-cloud-ai-硬件gpu-的黄金时代",
+      "title": "AI 硬件：GPU 的黄金时代",
+      "chapter": "08",
+      "chapterTitle": "第六章：系统视角——从单机到云端",
+      "url": "chapters/07-system-cloud.html#ai-硬件gpu-的黄金时代",
+      "body": ""
+    },
+    {
+      "id": "07-system-cloud-量子计算科幻照进现实",
+      "title": "量子计算：科幻照进现实？",
+      "chapter": "08",
+      "chapterTitle": "第六章：系统视角——从单机到云端",
+      "url": "chapters/07-system-cloud.html#量子计算科幻照进现实",
+      "body": ""
+    },
+    {
+      "id": "07-system-cloud-各项前沿技术的发展时间线",
+      "title": "各项前沿技术的发展时间线",
+      "chapter": "08",
+      "chapterTitle": "第六章：系统视角——从单机到云端",
+      "url": "chapters/07-system-cloud.html#各项前沿技术的发展时间线",
+      "body": ""
+    },
+    {
+      "id": "07-system-cloud-07-system-cloud-常见误区澄清-3",
+      "title": "常见误区澄清",
+      "chapter": "08",
+      "chapterTitle": "第六章：系统视角——从单机到云端",
+      "url": "chapters/07-system-cloud.html#07-system-cloud-常见误区澄清-3",
+      "body": ""
+    },
+    {
+      "id": "07-system-cloud-动手环节追踪前沿技术",
+      "title": "动手环节：追踪前沿技术",
+      "chapter": "08",
+      "chapterTitle": "第六章：系统视角——从单机到云端",
+      "url": "chapters/07-system-cloud.html#动手环节追踪前沿技术",
+      "body": ""
+    },
+    {
+      "id": "07-system-cloud-07-system-cloud-本节要点-3",
+      "title": "本节要点",
+      "chapter": "08",
+      "chapterTitle": "第六章：系统视角——从单机到云端",
+      "url": "chapters/07-system-cloud.html#07-system-cloud-本节要点-3",
+      "body": ""
+    },
+    {
+      "id": "07-system-cloud-64-从用户到理解者",
+      "title": "6.4 从用户到理解者",
+      "chapter": "08",
+      "chapterTitle": "第六章：系统视角——从单机到云端",
+      "url": "chapters/07-system-cloud.html#64-从用户到理解者",
+      "body": ""
+    },
+    {
+      "id": "07-system-cloud-你已经不一样了",
+      "title": "你已经不一样了",
+      "chapter": "08",
+      "chapterTitle": "第六章：系统视角——从单机到云端",
+      "url": "chapters/07-system-cloud.html#你已经不一样了",
+      "body": ""
+    },
+    {
+      "id": "07-system-cloud-知识的重新连接",
+      "title": "知识的重新连接",
+      "chapter": "08",
+      "chapterTitle": "第六章：系统视角——从单机到云端",
+      "url": "chapters/07-system-cloud.html#知识的重新连接",
+      "body": ""
+    },
+    {
+      "id": "07-system-cloud-从quot会用quot到quot理解quot一个关键的躍迁",
+      "title": "从&quot;会用&quot;到&quot;理解&quot;：一个关键的躍迁",
+      "chapter": "08",
+      "chapterTitle": "第六章：系统视角——从单机到云端",
+      "url": "chapters/07-system-cloud.html#从quot会用quot到quot理解quot一个关键的躍迁",
+      "body": ""
+    },
+    {
+      "id": "07-system-cloud-计算机科学的quot地图quot",
+      "title": "计算机科学的&quot;地图&quot;",
+      "chapter": "08",
+      "chapterTitle": "第六章：系统视角——从单机到云端",
+      "url": "chapters/07-system-cloud.html#计算机科学的quot地图quot",
+      "body": ""
+    },
+    {
+      "id": "07-system-cloud-带着问题前行",
+      "title": "带着问题前行",
+      "chapter": "08",
+      "chapterTitle": "第六章：系统视角——从单机到云端",
+      "url": "chapters/07-system-cloud.html#带着问题前行",
+      "body": ""
+    },
+    {
+      "id": "07-system-cloud-07-system-cloud-常见误区澄清-4",
+      "title": "常见误区澄清",
+      "chapter": "08",
+      "chapterTitle": "第六章：系统视角——从单机到云端",
+      "url": "chapters/07-system-cloud.html#07-system-cloud-常见误区澄清-4",
+      "body": ""
+    },
+    {
+      "id": "07-system-cloud-动手环节建立你自己的quot电脑档案quot",
+      "title": "动手环节：建立你自己的&quot;电脑档案&quot;",
+      "chapter": "08",
+      "chapterTitle": "第六章：系统视角——从单机到云端",
+      "url": "chapters/07-system-cloud.html#动手环节建立你自己的quot电脑档案quot",
+      "body": ""
+    },
+    {
+      "id": "07-system-cloud-07-system-cloud-本节要点-4",
+      "title": "本节要点",
+      "chapter": "08",
+      "chapterTitle": "第六章：系统视角——从单机到云端",
+      "url": "chapters/07-system-cloud.html#07-system-cloud-本节要点-4",
+      "body": ""
+    },
+    {
+      "id": "07-system-cloud-章节结尾串联与展望",
+      "title": "章节结尾：串联与展望",
+      "chapter": "08",
+      "chapterTitle": "第六章：系统视角——从单机到云端",
+      "url": "chapters/07-system-cloud.html#章节结尾串联与展望",
+      "body": ""
+    },
+    {
+      "id": "07-system-cloud-与其他章节的联系",
+      "title": "与其他章节的联系",
+      "chapter": "08",
+      "chapterTitle": "第六章：系统视角——从单机到云端",
+      "url": "chapters/07-system-cloud.html#与其他章节的联系",
+      "body": ""
+    },
+    {
+      "id": "07-system-cloud-下章预告",
+      "title": "【下章预告】",
+      "chapter": "08",
+      "chapterTitle": "第六章：系统视角——从单机到云端",
+      "url": "chapters/07-system-cloud.html#下章预告",
+      "body": ""
+    },
+    {
+      "id": "07-system-cloud-扩展资源",
+      "title": "扩展资源",
+      "chapter": "08",
+      "chapterTitle": "第六章：系统视角——从单机到云端",
+      "url": "chapters/07-system-cloud.html#扩展资源",
+      "body": ""
+    }
+  ]
+}

@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rust 长什么样——给 C 党的语法速览 — Rust</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" id="hljs-light" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+<link rel="stylesheet" id="hljs-dark" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" media="not all">
+</head>
+<body>
+
+<div class="progress-bar" id="progress-bar"></div>
+
+<nav class="topnav" id="topnav">
+  <div class="topnav-inner">
+    <a class="brand" href="../index.html">Rust</a>
+    <div class="nav-links">
+      <a href="01-why-rust.html">01</a>
+      <a href="02-core-philosophy.html">02</a>
+      <a href="03-syntax.html" class="active">03</a>
+      <a href="04-where-rust.html">04</a>
+      <a href="05-public-opinion.html">05</a>
+      <a href="06-rust-2026.html">06</a>
+      <a href="07-should-i-learn.html">07</a>
+    </div>
+    <div class="nav-controls">
+      <button class="nav-btn" id="search-btn" aria-label="搜索 (Ctrl+K)">⌘K</button>
+      <button class="nav-btn" id="settings-btn" aria-label="阅读设置">Aa</button>
+      <a class="nav-btn" href="../../index.html" aria-label="返回知识库">← 知识库</a>
+    </div>
+  </div>
+</nav>
+<div class="settings-pop" id="settings-pop">
+  <h5>主题</h5>
+  <div class="row">
+    <button class="seg" data-theme-set="light">明亮</button>
+    <button class="seg" data-theme-set="dark">暗色</button>
+  </div>
+  <h5>字号</h5>
+  <div class="row">
+    <button class="seg" data-size-set="s">小</button>
+    <button class="seg" data-size-set="m">中</button>
+    <button class="seg" data-size-set="l">大</button>
+  </div>
+</div>
+
+<div class="with-sidebar">
+  <aside class="sidebar">
+  <div class="chapter-num">CHAPTER 03</div>
+  <div class="chapter-name">Rust 长什么样——给 C 党的语法速览</div>
+  <h4>目录</h4>
+  <ul>
+    <li><a href="#31-变量函数控制流和c像不像">3.1 变量、函数、控制流：和C像不像</a></li>
+    <li><a href="#32-所有权三板斧move-borrow-lifetime">3.2 所有权三板斧：Move / Borrow / Lifetime</a></li>
+    <li><a href="#33-枚举和模式匹配比c的union好在哪">3.3 枚举和模式匹配：比C的union好在哪</a></li>
+    <li><a href="#34-错误处理result代替异常">3.4 错误处理：Result代替异常</a></li>
+    <li><a href="#35-cargorust的包管理工具">3.5 Cargo：Rust的包管理工具</a></li>
+  </ul>
+</aside>
+  <article class="chapter-body">
+    <header class="chapter-head">
+  <div class="chapter-head-meta">
+    <span class="num">CHAPTER 03</span>
+    <span>≈ 40 MIN READ</span>
+  </div>
+  <h1>Rust 长什么样——给 C 党的语法速览</h1>
+</header>
+    <blockquote><p>这一章是可选的硬核内容。如果你只想了解Rust的存在价值和适用场景，可以跳过这章，直接看第四章，不影响理解。</p>
+<p>如果你想看看Rust代码实际长什么样，这章给你一个概览——不求你现在就能写Rust，但求看懂基本结构，对语法有直觉。</p>
+</blockquote>
+<h2 id="31-变量函数控制流和c像不像">3.1 变量、函数、控制流：和C像不像</h2>
+<h4 id="311-变量声明let和mut">3.1.1 变量声明：let和mut</h4>
+<p>C里声明变量：</p>
+<pre data-label="c"><code class="language-c">int x = 5;
+x = 10; // 可以改</code></pre>
+<p>Rust里：</p>
+<pre data-label="rust"><code class="language-rust">let x = 5;       // 不可变绑定，类型自动推断为i32
+x = 10;       // 编译错误！默认不可变！
+let mut y = 5;   // 可变绑定
+y = 10;          // OK</code></pre>
+<p>最大的区别：Rust默认变量是<strong>不可变的</strong>（immutable）。想要可变必须显式加<code>mut</code>。这个设计初看有点烦，但它有几个好处：</p>
+<ol>
+<li>不可变性让代码更容易推理——你看到一个没有<code>mut</code>的变量，就知道它不会变，不用追踪整个代码路径。</li>
+<li>编译器可以做更激进的优化。</li>
+<li>在多线程场景，不可变数据天然是安全的，不需要锁。</li>
+</ol>
+<p>这和C的设计哲学相反——C里<code>const</code>是显式加的，可变是默认。这个选择是有意义的：在1970年代，不可变性不是重要关注点；在现代软件工程里，不可变性被认为是好的实践。</p>
+<p>**遮蔽（Shadowing）**是Rust特有的一个小特性：</p>
+<pre data-label="rust"><code class="language-rust">let x = 5;
+let x = x + 1;    // 重新声明x，遮蔽了上面的x
+let x = x * 2;    // 又遮蔽
+println!("{}", x); // 输出12</code></pre>
+<p>遮蔽允许你复用变量名，甚至改变类型，同时不需要<code>mut</code>——每次<code>let</code>都创建了一个新的绑定。</p>
+<h4 id="312-基本类型">3.1.2 基本类型</h4>
+<p>Rust的基本类型和C类似，但更明确：</p>
+<div class="table-wrap"><table><thead><tr>
+<th>Rust类型</th>
+<th>C类型</th>
+<th>说明</th>
+</tr>
+</thead><tbody><tr>
+<td><code>i8</code>, <code>i16</code>, <code>i32</code>, <code>i64</code>, <code>i128</code></td>
+<td><code>int8_t</code>等</td>
+<td>有符号整数，位数明确</td>
+</tr>
+<tr>
+<td><code>u8</code>, <code>u16</code>, <code>u32</code>, <code>u64</code>, <code>u128</code></td>
+<td><code>uint8_t</code>等</td>
+<td>无符号整数</td>
+</tr>
+<tr>
+<td><code>isize</code>, <code>usize</code></td>
+<td><code>ptrdiff_t</code>, <code>size_t</code></td>
+<td>指针大小的整数</td>
+</tr>
+<tr>
+<td><code>f32</code>, <code>f64</code></td>
+<td><code>float</code>, <code>double</code></td>
+<td>浮点数</td>
+</tr>
+<tr>
+<td><code>bool</code></td>
+<td><code>_Bool</code> / <code>bool</code></td>
+<td>布尔值，只有<code>true</code>/<code>false</code></td>
+</tr>
+<tr>
+<td><code>char</code></td>
+<td><code>char</code></td>
+<td><strong>32位</strong>Unicode字符，不是C的1字节char</td>
+</tr>
+<tr>
+<td><code>&amp;str</code></td>
+<td><code>const char*</code></td>
+<td>字符串切片（不可变，UTF-8）</td>
+</tr>
+<tr>
+<td><code>String</code></td>
+<td><code>string</code></td>
+<td>堆分配的可增长字符串</td>
+</tr>
+</tbody></table></div>
+<p>注意Rust的<code>char</code>是32位的——每个<code>char</code>是一个Unicode码点，不是字节。这和C的<code>char</code>本质不同，避免了很多字符编码的坑。</p>
+<h4 id="313-函数">3.1.3 函数</h4>
+<p>Rust的函数：</p>
+<pre data-label="rust"><code class="language-rust">fn add(x: i32, y: i32) -&gt; i32 {
+    x + y  // 注意：没有return，最后一个表达式的值就是返回值
+}
+
+fn greet(name: &amp;str) -&gt; String {
+    format!("你好，{}", name)  // format!是宏，类似sprintf
+}
+
+fn nothing() {
+    // 没有显式返回类型表示返回()，即unit类型（类似C的void）
+}</code></pre>
+<p>两个值得注意的地方：</p>
+<p><strong>函数参数必须显式标注类型</strong>，没有自动推断。这是有意为之——函数签名是接口契约，必须明确。</p>
+<p><strong>最后一个表达式可以省略<code>return</code>和分号</strong>，它的值就是函数的返回值。在Rust里，几乎一切都是表达式，包括<code>if</code>、<code>match</code>、代码块。这一点来自函数式编程语言的影响。</p>
+<pre data-label="rust"><code class="language-rust">fn abs(x: i32) -&gt; i32 {
+    if x &gt;= 0 { x } else { -x }
+    // if是表达式，整个if的值是x或-x
+}</code></pre>
+<h4 id="314-控制流熟悉但有差异">3.1.4 控制流：熟悉但有差异</h4>
+<p><strong>if/else</strong>：和C一样，但条件不需要括号，而且是表达式。</p>
+<pre data-label="rust"><code class="language-rust">let number = 7;
+if number &lt; 5 {
+    println!("小");
+} else if number == 5 {
+    println!("等于5");
+} else {
+    println!("大");
+}
+
+// if作为表达式
+let description = if number &gt; 5 { "大" } else { "小" };</code></pre>
+<p><strong>loop</strong>：无限循环，用<code>break</code>退出，可以从<code>break</code>返回值。</p>
+<pre data-label="rust"><code class="language-rust">let result = loop {
+    // 做一些事情
+    let x = some_computation();
+    if x &gt; 100 {
+        break x; // 从loop返回x的值
+    }
+};</code></pre>
+<p><strong>while</strong>：和C基本一样。</p>
+<pre data-label="rust"><code class="language-rust">let mut n = 0;
+while n &lt; 10 {
+    n += 1;
+}</code></pre>
+<p><strong>for</strong>：这里Rust和C差异比较大。Rust的<code>for</code>是迭代器循环，不是C风格的计数器循环：</p>
+<pre data-label="rust"><code class="language-rust">// Rust的for
+for i in 0..10 {  // 0..10是Range，一个迭代器
+    println!("{}", i);
+}
+
+// 遍历数组
+let arr = [10, 20, 30, 40, 50];
+for element in arr.iter() {
+    println!("{}", element);
+}</code></pre>
+<p>不存在C风格的<code>for (int i = 0; i &lt; n; i++)</code>。如果你需要下标，用<code>enumerate()</code>：</p>
+<pre data-label="rust"><code class="language-rust">for (i, val) in arr.iter().enumerate() {
+    println!("arr[{}] = {}", i, val);
+}</code></pre>
+<h2 id="32-所有权三板斧move-borrow-lifetime">3.2 所有权三板斧：Move / Borrow / Lifetime</h2>
+<h4 id="321-move转移所有权">3.2.1 Move：转移所有权</h4>
+<p>我们在第二章已经介绍了Move的概念，这里用代码更具体地展示：</p>
+<pre data-label="rust"><code class="language-rust">fn take_ownership(s: String) {
+    println!("{}", s);
+    // s在这里离开作用域，String被释放
+}
+
+fn main() {
+    let s = String::from("hello");
+    take_ownership(s);  // s的所有权移入函数
+    println!("{}", s);  // 编译错误！s已经被移走了
+}</code></pre>
+<p>和C对比：C里传指针给函数，函数可以自由地操作指针，包括free它，调用者完全不知道。Rust的Move让&quot;所有权转移&quot;在语言层面是可见的、可追踪的。</p>
+<p><strong>Clone</strong>：如果你确实需要两份数据，显式clone：</p>
+<pre data-label="rust"><code class="language-rust">let s1 = String::from("hello");
+let s2 = s1.clone(); // 深拷贝，两份独立的数据
+println!("{} {}", s1, s2); // 都可用</code></pre>
+<p>Clone是显式的，这很重要——你看到<code>.clone()</code>就知道这里有一次堆内存分配和数据复制，性能敏感的场景要注意。和Python不同，Python里<code>a = b</code>对于列表来说只是浅拷贝，可能有意外的副作用；Rust的设计强迫你想清楚自己要什么。</p>
+<h4 id="322-borrow引用和借用">3.2.2 Borrow：引用和借用</h4>
+<p>借用是通过引用实现的，<code>&amp;</code>是不可变引用，<code>&amp;mut</code>是可变引用：</p>
+<pre data-label="rust"><code class="language-rust">fn calculate_length(s: &amp;String) -&gt; usize {
+    s.len()  // s是借来的，不会在这里被释放
+}
+
+fn change(s: &amp;mut String) {
+    s.push_str(", world"); // 可以修改，因为是&amp;mut
+}
+
+fn main() {
+    let s = String::from("hello");
+    let len = calculate_length(&amp;s); // 传引用，不移动
+    println!("{} 的长度是 {}", s, len); // s还在
+
+    let mut s2 = String::from("hello");
+    change(&amp;mut s2); // 传可变引用
+    println!("{}", s2); // "hello, world"
+}</code></pre>
+<p>关键规则回顾：</p>
+<ul>
+<li>任意时刻，要么有多个不可变引用（<code>&amp;T</code>），要么有一个可变引用（<code>&amp;mut T</code>）。</li>
+<li>所有引用必须有效（不能是悬垂引用）。</li>
+</ul>
+<h4 id="323-lifetime生命周期注解">3.2.3 Lifetime：生命周期注解</h4>
+<p>生命周期是Rust里最让新手头疼的概念。大多数时候编译器可以自动推断生命周期，不需要你显式写。但在某些情况下，编译器需要你帮它一把。</p>
+<p>最典型的场景是：函数的返回值是一个引用，编译器需要知道这个引用的有效期是由哪个参数决定的。</p>
+<pre data-label="rust"><code class="language-rust">// 这个函数返回两个字符串切片中较长的那个
+// 'a是生命周期参数，读作"lifetime a"
+fn longest&lt;'a&gt;(x: &amp;'a str, y: &amp;'a str) -&gt; &amp;'a str {
+    if x.len() &gt; y.len() { x } else { y }
+}</code></pre>
+<p>这里的<code>&#39;a</code>说的是：返回值的生命周期和参数<code>x</code>、<code>y</code>的生命周期中<strong>较短的那个</strong>一样长。这让编译器能在调用方检查：你拿到这个引用，能不能保证在使用它的时候，原始数据还活着？</p>
+<pre data-label="rust"><code class="language-rust">fn main() {
+    let string1 = String::from("长字符串很长");
+    let result;
+    {
+        let string2 = String::from("xyz");
+        result = longest(string1.as_str(), string2.as_str());
+        println!("{}", result); // OK，string2在这里还活着
+    }
+    // println!("{}", result); // 编译错误！string2已经离开作用域，result的引用不再有效
+}</code></pre>
+<p>生命周期注解不会改变程序的运行时行为，它只是给编译器提供信息，让编译器能做静态分析。在Rust 2018之后，很多常见场景有了&quot;生命周期省略规则&quot;（lifetime elision），不需要显式写生命周期。</p>
+<p>老实说：生命周期是Rust学习曲线上最陡的那一段。如果你现在看不明白，完全正常，需要真正写Rust才会逐渐理解。我的建议是，把这一节当作&quot;知道有这个东西，大概了解它是为了解决什么问题就够了&quot;。</p>
+<h2 id="33-枚举和模式匹配比c的union好在哪">3.3 枚举和模式匹配：比C的union好在哪</h2>
+<h4 id="331-c的union手动类型标签">3.3.1 C的union：手动类型标签</h4>
+<p>C语言里有<code>union</code>，允许同一块内存存储不同类型的数据：</p>
+<pre data-label="c"><code class="language-c">union Value {
+    int integer;
+    double floating;
+    const char* string;
+};</code></pre>
+<p>但C的<code>union</code>有个根本问题：它不记录当前存的是哪种类型。你必须自己用一个额外的字段（通常叫&quot;tag&quot;）来记录：</p>
+<pre data-label="c"><code class="language-c">typedef struct {
+    enum { INT_TYPE, FLOAT_TYPE, STRING_TYPE } tag;
+    union {
+        int integer;
+        double floating;
+        const char* string;
+    } value;
+} TaggedValue;</code></pre>
+<p>然后使用时：</p>
+<pre data-label="c"><code class="language-c">TaggedValue v;
+v.tag = INT_TYPE;
+v.value.integer = 42;
+
+// 必须手动检查tag
+if (v.tag == INT_TYPE) {
+    printf("%d\n", v.value.integer);
+} else if (v.tag == FLOAT_TYPE) {
+    printf("%f\n", v.value.floating);
+}
+
+// 没有任何机制防止你读错类型：
+// printf("%f\n", v.value.floating); // 如果tag是INT_TYPE，这是未定义行为</code></pre>
+<p>这很繁琐，而且容易出错——没有人强制你在读之前检查tag。</p>
+<h4 id="332-rust枚举类型安全的带数据枚举">3.3.2 Rust枚举：类型安全的带数据枚举</h4>
+<p>Rust的<code>enum</code>是**代数数据类型（Algebraic Data Type, ADT）**的一种，每个变体可以携带不同类型的数据，而且类型是安全的——你必须通过模式匹配来访问，不可能读错类型：</p>
+<pre data-label="rust"><code class="language-rust">enum Value {
+    Integer(i64),
+    Float(f64),
+    Text(String),
+    Nothing,  // 不携带数据的变体
+}
+
+let v = Value::Integer(42);
+
+// 必须通过match来访问，不能直接读
+match v {
+    Value::Integer(n) =&gt; println!("整数：{}", n),
+    Value::Float(f) =&gt; println!("浮点：{}", f),
+    Value::Text(s) =&gt; println!("字符串：{}", s),
+    Value::Nothing =&gt; println!("空"),
+}</code></pre>
+<p>编译器强制你处理所有的变体（除非你用<code>_</code>通配符省略）。如果你加了一个新的变体但忘记更新某处的<code>match</code>，编译器会报错。这对大型代码库的维护非常友好。</p>
+<h4 id="333-option消灭空指针">3.3.3 Option：消灭空指针</h4>
+<p>Rust里没有<code>null</code>。这不是说法语——Rust里真的没有<code>null</code>这个概念（在安全代码里）。取而代之的是<code>Option&lt;T&gt;</code>类型：</p>
+<pre data-label="rust"><code class="language-rust">enum Option&lt;T&gt; {
+    Some(T),  // 有值
+    None,     // 没值
+}</code></pre>
+<p>一个可能不存在的值，类型就是<code>Option&lt;T&gt;</code>，而不是裸的<code>T</code>。你必须通过模式匹配或者其他方式显式处理<code>None</code>的情况：</p>
+<pre data-label="rust"><code class="language-rust">fn divide(a: f64, b: f64) -&gt; Option&lt;f64&gt; {
+    if b == 0.0 {
+        None
+    } else {
+        Some(a / b)
+    }
+}
+
+let result = divide(10.0, 2.0);
+match result {
+    Some(value) =&gt; println!("结果是 {}", value),
+    None =&gt; println!("不能除以零"),
+}
+
+// 也可以用if let，更简洁
+if let Some(value) = divide(10.0, 2.0) {
+    println!("结果是 {}", value);
+}
+
+// 或者用unwrap（如果你确信一定有值，否则会panic）
+let value = divide(10.0, 2.0).unwrap();
+
+// 或者提供默认值
+let value = divide(10.0, 0.0).unwrap_or(0.0);</code></pre>
+<p>Option消灭了&quot;空指针解引用&quot;这类错误——你不可能忘记处理None，因为编译器不让你直接把<code>Option&lt;T&gt;</code>当<code>T</code>用。</p>
+<p>Tony Hoare（null的发明者）在2009年的一次演讲里称null为&quot;我的十亿美元错误&quot;。Rust选择了彻底废除null。</p>
+<h4 id="334-模式匹配match不只是switch">3.3.4 模式匹配：match不只是switch</h4>
+<p><code>match</code>在Rust里远比C的<code>switch</code>强大。它可以匹配几乎任何东西：</p>
+<pre data-label="rust"><code class="language-rust">let pair = (0, -2);
+
+match pair {
+    (0, y) =&gt; println!("第一个是零，第二个是{}", y),
+    (x, 0) =&gt; println!("第一个是{}，第二个是零", x),
+    _ =&gt; println!("其他情况"),
+}
+
+// 匹配范围
+let x = 5;
+match x {
+    1..=5 =&gt; println!("1到5之间"),
+    6..=10 =&gt; println!("6到10之间"),
+    _ =&gt; println!("其他"),
+}
+
+// 匹配结构体字段
+struct Point { x: i32, y: i32 }
+let p = Point { x: 0, y: 7 };
+match p {
+    Point { x: 0, y } =&gt; println!("在y轴上，y={}", y),
+    Point { x, y: 0 } =&gt; println!("在x轴上，x={}", x),
+    Point { x, y } =&gt; println!("({}, {})", x, y),
+}</code></pre>
+<p>模式匹配是声明式的——你说&quot;当数据长这样的时候做这个&quot;，而不是命令式地&quot;先检查这个，再检查那个&quot;。这让复杂的条件逻辑更清晰、更不容易遗漏情况。</p>
+<h2 id="34-错误处理result代替异常">3.4 错误处理：Result代替异常</h2>
+<h4 id="341-三种错误处理思路">3.4.1 三种错误处理思路</h4>
+<p>在编程语言里，处理错误有几种主流思路：</p>
+<p><strong>1. 返回错误码（C的方式）</strong></p>
+<pre data-label="c"><code class="language-c">int result = some_function(args);
+if (result &lt; 0) {
+    // 错误
+    perror("failed");
+    return -1;
+}</code></pre>
+<p>问题：容易忘记检查，错误码的含义不统一，错误信息不够丰富。</p>
+<p><strong>2. 异常（Python、Java、C++的方式）</strong></p>
+<pre data-label="python"><code class="language-python">try:
+    result = might_fail()
+except ValueError as e:
+    handle_error(e)</code></pre>
+<p>优点：不能&quot;忘记&quot;——异常会自动向上传播，如果没有被处理最终会让程序崩溃。
+问题：函数签名里看不出它会抛什么异常（Python没有checked exception），运行时有开销，控制流不直观（异常可以从任何地方&quot;穿越&quot;到上层）。</p>
+<p><strong>3. Result类型（Rust、Haskell的方式）</strong></p>
+<p>Rust的错误处理是通过<code>Result&lt;T, E&gt;</code>类型实现的：</p>
+<pre data-label="rust"><code class="language-rust">enum Result&lt;T, E&gt; {
+    Ok(T),   // 成功，携带T类型的返回值
+    Err(E),  // 失败，携带E类型的错误信息
+}</code></pre>
+<h4 id="342-result的使用">3.4.2 Result的使用</h4>
+<pre data-label="rust"><code class="language-rust">use std::fs::File;
+use std::io;
+
+fn open_file(path: &amp;str) -&gt; Result&lt;File, io::Error&gt; {
+    File::open(path) // 返回Result&lt;File, io::Error&gt;
+}
+
+fn main() {
+    let result = open_file("hello.txt");
+    match result {
+        Ok(file) =&gt; println!("文件打开成功"),
+        Err(e) =&gt; println!("错误：{}", e),
+    }
+}</code></pre>
+<p>你不能直接把<code>Result&lt;File, io::Error&gt;</code>当<code>File</code>用，必须先处理错误情况。这和<code>Option</code>消灭null的思路一样——把可能的错误编进类型系统，强制你面对它。</p>
+<h4 id="343-运算符优雅的错误传播">3.4.3 ?运算符：优雅的错误传播</h4>
+<p>但是如果每一个可能失败的操作都要写<code>match</code>，代码会非常啰嗦。Rust提供了<code>?</code>运算符来简化错误传播：</p>
+<pre data-label="rust"><code class="language-rust">use std::fs::File;
+use std::io::{self, Read};
+
+fn read_username_from_file() -&gt; Result&lt;String, io::Error&gt; {
+    let mut file = File::open("username.txt")?;
+    // ?的意思是：如果是Err，立即从当前函数返回这个Err；如果是Ok，展开Ok里的值
+
+    let mut username = String::new();
+    file.read_to_string(&amp;mut username)?;
+
+    Ok(username)
+}</code></pre>
+<p><code>?</code>相当于：</p>
+<pre data-label="rust"><code class="language-rust">// 展开版本
+let mut file = match File::open("username.txt") {
+    Ok(f) =&gt; f,
+    Err(e) =&gt; return Err(e),
+};</code></pre>
+<p>这在行为上类似于其他语言的异常传播——错误会自动向上传递，但它是<strong>显式的</strong>（你看到<code>?</code>就知道这里有错误传播），而且函数签名里清楚地写明了它返回<code>Result</code>，调用者知道要处理错误。</p>
+<h4 id="344-panic不可恢复的错误">3.4.4 panic!：不可恢复的错误</h4>
+<p>Rust还有<code>panic!</code>宏，用于处理<strong>程序逻辑错误</strong>——那种理论上不应该发生、但发生了说明程序有bug的情况：</p>
+<pre data-label="rust"><code class="language-rust">let v = vec![1, 2, 3];
+v[10]; // 越界访问，在debug模式下panic，打印错误信息和堆栈</code></pre>
+<p><code>panic!</code>会展开调用栈（或直接abort），打印错误信息。它不是用来处理&quot;正常的错误情况&quot;（文件不存在、网络超时）的，那些用<code>Result</code>处理。<code>panic!</code>是&quot;这不应该发生，程序遇到了无法恢复的状态&quot;的信号。</p>
+<p>类比：</p>
+<ul>
+<li>C的段错误（segfault）：无声无息地崩溃，没有有用的错误信息，调试困难。</li>
+<li>Rust的panic：打印出哪个文件哪一行发生了什么，还有完整的调用栈，调试友好。</li>
+</ul>
+<h2 id="35-cargorust的包管理工具">3.5 Cargo：Rust的包管理工具</h2>
+<h4 id="351-c的痛苦没有标准包管理">3.5.1 C的痛苦：没有标准包管理</h4>
+<p>从C党的视角来看，Cargo可能是Rust最让人心动的特性之一。</p>
+<p>C没有官方的包管理工具。你想用一个第三方库，要么系统自带（<code>apt install libssl-dev</code>），要么手动下载源码、编译、链接，要么用vcpkg、Conan这些第三方包管理器（但它们不是标准的）。CMakeLists.txt的依赖管理可以把人逼疯。</p>
+<p>C++稍好一点，但标准化的包管理在C++领域直到2020年代还是一个让人头疼的问题。</p>
+<h4 id="352-cargo一站式解决">3.5.2 Cargo：一站式解决</h4>
+<p>Rust从一开始就内置了Cargo，它同时是：</p>
+<ul>
+<li><strong>包管理器</strong>：管理依赖（类似pip、npm）</li>
+<li><strong>构建工具</strong>：替代make、cmake</li>
+<li><strong>测试运行器</strong>：<code>cargo test</code></li>
+<li><strong>文档生成器</strong>：<code>cargo doc</code></li>
+<li><strong>代码格式化</strong>：<code>cargo fmt</code>（调用rustfmt）</li>
+<li><strong>代码检查</strong>：<code>cargo clippy</code>（lint工具）</li>
+</ul>
+<p>一个新Rust项目：</p>
+<pre data-label="bash"><code class="language-bash">cargo new my_project  # 创建项目
+cd my_project</code></pre>
+<p><code>Cargo.toml</code>（项目配置文件，类似package.json）：</p>
+<pre data-label="toml"><code class="language-toml">[package]
+name = "my_project"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+serde = { version = "1.0", features = ["derive"] }
+reqwest = { version = "0.11", features = ["json"] }
+tokio = { version = "1", features = ["full"] }</code></pre>
+<pre data-label="bash"><code class="language-bash">cargo build    # 构建
+cargo run      # 构建并运行
+cargo test     # 运行测试
+cargo add serde  # 添加依赖（会自动修改Cargo.toml）</code></pre>
+<p>Cargo会自动下载依赖、管理版本冲突、缓存编译结果。和C相比，这是另一个世界。</p>
+<p>Crates.io（发音&quot;crates dot io&quot;）是Rust的官方包仓库，截至2025年已有超过15万个crate（Rust的包称为crate）。质量参差不齐，但核心生态的几个大库——tokio（异步运行时）、serde（序列化）、reqwest（HTTP客户端）——都是高质量、广泛维护的。</p>
+<h4 id="353-traitrust的接口系统">3.5.3 trait：Rust的接口系统</h4>
+<p>简单提一下<code>trait</code>，因为它是Rust生态里无处不在的概念。</p>
+<p><code>trait</code>类似Java的接口或Python的抽象基类，定义一组类型必须实现的方法：</p>
+<pre data-label="rust"><code class="language-rust">trait Summary {
+    fn summarize(&amp;self) -&gt; String;
+}
+
+struct Article {
+    title: String,
+    content: String,
+}
+
+impl Summary for Article {
+    fn summarize(&amp;self) -&gt; String {
+        format!("{}: {}...", self.title, &amp;self.content[..50])
+    }
+}</code></pre>
+<p>Rust的trait系统比Java接口更强大的地方在于：你可以给任何类型实现任何trait，包括你没有写的类型（在一定限制下）。这是一种叫做&quot;特设多态&quot;（ad hoc polymorphism）的能力，让代码组合非常灵活。</p>
+<p>Rust没有传统意义上的继承（类和子类）。它用trait来实现代码复用和多态，这是一种不同的面向对象思路，更接近组合而不是继承。如果你熟悉Go的接口系统，Rust的trait和它有些像，但功能更强大。</p>
+<blockquote><p>好了，第三章到这里。所有权三板斧、枚举、模式匹配、错误处理——这四个东西是Rust语法最有特色的部分，也是和C/Python差异最大的地方。</p>
+<p>说实话，只看文字描述很难真正理解这些概念。所有权和借用需要你亲手写代码，被借用检查器骂几次，才会慢慢内化。这章的目的只是给你一个印象：Rust的语法在哪些地方和C像（控制流、基本类型、函数），在哪些地方根本不同（所有权、枚举、错误处理）。</p>
+<p>下一章我们回到宏观视角：Rust实际上跑在哪里，解决了谁的问题，什么场景用它是多此一举。</p>
+</blockquote>
+
+    <nav class="pager">  <a href="02-core-philosophy.html">
+    <span class="label">← 上一章</span>
+    <span class="title">Rust 到底在解决什么问题——核心哲学</span>
+  </a>  <a href="04-where-rust.html" class="next">
+    <span class="label">下一章 →</span>
+    <span class="title">Rust 在哪里出没——它的边界和地盘</span>
+  </a></nav>
+  </article>
+</div>
+
+<footer>
+  <div class="set">
+    <span>RUST</span>
+    <span>2026 · ZH-CN</span>
+  </div>
+  <div class="set">
+    <span>Mav</span>
+  </div>
+</footer>
+<div class="search-backdrop" id="search-overlay" role="dialog" aria-modal="true" aria-label="搜索" hidden>
+  <div class="search-modal">
+    <div class="search-input-wrap">
+      <input type="search" class="search-input" placeholder="搜索内容..." aria-label="搜索内容" autocomplete="off">
+      <kbd>ESC</kbd>
+    </div>
+    <div class="search-results" role="listbox" aria-label="搜索结果"></div>
+  </div>
+</div>
+
+<!-- Mobile TOC -->
+<button class="mtoc-fab" id="mtoc-fab" aria-label="目录">TOC</button>
+<div class="mtoc-drawer" id="mtoc-drawer">
+  <div class="mtoc-content"></div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/bash.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/typescript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/yaml.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/javascript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/json.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/python.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/css.min.js"></script>
+<script src="../assets/script.js"></script>
+</body>
+</html>

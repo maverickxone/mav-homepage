@@ -1,0 +1,436 @@
+{
+  "documents": [
+    {
+      "id": "01-pixel-resolution",
+      "title": "像素与分辨率：屏幕是怎么工作的",
+      "chapter": "01",
+      "chapterTitle": "像素与分辨率：屏幕是怎么工作的",
+      "url": "chapters/01-pixel-resolution.html",
+      "body": "\n   什么是像素？\n\n你现在正在盯着一块屏幕看这行字。如果你把脸贴近屏幕，凑得足够近，你会发现屏幕上的图像是由无数个微小的发光点组成的。这些发光点，就是  像素（Pixel，来自\"Picture Element\"的缩写）  。\n\n每一个像素都能发出特定颜色的光。当成千上万个像素紧密排列在一起，它们各自发出不同颜色和亮度的光，合在一起，就形成了你眼中看到的图像。\n\n想象一下马赛克拼图：每一块小马赛克就是一个像素。当你站得很近，你只能看到一块块色块；当你站得远一些，这些色块就连成了一幅画。屏幕上的像素道理相同——足够多、足够小的像素，在正常观看距离下，你的眼睛就无法分辨出单个像素，只会看到一幅流畅的图像。\n\n   像素是怎么发光的？\n\n现代屏幕主要有三种发光方式，了解它们能帮助你理解为什么不同屏幕价格相差悬殊。\n\n  LCD（液晶显示器）  \n\nLCD 不是自己发光的。它的工作原理是：\n1. 背部有一个均匀的  背光灯  （通常是LED灯板）照亮整块屏幕\n2. 背光穿过一层  液晶层  ，液晶分子像百叶窗一样，可以通过加电控制它们的排列，从而决定每个像素让多少光通过\n3. 光线再穿过  彩色滤光片  ，分别生成红、绿、蓝三色\n4. 三种颜色的光混合，形成你看到的颜色\n\nLCD 的问题在于：背光是整块打开的。即使某个区域显示纯黑色，背光灯仍然在发光，只是被液晶挡住了——但总有一些光会漏出来，导致\"黑色\"看起来并不是真正的黑，而是略显灰暗。这就是 LCD 的\"漏光\"问题。\n\n  OLED（有机发光二极管）  \n\nOLED 的每一个像素都是  自己发光的  。显示黑色时，那个像素就直接关闭——不发光，就是真正的纯黑。这让 OLED 的对比度极其惊人，黑色深邃、颜色鲜艳。\n\nOLED 的缺点：\n    烧屏风险  ：长时间显示静止画面（如状态栏的图标），对应像素会因过度使用而衰减，形成残影\n    低亮度闪烁  ：部分 OLED 调光方式会让屏幕在低亮度时以极高频率闪烁（PWM 调光），长时间使用可能引发眼部疲劳。高端 OLED 屏幕（如华为 MateBook X Pro 2024）通过提高 PWM 频率到 1440Hz 来缓解这一问题\n\n  Mini LED  \n\nMini LED 是 LCD 的升级版。它把背光灯从大面积灯板改为成千上万个超小 LED 灯（\"Mini\"），可以对屏幕不同区域独立控制背光亮度。显示暗色区域时降低那一块的背光，显示亮色区域时提高背光，从而大幅提升对比度，兼顾了 LCD 的稳定性和接近 OLED 的显示效果。苹果 MacBook Pro 的 Liquid Retina XDR 屏幕，就是 Mini LED 方案。\n\n   RGB：三原色的秘密\n\n每个像素通常由三个更小的  子像素（Subpixel）  组成，分别发出  红（Red）、绿（Green）、蓝（Blue）  三种颜色的光。这就是   RGB 色彩模型  。\n\n人眼有三种对光敏感的视锥细胞，分别对红、绿、蓝光最敏感。通过控制 R、G、B 三个子像素各自的亮度，就能混合出几乎任何颜色：\n\n  R 值   G 值   B 值   显示颜色  \n                                 \n  255    0      0      纯红色    \n  0      255    0      纯绿色    \n  0      0      255    纯蓝色    \n  255    255    0      黄色      \n  255    255    255    纯白色    \n  0      0      0      纯黑色    \n  128    0      128    紫色      \n\n每个通道的值从 0 到 255，共 256 个级别（这是 8 位色深，后面第七章会详细讲）。所以一个像素能表示的颜色总数是 256 × 256 × 256 ≈   1670 万种颜色  ，这已经超过了人眼能分辨的极限。\n\n   PPI——像素密度，清晰度的真正决定者\n\n光有像素数量还不够，还要看这些像素排列得多紧密。  PPI（Pixels Per Inch，每英寸像素数）  就是衡量这个密度的指标。\n\nPPI 的计算方式：\n\n   \nPPI = 对角线像素数 / 屏幕对角线英寸数\n对角线像素数 = √ 水平像素² + 垂直像素² \n   \n\n举个例子，你的 iPad Pro 2021 11英寸屏幕，分辨率 2388×1668：\n  对角线像素数 = √ 2388² + 1668²  = √ 5702544 + 2782224  = √8484768 ≈ 2913\n  PPI = 2913 / 11 ≈   264"
+    },
+    {
+      "id": "01-pixel-resolution-什么是像素",
+      "title": "什么是像素？",
+      "chapter": "01",
+      "chapterTitle": "像素与分辨率：屏幕是怎么工作的",
+      "url": "chapters/01-pixel-resolution.html#什么是像素",
+      "body": ""
+    },
+    {
+      "id": "01-pixel-resolution-像素是怎么发光的",
+      "title": "像素是怎么发光的？",
+      "chapter": "01",
+      "chapterTitle": "像素与分辨率：屏幕是怎么工作的",
+      "url": "chapters/01-pixel-resolution.html#像素是怎么发光的",
+      "body": ""
+    },
+    {
+      "id": "01-pixel-resolution-rgb三原色的秘密",
+      "title": "RGB：三原色的秘密",
+      "chapter": "01",
+      "chapterTitle": "像素与分辨率：屏幕是怎么工作的",
+      "url": "chapters/01-pixel-resolution.html#rgb三原色的秘密",
+      "body": ""
+    },
+    {
+      "id": "01-pixel-resolution-ppi像素密度清晰度的真正决定者",
+      "title": "PPI——像素密度，清晰度的真正决定者",
+      "chapter": "01",
+      "chapterTitle": "像素与分辨率：屏幕是怎么工作的",
+      "url": "chapters/01-pixel-resolution.html#ppi像素密度清晰度的真正决定者",
+      "body": ""
+    },
+    {
+      "id": "01-pixel-resolution-分辨率是什么",
+      "title": "分辨率是什么？",
+      "chapter": "01",
+      "chapterTitle": "像素与分辨率：屏幕是怎么工作的",
+      "url": "chapters/01-pixel-resolution.html#分辨率是什么",
+      "body": ""
+    },
+    {
+      "id": "01-pixel-resolution-字母里的历史pi-和分辨率的命名逻辑",
+      "title": "字母里的历史：P、i 和分辨率的命名逻辑",
+      "chapter": "01",
+      "chapterTitle": "像素与分辨率：屏幕是怎么工作的",
+      "url": "chapters/01-pixel-resolution.html#字母里的历史pi-和分辨率的命名逻辑",
+      "body": ""
+    },
+    {
+      "id": "01-pixel-resolution-从360p到4k清晰度如何提升",
+      "title": "从360P到4K，清晰度如何提升？",
+      "chapter": "01",
+      "chapterTitle": "像素与分辨率：屏幕是怎么工作的",
+      "url": "chapters/01-pixel-resolution.html#从360p到4k清晰度如何提升",
+      "body": ""
+    },
+    {
+      "id": "01-pixel-resolution-分辨率的quot天花板quot为什么高分辨率并不是越高越好",
+      "title": "分辨率的&quot;天花板&quot;：为什么高分辨率并不是越高越好？",
+      "chapter": "01",
+      "chapterTitle": "像素与分辨率：屏幕是怎么工作的",
+      "url": "chapters/01-pixel-resolution.html#分辨率的quot天花板quot为什么高分辨率并不是越高越好",
+      "body": ""
+    },
+    {
+      "id": "02-film-codec",
+      "title": "胶卷与编解码器：从模拟到数字",
+      "chapter": "02",
+      "chapterTitle": "胶卷与编解码器：从模拟到数字",
+      "url": "chapters/02-film-codec.html",
+      "body": "\n   一个让人困惑的现象\n\n你可能注意到，《2001太空漫游》（1968年）、《教父》（1972年）、甚至早期王家卫的电影，现在都有 4K 蓝光版本。但问题来了：1968 年根本没有 4K 技术，那么这些 4K 版本从哪里来的？\n\n答案藏在  胶片的物理特性  里。\n\n   胶片的工作原理\n\n电影胶片（Film）是一种涂有  卤化银晶体  的透明柔性基材。当光线照射到胶片时，卤化银晶体发生化学反应，根据光强的不同产生不同程度的变化，经过化学显影后，就在胶片上留下了连续的影像。\n\n关键在于：  胶片记录的是连续的模拟信息，而不是离散的数字像素  。\n\n这就是本质区别。数字相机有一个固定数量的像素阵列（比如 4000×3000 = 1200 万像素），它的\"分辨率上限\"在传感器制造完成时就固定了。而胶片的感光颗粒（银盐晶体）极其细小，密度极高，记录的信息量远超任何早期数字设备。\n\n   胶片的等效分辨率\n\n传统 35mm 电影胶片的\"信息量\"大约等效于多高的数字分辨率？\n\n这个问题没有简单的答案，因为胶片不是像素阵列，两者的性质不同。但大量研究和测试表明：\n\n    标准 35mm 电影胶片  （用于大多数商业电影）的细节信息约等效于   4K 到 6K  （依胶片品牌、感光度和镜头质量而定）\n    高质量 35mm 低感光度胶片  甚至可以等效   8K   左右\n    70mm 胶片  （用于《星际穿越》《八恶人》等）的细节量更是高达等效   12K 甚至更高  \n\n所以，当你看到 00 年代（或更早）的胶片电影被制作成 4K 版本时，这完全是有根据的——因为  原始胶片上就存储着那么多细节，只是当年的技术无法提取  。\n\n   4K 修复的过程\n\n将老胶片制作成 4K 数字版本，叫做  4K 扫描（4K Scan）  或  4K 修复（4K Restoration）  ，是一个技术含量极高的工程：\n\n  第一步：物理修复  \n\n在扫描之前，通常需要先对原始胶片进行物理修复。经过几十年，胶片可能有：\n  划痕（从横贯画面的白色线条）\n  灰尘颗粒（随机出现的黑白斑点）\n  褪色（化学成分分解导致颜色偏移）\n  收缩变形（胶片基材随时间缩短）\n  霉斑（保存条件不佳导致）\n\n专业的修复人员会用棉签、专业溶液等小心清洁胶片，有时甚至需要在显微镜下操作。\n\n  第二步：高分辨率扫描  \n\n使用专业的胶片扫描仪，以极高精度逐帧扫描胶片。一部 2 小时的电影约有 172800 帧（24fps × 7200秒），每一帧都需要以 4K 分辨率扫描，最终产生数 TB 的原始数字文件。\n\n  第三步：数字修复  \n\n扫描得到的数字文件，还需要用软件进行大量修复工作：\n    去划痕  ：算法识别并插值修复胶片划痕\n    去噪点  ：减少胶片颗粒感（注意：过度去噪会让画面失去胶片质感，所以需要权衡）\n    色彩还原  ：根据原始胶片的颜色档案和导演意图，修正褪色\n    画面稳定  ：修正胶片因拉片不稳定导致的抖动\n    逐帧人工校对  ：对自动修复效果进行人工审查，修正算法遗漏的问题\n\n  第四步：色彩调级  \n\n在技术修复完成后，通常会邀请原片的摄影指导或导演本人参与  DCP（数字电影包）色彩调级  ，确保 4K 版本的视觉呈现符合创作意图，甚至可以借助现代 HDR 技术展现原片中一些在当年放映条件下无法完整呈现的细节。\n\n   为什么不是所有老电影都有4K版本？\n\n制作一部高质量 4K 修复版本的成本相当惊人，通常在   50 万到几百万美元  之间。决定是否值得投入，要考虑：\n\n1.   原始素材的保存状态  ：如果胶片保存极差，修复的意义和可能性就降低了\n2.   商业价值  ：经典名片才值得高昂投入\n3.   版权问题  ：版权归属复杂的老片很难推进修复项目\n4.   原始底片的存在  ：部分电影的原始底片已经损毁或丢失\n\n值得一提的是，数字电影（全数字拍摄）就没有这种\"潜力\"了。用 2K 数字摄像机拍摄的电影，就是 2K 的信息量，永远无法真正\"升级\"成 4K——可以做的仅仅是放大（Upscaling），即用算法猜测并填充不存在的像素，但这与真正的细节是两码事。\n\n这就是为什么许多顶级导演（如诺兰、昆汀·塔伦蒂诺）至今仍坚持用胶片拍摄——它保留了更大的\"未来潜力\"。\n\n\n\n   视频文件的本质问题\n\n一部未经压缩的 4K 视频文件有多大？我们来算一下：\n\n  分辨率：3840×2160 = 8,294,400 像素\n  每像素颜色：RGB 各 8 位，共 24 位 = 3 字节\n  帧率：24fps\n  时长：120 分钟 = 7200 秒\n\n原始数据量 = 8,294,400 × 3 × 24 × 7200  \n= "
+    },
+    {
+      "id": "02-film-codec-一个让人困惑的现象",
+      "title": "一个让人困惑的现象",
+      "chapter": "02",
+      "chapterTitle": "胶卷与编解码器：从模拟到数字",
+      "url": "chapters/02-film-codec.html#一个让人困惑的现象",
+      "body": ""
+    },
+    {
+      "id": "02-film-codec-胶片的工作原理",
+      "title": "胶片的工作原理",
+      "chapter": "02",
+      "chapterTitle": "胶卷与编解码器：从模拟到数字",
+      "url": "chapters/02-film-codec.html#胶片的工作原理",
+      "body": ""
+    },
+    {
+      "id": "02-film-codec-胶片的等效分辨率",
+      "title": "胶片的等效分辨率",
+      "chapter": "02",
+      "chapterTitle": "胶卷与编解码器：从模拟到数字",
+      "url": "chapters/02-film-codec.html#胶片的等效分辨率",
+      "body": ""
+    },
+    {
+      "id": "02-film-codec-4k-修复的过程",
+      "title": "4K 修复的过程",
+      "chapter": "02",
+      "chapterTitle": "胶卷与编解码器：从模拟到数字",
+      "url": "chapters/02-film-codec.html#4k-修复的过程",
+      "body": ""
+    },
+    {
+      "id": "02-film-codec-为什么不是所有老电影都有4k版本",
+      "title": "为什么不是所有老电影都有4K版本？",
+      "chapter": "02",
+      "chapterTitle": "胶卷与编解码器：从模拟到数字",
+      "url": "chapters/02-film-codec.html#为什么不是所有老电影都有4k版本",
+      "body": ""
+    },
+    {
+      "id": "02-film-codec-视频文件的本质问题",
+      "title": "视频文件的本质问题",
+      "chapter": "02",
+      "chapterTitle": "胶卷与编解码器：从模拟到数字",
+      "url": "chapters/02-film-codec.html#视频文件的本质问题",
+      "body": ""
+    },
+    {
+      "id": "02-film-codec-视频压缩的基本原理",
+      "title": "视频压缩的基本原理",
+      "chapter": "02",
+      "chapterTitle": "胶卷与编解码器：从模拟到数字",
+      "url": "chapters/02-film-codec.html#视频压缩的基本原理",
+      "body": ""
+    },
+    {
+      "id": "02-film-codec-avch264天下第一普及",
+      "title": "AVC（H.264）——天下第一普及",
+      "chapter": "02",
+      "chapterTitle": "胶卷与编解码器：从模拟到数字",
+      "url": "chapters/02-film-codec.html#avch264天下第一普及",
+      "body": ""
+    },
+    {
+      "id": "02-film-codec-hevch265高效的继承者",
+      "title": "HEVC（H.265）——高效的继承者",
+      "chapter": "02",
+      "chapterTitle": "胶卷与编解码器：从模拟到数字",
+      "url": "chapters/02-film-codec.html#hevch265高效的继承者",
+      "body": ""
+    },
+    {
+      "id": "02-film-codec-av1免费的未来",
+      "title": "AV1——免费的未来",
+      "chapter": "02",
+      "chapterTitle": "胶卷与编解码器：从模拟到数字",
+      "url": "chapters/02-film-codec.html#av1免费的未来",
+      "body": ""
+    },
+    {
+      "id": "02-film-codec-三者对比总结",
+      "title": "三者对比总结",
+      "chapter": "02",
+      "chapterTitle": "胶卷与编解码器：从模拟到数字",
+      "url": "chapters/02-film-codec.html#三者对比总结",
+      "body": ""
+    },
+    {
+      "id": "02-film-codec-编解码器与硬件的关系软解vs硬解",
+      "title": "编解码器与硬件的关系——软解vs硬解",
+      "chapter": "02",
+      "chapterTitle": "胶卷与编解码器：从模拟到数字",
+      "url": "chapters/02-film-codec.html#编解码器与硬件的关系软解vs硬解",
+      "body": ""
+    },
+    {
+      "id": "03-bitrate-refresh",
+      "title": "码率与刷新率：画质、文件大小与流畅度",
+      "chapter": "03",
+      "chapterTitle": "码率与刷新率：画质、文件大小与流畅度",
+      "url": "chapters/03-bitrate-refresh.html",
+      "body": "\n   码率是什么？\n\n  码率（Bitrate）  ，又称\"比特率\"，是指单位时间内视频文件传输或处理的数据量，通常用   kbps（千比特每秒）   或   Mbps（兆比特每秒）   表示。\n\n码率 = 视频文件大小 / 视频时长\n\n例如，一段 1 小时的视频，码率为 5000 kbps（5 Mbps），则文件大小约为：\n5000 × 3600 ÷ 8 ÷ 1024 ≈   2.2 GB  \n\n（除以 8 是把比特转换成字节，除以 1024 是把字节转换成 GB）\n\n   码率、分辨率与画质的三角关系\n\n这三者之间存在密切的联系，但并非简单的线性关系。\n\n  分辨率决定了画面的\"信息容量\"  \n\n4K 视频的每帧信息量是 1080P 的 4 倍。如果用相同的码率编码，平均到每个像素的\"比特数\"就只有 1080P 的四分之一，画质必然更差。\n\n  码率决定了压缩质量  \n\n在相同分辨率下，码率越高，压缩时丢弃的细节越少，画质越好。但码率提升有边际效益递减：当码率已经足够高，继续提高码率对画质的提升几乎肉眼不可见。\n\n  编解码器决定了\"效率\"  \n\n相同的码率，AV1 能呈现比 AVC 更好的画质；或者说，AV1 能用 AVC 一半的码率达到同等画质。\n\n   从数字理解你的下载列表\n\n让我们回到你的下载列表，分析几个关键选项：\n\n  4K 组：  \n  AVC：8327 kbps，8.14 GB（用了最多数据换画质）\n  HEVC：3228 kbps，3.16 GB（相同画质，大小约为 AVC 的 38%）\n  AV1：2262 kbps，2.21 GB（压缩最激进，理论上画质与 HEVC 相当或更好）\n\n  1080P 高码率组：  \n  AVC：5250 kbps（5.13 GB）\n  AV1：2531 kbps（2.48 GB）\n  HEVC：938 kbps（939 MB）\n\n注意这里有个有趣的现象：1080P 高码率 HEVC 只有 938 kbps，而 1080P 高码率 AVC 有 5250 kbps，前者只有后者的约 18%。这说明这两个\"高码率\"其实品质差异很大——可能 HEVC 版本是另一个不同来源的编码。不能简单认为\"同名档次\"的不同编码格式画质相当，要具体看 kbps 数值。\n\n  \"高清\"vs\"高码率\"：  \n  1080P 高码率 AVC：5250 kbps（更好的画质）\n  1080P 高清 AVC：1752 kbps（对比压缩更大）\n\n两者分辨率一样，但码率差了 3 倍。如果你对画质有要求，在有 AVC 可选时，高码率版本会明显比\"高清\"版更清晰，尤其是在快速运动场景（如打斗、体育比赛）中，高码率版本不会出现\"方块感\"。\n\n   \"够用\"的码率是多少？\n\n不同内容类型所需的最低码率不同：\n\n  分辨率   内容类型   AVC 最低码率   HEVC 最低码率  \n                                                  \n  1080P   安静场景（讲话、纪录片）  2000 kbps   1000 kbps  \n  1080P   一般电影   4000 6000 kbps   2000 3000 kbps  \n  1080P   高动态内容（动作片）  8000+ kbps   4000+ kbps  \n  4K   一般电影   15000 25000 kbps   8000 12000 kbps  \n  4K   高动态内容   30000+ kbps   15000+ kbps  \n\n注意你列表里的 4K AVC 是 8327 kbps，按照上面的标准，这对 4K 来说码率其实不算高，可能画质不如一张正儿八经的 4K 蓝光碟（4K 蓝光标准码率可以达到 60 100 Mbps）。\n\n   可变码率（VBR）vs 固定码率（CBR）\n\n视频文件的码率并不一定是固定不变的。\n\n  CBR（Constant Bit Rate，固定码率）  ：无论画面复杂与否，始终保持相同的比特率。好处是文件大小可预测；缺点是在简单场景（如纯色背景）浪费空间，在复杂场景又可能不够用。\n\n  VBR（Variable Bit Rate，可变码率）  ：根据画面复杂度动态调整码率——简单画面少分配比特，复杂画面多分配。这样在整体文件大小相同的情况下，画质更好。你下载的视频文件几乎都是 VBR 编码。\n\n\n\n   什么是刷新率？\n\n  刷新率（Refresh Rate）  是屏幕每秒刷新画面的次数，单位是   Hz（赫兹）  。60Hz 意味着屏幕每秒更新 60 次画面，120Hz 则是每秒更新 120 次。\n\n这和帧率（fps）是不同的概念，但关系密切：\n   "
+    },
+    {
+      "id": "03-bitrate-refresh-码率是什么",
+      "title": "码率是什么？",
+      "chapter": "03",
+      "chapterTitle": "码率与刷新率：画质、文件大小与流畅度",
+      "url": "chapters/03-bitrate-refresh.html#码率是什么",
+      "body": ""
+    },
+    {
+      "id": "03-bitrate-refresh-码率分辨率与画质的三角关系",
+      "title": "码率、分辨率与画质的三角关系",
+      "chapter": "03",
+      "chapterTitle": "码率与刷新率：画质、文件大小与流畅度",
+      "url": "chapters/03-bitrate-refresh.html#码率分辨率与画质的三角关系",
+      "body": ""
+    },
+    {
+      "id": "03-bitrate-refresh-从数字理解你的下载列表",
+      "title": "从数字理解你的下载列表",
+      "chapter": "03",
+      "chapterTitle": "码率与刷新率：画质、文件大小与流畅度",
+      "url": "chapters/03-bitrate-refresh.html#从数字理解你的下载列表",
+      "body": ""
+    },
+    {
+      "id": "03-bitrate-refresh-quot够用quot的码率是多少",
+      "title": "&quot;够用&quot;的码率是多少？",
+      "chapter": "03",
+      "chapterTitle": "码率与刷新率：画质、文件大小与流畅度",
+      "url": "chapters/03-bitrate-refresh.html#quot够用quot的码率是多少",
+      "body": ""
+    },
+    {
+      "id": "03-bitrate-refresh-可变码率vbrvs-固定码率cbr",
+      "title": "可变码率（VBR）vs 固定码率（CBR）",
+      "chapter": "03",
+      "chapterTitle": "码率与刷新率：画质、文件大小与流畅度",
+      "url": "chapters/03-bitrate-refresh.html#可变码率vbrvs-固定码率cbr",
+      "body": ""
+    },
+    {
+      "id": "03-bitrate-refresh-什么是刷新率",
+      "title": "什么是刷新率？",
+      "chapter": "03",
+      "chapterTitle": "码率与刷新率：画质、文件大小与流畅度",
+      "url": "chapters/03-bitrate-refresh.html#什么是刷新率",
+      "body": ""
+    },
+    {
+      "id": "03-bitrate-refresh-为什么高刷新率让人感觉quot更流畅quot",
+      "title": "为什么高刷新率让人感觉&quot;更流畅&quot;？",
+      "chapter": "03",
+      "chapterTitle": "码率与刷新率：画质、文件大小与流畅度",
+      "url": "chapters/03-bitrate-refresh.html#为什么高刷新率让人感觉quot更流畅quot",
+      "body": ""
+    },
+    {
+      "id": "03-bitrate-refresh-苹果为什么被诟病长期用60hz",
+      "title": "苹果为什么被诟病长期用60Hz？",
+      "chapter": "03",
+      "chapterTitle": "码率与刷新率：画质、文件大小与流畅度",
+      "url": "chapters/03-bitrate-refresh.html#苹果为什么被诟病长期用60hz",
+      "body": ""
+    },
+    {
+      "id": "03-bitrate-refresh-自适应刷新率promotion-ltpo",
+      "title": "自适应刷新率（ProMotion / LTPO）",
+      "chapter": "03",
+      "chapterTitle": "码率与刷新率：画质、文件大小与流畅度",
+      "url": "chapters/03-bitrate-refresh.html#自适应刷新率promotion-ltpo",
+      "body": ""
+    },
+    {
+      "id": "03-bitrate-refresh-游戏对高刷有不同的需求",
+      "title": "游戏对高刷有不同的需求",
+      "chapter": "03",
+      "chapterTitle": "码率与刷新率：画质、文件大小与流畅度",
+      "url": "chapters/03-bitrate-refresh.html#游戏对高刷有不同的需求",
+      "body": ""
+    },
+    {
+      "id": "03-bitrate-refresh-帧率的选择24fps-的电影感从哪里来",
+      "title": "帧率的选择：24fps 的电影感从哪里来？",
+      "chapter": "03",
+      "chapterTitle": "码率与刷新率：画质、文件大小与流畅度",
+      "url": "chapters/03-bitrate-refresh.html#帧率的选择24fps-的电影感从哪里来",
+      "body": ""
+    },
+    {
+      "id": "04-color-devices",
+      "title": "色彩科学与设备横评",
+      "chapter": "04",
+      "chapterTitle": "色彩科学与设备横评",
+      "url": "chapters/04-color-devices.html",
+      "body": "\n   色域：屏幕能显示多大范围的颜色？\n\n世界上的颜色是无限的，但屏幕能显示的颜色范围是有限的，这个范围叫做  色域（Color Gamut）  。\n\n不同用途的屏幕使用不同的色域标准：\n\n  sRGB / Rec. 709  \n\n最基础的色域标准，覆盖人眼可见颜色的约 35%。几乎所有普通屏幕和互联网内容（网页、普通视频）都以 sRGB 为基准。如果你的屏幕能 100% 覆盖 sRGB，那么对于日常使用来说已经足够。\n\n  DCI P3 / Display P3  \n\n电影行业标准，覆盖人眼可见颜色的约 46%，比 sRGB 宽约 25%。主要体现在更丰富的红色和绿色。\n\n苹果将 P3 引入消费设备（iPhone 7 开始），华为高端笔记本也支持 P3。Apple TV、Netflix 的高清内容通常使用 P3 色域制作。\n\n  Adobe RGB  \n\n专业摄影/印刷行业标准，在绿色和青色方面比 DCI P3 更宽，主要用于印刷色彩管理。\n\n  Rec. 2020  \n\n面向未来的 4K/8K 超高清广播标准，覆盖人眼可见颜色的约 76%。目前还没有任何消费级显示器能完整显示 Rec. 2020，只有一些专业显示器能覆盖其 85% 左右。\n\n对你而言：当你的屏幕支持 P3 色域时，看 Netflix 的 HDR 内容、看苹果的照片，色彩会比只支持 sRGB 的屏幕更鲜艳、更准确。但如果你把 P3 色域的内容显示在 sRGB 屏幕上，超出 sRGB 范围的颜色会被\"截断\"（压缩到 sRGB 边界内），失去部分色彩细节。\n\n   色深：颜色的\"精细度\"\n\n我们在第一章提到，每个像素的 RGB 各通道有 256 个级别（8位），能表达约 1670 万种颜色。这叫做   8位色深（8 bit color）  。\n\n如果是   10位色深（10 bit color）  ，每通道有 1024 个级别，总颜色数是 1024³ ≈   10.7 亿种颜色  。\n\n这有什么实际意义？\n\n想象从深红色到浅橙色的渐变。8位色深下，这个渐变由 256 步完成，在某些情况下（尤其是大面积色彩过渡），肉眼可以看到明显的\"色带\"——渐变不连续，出现明显的色块分界。这叫做  色带现象（Banding）  。\n\n10位色深下，同样的渐变由 1024 步完成，过渡更丝滑，消除了色带现象。\n\n你的华为 MateBook X Pro 2024 屏幕支持 10bit 色深（需要开启 HDR 模式），这意味着它可以显示 10.7 亿种颜色。\n\n   HDR：高动态范围\n\n  HDR（High Dynamic Range，高动态范围）  是近年来视频和显示技术中最重要的进步之一。\n\n传统的 SDR（标准动态范围）内容和屏幕，亮度范围大约在 100 尼特（nits）左右。这意味着屏幕上最亮的白和最暗的黑之间的差距是有限的。\n\n而真实世界的光照范围远比这大得多——晴天的太阳光强约 100,000 尼特，阴影处约 100 尼特，人眼能同时适应几个数量级的亮度差。\n\nHDR 的目标是让屏幕更接近真实世界的亮度范围：\n  HDR 内容的峰值亮度可以达到 1000 nits、4000 nits 甚至更高\n  暗部细节（比如夜晚场景中的阴影）更丰富\n  亮部细节（比如窗外阳光照射的场景）不会\"过曝\"成一片白\n\n  几种 HDR 标准：  \n\n  标准   峰值亮度   色深   内容量  \n                                   \n  HDR10   1000 nits   10 bit   最多  \n  HDR10+   可变（动态元数据）  10 bit   较多  \n  Dolby Vision   10000 nits（理论）  12 bit   较多  \n  HLG   用于广播   10 bit   较多  \n\n  DisplayHDR 400/600/1000   是显示器 HDR 认证等级：\n    DisplayHDR 400  ：峰值亮度 400 nits，这是\"入门级 HDR\"，效果提升有限\n    DisplayHDR 600/1000  ：更高亮度，HDR 效果显著\n  你的 AOC U27U3XD 支持   DisplayHDR 400  ，峰值亮度 450 nits，属于入门 HDR 档次\n\n真正的 HDR 体验需要屏幕硬件支持（足够高的峰值亮度和足够深的暗部），一些 LCD 屏幕虽然通过了 HDR 400 认证，但实际改善效果有限；OLED 屏幕因为能实现真正的纯黑，在 HDR 表现上通常远好于同亮度的 LCD。\n\n\n\n  以下数据均来自官方规格及权威媒体，所有设备信息更新至 2025 2026 年。\n\n   理解\"播"
+    },
+    {
+      "id": "04-color-devices-色域屏幕能显示多大范围的颜色",
+      "title": "色域：屏幕能显示多大范围的颜色？",
+      "chapter": "04",
+      "chapterTitle": "色彩科学与设备横评",
+      "url": "chapters/04-color-devices.html#色域屏幕能显示多大范围的颜色",
+      "body": ""
+    },
+    {
+      "id": "04-color-devices-色深颜色的quot精细度quot",
+      "title": "色深：颜色的&quot;精细度&quot;",
+      "chapter": "04",
+      "chapterTitle": "色彩科学与设备横评",
+      "url": "chapters/04-color-devices.html#色深颜色的quot精细度quot",
+      "body": ""
+    },
+    {
+      "id": "04-color-devices-hdr高动态范围",
+      "title": "HDR：高动态范围",
+      "chapter": "04",
+      "chapterTitle": "色彩科学与设备横评",
+      "url": "chapters/04-color-devices.html#hdr高动态范围",
+      "body": ""
+    },
+    {
+      "id": "04-color-devices-理解quot播放4kquot与quot显示4kquot的区别",
+      "title": "理解&quot;播放4K&quot;与&quot;显示4K&quot;的区别",
+      "chapter": "04",
+      "chapterTitle": "色彩科学与设备横评",
+      "url": "chapters/04-color-devices.html#理解quot播放4kquot与quot显示4kquot的区别",
+      "body": ""
+    },
+    {
+      "id": "04-color-devices-ipad-air-系列2024-2025",
+      "title": "iPad Air 系列（2024-2025）",
+      "chapter": "04",
+      "chapterTitle": "色彩科学与设备横评",
+      "url": "chapters/04-color-devices.html#ipad-air-系列2024-2025",
+      "body": ""
+    },
+    {
+      "id": "04-color-devices-ipad-pro-系列2021-2024",
+      "title": "iPad Pro 系列（2021-2024）",
+      "chapter": "04",
+      "chapterTitle": "色彩科学与设备横评",
+      "url": "chapters/04-color-devices.html#ipad-pro-系列2021-2024",
+      "body": ""
+    },
+    {
+      "id": "04-color-devices-华为-matebook-x-pro2024款你的设备",
+      "title": "华为 MateBook X Pro（2024款，你的设备）",
+      "chapter": "04",
+      "chapterTitle": "色彩科学与设备横评",
+      "url": "chapters/04-color-devices.html#华为-matebook-x-pro2024款你的设备",
+      "body": ""
+    },
+    {
+      "id": "04-color-devices-macbook-air-系列m3m4",
+      "title": "MacBook Air 系列（M3/M4）",
+      "chapter": "04",
+      "chapterTitle": "色彩科学与设备横评",
+      "url": "chapters/04-color-devices.html#macbook-air-系列m3m4",
+      "body": ""
+    },
+    {
+      "id": "04-color-devices-macbook-pro-系列m42024",
+      "title": "MacBook Pro 系列（M4，2024）",
+      "chapter": "04",
+      "chapterTitle": "色彩科学与设备横评",
+      "url": "chapters/04-color-devices.html#macbook-pro-系列m42024",
+      "body": ""
+    },
+    {
+      "id": "04-color-devices-aoc-u27u3xd-显示器",
+      "title": "AOC U27U3XD 显示器",
+      "chapter": "04",
+      "chapterTitle": "色彩科学与设备横评",
+      "url": "chapters/04-color-devices.html#aoc-u27u3xd-显示器",
+      "body": ""
+    },
+    {
+      "id": "04-color-devices-设备屏幕总览",
+      "title": "设备屏幕总览",
+      "chapter": "04",
+      "chapterTitle": "色彩科学与设备横评",
+      "url": "chapters/04-color-devices.html#设备屏幕总览",
+      "body": ""
+    },
+    {
+      "id": "05-practice-glossary",
+      "title": "实战选择与术语速查",
+      "chapter": "05",
+      "chapterTitle": "实战选择与术语速查",
+      "url": "chapters/05-practice-glossary.html",
+      "body": "\n   场景一：用 iPad Pro 2021（11英寸）或 iPad Air 看\n\n你的 iPad 屏幕分辨率大约是 2388×1668，不到 4K 的一半，而且是 11 英寸小屏，观看距离也近。\n\n  推荐选项：1080P 高码率 HEVC（序号  5）或 1080P 高码率 AV1（序号  4）  \n\n理由：\n  屏幕不需要 4K，1080P 已经绰绰有余\n  M1 芯片支持 HEVC 和 AV1 硬件解码，播放流畅、省电\n  HEVC 938 MB，AV1 2531 Mbps（注意 AV1 在这里码率反而高于 HEVC），选 HEVC 节省空间\n  若 HEVC 版本码率只有 938kbps 感觉不够，可考虑 1080P 高清 AV1（ 7，883 Mbps，886 MB）\n\n  如果是 AVC 的忠实用户：1080P 高清 AVC（ 6）  ，1.71GB，兼容性最好。\n\n   场景二：用 MateBook X Pro 看\n\n14.2英寸屏幕，分辨率 3120×2080（3.1K），自己使用。\n\n  推荐选项：1080P 高码率 HEVC（ 5）或 4K HEVC（ 1）  \n\n  1080P 高码率 HEVC：939 MB，画质够用，播放流畅\n  4K HEVC：3.16 GB，屏幕会缩放显示，但高码率确保了细节丰富\n  若在意文件大小：1080P AV1（ 7，886MB），Intel Arc 显卡支持 AV1 硬件解码\n\n   场景三：外接 AOC U27U3XD（4K 144Hz 模式）看\n\n这是唯一一个 4K 视频  真正有意义  的场景。\n\n  推荐选项：4K AV1（ 2，2.21GB）或 4K HEVC（ 1，3.16GB）  \n\n理由：\n  屏幕是原生 4K，4K 内容可以逐像素原生显示\n  2262 kbps 的 4K AV1 码率对于电影来说稍偏低，如果内容动态场景多，可能出现轻微压缩痕迹\n  4K HEVC（3228 kbps）码率更高，画质更稳定\n  不推荐 4K AVC（8327 kbps），虽然码率最高，但文件是 4K AV1 的近 4 倍，而现代 HEVC/AV1 的画质效率远高于 AVC\n\n  音频建议：   配合  0 音频（M4A 323kbps），全程沉浸式体验。\n\n   场景四：存储空间紧张，只想快速看完\n\n  推荐：720P HEVC（ 11，310MB）或 480P AV1（ 13，395MB）  \n\n在手机或 iPad 小屏上，720P 完全足够日常观看，310MB 的文件大小非常友好。\n\n   选择速查表\n\n  观看设备   首选   备选  \n                          \n  iPad（任何尺寸）  1080P HEVC 或 AV1   1080P AVC（最兼容） \n  MateBook X Pro 2024   1080P HEVC 或 AV1   4K HEVC（追求画质） \n  MacBook Air   1080P HEVC 或 AV1   1080P AVC  \n  MacBook Pro   1080P HEVC 或 AV1   4K HEVC  \n  AOC U27U3XD（4K模式）  4K AV1   4K HEVC  \n  网络差/流量有限   720P HEVC   480P HEVC  \n\n\n   附录：常用术语速查表\n\n  术语   全称   含义  \n                      \n  PPI   Pixels Per Inch   每英寸像素数，越高越细腻  \n  fps   Frames Per Second   帧率，每秒多少帧画面  \n  Hz   Hertz（赫兹）  刷新率单位，屏幕每秒刷新次数  \n  kbps   Kilobits Per Second   码率单位，每秒千比特  \n  Mbps   Megabits Per Second   码率单位，每秒兆比特  \n  AVC   Advanced Video Coding   H.264 编解码器  \n  HEVC   High Efficiency Video Coding   H.265 编解码器  \n  AV1   AOMedia Video 1   新一代开源编解码器  \n  HDR   High Dynamic Range   高动态范围  \n  SDR   Standard Dynamic Range   标准动态范围  \n  nits   —   亮度单位（尼特） \n  IPS   In Plane Switching   一种 LCD 面板技术，广视角  \n  OLED   Organic Light Emitt"
+    },
+    {
+      "id": "05-practice-glossary-场景一用-ipad-pro-202111英寸或-ipad-air-看",
+      "title": "场景一：用 iPad Pro 2021（11英寸）或 iPad Air 看",
+      "chapter": "05",
+      "chapterTitle": "实战选择与术语速查",
+      "url": "chapters/05-practice-glossary.html#场景一用-ipad-pro-202111英寸或-ipad-air-看",
+      "body": ""
+    },
+    {
+      "id": "05-practice-glossary-场景二用-matebook-x-pro-看",
+      "title": "场景二：用 MateBook X Pro 看",
+      "chapter": "05",
+      "chapterTitle": "实战选择与术语速查",
+      "url": "chapters/05-practice-glossary.html#场景二用-matebook-x-pro-看",
+      "body": ""
+    },
+    {
+      "id": "05-practice-glossary-场景三外接-aoc-u27u3xd4k-144hz-模式看",
+      "title": "场景三：外接 AOC U27U3XD（4K 144Hz 模式）看",
+      "chapter": "05",
+      "chapterTitle": "实战选择与术语速查",
+      "url": "chapters/05-practice-glossary.html#场景三外接-aoc-u27u3xd4k-144hz-模式看",
+      "body": ""
+    },
+    {
+      "id": "05-practice-glossary-场景四存储空间紧张只想快速看完",
+      "title": "场景四：存储空间紧张，只想快速看完",
+      "chapter": "05",
+      "chapterTitle": "实战选择与术语速查",
+      "url": "chapters/05-practice-glossary.html#场景四存储空间紧张只想快速看完",
+      "body": ""
+    },
+    {
+      "id": "05-practice-glossary-选择速查表",
+      "title": "选择速查表",
+      "chapter": "05",
+      "chapterTitle": "实战选择与术语速查",
+      "url": "chapters/05-practice-glossary.html#选择速查表",
+      "body": ""
+    },
+    {
+      "id": "05-practice-glossary-附录常用术语速查表",
+      "title": "附录：常用术语速查表",
+      "chapter": "05",
+      "chapterTitle": "实战选择与术语速查",
+      "url": "chapters/05-practice-glossary.html#附录常用术语速查表",
+      "body": ""
+    },
+    {
+      "id": "05-practice-glossary-后记关于quot够用quot与quot更好quot",
+      "title": "后记：关于&quot;够用&quot;与&quot;更好&quot;",
+      "chapter": "05",
+      "chapterTitle": "实战选择与术语速查",
+      "url": "chapters/05-practice-glossary.html#后记关于quot够用quot与quot更好quot",
+      "body": ""
+    }
+  ]
+}

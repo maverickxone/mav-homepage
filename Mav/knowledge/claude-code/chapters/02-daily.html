@@ -1,0 +1,757 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>第二章 · 日常使用 — Claude Code 使用指南</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" id="hljs-light" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+<link rel="stylesheet" id="hljs-dark" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" media="not all">
+</head>
+<body>
+
+<div class="progress-bar" id="progress-bar"></div>
+
+<nav class="topnav" id="topnav">
+  <div class="topnav-inner">
+    <a class="brand" href="../index.html">Claude Code 指南</a>
+    <div class="nav-links">
+      <a href="01-what-is.html">01</a>
+      <a href="02-daily.html" class="active">02</a>
+      <a href="03-power.html">03</a>
+      <a href="04-mental.html">04</a>
+      <a href="05-cache.html">05</a>
+      <a href="06-easter-eggs.html">06</a>
+      <a href="reference.html">Ref</a>
+    </div>
+    <div class="nav-controls">
+      <button class="nav-btn" id="search-btn" aria-label="搜索 (Ctrl+K)">⌘K</button>
+      <button class="nav-btn" id="settings-btn" aria-label="阅读设置">Aa</button>
+      <a class="nav-btn" href="../../index.html" aria-label="返回知识库">← 知识库</a>
+    </div>
+  </div>
+</nav>
+
+<div class="settings-pop" id="settings-pop">
+  <h5>主题</h5>
+  <div class="row">
+    <button class="seg" data-theme-set="light">明亮</button>
+    <button class="seg" data-theme-set="dark">暗色</button>
+  </div>
+  <h5>字号</h5>
+  <div class="row">
+    <button class="seg" data-size-set="s">小</button>
+    <button class="seg" data-size-set="m">中</button>
+    <button class="seg" data-size-set="l">大</button>
+  </div>
+</div>
+
+<div class="with-sidebar">
+
+  <aside class="sidebar">
+    <div class="chapter-num">Chapter 02</div>
+    <div class="chapter-name">日常使用</div>
+    <h4>本章目录</h4>
+    <ul>
+      <li><a href="#s1">三种输入前缀</a></li>
+      <li><a href="#s2">@ 引用文件</a></li>
+      <li><a href="#s3">! 跑一条命令</a></li>
+      <li><a href="#s4">/ 斜杠命令全景</a></li>
+      <li><a href="#s5">会话保养</a></li>
+      <li><a href="#s6">模型与强度</a></li>
+      <li><a href="#s7">长期记忆与配置</a></li>
+      <li><a href="#s8">任务与工作流</a></li>
+      <li><a href="#s9">/plan 计划模式</a></li>
+      <li><a href="#s10">/goal 目标模式</a></li>
+      <li><a href="#s11">/btw · /rename · /fork</a></li>
+      <li><a href="#s12">审查三件套</a></li>
+      <li><a href="#s13">权限那一幕</a></li>
+      <li><a href="#s14">快捷键</a></li>
+      <li><a href="#s15">CLI 模式</a></li>
+      <li><a href="#s16">一条真实的工作流</a></li>
+    </ul>
+  </aside>
+
+  <article class="chapter-body">
+
+    <header class="chapter-head">
+      <div class="chapter-head-meta">
+        <span class="num">Chapter 02 / 06</span>
+        <span>≈ 28 min</span>
+      </div>
+      <div class="chapter-eyebrow">第二章</div>
+      <h1>日常使用</h1>
+      <p class="sub">
+        打开 Claude Code，你会遇到的所有「打字的方式」。三种前缀、三十多个斜杠命令、一个叫权限的弹窗、一把快捷键——本章把这些全讲透。<strong>命令卡片可以点开</strong>，展开详细用法和示例。
+      </p>
+    </header>
+
+    <h2 id="s1" data-num="§ 2.1">先认识三种输入前缀</h2>
+
+    <p>
+      在 Claude Code 的输入框里，第一个字符决定了这条输入是什么意思。大部分时候你直接打中文或英文——那是「自然语言请求」，Claude 会自己推断你想干啥。但有三个特殊符号会改变这条输入的性质：
+    </p>
+
+    <div class="table-wrap">
+    <table>
+      <thead><tr><th>前缀</th><th>含义</th><th>例子</th></tr></thead>
+      <tbody>
+        <tr><td><code>@</code></td><td>引用文件或目录的内容</td><td><code>@src/api.ts 帮我加一个错误处理</code></td></tr>
+        <tr><td><code>!</code></td><td>让 Claude 帮你跑一条 shell 命令</td><td><code>!git status</code></td></tr>
+        <tr><td><code>/</code></td><td>调用一个「斜杠命令」</td><td><code>/plan</code>、<code>/goal ...</code></td></tr>
+      </tbody>
+    </table>
+    </div>
+
+    <p>还有一个位置敏感的前缀：</p>
+    <ul>
+      <li><code>#</code>（在消息末尾单独用）<strong>把某条内容写进 CLAUDE.md</strong>，相当于「记一下，下次别再告诉你」。</li>
+      <li><code>` + Enter</code>（反斜杠 + 回车）<strong>在任何终端都能换行</strong>，不用记 Shift+Enter 各个终端不同的规则。</li>
+    </ul>
+
+    <p>这几个前缀你会天天用，我们一个个来。</p>
+
+    <h2 id="s2" data-num="§ 2.2"><code>@</code> — 把文件「贴」进对话</h2>
+
+    <p>
+      如果你想让 Claude 看某个具体的文件，最笨的办法是让它自己去找。但如果你<em>已经</em>知道是哪个文件，直接用 <code>@</code> 指给它看更快、更省 token。
+    </p>
+
+    <pre><code>> @src/utils/date.ts 这里面的 formatDate 能不能支持时区参数？</code></pre>
+
+    <p>
+      Claude 会先把 <code>src/utils/date.ts</code> 的内容读进上下文，再回答你。打到 <code>@</code> 的时候会弹出模糊匹配菜单，你可以用方向键选文件；一句话里可以 <code>@</code> 多个文件，也可以 <code>@</code> 整个目录（它会递归列出文件清单，但默认不会把所有文件都读进来——目录是「路标」，不是「夹带」）。
+    </p>
+
+    <p>还有几个鲜为人知的变体：</p>
+
+    <ul>
+      <li><code>@terminal:&lt;name&gt;</code> 引用另一个终端窗口的输出（IDE 集成时可用）。</li>
+      <li><code>@</code> 后 Tab 触发更完整的路径补全，包含子目录。</li>
+      <li>在 IDE 扩展里，按住 <kbd>Shift</kbd> 把文件拖进输入框等价于 <code>@</code>。</li>
+    </ul>
+
+    <div class="callout callout-tip">
+      <p class="callout-title">什么时候用 @，什么时候让它自己找</p>
+      <p>
+        <strong>你确切知道要哪个文件</strong>：用 <code>@</code>。省一次 Glob，也不给它选错文件的机会。<br>
+        <strong>你只有模糊需求</strong>（「修一下那个登录 bug」）：<em>不要</em>用 <code>@</code>——让 Claude 自己去搜、去找，它擅长这个，还会顺便把相关文件一起扫了。
+      </p>
+    </div>
+
+    <h2 id="s3" data-num="§ 2.3"><code>!</code> — 临时跑一条命令</h2>
+
+    <p>
+      有时候你只是想让 Claude 看一眼命令输出，不用走完整的对话流程。用 <code>!</code>：
+    </p>
+
+    <pre><code>> !git log --oneline -20</code></pre>
+
+    <p>
+      它会直接执行这条命令，把输出放进对话里。下次你问「刚才最近那个提交改了啥」，它就能直接看到上下文，不用再自己跑一次 git。这个前缀本质上是你和 Claude <em>共享一个终端观察视角</em>——你看到的它也看到了。
+    </p>
+
+    <p>
+      <code>!</code> 特别适合那些「我自己打会更快、但我希望 Claude 也看到结果」的场景：<code>!npm test</code>、<code>!docker ps</code>、<code>!cat .env.example</code>、<code>!curl -I example.com</code>。
+    </p>
+
+    <p>还有一个变体：在 Skill 或 CLAUDE.md 里写 <code>!`git diff HEAD`</code>（反引号包起来），意思是「加载的时候跑这个命令，把结果当成内容的一部分」。动态内容注入——第三章会详细讲。</p>
+
+    <h2 id="s4" data-num="§ 2.4"><code>/</code> — 斜杠命令：Claude Code 的「功能键」</h2>
+
+    <p>
+      斜杠命令是内置的小功能。你打一个 <code>/</code>，就会弹出一个自动补全菜单，列出所有可用的命令——包括你自己写的 Skill 和项目里挂的插件提供的命令。
+    </p>
+
+    <p>
+      截至 2026 年 5 月，Claude Code 官方的斜杠命令大约 40 个。下面按主题分组。<strong>点击任意卡片可以看命令的详细用法、示例、注意事项。</strong>
+    </p>
+
+    <h2 id="s5" data-num="§ 2.5">会话保养类</h2>
+
+    <p>日常维持会话状态用的命令。它们不改代码，只管「让这次聊天更舒服」。</p>
+
+    <div class="cmd-grid">
+      <div class="cmd-card" data-cmd="/help"><span class="name">/help</span><span class="desc">列出所有命令和快捷键，忘了就按它。</span></div>
+      <div class="cmd-card" data-cmd="/status"><span class="name">/status</span><span class="desc">显示当前模型、工作目录、账号、会话 ID 等状态。</span></div>
+      <div class="cmd-card" data-cmd="/context"><span class="name">/context</span><span class="desc">查看上下文用了多少 token，哪些东西在吃内存。</span></div>
+      <div class="cmd-card" data-cmd="/compact"><span class="name">/compact</span><span class="desc">让 Claude 总结前面对话，腾出上下文空间。</span></div>
+      <div class="cmd-card" data-cmd="/clear"><span class="name">/clear</span><span class="desc">开一个全新的会话，彻底清空上下文。</span></div>
+      <div class="cmd-card" data-cmd="/rewind"><span class="name">/rewind</span><span class="desc">回到某个检查点，撤销代码和对话。</span></div>
+      <div class="cmd-card" data-cmd="/resume"><span class="name">/resume</span><span class="desc">挑一个历史会话继续。</span></div>
+      <div class="cmd-card" data-cmd="/fork"><span class="name">/fork</span><span class="desc">把当前会话分叉成新会话。</span></div>
+      <div class="cmd-card" data-cmd="/doctor"><span class="name">/doctor</span><span class="desc">诊断安装、设置、认证、MCP 问题。</span></div>
+      <div class="cmd-card" data-cmd="/debug"><span class="name">/debug</span><span class="desc">排障日志：API 请求、工具耗时、hook 记录。</span></div>
+      <div class="cmd-card" data-cmd="/exit"><span class="name">/exit</span><span class="desc">退出 Claude Code。Ctrl+D 等价。</span></div>
+      <div class="cmd-card" data-cmd="/tui"><span class="name">/tui</span><span class="desc">切到无闪烁的全屏渲染模式。<span class="badge badge-new">新</span></span></div>
+    </div>
+
+    <div class="callout callout-tip">
+      <p class="callout-title">容易搞混的地方</p>
+      <p>
+        <code>/compact</code> 和 <code>/clear</code> 不一样。<code>/compact</code> 保留任务上下文只压缩历史，<code>/clear</code> 直接把前面全忘了。任务没做完千万别 <code>/clear</code>。
+      </p>
+    </div>
+
+    <h2 id="s6" data-num="§ 2.6">模型与强度</h2>
+
+    <p>
+      Claude Code 不是一个模型，是一组。不同任务配不同模型能显著省钱、省时间。
+    </p>
+
+    <div class="cmd-grid">
+      <div class="cmd-card" data-cmd="/model"><span class="name">/model</span><span class="desc">在 Opus / Sonnet / Haiku 之间切换。</span></div>
+      <div class="cmd-card" data-cmd="/effort"><span class="name">/effort</span><span class="desc">调推理强度，从 low 到 max。</span></div>
+      <div class="cmd-card" data-cmd="/fast"><span class="name">/fast</span><span class="desc">切到 Opus 快速模式，响应更快。</span></div>
+      <div class="cmd-card" data-cmd="/theme"><span class="name">/theme</span><span class="desc">改主题，支持自定义。</span></div>
+    </div>
+
+    <h3>搭配建议</h3>
+
+    <div class="dl">
+      <dt>重构 / 难 bug</dt>
+      <dd>Opus 4.7 + xhigh 或 max。它要多想两轮，成功率远高于一把过就改。</dd>
+      <dt>日常开发</dt>
+      <dd>Sonnet 4.6 + high。响应快，够聪明。大部分时间用这个。</dd>
+      <dt>批量机械改动</dt>
+      <dd>Haiku 4.5 + medium。几十个函数加 JSDoc、把 var 全换成 const——用 Haiku 便宜十倍。</dd>
+      <dt>设计方案</dt>
+      <dd>Opus 4.7 + max + /plan。花钱买决策质量，最值。</dd>
+    </div>
+
+    <p style="margin-top: var(--space-6); color: var(--ink-soft); font-style: italic;">注意，你还可以使用你的脑子，不需要消耗 token。</p>
+
+    <h2 id="s7" data-num="§ 2.7">长期记忆与配置</h2>
+
+    <p>让 Claude「记住」项目规矩的一组命令。第三章会展开讲，这里先认名字。</p>
+
+    <div class="cmd-grid">
+      <div class="cmd-card" data-cmd="/init"><span class="name">/init</span><span class="desc">扫项目，自动生成一份 CLAUDE.md。</span></div>
+      <div class="cmd-card" data-cmd="/memory"><span class="name">/memory</span><span class="desc">查看当前加载的 CLAUDE.md 和自动记忆。</span></div>
+      <div class="cmd-card" data-cmd="/permissions"><span class="name">/permissions</span><span class="desc">管理允许/禁止的操作。</span></div>
+      <div class="cmd-card" data-cmd="/less-permission-prompts"><span class="name">/less-permission-prompts</span><span class="desc">自动生成只读命令白名单，少弹窗。<span class="badge badge-new">新</span></span></div>
+    </div>
+
+    <h2 id="s8" data-num="§ 2.8">任务与工作流</h2>
+
+    <p>
+      控制 Claude「怎么干」的命令。这一组是本章的重头戏——<code>/plan</code>、<code>/goal</code>、<code>/btw</code> 是 Claude Code 工作流的三个支点。
+    </p>
+
+    <div class="cmd-grid">
+      <div class="cmd-card" data-cmd="/plan"><span class="name">/plan</span><span class="desc">进入计划模式，只读不改。</span></div>
+      <div class="cmd-card" data-cmd="/goal"><span class="name">/goal</span><span class="desc">设定完成条件，让它自主做到达成。<span class="badge badge-new">新</span></span></div>
+      <div class="cmd-card" data-cmd="/btw"><span class="name">/btw</span><span class="desc">临时插一句不进主对话历史的话。<span class="badge badge-new">新</span></span></div>
+      <div class="cmd-card" data-cmd="/rename"><span class="name">/rename</span><span class="desc">给当前会话起个人话名字。<span class="badge badge-new">新</span></span></div>
+      <div class="cmd-card" data-cmd="/loop"><span class="name">/loop</span><span class="desc">按间隔或自调节节奏反复执行提示。</span></div>
+      <div class="cmd-card" data-cmd="/background"><span class="name">/background</span><span class="desc">把整个会话丢到后台继续跑。</span></div>
+      <div class="cmd-card" data-cmd="/tasks"><span class="name">/tasks</span><span class="desc">看当前会话的后台任务列表。</span></div>
+      <div class="cmd-card" data-cmd="/schedule"><span class="name">/schedule</span><span class="desc">基于 cron 的定时远程任务。</span></div>
+    </div>
+
+    <h2 id="s9" data-num="§ 2.9"><code>/plan</code> — 先想清楚再动手</h2>
+
+    <p>
+      新手最容易翻车的场景是：说一句「帮我把登录模块重写一下」，然后看着 Claude 哗啦哗啦改了二十个文件，改完你一看，根本不是你想要的方向，但 diff 已经一大堆了。
+    </p>
+
+    <p>
+      <code>/plan</code> 就是为这种情况准备的。进入计划模式后，Claude 变成「只读」：它可以看文件、搜索、分析，但不能改文件、不能跑会产生副作用的命令。它会产出一份<strong>方案</strong>——列出打算改什么、为什么这么改、有什么影响——然后停下来让你看。
+    </p>
+
+    <pre><code>> /plan
+> 重写登录模块，用 JWT 替代 session
+
+· 读取 src/auth/session.ts
+· 读取 src/middleware/auth.ts
+· Grep "req.session" (47 matches in 12 files)
+· 读取 tests/auth.test.ts
+
+计划：
+
+1. 新增 src/auth/jwt.ts：封装 sign/verify，用 jose 库
+2. 改 src/middleware/auth.ts：从 session 读改成从 Authorization header 读
+3. 改 src/routes/login.ts：登录成功后签发 JWT（15 分钟 access + 7 天 refresh）
+4. 兼容期：保留 session 逻辑 2 周
+5. 更新 12 个调用点
+6. 补 8 个新测试
+
+潜在风险：
+- 前端需要同步改登录返回处理
+- 中间件顺序要调整（csrf → jwt → session）
+- 老会话怎么迁移？建议发一个一次性迁移脚本
+
+请确认，或告诉我哪里要调整。</code></pre>
+
+    <p>
+      你看完这份计划，可以说「好，去做吧」（按 <kbd>Shift+Tab</kbd> 切到 normal 模式），也可以说「第 4 步不用兼容层，直接切」，然后它会更新计划。
+    </p>
+
+    <h3>计划模式的几个细节</h3>
+
+    <ul>
+      <li><strong>可以读，不能写。</strong>包括不能跑 <code>npm install</code> 这种修改磁盘的命令，但可以跑 <code>npm ls</code> 这种只读命令。</li>
+      <li><strong>输出的计划会存到 <code>.claude/plans/</code></strong>，文件名由 Claude 起（比如 <code>fix-auth-race-snug-otter.md</code>）。可以回头查。</li>
+      <li><strong>退出计划模式</strong>：按 <kbd>Shift+Tab</kbd> 切回 normal，或者你口头说「好，开干」。</li>
+      <li><strong>常见误用</strong>：小任务也开 /plan。改个 typo、改个变量名——这种事情 /plan 反而慢。</li>
+    </ul>
+
+    <div class="callout callout-tip">
+      <p class="callout-title">经验法则</p>
+      <p>
+        凡是涉及多个文件、或者你不确定影响范围的任务，都先 <code>/plan</code>。代价是多花一分钟看计划，收益是避免半小时的回滚。
+      </p>
+    </div>
+
+    <h2 id="s10" data-num="§ 2.10"><code>/goal</code> — 设定完成条件 <span class="badge badge-new">2026.05.11</span></h2>
+
+    <p>
+      默认情况下，Claude 每做一轮会停下来看你一眼。这适合「边走边聊」，但有些任务你希望它<strong>一口气做完</strong>——比如「把所有 TypeScript 报错修掉」、「让测试覆盖率到 80%」。这些都有明确的、机器可验证的完成判据。
+    </p>
+
+    <p>
+      <code>/goal</code> 就是告诉它：<em>别停，直到下面这个条件满足。</em>
+    </p>
+
+    <pre><code>> /goal 所有 tsc 报错清零，且 npm test 全绿</code></pre>
+
+    <p>
+      设完你会看到一个小进度卡片，实时显示：已经跑了几轮、用了多久、花了多少 token、离目标还有多远（估算）。Claude 会反复跑 <code>tsc</code> 和 <code>npm test</code>、修、再跑，直到两个命令都干净为止。
+    </p>
+
+    <h3>「可验证」是关键</h3>
+
+    <p>
+      /goal 只接受<strong>二元判断</strong>的目标——对或错、绿或红、满足或不满足。Claude 自己能跑命令检查答案的那种。
+    </p>
+
+    <div class="table-wrap">
+    <table>
+      <thead><tr><th>好目标（可验证）</th><th>坏目标（会死循环）</th></tr></thead>
+      <tbody>
+        <tr><td>npm test 全绿</td><td>测试写得好</td></tr>
+        <tr><td>eslint 零警告</td><td>代码质量高</td></tr>
+        <tr><td>端口 3000 能返回 HTTP 200</td><td>性能更好</td></tr>
+        <tr><td>git grep "TODO" 为空</td><td>处理所有遗漏</td></tr>
+        <tr><td>bundle size &lt; 500KB</td><td>让打包更小</td></tr>
+      </tbody>
+    </table>
+    </div>
+
+    <h3>几个进阶用法</h3>
+
+    <ul>
+      <li><strong>组合条件</strong>：<code>/goal tsc 过 且 测试全绿 且 git diff 没有 .env 改动</code>——用「且/或」连接。</li>
+      <li><strong>带预算</strong>：<code>/goal ... --max-turns 20</code>，跑 20 轮没达成就停，防止它死磕。</li>
+      <li><strong>提前停</strong>：按 <kbd>Ctrl+C</kbd>，当前 goal 会被记为「已中止」，但 Claude 会告诉你它做到哪了、为什么停。</li>
+      <li><strong>覆盖</strong>：再打一次 <code>/goal 新条件</code> 会直接替换旧 goal，不用先清。</li>
+    </ul>
+
+    <div class="callout callout-warn">
+      <p class="callout-title">v2.1.140 的一个小坑</p>
+      <p>
+        v2.1.140（2026-05-12）修复了一个已知 bug：<code>/goal</code> 在某些 hook 配置下会静默卡住。如果你的 Claude Code 版本老于 2.1.140，遇到 goal 不动了，<strong>不是它懒</strong>，是 hook 里有东西挡住了——升级就好。
+      </p>
+    </div>
+
+    <h2 id="s11" data-num="§ 2.11">三个省心小命令：/btw、/rename、/fork</h2>
+
+    <p>这三个命令单看都不起眼，合起来是长会话下的生存技能。</p>
+
+    <h3><code>/btw</code> — 不进主对话的旁白 <span class="badge badge-new">新</span></h3>
+
+    <p>
+      想象你在指挥 Claude 做一件大事，中间突然想问：「对了，这个项目用 pnpm 还是 npm？」——这个问题和主任务无关，但你懒得等 Claude 忙完。以前只能直接问，结果这个闲聊会被记进对话历史，以后每次 <code>/compact</code>、每次资源传递，都带着这条没用的 QA。
+    </p>
+
+    <p>
+      现在有了 <code>/btw</code>。它的消息存在「旁路」里，<strong>不会进入主对话历史</strong>，就像在会议中举手问了一句话，但会议纪要里不记。
+    </p>
+
+    <pre><code>> /btw 这个项目用 pnpm 还是 npm？
+Claude: 看 lockfile 是 pnpm-lock.yaml，所以 pnpm。
+
+> （继续主任务，刚才的问答不占主上下文）</code></pre>
+
+    <h3><code>/rename</code> — 给会话贴标签 <span class="badge badge-new">新</span></h3>
+
+    <p>
+      Claude Code 支持同时开多个会话（一个改前端，一个改后端，一个跑后台调研）。默认每个会话用一串随机 ID 命名，过两天你根本分不清谁是谁。<code>/rename</code> 给当前会话起个人话名字，之后在 <code>/tasks</code>、<code>claude resume</code>、agent 视图里都以这个名字出现。
+    </p>
+
+    <pre><code>> /rename 重构登录模块</code></pre>
+
+    <h3><code>/fork</code> — 走两条路</h3>
+
+    <p>
+      <code>/fork</code> 复制一份当前上下文到新 session，两边各走各的。典型用例：你走到一半想试两种方案——fork 出一个新会话，在它里面试方案 B；原会话继续方案 A。谁跑得好留谁。
+    </p>
+
+    <h2 id="s12" data-num="§ 2.12">审查三件套：/review、/security-review、/simplify</h2>
+
+    <p>
+      写完代码要 review。Claude Code 内置了三种视角的审查器，点开卡片看每个的具体用法：
+    </p>
+
+    <div class="cmd-grid">
+      <div class="cmd-card" data-cmd="/review"><span class="name">/review</span><span class="desc">对当前分支或指定 PR 做综合审查。</span></div>
+      <div class="cmd-card" data-cmd="/security-review"><span class="name">/security-review</span><span class="desc">专项安全审查，按 OWASP 过一遍。</span></div>
+      <div class="cmd-card" data-cmd="/simplify"><span class="name">/simplify</span><span class="desc">找可以删掉、可以合并的代码。</span></div>
+      <div class="cmd-card" data-cmd="/ultrareview"><span class="name">/ultrareview</span><span class="desc">云端并行的深度审查。<span class="badge badge-new">新</span></span></div>
+    </div>
+
+    <h3>什么时候用哪个</h3>
+
+    <div class="dl">
+      <dt>每次 commit 前</dt>
+      <dd><code>/review</code>。三十秒审完当前 diff，抓住明显的 bug 和漏测。</dd>
+      <dt>涉及用户输入 / 鉴权 / 支付</dt>
+      <dd><code>/security-review</code> 必跑。成本几乎零，一旦找到一个 SQL 注入就值回票价。</dd>
+      <dt>重构完觉得「这代码怎么比原来还长」</dt>
+      <dd><code>/simplify</code>。它会指出没必要的防御性代码、可以抽出的重复、被删掉也不影响的分支。</dd>
+      <dt>重要 PR 合并前</dt>
+      <dd><code>/ultrareview</code>。多个 agent 并行从不同角度审，比本地 /review 慢几分钟但深得多。</dd>
+    </div>
+
+    <h2 id="s13" data-num="§ 2.13">插播：权限那一幕</h2>
+
+    <p>你用着用着会遇到这一幕——Claude 想跑一条命令，终端突然停下来，弹出一个框：</p>
+
+    <pre><code>Claude wants to run: rm -rf node_modules
+
+  [y] Yes, once
+  [a] Yes, and don't ask again for this pattern (Bash(rm -rf *))
+  [n] No, and tell Claude what to do instead
+  [e] Edit the command before running</code></pre>
+
+    <p>
+      这是 Claude Code 的权限系统。<strong>每次模型想调用「有副作用」的工具</strong>——写文件、跑命令、上网请求——默认都会先问你一下。读文件、搜索这类只读操作不会问。
+    </p>
+
+    <h3>四个选项</h3>
+
+    <div class="dl">
+      <dt>y</dt>
+      <dd>这一次允许，以后同样的命令还会再问。最安全，但高频操作会烦。</dd>
+      <dt>a</dt>
+      <dd>允许并<strong>记住这个模式</strong>，以后不问了。Claude 会给你一个合理的 glob（比如 <code>Bash(npm run test *)</code>）——看一眼再按，别闭眼按。</dd>
+      <dt>n</dt>
+      <dd>拒绝。弹窗里可以顺带告诉 Claude 你希望它改怎么做——它会拿着你的反馈重新规划。</dd>
+      <dt>e</dt>
+      <dd>命令我改一下再跑。你可以在终端里直接编辑那条命令，然后确认。特别适合「它想跑的对，只是路径不对」的情况。</dd>
+    </div>
+
+    <h3>四种权限模式</h3>
+
+    <p>按 <kbd>Shift+Tab</kbd> 在几种模式之间循环：</p>
+
+    <div class="table-wrap">
+    <table>
+      <thead><tr><th>模式</th><th>行为</th><th>适合</th></tr></thead>
+      <tbody>
+        <tr><td><strong>default</strong></td><td>有副作用的工具每次问</td><td>日常</td></tr>
+        <tr><td><strong>plan</strong></td><td>完全只读，没副作用</td><td>不确定、先看方案</td></tr>
+        <tr><td><strong>auto</strong> (acceptEdits)</td><td>文件编辑自动通过，命令还是问</td><td>信任编辑、警惕命令</td></tr>
+        <tr><td><strong>bypass</strong></td><td>什么都不问（危险）</td><td>只在一次性容器/沙盒里用</td></tr>
+      </tbody>
+    </table>
+    </div>
+
+    <h3>配置：在 <code>.claude/settings.json</code> 里定白名单</h3>
+
+    <pre><code>{
+  "permissions": {
+    "allow": [
+      "Bash(npm test *)",
+      "Bash(npm run *)",
+      "Bash(git status)",
+      "Bash(git diff *)",
+      "Bash(git log *)",
+      "Bash(ls *)",
+      "Read",
+      "mcp__github__*"
+    ],
+    "deny": [
+      "Bash(rm -rf *)",
+      "Bash(sudo *)",
+      "Bash(curl * | sh)",
+      "Write(.env)",
+      "Write(.env.local)",
+      "mcp__slack__send_message"
+    ]
+  }
+}</code></pre>
+
+    <p>语法要点：</p>
+    <ul>
+      <li><code>Bash(pattern)</code> 用 shell glob，<code>*</code> 匹配任意。</li>
+      <li><code>Read</code> / <code>Write</code> / <code>Edit</code> 单独给，不带括号表示「所有路径」；带括号限定路径模式。</li>
+      <li><code>mcp__&lt;server&gt;__&lt;tool&gt;</code> 格式匹配 MCP 工具，<code>*</code> 可覆盖所有。</li>
+      <li><code>deny</code> 比 <code>allow</code> 优先级高——同一条命令既在 allow 又在 deny，deny 胜。</li>
+    </ul>
+
+    <div class="callout callout-tip">
+      <p class="callout-title">一键配好白名单</p>
+      <p>
+        懒得手写？打 <code>/less-permission-prompts</code>，Claude 会扫你的历史记录，把反复通过的只读命令聚合成建议白名单，一步写进 settings.json。本来要按二十次 <kbd>y</kbd>，改完再也不弹。
+      </p>
+    </div>
+
+    <div class="callout callout-warn">
+      <p class="callout-title">不要无脑开 <code>--dangerously-skip-permissions</code></p>
+      <p>
+        有这么一个 CLI 旗标可以关掉所有权限提示。适合跑在一次性 Docker 容器或 CI 沙盒里。直接在你的主力电脑上用它，等于把方向盘交给一个没见过这条路的司机——而且司机以为自己见过。一旦它决定 <code>rm -rf /</code>，你没有第二次机会。
+      </p>
+    </div>
+
+    <h2 id="s14" data-num="§ 2.14">快捷键：那些能让你快十倍的组合</h2>
+
+    <p>Claude Code 在终端里跑，键盘就是一切。以下这些值得记到肌肉记忆里：</p>
+
+    <h3>基本操作</h3>
+
+    <div class="table-wrap">
+    <table>
+      <thead><tr><th>按键</th><th>作用</th></tr></thead>
+      <tbody>
+        <tr><td><kbd>Enter</kbd></td><td>发送消息</td></tr>
+        <tr><td><kbd>Shift+Enter</kbd></td><td>换行（部分终端支持）</td></tr>
+        <tr><td><kbd>\</kbd> + <kbd>Enter</kbd></td><td>换行（所有终端通用）</td></tr>
+        <tr><td><kbd>Esc</kbd></td><td>中断当前生成</td></tr>
+        <tr><td><kbd>Esc</kbd> × 2</td><td>打开 rewind 菜单，选择回到某个检查点</td></tr>
+        <tr><td><kbd>Ctrl+C</kbd></td><td>按一下：取消当前输入。按两下：退出</td></tr>
+        <tr><td><kbd>Ctrl+D</kbd></td><td>退出 Claude Code</td></tr>
+        <tr><td><kbd>Ctrl+L</kbd></td><td>强制刷新终端显示</td></tr>
+        <tr><td><kbd>Ctrl+R</kbd></td><td>反向搜索历史命令（Ctrl+S 切换到只搜当前项目）</td></tr>
+        <tr><td><kbd>?</kbd></td><td>弹出快捷键小抄</td></tr>
+      </tbody>
+    </table>
+    </div>
+
+    <h3>模式切换</h3>
+
+    <div class="table-wrap">
+    <table>
+      <thead><tr><th>按键</th><th>作用</th></tr></thead>
+      <tbody>
+        <tr><td><kbd>Shift+Tab</kbd></td><td>循环切换权限模式（default → auto → plan）</td></tr>
+        <tr><td><kbd>Tab</kbd></td><td>打开/关闭扩展思考</td></tr>
+        <tr><td><kbd>Alt+P</kbd> / <kbd>Opt+P</kbd></td><td>切换模型（Sonnet / Opus / Haiku）</td></tr>
+        <tr><td><kbd>Alt+T</kbd> / <kbd>Opt+T</kbd></td><td>切换 thinking</td></tr>
+        <tr><td><kbd>Ctrl+T</kbd></td><td>打开/关闭任务列表面板</td></tr>
+        <tr><td><kbd>Ctrl+O</kbd></td><td>切换详细输出</td></tr>
+        <tr><td><kbd>Ctrl+G</kbd></td><td>在外部编辑器里写本次输入</td></tr>
+      </tbody>
+    </table>
+    </div>
+
+    <h3>输入编辑</h3>
+
+    <div class="table-wrap">
+    <table>
+      <thead><tr><th>按键</th><th>作用</th></tr></thead>
+      <tbody>
+        <tr><td><kbd>Ctrl+U</kbd></td><td>清空当前输入</td></tr>
+        <tr><td><kbd>Ctrl+Y</kbd></td><td>恢复刚被 Ctrl+U 清掉的内容</td></tr>
+        <tr><td><kbd>Ctrl+K</kbd></td><td>删到行尾</td></tr>
+        <tr><td><kbd>Ctrl+S</kbd></td><td>把当前输入暂存（之后 Ctrl+R 找回）</td></tr>
+        <tr><td><kbd>Alt+B</kbd> / <kbd>Alt+F</kbd></td><td>按词向前 / 向后跳</td></tr>
+        <tr><td><kbd>Ctrl+A</kbd> / <kbd>Ctrl+E</kbd></td><td>跳行首 / 行尾</td></tr>
+      </tbody>
+    </table>
+    </div>
+
+    <h3>后台 / agent 控制</h3>
+
+    <div class="table-wrap">
+    <table>
+      <thead><tr><th>按键</th><th>作用</th></tr></thead>
+      <tbody>
+        <tr><td><kbd>Ctrl+F</kbd></td><td>按两下：停掉所有后台 agent</td></tr>
+        <tr><td><kbd>Shift+↓</kbd></td><td>在 Agent Teams 里切换队友</td></tr>
+        <tr><td><kbd>Shift+Drag</kbd></td><td>拖文件进输入框 = <code>@文件</code></td></tr>
+        <tr><td><kbd>Ctrl+V</kbd></td><td>粘贴剪贴板里的图片（支持截图）</td></tr>
+      </tbody>
+    </table>
+    </div>
+
+    <div class="callout callout-tip">
+      <p class="callout-title">自己改键位</p>
+      <p>
+        想把某个快捷键换成别的？<code>/keybindings</code> 打开 <code>~/.claude/keybindings.json</code>，按 VS Code 式的语法改。改完立刻生效，不用重启。
+      </p>
+    </div>
+
+    <h2 id="s15" data-num="§ 2.15">CLI 模式：把 Claude Code 当命令行工具</h2>
+
+    <p>
+      Claude Code 不只是交互式界面。它也是一个 <strong>CLI</strong>——可以被脚本、CI、Makefile 调用。
+    </p>
+
+    <h3>几种启动方式</h3>
+
+    <pre><code># 交互式
+$ claude
+$ claude "帮我看看 main.py"        # 带初始 prompt
+
+# 非交互（打印一次就退出）
+$ claude -p "给这个项目写一句话总结"
+$ cat README.md | claude -p "总结成三个 bullet"
+
+# 续会话
+$ claude -c                         # 最近一次
+$ claude -r "重构登录模块"          # 按名字
+$ claude --from-pr 42               # 按 GitHub PR 号
+
+# 隔离 / 后台
+$ claude -w feature-jwt             # 新建 git worktree 隔离跑
+$ claude -w feature-jwt --tmux      # + tmux 分窗口</code></pre>
+
+    <h3>常用 flag（节选）</h3>
+
+    <div class="table-wrap">
+    <table>
+      <thead><tr><th>Flag</th><th>作用</th></tr></thead>
+      <tbody>
+        <tr><td><code>--model opus|sonnet|haiku</code></td><td>指定模型</td></tr>
+        <tr><td><code>--effort high</code></td><td>指定思考强度</td></tr>
+        <tr><td><code>--max-turns 10</code></td><td>非交互模式下最多走几轮</td></tr>
+        <tr><td><code>--max-budget-usd 2.00</code></td><td>花费超过就停</td></tr>
+        <tr><td><code>--output-format json</code></td><td>输出成 JSON 方便脚本解析</td></tr>
+        <tr><td><code>--json-schema '...'</code></td><td>用 schema 校验输出</td></tr>
+        <tr><td><code>--allowedTools "Read,Grep,Glob"</code></td><td>限定工具（常用于 CI）</td></tr>
+        <tr><td><code>--permission-mode plan</code></td><td>启动时就进 plan 模式</td></tr>
+        <tr><td><code>--agent my-researcher</code></td><td>指定用某个 agent</td></tr>
+        <tr><td><code>--bare</code></td><td>跳过 hooks/plugins/auto-memory，干净启动</td></tr>
+        <tr><td><code>--dangerously-skip-permissions</code></td><td>禁用权限弹窗（只在沙盒用）</td></tr>
+      </tbody>
+    </table>
+    </div>
+
+    <h3>一个 CI 里的实战例子</h3>
+
+    <p>给 PR 自动生成变更说明，写成 GitHub Action 的一步：</p>
+
+    <pre><code># .github/workflows/pr-summary.yml
+- name: Summarize PR with Claude
+  run: |
+    gh pr diff ${{ github.event.pull_request.number }} | \
+    claude -p "把这份 diff 总结成 3 条 bullet，面向评审者" \
+      --output-format text \
+      --max-turns 1 \
+      --max-budget-usd 0.50 > summary.txt
+    gh pr comment ${{ github.event.pull_request.number }} --body-file summary.txt
+  env:
+    ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}</code></pre>
+
+    <p>
+      这里用了 <code>--max-turns 1</code> 和预算上限——CI 里最怕的是「无限循环吃钱」。加上这两个就是理性的。
+    </p>
+
+    <h2 id="s16" data-num="§ 2.16">把这些串起来：一条真实的工作流</h2>
+
+    <p>
+      下面是用 Claude Code 做一个功能的典型流程，把本章讲到的东西都串起来：
+    </p>
+
+    <pre><code># 1. 进项目，启动
+$ cd my-project
+$ claude
+
+# 2. 给这次会话起个名字，方便回来
+> /rename 加一个文件上传接口
+
+# 3. 用计划模式先让它想清楚
+> /plan
+> 加一个 POST /api/upload，接受图片，存到 S3，返回 URL
+
+# Claude 列出 8 步计划。我看完 OK，Shift+Tab 切到 normal
+
+# 4. 干活中途，想起个小问题 —— /btw
+> /btw 这个项目的 S3 bucket 名字在哪个环境变量里？
+# Claude 扫了眼 .env.example 直接答了，不占主上下文
+
+# 5. 让它一口气做完 —— /goal
+> /goal 新接口有完整测试，npm test 全绿，tsc 无报错
+
+# 6. 中间如果想要停，Ctrl+C 随时
+
+# 7. 完事了自检一下
+> /review
+
+# 8. 安全视角再扫一遍（上传接口一定要）
+> /security-review
+
+# 9. 上下文差不多了，压一下为下一任务腾空间
+> /compact
+
+# 10. 提交
+> 根据 git diff 写个 commit message，别合并到 main</code></pre>
+
+    <p>
+      十步里有六个斜杠命令、两次自然语言请求、几次快捷键。这是 Claude Code 的<strong>日常节奏</strong>——你和它之间的切换越丝滑，效率越高。
+    </p>
+
+    <div class="callout callout-tip">
+      <p class="callout-title">练习</p>
+      <p>
+        选一个你自己的小项目，按上面的十步跑一遍。不用做真实功能——随便一个「加一个 /ping 路由」也行。重点是让三个关键命令（<code>/plan</code>、<code>/goal</code>、<code>/review</code>）从陌生变成反射。
+      </p>
+    </div>
+
+    <nav class="pager" aria-label="章节导航">
+      <a href="01-what-is.html" class="pager-link pager-prev">
+        <span class="pager-dir">← 上一章</span>
+        <span class="pager-title">01 · 它到底是什么</span>
+      </a>
+      <a href="03-power.html" class="pager-link pager-next">
+        <span class="pager-dir">下一章 →</span>
+        <span class="pager-title">03 · 进阶武器库</span>
+      </a>
+    </nav>
+
+  </article>
+</div>
+
+<footer>
+  <div class="set"><span>第 2 / 6 章</span><span>关于 Claude Code，你应该了解的一切</span></div>
+  <div class="set"><span>≈ 28 MIN</span></div>
+</footer>
+
+<!-- Search Overlay -->
+<div class="search-backdrop" id="search-overlay" role="dialog" aria-modal="true" aria-label="搜索" hidden>
+  <div class="search-modal">
+    <div class="search-input-wrap">
+      <input type="search" class="search-input" placeholder="搜索命令、主题..." aria-label="搜索内容" autocomplete="off">
+      <kbd>ESC</kbd>
+    </div>
+    <div class="search-results" role="listbox" aria-label="搜索结果"></div>
+  </div>
+</div>
+
+<div class="modal-backdrop" id="cmd-modal" role="dialog" aria-modal="true" aria-label="命令详情">
+  <div class="modal">
+    <button class="modal-close">关闭 ESC</button>
+    <span class="tag"></span>
+    <h3></h3>
+    <p class="summary"></p>
+    <div class="modal-body"></div>
+  </div>
+</div>
+
+<button class="mtoc-fab" id="mtoc-fab" aria-label="目录">目录</button>
+<div class="mtoc-drawer" id="mtoc-drawer">
+  <div class="mtoc-content"></div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/bash.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/typescript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/yaml.min.js"></script>
+<script src="../assets/commands.js"></script>
+<script src="../assets/script.js"></script>
+</body>
+</html>

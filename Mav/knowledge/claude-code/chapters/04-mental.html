@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>第四章 · 心智模型与边界 — Claude Code 使用指南</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" id="hljs-light" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+<link rel="stylesheet" id="hljs-dark" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" media="not all">
+</head>
+<body>
+
+<div class="progress-bar" id="progress-bar"></div>
+
+<nav class="topnav" id="topnav">
+  <div class="topnav-inner">
+    <a class="brand" href="../index.html">Claude Code 指南</a>
+    <div class="nav-links">
+      <a href="01-what-is.html">01</a>
+      <a href="02-daily.html">02</a>
+      <a href="03-power.html">03</a>
+      <a href="04-mental.html" class="active">04</a>
+      <a href="05-cache.html">05</a>
+      <a href="06-easter-eggs.html">06</a>
+      <a href="reference.html">Ref</a>
+    </div>
+    <div class="nav-controls">
+      <button class="nav-btn" id="search-btn" aria-label="搜索 (Ctrl+K)">⌘K</button>
+      <button class="nav-btn" id="settings-btn" aria-label="阅读设置">Aa</button>
+      <a class="nav-btn" href="../../index.html" aria-label="返回知识库">← 知识库</a>
+    </div>
+  </div>
+</nav>
+
+<div class="settings-pop" id="settings-pop">
+  <h5>主题</h5>
+  <div class="row">
+    <button class="seg" data-theme-set="light">明亮</button>
+    <button class="seg" data-theme-set="dark">暗色</button>
+  </div>
+  <h5>字号</h5>
+  <div class="row">
+    <button class="seg" data-size-set="s">小</button>
+    <button class="seg" data-size-set="m">中</button>
+    <button class="seg" data-size-set="l">大</button>
+  </div>
+</div>
+
+<div class="with-sidebar">
+  <aside class="sidebar">
+    <div class="chapter-num">Chapter 04</div>
+    <div class="chapter-name">心智模型与边界</div>
+    <h4>本章目录</h4>
+    <ul>
+      <li><a href="#when">什么时候最闪光</a></li>
+      <li><a href="#when-not">什么时候别用</a></li>
+      <li><a href="#ask">怎么问它</a></li>
+      <li><a href="#token">token 经济学</a></li>
+      <li><a href="#fail">它会怎么出错</a></li>
+      <li><a href="#hallucination">幻觉是怎么来的</a></li>
+      <li><a href="#trust">有刻度的信任</a></li>
+      <li><a href="#git">Git 是你的安全带</a></li>
+      <li><a href="#review">审查 diff 是技能</a></li>
+      <li><a href="#team">团队里的 Claude</a></li>
+      <li><a href="#end">接下来</a></li>
+    </ul>
+  </aside>
+
+  <article class="chapter-body">
+
+    <header class="chapter-head">
+      <div class="chapter-head-meta">
+        <span class="num">Chapter 04 / 06</span>
+        <span>≈ 30 min</span>
+      </div>
+      <div class="chapter-eyebrow">第四章</div>
+      <h1>心智模型与边界</h1>
+      <p class="sub">
+        前三章讲它能做什么、怎么做。这一章讲它<em>什么时候会出错</em>，以及你该用什么姿态和它相处。这是你和 Claude Code 的关系里最重要、也最没人教的一部分。
+      </p>
+    </header>
+
+    <h2 id="when" data-num="§ 4.1">什么时候 Claude Code 最闪光</h2>
+
+    <p>
+      不是所有任务都适合扔给 Claude。用对地方，它能让你一小时的活十分钟完成；用错地方，它能让你十分钟的活花一小时收拾。
+    </p>
+
+    <p><strong>它最擅长的五类任务：</strong></p>
+
+    <ol>
+      <li>
+        <strong>跨文件的机械改动。</strong>「把所有 <code>console.log</code> 换成 <code>logger.debug</code>」「这个 API 改名以后同步所有调用点」——你知道怎么改，只是改的地方太多。这种任务它几乎不会犯错，<code>/goal</code> 模式 + Haiku 跑下来又快又便宜。
+      </li>
+      <li>
+        <strong>探索陌生代码。</strong>「这个项目是怎么处理认证的？」「帮我找到所有用到 <code>ws</code> 连接的地方」——它用 Glob/Grep 扫得比你快，还能帮你总结。新接手一个项目？让它先带你过一遍架构。
+      </li>
+      <li>
+        <strong>写测试和样板代码。</strong>给它一个接口定义，让它补一批单元测试；给它一个表结构，让它生成 CRUD 接口；给它一个错误，让它写个对应的 fixture。这些事你自己写不难，但无聊。
+      </li>
+      <li>
+        <strong>「我不知道怎么开始」的时候。</strong>不是让它给你写完，是让它帮你搭架子、列大纲、给几个可能的方向。它是很好的「思考伙伴」，尤其是进入新领域、读新论文、用新框架的时候。
+      </li>
+      <li>
+        <strong>处理「好烦但必须做」的活。</strong>读一份规范、对照写校验代码；把别人的报错信息搜一遍 Stack Overflow + GitHub issue 综合判断；把一份英文 RFC 总结成你能用的中文要点。这些事它做得不比你强，但你做了会很烦——它正好。
+      </li>
+    </ol>
+
+    <h2 id="when-not" data-num="§ 4.2">什么时候别用，或者用但别完全相信</h2>
+
+    <p><strong>它很容易翻车的场景：</strong></p>
+
+    <ol>
+      <li>
+        <strong>需要真正理解业务规则的判断。</strong>「这个退款场景该不该自动处理？」——这不是技术问题，是业务问题。它不知道你的用户、你的法律环境、你的老板怎么想。它会给出一个听起来合理的答案，但可能完全错。
+      </li>
+      <li>
+        <strong>性能、并发、安全这种「看起来对但藏坑」的代码。</strong>它写出来的东西可能跑得通、测试也过，但在特定并发下会死锁，或者有个 SQL 注入的角落。这类代码<strong>必须人工 review</strong>，<code>/security-review</code> 是最低标配，更高风险的还要资深工程师过。
+      </li>
+      <li>
+        <strong>需要大量当前情境知识的任务。</strong>「这个 bug 和昨天那次发布有没有关系？」——它没有那个上下文。除非你把昨天的发布说明、commit 范围、监控报警都贴给它。
+      </li>
+      <li>
+        <strong>很小的改动。</strong>改一个 typo、挪一个按钮——你直接改比解释给它听要快十倍。用 Claude 也有「交流成本」，不值得为了 2 秒的活付 20 秒。
+      </li>
+      <li>
+        <strong>核心算法、数据结构、系统设计。</strong>不是不能让它写——是这种东西你<em>必须自己懂</em>。让它写一个 LRU cache、让它讲一致性哈希——它写完你自己要看得懂、要会改。否则后续维护是地狱。
+      </li>
+    </ol>
+
+    <div class="callout">
+      <p class="callout-title">一个粗略的判断法</p>
+      <p>
+        如果你觉得「<em>解释给 Claude 听的时间 + 审查它结果的时间 &gt; 自己做的时间</em>」——那就自己做。决策成本本身是真实的成本，别忘记算。
+      </p>
+    </div>
+
+    <h2 id="ask" data-num="§ 4.3">怎么问，能显著提高成功率</h2>
+
+    <p>
+      你已经看到很多「Claude 帮我 X」的例子了。但同样的请求，问法不同，结果差距很大。这里是几条被反复验证过的经验，按重要性排：
+    </p>
+
+    <h3>1. 给目标，不给步骤</h3>
+
+    <p>
+      <strong>不好</strong>：「先读 user.ts，然后找到 login 函数，把第 23 行的 bcrypt 换成 argon2，然后……」<br>
+      <strong>更好</strong>：「把这个项目的密码哈希从 bcrypt 迁移到 argon2，保持 API 向后兼容。」
+    </p>
+
+    <p>
+      你告诉它<em>要什么</em>，它比你更会规划<em>怎么做</em>——因为它可以并行读十几个文件。你给得越具体的步骤，反而是限制它。
+    </p>
+
+    <blockquote>
+      <p>
+        <strong>小提示</strong>：「给目标不给步骤」不等于「给模糊指令」。目标本身要清晰、约束要明确——你省掉的只是「怎么实现」这部分。Claude 的优势是跨文件分析和规划路径，你的优势是知道业务意图和验收标准。各干各擅长的。
+      </p>
+    </blockquote>
+
+    <h3>2. 给约束和验收标准</h3>
+
+    <p>
+      「保持 API 向后兼容」「测试要全绿」「不要动 src/legacy/」「响应时间不能超过 50ms」——这种边界条件越明确越好。它不会猜你心里有没有这些线。
+    </p>
+
+    <p>
+      <strong>验收标准</strong>是约束的特例：你怎么判断这件事做完了？把这个问题写出来，往往就是给 <code>/goal</code> 的最佳输入。
+    </p>
+
+    <h3>3. 说出你的上下文</h3>
+
+    <p>
+      「我在复习期末，下周二要演示」「这是生产代码，每天 100k QPS」「这是个实验脚本，糙一点没关系」——这些信息会改变它的取舍。生产代码它会多加防御；实验脚本它就不会浪费你时间写测试。
+    </p>
+
+    <h3>4. 不确定时让它先 <code>/plan</code></h3>
+
+    <p>
+      第二章已经讲过。再强调一次：<strong>涉及多个文件、或者你自己都说不清要怎么改的时候，先让它出方案</strong>。一分钟的方案能避免半小时的回滚。
+    </p>
+
+    <h3>5. 不满意就打断、重来</h3>
+
+    <p>
+      看到它走偏，按 <kbd>Esc</kbd> 或 <kbd>Ctrl+C</kbd> 打断，然后说「停，你上面那个思路不对，应该这样…」。<strong>不要让它错下去再大改</strong>——它不会自己意识到自己错了，它会越走越远。
+    </p>
+
+    <h3>6. 给它例子，特别是「不要这样」的例子</h3>
+
+    <p>
+      正面例子有用，但反例更有用。「不要写成 try/catch 里 console.error 然后吞掉」——比说「请妥善处理错误」管用十倍。模型对正例的拟合很容易过头，反例会让它的输出更收敛。
+    </p>
+
+    <h3>7. 长任务用「检查点 prompt」</h3>
+
+    <p>
+      做一个 30 分钟的大任务时，每完成一段让它做一次自我检查：「停一下，列出你刚才改了哪些文件，每一处的目的。」这相当于让它生成一份 mini diff——你不用看代码就能判断方向对不对，不对就早点掉头。
+    </p>
+
+    <h2 id="token" data-num="§ 4.4">token 经济学：你为什么花钱</h2>
+
+    <p>
+      Claude Code 是按 token 计费的。理解 token 怎么花，能帮你少花一半钱。
+    </p>
+
+    <h3>哪些操作贵</h3>
+
+    <div class="dl">
+      <dt>读大文件</dt>
+      <dd>每读一个文件，文件内容全部进入下次模型调用的输入。读 5 个 1000 行的文件 ≈ 4 万 input token。</dd>
+      <dt>跑命令的输出</dt>
+      <dd><code>npm test</code> 输出一屏没事，<code>find / -name "*"</code> 这种几百 KB 的输出会爆。</dd>
+      <dt>反复迭代</dt>
+      <dd>每多一轮，前面所有内容都要重发一遍。20 轮的对话 ≈ 第 20 轮要把前 19 轮全部重新喂给模型。</dd>
+      <dt>大上下文 + xhigh</dt>
+      <dd>1M 上下文 + xhigh 思考是最贵的组合。一不留神一个会话可能烧了一二十美元，不要过于频繁使用。</dd>
+    </div>
+
+    <h3>省钱的几招</h3>
+
+    <ul>
+      <li><strong>该用 sonnet 用 sonnet。</strong>批量重命名、补 JSDoc、生成测试 fixture——sonnet 比 Opus 便宜 10–15 倍，而且质量完全在线。</li>
+      <li><strong>大任务前 <code>/compact</code>。</strong>压一次省的不是这次的钱，是后面每一轮的钱。</li>
+      <li><strong>用 prompt cache。</strong>SDK 自动用，CLI 里你写到 CLAUDE.md 的内容会被缓存 5 分钟，反复发同一个 prompt 不会重复计费输入部分。</li>
+      <li><strong>限预算。</strong>非交互模式加 <code>--max-budget-usd 1.00</code>，超了就停。CI 里必加。</li>
+      <li><strong>子代理省得多。</strong>派一个 Haiku subagent 去读完 30 个文件，回来一段 200 字的总结——主会话只多了 200 字的输入，不是 30 个文件的内容。</li>
+    </ul>
+
+    <div class="callout callout-tip">
+      <p class="callout-title">/usage 是你的好朋友</p>
+      <p>
+        每天结束前敲一次 <code>/usage</code>，看自己花了多少。你会很快建立直觉：「今天这个任务花了 0.8 美元，但替我省了 2 小时」——这是值的。「今天闲聊花了 0.3 美元，没产出」——这不是。让数字反过来教你。
+      </p>
+    </div>
+
+    <h2 id="fail" data-num="§ 4.5">它会怎么出错，具体来说</h2>
+
+    <p>
+      知道一个工具怎么坏，比知道它怎么好更重要。Claude Code 有几种典型的失败模式：
+    </p>
+
+    <h3>幻觉（hallucination）</h3>
+
+    <p>
+      它可能会「发明」不存在的 API、不存在的函数、不存在的配置项。尤其是对冷门库、版本差异大的库。它写得很自信，看起来对，但你真去跑会报 <code>undefined is not a function</code>。
+    </p>
+
+    <p>
+      <strong>怎么防</strong>：对不熟的库，让它用 <code>!npm ls &lt;库&gt;</code> 先确认版本，或者读 <code>node_modules/&lt;库&gt;/types</code>；让它跑代码验证；多用 <code>/plan</code> 看它引用了什么，然后你抽查。
+    </p>
+
+    <h3>信息过期</h3>
+
+    <p>
+      Claude 的知识有一个截止日期（Opus 4.7 是 2026 年 1 月）。之后发布的库、新版 API、政策变化，它可能不知道，或者知道错。
+    </p>
+
+    <p>
+      <strong>怎么防</strong>：对时间敏感的东西，要求它<strong>联网搜索调研一下再回答</strong>，而不是凭记忆。
+    </p>
+
+    <h3>「修好」但其实跳过</h3>
+
+    <p>
+      一个常见的翻车是：它为了让测试通过，会把测试<em>本身</em>改弱，或者直接加 <code>@ts-ignore</code>、<code>try { ... } catch {}</code>、<code># type: ignore</code>。测试全绿了，但问题被藏进了地毯下。
+    </p>
+
+    <p>
+      <strong>怎么防</strong>：在 CLAUDE.md 里明确禁止：「不要用 @ts-ignore 绕过类型错误」「测试失败要修代码不要改测试」。以及，review diff 的时候<strong>特别注意测试文件</strong>——绿测试 + 改过的测试，是危险信号。
+    </p>
+
+    <blockquote>
+      <p>这不是某个模型的 bug，是当前所有 LLM 的结构性倾向——模型的目标是「让任务看起来完成」，而不是「让代码真正正确」。更强的模型（比如 Opus）犯这个错的频率更低，但不是零。不要因为用了最贵的模型就放松警惕，diff 里的测试文件永远值得多看一眼。</p>
+    </blockquote>
+
+    <h3>过度发挥</h3>
+
+    <p>
+      你让它修一个 bug，它顺手「整理」了周边几个文件、重写了一个类、升级了一个依赖——你现在要 review 的 diff 是原本的十倍。
+    </p>
+
+    <p>
+      <strong>怎么防</strong>：在请求里明确「<em>只修这一个问题</em>，不要做其他改动」。如果已经发生了，用 <code>git add -p</code> 分拆，把相关的留下、其他 stash 掉。CLAUDE.md 里加一条「不要顺手重构」也很有用。
+    </p>
+
+    <h3>卡在循环里</h3>
+
+    <p>
+      偶尔你会看到它在两个错误之间反复横跳：改 A 导致 B 报错，改 B 又让 A 报错。尤其是用 <code>/goal</code> 的时候，它会在循环里耗光预算。
+    </p>
+
+    <p>
+      <strong>怎么防</strong>：看到它连续两次改同一个地方还没解决，<kbd>Ctrl+C</kbd> 打断，手动看一眼——通常是它误解了问题，你点破一下它就通了。设 <code>--max-turns</code> 给 <code>/goal</code> 也是底线保险。
+    </p>
+
+    <h3>「演」做完了</h3>
+
+    <p>
+      最阴险的一种。它说「我做完了，所有测试都通过」，但实际上它根本没跑测试，或者跑了但没看输出就报告。
+    </p>
+
+    <p>
+      <strong>怎么防</strong>：永远不要相信它的「自我汇报」。<em>你自己跑一次测试</em>。<em>你自己看一眼 git diff</em>。CLAUDE.md 里加：「报告任务完成前必须实际跑测试，并把输出贴出来。」
+    </p>
+
+    <h2 id="hallucination" data-num="§ 4.6">深一层：幻觉为什么会发生</h2>
+
+    <p>
+      想知道「为什么」会让你更会防它。语言模型的本质是「根据上文预测下一个 token 的分布」。它学习的目标是「输出像训练数据」，不是「输出真实」。
+    </p>
+
+    <p>
+      很多时候这两件事重合——训练数据里 <code>fs.readFileSync</code> 这个 API 真的存在，所以模型生成它就是对的。但当你问一个冷门库的方法、或者问一个版本差异大的 API：训练数据里可能都是「这个库有 .doSomething() 方法」的<em>形状</em>，但实际上它具体的方法名各版本不同。模型按形状生成，结果生成了一个看起来合理但不存在的名字。这不是「错」——这是模型设计上的副作用。
+    </p>
+
+    <p>
+      Agent loop 给了我们对抗幻觉的最强武器：<strong>让模型实际验证</strong>。让它读 <code>node_modules</code>、跑命令看输出、抓官方文档——这些动作把「凭记忆」变成「凭事实」。
+    </p>
+
+    <div class="callout callout-tip">
+      <p class="callout-title">一个简单的咒语</p>
+      <p>
+        遇到模型给出一段你没看过的 API 调用，先别信。回它一句：「跑一下确认这个真的能用」或「读一眼官方文档说明」。它会去查、去跑——结果对不对，立刻就清楚。
+      </p>
+    </div>
+
+    <h2 id="trust" data-num="§ 4.7">怎么给它合适的信任</h2>
+
+    <p>
+      对 AI 工具，一个常见的错误是<strong>要么不信、要么全信</strong>——不信的人继续手打所有代码，浪费了一个杠杆；全信的人把 PR 直接合进 main，迟早出事。两种都把事情简化了。
+    </p>
+
+    <p>
+      合适的信任是「有刻度的」。下面是一个可以参考的分级：
+    </p>
+
+    <div class="table-wrap">
+    <table>
+      <thead><tr><th>任务类型</th><th>建议的信任度</th><th>姿态</th></tr></thead>
+      <tbody>
+        <tr><td>写一次性脚本、做 PoC</td><td>高</td><td>让它做，跑通就行，不用细看 diff</td></tr>
+        <tr><td>补测试、改样板代码、重构命名</td><td>中高</td><td>快速扫 diff，测试绿就过</td></tr>
+        <tr><td>个人项目的新功能</td><td>中</td><td>读完 diff，关键逻辑自己想一遍</td></tr>
+        <tr><td>生产代码、团队项目、涉钱代码</td><td>低</td><td>逐行 review，必要时重写关键部分</td></tr>
+        <tr><td>安全、认证、权限、支付</td><td>极低</td><td>把它当建议参考，正式实现你亲自写</td></tr>
+      </tbody>
+    </table>
+    </div>
+
+    <p>
+      这张表不是死的。你会随着用它的时间增长，慢慢校准每一格。但<strong>不要一开始就把所有格子设成「高」</strong>——那是通往灾难的最快路径。
+    </p>
+
+    <h3>渐进式：怎么慢慢升级信任</h3>
+
+    <p>
+      新接手一个领域、新团队、新项目，给 Claude 的信任度都应该<strong>重置</strong>，从「极低」开始往上爬。爬的步子大概是这样：
+    </p>
+
+    <ol>
+      <li>跑只读任务（<code>/plan</code>、explore）。看它对项目的理解到不到位。</li>
+      <li>让它做小改动（典型 typo、加日志、补一个 if）。看 diff 写的精度。</li>
+      <li>让它写测试。看它会不会作弊（注释掉断言、return early）。</li>
+      <li>让它做小重构。看它会不会过度发挥。</li>
+      <li>让它做新功能。这时你才有数据决定信任度。</li>
+    </ol>
+
+    <p>整个过程可能就一两小时，但对长期协作非常值。</p>
+
+    <h2 id="git" data-num="§ 4.8">Git 是你的安全带</h2>
+
+    <p>
+      无论多信任 Claude，都要把每次会话想象成「开车不系安全带可能翻车」。Git 就是你的安全带。
+    </p>
+
+    <ul>
+      <li><strong>开始任务前 <code>git commit</code> 当前进度</strong>，哪怕只是一行改动也 commit。这样任何时刻都能 <code>git reset --hard</code> 回去。</li>
+      <li><strong>复杂任务开新分支</strong>：<code>git switch -c claude-refactor-auth</code>。随便 Claude 怎么折腾，不污染 main。</li>
+      <li><strong>用 worktree 做隔离</strong>：<code>claude -w feature-jwt</code>，Claude 在一个全新的目录里跑，连文件系统都不互相影响。</li>
+      <li><strong>用 <code>git stash</code> 不要用 <code>git checkout .</code></strong>——前者可逆、后者吞掉所有未提交的改动。</li>
+      <li><strong>commit 信息让 Claude 帮你写</strong>，但<strong>不要让它自动 push</strong>。push 是「广播到世界」的动作，应该你亲手按。<del style="opacity: 0.5; margin-left: 4px;">我对三体人说话（bushi</del></li>
+    </ul>
+
+    <div class="callout callout-tip">
+      <p class="callout-title">一个很实用的习惯</p>
+      <p>
+        每次 Claude 做完一个阶段性任务，你 review 完觉得 OK，立刻 <code>git commit</code>。这样 diff 不会越积越大，你也不用担心下一步翻车就失去这次的成果。一次任务最好对应一两个原子提交——<code>/review</code> 也是按 commit 范围算的，commit 干净，审查更准。
+      </p>
+    </div>
+
+    <p>
+      <code>/rewind</code> 是 Claude Code 自己的「时光机」，比 git 还细——它在每次重要操作前打 checkpoint，能回到一分钟前。<strong>但它不是替代 git</strong>：rewind 是会话级的、临时的；git 是项目级的、永久的。两个一起用最稳。
+    </p>
+
+    <h2 id="review" data-num="§ 4.9">审查 diff 是一项独立技能</h2>
+
+    <p>
+      自己写代码，你是「生成者」；用 Claude，你是「审查者」。这是两种不同的脑力活动，而学校和教科书基本不教后者。这一节给你一份 review 清单。
+    </p>
+
+    <h3>看 diff 时心里要过的问题</h3>
+
+    <ol>
+      <li>这个改动<strong>解决的问题</strong>是我要求的那个问题吗？还是它跑偏了？</li>
+      <li>有没有改动<strong>是这个任务不需要的</strong>？（顺手重构是大坑）</li>
+      <li>边界情况呢？空值、网络错误、并发、超大输入、空数组、并发请求、跨时区？</li>
+      <li>它<strong>删掉</strong>了什么？删除比新增更危险——可能删的是你忘了的依赖。</li>
+      <li>测试覆盖的是<strong>真正的逻辑</strong>还是只是 shape？（测试 <code>typeof result === 'object'</code> 完全没用）</li>
+      <li>有没有 <code>any</code> / <code>@ts-ignore</code> / <code># type: ignore</code> / <code>// eslint-disable</code>？这些都是「藏问题」的信号。</li>
+      <li>新依赖是不是必要的？是不是知名库？版本怎么选的？</li>
+      <li>错误处理：try/catch 里是真的处理了，还是 console.log 然后吞掉？</li>
+      <li>命名：变量名、函数名能让一年后的我看懂吗？</li>
+      <li><strong>如果我明天忘了这是 AI 写的，我会愿意为这段代码负责吗？</strong></li>
+    </ol>
+
+    <p>
+      <strong>最后一条是金标准。</strong>你合进仓库的每一行代码，git blame 都会指向你。Claude 没法被追责——你可以。
+    </p>
+
+    <h3>review 工具组合拳</h3>
+
+    <p>用 Claude Code 自己审 Claude Code 的产出，听起来奇怪但很有效：</p>
+
+    <pre><code>$ git stash         # 把改动暂存
+$ claude
+> /review           # 让另一个会话从「无前置」的视角看 diff</code></pre>
+
+    <p>
+      新会话不知道你和上一个 Claude 聊过什么，它的 review 是「冷启动」的——这往往能抓到上一个 Claude 因为「记得我们说过 X」而忽略的问题。再加上 <code>/security-review</code> 和 <code>/simplify</code>，三个角度的审视，往往可以解决不少问题。
+    </p>
+
+    <h2 id="team" data-num="§ 4.10">团队里的 Claude：协作伦理</h2>
+
+    <p>
+      到目前为止讨论的都是「你和你的 Claude」。但当 Claude Code 进入团队，会出几个新问题，提前知道好避坑。
+    </p>
+
+    <h3>谁该为 AI 写的代码负责？</h3>
+
+    <p>
+      简单答案：<strong>提交者</strong>。git blame 指向你，你就是负责人。这意味着即便代码 95% 是 Claude 写的，你 review 时不细心、出了问题、责任在你。
+    </p>
+
+    <p>
+      团队里别用「这是 AI 写的」当借口。AI 不能上 oncall，AI 不能去客户面前道歉，AI 不能被解雇——你可以。承担责任的能力是<strong>你相对 AI 的核心价值</strong>。
+    </p>
+
+    <h3>commit message 要标记 AI 吗？</h3>
+
+    <p>
+      团队约定优先。如果团队没规定，建议至少在 PR 描述里说清「主要由 Claude Code 生成」——这帮 reviewer 调整审查策略，也对未来回看 git 历史的人公平。一些 Anthropic 员工的 commit 会带 <code>Co-Authored-By: Claude</code> trailer，是个不错的实践。
+    </p>
+
+    <h3>code review 标准要不要变？</h3>
+
+    <p>
+      不要降低，要<strong>调整侧重</strong>：
+    </p>
+
+    <ul>
+      <li>更注意「过度发挥」——AI PR 比人 PR 容易出现无关改动。</li>
+      <li>更注意「神奇的依赖」——AI 会偶尔引入一个你团队从来没用过的库，让它解释为什么。</li>
+      <li>更注意「测试改弱」——把测试文件单独看一遍，确认断言没被注释、没被改弱。</li>
+      <li>不用花时间挑「这变量名能不能更好」——AI 在<em>风格</em>上往往比人均水平稳，省下精力盯逻辑和边界。</li>
+    </ul>
+
+    <h2 id="end" data-num="§ 4.11">接下来</h2>
+
+    <p>
+      到这里，你已经知道了 Claude Code 什么时候好用、什么时候会翻车、怎么问它、怎么审查它的产出、怎么在团队里和它协作。这些是「用好它」的软技能。
+    </p>
+
+    <p>
+      但还有一个硬问题没讲：<strong>钱</strong>。Claude Code 按 token 收费，而你每发一句话，背后传输的 token 量远比你想象的大。下一章讲缓存——理解它之后，你会知道为什么有时候同样的对话几乎免费，有时候却贵得离谱，以及怎么让账单永远停在前者。
+    </p>
+
+    <nav class="pager" aria-label="章节导航">
+      <a href="03-power.html" class="pager-link pager-prev">
+        <span class="pager-dir">← 上一章</span>
+        <span class="pager-title">03 · 进阶武器库</span>
+      </a>
+      <a href="05-cache.html" class="pager-link pager-next">
+        <span class="pager-dir">下一章 →</span>
+        <span class="pager-title">05 · 缓存</span>
+      </a>
+    </nav>
+
+  </article>
+</div>
+
+<footer>
+  <div class="set"><span>第 4 / 6 章</span><span>关于 Claude Code，你应该了解的一切</span></div>
+  <div class="set"><span>≈ 30 MIN</span></div>
+</footer>
+
+<!-- Search Overlay -->
+<div class="search-backdrop" id="search-overlay" role="dialog" aria-modal="true" aria-label="搜索" hidden>
+  <div class="search-modal">
+    <div class="search-input-wrap">
+      <input type="search" class="search-input" placeholder="搜索命令、主题..." aria-label="搜索内容" autocomplete="off">
+      <kbd>ESC</kbd>
+    </div>
+    <div class="search-results" role="listbox" aria-label="搜索结果"></div>
+  </div>
+</div>
+
+<div class="modal-backdrop" id="cmd-modal" role="dialog" aria-modal="true" aria-label="命令详情">
+  <div class="modal">
+    <button class="modal-close">关闭 ESC</button>
+    <span class="tag"></span>
+    <h3></h3>
+    <p class="summary"></p>
+    <div class="modal-body"></div>
+  </div>
+</div>
+
+<button class="mtoc-fab" id="mtoc-fab" aria-label="目录">目录</button>
+<div class="mtoc-drawer" id="mtoc-drawer">
+  <div class="mtoc-content"></div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/bash.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/typescript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/yaml.min.js"></script>
+<script src="../assets/commands.js"></script>
+<script src="../assets/script.js"></script>
+</body>
+</html>

@@ -1,0 +1,851 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>开篇：那些你每天都在经历，但从未真正理解的事 — 电脑怎么工作的——给大一新生的计算机原理课</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" id="hljs-light" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+<link rel="stylesheet" id="hljs-dark" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" media="not all">
+</head>
+<body>
+
+<div class="progress-bar" id="progress-bar"></div>
+
+<nav class="topnav" id="topnav">
+  <div class="topnav-inner">
+    <a class="brand" href="../index.html">电脑怎么工作的——给大一新生的计算机原理课</a>
+    <div class="nav-links">
+      <a href="00-preface.html" class="active">01</a>
+      <a href="01-storage.html">02</a>
+      <a href="02-storage-appendix.html">03</a>
+      <a href="03-cpu-gpu.html">04</a>
+      <a href="04-operating-system.html">05</a>
+      <a href="05-motherboard-soc.html">06</a>
+      <a href="06-buying-guide.html">07</a>
+      <a href="07-system-cloud.html">08</a>
+    </div>
+    <div class="nav-controls">
+      <button class="nav-btn" id="search-btn" aria-label="搜索 (Ctrl+K)">⌘K</button>
+      <button class="nav-btn" id="settings-btn" aria-label="阅读设置">Aa</button>
+      <a class="nav-btn" href="../../index.html" aria-label="返回知识库">← 知识库</a>
+    </div>
+  </div>
+</nav>
+<div class="settings-pop" id="settings-pop">
+  <h5>主题</h5>
+  <div class="row">
+    <button class="seg" data-theme-set="light">明亮</button>
+    <button class="seg" data-theme-set="dark">暗色</button>
+  </div>
+  <h5>字号</h5>
+  <div class="row">
+    <button class="seg" data-size-set="s">小</button>
+    <button class="seg" data-size-set="m">中</button>
+    <button class="seg" data-size-set="l">大</button>
+  </div>
+</div>
+
+<div class="with-sidebar">
+  <aside class="sidebar">
+  <div class="chapter-num">CHAPTER 01</div>
+  <div class="chapter-name">开篇：那些你每天都在经历，但从未真正理解的事</div>
+  <h4>目录</h4>
+  <ul>
+    <li><a href="#场景引入">场景引入</a></li>
+    <li><a href="#本章目标">本章目标</a></li>
+    <li><a href="#01-双击图标后的05秒发生了什么">0.1 双击图标后的0.5秒，发生了什么？</a></li>
+    <li><a href="#02-为什么同样16gb手机和电脑的价格差那么多">0.2 为什么同样16GB，手机和电脑的价格差那么多？</a></li>
+    <li><a href="#03-买电脑时的参数表到底在说什么">0.3 买电脑时的参数表，到底在说什么？</a></li>
+    <li><a href="#04-为什么好的显卡才能跑游戏">0.4 为什么好的显卡才能跑游戏？</a></li>
+    <li><a href="#05-ai时代为什么内存价格飞起">0.5 AI时代，为什么内存价格飞起？</a></li>
+    <li><a href="#本章回顾与展望">本章回顾与展望</a></li>
+    <li><a href="#扩展资源">扩展资源</a></li>
+  </ul>
+</aside>
+  <article class="chapter-body">
+    <header class="chapter-head">
+  <div class="chapter-head-meta">
+    <span class="num">CHAPTER 01</span>
+    <span>≈ 30 MIN READ</span>
+  </div>
+  <h1>开篇：那些你每天都在经历，但从未真正理解的事</h1>
+</header>
+    <blockquote><p><strong>《电脑怎么工作的——给大一新生的计算机原理课》</strong></p>
+</blockquote>
+<hr>
+<h2 id="场景引入">场景引入</h2>
+<p>你刚从高考的硝烟中走出来，拿着录取通知书和家里给的预算，站在电脑城（或者更可能是京东的搜索框前），准备买一台属于自己的电脑。</p>
+<p>你看到了这样一串参数：</p>
+<blockquote><p><strong>Intel Core i7-13700H / 16GB DDR5 5600MHz / 512GB NVMe SSD / RTX 4060 8GB / 15.6&quot; 2.5K 165Hz</strong></p>
+</blockquote>
+<p>你的内心OS大概是：&quot;i7好像比i5好？16GB够不够？SSD是什么？RTX 4060能干嘛？2.5K和1080P差多少？&quot;</p>
+<p>别慌。这本书就是为了让你彻底看懂这些东西而写的。</p>
+<p>不只是看懂参数——我们要搞明白，这些数字背后的<strong>原理</strong>是什么。为什么CPU要分核心和线程？为什么内存和硬盘是两个东西？为什么显卡对游戏那么重要，但写Word的时候根本用不上？</p>
+<p>这一章是全书的&quot;预告片&quot;。我会抛出五个你日常一定遇到过的困惑，每一个都会简单拆解，但<strong>不会展开太深</strong>——因为后面的每一章，都会专门回来讲透它们。</p>
+<hr>
+<h2 id="本章目标">本章目标</h2>
+<p>读完这一章，你将会：</p>
+<ol>
+<li>理解双击一个程序后，电脑内部发生的基本流程</li>
+<li>明白&quot;内存&quot;和&quot;存储&quot;为什么是两回事</li>
+<li>知道电脑参数表里每个数字大概在说什么</li>
+<li>初步理解GPU为什么对游戏和AI如此重要</li>
+<li>了解当下（2025-2026年）硬件市场正在发生什么</li>
+</ol>
+<p><strong>预计阅读时间</strong>：25-30分钟</p>
+<hr>
+<hr>
+<h2 id="01-双击图标后的05秒发生了什么">0.1 双击图标后的0.5秒，发生了什么？</h2>
+<h3 id="从一个日常动作说起">从一个日常动作说起</h3>
+<p>大一开学第一周，你下载了Steam，双击图标，屏幕上出现了加载动画。也许你还顺手打开了QQ音乐，后台挂着微信，浏览器里开了十几个标签页。</p>
+<p>这一切看起来稀松平常——你甚至可能在等加载的时候刷了两条朋友圈。</p>
+<p>但如果我告诉你，就在你双击鼠标到Steam窗口出现的那不到一秒钟里，你的电脑至少完成了以下这些事情：</p>
+<ol>
+<li><strong>鼠标信号传输</strong>：鼠标捕捉到你的点击，通过USB或蓝牙将电信号传给主板</li>
+<li><strong>操作系统响应</strong>：Windows接收到&quot;双击&quot;事件，查找这个图标对应的程序路径</li>
+<li><strong>硬盘读取</strong>：操作系统从SSD（固态硬盘）中找到Steam的可执行文件（<code>steam.exe</code>），把它读入内存</li>
+<li><strong>内存加载</strong>：程序的代码和初始数据被加载到内存（RAM）中，准备执行</li>
+<li><strong>CPU执行</strong>：CPU开始一条一条地执行程序指令，初始化Steam的各个模块</li>
+<li><strong>GPU渲染</strong>：Steam的界面需要显示出来——文字、图标、动画，这些像素最终由GPU渲染并输出到屏幕</li>
+<li><strong>网络请求</strong>：Steam尝试连接服务器，检查你的账号状态和游戏更新</li>
+</ol>
+<p>这七步，在不到一秒内完成。每一步都涉及不同的硬件组件，而它们之间的协作，全靠一个你看不见的&quot;管家&quot;——<strong>操作系统（Operating System, OS）</strong>——来调度。</p>
+<h3 id="核心概念计算机的基本工作流">核心概念：计算机的基本工作流</h3>
+<p>我们可以用一个餐厅的类比来理解这个过程：</p>
+<p>想象一家餐厅：</p>
+<ul>
+<li><strong>硬盘</strong>就像餐厅的<strong>食材仓库</strong>——所有食材都存在这里，容量大，但你不能直接在仓库里炒菜</li>
+<li><strong>内存</strong>就像厨房里的<strong>操作台（工作台）</strong>——大厨做菜时，需要把食材从仓库搬到操作台上，操作台空间有限但取用方便</li>
+<li><strong>CPU</strong>就是<strong>大厨</strong>——真正干活的人，一次处理一道菜（一条指令），但动作极快</li>
+<li><strong>GPU</strong>就是一排<strong>流水线工人</strong>——不如大厨全能，但可以同时干很多重复性工作（比如同时切一百根土豆丝）</li>
+<li><strong>操作系统</strong>就是<strong>餐厅经理</strong>——决定先做哪道菜、给哪桌上菜、谁来负责什么</li>
+</ul>
+<p>所以，双击Steam这个动作，本质上就是你（用户）对餐厅经理（操作系统）说：&quot;我要一份Steam套餐&quot;，然后经理安排大厨（CPU）从仓库（硬盘）取出食材放到操作台（内存）上开始制作，最后由流水线工人（GPU）把成品端到你面前（显示在屏幕上）。</p>
+<p>这个类比会贯穿全书。后面每一章深入一个&quot;角色&quot;，你会发现这家餐厅的运作比你想象的精妙得多。</p>
+<p>现在，让我们把这个过程稍微量化一下。当Steam从硬盘加载到内存时，涉及到的数据传输速度大概是多少？</p>
+<ul>
+<li>一块典型的NVMe SSD（比如三星990 Pro）的顺序读取速度约为 $7000 \text{ MB/s}$</li>
+<li>Steam客户端的安装包大约是 $300\text{-}500 \text{ MB}$</li>
+<li>所以理论上，读取整个Steam到内存只需要 $\frac{500}{7000} \approx 0.07$ 秒</li>
+</ul>
+<p>但实际加载时间远不止0.07秒——因为程序启动不只是&quot;把文件搬到内存&quot;那么简单，还涉及解析、初始化、网络连接等一系列操作。这些都是后面章节的故事。</p>
+<h3 id="常见误区">常见误区</h3>
+<p>❌ <strong>&quot;电脑卡了就是CPU不行&quot;</strong></p>
+<p>→ ✅ 电脑卡顿可能是内存不够（操作台太小，菜放不下了）、硬盘太慢（从仓库搬食材慢）、甚至是散热出了问题（大厨中暑了）。CPU只是可能的原因之一。要找到真正的瓶颈，需要理解整个系统的协作方式——这也是这本书要教你的。</p>
+<p>❌ <strong>&quot;双击之后电脑就开始运行程序了&quot;</strong></p>
+<p>→ ✅ 双击只是第一步。操作系统需要先找到程序文件、分配内存空间、加载程序代码，然后才是CPU开始执行。中间有很多&quot;看不见的准备工作&quot;。</p>
+<h3 id="-动手试试">🔧 动手试试</h3>
+<p>打开你的电脑，做以下操作：</p>
+<p><strong>Windows用户：</strong></p>
+<ol>
+<li>按 <code>Ctrl + Shift + Esc</code> 打开任务管理器</li>
+<li>点击&quot;性能&quot;标签页</li>
+<li>你会看到CPU、内存、磁盘、网络等的实时使用情况</li>
+<li>现在，打开一个大型程序（比如Photoshop、Visual Studio或一个大型游戏）</li>
+<li>观察：启动瞬间，是<strong>磁盘</strong>使用率先飙升（从硬盘读取），然后<strong>内存</strong>占用增加（加载到内存），最后<strong>CPU</strong>使用率升高（开始执行）</li>
+</ol>
+<p><strong>Mac用户：</strong></p>
+<ol>
+<li>按 <code>Command + 空格</code>，输入&quot;活动监视器&quot;并打开</li>
+<li>切换到&quot;CPU&quot;&quot;内存&quot;&quot;磁盘&quot;标签分别观察</li>
+<li>同样打开一个大程序，观察变化顺序</li>
+</ol>
+<p>你刚刚亲眼见证了&quot;仓库→操作台→大厨开工&quot;的完整流程。</p>
+<h3 id="本节要点">本节要点</h3>
+<ul>
+<li>✓ 双击图标后，数据从硬盘→内存→CPU依次流动</li>
+<li>✓ CPU负责执行指令，GPU负责画面渲染，操作系统负责调度协作</li>
+<li>✓ 电脑性能是一个<strong>系统问题</strong>，不是单看某个参数</li>
+<li>✓ 餐厅类比：仓库（硬盘）→ 操作台（内存）→ 大厨（CPU）→ 流水线工人（GPU）</li>
+<li>✓ 任务管理器是观察系统运行最直观的工具</li>
+</ul>
+<hr>
+<hr>
+<h2 id="02-为什么同样16gb手机和电脑的价格差那么多">0.2 为什么同样16GB，手机和电脑的价格差那么多？</h2>
+<h3 id="一个让你困惑的购物经历">一个让你困惑的购物经历</h3>
+<p>你在看手机的时候，发现一台&quot;16GB+512GB&quot;的手机卖4000块。然后你去看电脑，一台&quot;16GB内存+512GB SSD&quot;的笔记本也是四五千块。</p>
+<p>等等——手机的16GB和电脑的16GB，是同一个东西吗？512GB是同一个512GB吗？</p>
+<p>更让人困惑的是：同样标着&quot;16GB&quot;，有时候说的是&quot;运行内存&quot;，有时候说的是&quot;存储空间&quot;。某些手机广告上的&quot;16GB&quot;其实是RAM，而平板电脑广告上的&quot;16GB&quot;可能是ROM（存储空间）。到底怎么回事？</p>
+<h3 id="核心概念存储-vs-内存两个完全不同的东西">核心概念：存储 vs 内存——两个完全不同的东西</h3>
+<p>让我们回到餐厅类比。</p>
+<p>你的电脑里有两种&quot;放东西的地方&quot;，它们的功能完全不同：</p>
+<p><strong>硬盘/SSD（存储）= 食材仓库</strong></p>
+<ul>
+<li>容量大（通常256GB到几TB不等）</li>
+<li>断电不丢失（仓库关门了，食材还在）</li>
+<li>但存取速度相对慢（去仓库拿东西总得走一趟）</li>
+<li>存放：你的照片、文档、游戏安装包、操作系统本身</li>
+</ul>
+<p><strong>内存/RAM（运行内存）= 操作台</strong></p>
+<ul>
+<li>容量小（通常8GB到64GB）</li>
+<li>断电即丢失（下班后操作台会被清空）</li>
+<li>但存取速度极快（食材就在手边，拿起来就用）</li>
+<li>存放：正在运行的程序和数据</li>
+</ul>
+<p>那手机的&quot;16GB+512GB&quot;是什么意思？</p>
+<ul>
+<li><strong>16GB</strong> = RAM（内存 / 操作台大小）</li>
+<li><strong>512GB</strong> = 闪存存储（硬盘 / 仓库大小）</li>
+</ul>
+<p>电脑的&quot;16GB内存+512GB SSD&quot;也是一回事：</p>
+<ul>
+<li><strong>16GB</strong> = DDR5内存（操作台大小）</li>
+<li><strong>512GB</strong> = NVMe固态硬盘（仓库大小）</li>
+</ul>
+<p>它们的角色完全一样！只不过手机和电脑使用的<strong>具体芯片规格不同</strong>。</p>
+<h3 id="那为什么价格差那么多">那为什么价格差那么多？</h3>
+<p>关键在于<strong>速度和规格</strong>的差异。</p>
+<p>让我们看一些真实数据：</p>
+<p><strong>内存（RAM）方面：</strong></p>
+<div class="table-wrap"><table><thead><tr>
+<th>指标</th>
+<th>手机（LPDDR5X）</th>
+<th>电脑（DDR5-5600）</th>
+</tr>
+</thead><tbody><tr>
+<td>类型</td>
+<td>LPDDR5X（低功耗版）</td>
+<td>DDR5（标准版）</td>
+</tr>
+<tr>
+<td>典型带宽</td>
+<td>$51.2 \text{ GB/s}$</td>
+<td>$44.8 \text{ GB/s}$</td>
+</tr>
+<tr>
+<td>功耗</td>
+<td>极低（手机靠电池）</td>
+<td>较高（有电源适配器）</td>
+</tr>
+<tr>
+<td>封装</td>
+<td>直接焊在SoC旁边</td>
+<td>插在内存插槽上（可更换）</td>
+</tr>
+</tbody></table></div>
+<p>你可能注意到了：手机内存的带宽甚至比电脑还高？没错。现代手机的LPDDR5X内存在带宽上已经追上甚至超过了桌面DDR5。但这不意味着手机比电脑快——因为<strong>内存带宽只是性能的一个维度</strong>，CPU和GPU的处理能力才是大头。</p>
+<p><strong>存储方面：</strong></p>
+<div class="table-wrap"><table><thead><tr>
+<th>指标</th>
+<th>手机（UFS 4.0）</th>
+<th>电脑（NVMe SSD）</th>
+</tr>
+</thead><tbody><tr>
+<td>顺序读取</td>
+<td>$\sim 4200 \text{ MB/s}$</td>
+<td>$\sim 7000\text{-}14000 \text{ MB/s}$</td>
+</tr>
+<tr>
+<td>顺序写入</td>
+<td>$\sim 2800 \text{ MB/s}$</td>
+<td>$\sim 5000\text{-}12000 \text{ MB/s}$</td>
+</tr>
+<tr>
+<td>接口</td>
+<td>UFS</td>
+<td>PCIe Gen4/Gen5</td>
+</tr>
+</tbody></table></div>
+<p>电脑的NVMe SSD比手机快很多，而且电脑端的SSD可以单独购买、更换——这在手机上几乎不可能（手机存储芯片是直接焊在主板上的）。</p>
+<h3 id="一个有趣的现实2025-2026年的内存价格风暴">一个有趣的现实：2025-2026年的内存价格风暴</h3>
+<p>说到内存，这里有一件正在发生的大事值得一提。</p>
+<p>如果你现在（2025-2026年）去装机，你会发现DDR5内存的价格贵得离谱。一套32GB（2×16GB）DDR5内存，在2024年中只要约 $100$（约700元人民币），但到了2025年底至2026年初，同样的套装价格飙升到了 $350$ 甚至更高（约2500元人民币），涨幅超过300%。</p>
+<p>为什么？一个核心原因是：<strong>AI对内存的需求爆炸式增长</strong>。</p>
+<p>训练大语言模型（比如ChatGPT背后的GPT系列）需要海量的高带宽内存（HBM）和DDR5内存。三星、SK海力士、美光这三大内存厂商把大量产能分配给了AI服务器用的HBM芯片，导致消费级DDR5和DDR4的供应严重不足。</p>
+<p>这是一个非常典型的<strong>供需关系影响价格</strong>的案例——只不过这次，AI是那个打破平衡的&quot;新玩家&quot;。我们会在第六章和第0.5节更详细地聊这个话题。</p>
+<h3 id="00-preface-常见误区-2">常见误区</h3>
+<p>❌ <strong>&quot;手机16GB内存和电脑16GB内存是一样的东西&quot;</strong></p>
+<p>→ ✅ 容量相同，但规格不同。手机用LPDDR5X（低功耗），电脑用DDR5（高性能标准版）或LPDDR5X（轻薄本）。不能直接拿来比较性能。</p>
+<p>❌ <strong>&quot;内存越大电脑越快&quot;</strong></p>
+<p>→ ✅ 内存大小决定的是你能同时打开多少程序（操作台大小），而不是程序运行的速度。如果你只开一个Word，8GB和32GB的体验几乎没有区别。但如果你同时开Chrome（几十个标签页）、Photoshop、微信、网易云……内存不够的话，系统就会卡顿——因为操作台放不下了，系统不得不把一些东西暂时搬回仓库（硬盘），这个过程叫做<strong>换页（Paging）</strong>，非常慢。</p>
+<p>❌ <strong>&quot;512GB存储和512GB内存差不多&quot;</strong></p>
+<p>→ ✅ 完全是两回事！存储是&quot;仓库&quot;，内存是&quot;操作台&quot;。512GB是存储的常见大小，但512GB的内存？那是服务器级别的配置，普通电脑用不上也买不起。</p>
+<h3 id="00-preface--动手试试-2">🔧 动手试试</h3>
+<p><strong>查看你电脑的内存和存储信息：</strong></p>
+<p><strong>Windows用户：</strong></p>
+<ol>
+<li>右键点击&quot;此电脑&quot;→&quot;属性&quot;，你能看到&quot;已安装的RAM&quot;——这就是你的内存大小</li>
+<li>打开&quot;设置&quot;→&quot;系统&quot;→&quot;存储&quot;，你能看到每个硬盘分区的容量和使用情况</li>
+<li>打开任务管理器（<code>Ctrl + Shift + Esc</code>）→&quot;性能&quot;→&quot;内存&quot;，你能看到：<ul>
+<li>已使用的内存量</li>
+<li>内存速度（比如&quot;5600 MHz&quot;）</li>
+<li>内存插槽使用情况（比如&quot;已使用2/2个插槽&quot;）</li>
+</ul>
+</li>
+</ol>
+<p><strong>Mac用户：</strong></p>
+<ol>
+<li>点击左上角苹果图标 →&quot;关于本机&quot;，你能看到内存（如&quot;16GB&quot;）和存储信息</li>
+<li>打开&quot;活动监视器&quot;→&quot;内存&quot;标签，观察&quot;内存压力&quot;图表——绿色表示内存充足，黄色表示有点紧张，红色表示严重不足</li>
+</ol>
+<p><strong>手机用户（作为对比）：</strong></p>
+<ol>
+<li>安卓：设置 → 关于手机 → RAM和存储</li>
+<li>iPhone：设置 → 通用 → 关于本机（注意iOS不会直接显示RAM大小，这是苹果的设计哲学——他们认为用户不需要关心这个）</li>
+</ol>
+<p>对比一下你的手机和电脑的参数，感受一下&quot;同样16GB&quot;背后的不同。</p>
+<h3 id="00-preface-本节要点-2">本节要点</h3>
+<ul>
+<li>✓ 内存（RAM）和存储（SSD/HDD）是两个完全不同的东西：一个是操作台，一个是仓库</li>
+<li>✓ 手机和电脑的内存/存储在原理上相同，但使用不同的技术规格</li>
+<li>✓ 内存大小决定能同时处理多少任务，而非单个任务的速度</li>
+<li>✓ 2025-2026年内存价格暴涨，AI需求是核心推手</li>
+<li>✓ 查看自己设备的内存和存储信息，是理解计算机的第一步</li>
+</ul>
+<hr>
+<hr>
+<h2 id="03-买电脑时的参数表到底在说什么">0.3 买电脑时的参数表，到底在说什么？</h2>
+<h3 id="一张让人头大的配置单">一张让人头大的配置单</h3>
+<p>你终于决定买电脑了。打开京东，搜索&quot;笔记本电脑&quot;，点进一个产品页面，映入眼帘的是这样一张参数表：</p>
+<div class="table-wrap"><table><thead><tr>
+<th>项目</th>
+<th>参数</th>
+</tr>
+</thead><tbody><tr>
+<td>处理器</td>
+<td>Intel Core i7-13700H（14核20线程，最高5.0GHz）</td>
+</tr>
+<tr>
+<td>显卡</td>
+<td>NVIDIA GeForce RTX 4060 Laptop GPU 8GB GDDR6</td>
+</tr>
+<tr>
+<td>内存</td>
+<td>16GB DDR5 5600MHz（双通道）</td>
+</tr>
+<tr>
+<td>硬盘</td>
+<td>512GB PCIe 4.0 NVMe M.2 SSD</td>
+</tr>
+<tr>
+<td>屏幕</td>
+<td>15.6英寸 2560×1440 165Hz IPS</td>
+</tr>
+<tr>
+<td>电池</td>
+<td>80Wh</td>
+</tr>
+<tr>
+<td>重量</td>
+<td>2.3kg</td>
+</tr>
+</tbody></table></div>
+<p>看完之后你的感觉大概是：每个字都认识，连在一起完全看不懂。</p>
+<p>别担心，我们现在就来逐行翻译。</p>
+<h3 id="核心概念逐行解读参数表">核心概念：逐行解读参数表</h3>
+<p><strong>第一行：处理器（CPU）——Intel Core i7-13700H（14核20线程，最高5.0GHz）</strong></p>
+<p>这一行信息量巨大，我们拆开看：</p>
+<ul>
+<li><strong>Intel Core</strong>：品牌和产品线。Intel是CPU制造商，Core是其主流产品系列</li>
+<li><strong>i7</strong>：性能等级。Intel把CPU分为i3（入门）、i5（主流）、i7（高性能）、i9（旗舰）。就像汽车分经济型、舒适型、豪华型、超跑</li>
+<li><strong>13</strong>：代数。13代表第13代Intel Core处理器（2023年发布）。代数越新，同等级下通常性能越好、功耗越低</li>
+<li><strong>700</strong>：同代内的具体型号编号，数字越大通常越强</li>
+<li><strong>H</strong>：后缀。H代表High Performance（高性能），适合游戏本和工作站；U代表Ultra-low power（超低功耗），适合轻薄本。同样是i7，H后缀的性能远超U后缀</li>
+<li><strong>14核20线程</strong>：这台CPU有14个物理计算核心，通过超线程技术（Hyper-Threading）可以同时处理20个任务。用餐厅类比——14个大厨，通过巧妙安排可以同时做20道菜</li>
+<li><strong>最高5.0GHz</strong>：主频（时钟频率）。$1 text{ GHz} = 10^9$ 次运算/秒。5.0GHz意味着CPU每秒可以执行约50亿次基础运算。但注意，这是&quot;最高&quot;频率——平时为了省电和散热，CPU不会一直跑在最高频率</li>
+</ul>
+<p><strong>第二行：显卡（GPU）——NVIDIA GeForce RTX 4060 Laptop GPU 8GB GDDR6</strong></p>
+<ul>
+<li><strong>NVIDIA GeForce</strong>：品牌和系列。NVIDIA是最主要的独立显卡制造商，GeForce是其游戏显卡产品线</li>
+<li><strong>RTX</strong>：支持实时光线追踪（Ray Tracing）。这是一种让游戏画面更真实的技术，模拟光线在物体间的反射和折射。RTX比GTX多了这个能力</li>
+<li><strong>4060</strong>：型号。第一位&quot;4&quot;代表第4代RTX架构（Ada Lovelace），后三位&quot;060&quot;代表中端定位。数字越大越强：4050 &lt; 4060 &lt; 4070 &lt; 4080 &lt; 4090</li>
+<li><strong>Laptop GPU</strong>：笔记本版本。笔记本显卡通常比同型号的桌面版弱20-30%，因为需要控制功耗和发热</li>
+<li><strong>8GB GDDR6</strong>：显存（Video RAM）。这是GPU自己的&quot;操作台&quot;，专门存放图形数据。GDDR6是显存的类型，比普通DDR5更适合GPU的大带宽需求</li>
+<li>RTX 4060发售价为 ¥2399（2023年），到2024年底市场价约 ¥2200-2700 不等</li>
+</ul>
+<p><strong>第三行：内存——16GB DDR5 5600MHz（双通道）</strong></p>
+<p>上一节我们已经聊过内存了，这里补充几个新概念：</p>
+<ul>
+<li><strong>DDR5</strong>：内存的技术代次。DDR = Double Data Rate（双倍数据速率）。DDR5是2021年推出的最新一代，比DDR4带宽更高、功耗更低</li>
+<li><strong>5600MHz</strong>：内存频率，决定数据传输速度。频率越高，操作台上&quot;传菜&quot;的速度越快</li>
+<li><strong>双通道（Dual Channel）</strong>：两根内存条同时工作，相当于把&quot;传菜通道&quot;从一条变成两条，理论带宽翻倍。所以 $2 \times 8\text{GB}$ 双通道通常比 $1 \times 16\text{GB}$ 单通道性能更好，尽管总容量相同</li>
+</ul>
+<p><strong>第四行：硬盘——512GB PCIe 4.0 NVMe M.2 SSD</strong></p>
+<p>这一串缩写看着可怕，但每个词都有明确含义：</p>
+<ul>
+<li><strong>512GB</strong>：容量。能存多少东西</li>
+<li><strong>SSD（Solid State Drive，固态硬盘）</strong>：相比传统的HDD（机械硬盘），SSD没有机械旋转部件，速度快几十倍</li>
+<li><strong>NVMe（Non-Volatile Memory Express）</strong>：一种通信协议（可以理解为&quot;数据传输的语言&quot;），专为SSD设计，比老的SATA协议快得多</li>
+<li><strong>PCIe 4.0</strong>：物理接口的版本。PCIe是连接SSD和主板的&quot;高速公路&quot;。4.0是第4代，最高理论带宽约 $8 text{ GB/s}$；最新的5.0代可达 $16 \text{ GB/s}$</li>
+<li><strong>M.2</strong>：物理外形规格。M.2是一种小巧的插卡形式，直接插在主板上的插槽里</li>
+</ul>
+<p>综合起来：这是一块使用PCIe 4.0高速公路、说NVMe语言、M.2外形的512GB固态硬盘。</p>
+<p><strong>第五行：屏幕——15.6英寸 2560×1440 165Hz IPS</strong></p>
+<ul>
+<li><strong>15.6英寸</strong>：屏幕对角线长度</li>
+<li><strong>2560×1440</strong>：分辨率，也叫2.5K或QHD。意味着屏幕上有 $2560 \times 1440 = 3,686,400$ 个像素点。分辨率越高，画面越清晰细腻</li>
+<li><strong>165Hz</strong>：刷新率。屏幕每秒刷新画面165次。对于游戏来说，高刷新率意味着更流畅的画面。普通办公60Hz就够了，但游戏玩家通常要求120Hz以上</li>
+<li><strong>IPS</strong>：面板类型。IPS面板的特点是色彩准确、可视角度大（侧着看也不变色）。其他常见类型包括VA（对比度高）和OLED（颜色鲜艳、黑色纯正）</li>
+</ul>
+<p><strong>最后两行：电池和重量</strong></p>
+<ul>
+<li><strong>80Wh</strong>：电池容量。Wh = Watt-hour（瓦时）。数字越大续航越长，但也意味着电池更大更重</li>
+<li><strong>2.3kg</strong>：这是一台中等重量的游戏本。作为参考，MacBook Air约1.2kg，轻薄本通常1.3-1.6kg，游戏本2.0-2.8kg</li>
+</ul>
+<h3 id="一张quot翻译过的quot参数表">一张&quot;翻译过的&quot;参数表</h3>
+<p>现在，让我们重新看看那张参数表，但换成&quot;人话&quot;：</p>
+<div class="table-wrap"><table><thead><tr>
+<th>项目</th>
+<th>参数</th>
+<th>翻译</th>
+</tr>
+</thead><tbody><tr>
+<td>处理器</td>
+<td>i7-13700H 14核20线程</td>
+<td>高性能CPU，14个大厨能同时做20道菜，手速极快</td>
+</tr>
+<tr>
+<td>显卡</td>
+<td>RTX 4060 8GB</td>
+<td>中端游戏显卡，能跑大部分3A大作，支持光追</td>
+</tr>
+<tr>
+<td>内存</td>
+<td>16GB DDR5 5600MHz</td>
+<td>操作台够大，日常使用绰绰有余，多开程序也问题不大</td>
+</tr>
+<tr>
+<td>硬盘</td>
+<td>512GB NVMe SSD</td>
+<td>高速仓库，装10个大型游戏就差不多满了</td>
+</tr>
+<tr>
+<td>屏幕</td>
+<td>15.6&quot; 2.5K 165Hz</td>
+<td>清晰度不错，玩游戏很流畅</td>
+</tr>
+<tr>
+<td>电池</td>
+<td>80Wh</td>
+<td>脱离电源大约能用3-5小时（取决于使用强度）</td>
+</tr>
+<tr>
+<td>重量</td>
+<td>2.3kg</td>
+<td>背着去上课会有点累，但不至于背不动</td>
+</tr>
+</tbody></table></div>
+<p>怎么样？是不是清晰多了？</p>
+<p>后面每一章，都会深入其中一个部件，让你不仅看懂参数，还理解参数背后的<strong>原理</strong>。</p>
+<h3 id="00-preface-常见误区-3">常见误区</h3>
+<p>❌ <strong>&quot;i7一定比i5好&quot;</strong></p>
+<p>→ ✅ 不一定！要看<strong>代数</strong>。最新一代的i5（比如14代i5-14600H）可能比上一代的i7（比如12代i7-12700H）还强。永远先看代数，再看等级。</p>
+<p>❌ <strong>&quot;主频越高性能越强&quot;</strong></p>
+<p>→ ✅ 主频只是性能的一个方面。CPU的架构、核心数量、缓存大小都会影响实际性能。就像大厨的手速（主频）很重要，但厨师人数（核心数）和厨房设施（缓存）同样关键。一个3.5GHz的新架构CPU可能比5.0GHz的老架构CPU更快。</p>
+<p>❌ <strong>&quot;512GB SSD足够用了&quot;</strong></p>
+<p>→ ✅ 取决于你的使用场景。如果你只做文档和轻度使用，512GB绰绰有余。但如果你玩游戏，一个3A大作就可能占60-100GB，十个就占满了。做视频剪辑的同学更是需要至少1TB起步。</p>
+<h3 id="00-preface--动手试试-3">🔧 动手试试</h3>
+<p><strong>找到你自己电脑的完整参数：</strong></p>
+<p><strong>Windows用户：</strong></p>
+<ol>
+<li>按 <code>Win + R</code>，输入 <code>dxdiag</code>，回车</li>
+<li>在打开的&quot;DirectX诊断工具&quot;里，你能看到：<ul>
+<li><strong>系统</strong>标签：CPU型号、内存大小、操作系统版本</li>
+<li><strong>显示</strong>标签：显卡型号和显存大小</li>
+</ul>
+</li>
+<li>或者下载免费软件 <strong>CPU-Z</strong>（<a href="http://cpuid.com">cpuid.com</a>），它会给出更详细的硬件信息</li>
+</ol>
+<pre data-label="bash"><code class="language-bash"># 你也可以用命令行查看系统信息（Windows PowerShell）
+Get-ComputerInfo | Select-Object CsProcessors, OsTotalVisibleMemorySize, CsModel
+
+# 或者更简单的
+systeminfo</code></pre>
+<p><strong>Mac用户：</strong></p>
+<ol>
+<li>点击左上角苹果图标 →&quot;关于本机&quot;</li>
+<li>你能看到芯片型号（如&quot;Apple M3&quot;）、内存、序列号等</li>
+<li>点击&quot;系统报告&quot;可以看到更详细的硬件信息</li>
+</ol>
+<pre data-label="bash"><code class="language-bash"># Mac终端命令
+system_profiler SPHardwareDataType</code></pre>
+<p><strong>把你的电脑参数写下来</strong>，和上面的例子对比，尝试用&quot;人话&quot;翻译每一行。这是最好的学习方式。</p>
+<h3 id="00-preface-本节要点-3">本节要点</h3>
+<ul>
+<li>✓ CPU型号包含品牌、等级（i3/i5/i7/i9）、代数、后缀（H/U/P），每一部分都有含义</li>
+<li>✓ GPU型号数字越大越强，笔记本版比桌面版弱</li>
+<li>✓ 内存看容量（GB）、频率（MHz）、通道数；双通道优于单通道</li>
+<li>✓ SSD看容量、接口（NVMe/SATA）和协议版本（PCIe 4.0/5.0）</li>
+<li>✓ 屏幕看分辨率、刷新率和面板类型</li>
+</ul>
+<hr>
+<hr>
+<h2 id="04-为什么好的显卡才能跑游戏">0.4 为什么好的显卡才能跑游戏？</h2>
+<h3 id="一个让风扇尖叫的下午">一个让风扇尖叫的下午</h3>
+<p>宿舍里，你室友正在玩《原神》。你凑过去看了一眼，画面挺不错的。然后你回到自己的电脑上也想试试，下载安装之后打开——</p>
+<p>画面卡成PPT。</p>
+<p>你的笔记本风扇开始疯狂旋转，发出的噪声堪比小型飞机起飞。你看了一眼任务管理器，CPU使用率100%，GPU使用率也拉满了。你切到最低画质，勉强能玩，但画面糊得像马赛克。</p>
+<p>而你室友的电脑？高画质60帧稳如老狗。</p>
+<p>你俩的电脑差在哪里？答案很可能就是三个字母：<strong>GPU</strong>。</p>
+<h3 id="核心概念gpu是如何quot画quot出游戏画面的">核心概念：GPU是如何&quot;画&quot;出游戏画面的</h3>
+<p>要理解GPU为什么重要，我们需要先理解一件事：<strong>屏幕上的每一帧画面，都是&quot;画&quot;出来的。</strong></p>
+<p>当你在游戏里看到一个3D场景时——比如一片草地、几棵树、远处的山——这些画面不是像视频一样&quot;播放&quot;出来的，而是电脑<strong>实时计算</strong>出来的。每一帧画面的生成大致需要这些步骤：</p>
+<ol>
+<li><strong>顶点处理</strong>：3D模型是由成千上万个三角形组成的（这叫做&quot;网格&quot;）。GPU需要计算每个三角形的位置、旋转和缩放</li>
+<li><strong>光栅化</strong>：把3D空间中的三角形&quot;投影&quot;到2D屏幕上，确定每个三角形覆盖了屏幕上的哪些像素</li>
+<li><strong>着色</strong>：为每个像素计算颜色——这需要考虑光照、材质、阴影、反射等等</li>
+<li><strong>后处理</strong>：添加特效，比如景深（远处模糊）、抗锯齿（让边缘更平滑）、HDR等</li>
+</ol>
+<p>以一个 $2560 \times 1440$ 分辨率、60fps（每秒60帧）的游戏为例：</p>
+<p>$ \text{每秒需要着色的像素数} = 2560 \times 1440 \times 60 = 221,184,000 \approx 2.2 \text{亿} $</p>
+<p><strong>每秒2.2亿个像素</strong>，每一个都需要独立计算颜色。这就是为什么GPU如此重要——这种工作对CPU来说是噩梦，但对GPU来说正好合适。</p>
+<h3 id="cpu-vs-gpu大厨-vs-流水线">CPU vs GPU：大厨 vs 流水线</h3>
+<p>让我们回到餐厅类比，深入理解CPU和GPU的区别。</p>
+<p><strong>CPU（大厨）的特点：</strong></p>
+<ul>
+<li>核心数量少（通常4-24个）</li>
+<li>每个核心非常强大，能处理复杂的逻辑判断</li>
+<li>擅长：复杂的、需要动脑子的工作（比如创作一道新菜）</li>
+<li>不擅长：大量重复的简单工作</li>
+</ul>
+<p><strong>GPU（流水线工人）的特点：</strong></p>
+<ul>
+<li>核心数量极多（通常数千个，RTX 4060有3072个CUDA核心）</li>
+<li>每个核心相对简单，只能做比较基础的运算</li>
+<li>擅长：大量重复的简单工作（比如切3072根土豆丝）</li>
+<li>不擅长：复杂的、需要逻辑判断的工作</li>
+</ul>
+<p>用数据来对比：</p>
+<div class="table-wrap"><table><thead><tr>
+<th>特性</th>
+<th>i7-13700H（CPU）</th>
+<th>RTX 4060（GPU）</th>
+</tr>
+</thead><tbody><tr>
+<td>核心数</td>
+<td>14（6大核+8小核）</td>
+<td>3072（CUDA核心）</td>
+</tr>
+<tr>
+<td>频率</td>
+<td>最高5.0GHz</td>
+<td>最高2.37GHz</td>
+</tr>
+<tr>
+<td>擅长</td>
+<td>复杂逻辑、顺序计算</td>
+<td>大规模并行计算</td>
+</tr>
+<tr>
+<td>比喻</td>
+<td>14个数学天才</td>
+<td>3072个计算器操作员</td>
+</tr>
+</tbody></table></div>
+<p>渲染游戏画面时，每个像素的颜色计算是相对独立的——像素A的颜色不太依赖像素B。这意味着可以<strong>同时计算</strong>很多像素，这正是GPU的强项。</p>
+<p>如果让CPU来做这个工作：14个大厨轮流给2.2亿个像素上色——累死也来不及。</p>
+<p>如果让GPU来做：3072个工人同时工作，每人只负责一小片区域——轻松搞定。</p>
+<p>这就是**并行计算（Parallel Computing）**的核心思想：把一个大任务拆成很多小任务，同时执行。</p>
+<h3 id="不只是游戏gpu的新舞台">不只是游戏：GPU的新舞台</h3>
+<p>这里有一个有趣的历史转折。</p>
+<p>GPU最初确实只是为了渲染图形而设计的——&quot;Graphics Processing Unit&quot;嘛。但人们很快意识到，GPU的大规模并行计算能力不仅能画图，还能用来做<strong>任何</strong>大量重复计算的工作。</p>
+<p>比如：</p>
+<ul>
+<li><strong>深度学习/AI训练</strong>：训练一个神经网络需要做海量的矩阵乘法，这和渲染像素一样是高度并行的任务</li>
+<li><strong>视频编码</strong>：把视频从一个格式转换成另一个格式</li>
+<li><strong>科学计算</strong>：气候模拟、分子动力学、天文计算</li>
+<li><strong>加密货币挖矿</strong>：计算哈希值（这就是为什么前几年显卡被矿工买光了）</li>
+</ul>
+<p>这就是为什么NVIDIA的市值在AI时代暴涨——他们的GPU是目前训练大语言模型（如GPT、LLaMA等）最核心的硬件。A100、H100这些专业级GPU，每一块售价数万美元，而且供不应求。</p>
+<h3 id="建议配图cpu-vs-gpu架构对比示意图">【建议配图】CPU vs GPU架构对比示意图</h3>
+<pre><code>CPU：
+┌──────┐ ┌──────┐ ┌──────┐ ┌──────┐
+│ 大核 │ │ 大核 │ │ 大核 │ │ 大核 │ ... (14个核心)
+│ 强力 │ │ 强力 │ │ 强力 │ │ 强力 │
+└──────┘ └──────┘ └──────┘ └──────┘
+
+GPU：
+┌─┐┌─┐┌─┐┌─┐┌─┐┌─┐┌─┐┌─┐┌─┐┌─┐┌─┐┌─┐┌─┐┌─┐┌─┐┌─┐
+│○││○││○││○││○││○││○││○││○││○││○││○││○││○││○││○│ ... (3072个小核心)
+└─┘└─┘└─┘└─┘└─┘└─┘└─┘└─┘└─┘└─┘└─┘└─┘└─┘└─┘└─┘└─┘
+
+每个CPU核心 = 一个全能大厨 🧑‍🍳
+每个GPU核心 = 一个流水线工人 👷</code></pre>
+<h3 id="集成显卡-vs-独立显卡">集成显卡 vs 独立显卡</h3>
+<p>你可能在参数表上还见过另一种显卡：<strong>集成显卡（Integrated Graphics，简称&quot;集显&quot;或&quot;核显&quot;）</strong>。</p>
+<ul>
+<li><strong>集成显卡</strong>：内置在CPU里面的迷你GPU。比如Intel的&quot;Iris Xe&quot;或AMD的&quot;Radeon 780M&quot;。性能较弱，但不额外占空间，也不额外耗电。日常办公、看视频完全够用</li>
+<li><strong>独立显卡</strong>：单独的GPU芯片，有自己的显存和散热。比如RTX 4060。性能强大，但占空间、耗电、价格高</li>
+</ul>
+<p>如果你不玩大型游戏、不做视频剪辑、不搞AI开发，集成显卡就够了。这也是为什么轻薄本通常不配独立显卡——用不上，还费电。</p>
+<h3 id="00-preface-常见误区-4">常见误区</h3>
+<p>❌ <strong>&quot;显存越大显卡越好&quot;</strong></p>
+<p>→ ✅ 显存大小只是显卡性能的一个维度。一块8GB显存的RTX 4060远强于一块12GB显存的低端显卡。核心数量、架构、频率都很重要。就像仓库大不等于厨师手艺好。</p>
+<p>❌ <strong>&quot;不玩游戏就不需要显卡&quot;</strong></p>
+<p>→ ✅ 你的电脑一定有显卡——至少有集成显卡。只要有屏幕显示，就需要GPU来渲染画面。你打开的每一个窗口、每一段文字、每一个动画，都是GPU在画。只不过这些&quot;简单画作&quot;集成显卡就能搞定。</p>
+<p>❌ <strong>&quot;显卡只能用来打游戏&quot;</strong></p>
+<p>→ ✅ 现代GPU是通用并行计算设备。AI训练、视频剪辑、3D建模、科学计算都大量依赖GPU。NVIDIA的GPU已经是AI基础设施的核心。</p>
+<h3 id="00-preface--动手试试-4">🔧 动手试试</h3>
+<p><strong>看看你的GPU在干什么：</strong></p>
+<p><strong>Windows用户：</strong></p>
+<ol>
+<li>打开任务管理器（<code>Ctrl + Shift + Esc</code>）→&quot;性能&quot;标签</li>
+<li>你会看到&quot;GPU 0&quot;（可能还有&quot;GPU 1&quot;，如果你有独立显卡的话）</li>
+<li>观察GPU使用率。试试以下操作：<ul>
+<li>播放一个4K YouTube视频：GPU使用率会上升（视频解码）</li>
+<li>打开一个3D游戏：GPU使用率会飙到很高</li>
+<li>只是写Word或看网页：GPU使用率很低</li>
+</ul>
+</li>
+<li>注意观察是哪个GPU在工作——有些笔记本在轻负载时用集成显卡，重负载才切换到独立显卡</li>
+</ol>
+<p><strong>Mac用户：</strong></p>
+<ol>
+<li>打开&quot;活动监视器&quot;→&quot;窗口&quot;菜单→&quot;GPU历史&quot;</li>
+<li>或者在&quot;活动监视器&quot;主界面中，找到&quot;GPU&quot;列，看各个程序的GPU使用情况</li>
+</ol>
+<p><strong>一个有趣的实验：</strong></p>
+<p>如果你有独立显卡的电脑，试试在游戏里切换画质：</p>
+<ul>
+<li>最低画质 → 看看FPS（帧率）是多少</li>
+<li>最高画质 → 再看看FPS</li>
+<li>观察：分辨率和特效对GPU的负担有多大</li>
+</ul>
+<h3 id="00-preface-本节要点-4">本节要点</h3>
+<ul>
+<li>✓ 游戏画面是GPU实时&quot;画&quot;出来的，不是&quot;播放&quot;出来的</li>
+<li>✓ CPU擅长复杂逻辑（大厨），GPU擅长大规模并行计算（流水线工人）</li>
+<li>✓ RTX 4060有3072个CUDA核心，可以同时处理大量像素计算</li>
+<li>✓ GPU不只能打游戏——AI训练、视频剪辑、科学计算都依赖它</li>
+<li>✓ 集成显卡够日常使用，独立显卡面向游戏和专业需求</li>
+</ul>
+<hr>
+<hr>
+<h2 id="05-ai时代为什么内存价格飞起">0.5 AI时代，为什么内存价格飞起？</h2>
+<h3 id="一条让装机党崩溃的新闻">一条让装机党崩溃的新闻</h3>
+<p>2025年底，你在B站看到了一个装机视频的评论区，满屏都是“内存涨疆了”“一套DDR5卖到了之前三倍价”“还不如不装了”。</p>
+<p>你很困惑：内存不就是一个小条子吗？怎么突然就涨价了？这和AI又有什么关系？</p>
+<p>这个问题的答案，其实串联了这本书里几乎所有的核心概念。</p>
+<h3 id="核心概念为什么ai需要这么多内存">核心概念：为什么AI需要这么多内存？</h3>
+<p>要理解这个问题，我们先来简单理解AI模型是怎么工作的。</p>
+<p>以ChatGPT为例。当你跟ChatGPT对话时，背后发生的事情粗略地是这样的：</p>
+<ol>
+<li>你输入一句话（比如&quot;什么是CPU？&quot;）</li>
+<li>服务器上的GPU把这句话转换成数字</li>
+<li>这些数字被送入一个<strong>巨大的数学模型</strong>进行计算</li>
+<li>模型产出下一个最可能的词，然后再产出下一个，逐词生成回答</li>
+</ol>
+<p>这个&quot;巨大的数学模型&quot;有多大？以GPT-4为例，据估计它拥有约 $1.8 \text{ 万亿}$ 个参数（虽然OpenAI未官方确认）。每个参数占用约2字节（半精度浮点数），那么仅仅存储这个模型就需要：</p>
+<p>$ 1.8 \times 10^{12} \times 2 \text{ bytes} = 3.6 \text{ TB} $</p>
+<p>3.6TB！这还只是<strong>存储</strong>模型本身。在实际推理（生成回答）时，还需要额外的内存来存储中间计算结果。而在<strong>训练</strong>（让模型学习新知识）时，内存需求更是要翻好几倍。</p>
+<p>而且，这些计算全部发生在GPU上。GPU需要的不是普通DDR5内存，而是一种更先进的内存：<strong>HBM（High Bandwidth Memory，高带宽内存）</strong>。HBM直接堆叠在GPU芯片旁边，带宽可以达到普逝DDR5的几十倍。</p>
+<p>举个例子：NVIDIA H100（目前最主流的AI训练GPU之一）配备80GB HBM3内存，带宽达到 $3.35 text{ TB/s}$。作为对比，你电脑上的DDR5-5600内存，双通道带宽约 $89.6 text{ GB/s}$。H100的内存带宽是你电脑的37倍。</p>
+<h3 id="供需失衡为什么你的内存涨价了">供需失衡：为什么你的内存涨价了？</h3>
+<p>你可能会问：AI用的是HBM，我们电脑用的是DDR5，两个不同的东西，为什么会互相影响？</p>
+<p>关键在于：它们共享同一个<strong>产能池</strong>。</p>
+<p>全球内存芯片的制造商主要就是三家：<strong>三星（Samsung）、SK海力士（SK Hynix）、美光（Micron）</strong>。无论是HBM、DDR5还是DDR4，都是这三家生产的。它们的工厂产能是有限的。</p>
+<p>现在，AI公司（OpenAI、Google、Meta、字节跳动等）拼命采购HBM来建设训练集群。三大内存厂商发现HBM的利润率远高于普通DDR5，于是纷纷把更多的工厂产能转向HBM生产。</p>
+<p>结果就是：<strong>DDR5和DDR4的供应大幅减少，价格自然飙升。</strong></p>
+<p>来看一些真实数据：</p>
+<div class="table-wrap"><table><thead><tr>
+<th>时间</th>
+<th>32GB DDR5套装价格（美元）</th>
+<th>人民币约</th>
+<th>涨幅</th>
+</tr>
+</thead><tbody><tr>
+<td>2024年中</td>
+<td>~$100</td>
+<td>~¥700</td>
+<td>基准</td>
+</tr>
+<tr>
+<td>2025年9月</td>
+<td>~$150</td>
+<td>~¥1050</td>
+<td>+50%</td>
+</tr>
+<tr>
+<td>2025年12月</td>
+<td>~$350+</td>
+<td>~¥2500+</td>
+<td>+250%+</td>
+</tr>
+<tr>
+<td>2026年Q1（预测）</td>
+<td>继续上涨</td>
+<td>继续上涨</td>
+<td>预计+30%-40%</td>
+</tr>
+</tbody></table></div>
+<p>数据来源：Tom&#39;s Hardware 价格追踪、DIGITIMES Research、集邦咨询（TrendForce）报告，截至2025年12月。</p>
+<p>DDR4的情况更加夸张。据报道，2024年底至2025年12月间，DDR4 16Gb内存模块现货价格从约 $3.2$ 涨到了 $62$ 以上，涨幅超过 $1800%$。</p>
+<p>SSD同样未能幸免。NAND闪存（SSD的存储介质）价格也在上涨，因为AI服务器同样需要大量存储。</p>
+<h3 id="连锁反应电脑价格也在涨">连锁反应：电脑价格也在涨</h3>
+<p>内存涨价的影响不止于装机。据集邦咨询预测，到2026年底，DDR5 RDIMM内存价格预计再涨纤45%，存储组件成本将占据笔记本电脑材料总成本的约23%。</p>
+<p>这导致了一系列连锁反应：</p>
+<ul>
+<li><strong>笔记本价格上涨</strong>：部分厂商已宣布将高端机型价格上调30%</li>
+<li><strong>新品发布推迟</strong>：联想、惠普等大厂考虑推迟2026年新品发布计划</li>
+<li><strong>二手市场火爆</strong>：买不起新内存的人开始抢购二手内存条</li>
+<li><strong>低配版本增多</strong>：一些厂4GB或者仅配8GB内存的笔记本重新出现在市场上</li>
+</ul>
+<p>用餐厅类比来理解：以前操作台（内存）的材料便宜，餐厅都配了大操作台。现在材料涨价了，因为一家新开的“AI工厂”把材料买光了，普通餐厅只能配小操作台，或者涨价。</p>
+<h3 id="这和你有什么关系">这和你有什么关系？</h3>
+<p>如果你正好在2025-2026年买电脑，这就是你必须了解的背景：</p>
+<ol>
+<li><strong>内存价格可能会继续高位运行一段时间</strong>，考虑购买时要有心理预期</li>
+<li><strong>16GB内存在当前环境下是合理的选择</strong>，不必追求在这个价格下上32GB（除非确实需要）</li>
+<li><strong>理解内存和存储的区别</strong>，才能判断你真正需要多大容量</li>
+<li><strong>AI不只是软件概念，它对硬件产业链有深远影响</strong>——这是理解现代计算机生态的重要视角</li>
+</ol>
+<p>这个故事也揭示了一个更深层的道理：<strong>计算机硬件不是孤立存在的，它是一个巨大的产业生态系统的一部分。</strong> 从芯片设计、制造、到市场供需、到你手上的电脑价格，环环相扣。理解计算机原理，不只是理解技术，也是理解这个时代。</p>
+<h3 id="00-preface-常见误区-5">常见误区</h3>
+<p>❌ <strong>&quot;内存涨价是厂商在割韭菜&quot;</strong></p>
+<p>→ ✅ 这次涨价主要是供需失衡造成的。AI对HBM的需求挤占了DDR5/DDR4的产能，不是简单的&quot;厂商恶意涨价&quot;。当然，部分零售商确实存在趁火打劫的情况，但根本原因是供应链的结构性问题。</p>
+<p>❌ <strong>&quot;AI和我无关，我只是普通用户&quot;</strong></p>
+<p>→ ✅ AI对硬件产业的影响是全局性的。即使你不用AI，你买电脑的价格、可选配置、产品更新速度都会受到影响。理解这些背景，才能做出更明智的购买决策。</p>
+<h3 id="00-preface--动手试试-5">🔧 动手试试</h3>
+<p><strong>追踪内存价格和AI的关系：</strong></p>
+<ol>
+<li>打开京东（<a href="http://jd.com">jd.com</a>）或天猫，搜索&quot;DDR5 16GB&quot;——看看现在的价格是多少</li>
+<li>再搜索&quot;DDR5 16GB 2024年价格&quot;，找一些2024年的价格截图或评测，对比价格变化</li>
+<li>访问 Tom’s Hardware 的内存价格追踪页面（<a href="http://tomshardware.com">tomshardware.com</a>，搜索&quot;RAM price tracking&quot;）看实时曲线</li>
+<li>想一想：这个价格变化对你的购买计划有什么影响？</li>
+</ol>
+<p><strong>感受AI的计算规模：</strong></p>
+<p>打开浏览器，访问ChatGPT（<a href="http://chat.openai.com">chat.openai.com</a>）或任何其他AI对话工具，问它一个问题，观察它是如何“逐字”生成回答的——这背后每一个字的生成，都涉及数万亿次计算。</p>
+<h3 id="00-preface-本节要点-5">本节要点</h3>
+<ul>
+<li>✓ AI大模型需要海量内存和计算资源，GPT-4级别模型仅存储就需要数TB空间</li>
+<li>✓ HBM（高带宽内存）是AI训练的核心硬件，和DDR5共享产能</li>
+<li>✓ 2024-2026年内存价格暴涨，核心原因是AI需求挤占产能</li>
+<li>✓ 硬件价格不只取决于技术，还受全球供应链和市场需求影响</li>
+<li>✓ 理解计算机原理也是理解这个时代</li>
+</ul>
+<hr>
+<hr>
+<h2 id="本章回顾与展望">本章回顾与展望</h2>
+<h3 id="我们聊了什么">我们聊了什么？</h3>
+<p>这一章是全书的&quot;预告片&quot;。我们通过五个日常困惑，初步认识了计算机的核心组件和它们的角色：</p>
+<div class="table-wrap"><table><thead><tr>
+<th>困惑</th>
+<th>涉及的核心概念</th>
+<th>对应章节</th>
+</tr>
+</thead><tbody><tr>
+<td>双击图标后发生了什么</td>
+<td>CPU、内存、硬盘、GPU、操作系统的协作</td>
+<td>第一章~第四章</td>
+</tr>
+<tr>
+<td>同样16GB为什么不同</td>
+<td>内存 vs 存储，硬件规格差异</td>
+<td>第一章</td>
+</tr>
+<tr>
+<td>参数表怎么看</td>
+<td>CPU/GPU/内存/SSD/屏幕参数解读</td>
+<td>第五章</td>
+</tr>
+<tr>
+<td>为什么显卡影响游戏</td>
+<td>GPU并行计算、渲染流水线</td>
+<td>第二章</td>
+</tr>
+<tr>
+<td>AI时代内存涨价</td>
+<td>供应链、HBM、产能分配</td>
+<td>第六章</td>
+</tr>
+</tbody></table></div>
+<p>最重要的是，我们建立了一个贯穿全书的餐厅类比：</p>
+<aside> 🍳
+
+<p><strong>计算机 = 一家餐厅</strong></p>
+<ul>
+<li><strong>硬盘</strong> = 食材仓库 🏠（容量大，断电不丢失，但取用慢）</li>
+<li><strong>内存</strong> = 操作台 🧱（容量有限，断电清空，但取用快）</li>
+<li><strong>CPU</strong> = 大厨 🧑‍🍳（少而精，擅长复杂工作）</li>
+<li><strong>GPU</strong> = 流水线工人 👷（多而快，擅长重复工作）</li>
+<li><strong>操作系统</strong> = 餐厅经理 💼（调度一切，管理资源）</li>
+<li><strong>主板</strong> = 餐厅的建筑和管线 🏗️（连接所有部件） </aside></li>
+</ul>
+<h3 id="下章预告">【下章预告】</h3>
+<p>现在你对计算机的整体架构有了一个粗略的印象。但我们只是浅尝辄止——每个组件背后还有很多精彩的细节。</p>
+<p>下一章，我们将从<strong>存储</strong>开始，深入探索这家餐厅的&quot;仓库&quot;。你将会理解：</p>
+<ul>
+<li>为什么电脑有C盘和D盘？</li>
+<li>固态硬盘为什么比机械硬盘快那么多？</li>
+<li>&quot;虚拟内存&quot;是怎么回事？</li>
+<li>CPU缓存——那个藏在最深处的效率秘密</li>
+</ul>
+<p>准备好了吗？让我们翻开第一章。</p>
+<hr>
+<h2 id="扩展资源">扩展资源</h2>
+<h3 id="视频推荐">视频推荐</h3>
+<p>⭐ <strong>入门</strong> | <strong>&quot;How a CPU Works in 100 Seconds&quot;</strong> — Fireship</p>
+<ul>
+<li>YouTube: <a href="http://youtube.com/watch?v=vqs_0W-MSB0">youtube.com/watch?v=vqs_0W-MSB0</a></li>
+<li>100秒钟速览CPU工作原理，动画清晰，即使英文不好也能看懂</li>
+</ul>
+<p>⭐⭐ <strong>进阶</strong> | <strong>&quot;What&#39;s inside a CPU?&quot;</strong> — Branch Education</p>
+<ul>
+<li>YouTube: <a href="http://youtube.com/watch?v=NKfW1HJb4fA">youtube.com/watch?v=NKfW1HJb4fA</a></li>
+<li>通过精美的3D动画展示了CPU内部的物理结构，非常直观</li>
+</ul>
+<h3 id="文章推荐">文章推荐</h3>
+<p>⭐ <strong>入门</strong> | <strong>&quot;如何看懂电脑配置？新手小白的电脑硬件科普&quot;</strong> — 少数派</p>
+<ul>
+<li>链接：<a href="http://sspai.com">sspai.com</a>上搜索“电脑配置科普”</li>
+<li>中文文章，面向小白，涵盖了CPU/GPU/内存/硬盘的基本参数解读</li>
+</ul>
+<p>⭐⭐ <strong>进阶</strong> | <strong>&quot;Putting the &quot;You&quot; in CPU&quot;</strong> — Lexi Mattick</p>
+<ul>
+<li>链接：<a href="http://cpu.land">cpu.land</a></li>
+<li>一篇以对话式风格写成的CPU工作原理教程，图文并茂，非常有趣</li>
+</ul>
+<p>⭐⭐⭐ <strong>深入</strong> | <strong>&quot;What Every Programmer Should Know About Memory&quot;</strong> — Ulrich Drepper</p>
+<ul>
+<li>链接：<a href="http://people.freebsd.org/~lstewart/articles/cpumemory.pdf">people.freebsd.org/~lstewart/articles/cpumemory.pdf</a></li>
+<li>经典论文，深入讲解内存层次结构，适合对计算机架构感兴趣的同学</li>
+</ul>
+
+    <nav class="pager">  <a class="disabled"><span class="label">← 上一章</span><span class="title"></span></a>  <a href="01-storage.html" class="next">
+    <span class="label">下一章 →</span>
+    <span class="title">第一章：存储的秘密——文件都去哪了？</span>
+  </a></nav>
+  </article>
+</div>
+
+<footer>
+  <div class="set">
+    <span>电脑怎么工作的——给大一新生的计算机原理课</span>
+    <span>2026 · ZH-CN</span>
+  </div>
+  <div class="set">
+    <span>Mav</span>
+  </div>
+</footer>
+<div class="search-backdrop" id="search-overlay" role="dialog" aria-modal="true" aria-label="搜索" hidden>
+  <div class="search-modal">
+    <div class="search-input-wrap">
+      <input type="search" class="search-input" placeholder="搜索内容..." aria-label="搜索内容" autocomplete="off">
+      <kbd>ESC</kbd>
+    </div>
+    <div class="search-results" role="listbox" aria-label="搜索结果"></div>
+  </div>
+</div>
+
+<!-- Mobile TOC -->
+<button class="mtoc-fab" id="mtoc-fab" aria-label="目录">TOC</button>
+<div class="mtoc-drawer" id="mtoc-drawer">
+  <div class="mtoc-content"></div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/bash.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/typescript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/yaml.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/javascript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/json.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/python.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/css.min.js"></script>
+<script src="../assets/script.js"></script>
+</body>
+</html>

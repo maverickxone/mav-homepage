@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>像素与分辨率：屏幕是怎么工作的 — 从像素到 4K：视频与屏幕技术指南</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" id="hljs-light" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+<link rel="stylesheet" id="hljs-dark" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" media="not all">
+</head>
+<body>
+
+<div class="progress-bar" id="progress-bar"></div>
+
+<nav class="topnav" id="topnav">
+  <div class="topnav-inner">
+    <a class="brand" href="../index.html">从像素到 4K：视频与屏幕技术指南</a>
+    <div class="nav-links">
+      <a href="01-pixel-resolution.html" class="active">01</a>
+      <a href="02-film-codec.html">02</a>
+      <a href="03-bitrate-refresh.html">03</a>
+      <a href="04-color-devices.html">04</a>
+      <a href="05-practice-glossary.html">05</a>
+    </div>
+    <div class="nav-controls">
+      <button class="nav-btn" id="search-btn" aria-label="搜索 (Ctrl+K)">⌘K</button>
+      <button class="nav-btn" id="settings-btn" aria-label="阅读设置">Aa</button>
+      <a class="nav-btn" href="../../index.html" aria-label="返回知识库">← 知识库</a>
+    </div>
+  </div>
+</nav>
+<div class="settings-pop" id="settings-pop">
+  <h5>主题</h5>
+  <div class="row">
+    <button class="seg" data-theme-set="light">明亮</button>
+    <button class="seg" data-theme-set="dark">暗色</button>
+  </div>
+  <h5>字号</h5>
+  <div class="row">
+    <button class="seg" data-size-set="s">小</button>
+    <button class="seg" data-size-set="m">中</button>
+    <button class="seg" data-size-set="l">大</button>
+  </div>
+</div>
+
+<div class="with-sidebar">
+  <aside class="sidebar">
+  <div class="chapter-num">CHAPTER 01</div>
+  <div class="chapter-name">像素与分辨率：屏幕是怎么工作的</div>
+  <h4>目录</h4>
+  <ul>
+    <li><a href="#什么是像素">什么是像素？</a></li>
+    <li><a href="#像素是怎么发光的">像素是怎么发光的？</a></li>
+    <li><a href="#rgb三原色的秘密">RGB：三原色的秘密</a></li>
+    <li><a href="#ppi像素密度清晰度的真正决定者">PPI——像素密度，清晰度的真正决定者</a></li>
+    <li><a href="#分辨率是什么">分辨率是什么？</a></li>
+    <li><a href="#字母里的历史pi-和分辨率的命名逻辑">字母里的历史：P、i 和分辨率的命名逻辑</a></li>
+    <li><a href="#从360p到4k清晰度如何提升">从360P到4K，清晰度如何提升？</a></li>
+    <li><a href="#分辨率的quot天花板quot为什么高分辨率并不是越高越好">分辨率的&quot;天花板&quot;：为什么高分辨率并不是越高越好？</a></li>
+  </ul>
+</aside>
+  <article class="chapter-body">
+    <header class="chapter-head">
+  <div class="chapter-head-meta">
+    <span class="num">CHAPTER 01</span>
+    <span>≈ 14 MIN READ</span>
+  </div>
+  <h1>像素与分辨率：屏幕是怎么工作的</h1>
+</header>
+    <h2 id="什么是像素">什么是像素？</h2>
+<p>你现在正在盯着一块屏幕看这行字。如果你把脸贴近屏幕，凑得足够近，你会发现屏幕上的图像是由无数个微小的发光点组成的。这些发光点，就是<strong>像素（Pixel，来自&quot;Picture Element&quot;的缩写）</strong>。</p>
+<p>每一个像素都能发出特定颜色的光。当成千上万个像素紧密排列在一起，它们各自发出不同颜色和亮度的光，合在一起，就形成了你眼中看到的图像。</p>
+<p>想象一下马赛克拼图：每一块小马赛克就是一个像素。当你站得很近，你只能看到一块块色块；当你站得远一些，这些色块就连成了一幅画。屏幕上的像素道理相同——足够多、足够小的像素，在正常观看距离下，你的眼睛就无法分辨出单个像素，只会看到一幅流畅的图像。</p>
+<h2 id="像素是怎么发光的">像素是怎么发光的？</h2>
+<p>现代屏幕主要有三种发光方式，了解它们能帮助你理解为什么不同屏幕价格相差悬殊。</p>
+<p><strong>LCD（液晶显示器）</strong></p>
+<p>LCD 不是自己发光的。它的工作原理是：</p>
+<ol>
+<li>背部有一个均匀的<strong>背光灯</strong>（通常是LED灯板）照亮整块屏幕</li>
+<li>背光穿过一层<strong>液晶层</strong>，液晶分子像百叶窗一样，可以通过加电控制它们的排列，从而决定每个像素让多少光通过</li>
+<li>光线再穿过<strong>彩色滤光片</strong>，分别生成红、绿、蓝三色</li>
+<li>三种颜色的光混合，形成你看到的颜色</li>
+</ol>
+<p>LCD 的问题在于：背光是整块打开的。即使某个区域显示纯黑色，背光灯仍然在发光，只是被液晶挡住了——但总有一些光会漏出来，导致&quot;黑色&quot;看起来并不是真正的黑，而是略显灰暗。这就是 LCD 的&quot;漏光&quot;问题。</p>
+<p><strong>OLED（有机发光二极管）</strong></p>
+<p>OLED 的每一个像素都是<strong>自己发光的</strong>。显示黑色时，那个像素就直接关闭——不发光，就是真正的纯黑。这让 OLED 的对比度极其惊人，黑色深邃、颜色鲜艳。</p>
+<p>OLED 的缺点：</p>
+<ul>
+<li><strong>烧屏风险</strong>：长时间显示静止画面（如状态栏的图标），对应像素会因过度使用而衰减，形成残影</li>
+<li><strong>低亮度闪烁</strong>：部分 OLED 调光方式会让屏幕在低亮度时以极高频率闪烁（PWM 调光），长时间使用可能引发眼部疲劳。高端 OLED 屏幕（如华为 MateBook X Pro 2024）通过提高 PWM 频率到 1440Hz 来缓解这一问题</li>
+</ul>
+<p><strong>Mini-LED</strong></p>
+<p>Mini-LED 是 LCD 的升级版。它把背光灯从大面积灯板改为成千上万个超小 LED 灯（&quot;Mini&quot;），可以对屏幕不同区域独立控制背光亮度。显示暗色区域时降低那一块的背光，显示亮色区域时提高背光，从而大幅提升对比度，兼顾了 LCD 的稳定性和接近 OLED 的显示效果。苹果 MacBook Pro 的 Liquid Retina XDR 屏幕，就是 Mini-LED 方案。</p>
+<h2 id="rgb三原色的秘密">RGB：三原色的秘密</h2>
+<p>每个像素通常由三个更小的**子像素（Subpixel）<strong>组成，分别发出</strong>红（Red）、绿（Green）、蓝（Blue）**三种颜色的光。这就是 <strong>RGB 色彩模型</strong>。</p>
+<p>人眼有三种对光敏感的视锥细胞，分别对红、绿、蓝光最敏感。通过控制 R、G、B 三个子像素各自的亮度，就能混合出几乎任何颜色：</p>
+<div class="table-wrap"><table><thead><tr>
+<th>R 值</th>
+<th>G 值</th>
+<th>B 值</th>
+<th>显示颜色</th>
+</tr>
+</thead><tbody><tr>
+<td>255</td>
+<td>0</td>
+<td>0</td>
+<td>纯红色</td>
+</tr>
+<tr>
+<td>0</td>
+<td>255</td>
+<td>0</td>
+<td>纯绿色</td>
+</tr>
+<tr>
+<td>0</td>
+<td>0</td>
+<td>255</td>
+<td>纯蓝色</td>
+</tr>
+<tr>
+<td>255</td>
+<td>255</td>
+<td>0</td>
+<td>黄色</td>
+</tr>
+<tr>
+<td>255</td>
+<td>255</td>
+<td>255</td>
+<td>纯白色</td>
+</tr>
+<tr>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>纯黑色</td>
+</tr>
+<tr>
+<td>128</td>
+<td>0</td>
+<td>128</td>
+<td>紫色</td>
+</tr>
+</tbody></table></div>
+<p>每个通道的值从 0 到 255，共 256 个级别（这是 8 位色深，后面第七章会详细讲）。所以一个像素能表示的颜色总数是 256 × 256 × 256 ≈ <strong>1670 万种颜色</strong>，这已经超过了人眼能分辨的极限。</p>
+<h2 id="ppi像素密度清晰度的真正决定者">PPI——像素密度，清晰度的真正决定者</h2>
+<p>光有像素数量还不够，还要看这些像素排列得多紧密。**PPI（Pixels Per Inch，每英寸像素数）**就是衡量这个密度的指标。</p>
+<p>PPI 的计算方式：</p>
+<pre><code>PPI = 对角线像素数 / 屏幕对角线英寸数
+对角线像素数 = √(水平像素² + 垂直像素²)</code></pre>
+<p>举个例子，你的 iPad Pro 2021 11英寸屏幕，分辨率 2388×1668：</p>
+<ul>
+<li>对角线像素数 = √(2388² + 1668²) = √(5702544 + 2782224) = √8484768 ≈ 2913</li>
+<li>PPI = 2913 / 11 ≈ <strong>264 PPI</strong></li>
+</ul>
+<p>PPI 越高，意味着同样大的面积上塞进了更多像素，图像自然更细腻、更锐利。苹果将 264 PPI 定义为 iPad 的&quot;视网膜&quot;标准——在正常使用距离（约 38cm）下，人眼已无法分辨单个像素。</p>
+<h2 id="分辨率是什么">分辨率是什么？</h2>
+<p>**分辨率（Resolution）**指的是一幅图像或视频画面包含的像素总数，通常用&quot;宽×高&quot;来表示，例如 1920×1080，表示横向有 1920 个像素、纵向有 1080 个像素。</p>
+<p>我们常说的&quot;1080P&quot;、&quot;4K&quot;，其实是对分辨率的简称：</p>
+<div class="table-wrap"><table><thead><tr>
+<th>名称</th>
+<th>分辨率</th>
+<th>总像素数</th>
+<th>相对关系</th>
+</tr>
+</thead><tbody><tr>
+<td>360P</td>
+<td>640×360</td>
+<td>约 23 万</td>
+<td>基准</td>
+</tr>
+<tr>
+<td>480P</td>
+<td>852×480</td>
+<td>约 41 万</td>
+<td>360P 的 1.8 倍</td>
+</tr>
+<tr>
+<td>720P（HD）</td>
+<td>1280×720</td>
+<td>约 92 万</td>
+<td>360P 的 4 倍</td>
+</tr>
+<tr>
+<td>1080P（Full HD）</td>
+<td>1920×1080</td>
+<td>约 207 万</td>
+<td>360P 的 9 倍</td>
+</tr>
+<tr>
+<td>2K / 1440P（QHD）</td>
+<td>2560×1440</td>
+<td>约 369 万</td>
+<td>360P 的 16 倍</td>
+</tr>
+<tr>
+<td>4K（UHD）</td>
+<td>3840×2160</td>
+<td>约 829 万</td>
+<td>360P 的 36 倍</td>
+</tr>
+<tr>
+<td>8K（UHD）</td>
+<td>7680×4320</td>
+<td>约 3318 万</td>
+<td>360P 的 144 倍</td>
+</tr>
+</tbody></table></div>
+<p>其中 &quot;P&quot; 是 &quot;Progressive&quot;（逐行扫描）的意思，代表画面的纵向像素数。</p>
+<h2 id="字母里的历史pi-和分辨率的命名逻辑">字母里的历史：P、i 和分辨率的命名逻辑</h2>
+<p>你可能见过 &quot;1080i&quot;——这个 &quot;i&quot; 是 &quot;Interlaced&quot;（隔行扫描）的缩写，是电视广播时代的技术遗产。</p>
+<p>在隔行扫描时代，每一帧画面分两次传送：先传奇数行（第1、3、5…行），再传偶数行（第2、4、6…行），两次合成一帧完整画面。这样做的好处是在当时有限的带宽下传输更多信息；缺点是画面在快速运动场景下容易出现&quot;梳状&quot;撕裂感。</p>
+<p>现代视频几乎全部采用逐行扫描（P），每次传输完整一帧，运动画面更平滑。</p>
+<h2 id="从360p到4k清晰度如何提升">从360P到4K，清晰度如何提升？</h2>
+<p>你的直觉猜测是对的——<strong>分辨率越高，携带的细节信息越多</strong>。我们来具体看看：</p>
+<p><strong>360P（640×360）</strong></p>
+<p>总计约 23 万个像素。在这么有限的画布上，只能呈现粗糙的轮廓和大色块。文字边缘会有明显的锯齿感，人脸细节模糊，头发丝无法区分。在手机小屏幕上勉强能看，放在 27 寸显示器上则一塌糊涂。</p>
+<p>实际应用：网络直播最低码流、早期 YouTube、流量极其有限的场景。</p>
+<p><strong>480P（852×480）</strong></p>
+<p>约 41 万像素。这是 DVD 时代的标准分辨率（标清），也是模拟电视向数字电视过渡的产物。对于 15 英寸以下的屏幕，在 2 米外观看是可以接受的。</p>
+<p>实际应用：旧 DVD 电影、一些流媒体服务的最低画质档位。</p>
+<p><strong>720P（1280×720）——高清时代的起点</strong></p>
+<p>约 92 万像素，是 480P 的 4 倍。迈入&quot;HD&quot;（高清）行列后，画面质感产生了质变：文字变得锐利，人脸细节可辨，背景细节不再糊成一团。这是视频质量从&quot;能看&quot;到&quot;好看&quot;的重要门槛。</p>
+<p>实际应用：早期蓝光碟、许多流媒体平台的标准画质、手机直播。</p>
+<p><strong>1080P（1920×1080）——Full HD，全高清</strong></p>
+<p>约 207 万像素，是 720P 的 2.25 倍。这是目前互联网视频消费的主力标准。在 27 英寸以下的屏幕上，1080P 和 4K 的差距在 1.5 米外几乎察觉不出来。1080P 内容经过精良压制，画面锐利、色彩准确，足以满足绝大多数人的日常需求。</p>
+<p>实际应用：蓝光标准、Netflix 基础会员、大多数 B 站视频、绝大多数电视机。</p>
+<p><strong>1440P / 2K（2560×1440）</strong></p>
+<p>约 369 万像素。常见于 27-32 英寸显示器，是游戏玩家和设计师的常用分辨率。在这个尺寸下，1440P 比 1080P 明显更细腻，而对硬件的压力又比 4K 小得多——被称为&quot;甜点分辨率&quot;。</p>
+<p>注意：严格意义上的&quot;2K&quot;来自电影行业，是 2048×1080；而消费市场常说的&quot;2K&quot;通常指 2560×1440（QHD/WQHD），两者是不同的。</p>
+<p><strong>4K（3840×2160）——Ultra HD</strong></p>
+<p>约 829 万像素，是 1080P 的整整 4 倍（横纵各 2 倍）。在 40 英寸以上的屏幕，或者你距离屏幕非常近的情况下（比如坐在 27 英寸显示器前 60cm 处），4K 和 1080P 的差距是肉眼可见的。4K 的细节极其丰富——你能看清远景中的纹理、演员脸上的毛孔、画面角落里的字体。</p>
+<p>还有一个重要概念：**电影行业的 4K（DCI 4K）**分辨率是 4096×2160，比消费级 UHD 4K（3840×2160）略宽。这就是为什么一些顶级电影院的放映规格和家用 4K 设备不完全一样。</p>
+<p><strong>8K（7680×4320）</strong></p>
+<p>约 3318 万像素，是 4K 的 4 倍。目前处于早期普及阶段，8K 内容极其稀少，硬件要求极高，且在 2 米以外的观看距离上，普通人几乎无法与 4K 区分。更多是技术展示和顶级制作留存的规格。</p>
+<h2 id="分辨率的quot天花板quot为什么高分辨率并不是越高越好">分辨率的&quot;天花板&quot;：为什么高分辨率并不是越高越好？</h2>
+<p>分辨率的提升收益会随着观看距离递减。有一个叫做<strong>人眼极限分辨率</strong>的概念：人眼的视力极限大约是 1 弧分（1/60 度），这决定了在特定观看距离下，超过某个像素密度之后，增加更多像素就没有实际意义了。</p>
+<p>例如，你坐在 60cm 外看一块 27 英寸的显示器：</p>
+<ul>
+<li>人眼极限对应的 PPI 约为 110 PPI</li>
+<li>1080P 在 27 英寸上约为 82 PPI（已经很接近极限）</li>
+<li>4K 在 27 英寸上约为 163 PPI（远超人眼极限）</li>
+</ul>
+<p>所以在这个距离，27 英寸的 4K 显示器和 1080P 的差别，人眼其实很难察觉——除非你凑得非常近，或者你的视力异常好。</p>
+<p>这并不是说 4K 显示器没有意义：它在图形设计、照片编辑、视频剪辑等专业工作中，当你需要&quot;像素级精确&quot;操作时非常有价值；而且高分辨率让系统可以用&quot;HiDPI&quot;（比如苹果的 Retina）方式渲染，文字更锐利，UI 元素更精细。但如果你只是看视频、上网、写代码，1080P 的屏幕已经完全够用。</p>
+
+    <nav class="pager">  <a class="disabled"><span class="label">← 上一章</span><span class="title"></span></a>  <a href="02-film-codec.html" class="next">
+    <span class="label">下一章 →</span>
+    <span class="title">胶卷与编解码器：从模拟到数字</span>
+  </a></nav>
+  </article>
+</div>
+
+<footer>
+  <div class="set">
+    <span>从像素到 4K：视频与屏幕技术指南</span>
+    <span>2026 · ZH-CN</span>
+  </div>
+  <div class="set">
+    <span>Mav</span>
+  </div>
+</footer>
+<div class="search-backdrop" id="search-overlay" role="dialog" aria-modal="true" aria-label="搜索" hidden>
+  <div class="search-modal">
+    <div class="search-input-wrap">
+      <input type="search" class="search-input" placeholder="搜索内容..." aria-label="搜索内容" autocomplete="off">
+      <kbd>ESC</kbd>
+    </div>
+    <div class="search-results" role="listbox" aria-label="搜索结果"></div>
+  </div>
+</div>
+
+<!-- Mobile TOC -->
+<button class="mtoc-fab" id="mtoc-fab" aria-label="目录">TOC</button>
+<div class="mtoc-drawer" id="mtoc-drawer">
+  <div class="mtoc-content"></div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/bash.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/typescript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/yaml.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/javascript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/json.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/python.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/css.min.js"></script>
+<script src="../assets/script.js"></script>
+</body>
+</html>

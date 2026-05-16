@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{{title}}</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/style.css">
+<link rel="stylesheet" id="hljs-light" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+<link rel="stylesheet" id="hljs-dark" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" media="not all">
+</head>
+<body>
+
+<div class="progress-bar" id="progress-bar"></div>
+
+{{nav}}
+{{settings_pop}}
+
+<main class="cover">
+  <section class="cover-hero">
+    <div class="cover-title-block">
+      <h1>{{title}}</h1>
+    </div>
+    <div class="cover-lede-row">
+      <div>
+        <p class="cover-lede">{{description}}</p>
+      </div>
+      <div>
+        <div class="num">{{author}}</div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    {{chapters_grid}}
+  </section>
+</main>
+
+{{footer}}
+{{search_overlay}}
+
+<script src="assets/script.js"></script>
+</body>
+</html>

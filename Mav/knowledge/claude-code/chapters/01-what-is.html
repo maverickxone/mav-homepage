@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>第一章 · 它到底是什么 — Claude Code 使用指南</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" id="hljs-light" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+<link rel="stylesheet" id="hljs-dark" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" media="not all">
+</head>
+<body>
+
+<div class="progress-bar" id="progress-bar"></div>
+
+<nav class="topnav" id="topnav">
+  <div class="topnav-inner">
+    <a class="brand" href="../index.html">Claude Code 指南</a>
+    <div class="nav-links">
+      <a href="01-what-is.html" class="active">01</a>
+      <a href="02-daily.html">02</a>
+      <a href="03-power.html">03</a>
+      <a href="04-mental.html">04</a>
+      <a href="05-cache.html">05</a>
+      <a href="06-easter-eggs.html">06</a>
+      <a href="reference.html">Ref</a>
+    </div>
+    <div class="nav-controls">
+      <button class="nav-btn" id="search-btn" aria-label="搜索 (Ctrl+K)">⌘K</button>
+      <button class="nav-btn" id="settings-btn" aria-label="阅读设置">Aa</button>
+      <a class="nav-btn" href="../../index.html" aria-label="返回知识库">← 知识库</a>
+    </div>
+  </div>
+</nav>
+
+<div class="settings-pop" id="settings-pop">
+  <h5>主题</h5>
+  <div class="row">
+    <button class="seg" data-theme-set="light">明亮</button>
+    <button class="seg" data-theme-set="dark">暗色</button>
+  </div>
+  <h5>字号</h5>
+  <div class="row">
+    <button class="seg" data-size-set="s">小</button>
+    <button class="seg" data-size-set="m">中</button>
+    <button class="seg" data-size-set="l">大</button>
+  </div>
+</div>
+
+<div class="with-sidebar">
+
+  <aside class="sidebar">
+    <div class="chapter-num">Chapter 01</div>
+    <div class="chapter-name">它到底是什么</div>
+    <h4>本章目录</h4>
+    <ul>
+      <li><a href="#s1">一个常见的误会</a></li>
+      <li><a href="#s2">什么是 agent</a></li>
+      <li><a href="#s3">一轮到底发生了什么</a></li>
+      <li><a href="#s4">工具：它的手和眼</a></li>
+      <li><a href="#s5">和网页版 Claude 的区别</a></li>
+      <li><a href="#s6">和 Copilot 的区别</a></li>
+      <li><a href="#s7">为什么是终端</a></li>
+      <li><a href="#s8">第一次对话，可能是这样</a></li>
+      <li><a href="#s9">带着三句话进下一章</a></li>
+    </ul>
+  </aside>
+
+  <article class="chapter-body">
+
+    <header class="chapter-head">
+      <div class="chapter-head-meta">
+        <span class="num">Chapter 01 / 06</span>
+        <span>≈ 22 min</span>
+      </div>
+      <div class="chapter-eyebrow">第一章</div>
+      <h1>它到底是什么</h1>
+      <p class="sub">
+        把 Claude Code 理解成「会打字的 ChatGPT」会让你错过 90% 的它。这一章想让你换一副眼镜再往下看——先看见那个叫 <em>agent loop</em> 的循环，剩下的东西才都对得上。
+      </p>
+    </header>
+
+    <h2 id="s1" data-num="§ 1.1">一个常见的误会</h2>
+
+    <p>
+      很多人第一次看到 Claude Code，会以为它是「把 claude.ai 搬进终端」——同一个聊天，只是没有浏览器。这个直觉很自然，但不对。
+    </p>
+
+    <p>
+      claude.ai 那个聊天框，本质是一张<strong>嘴</strong>：你说话，它回话。它可以帮你写代码、解释概念、生成诗歌，但写完以后，代码是印在聊天气泡里的文本——你得自己复制、自己粘贴到编辑器、自己保存、自己运行。它不知道你项目里有什么文件，也碰不到你的磁盘。你和它之间隔着一层玻璃。
+    </p>
+
+    <p>
+      Claude Code 是一双<strong>手</strong>。它坐在你的终端里，能读你的文件、改你的文件、执行命令、看命令输出、再根据输出决定下一步做什么。它和聊天框的区别，不是「能做更多事」那么简单——是它在一个<em>根本不同的循环</em>里运转。
+    </p>
+
+    <p>
+      这一章剩下的内容都在讲这个循环：它是怎么构造的，为什么重要，它怎么让「AI 协助编程」从「我描述、它回答」变成了「我提目标、它干活」。
+    </p>
+
+    <div class="callout">
+      <p class="callout-title">简单来说</p>
+      <p>网页版 Claude 是一个回答问题的人；Claude Code 是一个坐在你电脑前、替你动手干活的人。</p>
+    </div>
+
+    <h2 id="s2" data-num="§ 1.2">那「agent」到底是什么？</h2>
+
+    <p>
+      「agent」这个词在 AI 圈被用得很滥，但对 Claude Code 来说，它有一个很具体的技术含义，这个概念需要展开说。
+    </p>
+
+    <p>
+      一个普通的大模型调用是<strong>一次性</strong>的：输入一段文字，吐出一段文字，结束。就像你问一个朋友「现在几点了」，他回答「三点」，对话终止。这叫 <em>single-turn</em>——一问一答。
+    </p>
+
+    <p>
+      一个 <strong>agent</strong> 是把模型放进一个<strong>循环</strong>里运行。每一轮，模型不只能输出文字，还能输出「我想调用某个工具」，比如「我想读 <code>package.json</code>」。系统执行这个工具调用、把结果塞回给模型、让模型再想一想下一步做什么。直到它说「我做完了」为止。
+    </p>
+
+    <p>
+      把这两句话拉平：
+    </p>
+
+    <div class="dl">
+      <dt>LLM 调用</dt>
+      <dd>输入 prompt → 输出 text。一次完成。没有后续动作。</dd>
+      <dt>Agent 循环</dt>
+      <dd>输入 prompt → 输出 text <em>或</em> 工具调用 → 执行工具 → 结果注入 → 再次调用模型 →  ……直到模型选择「完成」。</dd>
+    </div>
+
+    <p>
+      差的不是技巧，是结构。一个 agent 不是「更强的模型」，它是「模型 + 工具 + 控制循环」这三件东西组合起来的<strong>系统</strong>。模型本身没有变——Claude Code 用的 Opus、Sonnet、Haiku 和网页版是同一批。变的是它的能力——真正可以做到调用工具解决问题。
+    </p>
+
+    <h2 id="s3" data-num="§ 1.3">一轮到底发生了什么</h2>
+
+    <p>
+      把最外层的循环画出来，长这样：
+    </p>
+
+    <pre class="ascii"><code>  ┌────────────────────────────────────────────────────────┐
+  │                                                     │
+  │   你的请求  ──►  模型思考  ──►  想调用工具?           │
+  │                     ▲             │                 │
+  │                     │             ▼                 │
+  │                 工具结果  ◄── 执行工具(Read/Bash/...) │
+  │                                   │                 │
+  │                                   ▼                 │
+  │                             不需要更多工具?          │
+  │                                   │                 │
+  │                                   ▼                 │
+  │                            给你最终回复              │
+  │                                                     │
+  └────────────────────────────────────────────────────────┘</code></pre>
+
+    <p>
+      这个循环叫 <strong>agent loop</strong>。Claude Code 的核心就是它。你看到终端里那些灰色的「<code>· 调用工具 Read</code>」「<code>· 调用工具 Bash</code>」的行，就是这个循环在跑。每一个灰行都是一次「模型说要做什么 → 系统去做 → 把结果带回来」的完整回合。
+    </p>
+
+    <h3>举个最小的具体例子</h3>
+
+    <p>
+      你说「帮我看看 README 里写了什么」。在后台，Claude Code 会这样走：
+    </p>
+
+    <ol>
+      <li>第 1 轮：模型收到你的请求，决定「我需要读 README.md」，输出一个 <code>Read</code> 工具调用。</li>
+      <li>系统拿到这个调用，去磁盘上读文件，把文件内容打包回传给模型。</li>
+      <li>第 2 轮：模型看到 README 内容，决定「够了，可以回答了」，输出一段文字：「这个项目是一个用 Rust 写的静态站点生成器……」</li>
+      <li>系统看到模型没有再请求工具，把这段文字展示给你，结束本轮任务。</li>
+    </ol>
+
+    <p>
+      两轮就够了。但如果你问「帮我把 src/ 下所有 console.log 换成 logger.debug，并运行测试确认没破坏」，循环可能会走几十轮：Glob 找出所有 .ts 文件、Read 每一个、Edit 一个个改、Bash 跑 <code>npm test</code>、看到测试挂了再 Read + Edit 修——直到测试全绿，才说「做完了」。
+    </p>
+
+    <p>
+      这就是 agent 真正有趣的地方：<strong>它的工作量和你的指令长度脱钩了</strong>。你一句话可以触发几十次文件操作，而你只需要审查最终结果。
+    </p>
+
+    <div class="callout callout-tip">
+      <p class="callout-title">打个比方</p>
+      <p>
+        想象你请了一个实习生帮你改代码。普通的 LLM 是这个实习生只能隔着玻璃窗跟你说话；agent 是你把电脑交给他，他可以<em>真的坐下来敲键盘</em>，但每隔几步抬头看你一眼：「这样行吗？」后面你会看到，那个「抬头看你一眼」就是权限弹窗——第二章会详细讲。
+      </p>
+    </div>
+
+    <h2 id="s4" data-num="§ 1.4">工具：它的手和眼</h2>
+
+    <p>
+      模型能做什么，最终取决于它手里有什么<strong>工具</strong>。Claude Code 给它挂的工具箱比较大，分几类：
+    </p>
+
+    <div class="table-wrap">
+    <table>
+      <thead><tr><th>类别</th><th>工具</th><th>它用这个工具做什么</th></tr></thead>
+      <tbody>
+        <tr><td>文件</td><td><code>Read</code> / <code>Write</code> / <code>Edit</code></td><td>读文件、从头写文件、在已有文件里做精确替换</td></tr>
+        <tr><td>搜索</td><td><code>Glob</code> / <code>Grep</code></td><td>按路径模式找文件、按内容在整个项目里搜索</td></tr>
+        <tr><td>执行</td><td><code>Bash</code></td><td>跑任意 shell 命令，从 <code>ls</code> 到 <code>npm test</code> 到 <code>docker build</code></td></tr>
+        <tr><td>网络</td><td><code>WebFetch</code> / <code>WebSearch</code></td><td>抓一个 URL 的内容并总结、用关键词搜网</td></tr>
+        <tr><td>后台</td><td><code>Monitor</code> / <code>run_in_background</code></td><td>起长任务，不阻塞当前对话</td></tr>
+        <tr><td>子代理</td><td><code>Agent</code></td><td>召唤另一个 Claude 去独立完成一个子任务（第三章细讲）</td></tr>
+        <tr><td>计划</td><td><code>TaskCreate</code> / <code>TaskUpdate</code></td><td>维护当前会话的待办清单</td></tr>
+        <tr><td>自省</td><td><code>Skill</code></td><td>调用一段事先写好的标准流程</td></tr>
+      </tbody>
+    </table>
+    </div>
+
+    <p>
+      每一轮，模型从这个工具箱里挑一个（偶尔几个并行），系统执行后把结果给它。再加上通过 MCP 接入的外部工具（GitHub、Slack、数据库），工具箱实际上是「可扩展的」——你自己项目里挂的每一个 MCP 服务器，都是给 Claude 多配一组趁手的手套。
+    </p>
+
+    <h3>可见和可控</h3>
+
+    <p>
+      一个关键设计选择：<strong>所有工具调用都对你可见</strong>。终端里的每一行灰色日志都是 Claude 当前在做什么。不像一些封闭的 AI 助手把中间过程藏起来只给你最终结果——Claude Code 相反，它在你眼皮底下工作。这不是好看，是<em>安全</em>：你随时能看明白它凭什么给出某个结论、是不是读了不该读的文件、跑了不该跑的命令。
+    </p>
+
+    <p>
+      配套的是<strong>权限系统</strong>。读文件、搜索是纯只读，系统会自动放行；写文件、跑 shell 命令、发网络请求这些有副作用的操作，默认每次都会弹一个小框问你是否允许。你可以逐次确认、也可以「允许这个命令模式所有后续操作」——这套机制第二章还会专门讲。
+    </p>
+
+    <h2 id="s5" data-num="§ 1.5">和网页版 Claude 的区别</h2>
+
+    <p>
+      网页版 Claude（claude.ai）也能调用一些工具——搜索、代码解释器、artifact 预览、Projects 里的文件。但它的工具箱是<strong>封闭的沙盒</strong>：它跑在 Anthropic 的服务器上，看不见你的电脑。你让它「读我项目里的 utils.ts」，它只能说「请把内容粘贴给我看看」。
+    </p>
+
+    <p>
+      Claude Code 相反——它跑在<strong>你的机器上</strong>，工具箱直接对接你的文件系统和 shell。你让它「读 utils.ts」，它真的去读了。同一个模型、同一个大脑，换了一副身体。
+    </p>
+
+    <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>能力</th>
+          <th>网页版 Claude</th>
+          <th>Claude Code</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>读你项目里的文件</td><td>不能，要粘贴</td><td>直接读</td></tr>
+        <tr><td>改你项目里的文件</td><td>生成文本你自己贴</td><td>写进去 + diff 给你看</td></tr>
+        <tr><td>跑命令（<code>npm test</code>、<code>git diff</code>）</td><td>不能</td><td>能，看输出后决定下一步</td></tr>
+        <tr><td>持续循环干活</td><td>一问一答</td><td>可以跑几十轮直到完成</td></tr>
+        <tr><td>记住项目规范</td><td>每次重新解释</td><td>CLAUDE.md 持久记忆</td></tr>
+        <tr><td>上下文窗口</td><td>200k</td><td>Opus 4.7 达 1M token</td></tr>
+        <tr><td>控制权</td><td>看不到中间过程</td><td>每一步工具调用明文可见</td></tr>
+        <tr><td>代价</td><td>订阅即用</td><td>消耗配额更快，但效率更高</td></tr>
+      </tbody>
+    </table>
+    </div>
+
+    <p>
+      很多人问「我订阅了 Pro，为什么还要装 Claude Code？」——因为<strong>它们解决不同的问题</strong>。你在网页版写一个 essay 很方便；写一个跨十几个文件的重构，在网页版几乎不可能，在 Claude Code 是十分钟的事。
+    </p>
+
+    <h2 id="s6" data-num="§ 1.6">和 GitHub Copilot 的区别</h2>
+
+    <p>
+      如果说网页版 Claude 是一张嘴、Claude Code 是一双手，那 Copilot 是<strong>一根自动补全的手指</strong>。
+    </p>
+
+    <p>
+      Copilot 的核心工作流是：你在编辑器里敲代码，它在光标处给你接下一行或一段。它的粒度是「行」或「小片段」，触发是「你在打字」，主动权在你。它像一个提词器——聪明的提词器——但你还是主角。
+    </p>
+
+    <p>
+      Claude Code 的粒度是「任务」。你说一句「帮我把这个 API 从 REST 改成 GraphQL」，它会自己读相关文件、列出要改的地方、一个个改过去、跑测试、如果测试挂了再回头调整。整个过程你可能只打了一句话。它更像一个初级工程师——会出错的那种——你把活派给他，验收他的产出。
+    </p>
+
+    <p>
+      一张表看对比：
+    </p>
+
+    <div class="table-wrap">
+    <table>
+      <thead><tr><th>维度</th><th>Copilot</th><th>Claude Code</th></tr></thead>
+      <tbody>
+        <tr><td>工作单位</td><td>几行代码</td><td>整个任务</td></tr>
+        <tr><td>触发方式</td><td>你敲键盘</td><td>你描述目标</td></tr>
+        <tr><td>上下文</td><td>当前文件 + 打开的文件</td><td>整个项目 + 跑命令的输出</td></tr>
+        <tr><td>会跑命令吗</td><td>不会</td><td>会，并看输出决定下一步</td></tr>
+        <tr><td>适合场景</td><td>你知道在写什么，只是想打得快</td><td>你知道要什么，不想自己动手</td></tr>
+      </tbody>
+    </table>
+    </div>
+
+    <div class="callout">
+      <p class="callout-title">两者不互斥</p>
+      <p>
+        很多人在 VS Code 里用 Copilot 做小补全，需要跨文件的活就切到 Claude Code。Anthropic 也做 VS Code 扩展把 Claude Code 嵌进 IDE——<code>Cmd/Ctrl+Esc</code> 召唤 Claude，在同一个窗口里完成「打字的同时有 agent 支持」。
+      </p>
+    </div>
+
+    <h2 id="s7" data-num="§ 1.7">为什么是终端，而不是 IDE 插件？</h2>
+
+    <p>
+      这是个值得解释的设计选择。答案有三层。
+    </p>
+
+    <p>
+      <strong>第一层，务实。</strong>终端是程序员世界的通用接口。无论你用 VS Code、Neovim、JetBrains、还是在服务器上裸 ssh，你都有终端。把能力放在终端里，意味着任何开发环境都能用——不需要为每个 IDE 写一个插件，也不受 IDE 的 API 限制。
+    </p>
+
+    <p>
+      <strong>第二层，哲学。</strong>终端天然就是一个「发号施令并看结果」的地方。你 <code>ls</code>、<code>cd</code>、<code>git status</code>——每一条命令都是一个小循环：输入、执行、输出、再决定。agent loop 其实是这个循环的一个更聪明的版本：不是你一条一条敲，而是模型替你敲，并且能看懂输出的含义。终端和 agent 在抽象结构上是同一种东西。
+    </p>
+
+    <p>
+      <strong>第三层，可组合性。</strong>终端里的一切都是文本流，可以被管道串联、被脚本调度、被 CI 系统调用。Claude Code 的 <code>claude -p "..."</code> 非交互模式——当你把它当成一个「接受 prompt 吐出 JSON」的命令行工具时——意味着你可以把它塞进 Makefile、塞进 GitHub Actions、塞进 cron。浏览器应用没法做到这一点。
+    </p>
+
+    <p>
+      Anthropic 也在做 VS Code 扩展、JetBrains 插件、桌面 App、网页版 App、iOS 移动端，但它们都是<strong>同一个 Claude Code 的外壳</strong>，里面的大脑和循环是一样的。先理解终端里的版本，其他都能套过去。
+    </p>
+
+    <h2 id="s8" data-num="§ 1.8">你的第一次对话，可能是这样</h2>
+
+    <p>在项目目录里敲一个字：</p>
+
+    <pre><code>claude</code></pre>
+
+    <p>
+      一个带着橙色小圆点的界面弹出来。如果是第一次跑，它会引导你登录（浏览器里授权）和选订阅档位。登完以后你就在输入框前了。随手问它：
+    </p>
+
+    <pre><code>> 这个项目是干嘛的？给我一个简要的概述。</code></pre>
+
+    <p>它不会凭空编。它会：</p>
+
+    <ol>
+      <li>调用 <code>Read</code> 读 <code>README.md</code>；</li>
+      <li>调用 <code>Glob</code> 扫一下目录结构，看看技术栈；</li>
+      <li>可能再读 <code>package.json</code> 或 <code>pyproject.toml</code>；</li>
+      <li>然后给你一个<strong>有根据的</strong>总结概览。</li>
+    </ol>
+
+    <p>
+      整个过程你能看到它每一步在做什么——工具调用是明文显示的，不是黑盒。这是 Claude Code 很重要的一个属性：<strong>它在你眼皮底下工作</strong>。你随时可以按 <kbd>Ctrl+C</kbd> 打断，也随时能看明白它为什么得出某个结论。
+    </p>
+
+    <h3>第一次翻车，大概会这样</h3>
+
+    <p>
+      别期待它完美。第一次用，你很可能遇到其中至少一种：
+    </p>
+
+    <ul>
+      <li><strong>它改了你不想让它改的文件。</strong>——没事，第二章你会学到 <code>/plan</code> 模式，让它先出方案再动手。</li>
+      <li><strong>它把一个简单任务做得太重。</strong>——第四章讲「过度发挥」，以及怎么让它「只修这一个问题」。</li>
+      <li><strong>它说的函数名不存在。</strong>——幻觉。第四章会讲为什么会发生、怎么防。</li>
+      <li><strong>权限弹窗太烦。</strong>——第二章讲白名单机制，以及 <code>/less-permission-prompts</code> 怎么一键配。</li>
+    </ul>
+
+    <p>
+      这些全是可以管理的。重要的是你从一开始就知道它们会发生——这样遇到它们的时候你不会慌、不会怀疑 AI 是不是「不好用」。它很好用，只是它像所有强大的工具一样需要<em>会用</em>。
+    </p>
+
+    <h2 id="s9" data-num="§ 1.9">稍微总结一下...</h2>
+
+    <div class="callout callout-tip">
+      <p class="callout-title">进入下一章之前</p>
+      <p>
+        （1）Claude Code 是一个跑在你电脑上的 <strong>agent</strong>，不是聊天机器人。<br>
+        （2）它的工作方式是 <strong>模型 + 工具 + 循环</strong>，不是一问一答。<br>
+        （3）你能<strong>看见并打断</strong>它的每一步——这是你控制它的入口。
+      </p>
+    </div>
+
+    <p>
+      到这里，你对 Claude Code 的「世界观」已经齐了。接下来第二章把手把手教你「怎么打字」——三种前缀、三十多个斜杠命令、权限弹窗那一幕。读完第二章，你就能开始真正<em>用</em>它做事了。
+    </p>
+
+    <nav class="pager" aria-label="章节导航">
+      <a href="02-daily.html" class="pager-link pager-next">
+        <span class="pager-dir">下一章 →</span>
+        <span class="pager-title">02 · 日常使用</span>
+      </a>
+    </nav>
+
+  </article>
+</div>
+
+<footer>
+  <div class="set"><span>第 1 / 6 章</span><span>关于 Claude Code，你应该了解的一切</span></div>
+  <div class="set"><span>≈ 22 MIN</span></div>
+</footer>
+
+<!-- Search Overlay -->
+<div class="search-backdrop" id="search-overlay" role="dialog" aria-modal="true" aria-label="搜索" hidden>
+  <div class="search-modal">
+    <div class="search-input-wrap">
+      <input type="search" class="search-input" placeholder="搜索命令、主题..." aria-label="搜索内容" autocomplete="off">
+      <kbd>ESC</kbd>
+    </div>
+    <div class="search-results" role="listbox" aria-label="搜索结果"></div>
+  </div>
+</div>
+
+<!-- Modal -->
+<div class="modal-backdrop" id="cmd-modal" role="dialog" aria-modal="true" aria-label="命令详情">
+  <div class="modal">
+    <button class="modal-close">关闭 ESC</button>
+    <span class="tag"></span>
+    <h3></h3>
+    <p class="summary"></p>
+    <div class="modal-body"></div>
+  </div>
+</div>
+
+<!-- Mobile TOC -->
+<button class="mtoc-fab" id="mtoc-fab" aria-label="目录">目录</button>
+<div class="mtoc-drawer" id="mtoc-drawer">
+  <div class="mtoc-content"></div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/bash.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/typescript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/yaml.min.js"></script>
+<script src="../assets/commands.js"></script>
+<script src="../assets/script.js"></script>
+</body>
+</html>

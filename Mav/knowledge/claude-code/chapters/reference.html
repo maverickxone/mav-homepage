@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>附录 · 速查表 — Claude Code 使用指南</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" id="hljs-light" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+<link rel="stylesheet" id="hljs-dark" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" media="not all">
+</head>
+<body>
+
+<div class="progress-bar" id="progress-bar"></div>
+
+<nav class="topnav" id="topnav">
+  <div class="topnav-inner">
+    <a class="brand" href="../index.html">Claude Code 指南</a>
+    <div class="nav-links">
+      <a href="01-what-is.html">01</a>
+      <a href="02-daily.html">02</a>
+      <a href="03-power.html">03</a>
+      <a href="04-mental.html">04</a>
+      <a href="05-cache.html">05</a>
+      <a href="06-easter-eggs.html">06</a>
+      <a href="reference.html" class="active">Ref</a>
+    </div>
+    <div class="nav-controls">
+      <button class="nav-btn" id="search-btn" aria-label="搜索 (Ctrl+K)">⌘K</button>
+      <button class="nav-btn" id="settings-btn" aria-label="阅读设置">Aa</button>
+      <a class="nav-btn" href="../../index.html" aria-label="返回知识库">← 知识库</a>
+    </div>
+  </div>
+</nav>
+
+<div class="settings-pop" id="settings-pop">
+  <h5>主题</h5>
+  <div class="row">
+    <button class="seg" data-theme-set="light">明亮</button>
+    <button class="seg" data-theme-set="dark">暗色</button>
+  </div>
+  <h5>字号</h5>
+  <div class="row">
+    <button class="seg" data-size-set="s">小</button>
+    <button class="seg" data-size-set="m">中</button>
+    <button class="seg" data-size-set="l">大</button>
+  </div>
+</div>
+
+<div class="with-sidebar">
+  <aside class="sidebar">
+    <div class="chapter-num">Reference</div>
+    <div class="chapter-name">速查表</div>
+    <h4>本页目录</h4>
+    <ul>
+      <li><a href="#cmd-all">所有斜杠命令</a></li>
+      <li><a href="#shortcuts">键盘快捷键</a></li>
+      <li><a href="#cli">CLI 参数</a></li>
+      <li><a href="#claudemd">CLAUDE.md 层级</a></li>
+      <li><a href="#settings">settings.json 配置</a></li>
+      <li><a href="#hooks">Hook 事件</a></li>
+      <li><a href="#permissions">权限模式</a></li>
+      <li><a href="#env">环境变量</a></li>
+      <li><a href="#mcp">MCP 传输类型</a></li>
+      <li><a href="#versions">版本时间线</a></li>
+      <li><a href="#where">更多去哪查</a></li>
+    </ul>
+  </aside>
+
+  <article class="chapter-body">
+
+    <header class="chapter-head">
+      <div class="chapter-head-meta">
+        <span class="num">Reference</span>
+        <span>≈ 随时翻</span>
+      </div>
+      <div class="chapter-eyebrow">附录</div>
+      <h1>速查表</h1>
+      <p class="sub">
+        所有斜杠命令、快捷键、配置项、hook 事件、环境变量,集中放这里。<em>点击命令卡片</em>可以展开详细说明。按 <kbd>Ctrl+F</kbd> / <kbd>Cmd+F</kbd> 用浏览器搜索更快。
+      </p>
+    </header>
+
+    <h2 id="cmd-all" data-num="§ A.1">所有斜杠命令(点开看详情)</h2>
+
+    <p>
+      截至 2026-05-12(v2.1.140),CLI 自带的斜杠命令共 <strong>41 个</strong>。按用途分组。所有卡片都是<strong>可点击的</strong>——展开详细说明、例子、注意事项。
+    </p>
+
+    <h3>会话保养</h3>
+    <div class="cmd-grid">
+      <div class="cmd-card" data-cmd="/help"><code>/help</code><span>所有命令 + 快捷键</span></div>
+      <div class="cmd-card" data-cmd="/status"><code>/status</code><span>模型、目录、账号、权限模式</span></div>
+      <div class="cmd-card" data-cmd="/context"><code>/context</code><span>上下文用量拆解</span></div>
+      <div class="cmd-card" data-cmd="/compact"><code>/compact</code><span>压缩历史腾出空间</span></div>
+      <div class="cmd-card" data-cmd="/clear"><code>/clear</code><span>彻底清空,开新会话</span></div>
+      <div class="cmd-card" data-cmd="/memory"><code>/memory</code><span>CLAUDE.md 管理</span></div>
+      <div class="cmd-card" data-cmd="/doctor"><code>/doctor</code><span>环境自检</span></div>
+      <div class="cmd-card" data-cmd="/debug"><code>/debug</code><span>调试日志开关</span></div>
+      <div class="cmd-card" data-cmd="/usage"><code>/usage</code><span>本月花了多少 token</span></div>
+      <div class="cmd-card" data-cmd="/insights"><code>/insights</code><span>使用习惯分析</span></div>
+    </div>
+
+    <h3>模型与思考深度</h3>
+    <div class="cmd-grid">
+      <div class="cmd-card" data-cmd="/model"><code>/model</code><span>切换 Opus / Sonnet / Haiku</span></div>
+      <div class="cmd-card" data-cmd="/effort"><code>/effort</code><span>low / mid / high / xhigh</span></div>
+      <div class="cmd-card" data-cmd="/fast"><code>/fast</code><span>Opus 提速模式</span></div>
+    </div>
+
+    <h3>初始化与项目骨架</h3>
+    <div class="cmd-grid">
+      <div class="cmd-card" data-cmd="/init"><code>/init</code><span>分析项目生成 CLAUDE.md</span></div>
+    </div>
+
+    <h3>计划、目标、循环</h3>
+    <div class="cmd-grid">
+      <div class="cmd-card" data-cmd="/plan"><code>/plan</code><span>先出方案再动手</span></div>
+      <div class="cmd-card" data-cmd="/goal"><code>/goal</code><span>跑到目标完成才停(2026-05-11 新)</span></div>
+      <div class="cmd-card" data-cmd="/loop"><code>/loop</code><span>定时循环执行</span></div>
+    </div>
+
+    <h3>对话控制与历史</h3>
+    <div class="cmd-grid">
+      <div class="cmd-card" data-cmd="/btw"><code>/btw</code><span>穿插提醒,不打断当前任务</span></div>
+      <div class="cmd-card" data-cmd="/rename"><code>/rename</code><span>改会话名</span></div>
+      <div class="cmd-card" data-cmd="/fork"><code>/fork</code><span>从当前状态分叉新会话</span></div>
+      <div class="cmd-card" data-cmd="/resume"><code>/resume</code><span>回到某个历史会话</span></div>
+      <div class="cmd-card" data-cmd="/rewind"><code>/rewind</code><span>回到某个 checkpoint</span></div>
+    </div>
+
+    <h3>扩展系统</h3>
+    <div class="cmd-grid">
+      <div class="cmd-card" data-cmd="/agents"><code>/agents</code><span>管理子代理</span></div>
+      <div class="cmd-card" data-cmd="/skills"><code>/skills</code><span>管理 Skills</span></div>
+      <div class="cmd-card" data-cmd="/hooks"><code>/hooks</code><span>管理 Hook</span></div>
+      <div class="cmd-card" data-cmd="/mcp"><code>/mcp</code><span>MCP 服务器管理</span></div>
+    </div>
+
+    <h3>审查与重构</h3>
+    <div class="cmd-grid">
+      <div class="cmd-card" data-cmd="/review"><code>/review</code><span>冷启动视角 review diff</span></div>
+      <div class="cmd-card" data-cmd="/security-review"><code>/security-review</code><span>安全视角过一遍</span></div>
+      <div class="cmd-card" data-cmd="/simplify"><code>/simplify</code><span>能不能写得更简单</span></div>
+      <div class="cmd-card" data-cmd="/ultrareview"><code>/ultrareview</code><span>三种角度一起来</span></div>
+    </div>
+
+    <h3>权限</h3>
+    <div class="cmd-grid">
+      <div class="cmd-card" data-cmd="/permissions"><code>/permissions</code><span>查看与编辑权限规则</span></div>
+      <div class="cmd-card" data-cmd="/less-permission-prompts"><code>/less-permission-prompts</code><span>一键减少弹窗</span></div>
+    </div>
+
+    <h3>界面与外观</h3>
+    <div class="cmd-grid">
+      <div class="cmd-card" data-cmd="/theme"><code>/theme</code><span>主题切换</span></div>
+      <div class="cmd-card" data-cmd="/vim"><code>/vim</code><span>vim 编辑模式</span></div>
+      <div class="cmd-card" data-cmd="/tui"><code>/tui</code><span>全屏 TUI</span></div>
+    </div>
+
+    <h3>远程、后台、调度</h3>
+    <div class="cmd-grid">
+      <div class="cmd-card" data-cmd="/rc"><code>/rc</code><span>Remote Control 连手机</span></div>
+      <div class="cmd-card" data-cmd="/teleport"><code>/teleport</code><span>把会话传到另一台机器</span></div>
+      <div class="cmd-card" data-cmd="/tasks"><code>/tasks</code><span>后台任务列表</span></div>
+      <div class="cmd-card" data-cmd="/schedule"><code>/schedule</code><span>定时触发</span></div>
+      <div class="cmd-card" data-cmd="/background"><code>/background</code><span>丢到后台跑</span></div>
+    </div>
+
+    <h3>彩蛋</h3>
+    <div class="cmd-grid">
+      <div class="cmd-card" data-cmd="/buddy"><code>/buddy</code><span>你的终端宠物(第六章)</span></div>
+    </div>
+
+    <h2 id="shortcuts" data-num="§ A.2">键盘快捷键</h2>
+
+    <p>大部分快捷键在 <code>/help</code> 里也能看到。下面这份表是全的。<kbd>⌘</kbd> 表示 macOS 的 Cmd,Windows / Linux 对应 <kbd>Ctrl</kbd>。</p>
+
+    <h3>输入与发送</h3>
+    <div class="table-wrap">
+    <table>
+      <thead><tr><th>快捷键</th><th>作用</th></tr></thead>
+      <tbody>
+        <tr><td><kbd>Enter</kbd></td><td>发送当前输入</td></tr>
+        <tr><td><kbd>Shift</kbd>+<kbd>Enter</kbd></td><td>换行,不发送</td></tr>
+        <tr><td><kbd>Esc</kbd></td><td>一次:停止当前响应;连按两次:打开 rewind 选择器</td></tr>
+        <tr><td><kbd>Ctrl</kbd>+<kbd>C</kbd></td><td>打断 Claude 的当前动作</td></tr>
+        <tr><td><kbd>Ctrl</kbd>+<kbd>D</kbd></td><td>空输入时退出 Claude Code</td></tr>
+        <tr><td><kbd>Tab</kbd></td><td>文件路径补全</td></tr>
+        <tr><td><kbd>↑</kbd> / <kbd>↓</kbd></td><td>翻历史指令(空输入时)</td></tr>
+        <tr><td><kbd>?</kbd></td><td>弹出键盘快捷键小抄</td></tr>
+      </tbody>
+    </table>
+    </div>
+
+    <h3>模式切换</h3>
+    <div class="table-wrap">
+    <table>
+      <thead><tr><th>快捷键</th><th>作用</th></tr></thead>
+      <tbody>
+        <tr><td><kbd>Shift</kbd>+<kbd>Tab</kbd></td><td>循环切换权限模式:default → plan → auto → bypass → default</td></tr>
+        <tr><td><kbd>Ctrl</kbd>+<kbd>F</kbd> 双击</td><td>紧急停止所有子代理(panic kill)</td></tr>
+        <tr><td><kbd>Ctrl</kbd>+<kbd>L</kbd></td><td>清屏(不清上下文)</td></tr>
+      </tbody>
+    </table>
+    </div>
+
+    <h3>IDE 集成(VS Code / JetBrains)</h3>
+    <div class="table-wrap">
+    <table>
+      <thead><tr><th>快捷键</th><th>作用</th></tr></thead>
+      <tbody>
+        <tr><td><kbd>Cmd/Ctrl</kbd>+<kbd>Esc</kbd></td><td>从任何文件召唤 Claude 侧边栏</td></tr>
+        <tr><td><kbd>Cmd/Ctrl</kbd>+<kbd>L</kbd></td><td>把当前选中片段喂给 Claude</td></tr>
+      </tbody>
+    </table>
+    </div>
+
+    <h3>特殊前缀(输入框里敲)</h3>
+    <div class="table-wrap">
+    <table>
+      <thead><tr><th>前缀</th><th>作用</th></tr></thead>
+      <tbody>
+        <tr><td><code>/</code></td><td>斜杠命令</td></tr>
+        <tr><td><code>!</code></td><td>运行一条 shell 命令,输出进对话</td></tr>
+        <tr><td><code>#</code></td><td>把这句话作为记忆写进 CLAUDE.md</td></tr>
+        <tr><td><code>@</code></td><td>引用文件:<code>@src/utils.ts</code></td></tr>
+      </tbody>
+    </table>
+    </div>
+
+    <h2 id="cli" data-num="§ A.3">CLI 参数</h2>
+
+    <p>
+      <code>claude</code> 命令可以直接用在 shell 里,也可以用 <code>claude -p "..."</code> 做非交互式调用(CI、脚本、Makefile)。完整参数表:
+    </p>
+
+    <h3>常用启动参数</h3>
+    <div class="table-wrap">
+    <table>
+      <thead><tr><th>参数</th><th>作用</th></tr></thead>
+      <tbody>
+        <tr><td><code>-p "prompt"</code> / <code>--prompt</code></td><td>非交互模式:给一个 prompt,跑完退出,结果输出到 stdout</td></tr>
+        <tr><td><code>-c</code> / <code>--continue</code></td><td>继续上次的会话(不用重新 /resume)</td></tr>
+        <tr><td><code>-r &lt;session-id&gt;</code> / <code>--resume</code></td><td>恢复到指定 session id</td></tr>
+        <tr><td><code>-w &lt;name&gt;</code> / <code>--worktree</code></td><td>在隔离的 git worktree 里跑</td></tr>
+        <tr><td><code>--model &lt;id&gt;</code></td><td>指定模型:<code>claude-opus-4-7</code> / <code>claude-sonnet-4-6</code> / <code>claude-haiku-4-5-20251001</code></td></tr>
+        <tr><td><code>--effort &lt;level&gt;</code></td><td><code>low</code> / <code>mid</code> / <code>high</code> / <code>xhigh</code></td></tr>
+        <tr><td><code>--permission-mode &lt;mode&gt;</code></td><td><code>default</code> / <code>plan</code> / <code>auto</code> / <code>bypass</code></td></tr>
+        <tr><td><code>--max-turns &lt;n&gt;</code></td><td>agent loop 最多跑多少轮</td></tr>
+        <tr><td><code>--max-budget-usd &lt;n&gt;</code></td><td>预算上限(美元),超了自动停</td></tr>
+        <tr><td><code>--output-format &lt;fmt&gt;</code></td><td><code>text</code>(默认) / <code>json</code> / <code>stream-json</code></td></tr>
+        <tr><td><code>--allowed-tools &lt;list&gt;</code></td><td>只允许这些工具,逗号分隔</td></tr>
+        <tr><td><code>--disallowed-tools &lt;list&gt;</code></td><td>禁用这些工具</td></tr>
+        <tr><td><code>--verbose</code></td><td>输出详细日志</td></tr>
+        <tr><td><code>--version</code></td><td>打印版本号</td></tr>
+        <tr><td><code>--help</code></td><td>CLI 帮助</td></tr>
+      </tbody>
+    </table>
+    </div>
+
+    <h3>子命令</h3>
+    <div class="table-wrap">
+    <table>
+      <thead><tr><th>子命令</th><th>作用</th></tr></thead>
+      <tbody>
+        <tr><td><code>claude config</code></td><td>查看和编辑全局配置</td></tr>
+        <tr><td><code>claude mcp add &lt;name&gt; &lt;url&gt;</code></td><td>添加 MCP 服务器</td></tr>
+        <tr><td><code>claude mcp list</code></td><td>列出已连接的 MCP</td></tr>
+        <tr><td><code>claude update</code></td><td>升级到最新版</td></tr>
+        <tr><td><code>claude login</code> / <code>logout</code></td><td>登录 / 退出</td></tr>
+        <tr><td><code>claude doctor</code></td><td>环境自检(也可以在会话里 /doctor)</td></tr>
+      </tbody>
+    </table>
+    </div>
+
+    <h3>CI 里最常见的用法</h3>
+
+<pre><code># GitHub Actions: PR 自动 review
+- name: Claude review
+  run: |
+    claude -p "审查这次 PR 的改动,重点看安全和边界情况" \
+      --model claude-opus-4-7 \
+      --effort high \
+      --max-budget-usd 0.50 \
+      --output-format json \
+      --permission-mode bypass \
+      --allowed-tools Read,Grep,Glob,Bash \
+      &gt; review.json
+  env:
+    ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}</code></pre>
+
+    <h2 id="claudemd" data-num="§ A.4">CLAUDE.md 层级</h2>
+
+    <p>
+      CLAUDE.md 是 Claude Code 的持久记忆。四层从广到窄,后面的覆盖前面的:
+    </p>
+
+    <div class="table-wrap">
+    <table>
+      <thead><tr><th>层级</th><th>位置</th><th>适合写什么</th></tr></thead>
+      <tbody>
+        <tr><td>用户级</td><td><code>~/.claude/CLAUDE.md</code></td><td>个人偏好:输出风格、默认语言、常用别名。所有项目共享。</td></tr>
+        <tr><td>项目级</td><td><code>&lt;repo-root&gt;/CLAUDE.md</code></td><td>项目规范、技术栈、约定、必跑命令。团队共享,入 git。</td></tr>
+        <tr><td>项目私有</td><td><code>&lt;repo-root&gt;/CLAUDE.local.md</code></td><td>只给自己用的项目备注,个人 API key。加到 .gitignore。</td></tr>
+        <tr><td>子目录</td><td><code>&lt;subdir&gt;/CLAUDE.md</code></td><td>子模块特定的说明。当 Claude 在这个目录下干活时优先生效。</td></tr>
+      </tbody>
+    </table>
+    </div>
+
+    <h3>推荐的项目级 CLAUDE.md 骨架</h3>
+
+<pre><code># 项目名
+&lt;一句话说明项目是干嘛的&gt;
+
+## 技术栈
+- 前端: React 18 + TypeScript + Vite
+- 后端: FastAPI + Postgres 15
+- 部署: Cloudflare Workers + Supabase
+
+## 风格约束
+- TypeScript strict mode,不写 any
+- 不要用 @ts-ignore 绕过类型错误,要修根因
+- React 组件用函数式 + hooks,不写 class
+
+## 必跑命令
+- 测试: pnpm test
+- 类型检查: pnpm typecheck
+- 开发启动: pnpm dev (端口 3000)
+
+## 不要碰的地方
+- src/legacy/ 下的代码冻结,除非明确要求
+- migrations/ 里的文件已 apply,不要改
+
+## 报告完成前必须做
+- 跑 pnpm test 且输出全绿
+- 跑 pnpm typecheck 无错
+- 贴出实际输出,不要自报</code></pre>
+
+    <h2 id="settings" data-num="§ A.5">settings.json 配置键</h2>
+
+    <p>
+      Claude Code 的配置放在两个地方:<code>~/.claude/settings.json</code>(全局)和 <code>&lt;repo&gt;/.claude/settings.json</code>(项目)。项目覆盖全局。常用键:
+    </p>
+
+    <div class="table-wrap">
+    <table>
+      <thead><tr><th>键</th><th>类型</th><th>说明</th></tr></thead>
+      <tbody>
+        <tr><td><code>model</code></td><td>string</td><td>默认模型 ID</td></tr>
+        <tr><td><code>effort</code></td><td>string</td><td>默认思考深度</td></tr>
+        <tr><td><code>permissionMode</code></td><td>string</td><td>默认权限模式</td></tr>
+        <tr><td><code>permissions.allow</code></td><td>string[]</td><td>允许的工具 / 命令 glob</td></tr>
+        <tr><td><code>permissions.deny</code></td><td>string[]</td><td>明确禁止的</td></tr>
+        <tr><td><code>permissions.ask</code></td><td>string[]</td><td>必须每次问的(覆盖 allow)</td></tr>
+        <tr><td><code>hooks</code></td><td>object</td><td>hook 事件 → handler 映射</td></tr>
+        <tr><td><code>mcpServers</code></td><td>object</td><td>MCP 服务器列表</td></tr>
+        <tr><td><code>env</code></td><td>object</td><td>注入到子进程的环境变量</td></tr>
+        <tr><td><code>worktree.baseRef</code></td><td>string</td><td><code>fresh</code>(从 origin/main)或 <code>head</code></td></tr>
+        <tr><td><code>apiKeyHelper</code></td><td>string</td><td>动态生成 API key 的脚本路径</td></tr>
+        <tr><td><code>theme</code></td><td>string</td><td>默认主题</td></tr>
+        <tr><td><code>editor</code></td><td>string</td><td>外部编辑器命令(长输入弹出时用)</td></tr>
+        <tr><td><code>includeCoAuthoredBy</code></td><td>boolean</td><td>commit 时加 Co-Authored-By: Claude trailer</td></tr>
+        <tr><td><code>cleanupPeriodDays</code></td><td>number</td><td>会话记录保留天数</td></tr>
+      </tbody>
+    </table>
+    </div>
+
+    <h3>一份典型的项目 settings.json</h3>
+
+<pre><code>{
+  "model": "claude-opus-4-7",
+  "effort": "high",
+  "permissions": {
+    "allow": [
+      "Read(**)",
+      "Glob(**)",
+      "Grep(**)",
+      "Bash(pnpm test*)",
+      "Bash(pnpm typecheck*)",
+      "Bash(git status)",
+      "Bash(git diff*)",
+      "Bash(git log*)"
+    ],
+    "deny": [
+      "Bash(rm -rf*)",
+      "Bash(git push*)",
+      "Bash(npm publish*)",
+      "Write(.env*)",
+      "Write(**/secrets/**)"
+    ]
+  },
+  "hooks": {
+    "PreToolUse": [
+      { "matcher": "Bash", "type": "command", "command": ".claude/hooks/audit.sh" }
+    ],
+    "Stop": [
+      { "type": "command", "command": ".claude/hooks/on-stop.sh" }
+    ]
+  },
+  "mcpServers": {
+    "github": {
+      "type": "http",
+      "url": "https://api.githubcopilot.com/mcp/",
+      "authorization_token": "${GITHUB_TOKEN}"
+    }
+  },
+  "includeCoAuthoredBy": true
+}</code></pre>
+
+    <h2 id="hooks" data-num="§ A.6">Hook 事件</h2>
+
+    <p>
+      Hook 是 Claude Code 的可编程拦截点——在关键时刻触发你的脚本(或 prompt / agent / HTTP 请求),可以观察、可以改写、也可以阻止操作。事件一览:
+    </p>
+
+    <div class="table-wrap">
+    <table>
+      <thead><tr><th>事件</th><th>触发时机</th><th>典型用法</th></tr></thead>
+      <tbody>
+        <tr><td><code>SessionStart</code></td><td>会话刚启动</td><td>注入项目上下文、检查环境</td></tr>
+        <tr><td><code>UserPromptSubmit</code></td><td>用户按下 Enter 之后、发送前</td><td>检查敏感词、自动补 prompt</td></tr>
+        <tr><td><code>PreToolUse</code></td><td>工具调用前</td><td>审计、阻止危险命令、参数改写</td></tr>
+        <tr><td><code>PostToolUse</code></td><td>工具调用后</td><td>格式化输出、统计、触发副作用</td></tr>
+        <tr><td><code>PermissionRequest</code></td><td>权限弹窗要显示前</td><td>基于规则自动批准 / 拒绝</td></tr>
+        <tr><td><code>PreCompact</code></td><td>/compact 即将执行前</td><td>保存压缩前的完整历史</td></tr>
+        <tr><td><code>Stop</code></td><td>Claude 宣布「做完了」时</td><td>配合 /goal 判断是否真的完成、不完成就回滚</td></tr>
+        <tr><td><code>SubagentStop</code></td><td>子代理结束时</td><td>聚合多个子代理的产出</td></tr>
+        <tr><td><code>Notification</code></td><td>Claude 发通知时</td><td>转发到 Slack / 桌面通知</td></tr>
+        <tr><td><code>SessionEnd</code></td><td>会话退出时</td><td>清理、统计</td></tr>
+      </tbody>
+    </table>
+    </div>
+
+    <h3>Handler 类型</h3>
+
+    <div class="table-wrap">
+    <table>
+      <thead><tr><th>类型</th><th>作用</th></tr></thead>
+      <tbody>
+        <tr><td><code>command</code></td><td>跑一条 shell 命令,stdin 里是事件 JSON,stdout 可以返回决策</td></tr>
+        <tr><td><code>prompt</code></td><td>把事件丢给 Claude 本身,让它判断</td></tr>
+        <tr><td><code>agent</code></td><td>派一个子代理处理</td></tr>
+        <tr><td><code>http</code></td><td>POST 到一个 URL,用返回体里的决策</td></tr>
+      </tbody>
+    </table>
+    </div>
+
+    <div class="callout callout-warn">
+      <p class="callout-title">Hook 是生产级安全边界</p>
+      <p>
+        团队环境里,不要把 <code>Bash(*)</code> 放进 allow。用 <code>PreToolUse</code> hook 审计所有 Bash 调用,记日志、可以加白名单、遇到不认识的命令就 block。Hook 返回 <code>{"decision":"block","reason":"..."}</code> 会让 Claude 收到一条拒绝消息,它会自己换个方式。
+      </p>
+    </div>
+
+    <h2 id="permissions" data-num="§ A.7">权限模式</h2>
+
+    <div class="table-wrap">
+    <table>
+      <thead><tr><th>模式</th><th>行为</th><th>什么时候用</th></tr></thead>
+      <tbody>
+        <tr><td><code>default</code></td><td>写、跑命令前每次问你</td><td>日常、生产代码。最稳。</td></tr>
+        <tr><td><code>plan</code></td><td>只读工具放行,任何写操作都先让 Claude 出方案让你批</td><td>不熟的任务、涉及多文件改动</td></tr>
+        <tr><td><code>auto</code></td><td>按 allow/deny 规则走,不匹配的才问</td><td>你已经配好白名单的项目</td></tr>
+        <tr><td><code>bypass</code></td><td>全放行不问</td><td>CI 里(已隔离)、一次性玩具项目。生产环境绝对不用。</td></tr>
+      </tbody>
+    </table>
+    </div>
+
+    <h3>allow / deny glob 语法</h3>
+
+    <p>
+      规则形如 <code>Tool(pattern)</code>。Tool 是工具名(<code>Read</code>、<code>Write</code>、<code>Bash</code>、<code>Edit</code> 等),pattern 的含义因工具而异:
+    </p>
+
+    <div class="table-wrap">
+    <table>
+      <thead><tr><th>工具</th><th>pattern 含义</th><th>例子</th></tr></thead>
+      <tbody>
+        <tr><td><code>Read</code> / <code>Write</code> / <code>Edit</code></td><td>文件 glob(相对项目根)</td><td><code>Write(src/**)</code>,<code>Read(.env*)</code></td></tr>
+        <tr><td><code>Bash</code></td><td>命令前缀,<code>*</code> 匹配参数</td><td><code>Bash(git diff*)</code>,<code>Bash(npm test*)</code></td></tr>
+        <tr><td><code>WebFetch</code></td><td>URL 前缀</td><td><code>WebFetch(https://docs.anthropic.com/*)</code></td></tr>
+      </tbody>
+    </table>
+    </div>
+
+    <h2 id="env" data-num="§ A.8">环境变量</h2>
+
+    <div class="table-wrap">
+    <table>
+      <thead><tr><th>变量</th><th>作用</th></tr></thead>
+      <tbody>
+        <tr><td><code>ANTHROPIC_API_KEY</code></td><td>API key。CI 里必填。</td></tr>
+        <tr><td><code>ANTHROPIC_BASE_URL</code></td><td>自建代理或兼容 API 端点</td></tr>
+        <tr><td><code>CLAUDE_CODE_USE_BEDROCK</code></td><td>走 AWS Bedrock(值 <code>1</code>)</td></tr>
+        <tr><td><code>CLAUDE_CODE_USE_VERTEX</code></td><td>走 Google Vertex AI(值 <code>1</code>)</td></tr>
+        <tr><td><code>CLAUDE_CODE_MAX_OUTPUT_TOKENS</code></td><td>单轮响应 token 上限</td></tr>
+        <tr><td><code>DISABLE_TELEMETRY</code></td><td>关遥测(值 <code>1</code>)</td></tr>
+        <tr><td><code>DISABLE_NON_ESSENTIAL_MODEL_CALLS</code></td><td>关自动 changelog、spinner 提示这类后台调用</td></tr>
+        <tr><td><code>NO_COLOR</code></td><td>禁用终端彩色输出</td></tr>
+        <tr><td><code>HTTP_PROXY</code> / <code>HTTPS_PROXY</code></td><td>走代理</td></tr>
+        <tr><td><code>CLAUDE_CODE_SSE_PORT</code></td><td>SDK 流式端口(高级)</td></tr>
+      </tbody>
+    </table>
+    </div>
+
+    <h2 id="mcp" data-num="§ A.9">MCP 传输类型</h2>
+
+    <p>MCP(Model Context Protocol)是 Anthropic 定义的「AI 外接工具」协议。Claude Code 支持三种传输:</p>
+
+    <div class="table-wrap">
+    <table>
+      <thead><tr><th>传输</th><th>场景</th><th>配置片段</th></tr></thead>
+      <tbody>
+        <tr><td><code>stdio</code></td><td>本地进程,最常见</td><td><code>{ "type": "stdio", "command": "npx", "args": ["-y", "@modelcontextprotocol/server-filesystem", "/data"] }</code></td></tr>
+        <tr><td><code>sse</code></td><td>Server-Sent Events 长连接</td><td><code>{ "type": "sse", "url": "https://mcp.example.com/sse" }</code></td></tr>
+        <tr><td><code>http</code></td><td>无状态 HTTP,最适合远端服务</td><td><code>{ "type": "http", "url": "https://api.githubcopilot.com/mcp/", "authorization_token": "${GITHUB_TOKEN}" }</code></td></tr>
+      </tbody>
+    </table>
+    </div>
+
+    <p>
+      添加:<code>claude mcp add &lt;name&gt; &lt;config.json&gt;</code> 或者直接编辑 <code>settings.json</code> 的 <code>mcpServers</code> 块。会话里 <code>/mcp</code> 查看当前连接状态,<code>/mcp list-tools github</code> 看某个服务器挂了哪些工具。
+    </p>
+
+    <h2 id="versions" data-num="§ A.10">版本时间线(关键节点)</h2>
+
+    <div class="dl">
+      <dt>v2.1.88 · 2026-03-31</dt>
+      <dd>意外发布带 source map 的 npm 包(59.8 MB)。内部彩蛋被提前拆包曝光。</dd>
+      <dt>v2.1.89 · 2026-04-01</dt>
+      <dd><code>/buddy</code> 正式上线。愚人节发布,但留了下来。</dd>
+      <dt>v2.1.111 · 2026-04-16</dt>
+      <dd>Opus 4.7 xhigh 档位开放。1M 上下文稳定可用。</dd>
+      <dt>v2.1.118 · 2026-04-22</dt>
+      <dd><code>/cost</code> 和 <code>/stats</code> 合并为 <code>/usage</code>。</dd>
+      <dt>v2.1.128 · 2026-05-02</dt>
+      <dd>第三方 API 接入时隐藏 spinner 段子提示。</dd>
+      <dt>v2.1.139 · 2026-05-11</dt>
+      <dd><code>/goal</code> 登场。配合 Stop hook 实现「跑到目标完成才停」。</dd>
+      <dt>v2.1.140 · 2026-05-12</dt>
+      <dd>本书撰写时最新的稳定版。</dd>
+    </div>
+
+    <p>
+      最新 changelog:<a href="https://code.claude.com/docs/en/changelog" target="_blank" rel="noopener">code.claude.com/docs/en/changelog</a>。
+    </p>
+
+    <h2 id="where" data-num="§ A.11">更多去哪查</h2>
+
+    <ul>
+      <li><strong>官方文档</strong>:<a href="https://docs.anthropic.com/en/docs/claude-code" target="_blank" rel="noopener">docs.anthropic.com/en/docs/claude-code</a> — 最权威</li>
+      <li><strong>Changelog</strong>:<a href="https://code.claude.com/docs/en/changelog" target="_blank" rel="noopener">code.claude.com/docs/en/changelog</a> — 每天一看</li>
+      <li><strong>GitHub Issues</strong>:<a href="https://github.com/anthropics/claude-code/issues" target="_blank" rel="noopener">github.com/anthropics/claude-code/issues</a> — 遇到 bug 先搜这里</li>
+      <li><strong>Agent SDK 文档</strong>:<a href="https://docs.anthropic.com/en/api/agent-sdk" target="_blank" rel="noopener">docs.anthropic.com/en/api/agent-sdk</a> — 想自己造 agent 时看</li>
+      <li><strong>MCP 协议</strong>:<a href="https://modelcontextprotocol.io" target="_blank" rel="noopener">modelcontextprotocol.io</a> — 写你自己的 MCP server</li>
+      <li><strong>会话内</strong>:<code>/help</code> 永远是起点。不知道就敲它。</li>
+    </ul>
+
+    <div class="callout callout-tip">
+      <p class="callout-title">读完这本册子之后</p>
+      <p>
+        这份速查表会随 Claude Code 升级而过时。最佳习惯是:遇到不确定的命令或配置,先跑 <code>/help</code>、再翻官方文档、最后才问别人。一个会查文档的 Claude Code 用户,比一个只背命令的用户强十倍——就像任何工具一样。
+      </p>
+    </div>
+
+    <nav class="pager" aria-label="章节导航">
+      <a href="05-cache.html" class="pager-link pager-prev">
+        <span class="pager-dir">← 上一章</span>
+        <span class="pager-title">05 · 缓存</span>
+      </a>
+    </nav>
+
+  </article>
+</div>
+
+<footer>
+  <div class="set"><span>附录 · 速查表</span><span>关于 Claude Code,你应该了解的一切</span></div>
+  <div class="set"><span>v2.1.140 · 2026-05-12</span></div>
+</footer>
+
+<!-- Search Overlay -->
+<div class="search-backdrop" id="search-overlay" role="dialog" aria-modal="true" aria-label="搜索" hidden>
+  <div class="search-modal">
+    <div class="search-input-wrap">
+      <input type="search" class="search-input" placeholder="搜索命令、主题..." aria-label="搜索内容" autocomplete="off">
+      <kbd>ESC</kbd>
+    </div>
+    <div class="search-results" role="listbox" aria-label="搜索结果"></div>
+  </div>
+</div>
+
+<div class="modal-backdrop" id="cmd-modal" role="dialog" aria-modal="true" aria-label="命令详情">
+  <div class="modal">
+    <button class="modal-close">关闭 ESC</button>
+    <span class="tag"></span>
+    <h3></h3>
+    <p class="summary"></p>
+    <div class="modal-body"></div>
+  </div>
+</div>
+
+<button class="mtoc-fab" id="mtoc-fab" aria-label="目录">目录</button>
+<div class="mtoc-drawer" id="mtoc-drawer">
+  <div class="mtoc-content"></div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/bash.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/typescript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/yaml.min.js"></script>
+<script src="../assets/commands.js"></script>
+<script src="../assets/script.js"></script>
+</body>
+</html>

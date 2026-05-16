@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>我要不要学 Rust — Rust</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" id="hljs-light" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+<link rel="stylesheet" id="hljs-dark" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" media="not all">
+</head>
+<body>
+
+<div class="progress-bar" id="progress-bar"></div>
+
+<nav class="topnav" id="topnav">
+  <div class="topnav-inner">
+    <a class="brand" href="../index.html">Rust</a>
+    <div class="nav-links">
+      <a href="01-why-rust.html">01</a>
+      <a href="02-core-philosophy.html">02</a>
+      <a href="03-syntax.html">03</a>
+      <a href="04-where-rust.html">04</a>
+      <a href="05-public-opinion.html">05</a>
+      <a href="06-rust-2026.html">06</a>
+      <a href="07-should-i-learn.html" class="active">07</a>
+    </div>
+    <div class="nav-controls">
+      <button class="nav-btn" id="search-btn" aria-label="搜索 (Ctrl+K)">⌘K</button>
+      <button class="nav-btn" id="settings-btn" aria-label="阅读设置">Aa</button>
+      <a class="nav-btn" href="../../index.html" aria-label="返回知识库">← 知识库</a>
+    </div>
+  </div>
+</nav>
+<div class="settings-pop" id="settings-pop">
+  <h5>主题</h5>
+  <div class="row">
+    <button class="seg" data-theme-set="light">明亮</button>
+    <button class="seg" data-theme-set="dark">暗色</button>
+  </div>
+  <h5>字号</h5>
+  <div class="row">
+    <button class="seg" data-size-set="s">小</button>
+    <button class="seg" data-size-set="m">中</button>
+    <button class="seg" data-size-set="l">大</button>
+  </div>
+</div>
+
+<div class="with-sidebar">
+  <aside class="sidebar">
+  <div class="chapter-num">CHAPTER 07</div>
+  <div class="chapter-name">我要不要学 Rust</div>
+  <h4>目录</h4>
+  <ul>
+    <li><a href="#结语1-先说结论">结语.1 先说结论</a></li>
+    <li><a href="#结语2-嵌入式场景rust对你意味着什么">结语.2 嵌入式场景：Rust对你意味着什么</a></li>
+    <li><a href="#结语3-ai基础设施rust在你的方向上扮演什么角色">结语.3 AI基础设施：Rust在你的方向上扮演什么角色</a></li>
+    <li><a href="#结语4-学习成本评估有c基础需要多久入门">结语.4 学习成本评估：有C基础需要多久入门</a></li>
+    <li><a href="#结语5-最终结论你和rust的关系">结语.5 最终结论：你和Rust的关系</a></li>
+  </ul>
+</aside>
+  <article class="chapter-body">
+    <header class="chapter-head">
+  <div class="chapter-head-meta">
+    <span class="num">CHAPTER 07</span>
+    <span>≈ 12 MIN READ</span>
+  </div>
+  <h1>我要不要学 Rust</h1>
+</header>
+    <h2 id="结语1-先说结论">结语.1 先说结论</h2>
+<p>如果你是大一，微电子和AI方向，已经熟悉C和Python，想知道&quot;我现在要不要学Rust&quot;，我的直接答案是：</p>
+<p><strong>现在不用专门学，但值得花两到三周时间了解它的核心思想。日后如果有需要，有C基础的你入门不会太难。</strong></p>
+<p>下面我来解释这个结论背后的逻辑。</p>
+<h2 id="结语2-嵌入式场景rust对你意味着什么">结语.2 嵌入式场景：Rust对你意味着什么</h2>
+<h4 id="结语21-stm32有rust支持吗">结语.2.1 STM32有Rust支持吗</h4>
+<p>有，但成熟度有差距。</p>
+<p>支持STM32的Rust生态主要是：</p>
+<ul>
+<li><code>stm32f4xx-hal</code>、<code>stm32f1xx-hal</code>等系列——由社区维护，覆盖了F1/F4/L4等常见系列</li>
+<li><code>stm32-rs</code>项目——维护从芯片SVD文件自动生成的底层外设访问库（PAC）</li>
+</ul>
+<p>可以用，但坑比用STM32CubeMX生成C代码多。原因：</p>
+<ol>
+<li>工具链配置（调试器、OpenOCD/probe-rs的集成）需要额外折腾</li>
+<li>文档和社区资源远不如C生态，遇到问题搜不到答案的概率高</li>
+<li>某些外设的HAL实现不完整，需要直接操作寄存器（即写<code>unsafe</code>代码）</li>
+</ol>
+<p>我的建议：<strong>先用C学嵌入式，把基本功打好。等你对嵌入式架构有了感觉，再去探索Rust嵌入式生态。到那时候Rust嵌入式也会更成熟。</strong></p>
+<p>如果你对RP2040（树莓派Pico）感兴趣，这块板子的Rust支持是相对好的，<code>rp-hal</code>维护积极，文档比较完整，作为Rust嵌入式入门的平台比STM32更友好。</p>
+<h4 id="结语22-risc-v上的rust">结语.2.2 RISC-V上的Rust</h4>
+<p>RISC-V是微电子方向不可回避的话题，Rust的RISC-V支持是真的好——因为RISC-V是设计相对干净的指令集，Rust的LLVM后端对它支持很好。不管是裸机还是有OS的RISC-V环境，Rust都是一个可行的选项。</p>
+<p>如果你的课程或研究有RISC-V嵌入式的内容，Rust是值得考虑的工具，生态比STM32要活跃一些。</p>
+<h2 id="结语3-ai基础设施rust在你的方向上扮演什么角色">结语.3 AI基础设施：Rust在你的方向上扮演什么角色</h2>
+<h4 id="结语31-直接角色有限">结语.3.1 直接角色有限</h4>
+<p>作为AI方向的学生，你直接写Rust代码的概率不高。你的主战场是Python（训练脚本、实验管理、模型评估）和CUDA C（如果你做底层优化）。Rust不在这个主线上。</p>
+<p>但Rust会以各种间接方式影响你的工作：</p>
+<ul>
+<li>你用的<strong>tokenizers</strong>（HuggingFace的）核心是Rust的</li>
+<li>你用的一些<strong>命令行工具</strong>（如果你在用rg、fd、bat）是Rust写的</li>
+<li>你用的<strong>IDE插件</strong>背后可能有Rust（如果你用Zed）</li>
+<li>未来你可能会用到的<strong>推理服务框架</strong>（如vllm等）的部分性能关键组件可能逐步迁移到Rust</li>
+</ul>
+<h4 id="结语32-ai基础设施的底层趋势">结语.3.2 AI基础设施的底层趋势</h4>
+<p>一个值得关注的趋势：AI基础设施（不是AI算法本身，而是训练/推理/部署的工程框架）正在越来越多地用Rust重写性能关键路径。原因是一样的：大规模AI推理对延迟、吞吐量、内存效率的要求极高，Rust在这里有竞争力。</p>
+<p>Candle（HuggingFace推出的纯Rust ML框架）、Burn（另一个Rust ML框架）、以及各种推理引擎的Rust实现正在出现。这些不是PyTorch的替代品，而是面向生产部署的轻量级推理工具，把模型从Python环境部署到不依赖Python运行时的场景。</p>
+<p>这对你的直接影响：如果你日后进入AI基础设施团队（不是做AI研究，而是做AI工程/MLOps），Rust的知识会有价值。如果你专注于AI研究，Rust大概率不是你需要掌握的技能。</p>
+<h2 id="结语4-学习成本评估有c基础需要多久入门">结语.4 学习成本评估：有C基础需要多久入门</h2>
+<h4 id="结语41-你的优势">结语.4.1 你的优势</h4>
+<p>有C基础的人学Rust，有几个明显优势：</p>
+<p><strong>理解内存布局</strong>。Rust的很多设计（栈vs堆、所有权的移动语义、裸指针的<code>unsafe</code>使用）都假设你理解内存是怎么工作的。C背景让你对这些有直觉，这是Python用户很难有的。</p>
+<p><strong>理解指针和引用</strong>。Rust的引用（<code>&amp;T</code>和<code>&amp;mut T</code>）在语义上类似C的指针，但有借用规则的约束。理解C指针的人能更快地理解借用检查器在保护什么。</p>
+<p><strong>命令行和工具链不陌生</strong>。你不会被Makefile、编译选项、链接器脚本这些东西吓到，对新的构建系统（cargo）的学习曲线更小。</p>
+<h4 id="结语42-你的劣势">结语.4.2 你的劣势</h4>
+<p><strong>C的自由主义习惯</strong>。C允许你随便做内存操作，Rust不允许。从C切换到Rust，最开始会觉得&quot;为什么这么多限制&quot;，需要主动改变思维模式，不是&quot;绕过规则&quot;而是&quot;理解规则背后的逻辑&quot;。</p>
+<p><strong>某些抽象是新的</strong>。枚举（Rust的enum比C丰富得多）、模式匹配、trait、泛型、迭代器适配器……这些概念如果你只接触过C和Python，有些会比较陌生。Python里的部分概念能帮助你（如迭代器、函数式风格），C里的部分不能直接迁移。</p>
+<h4 id="结语43-时间估算">结语.4.3 时间估算</h4>
+<p>比较务实的估算，假设每天学1-2小时：</p>
+<ul>
+<li><strong>第1-2周</strong>：能读懂基本的Rust代码，理解变量、函数、控制流，对所有权有初步感知。这个阶段目标是&quot;能看懂别人写的Rust&quot;。</li>
+<li><strong>第3-6周</strong>：能写简单的Rust程序，能解决借用检查器的基本报错，理解Move/Borrow/Lifetime的基本用法。这个阶段目标是&quot;能写出能编译的代码&quot;。</li>
+<li><strong>第2-4个月</strong>：能写中等复杂度的程序，理解trait和泛型，能使用tokio做基本的异步编程，能选择和使用合适的crate。这个阶段目标是&quot;能用Rust解决真实问题&quot;。</li>
+<li><strong>半年以上</strong>：对生命周期有真正的理解，能写惯用的（idiomatic）Rust代码，能参与有一定规模的Rust项目。</li>
+</ul>
+<p>如果你目标是&quot;了解Rust是什么、能读懂代码、对它的设计有感觉&quot;，两到三周够了。如果目标是&quot;能在项目里用Rust写功能&quot;，至少需要两到三个月的持续投入。</p>
+<h4 id="结语44-最好的学习路径">结语.4.4 最好的学习路径</h4>
+<p><strong>第一步：读《Rust程序设计语言》（The Book）</strong>。这本书免费在线（doc.rust-lang.org/book），中文版也有（rust-lang.cn/book）。前半本（第1-11章）覆盖了核心概念，读完就有了基础。这本书质量极高，是语言入门书里的标杆。</p>
+<p><strong>第二步：做Rustlings</strong>。这是一套交互式练习，每道题是一个需要改好的小程序，通过修复编译错误来学习语法和概念。比单纯阅读有效得多。（github.com/rust-lang/rustlings）</p>
+<p><strong>第三步：写一个你感兴趣的小项目</strong>。不管是CLI工具、一个简单的HTTP服务，还是一个嵌入式的小实验。有具体目标的学习比泛泛而学效率高。</p>
+<p><strong>第四步（可选）：读《Rust圣经》（Rust语言圣经）</strong>。这是一本面向中文读者的Rust学习材料，内容比官方Book更丰富，有大量工程实践的内容。（course.rs）</p>
+<h2 id="结语5-最终结论你和rust的关系">结语.5 最终结论：你和Rust的关系</h2>
+<p>让我用一个简单的框架来回答&quot;要不要学&quot;：</p>
+<p>如果你是以下情况，<strong>现在就可以开始</strong>：</p>
+<ul>
+<li>你对系统编程有强烈兴趣，想从事操作系统、驱动、嵌入式相关工作</li>
+<li>你在找一个C之后的&quot;下一门系统语言&quot;来深化内存管理的理解</li>
+<li>你有空闲时间，学Rust对你来说是探索而不是任务</li>
+</ul>
+<p>如果你是以下情况，<strong>暂时了解，日后深入</strong>：</p>
+<ul>
+<li>你的当前学业主要是AI/ML算法研究，Python是主战场</li>
+<li>你刚开始学嵌入式，C的基础还在建立中</li>
+<li>你的时间有限，有更紧迫的技术要学</li>
+</ul>
+<p>如果你是以下情况，<strong>可以先了解不深学</strong>：</p>
+<ul>
+<li>你对Rust的好奇心主要来自Zed的速度体验，本质上是对&quot;为什么它这么快&quot;的好奇</li>
+<li>你想在技术交流中不被这个话题卡住</li>
+<li>你关心行业趋势，想知道这门语言重不重要</li>
+</ul>
+<p>对于最后这种情况，你已经读完了这本书，这就够了。你现在知道Rust是什么、为什么存在、在哪里出没、被谁重视。当你日后在工作中遇到Rust的项目，你不会一脸茫然；当同学讨论Rust时，你能参与；当面试官问&quot;你了解Rust吗&quot;，你有话说。</p>
+<p>这就是这本书的全部目标：<strong>让你对Rust有真正的了解，而不是对概念的堆砌</strong>。</p>
+<p>Rust值得你尊重，但不需要你仰视。它是一门有真实解决的真实问题的工程语言，而不是一个需要信仰的宗教。了解它，在你需要的时候用它，这就是对它最好的态度。</p>
+<p>铁锈不是锈迹，是盔甲的材质。</p>
+<p><em>全书完</em></p>
+
+    <nav class="pager">  <a href="06-rust-2026.html">
+    <span class="label">← 上一章</span>
+    <span class="title">2026 年的 Rust 现状——它在哪里，走向哪里</span>
+  </a>  <a class="disabled next"><span class="label">下一章 →</span><span class="title"></span></a></nav>
+  </article>
+</div>
+
+<footer>
+  <div class="set">
+    <span>RUST</span>
+    <span>2026 · ZH-CN</span>
+  </div>
+  <div class="set">
+    <span>Mav</span>
+  </div>
+</footer>
+<div class="search-backdrop" id="search-overlay" role="dialog" aria-modal="true" aria-label="搜索" hidden>
+  <div class="search-modal">
+    <div class="search-input-wrap">
+      <input type="search" class="search-input" placeholder="搜索内容..." aria-label="搜索内容" autocomplete="off">
+      <kbd>ESC</kbd>
+    </div>
+    <div class="search-results" role="listbox" aria-label="搜索结果"></div>
+  </div>
+</div>
+
+<!-- Mobile TOC -->
+<button class="mtoc-fab" id="mtoc-fab" aria-label="目录">TOC</button>
+<div class="mtoc-drawer" id="mtoc-drawer">
+  <div class="mtoc-content"></div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/bash.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/typescript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/yaml.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/javascript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/json.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/python.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/css.min.js"></script>
+<script src="../assets/script.js"></script>
+</body>
+</html>

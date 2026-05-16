@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>胶卷与编解码器：从模拟到数字 — 从像素到 4K：视频与屏幕技术指南</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" id="hljs-light" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+<link rel="stylesheet" id="hljs-dark" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" media="not all">
+</head>
+<body>
+
+<div class="progress-bar" id="progress-bar"></div>
+
+<nav class="topnav" id="topnav">
+  <div class="topnav-inner">
+    <a class="brand" href="../index.html">从像素到 4K：视频与屏幕技术指南</a>
+    <div class="nav-links">
+      <a href="01-pixel-resolution.html">01</a>
+      <a href="02-film-codec.html" class="active">02</a>
+      <a href="03-bitrate-refresh.html">03</a>
+      <a href="04-color-devices.html">04</a>
+      <a href="05-practice-glossary.html">05</a>
+    </div>
+    <div class="nav-controls">
+      <button class="nav-btn" id="search-btn" aria-label="搜索 (Ctrl+K)">⌘K</button>
+      <button class="nav-btn" id="settings-btn" aria-label="阅读设置">Aa</button>
+      <a class="nav-btn" href="../../index.html" aria-label="返回知识库">← 知识库</a>
+    </div>
+  </div>
+</nav>
+<div class="settings-pop" id="settings-pop">
+  <h5>主题</h5>
+  <div class="row">
+    <button class="seg" data-theme-set="light">明亮</button>
+    <button class="seg" data-theme-set="dark">暗色</button>
+  </div>
+  <h5>字号</h5>
+  <div class="row">
+    <button class="seg" data-size-set="s">小</button>
+    <button class="seg" data-size-set="m">中</button>
+    <button class="seg" data-size-set="l">大</button>
+  </div>
+</div>
+
+<div class="with-sidebar">
+  <aside class="sidebar">
+  <div class="chapter-num">CHAPTER 02</div>
+  <div class="chapter-name">胶卷与编解码器：从模拟到数字</div>
+  <h4>目录</h4>
+  <ul>
+    <li><a href="#一个让人困惑的现象">一个让人困惑的现象</a></li>
+    <li><a href="#胶片的工作原理">胶片的工作原理</a></li>
+    <li><a href="#胶片的等效分辨率">胶片的等效分辨率</a></li>
+    <li><a href="#4k-修复的过程">4K 修复的过程</a></li>
+    <li><a href="#为什么不是所有老电影都有4k版本">为什么不是所有老电影都有4K版本？</a></li>
+    <li><a href="#视频文件的本质问题">视频文件的本质问题</a></li>
+    <li><a href="#视频压缩的基本原理">视频压缩的基本原理</a></li>
+    <li><a href="#avch264天下第一普及">AVC（H.264）——天下第一普及</a></li>
+    <li><a href="#hevch265高效的继承者">HEVC（H.265）——高效的继承者</a></li>
+    <li><a href="#av1免费的未来">AV1——免费的未来</a></li>
+    <li><a href="#三者对比总结">三者对比总结</a></li>
+    <li><a href="#编解码器与硬件的关系软解vs硬解">编解码器与硬件的关系——软解vs硬解</a></li>
+  </ul>
+</aside>
+  <article class="chapter-body">
+    <header class="chapter-head">
+  <div class="chapter-head-meta">
+    <span class="num">CHAPTER 02</span>
+    <span>≈ 18 MIN READ</span>
+  </div>
+  <h1>胶卷与编解码器：从模拟到数字</h1>
+</header>
+    <h2 id="一个让人困惑的现象">一个让人困惑的现象</h2>
+<p>你可能注意到，《2001太空漫游》（1968年）、《教父》（1972年）、甚至早期王家卫的电影，现在都有 4K 蓝光版本。但问题来了：1968 年根本没有 4K 技术，那么这些 4K 版本从哪里来的？</p>
+<p>答案藏在<strong>胶片的物理特性</strong>里。</p>
+<h2 id="胶片的工作原理">胶片的工作原理</h2>
+<p>电影胶片（Film）是一种涂有<strong>卤化银晶体</strong>的透明柔性基材。当光线照射到胶片时，卤化银晶体发生化学反应，根据光强的不同产生不同程度的变化，经过化学显影后，就在胶片上留下了连续的影像。</p>
+<p>关键在于：<strong>胶片记录的是连续的模拟信息，而不是离散的数字像素</strong>。</p>
+<p>这就是本质区别。数字相机有一个固定数量的像素阵列（比如 4000×3000 = 1200 万像素），它的&quot;分辨率上限&quot;在传感器制造完成时就固定了。而胶片的感光颗粒（银盐晶体）极其细小，密度极高，记录的信息量远超任何早期数字设备。</p>
+<h2 id="胶片的等效分辨率">胶片的等效分辨率</h2>
+<p>传统 35mm 电影胶片的&quot;信息量&quot;大约等效于多高的数字分辨率？</p>
+<p>这个问题没有简单的答案，因为胶片不是像素阵列，两者的性质不同。但大量研究和测试表明：</p>
+<ul>
+<li><strong>标准 35mm 电影胶片</strong>（用于大多数商业电影）的细节信息约等效于 <strong>4K 到 6K</strong>（依胶片品牌、感光度和镜头质量而定）</li>
+<li><strong>高质量 35mm 低感光度胶片</strong>甚至可以等效 <strong>8K</strong> 左右</li>
+<li><strong>70mm 胶片</strong>（用于《星际穿越》《八恶人》等）的细节量更是高达等效 <strong>12K 甚至更高</strong></li>
+</ul>
+<p>所以，当你看到 00 年代（或更早）的胶片电影被制作成 4K 版本时，这完全是有根据的——因为<strong>原始胶片上就存储着那么多细节，只是当年的技术无法提取</strong>。</p>
+<h2 id="4k-修复的过程">4K 修复的过程</h2>
+<p>将老胶片制作成 4K 数字版本，叫做<strong>4K 扫描（4K Scan）<strong>或</strong>4K 修复（4K Restoration）</strong>，是一个技术含量极高的工程：</p>
+<p><strong>第一步：物理修复</strong></p>
+<p>在扫描之前，通常需要先对原始胶片进行物理修复。经过几十年，胶片可能有：</p>
+<ul>
+<li>划痕（从横贯画面的白色线条）</li>
+<li>灰尘颗粒（随机出现的黑白斑点）</li>
+<li>褪色（化学成分分解导致颜色偏移）</li>
+<li>收缩变形（胶片基材随时间缩短）</li>
+<li>霉斑（保存条件不佳导致）</li>
+</ul>
+<p>专业的修复人员会用棉签、专业溶液等小心清洁胶片，有时甚至需要在显微镜下操作。</p>
+<p><strong>第二步：高分辨率扫描</strong></p>
+<p>使用专业的胶片扫描仪，以极高精度逐帧扫描胶片。一部 2 小时的电影约有 172800 帧（24fps × 7200秒），每一帧都需要以 4K 分辨率扫描，最终产生数 TB 的原始数字文件。</p>
+<p><strong>第三步：数字修复</strong></p>
+<p>扫描得到的数字文件，还需要用软件进行大量修复工作：</p>
+<ul>
+<li><strong>去划痕</strong>：算法识别并插值修复胶片划痕</li>
+<li><strong>去噪点</strong>：减少胶片颗粒感（注意：过度去噪会让画面失去胶片质感，所以需要权衡）</li>
+<li><strong>色彩还原</strong>：根据原始胶片的颜色档案和导演意图，修正褪色</li>
+<li><strong>画面稳定</strong>：修正胶片因拉片不稳定导致的抖动</li>
+<li><strong>逐帧人工校对</strong>：对自动修复效果进行人工审查，修正算法遗漏的问题</li>
+</ul>
+<p><strong>第四步：色彩调级</strong></p>
+<p>在技术修复完成后，通常会邀请原片的摄影指导或导演本人参与<strong>DCP（数字电影包）色彩调级</strong>，确保 4K 版本的视觉呈现符合创作意图，甚至可以借助现代 HDR 技术展现原片中一些在当年放映条件下无法完整呈现的细节。</p>
+<h2 id="为什么不是所有老电影都有4k版本">为什么不是所有老电影都有4K版本？</h2>
+<p>制作一部高质量 4K 修复版本的成本相当惊人，通常在 <strong>50 万到几百万美元</strong>之间。决定是否值得投入，要考虑：</p>
+<ol>
+<li><strong>原始素材的保存状态</strong>：如果胶片保存极差，修复的意义和可能性就降低了</li>
+<li><strong>商业价值</strong>：经典名片才值得高昂投入</li>
+<li><strong>版权问题</strong>：版权归属复杂的老片很难推进修复项目</li>
+<li><strong>原始底片的存在</strong>：部分电影的原始底片已经损毁或丢失</li>
+</ol>
+<p>值得一提的是，数字电影（全数字拍摄）就没有这种&quot;潜力&quot;了。用 2K 数字摄像机拍摄的电影，就是 2K 的信息量，永远无法真正&quot;升级&quot;成 4K——可以做的仅仅是放大（Upscaling），即用算法猜测并填充不存在的像素，但这与真正的细节是两码事。</p>
+<p>这就是为什么许多顶级导演（如诺兰、昆汀·塔伦蒂诺）至今仍坚持用胶片拍摄——它保留了更大的&quot;未来潜力&quot;。</p>
+<h2 id="视频文件的本质问题">视频文件的本质问题</h2>
+<p>一部未经压缩的 4K 视频文件有多大？我们来算一下：</p>
+<ul>
+<li>分辨率：3840×2160 = 8,294,400 像素</li>
+<li>每像素颜色：RGB 各 8 位，共 24 位 = 3 字节</li>
+<li>帧率：24fps</li>
+<li>时长：120 分钟 = 7200 秒</li>
+</ul>
+<p>原始数据量 = 8,294,400 × 3 × 24 × 7200<br>= 8,294,400 × 3 × 172,800<br>= <strong>约 4,300 GB（4.3 TB）</strong></p>
+<p>一部 4K 电影的原始数据高达 4.3TB——这根本无法在互联网上分发，也没有几个硬盘能装下。<strong>视频压缩</strong>因此成为了视频技术的核心问题。</p>
+<p><strong>编解码器（Codec）<strong>就是解决这一问题的技术，名字来自&quot;Coder-Decoder&quot;（编码器-解码器）的缩写。它在存储/传输时对视频进行</strong>压缩（编码）</strong>，在播放时进行<strong>解压（解码）</strong>。</p>
+<h2 id="视频压缩的基本原理">视频压缩的基本原理</h2>
+<p>视频压缩主要利用两类&quot;冗余&quot;：</p>
+<p><strong>空间冗余（Spatial Redundancy）</strong></p>
+<p>一帧图像内，相邻像素往往颜色相近。比如天空背景，可能有大片像素的颜色几乎一样。与其存储每个像素的独立颜色值，不如存储&quot;这一块区域颜色是蓝色&quot;的描述，大幅减少数据量。</p>
+<p>这就是为什么你的猜测是对的：低分辨率时，&quot;几个像素当一个用&quot;，数据就少。高分辨率时，每个像素都有独立信息，数据就多。但即使在高分辨率下，视频压缩同样会利用空间冗余。</p>
+<p><strong>时间冗余（Temporal Redundancy）</strong></p>
+<p>一段视频中，相邻帧之间往往变化不大。比如一个人在静止背景前讲话，背景部分每一帧都是一样的，没有必要重复存储。视频压缩会：</p>
+<ul>
+<li>存储<strong>关键帧（I-Frame/Keyframe）</strong>：完整保存某帧的全部信息，大概每隔几秒或在场景切换时插入一帧</li>
+<li>存储<strong>差异帧（P-Frame 和 B-Frame）</strong>：只存储与前后帧的差异信息，大幅减少数据量</li>
+</ul>
+<p>这就是为什么你快进或者网络卡顿时，视频有时会出现&quot;绿屏&quot;或&quot;马赛克&quot;——当 I-Frame 没有完整加载，而 P-Frame 又依赖 I-Frame 来计算完整画面，结果就出错了。</p>
+<h2 id="avch264天下第一普及">AVC（H.264）——天下第一普及</h2>
+<p><strong>全称：Advanced Video Coding（高级视频编码）</strong><br><strong>又称：H.264，MPEG-4 AVC</strong></p>
+<p>AVC 于 2003 年正式发布，是目前<strong>兼容性最强</strong>的视频编码格式，几乎所有能播放视频的设备（手机、电脑、电视机、游戏机、浏览器）都支持 AVC。</p>
+<p>它比早期的 MPEG-2（DVD 格式）压缩效率高约 50%，在当时是革命性的进步。AVC 让 HD 视频在互联网上传播成为现实。</p>
+<p><strong>优点：</strong></p>
+<ul>
+<li>兼容性无敌，几乎所有设备都支持硬件解码</li>
+<li>编码器成熟稳定</li>
+<li>支持广泛的流媒体平台</li>
+</ul>
+<p><strong>缺点：</strong></p>
+<ul>
+<li>相同画质下，文件比 HEVC 和 AV1 大</li>
+<li>专利授权费用昂贵（HEVC 也有同样问题）</li>
+</ul>
+<p>在你看到的下载列表里，AVC（H.264）版本的文件是同分辨率下最大的——这正是它的代价。</p>
+<h2 id="hevch265高效的继承者">HEVC（H.265）——高效的继承者</h2>
+<p><strong>全称：High Efficiency Video Coding（高效视频编码）</strong><br><strong>又称：H.265</strong></p>
+<p>HEVC 于 2013 年发布，设计目标是在相同画质下把文件大小压缩到 AVC 的一半（即&quot;比 AVC 高出一倍的压缩效率&quot;）。实际表现中，HEVC 通常比 AVC 小 40%-50%。</p>
+<p>从你的下载列表可以直观看出：</p>
+<ul>
+<li>4K AVC：8327 kbps（~8.14 GB）</li>
+<li>4K HEVC：3228 kbps（~3.16 GB）</li>
+<li>压缩比提升约 2.6 倍</li>
+</ul>
+<p><strong>优点：</strong></p>
+<ul>
+<li>相同画质下，文件比 AVC 小约 40-50%</li>
+<li>在较新设备上普遍有硬件解码支持</li>
+<li>支持 HDR10、Dolby Vision 等高动态范围格式</li>
+</ul>
+<p><strong>缺点：</strong></p>
+<ul>
+<li>专利池极其复杂，授权费昂贵（这导致了 AV1 的诞生）</li>
+<li>较老的设备（如 2015 年前的 PC、老一代 Android 手机）可能不支持硬件解码</li>
+<li>没有硬件解码支持时，软件解码会严重消耗 CPU，导致发热和续航缩短</li>
+</ul>
+<p><strong>硬件兼容性：</strong></p>
+<ul>
+<li>iPhone/iPad（A9 芯片及以后，即 2015 年以后）：✅ 硬件解码 HEVC</li>
+<li>华为 MateBook X Pro 2024（Intel Ultra 7）：✅ 硬件解码 HEVC</li>
+<li>苹果 Mac（M 系列芯片）：✅ 硬件解码 HEVC</li>
+</ul>
+<h2 id="av1免费的未来">AV1——免费的未来</h2>
+<p><strong>全称：AOMedia Video 1</strong><br><strong>开发者：开放媒体联盟（AOMedia），成员包括 Google、Netflix、Microsoft、Apple、Meta 等</strong></p>
+<p>AV1 于 2018 年发布，最大的特点是<strong>完全开源、免版税</strong>。这是一个&quot;复仇者联盟&quot;式的技术联盟——面对 HEVC 高昂的专利费，大厂们联手开发了一个不需要付费的替代方案。</p>
+<p>AV1 的压缩效率比 HEVC 再提升约 20-30%，与 AVC 相比，可以在相同画质下节省 50% 以上的文件大小。</p>
+<p>从你的下载列表：</p>
+<ul>
+<li>4K AVC：8327 kbps</li>
+<li>4K HEVC：3228 kbps</li>
+<li>4K AV1：2262 kbps</li>
+<li>AV1 比 AVC 节省了约 <strong>73%</strong> 的数据量！</li>
+</ul>
+<p><strong>优点：</strong></p>
+<ul>
+<li>完全免费，无版权费用，对平台友好（YouTube 大量使用 AV1）</li>
+<li>压缩效率最高</li>
+<li>正在快速普及到新设备</li>
+</ul>
+<p><strong>缺点：</strong></p>
+<ul>
+<li>编码速度慢（编码一段视频需要更长时间、更多计算）</li>
+<li>较老的设备不支持硬件解码，纯软件解码 4K AV1 对 CPU 压力很大</li>
+</ul>
+<p><strong>硬件兼容性（截至 2026 年）：</strong></p>
+<ul>
+<li>iPhone 15 系列及以后（A17 Pro / A16 Bionic）：✅ 硬件解码 AV1</li>
+<li>iPad Pro M4（2024）：✅ 硬件解码 AV1</li>
+<li>iPad Air M3（2025）：✅ 硬件解码 AV1</li>
+<li>你的 iPad Pro 2021（M1 芯片）：✅ 硬件解码 AV1</li>
+<li>华为 MateBook X Pro 2024（Intel Ultra 7，集成 Arc 显卡）：✅ 硬件解码 AV1</li>
+<li>苹果 MacBook（M 系列芯片，M2 及以后）：✅ 硬件解码 AV1（M1 不支持 AV1 硬件解码）</li>
+</ul>
+<h2 id="三者对比总结">三者对比总结</h2>
+<div class="table-wrap"><table><thead><tr>
+<th>指标</th>
+<th>AVC (H.264)</th>
+<th>HEVC (H.265)</th>
+<th>AV1</th>
+</tr>
+</thead><tbody><tr>
+<td>发布年份</td>
+<td>2003</td>
+<td>2013</td>
+<td>2018</td>
+</tr>
+<tr>
+<td>压缩效率</td>
+<td>基准</td>
+<td>+40-50%</td>
+<td>+50-60%</td>
+</tr>
+<tr>
+<td>专利费</td>
+<td>有</td>
+<td>有（且复杂）</td>
+<td>无</td>
+</tr>
+<tr>
+<td>兼容性</td>
+<td>极好（所有设备）</td>
+<td>好（2015年以后）</td>
+<td>一般（2020年以后新设备）</td>
+</tr>
+<tr>
+<td>硬件解码普及</td>
+<td>极高</td>
+<td>高</td>
+<td>中等</td>
+</tr>
+<tr>
+<td>编码速度</td>
+<td>快</td>
+<td>中等</td>
+<td>慢</td>
+</tr>
+<tr>
+<td>典型应用</td>
+<td>几乎所有视频</td>
+<td>苹果 HEIC、4K 蓝光</td>
+<td>YouTube、Netflix、Disney+</td>
+</tr>
+</tbody></table></div>
+<h2 id="编解码器与硬件的关系软解vs硬解">编解码器与硬件的关系——软解vs硬解</h2>
+<p>播放视频，需要把压缩过的数据解码还原成每一帧图像显示出来。这个解码过程有两种方式：</p>
+<p><strong>软件解码（Software Decoding）</strong></p>
+<p>由 CPU（处理器）完成解码工作。任何编码格式，只要有对应的解码软件，CPU 都能解码。但缺点是：</p>
+<ul>
+<li>消耗大量 CPU 算力</li>
+<li>发热严重，尤其是笔记本会感觉到明显的性能下降和续航缩短</li>
+<li>4K 高码率视频可能出现卡顿</li>
+</ul>
+<p><strong>硬件解码（Hardware Decoding）</strong></p>
+<p>现代处理器（CPU、GPU、手机芯片）通常内置了专用的视频解码模块，称为<strong>VPU（Video Processing Unit）<strong>或</strong>媒体引擎</strong>。这个模块专门负责特定编码格式的解码，效率极高、功耗极低。</p>
+<p>举例：在 MacBook Air M4 上用 Safari 播放 YouTube 4K AV1 视频，因为 M4 芯片内置了 AV1 硬件解码器，整个播放过程几乎不消耗 CPU，功耗可以降至 2-3W 级别；而如果在不支持 AV1 硬件解码的老设备上用软件解码播放同一视频，CPU 可能飙到 40-50%，机器烫手。</p>
+<p><strong>对你有什么实际影响？</strong></p>
+<ul>
+<li>播放时若选择设备不支持硬件解码的格式，会更耗电、更热</li>
+<li>对于 iPad Pro 2021（M1 芯片），推荐选 AVC 或 HEVC，而非 AV1</li>
+<li>对于华为 MateBook X Pro 2024，AV1 和 HEVC 都支持硬件解码，可以放心选</li>
+</ul>
+
+    <nav class="pager">  <a href="01-pixel-resolution.html">
+    <span class="label">← 上一章</span>
+    <span class="title">像素与分辨率：屏幕是怎么工作的</span>
+  </a>  <a href="03-bitrate-refresh.html" class="next">
+    <span class="label">下一章 →</span>
+    <span class="title">码率与刷新率：画质、文件大小与流畅度</span>
+  </a></nav>
+  </article>
+</div>
+
+<footer>
+  <div class="set">
+    <span>从像素到 4K：视频与屏幕技术指南</span>
+    <span>2026 · ZH-CN</span>
+  </div>
+  <div class="set">
+    <span>Mav</span>
+  </div>
+</footer>
+<div class="search-backdrop" id="search-overlay" role="dialog" aria-modal="true" aria-label="搜索" hidden>
+  <div class="search-modal">
+    <div class="search-input-wrap">
+      <input type="search" class="search-input" placeholder="搜索内容..." aria-label="搜索内容" autocomplete="off">
+      <kbd>ESC</kbd>
+    </div>
+    <div class="search-results" role="listbox" aria-label="搜索结果"></div>
+  </div>
+</div>
+
+<!-- Mobile TOC -->
+<button class="mtoc-fab" id="mtoc-fab" aria-label="目录">TOC</button>
+<div class="mtoc-drawer" id="mtoc-drawer">
+  <div class="mtoc-content"></div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/bash.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/typescript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/yaml.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/javascript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/json.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/python.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/css.min.js"></script>
+<script src="../assets/script.js"></script>
+</body>
+</html>

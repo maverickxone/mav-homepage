@@ -1,0 +1,1024 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>前端：浏览器里的三件套 — 服务器，前端与后端</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" id="hljs-light" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+<link rel="stylesheet" id="hljs-dark" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" media="not all">
+</head>
+<body>
+
+<div class="progress-bar" id="progress-bar"></div>
+
+<nav class="topnav" id="topnav">
+  <div class="topnav-inner">
+    <a class="brand" href="../index.html">服务器，前端与后端</a>
+    <div class="nav-links">
+      <a href="01-frontend.html" class="active">01</a>
+      <a href="02-backend.html">02</a>
+      <a href="03-server-hardware.html">03</a>
+      <a href="04-server-software.html">04</a>
+      <a href="05-summary.html">05</a>
+    </div>
+    <div class="nav-controls">
+      <button class="nav-btn" id="search-btn" aria-label="搜索 (Ctrl+K)">⌘K</button>
+      <button class="nav-btn" id="settings-btn" aria-label="阅读设置">Aa</button>
+      <a class="nav-btn" href="../../index.html" aria-label="返回知识库">← 知识库</a>
+    </div>
+  </div>
+</nav>
+<div class="settings-pop" id="settings-pop">
+  <h5>主题</h5>
+  <div class="row">
+    <button class="seg" data-theme-set="light">明亮</button>
+    <button class="seg" data-theme-set="dark">暗色</button>
+  </div>
+  <h5>字号</h5>
+  <div class="row">
+    <button class="seg" data-size-set="s">小</button>
+    <button class="seg" data-size-set="m">中</button>
+    <button class="seg" data-size-set="l">大</button>
+  </div>
+</div>
+
+<div class="with-sidebar">
+  <aside class="sidebar">
+  <div class="chapter-num">CHAPTER 01</div>
+  <div class="chapter-name">前端：浏览器里的三件套</div>
+  <h4>目录</h4>
+  <ul>
+    <li><a href="#总览什么是quot前端quot">总览：什么是&quot;前端&quot;？</a></li>
+    <li><a href="#html骨架与内容">HTML：骨架与内容</a></li>
+    <li><a href="#css装修与美化">CSS：装修与美化</a></li>
+    <li><a href="#javascript让页面quot活quot起来">JavaScript：让页面&quot;活&quot;起来</a></li>
+    <li><a href="#前端的完整工作流程">前端的完整工作流程</a></li>
+    <li><a href="#前端生态一览">前端生态一览</a></li>
+  </ul>
+</aside>
+  <article class="chapter-body">
+    <header class="chapter-head">
+  <div class="chapter-head-meta">
+    <span class="num">CHAPTER 01</span>
+    <span>≈ 25 MIN READ</span>
+  </div>
+  <h1>前端：浏览器里的三件套</h1>
+</header>
+    <h2 id="总览什么是quot前端quot">总览：什么是&quot;前端&quot;？</h2>
+<p>打开任何一个网页，按下 F12，你会看到一堆代码。这些代码就是&quot;前端&quot;——<strong>所有在你浏览器里运行的东西</strong>，统称前端。</p>
+<p>前端的本质很简单：浏览器从服务器那里拿到一堆文件（HTML、CSS、JS、图片等），然后在你的电脑上把它们渲染成你看到的页面。整个过程发生在你的机器上，不需要再和服务器通信（除非页面有动态交互）。</p>
+<p>前端由三样东西组成，各司其职：</p>
+<div class="table-wrap"><table><thead><tr>
+<th>技术</th>
+<th>角色</th>
+<th>类比</th>
+</tr>
+</thead><tbody><tr>
+<td>HTML</td>
+<td>结构与内容</td>
+<td>房子的框架和墙壁</td>
+</tr>
+<tr>
+<td>CSS</td>
+<td>样式与外观</td>
+<td>装修、油漆、家具摆放</td>
+</tr>
+<tr>
+<td>JavaScript</td>
+<td>行为与交互</td>
+<td>电路、开关、智能家居</td>
+</tr>
+</tbody></table></div>
+<p>一个纯 HTML 页面是能看的——只是丑。加上 CSS 变好看了。加上 JS 能动了。三者缺一不可，但重要性和学习曲线完全不同。</p>
+<div class="callout callout-tip">
+<p class="callout-title">一个直觉</p>
+
+<p>你用 GitHub Pages 部署的那个大作业网站，就是一个纯前端项目。没有后端，没有服务器逻辑，浏览器拿到文件就能直接显示。这种网站叫&quot;静态网站&quot;。</p>
+</div>
+
+<h3 id="前端代码是quot透明quot的">前端代码是&quot;透明&quot;的</h3>
+<p>这是前端最重要的特性之一：<strong>任何人都能看到你的前端代码</strong>。</p>
+<p>按 F12 打开开发者工具，Elements 面板里是 HTML 结构，Sources 面板里是所有 JS 文件，Network 面板里能看到每一个请求。你的 CSS 变量、JS 逻辑、页面结构——全部暴露在用户面前。</p>
+<p>这意味着：</p>
+<ul>
+<li>前端<strong>不能存放任何秘密</strong>（密码、API 密钥、加密逻辑）</li>
+<li>前端的&quot;验证&quot;只是用户体验层面的（比如表单校验），真正的安全校验必须在后端</li>
+<li>任何人都可以&quot;抄&quot;你的前端代码（所以开源前端框架才这么流行）</li>
+</ul>
+<p>这也是为什么需要后端——但那是第二章的事。</p>
+<h3 id="浏览器是怎么渲染页面的">浏览器是怎么渲染页面的？</h3>
+<p>当你输入一个网址按下回车，浏览器做了这些事：</p>
+<ol>
+<li><strong>DNS 查询</strong>：把域名（如 <code>github.com</code>）翻译成 IP 地址</li>
+<li><strong>建立连接</strong>：和服务器建立 TCP 连接（如果是 HTTPS 还要握手加密）</li>
+<li><strong>发送请求</strong>：告诉服务器&quot;我要 index.html&quot;</li>
+<li><strong>接收响应</strong>：服务器把 HTML 文件发回来</li>
+<li><strong>解析 HTML</strong>：浏览器从上到下读 HTML，遇到 <code>&lt;link&gt;</code> 就去请求 CSS，遇到 <code>&lt;script&gt;</code> 就去请求 JS</li>
+<li><strong>构建 DOM 树</strong>：把 HTML 标签转换成内存中的树形结构</li>
+<li><strong>计算样式</strong>：把 CSS 规则应用到每个 DOM 节点上</li>
+<li><strong>布局（Layout）</strong>：计算每个元素在页面上的位置和大小</li>
+<li><strong>绘制（Paint）</strong>：把像素画到屏幕上</li>
+</ol>
+<p>整个过程通常在几百毫秒内完成。你觉得&quot;网页加载慢&quot;的时候，瓶颈通常不在渲染，而在网络传输（等服务器响应）或者 JS 执行太慢。</p>
+<h3 id="开发者工具f12你的前端调试利器">开发者工具（F12）：你的前端调试利器</h3>
+<p>F12 打开的&quot;开发者工具&quot;是前端开发最重要的工具，没有之一。几个关键面板：</p>
+<div class="table-wrap"><table><thead><tr>
+<th>面板</th>
+<th>用途</th>
+</tr>
+</thead><tbody><tr>
+<td>Elements</td>
+<td>查看和实时修改 HTML/CSS</td>
+</tr>
+<tr>
+<td>Console</td>
+<td>运行 JS 代码、查看错误信息</td>
+</tr>
+<tr>
+<td>Network</td>
+<td>查看所有网络请求（加载了哪些文件、花了多久）</td>
+</tr>
+<tr>
+<td>Sources</td>
+<td>查看和调试 JS 源代码</td>
+</tr>
+<tr>
+<td>Application</td>
+<td>查看 Cookie、LocalStorage 等本地存储</td>
+</tr>
+</tbody></table></div>
+<p>一个实用技巧：在 Elements 面板里，你可以直接修改任何网页的 HTML 和 CSS，实时看到效果。当然这只是在你的浏览器里改，刷新就没了——但这对调试样式非常有用。</p>
+<div class="callout callout-tip">
+<p class="callout-title">阅读提示</p>
+
+<p>这一章接下来会分别介绍 HTML、CSS、JS 三件套，每个部分都有一些代码示例。如果你和我一样对前端只是一知半解、主要靠 AI 写——<strong>不需要记住任何代码细节</strong>。快速扫一遍，知道&quot;哦，HTML 长这样、CSS 大概是这种格式、JS 能做这些事&quot;就够了。这本书是帮你建立认知框架的，不是让你背语法的。看不懂的代码块直接跳过，完全不影响后面章节的理解。</p>
+</div>
+
+<hr>
+<h2 id="html骨架与内容">HTML：骨架与内容</h2>
+<h3 id="html-是什么">HTML 是什么？</h3>
+<p>HTML（HyperText Markup Language，超文本标记语言）是网页的<strong>结构描述语言</strong>。注意，它不是&quot;编程语言&quot;——它没有变量、没有循环、没有条件判断。它只是告诉浏览器：&quot;这里有一个标题，那里有一段文字，下面是一张图片。&quot;</p>
+<p>一个最简单的 HTML 页面：</p>
+<pre data-label="html"><code class="language-html">&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+  &lt;title&gt;我的页面&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;h1&gt;你好，世界&lt;/h1&gt;
+  &lt;p&gt;这是一段文字。&lt;/p&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+<p>浏览器读到这段代码，就知道：页面标题是&quot;我的页面&quot;，正文里有一个大标题和一段文字。就这么简单。</p>
+<h3 id="html-文档的基本结构">HTML 文档的基本结构</h3>
+<p>每个 HTML 文件都有固定的骨架：</p>
+<pre data-label="html"><code class="language-html">&lt;!DOCTYPE html&gt;          &lt;!-- 声明这是 HTML5 文档 --&gt;
+&lt;html lang="zh-CN"&gt;      &lt;!-- 根元素，lang 指定语言 --&gt;
+&lt;head&gt;                   &lt;!-- 头部：元信息，不显示在页面上 --&gt;
+  &lt;meta charset="UTF-8"&gt;              &lt;!-- 字符编码 --&gt;
+  &lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;
+  &lt;title&gt;页面标题&lt;/title&gt;              &lt;!-- 浏览器标签页上显示的文字 --&gt;
+  &lt;link rel="stylesheet" href="style.css"&gt;  &lt;!-- 引入 CSS --&gt;
+&lt;/head&gt;
+&lt;body&gt;                   &lt;!-- 正文：所有可见内容 --&gt;
+  &lt;!-- 你的内容放这里 --&gt;
+  &lt;script src="script.js"&gt;&lt;/script&gt;    &lt;!-- 引入 JS，通常放在最后 --&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+<p><code>&lt;head&gt;</code> 里的东西用户看不到，但对浏览器很重要：</p>
+<ul>
+<li><code>charset=&quot;UTF-8&quot;</code> 告诉浏览器用 UTF-8 编码解读文字（不写的话中文可能乱码）</li>
+<li><code>viewport</code> 那行是移动端适配的关键（没有它，手机上页面会缩得很小）</li>
+<li><code>&lt;title&gt;</code> 是浏览器标签页上的文字，也是搜索引擎显示的标题</li>
+</ul>
+<h3 id="标签taghtml-的基本单位">标签（Tag）：HTML 的基本单位</h3>
+<p>HTML 的一切都是&quot;标签&quot;。标签用尖括号包裹，通常成对出现：</p>
+<pre data-label="html"><code class="language-html">&lt;h1&gt;这是标题&lt;/h1&gt;
+&lt;p&gt;这是段落&lt;/p&gt;
+&lt;a href="https://example.com"&gt;这是链接&lt;/a&gt;
+&lt;img src="photo.jpg" alt="一张照片"&gt;</code></pre>
+<p>标签可以有<strong>属性（Attribute）</strong>，写在开始标签里：</p>
+<ul>
+<li><code>href</code> — 链接的目标地址</li>
+<li><code>src</code> — 图片/脚本的文件路径</li>
+<li><code>class</code> — CSS 类名（用于样式）</li>
+<li><code>id</code> — 唯一标识符（用于 JS 操作或 CSS 定位）</li>
+<li><code>alt</code> — 图片的替代文字（图片加载失败时显示，也用于无障碍访问）</li>
+</ul>
+<h3 id="常用标签详解">常用标签详解</h3>
+<p><strong>文本类：</strong></p>
+<div class="table-wrap"><table><thead><tr>
+<th>标签</th>
+<th>用途</th>
+<th>示例</th>
+</tr>
+</thead><tbody><tr>
+<td><code>&lt;h1&gt;</code> ~ <code>&lt;h6&gt;</code></td>
+<td>标题（1最大，6最小）</td>
+<td><code>&lt;h1&gt;主标题&lt;/h1&gt;</code></td>
+</tr>
+<tr>
+<td><code>&lt;p&gt;</code></td>
+<td>段落</td>
+<td><code>&lt;p&gt;一段文字&lt;/p&gt;</code></td>
+</tr>
+<tr>
+<td><code>&lt;strong&gt;</code></td>
+<td>加粗（有语义：重要）</td>
+<td><code>&lt;strong&gt;注意&lt;/strong&gt;</code></td>
+</tr>
+<tr>
+<td><code>&lt;em&gt;</code></td>
+<td>斜体（有语义：强调）</td>
+<td><code>&lt;em&gt;重点&lt;/em&gt;</code></td>
+</tr>
+<tr>
+<td><code>&lt;br&gt;</code></td>
+<td>换行（自闭合）</td>
+<td><code>第一行&lt;br&gt;第二行</code></td>
+</tr>
+<tr>
+<td><code>&lt;hr&gt;</code></td>
+<td>水平分割线</td>
+<td><code>&lt;hr&gt;</code></td>
+</tr>
+<tr>
+<td><code>&lt;code&gt;</code></td>
+<td>行内代码</td>
+<td><code>&lt;code&gt;console.log()&lt;/code&gt;</code></td>
+</tr>
+<tr>
+<td><code>&lt;pre&gt;</code></td>
+<td>预格式化文本（保留空格和换行）</td>
+<td>代码块</td>
+</tr>
+</tbody></table></div>
+<p><strong>容器类：</strong></p>
+<div class="table-wrap"><table><thead><tr>
+<th>标签</th>
+<th>用途</th>
+<th>备注</th>
+</tr>
+</thead><tbody><tr>
+<td><code>&lt;div&gt;</code></td>
+<td>通用块级容器</td>
+<td>没有语义，纯粹用来分组和布局</td>
+</tr>
+<tr>
+<td><code>&lt;span&gt;</code></td>
+<td>通用行内容器</td>
+<td>用来给一小段文字加样式</td>
+</tr>
+<tr>
+<td><code>&lt;header&gt;</code></td>
+<td>页头</td>
+<td>语义化标签</td>
+</tr>
+<tr>
+<td><code>&lt;nav&gt;</code></td>
+<td>导航栏</td>
+<td>语义化标签</td>
+</tr>
+<tr>
+<td><code>&lt;main&gt;</code></td>
+<td>主要内容</td>
+<td>语义化标签</td>
+</tr>
+<tr>
+<td><code>&lt;footer&gt;</code></td>
+<td>页脚</td>
+<td>语义化标签</td>
+</tr>
+<tr>
+<td><code>&lt;section&gt;</code></td>
+<td>内容分区</td>
+<td>语义化标签</td>
+</tr>
+<tr>
+<td><code>&lt;article&gt;</code></td>
+<td>独立的文章内容</td>
+<td>语义化标签</td>
+</tr>
+</tbody></table></div>
+<p><strong>链接与媒体：</strong></p>
+<pre data-label="html"><code class="language-html">&lt;!-- 链接 --&gt;
+&lt;a href="https://ustc.edu.cn" target="_blank"&gt;中科大官网&lt;/a&gt;
+&lt;!-- target="_blank" 表示在新标签页打开 --&gt;
+
+&lt;!-- 图片 --&gt;
+&lt;img src="images/photo.jpg" alt="校园风景" width="800"&gt;
+
+&lt;!-- 视频 --&gt;
+&lt;video src="video.mp4" controls width="640"&gt;&lt;/video&gt;</code></pre>
+<p><strong>列表：</strong></p>
+<pre data-label="html"><code class="language-html">&lt;!-- 无序列表（圆点） --&gt;
+&lt;ul&gt;
+  &lt;li&gt;第一项&lt;/li&gt;
+  &lt;li&gt;第二项&lt;/li&gt;
+  &lt;li&gt;第三项&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;!-- 有序列表（数字） --&gt;
+&lt;ol&gt;
+  &lt;li&gt;步骤一&lt;/li&gt;
+  &lt;li&gt;步骤二&lt;/li&gt;
+  &lt;li&gt;步骤三&lt;/li&gt;
+&lt;/ol&gt;</code></pre>
+<p><strong>表格：</strong></p>
+<pre data-label="html"><code class="language-html">&lt;table&gt;
+  &lt;thead&gt;
+    &lt;tr&gt;
+      &lt;th&gt;姓名&lt;/th&gt;
+      &lt;th&gt;学号&lt;/th&gt;
+      &lt;th&gt;成绩&lt;/th&gt;
+    &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td&gt;张三&lt;/td&gt;
+      &lt;td&gt;PB2400001&lt;/td&gt;
+      &lt;td&gt;95&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;李四&lt;/td&gt;
+      &lt;td&gt;PB2400002&lt;/td&gt;
+      &lt;td&gt;88&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;</code></pre>
+<p><strong>表单（用户输入）：</strong></p>
+<pre data-label="html"><code class="language-html">&lt;form action="/api/login" method="POST"&gt;
+  &lt;label for="username"&gt;用户名：&lt;/label&gt;
+  &lt;input type="text" id="username" name="username" placeholder="请输入用户名"&gt;
+
+  &lt;label for="password"&gt;密码：&lt;/label&gt;
+  &lt;input type="password" id="password" name="password"&gt;
+
+  &lt;button type="submit"&gt;登录&lt;/button&gt;
+&lt;/form&gt;</code></pre>
+<p>表单是前端和后端交互的最原始方式——用户填写信息，点击提交，浏览器把数据发送到 <code>action</code> 指定的地址。现代网站更多用 JS 的 <code>fetch</code> 来发送数据（不需要刷新页面），但表单依然是基础。</p>
+<h3 id="html-的核心思想语义化">HTML 的核心思想：语义化</h3>
+<p>好的 HTML 不只是&quot;能显示&quot;，而是要<strong>有意义</strong>。比如：</p>
+<pre data-label="html"><code class="language-html">&lt;!-- 不好：用 div 装一切 --&gt;
+&lt;div class="header"&gt;
+  &lt;div class="nav"&gt;
+    &lt;div class="nav-item"&gt;首页&lt;/div&gt;
+    &lt;div class="nav-item"&gt;关于&lt;/div&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+
+&lt;!-- 好：用语义标签 --&gt;
+&lt;header&gt;
+  &lt;nav&gt;
+    &lt;a href="/"&gt;首页&lt;/a&gt;
+    &lt;a href="/about"&gt;关于&lt;/a&gt;
+  &lt;/nav&gt;
+&lt;/header&gt;</code></pre>
+<p>两者在浏览器里可能看起来一样，但语义化的 HTML：</p>
+<ul>
+<li>搜索引擎能更好地理解你的页面结构（SEO）</li>
+<li>屏幕阅读器（视障用户使用的工具）能正确朗读内容</li>
+<li>代码可读性更好，维护更方便</li>
+<li>浏览器可以提供更好的默认行为（比如 <code>&lt;nav&gt;</code> 里的链接会被识别为导航）</li>
+</ul>
+<div class="callout">
+<p class="callout-title">小结</p>
+
+<p>HTML 就是用标签描述&quot;页面上有什么&quot;。它不管好不好看（那是 CSS 的事），也不管能不能动（那是 JS 的事）。你可以把它理解为一份&quot;内容清单&quot;——告诉浏览器这里有标题、那里有段落、下面有图片，仅此而已。</p>
+</div>
+
+<hr>
+<h2 id="css装修与美化">CSS：装修与美化</h2>
+<h3 id="css-是什么">CSS 是什么？</h3>
+<p>CSS（Cascading Style Sheets，层叠样式表）负责页面的<strong>视觉呈现</strong>。颜色、字体、间距、布局、动画——所有&quot;看起来怎么样&quot;的事情，都是 CSS 管的。</p>
+<p>没有 CSS 的 HTML 页面长什么样？你可以试试在 F12 里把所有 CSS 禁用——页面会变成一堆黑色文字从上到下排列，链接是蓝色带下划线，标题大一点，仅此而已。那就是浏览器的&quot;默认样式&quot;。</p>
+<p>一段典型的 CSS：</p>
+<pre data-label="css"><code class="language-css">h1 {
+  color: #333;
+  font-size: 2rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  line-height: 1.3;
+}
+
+.card {
+  background: white;
+  border-radius: 8px;
+  padding: 24px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  transition: transform 0.2s ease;
+}
+
+.card:hover {
+  transform: translateY(-2px);
+}</code></pre>
+<p>CSS 的基本结构是：<strong>选择器 { 属性: 值; }</strong>。选择器决定&quot;给谁加样式&quot;，花括号里是具体的样式规则。</p>
+<h3 id="选择器告诉-css-quot给谁加样式quot">选择器：告诉 CSS &quot;给谁加样式&quot;</h3>
+<p>选择器是 CSS 的核心概念之一。常见的选择器：</p>
+<pre data-label="css"><code class="language-css">/* 标签选择器：所有 &lt;p&gt; 标签 */
+p { color: #333; }
+
+/* 类选择器：所有 class="card" 的元素 */
+.card { padding: 16px; }
+
+/* ID 选择器：id="header" 的那一个元素 */
+#header { background: black; }
+
+/* 后代选择器：.nav 里面的所有 &lt;a&gt; */
+.nav a { color: white; }
+
+/* 伪类：鼠标悬停时 */
+a:hover { color: blue; }
+
+/* 伪类：第一个子元素 */
+li:first-child { font-weight: bold; }
+
+/* 组合：同时满足多个条件 */
+a.active { color: red; }  /* 同时是 &lt;a&gt; 标签且有 active 类 */</code></pre>
+<p>选择器的<strong>优先级</strong>（Specificity）从低到高：</p>
+<ol>
+<li>标签选择器（<code>p</code>、<code>div</code>）</li>
+<li>类选择器（<code>.card</code>）</li>
+<li>ID 选择器（<code>#header</code>）</li>
+<li>内联样式（<code>style=&quot;...&quot;</code>）</li>
+<li><code>!important</code>（核武器，尽量别用）</li>
+</ol>
+<p>当多条规则冲突时，优先级高的生效。这就是&quot;层叠&quot;（Cascading）的含义——规则像瀑布一样层层覆盖。</p>
+<h3 id="为什么-css-quot不像代码quot">为什么 CSS &quot;不像代码&quot;？</h3>
+<p>你说得对——CSS 确实不是传统意义上的&quot;编程&quot;。它没有变量（好吧，现在有 CSS 变量了，但那是后来加的），没有函数，没有循环。它更像是一份<strong>声明式的配置文件</strong>：你告诉浏览器&quot;我想要这个效果&quot;，浏览器去实现。</p>
+<p>这也是很多程序员不喜欢 CSS 的原因：它的行为有时候不直觉。比如：</p>
+<ul>
+<li>两个元素的 margin 会&quot;塌陷&quot;（合并成一个）</li>
+<li><code>width: 100%</code> 有时候会溢出父容器（因为 padding 和 border 会额外增加宽度）</li>
+<li>垂直居中在 CSS 里曾经是个世纪难题（现在有 Flexbox 了）</li>
+<li><code>z-index</code> 的层叠上下文规则让人抓狂</li>
+</ul>
+<p>但 CSS 的&quot;不像代码&quot;恰恰是它的设计哲学：<strong>描述目标，而非过程</strong>。你不需要写&quot;先计算容器宽度，再把元素放到中间&quot;，你只需要写 <code>display: flex; justify-content: center;</code>。</p>
+<h3 id="盒模型box-modelcss-的基础概念">盒模型（Box Model）：CSS 的基础概念</h3>
+<p>CSS 里每个元素都是一个&quot;盒子&quot;，由四层组成（从内到外）：</p>
+<pre><code>┌─────────────────────────────── margin（外边距）
+│  ┌──────────────────────────── border（边框）
+│  │  ┌───────────────────────── padding（内边距）
+│  │  │  ┌────────────────────── content（内容）
+│  │  │  │                    │
+│  │  │  │    Hello World     │
+│  │  │  │                    │
+│  │  │  └────────────────────┘
+│  │  └───────────────────────┘
+│  └──────────────────────────┘
+└─────────────────────────────┘</code></pre>
+<pre data-label="css"><code class="language-css">.box {
+  width: 200px;        /* 内容宽度 */
+  padding: 20px;       /* 内边距 */
+  border: 2px solid;   /* 边框 */
+  margin: 16px;        /* 外边距 */
+}
+/* 实际占用宽度 = 200 + 20*2 + 2*2 + 16*2 = 276px */</code></pre>
+<div class="callout callout-tip">
+<p class="callout-title">box-sizing: border-box</p>
+
+<p>默认情况下，<code>width</code> 只指内容宽度，padding 和 border 会额外增加。这很反直觉。现代 CSS 通常在全局加上：</p>
+<pre data-label="css"><code class="language-css">* { box-sizing: border-box; }</code></pre>
+<p>这样 <code>width</code> 就包含了 padding 和 border，计算起来直觉得多。几乎所有现代项目都会加这一行。</p>
+</div>
+
+<h3 id="css-的三种写法">CSS 的三种写法</h3>
+<pre data-label="html"><code class="language-html">&lt;!-- 1. 内联样式：直接写在标签上（不推荐，难维护） --&gt;
+&lt;p style="color: red; font-size: 14px;"&gt;红色文字&lt;/p&gt;
+
+&lt;!-- 2. 内部样式：写在 &lt;style&gt; 标签里（适合小页面） --&gt;
+&lt;style&gt;
+  p { color: red; }
+&lt;/style&gt;
+
+&lt;!-- 3. 外部样式：单独的 .css 文件（推荐！） --&gt;
+&lt;link rel="stylesheet" href="style.css"&gt;</code></pre>
+<p>实际项目几乎都用第三种——把样式和结构分离，方便维护。一个 CSS 文件可以被多个 HTML 页面共享，改一处样式全站生效。</p>
+<h3 id="常用-css-属性速览">常用 CSS 属性速览</h3>
+<p><strong>文字相关：</strong></p>
+<pre data-label="css"><code class="language-css">.text {
+  color: #333;                    /* 文字颜色 */
+  font-size: 16px;                /* 字号 */
+  font-weight: 600;               /* 字重（粗细），400=正常，700=粗体 */
+  font-family: 'Inter', sans-serif; /* 字体 */
+  line-height: 1.6;               /* 行高（1.6 = 字号的 1.6 倍） */
+  text-align: center;             /* 对齐：left/center/right */
+  text-decoration: none;          /* 去掉下划线（常用于链接） */
+  letter-spacing: 0.5px;          /* 字间距 */
+}</code></pre>
+<p><strong>背景与边框：</strong></p>
+<pre data-label="css"><code class="language-css">.box {
+  background: #f5f5f5;            /* 背景色 */
+  background: linear-gradient(135deg, #667eea, #764ba2); /* 渐变 */
+  border: 1px solid #ddd;         /* 边框 */
+  border-radius: 8px;             /* 圆角 */
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1); /* 阴影 */
+}</code></pre>
+<p><strong>间距与尺寸：</strong></p>
+<pre data-label="css"><code class="language-css">.element {
+  width: 100%;                    /* 宽度 */
+  max-width: 800px;               /* 最大宽度（响应式关键） */
+  height: auto;                   /* 高度自适应内容 */
+  padding: 24px;                  /* 内边距（上右下左） */
+  padding: 16px 24px;             /* 内边距（上下 左右） */
+  margin: 0 auto;                 /* 外边距，auto 实现水平居中 */
+}</code></pre>
+<h3 id="现代-css-布局flexbox-和-grid">现代 CSS 布局：Flexbox 和 Grid</h3>
+<p>早期 CSS 布局靠 <code>float</code>（浮动），写起来像在玩拼图游戏，痛苦无比。现代 CSS 有两个强大的布局工具：</p>
+<p><strong>Flexbox（弹性盒子）</strong>——一维布局，适合一行或一列的排列：</p>
+<pre data-label="css"><code class="language-css">/* 水平排列，两端对齐，垂直居中 */
+.nav {
+  display: flex;
+  justify-content: space-between;  /* 主轴对齐方式 */
+  align-items: center;             /* 交叉轴对齐方式 */
+  gap: 16px;                       /* 元素间距 */
+}
+
+/* 垂直居中（曾经的世纪难题，现在一行搞定） */
+.center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;  /* vh = viewport height，视口高度 */
+}
+
+/* 换行排列 */
+.tags {
+  display: flex;
+  flex-wrap: wrap;  /* 放不下时自动换行 */
+  gap: 8px;
+}</code></pre>
+<p><strong>Grid（网格）</strong>——二维布局，适合复杂的行列结构：</p>
+<pre data-label="css"><code class="language-css">/* 三列等宽网格 */
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;  /* fr = fraction，等分 */
+  gap: 16px;
+}
+
+/* 响应式网格：自动适应列数 */
+.responsive-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 24px;
+}
+/* 这行的意思是：每列最小 300px，能放几列放几列，自动适应 */</code></pre>
+<div class="callout">
+<p class="callout-title">Flexbox vs Grid 怎么选？</p>
+
+<ul>
+<li><strong>一行或一列</strong>的排列 → Flexbox（导航栏、按钮组、标签列表）</li>
+<li><strong>行和列都要控制</strong>的布局 → Grid（卡片网格、整体页面布局）</li>
+<li>不确定 → 先试 Flexbox，不够用再换 Grid</li>
+</ul>
+</div>
+
+<h3 id="响应式设计适配不同屏幕">响应式设计：适配不同屏幕</h3>
+<p>同一个网站在手机、平板、电脑上都要好看——这就是响应式设计。核心工具是<strong>媒体查询（Media Query）</strong>：</p>
+<pre data-label="css"><code class="language-css">/* 默认样式（移动端优先） */
+.container {
+  padding: 16px;
+}
+
+/* 屏幕宽度 &gt;= 768px 时（平板） */
+@media (min-width: 768px) {
+  .container {
+    padding: 32px;
+    max-width: 720px;
+    margin: 0 auto;
+  }
+}
+
+/* 屏幕宽度 &gt;= 1024px 时（电脑） */
+@media (min-width: 1024px) {
+  .container {
+    max-width: 960px;
+  }
+}</code></pre>
+<p>现代响应式设计的思路是&quot;移动端优先&quot;——先写手机上的样式，再用媒体查询逐步增强大屏幕的布局。</p>
+<h3 id="css-变量让样式可维护">CSS 变量：让样式可维护</h3>
+<p>CSS 变量（Custom Properties）让你可以定义&quot;全局常量&quot;，改一处全站生效：</p>
+<pre data-label="css"><code class="language-css">:root {
+  --color-primary: #2563eb;
+  --color-text: #1f2937;
+  --color-bg: #ffffff;
+  --radius: 8px;
+  --font-body: 'Inter', sans-serif;
+}
+
+.button {
+  background: var(--color-primary);
+  border-radius: var(--radius);
+  font-family: var(--font-body);
+}
+
+/* 暗色主题只需要改变量值 */
+[data-theme="dark"] {
+  --color-text: #f3f4f6;
+  --color-bg: #111827;
+}</code></pre>
+<p>这就是你的 md2HTML 工具实现暗色/亮色主题切换的原理——切换一个 <code>data-theme</code> 属性，CSS 变量自动切换，整个页面颜色跟着变。</p>
+<div class="callout callout-tip">
+<p class="callout-title">给不喜欢 CSS 的你</p>
+
+<p>CSS 确实适合让 AI 来写。但理解这些基本概念（选择器、盒模型、Flex 布局、媒体查询、CSS 变量）还是有必要的——至少你要能看懂 AI 写的 CSS 在干什么，以及出了问题知道往哪个方向调。</p>
+<p>一个实用的学习方法：打开你喜欢的网站，F12 看它的 CSS，试着修改一些值看看效果。这比看教程有趣得多。</p>
+</div>
+
+<hr>
+<h2 id="javascript让页面quot活quot起来">JavaScript：让页面&quot;活&quot;起来</h2>
+<h3 id="js-是什么">JS 是什么？</h3>
+<p>JavaScript（简称 JS）是前端唯一的<strong>编程语言</strong>。HTML 和 CSS 都是声明式的&quot;描述&quot;，而 JS 是命令式的&quot;指令&quot;——它能做判断、循环、处理数据、响应用户操作。</p>
+<p>当你点击一个按钮弹出对话框、滑动页面出现动画、输入搜索词实时显示结果——这些都是 JS 在工作。</p>
+<p>一个重要的历史背景：JS 最初（1995 年）是为了给网页加一点简单交互而设计的，只花了 10 天就被创造出来。没人想到它会成为世界上使用最广泛的编程语言之一。这也是为什么 JS 有很多&quot;奇怪&quot;的设计——历史包袱太重了。</p>
+<h3 id="js-的基本语法">JS 的基本语法</h3>
+<p>如果你学过 C 或 Python，JS 的语法会让你觉得似曾相识：</p>
+<pre data-label="javascript"><code class="language-javascript">// ===== 变量 =====
+let name = "Mav";          // let：可以重新赋值
+const age = 19;             // const：常量，不能重新赋值
+// var 是老写法，有作用域问题，现代 JS 不推荐用
+
+// ===== 数据类型 =====
+let num = 42;               // 数字（整数和浮点数不区分）
+let str = "hello";          // 字符串
+let bool = true;            // 布尔值
+let arr = [1, 2, 3];       // 数组
+let obj = { x: 1, y: 2 };  // 对象（类似 Python 的字典）
+let nothing = null;         // 空值
+let undef = undefined;      // 未定义
+
+// ===== 函数 =====
+// 传统写法
+function greet(person) {
+  return "你好，" + person;
+}
+
+// 箭头函数（现代写法，更简洁）
+const greet2 = (person) =&gt; "你好，" + person;
+
+// ===== 条件 =====
+if (age &gt;= 18) {
+  console.log("成年了");
+} else {
+  console.log("未成年");
+}
+
+// ===== 循环 =====
+for (let i = 0; i &lt; 5; i++) {
+  console.log(i);
+}
+
+// 遍历数组（更现代的写法）
+const fruits = ["苹果", "香蕉", "橘子"];
+fruits.forEach(fruit =&gt; console.log(fruit));
+
+// ===== 模板字符串（反引号） =====
+const message = `你好，${name}，你今年 ${age} 岁`;
+// 比 "你好，" + name + "，你今年 " + age + " 岁" 好读多了</code></pre>
+<h3 id="js-和-cpython-的主要区别">JS 和 C/Python 的主要区别</h3>
+<div class="table-wrap"><table><thead><tr>
+<th>特性</th>
+<th>C</th>
+<th>Python</th>
+<th>JavaScript</th>
+</tr>
+</thead><tbody><tr>
+<td>类型系统</td>
+<td>静态强类型</td>
+<td>动态强类型</td>
+<td>动态弱类型</td>
+</tr>
+<tr>
+<td>变量声明</td>
+<td><code>int x = 1;</code></td>
+<td><code>x = 1</code></td>
+<td><code>let x = 1;</code></td>
+</tr>
+<tr>
+<td>分号</td>
+<td>必须</td>
+<td>不用</td>
+<td>建议加（不加也行）</td>
+</tr>
+<tr>
+<td>代码块</td>
+<td><code>{ }</code></td>
+<td>缩进</td>
+<td><code>{ }</code></td>
+</tr>
+<tr>
+<td>数组</td>
+<td>固定大小</td>
+<td>列表 <code>[]</code></td>
+<td>数组 <code>[]</code>（动态大小）</td>
+</tr>
+<tr>
+<td>字典/对象</td>
+<td>无（用 struct）</td>
+<td><code>dict</code></td>
+<td>对象 <code>{}</code></td>
+</tr>
+<tr>
+<td>函数</td>
+<td>一等公民？否</td>
+<td>是</td>
+<td>是</td>
+</tr>
+<tr>
+<td>异步</td>
+<td>手动线程</td>
+<td>async/await</td>
+<td>async/await + Promise</td>
+</tr>
+</tbody></table></div>
+<p>JS 最&quot;奇怪&quot;的地方是<strong>弱类型</strong>——它会自动做类型转换，有时候结果很离谱：</p>
+<pre data-label="javascript"><code class="language-javascript">"5" + 3    // "53"（字符串拼接）
+"5" - 3    // 2（自动转数字）
+[] + []    // ""（空字符串）
+[] + {}    // "[object Object]"
+{} + []    // 0（别问为什么）</code></pre>
+<p>这就是为什么大型项目都用 TypeScript——给 JS 加上类型检查，避免这类隐式转换的坑。</p>
+<h3 id="js-在前端做什么">JS 在前端做什么？</h3>
+<p>JS 在浏览器里的核心能力是<strong>操作 DOM（Document Object Model）</strong>。DOM 就是浏览器把 HTML 解析后生成的一棵&quot;树&quot;，JS 可以增删改查这棵树上的任何节点。</p>
+<pre data-label="javascript"><code class="language-javascript">// ===== 查找元素 =====
+const btn = document.querySelector('#my-button');     // 找 id="my-button" 的元素
+const cards = document.querySelectorAll('.card');      // 找所有 class="card" 的元素
+const title = document.querySelector('h1');           // 找第一个 &lt;h1&gt;
+
+// ===== 修改内容 =====
+title.textContent = '新标题';                         // 改文字
+title.innerHTML = '&lt;em&gt;斜体标题&lt;/em&gt;';                // 改 HTML（注意安全风险）
+
+// ===== 修改样式 =====
+title.style.color = 'red';                           // 直接改样式
+title.classList.add('highlight');                     // 添加 CSS 类
+title.classList.toggle('active');                     // 切换 CSS 类
+
+// ===== 创建和删除元素 =====
+const newP = document.createElement('p');
+newP.textContent = '我是新创建的段落';
+document.body.appendChild(newP);                     // 添加到页面末尾
+
+// ===== 事件监听 =====
+btn.addEventListener('click', function() {
+  alert('按钮被点击了！');
+});
+
+// 更多事件类型：
+// 'click'      — 点击
+// 'mouseover'  — 鼠标悬停
+// 'keydown'    — 键盘按下
+// 'submit'     — 表单提交
+// 'scroll'     — 页面滚动
+// 'load'       — 页面加载完成</code></pre>
+<p>这就是 JS 最基础的工作模式：<strong>查找元素 → 监听事件 → 操作页面</strong>。</p>
+<h3 id="一个完整的小例子">一个完整的小例子</h3>
+<p>把 HTML、CSS、JS 三者结合起来，做一个简单的计数器：</p>
+<pre data-label="html"><code class="language-html">&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+  &lt;style&gt;
+    .counter {
+      text-align: center;
+      padding: 40px;
+      font-family: sans-serif;
+    }
+    .count {
+      font-size: 48px;
+      font-weight: bold;
+      margin: 20px 0;
+    }
+    button {
+      font-size: 18px;
+      padding: 8px 24px;
+      margin: 0 8px;
+      cursor: pointer;
+      border: 2px solid #333;
+      background: white;
+      border-radius: 4px;
+    }
+    button:hover {
+      background: #333;
+      color: white;
+    }
+  &lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;div class="counter"&gt;
+    &lt;h1&gt;计数器&lt;/h1&gt;
+    &lt;div class="count" id="count"&gt;0&lt;/div&gt;
+    &lt;button id="dec"&gt;-1&lt;/button&gt;
+    &lt;button id="inc"&gt;+1&lt;/button&gt;
+  &lt;/div&gt;
+
+  &lt;script&gt;
+    let count = 0;
+    const display = document.getElementById('count');
+
+    document.getElementById('inc').addEventListener('click', () =&gt; {
+      count++;
+      display.textContent = count;
+    });
+
+    document.getElementById('dec').addEventListener('click', () =&gt; {
+      count--;
+      display.textContent = count;
+    });
+  &lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+<p>这个例子虽然简单，但展示了前端三件套的完整协作：</p>
+<ul>
+<li>HTML 定义了结构（标题、数字显示、两个按钮）</li>
+<li>CSS 定义了样式（居中、字号、按钮样式、悬停效果）</li>
+<li>JS 定义了行为（点击按钮 → 修改计数 → 更新显示）</li>
+</ul>
+<h3 id="异步编程js-最重要的特性">异步编程：JS 最重要的特性</h3>
+<p>JS 有一个和 C/Python 很不一样的地方：它是<strong>单线程</strong>的，但通过<strong>异步</strong>机制来处理耗时操作。</p>
+<p>什么意思？假设你要从服务器获取数据，网络请求可能需要 500ms。如果 JS 像 C 一样&quot;等着&quot;请求完成，整个页面就会卡住 500ms——用户不能点击、不能滚动、什么都做不了。</p>
+<p>JS 的解决方案是：发出请求后<strong>不等待</strong>，继续执行后面的代码。等数据回来了，再执行你指定的&quot;回调&quot;。</p>
+<pre data-label="javascript"><code class="language-javascript">// 现代写法：async/await（看起来像同步代码，但实际是异步的）
+async function loadPosts() {
+  try {
+    const response = await fetch('/api/posts');  // 发请求，等待响应
+    const posts = await response.json();         // 解析 JSON
+    console.log(posts);                          // 使用数据
+  } catch (error) {
+    console.error('加载失败:', error);
+  }
+}
+
+// fetch 是浏览器内置的网络请求函数
+// await 表示"等这个操作完成再继续"
+// async 标记这个函数里面有 await</code></pre>
+<p><code>fetch</code> 是前端和后端通信的核心 API。你的前端页面通过 <code>fetch</code> 向后端发送请求，后端返回 JSON 数据，前端拿到数据后更新页面。这就是现代 Web 应用的基本模式。</p>
+<h3 id="你可能听过但不太懂的概念">你可能听过但不太懂的概念</h3>
+<p><strong>npm / Node.js</strong></p>
+<p>Node.js 让 JS 可以在浏览器之外运行（比如在服务器上、在你的电脑终端里）。npm 是 Node.js 的包管理器，类似 Python 的 pip——别人写好的代码打包成&quot;包&quot;，你用 <code>npm install xxx</code> 就能安装使用。</p>
+<p>你的 md2HTML 工具就是用 Node.js 写的——<code>node build.js</code> 就是在终端里用 Node.js 执行 JS 代码。它用了 <code>marked</code>（Markdown 解析）、<code>gray-matter</code>（YAML 解析）等 npm 包。</p>
+<p><strong>框架（React / Vue / Angular）</strong></p>
+<p>当项目变大，手动操作 DOM 会变得极其复杂。想象一下：一个购物车页面，用户添加商品、修改数量、删除商品、应用优惠券——每个操作都要手动找到对应的 DOM 元素并更新。代码会变成一团乱麻。</p>
+<p>框架的核心思想是<strong>数据驱动视图</strong>：你只管修改数据，框架自动帮你更新页面。</p>
+<pre data-label="javascript"><code class="language-javascript">// 没有框架：手动操作 DOM
+document.querySelector('#cart-count').textContent = cart.length;
+document.querySelector('#total-price').textContent = calculateTotal();
+// ... 还有十几处要更新
+
+// 有框架（React 风格）：只管数据，UI 自动更新
+setCart([...cart, newItem]);  // 数据变了，页面自动重新渲染</code></pre>
+<p>你暂时不需要学框架，但知道它们存在就好。等你需要做复杂的交互式应用时，再学不迟。</p>
+<p><strong>TypeScript</strong></p>
+<p>JS 的&quot;加强版&quot;，给 JS 加上了类型系统。大型项目几乎都用 TypeScript，因为它能在编码阶段就发现很多错误：</p>
+<pre data-label="typescript"><code class="language-typescript">// TypeScript：编译时就能发现错误
+function add(a: number, b: number): number {
+  return a + b;
+}
+add("5", 3);  // 编译错误！不能把字符串传给 number 参数
+
+// JavaScript：运行时才发现问题（或者根本发现不了）
+function add(a, b) {
+  return a + b;
+}
+add("5", 3);  // 返回 "53"，没有报错，但结果是错的</code></pre>
+<p><strong>打包工具（Vite / Webpack）</strong></p>
+<p>现代前端项目通常有几十甚至几百个 JS 文件、CSS 文件、图片等。打包工具把它们合并、压缩、优化，最终输出几个文件给浏览器加载。你暂时不需要了解细节，知道有这么个东西就行。</p>
+<div class="callout">
+<p class="callout-title">JS 的学习建议</p>
+
+<p>作为大一学生，你不需要精通 JS。但理解以下概念会让你受益：</p>
+<ul>
+<li>变量、函数、条件、循环（和 C/Python 差不多）</li>
+<li>对象和数组的操作（<code>map</code>、<code>filter</code>、<code>forEach</code>）</li>
+<li>DOM 操作（<code>querySelector</code>、<code>addEventListener</code>）</li>
+<li>异步（<code>fetch</code>、<code>async/await</code>）</li>
+<li>模块化（<code>import/export</code>）</li>
+</ul>
+<p>这些够你看懂大部分前端代码了。深入学习可以等到你真正需要写复杂交互的时候。</p>
+</div>
+
+<hr>
+<h2 id="前端的完整工作流程">前端的完整工作流程</h2>
+<p>最后，把前端的完整流程串起来：</p>
+<ol>
+<li><strong>你写代码</strong>：HTML 定义结构，CSS 定义样式，JS 定义交互</li>
+<li><strong>本地预览</strong>：双击 HTML 文件（或用 Live Server 插件），在浏览器里看效果</li>
+<li><strong>调试</strong>：F12 开发者工具，修改样式、查看错误、调试 JS</li>
+<li><strong>部署</strong>：把文件上传到服务器（或 GitHub Pages）</li>
+</ol>
+<p>用户访问时：</p>
+<ol>
+<li><strong>浏览器请求</strong>：用户输入网址，浏览器向服务器发送请求</li>
+<li><strong>服务器响应</strong>：服务器把 HTML/CSS/JS 文件发回来</li>
+<li><strong>浏览器渲染</strong>：<ul>
+<li>解析 HTML → 构建 DOM 树</li>
+<li>解析 CSS → 计算每个元素的样式</li>
+<li>执行 JS → 可能修改 DOM 和样式</li>
+<li>合成最终画面 → 显示在屏幕上</li>
+</ul>
+</li>
+</ol>
+<p>对于静态网站（比如你的 GitHub Pages 项目），服务器只是一个&quot;文件柜&quot;——用户要什么文件，它就给什么文件，不做任何处理。</p>
+<p>但如果你需要用户登录、存储数据、处理支付……光靠前端就不够了。这时候，就需要<strong>后端</strong>登场了。</p>
+<hr>
+<h2 id="前端生态一览">前端生态一览</h2>
+<p>最后附一张前端技术的&quot;地图&quot;，帮你建立全局认知。你不需要学所有这些，只是知道它们存在：</p>
+<div class="table-wrap"><table><thead><tr>
+<th>类别</th>
+<th>技术</th>
+<th>用途</th>
+</tr>
+</thead><tbody><tr>
+<td>基础</td>
+<td>HTML / CSS / JS</td>
+<td>前端三件套</td>
+</tr>
+<tr>
+<td>CSS 工具</td>
+<td>Tailwind CSS / Sass</td>
+<td>更高效地写 CSS</td>
+</tr>
+<tr>
+<td>JS 框架</td>
+<td>React / Vue / Svelte</td>
+<td>构建复杂交互式应用</td>
+</tr>
+<tr>
+<td>类型系统</td>
+<td>TypeScript</td>
+<td>给 JS 加类型检查</td>
+</tr>
+<tr>
+<td>打包工具</td>
+<td>Vite / Webpack</td>
+<td>合并压缩代码</td>
+</tr>
+<tr>
+<td>包管理</td>
+<td>npm / yarn / pnpm</td>
+<td>管理第三方依赖</td>
+</tr>
+<tr>
+<td>测试</td>
+<td>Jest / Vitest</td>
+<td>自动化测试</td>
+</tr>
+<tr>
+<td>静态站点</td>
+<td>Hugo / Astro / md2HTML</td>
+<td>Markdown → 网站</td>
+</tr>
+<tr>
+<td>部署</td>
+<td>GitHub Pages / Vercel / Netlify</td>
+<td>免费托管静态网站</td>
+</tr>
+</tbody></table></div>
+<p>你现在的位置：已经掌握了基础三件套的使用，能做静态网站。这已经比大部分大一学生强了。接下来的路，取决于你想往哪个方向深入。</p>
+
+    <nav class="pager">  <a class="disabled"><span class="label">← 上一章</span><span class="title"></span></a>  <a href="02-backend.html" class="next">
+    <span class="label">下一章 →</span>
+    <span class="title">后端：服务器背后的逻辑</span>
+  </a></nav>
+  </article>
+</div>
+
+<footer>
+  <div class="set">
+    <span>服务器，前端与后端</span>
+    <span>2026 · ZH-CN</span>
+  </div>
+  <div class="set">
+    <span>Mav</span>
+  </div>
+</footer>
+<div class="search-backdrop" id="search-overlay" role="dialog" aria-modal="true" aria-label="搜索" hidden>
+  <div class="search-modal">
+    <div class="search-input-wrap">
+      <input type="search" class="search-input" placeholder="搜索内容..." aria-label="搜索内容" autocomplete="off">
+      <kbd>ESC</kbd>
+    </div>
+    <div class="search-results" role="listbox" aria-label="搜索结果"></div>
+  </div>
+</div>
+
+<!-- Mobile TOC -->
+<button class="mtoc-fab" id="mtoc-fab" aria-label="目录">TOC</button>
+<div class="mtoc-drawer" id="mtoc-drawer">
+  <div class="mtoc-content"></div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/bash.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/typescript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/yaml.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/javascript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/json.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/python.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/css.min.js"></script>
+<script src="../assets/script.js"></script>
+</body>
+</html>

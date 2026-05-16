@@ -1,0 +1,3361 @@
+# CNN实战篇：PyTorch图像处理与卷积神经网络
+
+> 作者：USTC学生 | 适用人群：**零基础 / 深度学习初学者**
+> 特别说明：本笔记面向中科大大一大二同学，即使你之前没有接触过图像处理或神经网络，也能完全理解本笔记的所有内容。
+> 更新时间：2026年3月17日
+
+---
+
+**学习提示**：本章是CNN的核心基础，建议读者先完整阅读一遍建立起直观理解，然后根据需要回来查阅公式和代码。CNN的核心思想其实非常简单——它就像一个"带着放大镜的显微镜"，在图像上滑动并提取特征。
+
+### 前置知识说明
+
+在开始本章学习之前，你需要了解：
+- **Python基础**：会写循环、函数、类等
+- **PyTorch基础**：如果你还没看过第一章，建议先学习PyTorch基础（张量创建、基本操作、自动求导等）
+- **数学**：基础的微积分，线性代数。
+
+---
+
+## 目录
+
+- [前言：为什么CNN如此重要](#前言为什么cnn如此重要)
+- [第一章：从零开始理解卷积——图像、像素与滑动窗口](#第一章从零开始理解卷积图像像素与滑动窗口)
+  - [1.1 图像在计算机中是如何表示的？](#11-图像在计算机中是如何表示的)
+  - [1.2 什么是卷积？用一个具体的例子来解释](#12-什么是卷积用一个具体的例子来解释)
+  - [1.3 卷积的数学公式与物理意义](#13-卷积的数学公式与物理意义)
+  - [1.4 常见卷积核类型及其作用](#14-常见卷积核类型及其作用)
+  - [1.5 通道、滤波器和特征图：三个核心概念](#15-通道滤波器和特征图三个核心概念)
+- [第二章：PyTorch中的卷积操作](#第二章pytorch中的卷积操作)
+  - [2.1 nn.Conv2d：二维卷积层](#21-nnconv2d二维卷积层)
+  - [2.2 卷积层的参数详解](#22-卷积层的参数详解)
+  - [2.3 卷积输出尺寸计算](#23-卷积输出尺寸计算)
+- [第三章：池化层与下采样](#第三章池化层与下采样)
+  - [3.1 nn.MaxPool2d：最大池化](#31-nnmaxpool2d最大池化)
+  - [3.2 nn.AvgPool2d：平均池化](#32-nnnavgpool2d平均池化)
+  - [3.3 nn.AdaptiveAvgPool2d：自适应池化](#33-nnadaptiveavgpool2d自适应池化)
+- [第四章：归一化与正则化](#第四章归一化与正则化)
+  - [4.1 nn.BatchNorm2d：批归一化](#41-nnbatchnorm2d批归一化)
+  - [4.2 nn.Dropout：正则化](#42-nndropout正则化)
+  - [4.3 nn.LayerNorm：层归一化](#43-nnlayernorm层归一化)
+- [第五章：图像变换与数据增强](#第五章图像变换与数据增强)
+  - [5.1 transforms.Compose：组合多个变换](#51-transformscompose组合多个变换)
+  - [5.2 transforms.ToTensor：图像转张量](#52-transformstotensor图像转张量)
+  - [5.3 transforms.Normalize：标准化](#53-transformsnormalize标准化)
+  - [5.4 transforms.Resize与transforms.CenterCrop](#54-transformsresize与transformscentercrop)
+  - [5.5 transforms.RandomHorizontalFlip：随机水平翻转](#55-transformsrandomhorizontalflip随机水平翻转)
+  - [5.6 transforms.RandomRotation：随机旋转](#56-transformsrandomrotation随机旋转)
+  - [5.7 transforms.ColorJitter：颜色抖动](#57-transformscolorjitter颜色抖动)
+  - [5.8 transforms.RandomAffine：随机仿射变换](#58-transformsrandomaffine随机仿射变换)
+  - [5.9 transforms.RandomErasing：随机擦除](#59-transformsrandomerasing随机擦除)
+- [第六章：图像数据集加载](#第六章图像数据集加载)
+  - [6.1 torchvision.datasets：内置数据集](#61-torchvisiondatasets内置数据集)
+  - [6.2 Dataset类：自定义数据集](#62-dataset类自定义数据集)
+  - [6.3 DataLoader：批量数据加载](#63-dataloader批量数据加载)
+- [第七章：CNN模型构建实战](#第七章cnn模型构建实战)
+  - [7.1 经典LeNet模型实现](#71-经典lenet模型实现)
+  - [7.2 AlexNet模型实现](#72-alexnet模型实现)
+  - [7.3 VGG模型实现](#73-vgg模型实现)
+  - [7.4 ResNet残差网络](#74-resnet残差网络)
+- [第八章：预训练模型与迁移学习](#第八章预训练模型与迁移学习)
+  - [8.1 torchvision.models：预训练模型](#81-torchvisionmodels预训练模型)
+  - [8.2 特征提取：冻结主干网络](#82-特征提取冻结主干网络)
+  - [8.3 微调：解冻部分层](#83-微调解冻部分层)
+  - [8.4 模型保存与加载](#84-模型保存与加载)
+- [第九章：训练技巧与实战](#第九章训练技巧与实战)
+  - [9.1 学习率调度器](#91-学习率调度器)
+  - [9.2 早停策略](#92-早停策略)
+  - [9.3 梯度裁剪](#93-梯度裁剪)
+  - [9.4 混合精度训练](#94-混合精度训练)
+  - [9.5 完整的训练流程](#95-完整的训练流程)
+- [第十章：模型评估与可视化](#第十章模型评估与可视化)
+  - [10.1 混淆矩阵](#101-混淆矩阵)
+  - [10.2 分类报告](#102-分类报告)
+  - [10.3 学习曲线可视化](#103-学习曲线可视化)
+  - [10.4 中间层特征可视化](#104-中间层特征可视化)
+  - [10.5 Grad-CAM：梯度加权类激活映射](#105-grad-cam梯度加权类激活映射)
+- [常见错误与解决方案](#常见错误与解决方案)
+- [CNN训练快速查阅表](#cnn训练快速查阅表)
+- [总结与下一步](#总结与下一步)
+
+---
+
+## 前言：为什么CNN如此重要
+
+卷积神经网络（Convolutional Neural Network，CNN）是深度学习在计算机视觉领域取得突破的核心技术。从2012年AlexNet在ImageNet竞赛中一举夺冠开始，CNN就成了图像分类、目标检测、语义分割等视觉任务的标配。
+
+与全连接层相比，CNN具有以下优势：
+
+**参数效率**：全连接层将每个像素作为独立输入，参数数量巨大；而卷积层通过权重共享，大幅减少参数数量。
+
+**空间不变性**：卷积操作具有平移不变性，无论物体出现在图像的哪个位置，都能被有效识别。
+
+**层次化特征提取**：CNN能够自动从浅层的边缘、纹理，到深层的物体部件，最终形成完整的物体表示。
+
+本章将系统介绍PyTorch中CNN相关的核心函数，从卷积层、池化层，到数据增强、模型构建，再到训练技巧，帮助你全面掌握CNN的PyTorch实现。
+
+---
+
+## 第一章：从零开始理解卷积——图像、像素与滑动窗口
+
+> **本章学习目标**：
+> 1. 理解图像在计算机中是如何表示的（像素、通道）
+> 2. 理解卷积操作的核心思想——"滑动窗口"做点积
+> 3. 掌握卷积的数学公式
+> 4. 理解常见卷积核的作用
+> 5. 理解通道、滤波器、特征图三个核心概念
+
+本章是整个CNN的基础。如果你是零基础学习者，请一定要仔细阅读这一章，因为它会帮助你建立起对卷积神经网络的直观理解。**卷积的核心思想非常简单：它就像一个拿着"放大镜"的人，在图像上从左到右、从上到下滑动，每滑到一个位置，就提取出该区域的特征。**
+
+---
+
+### 1.1 图像在计算机中是如何表示的？
+
+在深入卷积之前，我们首先需要理解图像在计算机中是如何存储的。
+
+#### 1.1.1 灰度图像：一张二维的"数字表格"
+
+想象一张普通的黑白照片（比如手写的数字"3"）。如果你用一个放大镜靠近看，你会发现这张照片实际上是由很多很多小格子组成的。每个小格子有一个数值，表示该点的亮度。
+
+**举例说明**：
+
+假设我们有一张非常小的灰度图像，只有5×5个像素（5行5列）：
+
+```
+图像矩阵（5×5）：
+[[255, 255, 255, 255, 255],   # 第1行（白色）
+ [255, 255,   0, 255, 255],   # 第2行（中间是黑色）
+ [255, 255,   0, 255, 255],   # 第3行（中间是黑色）
+ [255, 255,   0, 255, 255],   # 第4行（中间是黑色）
+ [255, 255, 255, 255, 255]]   # 第5行（白色）
+```
+
+在这个矩阵中：
+- **255** 表示白色（最亮）
+- **0** 表示黑色（最暗）
+- 中间的3个"0"形成了一条竖线，看起来就像数字"1"
+
+这就是灰度图像的本质：**一个二维数组（矩阵）**，每个元素是一个0-255之间的整数。
+
+在PyTorch中，这样一张灰度图像表示为形状为 `(1, H, W)` 的张量：
+- `H` = 高度（行数）
+- `W` = 宽度（列数）
+- `1` = 通道数（灰度图只有1个通道）
+
+```python
+import torch
+
+# 创建上面那个"数字1"的5×5灰度图像
+# 注意：PyTorch中图像的形状是 (通道数, 高度, 宽度)
+gray_image = torch.tensor([[[255, 255, 255, 255, 255],
+                            [255, 255,   0, 255, 255],
+                            [255, 255,   0, 255, 255],
+                            [255, 255,   0, 255, 255],
+                            [255, 255, 255, 255, 255]]], dtype=torch.float32)
+
+print("灰度图像形状:", gray_image.shape)  # torch.Size([1, 5, 5])
+```
+
+> **小提示**：实际使用中，我们通常会将像素值归一化到0-1之间（除以255），这样计算更方便。
+
+#### 1.1.2 彩色图像：三个"图层"的叠加
+
+现实中的彩色照片比灰度图复杂得多。计算机中表示彩色图像最常用的方法是**RGB模型**——每 个像素位置实际上存储了三个数值：红色(Red)、绿色(Green)、蓝色(Blue)的强度。
+
+你可以把RGB图像想象成**三张透明的玻璃纸叠在一起**：
+- 第一张玻璃纸只显示红色信息
+- 第二张玻璃纸只显示绿色信息
+- 第三张玻璃纸只显示蓝色信息
+- 三张叠加起来，就看到了彩色的图像
+
+**举例说明**：
+
+假设还是那张5×5的图片，但现在是一张彩色图片：
+
+```
+红色通道 (R)：
+[[255, 255, 255, 255, 255],
+ [255, 200, 100, 100, 255],
+ [255, 100, 100, 100, 255],
+ [255, 100, 100, 100, 255],
+ [255, 255, 255, 255, 255]]
+
+绿色通道 (G)：
+[[255, 255, 255, 255, 255],
+ [255, 150,  50,  50, 255],
+ [255,  50,  50,  50, 255],
+ [255,  50,  50,  50, 255],
+ [255, 255, 255, 255, 255]]
+
+蓝色通道 (B)：
+[[255, 255, 255, 255, 255],
+ [255, 100,  50,  50, 255],
+ [255,  50,  50,  50, 255],
+ [255,  50,  50,  50, 255],
+ [255, 255, 255, 255, 255]]
+```
+
+在PyTorch中，彩色图像表示为形状为 `(3, H, W)` 的张量：
+- `3` = 通道数（红、绿、蓝三个通道）
+- `H` = 高度
+- `W` = 宽度
+
+```python
+# 创建5×5的RGB彩色图像
+# 形状: (通道数=3, 高度=5, 宽度=5)
+rgb_image = torch.zeros(3, 5, 5)
+
+# 红色通道 - 设置一些红色像素
+rgb_image[0, 2, 2] = 255  # 在中心位置设置红色
+
+# 绿色通道
+rgb_image[1, 2, 2] = 100
+
+# 蓝色通道
+rgb_image[2, 2, 2] = 50
+
+print("RGB图像形状:", rgb_image.shape)  # torch.Size([3, 5, 5])
+print("红色通道:\n", rgb_image[0])
+print("绿色通道:\n", rgb_image[1])
+print("蓝色通道:\n", rgb_image[2])
+```
+
+#### 1.1.3 批量图像：张量的批量处理
+
+在实际训练中，我们通常一次处理多张图像。为了提高效率，PyTorch使用一个4维张量来存储批量图像：
+
+```
+张量形状: (批量大小, 通道数, 高度, 宽度)
+       = (batch_size, channels, height, width)
+       = (B, C, H, W)
+```
+
+**举例说明**：
+
+```python
+# 创建批量为4的RGB图像数据集
+# 4张图片，每张图片3通道（RGB），每张图片224×224像素
+batch_images = torch.randn(4, 3, 224, 224)
+
+print("批量图像形状:", batch_images.shape)
+# torch.Size([4, 3, 224, 224])
+# 解释：4张图片，每张3通道，224高224宽
+```
+
+---
+
+### 1.2 什么是卷积？用一个具体的例子来解释
+
+现在你理解了图像的本质——它就是一个数字矩阵。那么**卷积**到底在做什么呢？
+
+#### 1.2.1 核心思想：滑动窗口 + 点积
+
+**卷积的核心思想只有两步**：
+
+1. **取出一个局部区域**：在输入图像上取一个“小窗口”（比如3×3的区域）
+2. **做点积运算**：把这个小窗口里的每个数值，与卷积核（也是一个小矩阵）对应位置相乘，然后求和
+
+**用一个具体例子来演示**：
+
+假设我们有一个5×5的输入图像：
+
+```
+输入图像 (5×5):
+[[1, 1, 1, 0, 0],
+ [0, 1, 1, 1, 0],
+ [0, 0, 1, 1, 1],
+ [0, 0, 1, 1, 0],
+ [0, 1, 1, 0, 0]]
+```
+
+还有一个3×3的卷积核（也叫做"滤波器"，英文叫 Kernel）：
+
+```
+卷积核/滤波器 (3×3):
+[[1, 0, 1],
+ [0, 1, 0],
+ [1, 0, 1]]
+```
+
+**现在我们来做卷积操作**：
+
+**第一步：取窗口**
+
+我们从图像的左上角开始，取一个3×3的区域：
+
+```
+输入图像 (标记了第一个窗口):
+[1, 1, 1]    ← 第一个3×3窗口
+[0, 1, 1]
+[0, 0, 1]
+```
+
+**第二步：点积计算**
+
+将窗口中的每个元素与卷积核对应位置的元素相乘，然后求和：
+
+```
+窗口 (3×3):           卷积核 (3×3):       乘积:
+[[1, 1, 1],         [[1, 0, 1],        [[1, 0, 1],
+ [0, 1, 1],    *     [0, 1, 0],    =    [0, 1, 0],
+ [0, 0, 1]]          [1, 0, 1]]         [0, 0, 1]]
+
+点积结果 = 1×1 + 1×0 + 1×1 + 0×0 + 1×1 + 1×0 + 0×1 + 0×0 + 1×1
+         = 1 + 0 + 1 + 0 + 1 + 0 + 0 + 0 + 1
+         = 4
+```
+
+所以，卷积操作输出的第一个值就是 **4**。
+
+**第三步：滑动**
+
+然后，我们把这个"小窗口"向右滑动一格（步长为1），继续做同样的操作：
+
+```
+下一个窗口位置:
+[1, 1, 0]    ← 第二个3×3窗口
+[1, 1, 1]
+[0, 1, 1]
+
+点积 = 1×1 + 1×0 + 0×1 + 1×0 + 1×1 + 1×0 + 0×1 + 1×0 + 1×1
+     = 1 + 0 + 0 + 0 + 1 + 0 + 0 + 0 + 1
+     = 3
+```
+
+**第四步：遍历全图**
+
+重复这个过程，直到遍历完整个图像。最终我们会得到一个3×3的输出矩阵（注意一下，卷积扫到的面积是3×3，最后得到的是一个值）：
+
+```
+卷积输出 (3×3):
+[[4, 3, 4],
+ [3, 4, 3],
+ [4, 3, 4]]
+```
+
+这就是卷积操作的全部过程！**简单来说，卷积就是：用一个小窗口（卷积核）在图像上滑动，每到一个位置就做一次"对应元素相乘后求和"的运算。**
+
+#### 1.2.2 用PyTorch代码来验证
+
+让我们用PyTorch来实际验证上面的计算过程：
+
+```python
+import torch
+import torch.nn as nn
+
+# 创建输入图像 (1, 1, 5, 5) - 1张灰度图，5×5
+input_image = torch.tensor([[[[1, 1, 1, 0, 0],
+                              [0, 1, 1, 1, 0],
+                              [0, 0, 1, 1, 1],
+                              [0, 0, 1, 1, 0],
+                              [0, 1, 1, 0, 0]]]], dtype=torch.float32)
+
+# 创建卷积核 (1, 1, 3, 3) - 1个卷积核，1通道，3×3
+kernel = torch.tensor([[[[1, 0, 1],
+                         [0, 1, 0],
+                         [1, 0, 1]]]], dtype=torch.float32)
+
+# 创建卷积层
+conv = nn.Conv2d(in_channels=1, out_channels=1, kernel_size=3, bias=False)
+
+# 手动设置卷积核权重
+conv.weight.data = kernel
+
+# 执行卷积
+output = conv(input_image)
+
+print("输入图像:\n", input_image[0, 0])
+print("\n卷积核:\n", kernel[0, 0])
+print("\n卷积输出:\n", output[0, 0])
+```
+
+**输出结果**：
+
+```
+输入图像:
+ tensor([[1., 1., 1., 0., 0.],
+        [0., 1., 1., 1., 0.],
+        [0., 0., 1., 1., 1.],
+        [0., 0., 1., 1., 0.],
+        [0., 1., 1., 0., 0.]])
+
+卷积核:
+ tensor([[1., 0., 1.],
+        [0., 1., 0.],
+        [1., 0., 1.]])
+
+卷积输出:
+ tensor([[4., 3., 4.],
+        [2., 4., 3.],
+        [2., 3., 4.]])
+```
+
+完美匹配我们的手动计算！
+
+Mav's Tip：这里的`nn.Conv2d`是一个类，会创建一个卷积层对象（如代码中的 `conv`），之后可以把这个对象当函数来调用。
+还有一点，创建了 `conv` 只是明确了基本“交通规则”，还需要像下方的`conv.weight.data` 一样来引入你自定义的kernel才有用。
+
+---
+
+### 1.3 卷积的数学公式与物理意义
+
+#### 1.3.1 数学公式
+
+卷积操作的数学表达式如下：
+
+$$(I * K)_{i,j} = \sum_{m}\sum_{n} I_{i+m, j+n} \cdot K_{m,n}$$
+
+其中：
+- $I$ 是输入图像（Input）
+- $K$ 是卷积核（Kernel）
+- $(I * K)_{i,j}$ 是输出特征图中位置 $(i,j)$ 的值
+- $m, n$ 是卷积核的偏移量
+
+**更直观的理解**：
+
+如果我们使用0索引（从0开始），并且卷积核大小为 $k \times k$，公式可以写成：
+
+$$(I * K)_{i,j} = \sum_{a=0}^{k-1}\sum_{b=0}^{k-1} I_{i+a, j+b} \cdot K_{a,b}$$
+
+**举例说明**：
+
+对于位置 $(i=0, j=0)$ 的输出：
+
+$$(I * K)_{0,0} = I_{0,0}K_{0,0} + I_{0,1}K_{0,1} + I_{0,2}K_{0,2} + \cdots + I_{2,2}K_{2,2}$$
+
+这正是我们前面手动计算的例子！
+
+#### 1.3.2 物理意义：特征提取
+
+**为什么卷积能够提取特征？**
+
+卷积核就像一个"探测器"或"过滤器"。不同的卷积核能够"检测"图像中不同的模式：
+
+- **水平边缘检测器**：检测水平方向的边缘
+- **垂直边缘检测器**：检测垂直方向的边缘
+- **锐化滤波器**：增强图像的对比度
+- **模糊滤波器**：平滑图像，去除噪声
+
+**关键洞察**：卷积核本质上是在做**"模式匹配"**。如果输入图像的某一部分与卷积核的"形状"相似，那么该位置的输出值就会很大（表示"匹配上了"）。
+
+---
+
+### 1.4 常见卷积核类型及其作用
+
+不同的卷积核能够提取不同的特征。让我们来看看几种经典的卷积核及其作用。
+
+#### 1.4.1 边缘检测卷积核
+
+边缘是图像最基本的特征之一。边缘检测卷积核能够检测出图像中颜色发生突变的位置。
+
+**水平边缘检测**：
+
+```python
+# 水平边缘检测卷积核
+# 这种卷积核能够检测水平方向的颜色变化
+kernel_h = torch.tensor([[[-1., -1., -1.],
+                         [ 0.,  0.,  0.],
+                         [ 1.,  1.,  1.]]])
+```
+
+**垂直边缘检测**：
+
+```python
+# 垂直边缘检测卷积核
+# 这种卷积核能够检测垂直方向的颜色变化
+kernel_v = torch.tensor([[[-1., 0., 1.],
+                         [-1., 0., 1.],
+                         [-1., 0., 1.]]])
+```
+
+**为什么能检测边缘？让我们用具体数值来理解**：
+
+```
+假设输入图像的某一区域:
+[[10, 10, 10],     ← 上方全是暗色（10）
+ [10, 10, 10],
+ [90, 90, 90]]     ← 下方全是亮色（90）
+                    ↑  颜色突变的地方就是边缘
+
+使用水平边缘检测卷积核:
+[[-1, -1, -1],
+ [ 0,  0,  0],
+ [ 1,  1,  1]]
+
+点积计算:
+= 10×(-1) + 10×(-1) + 10×(-1)   ← 第一行
++ 10×0  + 10×0  + 10×0          ← 第二行
++ 90×1  + 90×1  + 90×1          ← 第三行
+= -30 + 0 + 270
+= 240  ← 一个很大的正数！
+```
+
+**关键发现**：当图像上方颜色暗、下方颜色亮时，输出是一个大正数。这意味着检测到了"从暗到亮"的水平边缘！
+
+如果我们把图像反过来（上方亮、下方暗）：
+
+```
+[[90, 90, 90],     ← 上方全是亮色（90）
+ [10, 10, 10],
+ [10, 10, 10]]     ← 下方全是暗色（10）
+
+点积 = 90×(-1) + 90×(-1) + 90×(-1) + 10×0 + 10×0 + 10×0 + 10×1 + 10×1 + 10×1
+     = -270 + 0 + 30
+     = -240  ← 一个很大的负数！
+```
+
+**结论**：
+- **正数**：表示"从暗到亮"的边缘
+- **负数**：表示"从亮到暗"的边缘
+- **接近0**：表示没有边缘（颜色均匀）
+
+#### 1.4.2 锐化卷积核
+
+锐化卷积核能够增强图像的对比度，让边缘更加明显。
+
+```python
+# 锐化卷积核
+kernel_sharpen = torch.tensor([[[[ 0., -1.,  0.],
+                                 [-1.,  5., -1.],
+                                 [ 0., -1.,  0.]]]])
+```
+
+**工作原理**：
+
+```
+原始像素:
+[[10, 20, 10],
+ [20, 20, 20],
+ [10, 20, 10]]
+
+中心像素是20，周围也是20，没有变化
+
+锐化卷积:
+[[ 0, -1,  0],
+ [-1,  5, -1],
+ [ 0, -1,  0]]
+
+点积 = 20×0 + 20×(-1) + 20×0      ← 上下左右各一个20
+     + 20×(-1) + 20×5 + 20×(-1)  ← 中心×5
+     + 20×0 + 20×(-1) + 20×0
+     = 0 -20 + 0 -20 +100 -20 +0 -20 +0
+     = 20
+
+原来中心是20，输出是20，保持不变
+```
+
+但是！如果中心像素与周围不同：
+
+```
+原始像素:
+[[10, 20, 10],
+ [20, 80, 20],   ← 中心80特别亮
+ [10, 20, 10]]
+
+点积 = 10×0 + 20×(-1) + 10×0    ← 上下左右
+     + 20×(-1) + 80×5 + 20×(-1)
+     + 10×0 + 20×(-1) + 10×0
+     = 0 -20 +0 -20 +400 -20 +0 -20 +0
+     = 320  ← 增强了很多！
+
+输出 = 320  远大于原始的80
+```
+
+**结论**：锐化卷积核会**放大**中心像素与周围像素的差异，从而增强边缘。
+
+#### 1.4.3 模糊/平滑卷积核
+
+模糊卷积核能够减少图像噪声，让图像变得平滑。
+
+```python
+# 模糊卷积核（均值滤波器）
+# 取周围8个像素和中心像素的平均值
+kernel_blur = torch.tensor([[[[1., 1., 1.],
+                              [1., 1., 1.],
+                              [1., 1., 1.]]]]) / 9  # 除以9是为了归一化
+```
+
+**高斯模糊（更常用）**：
+
+```python
+# 高斯模糊卷积核
+# 离中心越近权重越大，符合高斯分布
+kernel_gaussian = torch.tensor([[[[1., 2., 1.],
+                                  [2., 4., 2.],
+                                  [1., 2., 1.]]]]) / 16  # 归一化
+```
+
+#### 1.4.4 用代码验证各种卷积核的效果
+
+```python
+import torch
+import torch.nn as nn
+import matplotlib.pyplot as plt
+
+# 创建测试图像（简单的梯度图案）
+test_image = torch.zeros(1, 1, 10, 10)
+# 左边是暗的，右边是亮的 - 用于测试边缘检测
+test_image[0, 0, :, :5] = 0      # 左边黑色
+test_image[0, 0, :, 5:] = 255    # 右边白色
+
+# 定义各种卷积核
+kernels = {
+    '水平边缘': torch.tensor([[[[-1., -1., -1.],
+                                [ 0.,  0.,  0.],
+                                [ 1.,  1.,  1.]]]]),
+    '垂直边缘': torch.tensor([[[[-1., 0., 1.],
+                                [-1., 0., 1.],
+                                [-1., 0., 1.]]]]),
+    '锐化': torch.tensor([[[[ 0., -1.,  0.],
+                            [-1.,  5., -1.],
+                            [ 0., -1.,  0.]]]]),
+    '模糊': torch.tensor([[[[1., 1., 1.],
+                            [1., 1., 1.],
+                            [1., 1., 1.]]]]) / 9,
+}
+
+# 创建卷积层并应用每个卷积核
+fig, axes = plt.subplots(1, 5, figsize=(15, 3))
+
+# 显示原图
+axes[idx+1].imshow(output[0, 0].detach().numpy(), cmap='gray')
+axes[0].set_title('原图')
+axes[0].axis('off')
+
+# 应用各个卷积核
+for idx, (name, kernel) in enumerate(kernels.items()):
+    conv = nn.Conv2d(1, 1, kernel_size=3, bias=False)
+    conv.weight.data = kernel
+    output = conv(test_image)
+
+    axes[idx+1].imshow(output[0, 0].numpy(), cmap='gray')
+    axes[idx+1].set_title(name)
+    axes[idx+1].axis('off')
+
+plt.tight_layout()
+plt.show()
+```
+
+---
+
+### 1.5 通道、滤波器和特征图：三个核心概念
+
+理解"通道"、"滤波器"和"特征图"这三个概念，对于掌握CNN至关重要。
+
+#### 1.5.1 通道（Channel）
+
+**什么是通道？**
+
+通道可以理解为图像的"层面"或"视角"：
+
+- **灰度图像**：1个通道（只有亮度信息）
+- **RGB彩色图像**：3个通道（红色、绿色、蓝色三个层面）
+- **卷积网络中间层**：通常有几十甚至几百个通道
+
+**举例说明**：
+
+```python
+import torch
+
+# 模拟卷积网络中间层的特征图
+# 假设是第5层的输出，有64个通道，每个通道是28×28
+features = torch.randn(1, 64, 28, 28)
+
+print("特征图形状:", features.shape)
+# torch.Size([1, 64, 28, 28])
+# 解释：1张图片，64个通道，每个通道28×28
+
+# 查看单个通道
+print("第0个通道的形状:", features[0, 0].shape)  # torch.Size([28, 28])
+```
+
+**通道的物理意义**：
+
+在卷积网络中，每个通道通常代表一种"特征"。比如：
+- 通道0：检测"水平边缘"
+- 通道1：检测"垂直边缘"
+- 通道2：检测"45度斜边"
+- 通道3：检测"圆形"
+- ...
+
+这些通道不是我们设计的，而是网络**自动学习**到的！
+
+**Mav's Tips：**这里通道不包括输入层。
+
+#### 1.5.2 滤波器/卷积核（Filter/Kernel）
+
+**什么是滤波器？**
+
+滤波器就是卷积操作中的那个"小窗口"，也叫做"卷积核"或"权重矩阵"。
+
+在PyTorch中，一个滤波器的形状是：
+- `(in_channels, kH, kW)` 对于单个滤波器
+- `(out_channels, in_channels, kH, kW)` 对于整个卷积层
+
+```python
+import torch.nn as nn
+
+# 定义一个卷积层
+conv = nn.Conv2d(in_channels=3, out_channels=64, kernel_size=3, padding=1)
+
+# 查看滤波器的形状
+print("滤波器权重形状:", conv.weight.shape)
+# torch.Size([64, 3, 3, 3])
+# 解释：有64个滤波器，每个滤波器有3个通道（对应RGB），每个滤波器是3×3
+
+print("偏置形状:", conv.bias.shape)
+# torch.Size([64]) - 每个滤波器有一个偏置
+```
+
+**滤波器 vs 通道**：
+
+- **滤波器**：是卷积核，是**参数**（需要学习）
+- **通道**：是特征图，是卷积的**输出**
+
+#### 1.5.3 特征图（Feature Map）
+
+**什么是特征图？**
+
+特征图是卷积操作**输出的结果**。每个滤波器会产生一个特征图。
+
+```python
+import torch
+import torch.nn as nn
+
+# 输入：1张RGB图片（3通道），224×224
+x = torch.randn(1, 3, 224, 224)
+
+# 卷积层：3通道输入，64通道输出
+conv = nn.Conv2d(3, 64, kernel_size=3, padding=1)
+
+# 输出：1张图片，64通道，224×224
+output = conv(x)
+
+print("输入形状:", x.shape)       # torch.Size([1, 3, 224, 224])
+print("输出形状:", output.shape)  # torch.Size([1, 64, 224, 224])
+```
+
+**特征图的含义**：
+
+```
+输入图像 (RGB):
+[红色通道]   [绿色通道]   [蓝色通道]
+  ↓            ↓            ↓
+         ↓    卷积层 (64个滤波器)    ↓
+         ↓            ↓            ↓
+[特征图0]  [特征图1]  [特征图2] ... [特征图63]
+```
+
+每个输出通道（特征图）都是输入图像经过某个滤波器处理后的结果。
+
+#### 1.5.4 三者关系总结
+
+| 概念 | 英文 | 含义 | 形状示例 |
+|------|------|------|----------|
+| **通道** | Channel | 图像的"层面"，或卷积输出的"特征维度" | `(64, H, W)` = 64个通道 |
+| **滤波器** | Filter/Kernel | 卷积核，卷积操作中滑动的小窗口，**是需要学习的参数** | `(3, 3, 3)` = 3通道的3×3卷积核 |
+| **特征图** | Feature Map | 卷积操作的输出结果 | `(1, 64, 224, 224)` = 1张图，64个特征图 |
+
+**理解要点**：
+
+1. **输入图像**有通道（如RGB的3个通道）
+2. **卷积层**有滤波器（每个滤波器也是一个"小图像"，但它的数值是学出来的）
+3. **卷积输出**是特征图（每个滤波器产生一个特征图）
+4. **特征图的通道数** = **滤波器的数量** = **卷积层的out_channels**
+
+---
+
+### 1.6 完整的卷积过程：一个滤波器的视角
+
+让我们用一个完整的例子来理解整个卷积过程：
+
+```python
+import torch
+import torch.nn as nn
+
+# 假设输入是一张RGB图像
+# 形状: (batch=1, channels=3, height=5, width=5)
+input_image = torch.randn(1, 3, 5, 5)
+
+print("=" * 50)
+print("输入图像信息")
+print("=" * 50)
+print(f"形状: {input_image.shape}")
+print(f"通道数: {input_image.shape[1]} (RGB三个通道)")
+print(f"每个通道的尺寸: {input_image.shape[2]}×{input_image.shape[3]}")
+
+# 创建卷积层：3通道输入 -> 1通道输出，3×3卷积核
+conv = nn.Conv2d(in_channels=3, out_channels=1, kernel_size=3, bias=False)
+
+print("\n" + "=" * 50)
+print("卷积层信息")
+print("=" * 50)
+print(f"输入通道数: {conv.in_channels}")
+print(f"输出通道数: {conv.out_channels}")
+print(f"卷积核大小: {conv.kernel_size}")
+print(f"权重形状: {conv.weight.shape}")
+print(f"偏置形状: {conv.bias}")
+
+# 执行卷积
+output = conv(input_image)
+
+print("\n" + "=" * 50)
+print("卷积输出信息")
+print("=" * 50)
+print(f"输出形状: {output.shape}")
+print(f"输出通道数: {output.shape[1]} (每个滤波器产生一个通道)")
+print(f"输出尺寸: {output.shape[2]}×{output.shape[3]}")
+```
+
+**运行结果**（每次运行会不同，因为是随机初始化）：
+
+```
+==================================================
+输入图像信息
+==================================================
+形状: torch.Size([1, 3, 5, 5])
+通道数: 3 (RGB三个通道)
+每个通道的尺寸: 5×5
+
+==================================================
+卷积层信息
+==================================================
+输入通道数: 3
+输出通道数: 1
+卷积核大小: (3, 3)
+权重形状: torch.Size([1, 3, 3, 3])
+偏置形状: None
+
+==================================================
+卷积输出信息
+==================================================
+输出形状: torch.Size([1, 1, 3, 3])
+输出通道数: 1 (每个滤波器产生一个通道)
+输出尺寸: 3×3
+```
+
+**计算过程可视化**：
+
+```
+输入图像 (3通道, 5×5):
+[通道0: 5×5]  [通道1: 5×5]  [通道2: 5×5]
+   ↓              ↓             ↓
+   ├──────────────┼──────────────┤
+   │         卷积层: 1个滤波器       │
+   │    权重形状: (3, 3, 3)         │
+   │    (3通道输入 × 3×3卷积核)     │
+   ├──────────────┼──────────────┤
+   ↓              ↓             ↓
+   [输出特征图: 1通道, 3×3]
+```
+
+---
+
+## 第二章：PyTorch中的卷积操作
+
+> **本章学习目标**：
+> 1. 掌握 `nn.Conv2d` 的用法
+> 2. 理解 `kernel_size`、`stride`、`padding`、`groups`、`dilation` 等参数
+> 3. 掌握卷积输出尺寸的计算公式
+
+在第一章中，我们理解了卷积的原理。现在我们学习如何在PyTorch中实现卷积操作。
+
+### 2.1 nn.Conv2d：二维卷积层
+
+`nn.Conv2d` 是PyTorch中实现二维卷积的核心类。
+
+```python
+import torch.nn as nn
+
+# 基础用法
+conv = nn.Conv2d(in_channels=3, out_channels=64, kernel_size=3, padding=1)
+
+# 参数说明：
+# in_channels: 输入通道数（RGB图像为3，灰度图为1）
+# out_channels: 输出通道数（卷积核的数量，也等于输出特征图的数量）
+# kernel_size: 卷积核大小（3表示3x3，也可以是5, 7等奇数）
+# padding: 填充层数（用于保持图像尺寸）
+```
+
+**Mav's Tips：**Padding是指在最外层填充一些像素，通常是空白的。
+
+**前向传播**：
+
+```python
+# 输入形状：(batch_size, channels, height, width)
+x = torch.randn(8, 3, 224, 224)  # 8张RGB图像，224x224
+
+# 通过卷积层
+output = conv(x)
+print(output.shape)  # torch.Size([8, 64, 224, 224])
+# 输出：batch_size=8, 通道数=64, 高度=224, 宽度=224
+```
+
+**卷积层的内部结构**：
+
+```python
+# 查看卷积层的参数
+conv = nn.Conv2d(3, 64, kernel_size=3, padding=1)
+print("权重形状:", conv.weight.shape)   # torch.Size([64, 3, 3, 3])
+print("偏置形状:", conv.bias.shape)     # torch.Size([64])
+
+# 权重形状解释：
+# 64个卷积核，每个卷积核3个通道（对应RGB），每个卷积核3x3大小
+```
+
+### 2.2 卷积层的参数详解
+
+`nn.Conv2d` 有多个重要参数，理解它们对于设计网络结构非常重要。
+
+#### 2.2.1 kernel_size：卷积核大小
+
+卷积核决定了卷积操作提取特征的"视野范围"。常见的卷积核大小有1×1、3×3、5×5、7×7等。
+
+```python
+# 1x1卷积：用于改变通道数，类似全连接
+conv_1x1 = nn.Conv2d(256, 64, kernel_size=1)
+
+# 3x3卷积：最常用的卷积核大小
+conv_3x3 = nn.Conv2d(64, 128, kernel_size=3, padding=1)
+
+# 5x5卷积：更大的感受野
+conv_5x5 = nn.Conv2d(64, 128, kernel_size=5, padding=2)
+
+# 可以使用元组指定不同的高宽核
+conv_rect = nn.Conv2d(64, 128, kernel_size=(3, 5), padding=(1, 2))
+```
+
+> **感受野（Receptive Field）**：指的是卷积神经网络中，一个输出像素点"看"到的输入区域的大小。3×3的卷积核，感受野就是3×3；5×5的卷积核，感受野就是5×5。
+
+#### 2.2.2 stride：步长
+
+`stride` 控制卷积核在图像上滑动的步长。stride=1时逐像素移动，stride=2时每次移动2个像素（输出尺寸减半）。
+
+```python
+# stride=1（默认）：保持尺寸
+conv_s1 = nn.Conv2d(3, 64, kernel_size=3, stride=1, padding=1)
+x = torch.randn(1, 3, 224, 224)
+print(conv_s1(x).shape)  # torch.Size([1, 64, 224, 224])
+
+# stride=2：尺寸减半
+conv_s2 = nn.Conv2d(3, 64, kernel_size=3, stride=2, padding=1)
+print(conv_s2(x).shape)  # torch.Size([1, 64, 112, 112])
+
+# stride=3：尺寸变为原来的1/3
+conv_s3 = nn.Conv2d(3, 64, kernel_size=3, stride=3, padding=1)
+print(conv_s3(x).shape)  # torch.Size([1, 64, 75, 75])  # ceil(224/3)
+```
+
+#### 2.2.3 padding：填充
+
+`padding` 在输入图像边缘添加像素，以控制输出尺寸。
+
+```python
+# padding=0（无填充）：尺寸减小
+conv_no_pad = nn.Conv2d(3, 64, kernel_size=3)
+x = torch.randn(1, 3, 224, 224)
+print(conv_no_pad(x).shape)  # torch.Size([1, 64, 222, 222])
+
+# padding=1：保持尺寸（最常用）
+conv_pad1 = nn.Conv2d(3, 64, kernel_size=3, padding=1)
+print(conv_pad1(x).shape)  # torch.Size([1, 64, 224, 224])
+
+# padding=2：尺寸增加
+conv_pad2 = nn.Conv2d(3, 64, kernel_size=3, padding=2)
+print(conv_pad2(x).shape)  # torch.Size([1, 64, 226, 226])
+
+# padding=kernel_size//2：保持尺寸的通用公式
+kernel_size = 5
+padding = kernel_size // 2  # 2
+conv_pad = nn.Conv2d(3, 64, kernel_size=kernel_size, padding=padding)
+print(conv_pad(x).shape)  # torch.Size([1, 64, 224, 224])
+```
+
+#### 2.2.4 groups：分组卷积
+
+`groups` 参数允许将输入和输出分成多个组，实现分组卷积。这减少了计算量，也是Depthwise Separable Convolution的基础。
+
+```python
+# groups=1（默认）：普通卷积
+conv_normal = nn.Conv2d(12, 12, kernel_size=3, padding=1, groups=1)
+
+# groups=in_channels=out_channels：Depthwise卷积
+# 输入12通道，输出12通道，分12组
+conv_depthwise = nn.Conv2d(12, 12, kernel_size=3, padding=1, groups=12)
+# 权重形状：torch.Size([12, 1, 3, 3]) - 每组独立
+
+# groups=in_channels：逐通道卷积，每个通道独立处理
+# groups=out_channels：逐点卷积，1x1卷积
+```
+
+**Mav's Tips：**group减少了通道之间的关联，牺牲了表达能力换取效率的提升，在某些情况有用，但有些情况会降低精度。
+
+#### 2.2.5 dilation：空洞卷积
+
+`dilation` 参数控制卷积核中间的空隙大小，用于增大感受野而不增加参数量。
+
+```python
+# dilation=1（默认）：普通卷积
+conv_d1 = nn.Conv2d(3, 64, kernel_size=3, padding=1, dilation=1)
+
+# dilation=2：空洞卷积，感受野扩大
+conv_d2 = nn.Conv2d(3, 64, kernel_size=3, padding=2, dilation=2)
+# 实际感受野：1 + (3-1)*2 = 5x5
+
+# dilation=4：更大的感受野
+conv_d4 = nn.Conv2d(3, 64, kernel_size=3, padding=4, dilation=4)
+# 实际感受野：1 + (3-1)*4 = 9x9
+```
+
+**Mav's Tips：** **感受野**是指把当前像素反推会原始图片占的面积，比如在kernel_size=3的情况，第一层感受野是3×3，第二层就是5×5了，以此类推。dilation则可以有效扩大感受野，让网络学习更多的细节。
+但同时也要注意避免“Gridding Artifact（网格效应）”，即空隙太大，忽略了中间的内容。
+
+### 2.3 卷积输出尺寸计算
+
+理解卷积输出尺寸的计算公式对于设计网络结构至关重要。
+
+**通用公式**：
+
+$$H_{out} = \left\lfloor\frac{H_{in} + 2 \times padding - dilation \times (kernel\_size - 1) - 1}{stride} + 1\right\rfloor$$
+
+简化版（当dilation=1时）：
+
+$$H_{out} = \left\lfloor\frac{H_{in} + 2 \times padding - kernel\_size}{stride} + 1\right\rfloor$$
+
+**常用快速计算**：
+
+```python
+def calc_conv_output_size(H, W, kernel_size=3, stride=1, padding=0, dilation=1):
+    """计算卷积输出尺寸"""
+    H_out = ((H + 2*padding - dilation*(kernel_size-1) - 1) // stride) + 1
+    W_out = ((W + 2*padding - dilation*(kernel_size-1) - 1) // stride) + 1
+    return H_out, W_out
+
+# 示例：224x224输入，3x3卷积，stride=2，padding=1
+H, W = 224, 224
+H_out, W_out = calc_conv_output_size(H, W, kernel_size=3, stride=2, padding=1)
+print(f"输出尺寸: {H_out}x{W_out}")  # 112x112
+```
+
+**实际应用示例**：
+
+```python
+import torch
+import torch.nn as nn
+
+# 构建一个典型的CNN特征提取器
+class FeatureExtractor(nn.Module):
+    def __init__(self):
+        super().__init__()
+        # Block 1: 224 -> 112 -> 56
+        self.conv1 = nn.Conv2d(3, 64, kernel_size=7, stride=2, padding=3)
+        self.pool1 = nn.MaxPool2d(kernel_size=3, stride=2, padding=1)
+
+        # Block 2: 56 -> 28
+        self.conv2 = nn.Conv2d(64, 128, kernel_size=3, stride=2, padding=1)
+
+        # Block 3: 28 -> 14
+        self.conv3 = nn.Conv2d(128, 256, kernel_size=3, stride=2, padding=1)
+
+        # Block 4: 14 -> 7
+        self.conv4 = nn.Conv2d(256, 512, kernel_size=3, stride=2, padding=1)
+
+    def forward(self, x):
+        x = self.pool1(torch.relu(self.conv1(x))) 
+        x = torch.relu(self.conv2(x))               
+        x = torch.relu(self.conv3(x))             
+        x = torch.relu(self.conv4(x))               
+        return x
+
+# 测试
+extractor = FeatureExtractor()
+x = torch.randn(1, 3, 224, 224)
+output = extractor(x)
+print("输出形状:", output.shape)  # torch.Size([1, 512, 7, 7])
+```
+
+**Mav's Tips：**这里有一个小细节，我们直接调用了`extractor(x)`，为什么不是`extractor.forward(x)`？这是因为这个类继承了`nn.Module`，`nn.Module`里面有一个`__call__`方法，是专门调用`forward()`函数的，也就是说，`extractor(x)`其实是`extractor.forward(x)`的缩写，更加便捷。
+
+---
+
+## 第三章：池化层与下采样
+
+池化层（Pooling Layer）用于降低特征图的空间尺寸，同时保留重要信息。池化操作可以增强网络的平移不变性，减少计算量，并帮助控制过拟合。
+
+### 3.1 nn.MaxPool2d：最大池化
+
+最大池化选取每个池化窗口中的最大值，是最常用的池化方式。
+
+```python
+import torch.nn as nn
+
+# 基础用法
+maxpool = nn.MaxPool2d(kernel_size=2, stride=2)
+
+# 参数说明：
+# kernel_size: 池化窗口大小（2表示2x2）
+# stride: 步长（默认等于kernel_size，即不重叠）
+# padding: 填充
+# dilation: 空洞率
+# return_indices: 是否返回最大值的索引（用于MaxUnpool）
+```
+
+```python
+# 输入
+x = torch.randn(1, 1, 4, 4)
+print("输入:\n", x)
+# tensor([[[[ 0.2341,  0.2341, -0.0116, -1.0414],
+#          [-0.7376, -0.5123,  0.2134,  0.3894],
+#          [-1.5151,  0.0160,  0.4503, -0.0131],
+#          [-0.4530,  0.0339, -0.3623,  0.1413]]]])
+
+# 最大池化
+output = maxpool(x)
+print("输出:\n", output)
+# tensor([[[[ 0.2341,  0.3894],
+#          [ 0.0160,  0.4503]]]])
+```
+
+**池化后尺寸计算**：
+
+```python
+# 池化尺寸计算公式
+def calc_pool_output_size(H, W, kernel_size=2, stride=2, padding=0, dilation=1):
+    H_out = ((H + 2*padding - dilation*(kernel_size-1) - 1) // stride) + 1
+    W_out = ((W + 2*padding - dilation*(kernel_size-1) - 1) // stride) + 1
+    return H_out, W_out
+
+# 常见配置
+H, W = 224, 224
+
+# 2x2池化，stride=2
+H_out, W_out = calc_pool_output_size(H, W, kernel_size=2, stride=2)
+print(f"2x2池化，stride=2: {H_out}x{W_out}")  # 112x112
+
+# 3x3池化，stride=2
+H_out, W_out = calc_pool_output_size(H, W, kernel_size=3, stride=2, padding=1)
+print(f"3x3池化，stride=2，padding=1: {H_out}x{W_out}")  # 112x112
+```
+
+**实际应用**：
+
+```python
+class CNNWithPooling(nn.Module):
+    def __init__(self):
+        super().__init__()
+        # 卷积层
+        self.conv1 = nn.Conv2d(3, 32, kernel_size=3, padding=1)
+        self.conv2 = nn.Conv2d(32, 64, kernel_size=3, padding=1)
+
+        # 池化层
+        self.pool = nn.MaxPool2d(kernel_size=2, stride=2)
+
+        # 全连接层
+        self.fc1 = nn.Linear(64 * 28 * 28, 256)
+        self.fc2 = nn.Linear(256, 10)
+
+    def forward(self, x):
+        # 224x224 -> 112x112
+        x = self.pool(torch.relu(self.conv1(x)))
+
+        # 112x112 -> 56x56
+        x = self.pool(torch.relu(self.conv2(x)))
+
+        # 展平
+        x = x.view(x.size(0), -1)
+
+        # 全连接
+        x = torch.relu(self.fc1(x))
+        x = self.fc2(x)
+        return x
+```
+
+---
+
+### 3.2 nn.AvgPool2d：平均池化
+
+平均池化计算池化窗口内所有值的平均值。在某些任务中比最大池化效果更好。
+
+```python
+# 平均池化
+avgpool = nn.AvgPool2d(kernel_size=2, stride=2)
+
+# 输入
+x = torch.randn(1, 1, 4, 4)
+print("输入:\n", x)
+# tensor([[[[ 0.2341,  0.2341, -0.0116, -1.0414],
+#          [-0.7376, -0.5123,  0.2134,  0.3894],
+#          [-1.5151,  0.0160,  0.4503, -0.0131],
+#          [-0.4530,  0.0339, -0.3623,  0.1413]]]])
+
+# 平均池化
+output = avgpool(x)
+print("输出:\n", output)
+# tensor([[[[-0.1944, -0.1123],
+#          [-0.4781,  0.0587]]]])
+```
+
+**平均池化 vs 最大池化**：
+
+| 特性 | MaxPool2d | AvgPool2d |
+|------|-----------|-----------|
+| 计算方式 | 取最大值 | 取平均值 |
+| 特点 | 保留显著特征 | 平滑特征 |
+| 常用场景 | 分类任务 | 特征平滑、注意力机制 |
+| 感受野 | 更关注最强响应 | 关注整体统计 |
+
+**Global Average Pooling（GAP）**：
+
+GAP是一种特殊的平均池化，将每个通道的整个特征图压缩为一个值。
+
+```python
+# 全局平均池化
+gap = nn.AdaptiveAvgPool2d(1)  # 输出1x1
+
+x = torch.randn(1, 512, 7, 7)
+gap_output = gap(x)
+print(gap_output.shape)  # torch.Size([1, 512, 1, 1])
+
+# 展平后用于分类
+gap_output = gap_output.view(gap_output.size(0), -1)
+print(gap_output.shape)  # torch.Size([1, 512])
+```
+
+---
+
+### 3.3 nn.AdaptiveAvgPool2d：自适应池化
+
+自适应池化可以指定输出的目标尺寸，PyTorch会自动计算所需的padding和stride。
+
+```python
+# 输出固定尺寸
+adaptive_pool = nn.AdaptiveAvgPool2d(output_size=(7, 7))
+
+x = torch.randn(1, 512, 28, 28)
+output = adaptive_pool(x)
+print(output.shape)  # torch.Size([1, 512, 7, 7])
+
+# 输出1x1（GAP）
+adaptive_pool_gap = nn.AdaptiveAvgPool2d(output_size=1)
+x = torch.randn(1, 512, 28, 28)
+output = adaptive_pool_gap(x)
+print(output.shape)  # torch.Size([1, 512, 1, 1])
+
+# 输出特定高度，宽度自适应
+adaptive_pool_h = nn.AdaptiveAvgPool2d(output_size=(1, None))
+x = torch.randn(1, 512, 28, 28)
+output = adaptive_pool_h(x)
+print(output.shape)  # torch.Size([1, 512, 1, 28])
+```
+
+**自适应最大池化**：
+
+```python
+adaptive_maxpool = nn.AdaptiveMaxPool2d(output_size=(3, 3))
+x = torch.randn(1, 64, 10, 10)
+output = adaptive_maxpool(x)
+print(output.shape)  # torch.Size([1, 64, 3, 3])
+```
+
+**自适应池化的应用场景**：
+
+```python
+# 典型的分类网络骨架
+class ClassifierBackbone(nn.Module):
+    def __init__(self, in_channels=3, num_classes=10):
+        super().__init__()
+        self.features = nn.Sequential(
+            # Conv Block 1
+            nn.Conv2d(in_channels, 64, kernel_size=3, padding=1),
+            nn.BatchNorm2d(64),
+            nn.ReLU(inplace=True),
+            nn.MaxPool2d(kernel_size=2, stride=2),  # 112x112
+
+            # Conv Block 2
+            nn.Conv2d(64, 128, kernel_size=3, padding=1),
+            nn.BatchNorm2d(128),
+            nn.ReLU(inplace=True),
+            nn.MaxPool2d(kernel_size=2, stride=2),  # 56x56
+
+            # Conv Block 3
+            nn.Conv2d(128, 256, kernel_size=3, padding=1),
+            nn.BatchNorm2d(256),
+            nn.ReLU(inplace=True),
+            nn.MaxPool2d(kernel_size=2, stride=2),  # 28x28
+
+            # 全局平均池化（无论输入尺寸如何，输出都是1x1）
+            nn.AdaptiveAvgPool2d(output_size=1)
+        )
+
+        self.classifier = nn.Linear(256, num_classes)
+
+    def forward(self, x):
+        x = self.features(x)
+        x = x.view(x.size(0), -1)  # 展平
+        x = self.classifier(x)
+        return x
+
+# 测试：不同输入尺寸
+model = ClassifierBackbone()
+
+x1 = torch.randn(1, 3, 224, 224)
+print(model(x1).shape)  # torch.Size([1, 10])
+
+x2 = torch.randn(1, 3, 112, 112)
+print(model(x2).shape)  # torch.Size([1, 10])
+
+x3 = torch.randn(1, 3, 96, 96)
+print(model(x3).shape)  # torch.Size([1, 10])
+```
+
+---
+
+## 第四章：归一化与正则化
+
+### 4.1 nn.BatchNorm2d：批归一化
+
+BatchNorm是深度学习中最重要的技巧之一，它通过规范化层的输入来加速训练、提高稳定性。
+
+**数学原理**：
+
+```
+y = gamma * (x - mean) / sqrt(var + epsilon) + beta
+```
+
+其中gamma（缩放）和beta（偏移）是可学习参数，mean和var是当前batch的统计量。
+
+```python
+import torch.nn as nn
+
+# BatchNorm2d用于2D特征图（图像）
+bn = nn.BatchNorm2d(num_features=64, eps=1e-5, momentum=0.1)
+
+# 参数说明：
+# num_features: 通道数（C）
+# eps: 防止除零的小常数（默认1e-5）
+# momentum: 移动平均的动量（用于训练时累积均值和方差）
+# affine: 是否学习gamma和beta（默认True）
+```
+
+```python
+# 前向传播
+x = torch.randn(8, 64, 32, 32)  # batch=8, channels=64, 32x32
+output = bn(x)
+
+print("输入形状:", x.shape)
+print("输出形状:", output.shape)
+print("训练模式均值:", bn.running_mean[:5])  # 累积的均值
+print("训练模式方差:", bn.running_var[:5])   # 累积的方差
+```
+
+**BatchNorm的关键特性**：
+
+```python
+# 训练模式 vs 评估模式
+bn_train = nn.BatchNorm2d(64)
+
+# 训练模式：使用batch统计量，并更新running统计量
+bn_train.train()
+output = bn_train(x)
+print("训练中:", bn_train.training)  # True
+
+# 评估模式：使用running统计量
+bn_train.eval()
+output = bn_train(x)
+print("评估中:", bn_train.training)  # False
+```
+
+**在CNN中使用BatchNorm**：
+
+```python
+# 典型的Conv-BatchNorm-ReLU组合
+class ConvBlock(nn.Module):
+    def __init__(self, in_channels, out_channels):
+        super().__init__()
+        self.block = nn.Sequential(
+            nn.Conv2d(in_channels, out_channels, kernel_size=3, padding=1),
+            nn.BatchNorm2d(out_channels),
+            nn.ReLU(inplace=True)
+        )
+
+    def forward(self, x):
+        return self.block(x)
+
+# 使用
+conv_block = ConvBlock(3, 64)
+x = torch.randn(4, 3, 32, 32)
+output = conv_block(x)
+print(output.shape)  # torch.Size([4, 64, 32, 32])
+```
+
+**BatchNorm的优势**：
+
+1. **加速收敛**：减少内部协变量偏移
+2. **允许更高学习率**：梯度更稳定
+3. **正则化效果**：每个batch的均值方差有噪声，提供正则化
+4. **减少对初始化的依赖**
+
+---
+
+### 4.2 nn.Dropout：正则化
+
+Dropout通过随机"关闭"部分神经元来防止过拟合，是深度学习中最常用的正则化技术之一。
+
+```python
+import torch.nn as nn
+
+# Dropout
+dropout = nn.Dropout(p=0.5)  # p: 丢弃概率
+
+x = torch.randn(4, 10)
+output = dropout(x)
+
+print("原始:\n", x)
+print("Dropout后:\n", output)
+# 大约50%的元素变为0
+```
+
+**在CNN中使用Dropout**：
+
+```python
+# nn.Dropout2d：随机丢弃整个通道
+dropout_2d = nn.Dropout2d(p=0.5)
+
+x = torch.randn(4, 64, 32, 32)
+output = dropout_2d(x)
+# 随机将整个通道置零
+print("输出:", output.shape)
+```
+
+**Dropout vs Dropout2d**：
+
+| 类型 | 作用 | 适用场景 |
+|------|------|----------|
+| nn.Dropout | 随机丢弃单个元素 | 全连接层、特征图较小时 |
+| nn.Dropout2d | 随机丢弃整个通道 | CNN的特征图 |
+
+```python
+# 典型的带Dropout的分类网络
+class CNNWithDropout(nn.Module):
+    def __init__(self, num_classes=10):
+        super().__init__()
+        self.features = nn.Sequential(
+            nn.Conv2d(3, 64, kernel_size=3, padding=1),
+            nn.ReLU(inplace=True),
+            nn.MaxPool2d(2),
+
+            nn.Conv2d(64, 128, kernel_size=3, padding=1),
+            nn.ReLU(inplace=True),
+            nn.MaxPool2d(2),
+
+            nn.Conv2d(128, 256, kernel_size=3, padding=1),
+            nn.ReLU(inplace=True),
+            nn.MaxPool2d(2),
+        )
+
+        # 全连接层之间使用Dropout
+        self.classifier = nn.Sequential(
+            nn.Dropout(0.5),
+            nn.Linear(256 * 4 * 4, 128),
+            nn.ReLU(inplace=True),
+            nn.Dropout(0.5),
+            nn.Linear(128, num_classes)
+        )
+
+    def forward(self, x):
+        x = self.features(x)
+        x = x.view(x.size(0), -1)
+        x = self.classifier(x)
+        return x
+```
+
+**Dropout2d的实际应用**：
+
+```python
+# Spatial Dropout（Dropout2d）
+# 丢弃整个通道而不是单个元素，更适合CNN
+class CNNWithSpatialDropout(nn.Module):
+    def __init__(self):
+        super().__init__()
+        self.conv1 = nn.Conv2d(3, 64, 3, padding=1)
+        # Spatial Dropout：丢弃整个通道
+        self.dropout = nn.Dropout2d(p=0.2)
+        self.conv2 = nn.Conv2d(64, 64, 3, padding=1)
+
+    def forward(self, x):
+        x = torch.relu(self.conv1(x))
+        x = self.dropout(x)  # 随机丢弃通道
+        x = torch.relu(self.conv2(x))
+        return x
+```
+
+---
+
+### 4.3 nn.LayerNorm：层归一化
+
+LayerNorm与BatchNorm类似，但归一化的维度不同。LayerNorm在单个样本的特征维度上进行归一化，不依赖于batch大小。
+
+```python
+import torch.nn as nn
+
+# LayerNorm
+ln = nn.LayerNorm(normalized_shape=[64, 32, 32])
+
+# 参数：
+# normalized_shape: 要归一化的形状
+# eps: 防止除零
+# elementwise_affine: 是否学习gamma和beta
+```
+
+```python
+# 输入
+x = torch.randn(8, 64, 32, 32)  # batch=8
+
+# LayerNorm：在通道和空间维度上归一化
+output = ln(x)
+print("输入形状:", x.shape)
+print("输出形状:", output.shape)
+```
+
+**BatchNorm vs LayerNorm vs InstanceNorm vs GroupNorm**：
+
+```python
+# 各种归一化方法的对比
+import torch
+
+# 输入形状
+x = torch.randn(8, 64, 32, 32)
+
+# BatchNorm2d：在batch和空间维度上归一化 (N, C, H, W) -> (N, C, 1, 1)
+bn = nn.BatchNorm2d(64)
+print("BatchNorm:", bn(x).shape)
+
+# LayerNorm：在通道和空间维度上归一化 (N, C, H, W) -> (N, 1, 1, 1)
+ln = nn.LayerNorm([64, 32, 32])
+print("LayerNorm:", ln(x).shape)
+
+# InstanceNorm2d：在空间维度上归一化 (N, C, H, W) -> (N, C, 1, 1)
+inn = nn.InstanceNorm2d(64)
+print("InstanceNorm:", inn(x).shape)
+
+# GroupNorm：将通道分组后在组内归一化 (N, C, H, W) -> (N, C, 1, 1)
+gn = nn.GroupNorm(num_groups=8, num_channels=64)
+print("GroupNorm:", gn(x).shape)
+```
+
+**各种归一化的可视化**：
+
+```
+输入形状: (N, C, H, W) = (8, 64, 32, 32)
+
+BatchNorm:    对每个特征，在(N, H, W)上求均值/方差
+              依赖batch大小，训练快，但batch小时不稳定
+
+LayerNorm:    对每个样本，在(C, H, W)上求均值/方差
+              不依赖batch，常用于RNN、Transformer
+
+InstanceNorm: 对每个样本、每个通道，在(H, W)上求均值/方差
+              风格迁移效果好
+
+GroupNorm:    对每个样本，将通道分成G组，在每组的(C/G, H, W)上求均值/方差
+              .batch大小无关，效果稳定，推荐使用
+```
+
+**实际应用建议**：
+
+```python
+# Transformer中常用LayerNorm
+class TransformerBlock(nn.Module):
+    def __init__(self, d_model, n_head):
+        super().__init__()
+        self.attention = nn.MultiheadAttention(d_model, n_head)
+        self.norm1 = nn.LayerNorm(d_model)
+        self.norm2 = nn.LayerNorm(d_model)
+        self.ff = nn.Linear(d_model, d_model * 4)
+        self.ff_out = nn.Linear(d_model * 4, d_model)
+
+    def forward(self, x):
+        # Self-attention with residual
+        attn_out, _ = self.attention(x, x, x)
+        x = self.norm1(x + attn_out)
+
+        # FFN with residual
+        ff_out = torch.relu(self.ff(x))
+        ff_out = self.ff_out(ff_out)
+        x = self.norm2(x + ff_out)
+        return x
+
+# CNN中常用GroupNorm（替代BatchNorm）
+class CNNWithGN(nn.Module):
+    def __init__(self, in_channels, out_channels):
+        super().__init__()
+        self.conv = nn.Conv2d(in_channels, out_channels, 3, padding=1)
+        # GroupNorm: 8 groups
+        self.norm = nn.GroupNorm(num_groups=8, num_channels=out_channels)
+        self.relu = nn.ReLU(inplace=True)
+
+    def forward(self, x):
+        x = self.conv(x)
+        x = self.norm(x)
+        x = self.relu(x)
+        return x
+```
+
+---
+
+## 第五章：图像变换与数据增强
+
+数据增强是提升模型泛化能力的关键技术。torchvision.transforms提供了丰富的图像变换函数。
+
+### 5.1 transforms.Compose：组合多个变换
+
+Compose用于将多个变换组合成管道。
+
+```python
+from torchvision import transforms
+
+# 创建变换管道
+transform = transforms.Compose([
+    transforms.ToTensor(),           # 1. 转为张量
+    transforms.Normalize([0.5], [0.5]),  # 2. 标准化
+    transforms.RandomHorizontalFlip(),   # 3. 随机翻转
+])
+
+# 应用变换
+from PIL import Image
+img = Image.open('cat.jpg')
+img_tensor = transform(img)
+print(img_tensor.shape)  # torch.Size([3, H, W])
+```
+
+### 5.2 transforms.ToTensor：图像转张量
+
+ToTensor将PIL Image或NumPy数组转换为PyTorch张量，并自动归一化到[0, 1]。
+
+```python
+from torchvision import transforms
+from PIL import Image
+import numpy as np
+
+# 从PIL Image转换
+img_pil = Image.open('cat.jpg')
+print("PIL Image:", img_pil.mode, img_pil.size)
+
+to_tensor = transforms.ToTensor()
+tensor = to_tensor(img_pil)
+print("Tensor:", tensor.shape, tensor.min(), tensor.max())
+# 自动转换为 (C, H, W)，值在 [0, 1]
+
+# 从NumPy数组转换
+img_np = np.array(img_pil)
+print("NumPy:", img_np.shape)
+tensor_np = to_tensor(img_np)
+print("Tensor from NumPy:", tensor_np.shape)
+
+# 转换前后对比
+print("\n=== 转换说明 ===")
+# PIL Image (H, W, C) [0-255]
+# NumPy   (H, W, C) [0-255]
+# Tensor  (C, H, W) [0, 1]
+```
+
+### 5.3 transforms.Normalize：标准化
+
+Normalize使用均值和标准差对图像进行标准化。
+
+**数学公式**：
+
+```
+normalized = (input - mean) / std
+```
+
+```python
+# ImageNet常用均值和标准差
+normalize = transforms.Normalize(
+    mean=[0.485, 0.456, 0.406],  # RGB通道的均值
+    std=[0.229, 0.224, 0.225]     # RGB通道的标准差
+)
+
+# 标准化流程
+x = torch.rand(3, 224, 224)  # [0, 1]
+x_normalized = normalize(x)
+
+print("标准化前: min={:.3f}, max={:.3f}".format(x.min(), x.max()))
+print("标准化后: min={:.3f}, max={:.3f}".format(x_normalized.min(), x_normalized.max()))
+# 标准化后值通常在 [-2, 2] 范围内
+```
+
+**训练和测试使用相同的标准化**：
+
+```python
+# 定义标准化参数（ImageNet）
+imagenet_mean = [0.485, 0.456, 0.406]
+imagenet_std = [0.229, 0.224, 0.225]
+
+# 训练变换
+train_transform = transforms.Compose([
+    transforms.RandomResizedCrop(224),
+    transforms.RandomHorizontalFlip(),
+    transforms.ToTensor(),
+    transforms.Normalize(mean=imagenet_mean, std=imagenet_std),
+])
+
+# 测试变换（验证集、测试集）
+test_transform = transforms.Compose([
+    transforms.Resize(256),
+    transforms.CenterCrop(224),
+    transforms.ToTensor(),
+    transforms.Normalize(mean=imagenet_mean, std=imagenet_std),
+])
+
+# 使用变换
+train_dataset = datasets.FashionMNIST(
+    root='./data',
+    train=True,
+    transform=train_transform,
+    download=True
+)
+
+test_dataset = datasets.FashionMNIST(
+    root='./data',
+    train=False,
+    transform=test_transform,
+    download=True
+)
+```
+
+### 5.4 transforms.Resize与transforms.CenterCrop
+
+调整图像尺寸并裁剪。
+
+```python
+# Resize：调整图像大小
+resize = transforms.Resize(size=(224, 224))  # 调整为指定尺寸
+# 或者
+resize = transforms.Resize(size=224)  # 短边调整为224，保持比例
+
+# CenterCrop：中心裁剪
+center_crop = transforms.CenterCrop(size=(224, 224))
+
+# FiveCrop：四个角和中心裁剪（返回5个图像）
+five_crop = transforms.FiveCrop(size=(224, 224))
+
+# TenCrop：水平翻转后裁剪（返回10个图像）
+ten_crop = transforms.TenCrop(size=(224, 224), vertical_flip=False)
+
+# 组合使用
+transform = transforms.Compose([
+    transforms.Resize(256),
+    transforms.CenterCrop(224),
+    transforms.ToTensor(),
+])
+```
+
+### 5.5 transforms.RandomHorizontalFlip：随机水平翻转
+
+随机水平翻转是数据增强中最常用、最有效的技术之一。
+
+```python
+# 随机水平翻转
+hflip = transforms.RandomHorizontalFlip(p=0.5)  # p: 翻转概率
+
+# 随机垂直翻转
+vflip = transforms.RandomVerticalFlip(p=0.5)
+
+# 实际应用
+img = Image.open('cat.jpg')
+flipped = hflip(img)
+```
+
+### 5.6 transforms.RandomRotation：随机旋转
+
+```python
+# 随机旋转
+rotation = transforms.RandomRotation(degrees=15)  # -15到15度之间随机旋转
+rotation10 = transforms.RandomRotation(degrees=(10, 30))  # 10到30度之间随机旋转
+
+# 随机旋转（包含填充）
+rotation_fill = transforms.RandomRotation(
+    degrees=30,
+    fill=(255, 255, 255)  # 填充颜色
+)
+```
+
+### 5.7 transforms.ColorJitter：颜色抖动
+
+```python
+# 颜色抖动
+color_jitter = transforms.ColorJitter(
+    brightness=0.2,    # 亮度调整范围
+    contrast=0.2,      # 对比度调整范围
+    saturation=0.2,    # 饱和度调整范围
+    hue=0.1           # 色调调整范围
+)
+
+# 单独使用
+brightness = transforms.ColorJitter(brightness=0.3)
+contrast = transforms.ColorJitter(contrast=0.3)
+saturation = transforms.ColorJitter(saturation=0.3)
+hue = transforms.ColorJitter(hue=0.1)
+```
+
+### 5.8 transforms.RandomAffine：随机仿射变换
+
+```python
+# 随机仿射变换
+affine = transforms.RandomAffine(
+    degrees=15,              # 旋转角度
+    translate=(0.1, 0.1),   # 平移范围（相对于尺寸的比例）
+    scale=(0.9, 1.1),        # 缩放范围
+    shear=15                # 剪切角度
+)
+```
+
+### 5.9 transforms.RandomErasing：随机擦除
+
+RandomErasing（随机擦除）是一种有效的正则化技术，模拟遮挡。
+
+```python
+# 随机擦除
+random_erase = transforms.RandomErasing(
+    p=0.5,                  # 擦除概率
+    scale=(0.02, 0.33),     # 擦除区域相对于图像的比例范围
+    ratio=(0.3, 3.3),       # 擦除区域宽高比范围
+    value=0                 # 擦除区域的值
+)
+
+# 在张量上应用
+to_tensor = transforms.ToTensor()
+img_tensor = to_tensor(img)
+erased = random_erase(img_tensor)
+```
+
+### 综合数据增强示例
+
+```python
+# 完整的数据增强策略
+train_transform = transforms.Compose([
+    # 1. 随机大小裁剪并调整到224x224
+    transforms.RandomResizedCrop(
+        224,
+        scale=(0.8, 1.0),    # 裁剪区域为原图的80%-100%
+        ratio=(0.9, 1.1)     # 宽高比范围
+    ),
+
+    # 2. 随机水平翻转
+    transforms.RandomHorizontalFlip(p=0.5),
+
+    # 3. 随机旋转（-15到15度）
+    transforms.RandomRotation(15),
+
+    # 4. 颜色抖动
+    transforms.ColorJitter(
+        brightness=0.2,
+        contrast=0.2,
+        saturation=0.2,
+        hue=0.1
+    ),
+
+    # 5. 转换为张量
+    transforms.ToTensor(),
+
+    # 6. 标准化
+    transforms.Normalize(
+        mean=[0.485, 0.456, 0.406],
+        std=[0.229, 0.224, 0.225]
+    ),
+
+    # 7. 随机擦除
+    transforms.RandomErasing(p=0.3),
+])
+
+# 测试变换
+test_transform = transforms.Compose([
+    transforms.Resize(256),
+    transforms.CenterCrop(224),
+    transforms.ToTensor(),
+    transforms.Normalize(
+        mean=[0.485, 0.456, 0.406],
+        std=[0.229, 0.224, 0.225]
+    ),
+])
+```
+
+---
+
+## 第六章：图像数据集加载
+
+### 6.1 torchvision.datasets：内置数据集
+
+PyTorch提供了常用的图像数据集，可以直接下载使用。
+
+```python
+from torchvision import datasets, transforms
+
+# Fashion-MNIST
+fashion_train = datasets.FashionMNIST(
+    root='./data',
+    train=True,
+    transform=transforms.ToTensor(),
+    download=True
+)
+
+fashion_test = datasets.FashionMNIST(
+    root='./data',
+    train=False,
+    transform=transforms.ToTensor(),
+    download=True
+)
+
+# CIFAR-10
+cifar10_train = datasets.CIFAR10(
+    root='./data',
+    train=True,
+    transform=transforms.ToTensor(),
+    download=True
+)
+
+cifar10_test = datasets.CIFAR10(
+    root='./data',
+    train=False,
+    transform=transforms.ToTensor(),
+    download=True
+)
+
+# ImageNet（需要手动下载）
+# imagenet_train = datasets.ImageNet(
+#     root='./data/imagenet',
+#     split='train',
+#     transform=transforms.ToTensor()
+# )
+
+# 查看数据集信息
+print("Fashion-MNIST训练集:", len(fashion_train))
+print("Fashion-MNIST测试集:", len(fashion_test))
+print("CIFAR-10类别:", datasets.CIFAR10.classes)
+```
+
+**常用数据集速查**：
+
+| 数据集 | 类别数 | 训练集大小 | 图像大小 | 说明 |
+|--------|--------|-----------|----------|------|
+| MNIST | 10 | 60,000 | 28x28 | 手写数字 |
+| Fashion-MNIST | 10 | 60,000 | 28x28 | 服装分类 |
+| CIFAR-10 | 10 | 50,000 | 32x32 | 通用物体 |
+| CIFAR-100 | 100 | 50,000 | 32x32 | 100类物体 |
+| ImageNet | 1000 | 1.2M | 可变 | 大规模图像 |
+
+### 6.2 Dataset类：自定义数据集
+
+当需要加载自己的数据时，需要自定义Dataset类。
+
+```python
+from torch.utils.data import Dataset
+from PIL import Image
+import os
+
+class CustomDataset(Dataset):
+    def __init__(self, root_dir, transform=None):
+        self.root_dir = root_dir
+        self.transform = transform
+        self.image_paths = []
+        self.labels = []
+
+        # 读取数据目录
+        for label_name in os.listdir(root_dir):
+            label_path = os.path.join(root_dir, label_name)
+            if os.path.isdir(label_path):
+                for img_name in os.listdir(label_path):
+                    if img_name.endswith(('.jpg', '.png', '.jpeg')):
+                        self.image_paths.append(os.path.join(label_path, img_name))
+                        self.labels.append(label_name)
+
+        # 创建标签到索引的映射
+        self.classes = sorted(list(set(self.labels)))
+        self.class_to_idx = {cls: idx for idx, cls in enumerate(self.classes)}
+
+    def __len__(self):
+        return len(self.image_paths)
+
+    def __getitem__(self, idx):
+        # 加载图像
+        img_path = self.image_paths[idx]
+        image = Image.open(img_path).convert('RGB')
+
+        # 应用变换
+        if self.transform:
+            image = self.transform(image)
+
+        # 获取标签
+        label = self.labels[idx]
+        label_idx = self.class_to_idx[label]
+
+        return image, label_idx
+
+# 使用自定义数据集
+custom_dataset = CustomDataset(
+    root_dir='./my_data/train',
+    transform=train_transform
+)
+
+print("数据集大小:", len(custom_dataset))
+print("类别:", custom_dataset.classes)
+```
+
+**处理文件夹结构**：
+
+```
+my_data/
+├── train/
+│   ├── cat/
+│   │   ├── cat001.jpg
+│   │   ├── cat002.jpg
+│   │   └── ...
+│   ├── dog/
+│   │   ├── dog001.jpg
+│   │   └── ...
+│   └── ...
+└── val/
+    ├── cat/
+    └── dog/
+```
+
+### 6.3 DataLoader：批量数据加载
+
+DataLoader是PyTorch中最重要的数据加载工具。
+
+```python
+from torch.utils.data import DataLoader
+
+# 基础用法
+train_loader = DataLoader(
+    dataset=train_dataset,
+    batch_size=32,
+    shuffle=True,
+    num_workers=4,
+    pin_memory=True,
+    drop_last=True
+)
+
+# 迭代数据
+for batch_idx, (images, labels) in enumerate(train_loader):
+    print("批次数:", batch_idx)
+    print("图像形状:", images.shape)    # [32, 3, 224, 224]
+    print("标签形状:", labels.shape)    # [32]
+    break
+```
+
+**DataLoader参数详解**：
+
+| 参数 | 说明 | 常用值 |
+|------|------|--------|
+| dataset | 数据集 | - |
+| batch_size | 批大小 | 32, 64, 128 |
+| shuffle | 是否打乱 | True(训练), False(测试) |
+| num_workers | 数据加载进程数 | 4, 8 |
+| pin_memory | 锁页内存，加快GPU传输 | True |
+| drop_last | 丢弃最后一个不完整batch | True(训练), False(测试) |
+| collate_fn | 自定义批处理函数 | 自定义 |
+
+**多GPU数据加载**：
+
+```python
+# 多GPU时使用DistributedSampler
+from torch.utils.data.distributed import DistributedSampler
+
+train_sampler = DistributedSampler(
+    dataset,
+    num_replicas=num_gpus,
+    rank=rank,
+    shuffle=True
+)
+
+train_loader = DataLoader(
+    dataset,
+    batch_size=batch_size,
+    sampler=train_sampler,
+    num_workers=4,
+    pin_memory=True
+)
+```
+
+---
+
+## 第七章：CNN模型构建实战
+
+### 7.1 经典LeNet模型实现
+
+LeNet是1998年Yann LeCun提出的第一个卷积神经网络，是现代CNN的开山之作。
+
+```python
+import torch.nn as nn
+
+class LeNet(nn.Module):
+    def __init__(self, num_classes=10):
+        super().__init__()
+
+        # 特征提取部分
+        self.features = nn.Sequential(
+            # C1: 第一卷积层
+            nn.Conv2d(1, 6, kernel_size=5, padding=2),  # 28x28 -> 28x28
+            nn.ReLU(inplace=True),
+            nn.AvgPool2d(kernel_size=2, stride=2),      # 28x28 -> 14x14
+
+            # C3: 第二卷积层
+            nn.Conv2d(6, 16, kernel_size=5),            # 14x14 -> 10x10
+            nn.ReLU(inplace=True),
+            nn.AvgPool2d(kernel_size=2, stride=2),      # 10x10 -> 5x5
+        )
+
+        # 分类器部分
+        self.classifier = nn.Sequential(
+            nn.Flatten(),
+            nn.Linear(16 * 5 * 5, 120),
+            nn.ReLU(inplace=True),
+            nn.Linear(120, 84),
+            nn.ReLU(inplace=True),
+            nn.Linear(84, num_classes)
+        )
+
+    def forward(self, x):
+        x = self.features(x)
+        x = self.classifier(x)
+        return x
+
+# 测试
+model = LeNet(num_classes=10)
+x = torch.randn(1, 1, 28, 28)
+output = model(x)
+print("输出形状:", output.shape)  # torch.Size([1, 10])
+
+# 打印模型结构
+print(model)
+```
+
+**LeNet架构图**：
+
+```
+输入 (1, 28, 28)
+    ↓
+Conv2d(1, 6, 5x5) + ReLU + AvgPool  →  (6, 14, 14)
+    ↓
+Conv2d(6, 16, 5x5) + ReLU + AvgPool  →  (16, 5, 5)
+    ↓
+Flatten  →  (400)
+    ↓
+Linear(400, 120) + ReLU  →  (120)
+    ↓
+Linear(120, 84) + ReLU  →  (84)
+    ↓
+Linear(84, 10)  →  (10)
+```
+
+---
+
+### 7.2 AlexNet模型实现
+
+AlexNet在2012年ImageNet竞赛中取得突破性成绩，标志着深度学习的复兴。
+
+```python
+class AlexNet(nn.Module):
+    def __init__(self, num_classes=1000):
+        super().__init__()
+
+        self.features = nn.Sequential(
+            # Conv1
+            nn.Conv2d(3, 96, kernel_size=11, stride=4, padding=2),
+            nn.ReLU(inplace=True),
+            nn.MaxPool2d(kernel_size=3, stride=2),  # 224 -> 55
+
+            # Conv2
+            nn.Conv2d(96, 256, kernel_size=5, padding=2),
+            nn.ReLU(inplace=True),
+            nn.MaxPool2d(kernel_size=3, stride=2),  # 55 -> 27
+
+            # Conv3
+            nn.Conv2d(256, 384, kernel_size=3, padding=1),
+            nn.ReLU(inplace=True),
+
+            # Conv4
+            nn.Conv2d(384, 384, kernel_size=3, padding=1),
+            nn.ReLU(inplace=True),
+
+            # Conv5
+            nn.Conv2d(384, 256, kernel_size=3, padding=1),
+            nn.ReLU(inplace=True),
+            nn.MaxPool2d(kernel_size=3, stride=2),  # 27 -> 13
+        )
+
+        self.avgpool = nn.AdaptiveAvgPool2d((6, 6))
+
+        self.classifier = nn.Sequential(
+            nn.Dropout(0.5),
+            nn.Linear(256 * 6 * 6, 4096),
+            nn.ReLU(inplace=True),
+            nn.Dropout(0.5),
+            nn.Linear(4096, 4096),
+            nn.ReLU(inplace=True),
+            nn.Linear(4096, num_classes),
+        )
+
+    def forward(self, x):
+        x = self.features(x)
+        x = self.avgpool(x)
+        x = torch.flatten(x, 1)
+        x = self.classifier(x)
+        return x
+
+# 测试
+model = AlexNet(num_classes=1000)
+x = torch.randn(1, 3, 224, 224)
+output = model(x)
+print("输出形状:", output.shape)  # torch.Size([1, 1000])
+
+# 参数统计
+total_params = sum(p.numel() for p in model.parameters())
+trainable_params = sum(p.numel() for p in model.parameters() if p.requires_grad)
+print(f"总参数: {total_params:,}")
+print(f"可训练参数: {trainable_params:,}")
+```
+
+---
+
+### 7.3 VGG模型实现
+
+VGG通过使用更小的3x3卷积核堆叠来增加网络深度，是当时最常用的特征提取网络。
+
+```python
+class VGG(nn.Module):
+    def __init__(self, num_classes=1000):
+        super().__init__()
+
+        # VGG16配置
+        # [64, 64, 'M', 128, 128, 'M', 256, 256, 256, 'M',
+        #  512, 512, 512, 'M', 512, 512, 512, 'M']
+        # 'M' = MaxPool
+
+        self.features = self._make_layers([
+            64, 64, 'M',           # Block 1: 224 -> 112
+            128, 128, 'M',         # Block 2: 112 -> 56
+            256, 256, 256, 'M',    # Block 3: 56 -> 28
+            512, 512, 512, 'M',    # Block 4: 28 -> 14
+            512, 512, 512, 'M',    # Block 5: 14 -> 7
+        ])
+
+        self.avgpool = nn.AdaptiveAvgPool2d((7, 7))
+
+        self.classifier = nn.Sequential(
+            nn.Linear(512 * 7 * 7, 4096),
+            nn.ReLU(inplace=True),
+            nn.Dropout(0.5),
+            nn.Linear(4096, 4096),
+            nn.ReLU(inplace=True),
+            nn.Dropout(0.5),
+            nn.Linear(4097, num_classes),
+        )
+
+    def _make_layers(self, config):
+        layers = []
+        in_channels = 3
+
+        for v in config:
+            if v == 'M':
+                layers.append(nn.MaxPool2d(kernel_size=2, stride=2))
+            else:
+                layers.append(nn.Conv2d(in_channels, v, kernel_size=3, padding=1))
+                layers.append(nn.BatchNorm2d(v))
+                layers.append(nn.ReLU(inplace=True))
+                in_channels = v
+
+        return nn.Sequential(*layers)
+
+    def forward(self, x):
+        x = self.features(x)
+        x = self.avgpool(x)
+        x = torch.flatten(x, 1)
+        x = self.classifier(x)
+        return x
+
+# 测试
+model = VGG(num_classes=1000)
+x = torch.randn(1, 3, 224, 224)
+output = model(x)
+print("输出形状:", output.shape)
+
+# 参数统计
+total_params = sum(p.numel() for p in model.parameters())
+print(f"VGG16参数: {total_params:,}")
+```
+
+**VGG变体**：
+
+```python
+# VGG11, VGG13, VGG16, VGG19
+# 数字表示卷积层+全连接层的总层数
+# 常用VGG16（在准确率和参数量之间平衡较好）
+```
+
+---
+
+### 7.4 ResNet残差网络
+
+ResNet通过残差连接解决了深层网络梯度消失问题，是现代CNN的里程碑。
+
+```python
+class ResidualBlock(nn.Module):
+    """残差块"""
+    def __init__(self, in_channels, out_channels, stride=1, downsample=None):
+        super().__init__()
+        self.conv1 = nn.Conv2d(
+            in_channels, out_channels,
+            kernel_size=3, stride=stride, padding=1, bias=False
+        )
+        self.bn1 = nn.BatchNorm2d(out_channels)
+        self.relu = nn.ReLU(inplace=True)
+        self.conv2 = nn.Conv2d(
+            out_channels, out_channels,
+            kernel_size=3, stride=1, padding=1, bias=False
+        )
+        self.bn2 = nn.BatchNorm2d(out_channels)
+        self.downsample = downsample
+
+    def forward(self, x):
+        identity = x
+
+        out = self.conv1(x)
+        out = self.bn1(out)
+        out = self.relu(out)
+
+        out = self.conv2(out)
+        out = self.bn2(out)
+
+        if self.downsample is not None:
+            identity = self.downsample(x)
+
+        out += identity  # 残差连接
+        out = self.relu(out)
+
+        return out
+
+
+class ResNet(nn.Module):
+    def __init__(self, num_classes=1000):
+        super().__init__()
+
+        # 初始卷积层
+        self.conv1 = nn.Conv2d(3, 64, kernel_size=7, stride=2, padding=3, bias=False)
+        self.bn1 = nn.BatchNorm2d(64)
+        self.relu = nn.ReLU(inplace=True)
+        self.maxpool = nn.MaxPool2d(kernel_size=3, stride=2, padding=1)
+
+        # 残差层
+        self.layer1 = self._make_layer(64, 64, blocks=2, stride=1)
+        self.layer2 = self._make_layer(64, 128, blocks=2, stride=2)
+        self.layer3 = self._make_layer(128, 256, blocks=2, stride=2)
+        self.layer4 = self._make_layer(256, 512, blocks=2, stride=2)
+
+        # 全局平均池化和分类器
+        self.avgpool = nn.AdaptiveAvgPool2d((1, 1))
+        self.fc = nn.Linear(512, num_classes)
+
+    def _make_layer(self, in_channels, out_channels, blocks, stride):
+        downsample = None
+
+        if stride != 1 or in_channels != out_channels:
+            downsample = nn.Sequential(
+                nn.Conv2d(in_channels, out_channels, kernel_size=1, stride=stride, bias=False),
+                nn.BatchNorm2d(out_channels),
+            )
+
+        layers = []
+        layers.append(ResidualBlock(in_channels, out_channels, stride, downsample))
+
+        for _ in range(1, blocks):
+            layers.append(ResidualBlock(out_channels, out_channels))
+
+        return nn.Sequential(*layers)
+
+    def forward(self, x):
+        x = self.conv1(x)
+        x = self.bn1(x)
+        x = self.relu(x)
+        x = self.maxpool(x)
+
+        x = self.layer1(x)
+        x = self.layer2(x)
+        x = self.layer3(x)
+        x = self.layer4(x)
+
+        x = self.avgpool(x)
+        x = torch.flatten(x, 1)
+        x = self.fc(x)
+
+        return x
+
+
+# 测试
+model = ResNet(num_classes=1000)
+x = torch.randn(1, 3, 224, 224)
+output = model(x)
+print("输出形状:", output.shape)
+
+# ResNet18参数统计
+total_params = sum(p.numel() for p in model.parameters())
+print(f"ResNet参数: {total_params:,}")
+```
+
+**ResNet的优势**：
+
+```
+普通网络: 输出 = F(x)
+残差网络: 输出 = F(x) + x
+
+残差连接使得梯度可以直接反向传播到浅层
+解决了深层网络梯度消失的问题
+```
+
+---
+
+## 第八章：预训练模型与迁移学习
+
+### 8.1 torchvision.models：预训练模型
+
+PyTorch提供了在ImageNet上预训练的模型，可以直接下载使用。
+
+```python
+import torchvision.models as models
+
+# 加载预训练模型
+resnet18 = models.resnet18(pretrained=True)
+resnet50 = models.resnet50(pretrained=True)
+vgg16 = models.vgg16(pretrained=True)
+alexnet = models.alexnet(pretrained=True)
+
+# 加载未训练的模型（用于微调）
+resnet18_no_pretrain = models.resnet18(pretrained=False)
+
+# 查看模型结构
+print(resnet18)
+```
+
+**常用预训练模型**：
+
+```python
+# ImageNet预训练模型
+models.resnet18(pretrained=True)    # 11.7M参数
+models.resnet34(pretrained=True)   # 21.8M参数
+models.resnet50(pretrained=True)   # 25.6M参数
+models.resnet101(pretrained=True)  # 44.5M参数
+
+models.vgg11(pretrained=True)       # 132.9M参数
+models.vgg13(pretrained=True)
+models.vgg16(pretrained=True)      # 138.4M参数
+
+models.alexnet(pretrained=True)    # 61.1M参数
+
+# EfficientNet系列（最新最强）
+models.efficientnet_b0(pretrained=True)
+models.efficientnet_b1(pretrained=True)
+
+# MobileNet系列（移动端优化）
+models.mobilenet_v2(pretrained=True)
+models.mobilenet_v3_small(pretrained=True)
+
+# ViT（Vision Transformer）
+models.vit_b_16(pretrained=True)    # 需要较大计算资源
+```
+
+### 8.2 特征提取：冻结主干网络
+
+特征提取是最常用的迁移学习方法，将预训练模型作为固定特征提取器。
+
+```python
+import torchvision.models as models
+
+# 加载预训练模型
+model = models.resnet18(pretrained=True)
+
+# 冻结所有层（不更新参数）
+for param in model.parameters():
+    param.requires_grad = False
+
+# 修改最后的全连接层
+num_features = model.fc.in_features
+model.fc = nn.Linear(num_features, 10)  # 10类分类
+
+# 训练时只有fc层的参数会更新
+# 其他层参数固定不变
+```
+
+**特征提取的完整示例**：
+
+```python
+import torchvision.models as models
+import torch.nn as nn
+
+# 1. 加载预训练模型
+feature_extractor = models.resnet18(pretrained=True)
+
+# 2. 冻结所有参数
+for param in feature_extractor.parameters():
+    param.requires_grad = False
+
+# 3. 替换分类头
+feature_extractor.fc = nn.Sequential(
+    nn.Dropout(0.3),
+    nn.Linear(512, 256),
+    nn.ReLU(),
+    nn.Dropout(0.3),
+    nn.Linear(256, 10)
+)
+
+# 4. 冻结BatchNorm（可选，防止更新running stats）
+for module in feature_extractor.modules():
+    if isinstance(module, nn.BatchNorm2d):
+        module.eval()
+
+# 5. 训练
+optimizer = torch.optim.Adam(feature_extractor.fc.parameters(), lr=0.001)
+
+# 训练循环
+for images, labels in train_loader:
+    outputs = feature_extractor(images)
+    loss = criterion(outputs, labels)
+
+    optimizer.zero_grad()
+    loss.backward()
+    optimizer.step()
+```
+
+### 8.3 微调：解冻部分层
+
+微调（Fine-tuning）是在预训练模型基础上解冻部分层进行训练。
+
+```python
+# 方法1：解冻所有层
+model = models.resnet18(pretrained=True)
+optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
+
+# 方法2：只解冻最后几层
+model = models.resnet18(pretrained=True)
+
+# 冻结前面的层
+for name, param in model.named_parameters():
+    if 'layer4' not in name and 'fc' not in name:
+        param.requires_grad = False
+
+# 只优化可训练参数
+optimizer = torch.optim.Adam(
+    filter(lambda p: p.requires_grad, model.parameters()),
+    lr=0.001
+)
+
+# 方法3：使用不同的学习率
+model = models.resnet18(pretrained=True)
+
+# 基础层（浅层）使用较小学习率
+base_params = []
+base_layers = ['conv1', 'bn1', 'layer1', 'layer2']
+for name, param in model.named_parameters():
+    if any(layer in name for layer in base_layers):
+        base_params.append(param)
+        param.requires_grad = True
+    else:
+        param.requires_grad = False
+
+optimizer = torch.optim.Adam([
+    {'params': base_params, 'lr': 1e-4},      # 基础层：低学习率
+    {'params': model.fc.parameters(), 'lr': 1e-3}  # 分类头：高学习率
+])
+```
+
+### 8.4 模型保存与加载
+
+```python
+import torch
+
+# 方法1：只保存参数（推荐）
+torch.save(model.state_dict(), 'model.pth')
+
+# 加载
+model = MyModel()
+model.load_state_dict(torch.load('model.pth'))
+
+# 方法2：保存完整模型
+torch.save(model, 'model_full.pth')
+
+# 加载
+model = torch.load('model_full.pth')
+
+# 方法3：保存检查点（训练中断恢复）
+checkpoint = {
+    'epoch': 10,
+    'model_state_dict': model.state_dict(),
+    'optimizer_state_dict': optimizer.state_dict(),
+    'loss': 0.5,
+}
+torch.save(checkpoint, 'checkpoint.pth')
+
+# 加载检查点
+checkpoint = torch.load('checkpoint.pth')
+model.load_state_dict(checkpoint['model_state_dict'])
+optimizer.load_state_dict(checkpoint['optimizer_state_dict'])
+start_epoch = checkpoint['epoch'] + 1
+
+# 方法4：GPU到CPU的模型加载
+device = torch.device('cpu')
+model = MyModel()
+model.load_state_dict(torch.load('model.pth', map_location=device))
+
+# 方法5：跨设备加载（GPU/CPU兼容）
+model = MyModel()
+model.load_state_dict(torch.load('model.pth', map_location='cuda:0' if torch.cuda.is_available() else 'cpu'))
+```
+
+---
+
+## 第九章：训练技巧与实战
+
+### 8.1 学习率调度器
+
+学习率调度器可以根据训练进程动态调整学习率。
+
+```python
+import torch.optim as optim
+
+# 1. StepLR：固定步长衰减
+optimizer = optim.SGD(model.parameters(), lr=0.1)
+scheduler = optim.lr_scheduler.StepLR(optimizer, step_size=10, gamma=0.1)
+
+for epoch in range(100):
+    train(...)
+    scheduler.step()
+    print(f"Epoch {epoch}: LR = {scheduler.get_last_lr()[0]}")
+
+# 2. MultiStepLR：多个里程碑衰减
+scheduler = optim.lr_scheduler.MultiStepLR(
+    optimizer, milestones=[30, 60, 90], gamma=0.1
+)
+
+# 3. CosineAnnealingLR：余弦退火
+scheduler = optim.lr_scheduler.CosineAnnealingLR(
+    optimizer, T_max=50, eta_min=1e-6
+)
+
+# 4. ReduceLROnPlateau：监控指标下降时调整
+scheduler = optim.lr_scheduler.ReduceLROnPlateau(
+    optimizer, mode='min', factor=0.1, patience=5
+)
+
+# 训练循环
+for epoch in range(100):
+    train_loss = train(...)
+    val_loss = validate(...)
+
+    scheduler.step(val_loss)  # 根据验证损失调整
+
+# 5. Warmup策略：学习率预热
+class WarmupScheduler:
+    def __init__(self, optimizer, warmup_epochs, base_lr):
+        self.optimizer = optimizer
+        self.warmup_epochs = warmup_epochs
+        self.base_lr = base_lr
+
+    def step(self, epoch):
+        if epoch < self.warmup_epochs:
+            lr = self.base_lr * (epoch + 1) / self.warmup_epochs
+            for param_group in self.optimizer.param_groups:
+                param_group['lr'] = lr
+```
+
+### 8.2 早停策略
+
+早停（Early Stopping）防止过拟合。
+
+```python
+class EarlyStopping:
+    def __init__(self, patience=7, min_delta=0, mode='min'):
+        self.patience = patience
+        self.min_delta = min_delta
+        self.mode = mode
+        self.counter = 0
+        self.best_score = None
+        self.early_stop = False
+
+    def __call__(self, score):
+        if self.best_score is None:
+            self.best_score = score
+        elif self._is_improvement(score):
+            self.best_score = score
+            self.counter = 0
+        else:
+            self.counter += 1
+            if self.counter >= self.patience:
+                self.early_stop = True
+
+        return self.early_stop
+
+    def _is_improvement(self, score):
+        if self.mode == 'min':
+            return score < self.best_score - self.min_delta
+        else:
+            return score > self.best_score + self.min_delta
+
+# 使用
+early_stopping = EarlyStopping(patience=10, mode='min')
+
+for epoch in range(100):
+    train_loss = train(...)
+    val_loss = validate(...)
+
+    early_stopping(val_loss)
+    if early_stopping.early_stop:
+        print(f"早停！Epoch {epoch}")
+        break
+```
+
+### 8.3 梯度裁剪
+
+梯度裁剪防止梯度爆炸。
+
+```python
+# 方法1：按值裁剪
+torch.nn.utils.clip_grad_value_(model.parameters(), clip_value=1.0)
+
+# 方法2：按范数裁剪（推荐）
+torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm=1.0)
+
+# 训练循环中的使用
+for images, labels in train_loader:
+    outputs = model(images)
+    loss = criterion(outputs, labels)
+
+    optimizer.zero_grad()
+    loss.backward()
+
+    # 梯度裁剪
+    torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm=1.0)
+
+    optimizer.step()
+```
+
+### 8.4 混合精度训练
+
+混合精度训练可以显著加速训练并减少显存使用。
+
+```python
+from torch.cuda.amp import autocast, GradScaler
+
+# 检查GPU是否支持混合精度
+print(torch.cuda.is_available())
+print(torch.cuda.get_device_capability())
+
+# 创建scaler
+scaler = GradScaler()
+
+# 训练循环
+model = model.cuda()
+criterion = nn.CrossEntropyLoss()
+optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
+
+for epoch in range(10):
+    for images, labels in train_loader:
+        images = images.cuda()
+        labels = labels.cuda()
+
+        optimizer.zero_grad()
+
+        # 前向传播使用自动混合精度
+        with autocast():
+            outputs = model(images)
+            loss = criterion(outputs, labels)
+
+        # 反向传播
+        scaler.scale(loss).backward()
+
+        # 梯度裁剪
+        scaler.unscale_(optimizer)
+        torch.nn.utils.clip_grad_norm_(model.parameters(), 1.0)
+
+        # 更新参数
+        scaler.step(optimizer)
+        scaler.update()
+```
+
+### 8.5 完整的训练流程
+
+```python
+import torch
+import torch.nn as nn
+from torch.utils.data import DataLoader
+from torchvision import datasets, transforms
+import torchvision.models as models
+from tqdm import tqdm
+
+def train_one_epoch(model, train_loader, criterion, optimizer, device):
+    model.train()
+    running_loss = 0.0
+    correct = 0
+    total = 0
+
+    pbar = tqdm(train_loader, desc='Training')
+    for images, labels in pbar:
+        images, labels = images.to(device), labels.to(device)
+
+        # 前向传播
+        outputs = model(images)
+        loss = criterion(outputs, labels)
+
+        # 反向传播
+        optimizer.zero_grad()
+        loss.backward()
+        optimizer.step()
+
+        # 统计
+        running_loss += loss.item()
+        _, predicted = outputs.max(1)
+        total += labels.size(0)
+        correct += predicted.eq(labels).sum().item()
+
+        pbar.set_postfix({
+            'loss': running_loss / (pbar.n + 1),
+            'acc': 100. * correct / total
+        })
+
+    return running_loss / len(train_loader), 100. * correct / total
+
+
+def validate(model, val_loader, criterion, device):
+    model.eval()
+    running_loss = 0.0
+    correct = 0
+    total = 0
+
+    with torch.no_grad():
+        for images, labels in val_loader:
+            images, labels = images.to(device), labels.to(device)
+
+            outputs = model(images)
+            loss = criterion(outputs, labels)
+
+            running_loss += loss.item()
+            _, predicted = outputs.max(1)
+            total += labels.size(0)
+            correct += predicted.eq(labels).sum().item()
+
+    return running_loss / len(val_loader), 100. * correct / total
+
+
+# 主训练流程
+def main():
+    # 设置设备
+    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+    print(f"使用设备: {device}")
+
+    # 数据增强
+    train_transform = transforms.Compose([
+        transforms.RandomResizedCrop(224),
+        transforms.RandomHorizontalFlip(),
+        transforms.ToTensor(),
+        transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])
+    ])
+
+    val_transform = transforms.Compose([
+        transforms.Resize(256),
+        transforms.CenterCrop(224),
+        transforms.ToTensor(),
+        transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])
+    ])
+
+    # 加载数据
+    train_dataset = datasets.FakeData(
+        size=1000, image_size=(3, 224, 224), transform=train_transform
+    )
+    val_dataset = datasets.FakeData(
+        size=200, image_size=(3, 224, 224), transform=val_transform
+    )
+
+    train_loader = DataLoader(train_dataset, batch_size=32, shuffle=True)
+    val_loader = DataLoader(val_dataset, batch_size=32)
+
+    # 创建模型
+    model = models.resnet18(pretrained=True)
+    model.fc = nn.Linear(model.fc.in_features, 10)
+    model = model.to(device)
+
+    # 损失函数和优化器
+    criterion = nn.CrossEntropyLoss()
+    optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
+    scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=3, gamma=0.1)
+
+    # 训练
+    best_acc = 0.0
+    num_epochs = 10
+
+    for epoch in range(num_epochs):
+        print(f"\nEpoch {epoch + 1}/{num_epochs}")
+
+        train_loss, train_acc = train_one_epoch(
+            model, train_loader, criterion, optimizer, device
+        )
+
+        val_loss, val_acc = validate(model, val_loader, criterion, device)
+
+        scheduler.step()
+
+        print(f"Train Loss: {train_loss:.4f}, Train Acc: {train_acc:.2f}%")
+        print(f"Val Loss: {val_loss:.4f}, Val Acc: {val_acc:.2f}%")
+
+        # 保存最佳模型
+        if val_acc > best_acc:
+            best_acc = val_acc
+            torch.save(model.state_dict(), 'best_model.pth')
+            print("保存最佳模型!")
+
+    print(f"\n最佳验证准确率: {best_acc:.2f}%")
+
+if __name__ == '__main__':
+    main()
+```
+
+---
+
+## 第十章：模型评估与可视化
+
+### 9.1 混淆矩阵
+
+```python
+import numpy as np
+from sklearn.metrics import confusion_matrix
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+def plot_confusion_matrix(y_true, y_pred, classes):
+    cm = confusion_matrix(y_true, y_pred)
+
+    plt.figure(figsize=(10, 8))
+    sns.heatmap(cm, annot=True, fmt='d', cmap='Blues',
+                xticklabels=classes, yticklabels=classes)
+    plt.ylabel('真实标签')
+    plt.xlabel('预测标签')
+    plt.title('混淆矩阵')
+    plt.show()
+
+# 使用
+all_preds = []
+all_labels = []
+
+model.eval()
+with torch.no_grad():
+    for images, labels in test_loader:
+        images = images.to(device)
+        outputs = model(images)
+        _, predicted = outputs.max(1)
+
+        all_preds.extend(predicted.cpu().numpy())
+        all_labels.extend(labels.numpy())
+
+plot_confusion_matrix(all_labels, all_preds, classes)
+```
+
+### 9.2 分类报告
+
+```python
+from sklearn.metrics import classification_report
+
+# 详细分类报告
+print(classification_report(
+    all_labels,
+    all_preds,
+    target_names=['T恤', '裤子', '套头衫', '连衣裙', '外套',
+                  '凉鞋', '衬衫', '运动鞋', '包', '短靴']
+))
+```
+
+### 9.3 学习曲线可视化
+
+```python
+import matplotlib.pyplot as plt
+
+def plot_learning_curves(train_losses, val_losses, train_accs, val_accs):
+    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12, 4))
+
+    # 损失曲线
+    ax1.plot(train_losses, label='训练损失')
+    ax1.plot(val_losses, label='验证损失')
+    ax1.set_xlabel('Epoch')
+    ax1.set_ylabel('损失')
+    ax1.set_title('损失曲线')
+    ax1.legend()
+    ax1.grid(True)
+
+    # 准确率曲线
+    ax2.plot(train_accs, label='训练准确率')
+    ax2.plot(val_accs, label='验证准确率')
+    ax2.set_xlabel('Epoch')
+    ax2.set_ylabel('准确率 (%)')
+    ax2.set_title('准确率曲线')
+    ax2.legend()
+    ax2.grid(True)
+
+    plt.tight_layout()
+    plt.show()
+
+# 使用
+history = {
+    'train_loss': [],
+    'val_loss': [],
+    'train_acc': [],
+    'val_acc': []
+}
+
+for epoch in range(num_epochs):
+    # 训练...
+    history['train_loss'].append(train_loss)
+    history['val_loss'].append(val_loss)
+    history['train_acc'].append(train_acc)
+    history['val_acc'].append(val_acc)
+
+plot_learning_curves(
+    history['train_loss'],
+    history['val_loss'],
+    history['train_acc'],
+    history['val_acc']
+)
+```
+
+### 9.4 中间层特征可视化
+
+```python
+import matplotlib.pyplot as plt
+
+def visualize_feature_maps(model, image, layer_idx=0):
+    """可视化指定层的特征图"""
+    model.eval()
+
+    # 提取中间层
+    layers = list(model.features.children())
+    layer = layers[layer_idx]
+
+    # 创建特征提取器
+    feature_extractor = nn.Sequential(*layers[:layer_idx+1])
+
+    with torch.no_grad():
+        features = feature_extractor(image)
+
+    # 可视化前16个通道
+    fig, axes = plt.subplots(4, 4, figsize=(12, 12))
+    for i, ax in enumerate(axes.flat):
+        if i < features.shape[1]:
+            feature_map = features[0, i].cpu()
+            ax.imshow(feature_map, cmap='viridis')
+            ax.set_title(f'Channel {i}')
+        ax.axis('off')
+
+    plt.tight_layout()
+    plt.show()
+
+# 使用
+model = models.resnet18(pretrained=True)
+image = torch.randn(1, 3, 224, 224).cuda()
+visualize_feature_maps(model, image, layer_idx=4)
+```
+
+### 9.5 Grad-CAM：梯度加权类激活映射
+
+Grad-CAM可以可视化模型关注图像的哪些区域进行分类。
+
+```python
+import torch
+import torch.nn.functional as F
+import numpy as np
+import cv2
+
+class GradCAM:
+    def __init__(self, model, target_layer):
+        self.model = model
+        self.target_layer = target_layer
+        self.gradients = None
+        self.activations = None
+
+        # 注册hook
+        target_layer.register_forward_hook(self.save_activation)
+        target_layer.register_full_backward_hook(self.save_gradient)
+
+    def save_activation(self, module, input, output):
+        self.activations = output.detach()
+
+    def save_gradient(self, module, grad_input, grad_output):
+        self.gradients = grad_output[0].detach()
+
+    def generate_cam(self, input_tensor, target_class):
+        # 前向传播
+        output = self.model(input_tensor)
+
+        # 反向传播
+        self.model.zero_grad()
+        one_hot = torch.zeros_like(output)
+        one_hot[0][target_class] = 1
+        output.backward(gradient=one_hot, retain_graph=True)
+
+        # 计算CAM
+        gradients = self.gradients[0]  # (C, H, W)
+        activations = self.activations[0]  # (C, H, W)
+
+        # 全局平均池化梯度作为权重
+        weights = torch.mean(gradients, dim=(1, 2))  # (C,)
+
+        # 加权求和
+        cam = torch.zeros(activations.shape[1:], dtype=torch.float32)
+        for i, w in enumerate(weights):
+            cam += w * activations[i]
+
+        # ReLU
+        cam = F.relu(cam)
+
+        # 归一化
+        cam = cam.cpu().numpy()
+        cam = cam - cam.min()
+        cam = cam / (cam.max() + 1e-8)
+
+        # 调整大小到输入图像
+        cam = cv2.resize(cam, (224, 224))
+
+        return cam
+
+
+def show_gradcam(image, cam):
+    """显示Grad-CAM结果"""
+    img = image.cpu().squeeze().permute(1, 2, 0).numpy()
+    img = (img - img.min()) / (img.max() - img.min())
+
+    # 热力图
+    heatmap = cv2.applyColorMap(np.uint8(255 * cam), cv2.COLORMAP_JET)
+    heatmap = cv2.cvtColor(heatmap, cv2.COLOR_BGR2RGB)
+    heatmap = np.float32(heatmap) / 255
+
+    # 叠加
+    result = heatmap * 0.4 + np.float32(img) * 0.6
+
+    plt.figure(figsize=(10, 4))
+    plt.subplot(1, 3, 1)
+    plt.imshow(img)
+    plt.title('原图')
+    plt.axis('off')
+
+    plt.subplot(1, 3, 2)
+    plt.imshow(heatmap)
+    plt.title('热力图')
+    plt.axis('off')
+
+    plt.subplot(1, 3, 3)
+    plt.imshow(result)
+    plt.title('叠加')
+    plt.axis('off')
+
+    plt.tight_layout()
+    plt.show()
+
+
+# 使用
+model = models.resnet18(pretrained=True)
+target_layer = model.layer4[-1]
+gradcam = GradCAM(model, target_layer)
+
+image = torch.randn(1, 3, 224, 224)
+image.requires_grad = True
+cam = gradcam.generate_cam(image, target_class=0)
+show_gradcam(image, cam)
+```
+
+---
+
+## 常见错误与解决方案
+
+### 1. 图像维度错误
+
+```python
+# 错误：PIL Image直接传入模型
+img = Image.open('cat.jpg')
+output = model(img)  # 错误！
+
+# 解决：转换为张量
+transform = transforms.Compose([
+    transforms.ToTensor(),
+])
+img_tensor = transform(img).unsqueeze(0)  # 添加batch维度
+output = model(img_tensor)
+```
+
+### 2. 标准化不一致
+
+```python
+# 错误：训练和测试使用不同的标准化
+train_transform = transforms.Compose([
+    transforms.Normalize(mean=[0.5, 0.5, 0.5], std=[0.5, 0.5, 0.5])
+])
+
+test_transform = transforms.Compose([
+    transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
+])
+
+# 解决：使用相同的标准化
+IMAGENET_MEAN = [0.485, 0.456, 0.406]
+IMAGENET_STD = [0.229, 0.224, 0.225]
+
+normalize = transforms.Normalize(mean=IMAGENET_MEAN, std=IMAGENET_STD)
+# 训练和测试都使用这个normalize
+```
+
+### 3. GPU内存不足
+
+```python
+# 错误：batch_size太大
+train_loader = DataLoader(dataset, batch_size=256)  # 可能OOM
+
+# 解决1：减小batch_size
+train_loader = DataLoader(dataset, batch_size=32)
+
+# 解决2：使用梯度累积
+accumulation_steps = 8
+optimizer.zero_grad()
+for i, (images, labels) in enumerate(train_loader):
+    outputs = model(images)
+    loss = criterion(outputs, labels)
+    loss = loss / accumulation_steps
+    loss.backward()
+
+    if (i + 1) % accumulation_steps == 0:
+        optimizer.step()
+        optimizer.zero_grad()
+
+# 解决3：使用混合精度
+scaler = GradScaler()
+with autocast():
+    outputs = model(images)
+```
+
+### 4. 模型eval模式忘记切换
+
+```python
+# 错误：训练后忘记切换到eval模式
+model.train()
+# 训练完成后直接测试
+test_acc = evaluate(model, test_loader)  # 错误！
+
+# 解决：在评估前切换到eval模式
+model.eval()
+with torch.no_grad():
+    test_acc = evaluate(model, test_loader)
+```
+
+---
+
+## CNN训练快速查阅表
+
+```python
+# ============ 导入 ============
+import torch
+import torch.nn as nn
+import torch.optim as optim
+from torch.utils.data import DataLoader
+from torchvision import transforms, datasets, models
+
+# ============ 数据变换 ============
+train_transform = transforms.Compose([
+    transforms.RandomResizedCrop(224),
+    transforms.RandomHorizontalFlip(),
+    transforms.ToTensor(),
+    transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])
+])
+
+test_transform = transforms.Compose([
+    transforms.Resize(256),
+    transforms.CenterCrop(224),
+    transforms.ToTensor(),
+    transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])
+])
+
+# ============ 数据加载 ============
+train_dataset = datasets.CIFAR10(root='./data', train=True, transform=train_transform)
+test_dataset = datasets.CIFAR10(root='./data', train=False, transform=test_transform)
+
+train_loader = DataLoader(train_dataset, batch_size=64, shuffle=True, num_workers=4)
+test_loader = DataLoader(test_dataset, batch_size=64, shuffle=False, num_workers=4)
+
+# ============ 模型构建 ============
+model = models.resnet18(pretrained=True)
+model.fc = nn.Linear(model.fc.in_features, 10)  # 10类分类
+model = model.cuda()  # 或 .to(device)
+
+# ============ 损失函数和优化器 ============
+criterion = nn.CrossEntropyLoss()
+optimizer = optim.Adam(model.parameters(), lr=0.001)
+scheduler = optim.lr_scheduler.StepLR(optimizer, step_size=10, gamma=0.1)
+
+# ============ 训练循环 ============
+for epoch in range(20):
+    model.train()
+    for images, labels in train_loader:
+        images, labels = images.cuda(), labels.cuda()
+
+        optimizer.zero_grad()
+        outputs = model(images)
+        loss = criterion(outputs, labels)
+        loss.backward()
+        optimizer.step()
+
+    scheduler.step()
+
+    # 验证
+    model.eval()
+    correct = 0
+    total = 0
+    with torch.no_grad():
+        for images, labels in test_loader:
+            images, labels = images.cuda(), labels.cuda()
+            outputs = model(images)
+            _, predicted = torch.max(outputs.data, 1)
+            total += labels.size(0)
+            correct += (predicted == labels).sum().item()
+
+    print(f'Epoch {epoch}: Accuracy {100 * correct / total}%')
+
+# ============ 保存模型 ============
+torch.save(model.state_dict(), 'model.pth')
+
+# 加载模型
+model.load_state_dict(torch.load('model.pth'))
+```
+
+---
+
+## 总结与下一步
+
+### 本篇笔记核心要点
+
+1. **卷积操作**：nn.Conv2d的参数（kernel_size, stride, padding, groups, dilation）
+2. **池化层**：MaxPool2d, AvgPool2d, AdaptiveAvgPool2d
+3. **归一化**：BatchNorm2d, LayerNorm, GroupNorm, Dropout
+4. **数据增强**：transforms的各种变换（翻转、旋转、裁剪、颜色抖动等）
+5. **模型构建**：LeNet, AlexNet, VGG, ResNet
+6. **迁移学习**：特征提取、微调、模型保存加载
+7. **训练技巧**：学习率调度、早停、梯度裁剪、混合精度
+
+### 下一步学习建议
+
+- **目标检测**：YOLO, Faster R-CNN, SSD
+- **语义分割**：U-Net, DeepLabV3
+- **实例分割**：Mask R-CNN
+- **Transformer视觉**：ViT, DETR
+- **自监督学习**：SimCLR, MoCo, MAE
+
+### 推荐资源
+
+- PyTorch官方文档：https://pytorch.org/docs/
+- torchvision：https://pytorch.org/vision/
+- Papers With Code：https://paperswithcode.com/
+
+---
+
+*本笔记是USTC学生深度学习笔记系列第二篇*

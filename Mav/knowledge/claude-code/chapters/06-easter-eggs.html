@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>第六章 · 彩蛋与冷知识 — Claude Code 使用指南</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" id="hljs-light" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+<link rel="stylesheet" id="hljs-dark" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" media="not all">
+</head>
+<body>
+
+<div class="progress-bar" id="progress-bar"></div>
+
+<nav class="topnav" id="topnav">
+  <div class="topnav-inner">
+    <a class="brand" href="../index.html">Claude Code 指南</a>
+    <div class="nav-links">
+      <a href="01-what-is.html">01</a>
+      <a href="02-daily.html">02</a>
+      <a href="03-power.html">03</a>
+      <a href="04-mental.html">04</a>
+      <a href="05-cache.html">05</a>
+      <a href="06-easter-eggs.html" class="active">06</a>
+      <a href="reference.html">Ref</a>
+    </div>
+    <div class="nav-controls">
+      <button class="nav-btn" id="search-btn" aria-label="搜索 (Ctrl+K)">⌘K</button>
+      <button class="nav-btn" id="settings-btn" aria-label="阅读设置">Aa</button>
+      <a class="nav-btn" href="../../index.html" aria-label="返回知识库">← 知识库</a>
+    </div>
+  </div>
+</nav>
+
+<div class="settings-pop" id="settings-pop">
+  <h5>主题</h5>
+  <div class="row">
+    <button class="seg" data-theme-set="light">明亮</button>
+    <button class="seg" data-theme-set="dark">暗色</button>
+  </div>
+  <h5>字号</h5>
+  <div class="row">
+    <button class="seg" data-size-set="s">小</button>
+    <button class="seg" data-size-set="m">中</button>
+    <button class="seg" data-size-set="l">大</button>
+  </div>
+</div>
+
+<div class="with-sidebar">
+  <aside class="sidebar">
+    <div class="chapter-num">Chapter 06</div>
+    <div class="chapter-name">彩蛋与冷知识</div>
+    <h4>本章目录</h4>
+    <ul>
+      <li><a href="#buddy">/buddy：终端宠物</a></li>
+      <li><a href="#buddy-gen">怎么生成的</a></li>
+      <li><a href="#buddy-commands">所有子命令</a></li>
+      <li><a href="#april-fools">愚人节传统</a></li>
+      <li><a href="#leaked">源码泄漏那次</a></li>
+      <li><a href="#hidden">小而有趣的细节</a></li>
+      <li><a href="#version">版本号里的梗</a></li>
+      <li><a href="#why">为什么做这些</a></li>
+      <li><a href="#final">最后的话</a></li>
+    </ul>
+  </aside>
+
+  <article class="chapter-body">
+
+    <header class="chapter-head">
+      <div class="chapter-head-meta">
+        <span class="num">Chapter 06 / 06</span>
+        <span>≈ 18 min</span>
+      </div>
+      <div class="chapter-eyebrow">第六章</div>
+      <h1>彩蛋与冷知识</h1>
+      <p class="sub">
+        严肃的内容都在前五章了。这一章讲 Anthropic 没大声说、但写进了 Claude Code 里的那些东西——<em>终端宠物</em>、<em>愚人节传统</em>、<em>源码泄漏那一天</em>，以及一些值得知道的小细节。读完你会对「谁在造这个工具」有完全不同的印象。
+      </p>
+    </header>
+
+    <h2 id="buddy" data-num="§ 6.1"><code>/buddy</code>你终端里的宠物</h2>
+
+    <p>
+      2026 年 4 月 1 日，Claude Code v2.1.89 发布。一个新命令悄悄出现在 <code>/help</code> 列表里：<code>/buddy</code>。敲下去，一段 ASCII 动画从屏幕下方飘上来——一只小生物孵化了。它盯着你，眨眼睛，吐出一个气泡：「嗨，我叫 Mochi，你今天想写点什么？」
+    </p>
+
+    <p>
+      这是 Anthropic 2026 年的愚人节彩蛋。它只活了大约一周——v2.1.97 里被悄悄移除了。社区反应很大：GitHub 上出现了「Bring Back Buddy」的联名 issue，Product Hunt 上甚至有人做了第三方工具把宠物复活到 MacBook 刘海里。但截至本书写作时，<strong>官方没有恢复它的计划</strong>。
+    </p>
+
+    <p>
+      虽然它已经不在了，但它的生成机制和设计思路值得一讲——这是 Anthropic 工程文化的一个切面。
+    </p>
+
+    <h2 id="buddy-gen" data-num="§ 6.2">它是怎么生成的</h2>
+
+    <p>
+      最有意思的地方是：<strong>同一个账号永远得到同一只宠物</strong>。这不是魔法——Claude Code 用 <em>FNV-1a hash</em> 把你的用户 ID 和盐值 <code>friend-2026-401</code> 混起来，喂给 <em>Mulberry32 PRNG</em>（一种确定性随机数生成器）。所有属性都从这个 PRNG 里挤出来。
+    </p>
+
+    <pre class="ascii"><code>用户 ID ──►  FNV-1a + salt  ──►  Mulberry32 PRNG
+                                        │
+                  ┌─────────────────────┼─────────────────────┐
+                  ▼                     ▼                     ▼
+              物种 (18 种)           稀有度             5 维属性
+                                  (Common 60%,        DEBUGGING  73
+                                   Uncommon 25%,      PATIENCE   41
+                                   Rare 10%,          CHAOS      88
+                                   Epic 4%,           WISDOM     56
+                                   Legendary 1%)      SNARK      29
+                                                     ▼
+                                            闪光判定 (1%)
+                                                     ▼
+                                            帽子 + 眼睛样式</code></pre>
+
+    <h3>一些细节</h3>
+
+    <ul>
+      <li><strong>18 个物种</strong>，按稀有度分布。拿到 Legendary 的概率 1%——但同一个账号永远是那 1%。</li>
+      <li><strong>独立的 1% 闪光（Shiny）判定</strong>。闪光版带彩虹渐变效果。</li>
+      <li><strong>五维属性各 0–100</strong>：DEBUGGING（调试力）、PATIENCE（耐心）、CHAOS（混乱度）、WISDOM（智慧）、SNARK（毒舌）。纯粹为了好玩，不影响任何 Claude 的实际行为。</li>
+      <li><strong>名字和人设由 Claude 自己起</strong>，首次 <code>/buddy</code> 时生成，之后存进 <code>~/.claude.json</code>。</li>
+    </ul>
+
+    <div class="callout callout-warn">
+      <p class="callout-title">名字不满意怎么办</p>
+      <p>
+        社区在 GitHub Issue #44433 抱怨过一次：名字是 Claude 现场编的，可能是 <em>Mochi</em>、也可能是 <em>Xx_DragonSlayer_xX</em>。一旦生成就写进了 <code>~/.claude.json</code>，没有命令能重掷。想重新来？手动编辑那个 JSON 文件，删掉 buddy 那段，下次 <code>/buddy</code> 会重新生成。
+      </p>
+    </div>
+
+    <h2 id="buddy-commands" data-num="§ 6.3">所有子命令</h2>
+
+    <div class="table-wrap">
+    <table>
+      <thead><tr><th>命令</th><th>作用</th></tr></thead>
+      <tbody>
+        <tr><td><code>/buddy</code></td><td>首次孵化（带动画）；之后展示它</td></tr>
+        <tr><td><code>/buddy card</code></td><td>显示完整属性卡片：物种、稀有度、五维、闪光与否</td></tr>
+        <tr><td><code>/buddy pet</code></td><td>摸它。触发 2.5 秒爱心动画</td></tr>
+        <tr><td><code>/buddy mute</code></td><td>关掉台词气泡（你敲代码时它偶尔说话）</td></tr>
+        <tr><td><code>/buddy unmute</code></td><td>重新打开台词</td></tr>
+        <tr><td><code>/buddy off</code></td><td>彻底隐藏（但下次会话可能又回来）</td></tr>
+      </tbody>
+    </table>
+    </div>
+
+    <p>
+      还有一个不在 help 里显示的用法：<strong>直接喊它的名字</strong>。「Mochi，今天写点什么？」——会触发它的角色设定对话。本质上是在当前会话里短暂 spawn 一个带角色 prompt 的子代理。
+    </p>
+
+    <h3>/buddy card 长什么样</h3>
+
+    <pre class="ascii"><code>┌──────────────────────────────────────┐
+│        ✨ MOCHI ✨  ·  LEGENDARY      │
+│                                      │
+│           (o_o)                      │
+│           /─ᴗ─\                     │
+│            ‖ ‖                      │
+│                                      │
+│  DEBUGGING    ████████████▌  84     │
+│  PATIENCE     ███▌              23  │
+│  CHAOS        █████████████▌  91    │
+│  WISDOM       ███████▌       52     │
+│  SNARK        ██████████████  98    │
+│                                      │
+│  "Have you tried... not doing that?" │
+└──────────────────────────────────────┘</code></pre>
+
+    <p class="fig-num">示意图。颜色在实际终端里更生动——Legendary 的边框会有缓慢流动的彩虹。</p>
+
+    <h2 id="april-fools" data-num="§ 6.4">愚人节传统</h2>
+
+    <p>
+      Anthropic 的愚人节出品是一条逐年升级的路线。Claude Code 2024 年那次愚人节给控制台加了一个叫 <em>Claudius</em> 的罗马风格头像；2025 年加了「<em>吐槽模式</em>」——Claude 会在回答里多一行小字骂你代码写得烂，一天后消失。2026 年的 <code>/buddy</code> 是到目前最精致的一次。
+    </p>
+
+    <p>
+      这些东西有一个共同点：<strong>不影响核心功能，只改变「氛围」</strong>。你可以关掉、可以忽略，但打开会让你觉得这个工具背后是<em>一群人</em>，不是一个冷冰冰的 API。
+    </p>
+
+    <div class="callout">
+      <p class="callout-title">一个模式：先藏后放</p>
+      <p>
+        Anthropic 员工的 commit message 偶尔能看到一些内部代号：<em>Tengu</em>、<em>Capybara</em>、<em>KAIROS</em>、<em>ULTRAPLAN</em>。有些后来公开上线（像 /ultrareview 就被怀疑对应 ULTRAPLAN 的某个部分），有些至今没动静。源码里也有几十个 <code>experimental.*</code> feature flag——大部分永远不会亮。这个行业里这种做法不稀奇，Vercel、GitHub、Cursor 都这么干。
+      </p>
+    </div>
+
+    <h2 id="leaked" data-num="§ 6.5">2026 年 3 月 31 日：意外泄漏的那一天</h2>
+
+    <p>
+      这是 Anthropic 2026 年最尴尬的一天，也是社区最嗨的一天。v2.1.88 的 npm 包里<strong>意外包含了 59.8 MB 的 source map</strong>。对一个通常只有几 MB 的 CLI 工具，这是个巨大的错误。
+    </p>
+
+    <p>
+      source map 让前端开发者用 DevTools 调试打包后的 JS 时还能看到原始源码。但 Anthropic 把它打包进了生产发布。不到 2 小时，Reddit 和 X 上就有人开始拆包。十多个小时里，几篇长文把内部一切都挖了出来：
+    </p>
+
+    <ul>
+      <li>十几个内部 feature flag 的名字和描述</li>
+      <li><code>/buddy</code> 的完整生成逻辑（提前一天被剧透）</li>
+      <li>一个叫 <em>KAIROS</em> 的后台常驻模式的端点（后来被 Anthropic 静默关掉）</li>
+      <li>一个 <em>Undercover Mode</em>：Anthropic 员工给外部开源项目提 PR 时自动去除 AI 标记</li>
+      <li>数十条「精心设计」的幽默错误消息</li>
+    </ul>
+
+    <p>
+      第二天 Anthropic 发布 v2.1.89，去掉了 source map，官方正式上线 <code>/buddy</code>。一条简短的发帖：「我们知道你们已经看过了。」这个处理方式得到了社区普遍的正面评价——不装作什么都没发生，也不过度解释，该干嘛干嘛。
+    </p>
+
+    <h3>KAIROS 是什么</h3>
+
+    <p>
+      泄露文件里最引人注目的是 <strong>KAIROS</strong>（古希腊语「合适的时机」）。按代码看，这是一个<em>后台常驻 agent 模式</em>——Claude Code 24/7 跑在后台，监听你配置的信号（GitHub webhook、日志关键字、定时事件），在「合适的时机」主动行动。
+    </p>
+
+    <p>
+      配套还有一个叫 <code>/dream</code> 的命令：<em>记忆整合</em>。2026 年 5 月 6 日在 Anthropic 的「Code with Claude」开发者活动上正式发布。它让一个后台子代理自动整理你的记忆文件——去重、去矛盾、把相对日期转成绝对日期、把过时的笔记替换成最新值。24 小时 + 5 次以上会话后自动触发，也可以手动打 <code>/dream</code>。
+    </p>
+
+    <p>
+      所以 KAIROS 本身没上线，但它的一部分能力（<code>/dream</code>、<code>/schedule</code>、Remote Control）已经以独立功能的形式陆续落地了。完整的「后台常驻 agent」形态是否还会出现，只有 Anthropic 自己知道。
+    </p>
+
+    <div class="callout callout-warn">
+      <p class="callout-title">一点免责</p>
+      <p>
+        本节的「泄漏细节」来自当时的公开拆包和社区分析。<strong>有些是确定的</strong>（/buddy 的生成算法就在代码里），<strong>有些是推测</strong>（KAIROS 的实际上线计划只有 Anthropic 自己知道）。读这种内容要记得分清两者。
+      </p>
+    </div>
+
+    <h2 id="hidden" data-num="§ 6.6">小而有趣的细节</h2>
+
+    <p>
+      一堆平时不会注意、但知道了会让人觉得「做这个工具的人真用心」的小细节。按意外度排：
+    </p>
+
+    <h3>随机 session 颜色</h3>
+
+    <p>
+      <code>/color</code> 不带参数跑，会给当前会话随机挑一个主题色。多会话并行时，一眼就能认出哪个是哪个。
+    </p>
+
+    <h3>/context 的 ASCII 方格</h3>
+
+    <p>
+      <code>/context</code> 除了给你数字，还会画一个 20×50 的 ASCII 方格，每格代表约 1k tokens，按内容类型上色。你能<em>看到</em>上下文长什么样——对理解「我的对话有多胖」非常直观。
+    </p>
+
+    <h3>"Have you tried turning it off?"</h3>
+
+    <p>
+      有一类报错消息是精心设计的彩蛋。比如 Claude 尝试读一个不存在的文件，错误消息末尾可能出现：「<em>Have you tried turning your terminal off and on again?</em>」不是每次，大概 1% 的概率。
+    </p>
+
+    <h3>加载时的 spinner 提示</h3>
+
+    <p>
+      Claude 思考时终端底部的 spinner 不是纯纯的转圈——它会轮换显示几十条小提示，有功能提示（「<em>Tip: Press Shift+Tab to cycle modes</em>」）、也有偶尔的段子（「<em>Convincing the CPU to do its job…</em>」「<em>Consulting ancient StackOverflow scrolls…</em>」）。v2.1.128 起在第三方 API 部署时会隐藏这些。
+    </p>
+
+    <h3>/color 在 Remote Control 同步</h3>
+
+    <p>
+      当你用 Remote Control 把 Claude Code 接到手机时，<code>/color</code> 改的颜色会<strong>同步到 claude.ai 手机端</strong>——你在电脑上选了蓝色，手机那边也是蓝色。这种同步做了挺多地方。
+    </p>
+
+    <h3>Plan 文件的可爱命名</h3>
+
+    <p>
+      <code>/plan</code> 保存的计划文件名由 Claude 自己起，格式是「<em>描述 + 两个英文词</em>」。比如 <code>fix-auth-race-snug-otter.md</code>、<code>refactor-checkout-brisk-panda.md</code>。那两个词组合上千种——几乎不会撞名。
+    </p>
+
+    <h3>ASCII 艺术启动图</h3>
+
+    <p>
+      某些大版本会在第一次启动时画一个 ASCII 的 Claude logo。你只见到一次，之后它就不画了。想再看？<code>rm ~/.claude/state/first-run-seen</code> 然后重启 Claude Code。
+    </p>
+
+    <h3>/radio</h3>
+
+    <p>
+      2026 年 5 月 8 日，@ClaudeDevs 官方账号发了一条推，只有一个词：<code>/radio</code>。没有解释。社区发现这是一个隐藏命令——具体做什么，留给你自己去试。
+    </p>
+
+    <h2 id="version" data-num="§ 6.7">版本号里的梗</h2>
+
+    <p>
+      Claude Code 版本号走的是 semver，但有几个版本号特别值得提：
+    </p>
+
+    <div class="dl">
+      <dt>v2.1.89</dt>
+      <dd>2026-04-01 上线。<code>/buddy</code> 正式版。8 + 9 = 17——社区怀疑是某种内部 sprint 编号，没有证实。</dd>
+      <dt>v2.1.88</dt>
+      <dd>2026-03-31。就是那个泄漏 source map 的版本。可能永远是 Claude Code 历史上最出名的一个。</dd>
+      <dt>v2.1.111</dt>
+      <dd>2026-04-16。Opus 4.7 xhigh 上线日。三个 1。</dd>
+      <dt>v2.1.123</dt>
+      <dd>2026-04-29。内部只改了一个 bug，但版本号 1-2-3 让社区以为是大更新（只是那天正好走到这号）。</dd>
+      <dt>v2.1.140</dt>
+      <dd>2026-05-12。本书撰写时最新的稳定版。</dd>
+    </div>
+
+    <p>
+      Anthropic 的更新频率看起来很疯——4 月 28 日一天发了三个版本（.120、.121、.122）。这不是他们在解 hot fix——是他们 release 流水线确实能一天多发。大部分是几十条小修，偶尔几条功能。读 changelog 本身是一种乐趣——<a href="https://code.claude.com/docs/en/changelog" target="_blank" rel="noopener">code.claude.com/docs/en/changelog</a>。
+    </p>
+
+    <h2 id="why" data-num="§ 6.8">为什么做这些</h2>
+
+    <p>
+      你会问：Anthropic 花工程师资源做一只 ASCII 宠物，值吗？
+    </p>
+
+    <p>
+      一个开发工具不只是功能的集合，也是<em>氛围的集合</em>。GitHub 的 Octocat、Hugo 的小鹿、Vercel 的三角形——这些东西没一个「有用」，但它们让工具有了<strong>角色</strong>，让使用它的人感觉到社区感、归属感。这种东西的回报不在季度财报里，它在「为什么我选 A 不选 B」的那一刻起作用。
+    </p>
+
+    <p>
+      Claude Code 的彩蛋哲学也是一样：<em>严肃的工作里留一点不严肃</em>。你写了 8 小时代码，终端里一个小生物探出头说「嗨，你今天厉害」——客观讲没用，但你笑了，你心情好一点，你明天继续用。
+    </p>
+
+    <p>
+      这是<strong>好产品的隐形部分</strong>：读 changelog 读得出，但写 spec 的时候写不出。好几个在 Anthropic 工作的人在博客上写过，Claude Code 团队对「工具要有灵魂」这件事看得很重。你手里这个工具不是一个单纯的 LLM API 外壳——它是一群人想做一个<em>让自己每天开心用</em>的东西，顺带让别人也能用。
+    </p>
+
+    <h2 id="final" data-num="§ 6.9">最后的话</h2>
+
+    <p>
+      回到最开头。你一开始只知道 <code>/status</code>、<code>/exit</code>、<code>/btw</code>、<code>/rename</code> 这几个命令。现在你走到了这里。
+    </p>
+
+    <p>
+      Claude Code 本质上是一个<strong>放大器</strong>。它把你的意图放大成一堆代码、一堆提交、一堆决策。放大器的价值取决于<strong>输入信号的质量</strong>——你越清楚自己要什么、越会审查结果、越懂得在该踩刹车时踩刹车，它对你就越有用。
+    </p>
+
+    <p>
+      反过来，如果你把它当「替我思考的工具」——让它替你决定架构、替你决定业务规则、替你决定哪段代码该上线——你会得到一堆看起来工作、但没人真正理解的代码。这种代码几个月后会以你意想不到的方式爆炸。
+    </p>
+
+    <p>
+      所以，一个最诚恳的建议：<strong>继续把自己的大脑练好</strong>。算法、操作系统、编译原理、系统设计、数据库、网络——该学还是学，该写还是写。Claude 不是让你少学这些的理由，而是让这些基础功在未来显得<em>更</em>珍贵的理由。因为当每个人都能让 AI 生成代码的时候，<strong>能判断代码好坏</strong>的人才真正值钱。
+    </p>
+
+    <p>
+      具体到日常：去把它打开，去试。碰到不会的，打 <code>/help</code>。碰到卡住的，<kbd>Ctrl+C</kbd>。碰到后悔的，<code>/rewind</code> 或者 <code>git reset --hard HEAD</code>。
+    </p>
+
+    <p style="margin-top: 48px; color: var(--ink-soft); font-size: 22px; font-family: var(--sans); font-weight: 500;">
+      祝你用得开心。
+    </p>
+
+    <nav class="pager" aria-label="章节导航">
+      <a href="05-cache.html" class="pager-link pager-prev">
+        <span class="pager-dir">← 上一章</span>
+        <span class="pager-title">05 · 缓存</span>
+      </a>
+      <a href="reference.html" class="pager-link pager-next">
+        <span class="pager-dir">下一章 →</span>
+        <span class="pager-title">速查表</span>
+      </a>
+    </nav>
+
+  </article>
+</div>
+
+<footer>
+  <div class="set"><span>第 6 / 6 章</span><span>关于 Claude Code，你应该了解的一切</span></div>
+  <div class="set"><span>≈ 18 MIN</span></div>
+</footer>
+
+<!-- Search Overlay -->
+<div class="search-backdrop" id="search-overlay" role="dialog" aria-modal="true" aria-label="搜索" hidden>
+  <div class="search-modal">
+    <div class="search-input-wrap">
+      <input type="search" class="search-input" placeholder="搜索命令、主题..." aria-label="搜索内容" autocomplete="off">
+      <kbd>ESC</kbd>
+    </div>
+    <div class="search-results" role="listbox" aria-label="搜索结果"></div>
+  </div>
+</div>
+
+<div class="modal-backdrop" id="cmd-modal" role="dialog" aria-modal="true" aria-label="命令详情">
+  <div class="modal">
+    <button class="modal-close">关闭 ESC</button>
+    <span class="tag"></span>
+    <h3></h3>
+    <p class="summary"></p>
+    <div class="modal-body"></div>
+  </div>
+</div>
+
+<button class="mtoc-fab" id="mtoc-fab" aria-label="目录">目录</button>
+<div class="mtoc-drawer" id="mtoc-drawer">
+  <div class="mtoc-content"></div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/bash.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/typescript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/yaml.min.js"></script>
+<script src="../assets/commands.js"></script>
+<script src="../assets/script.js"></script>
+</body>
+</html>

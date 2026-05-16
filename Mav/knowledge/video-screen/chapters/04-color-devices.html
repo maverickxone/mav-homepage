@@ -1,0 +1,759 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>色彩科学与设备横评 — 从像素到 4K：视频与屏幕技术指南</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" id="hljs-light" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+<link rel="stylesheet" id="hljs-dark" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" media="not all">
+</head>
+<body>
+
+<div class="progress-bar" id="progress-bar"></div>
+
+<nav class="topnav" id="topnav">
+  <div class="topnav-inner">
+    <a class="brand" href="../index.html">从像素到 4K：视频与屏幕技术指南</a>
+    <div class="nav-links">
+      <a href="01-pixel-resolution.html">01</a>
+      <a href="02-film-codec.html">02</a>
+      <a href="03-bitrate-refresh.html">03</a>
+      <a href="04-color-devices.html" class="active">04</a>
+      <a href="05-practice-glossary.html">05</a>
+    </div>
+    <div class="nav-controls">
+      <button class="nav-btn" id="search-btn" aria-label="搜索 (Ctrl+K)">⌘K</button>
+      <button class="nav-btn" id="settings-btn" aria-label="阅读设置">Aa</button>
+      <a class="nav-btn" href="../../index.html" aria-label="返回知识库">← 知识库</a>
+    </div>
+  </div>
+</nav>
+<div class="settings-pop" id="settings-pop">
+  <h5>主题</h5>
+  <div class="row">
+    <button class="seg" data-theme-set="light">明亮</button>
+    <button class="seg" data-theme-set="dark">暗色</button>
+  </div>
+  <h5>字号</h5>
+  <div class="row">
+    <button class="seg" data-size-set="s">小</button>
+    <button class="seg" data-size-set="m">中</button>
+    <button class="seg" data-size-set="l">大</button>
+  </div>
+</div>
+
+<div class="with-sidebar">
+  <aside class="sidebar">
+  <div class="chapter-num">CHAPTER 04</div>
+  <div class="chapter-name">色彩科学与设备横评</div>
+  <h4>目录</h4>
+  <ul>
+    <li><a href="#色域屏幕能显示多大范围的颜色">色域：屏幕能显示多大范围的颜色？</a></li>
+    <li><a href="#色深颜色的quot精细度quot">色深：颜色的&quot;精细度&quot;</a></li>
+    <li><a href="#hdr高动态范围">HDR：高动态范围</a></li>
+    <li><a href="#理解quot播放4kquot与quot显示4kquot的区别">理解&quot;播放4K&quot;与&quot;显示4K&quot;的区别</a></li>
+    <li><a href="#ipad-air-系列2024-2025">iPad Air 系列（2024-2025）</a></li>
+    <li><a href="#ipad-pro-系列2021-2024">iPad Pro 系列（2021-2024）</a></li>
+    <li><a href="#华为-matebook-x-pro2024款你的设备">华为 MateBook X Pro（2024款，你的设备）</a></li>
+    <li><a href="#macbook-air-系列m3m4">MacBook Air 系列（M3/M4）</a></li>
+    <li><a href="#macbook-pro-系列m42024">MacBook Pro 系列（M4，2024）</a></li>
+    <li><a href="#aoc-u27u3xd-显示器">AOC U27U3XD 显示器</a></li>
+    <li><a href="#设备屏幕总览">设备屏幕总览</a></li>
+  </ul>
+</aside>
+  <article class="chapter-body">
+    <header class="chapter-head">
+  <div class="chapter-head-meta">
+    <span class="num">CHAPTER 04</span>
+    <span>≈ 22 MIN READ</span>
+  </div>
+  <h1>色彩科学与设备横评</h1>
+</header>
+    <h2 id="色域屏幕能显示多大范围的颜色">色域：屏幕能显示多大范围的颜色？</h2>
+<p>世界上的颜色是无限的，但屏幕能显示的颜色范围是有限的，这个范围叫做<strong>色域（Color Gamut）</strong>。</p>
+<p>不同用途的屏幕使用不同的色域标准：</p>
+<p><strong>sRGB / Rec. 709</strong></p>
+<p>最基础的色域标准，覆盖人眼可见颜色的约 35%。几乎所有普通屏幕和互联网内容（网页、普通视频）都以 sRGB 为基准。如果你的屏幕能 100% 覆盖 sRGB，那么对于日常使用来说已经足够。</p>
+<p><strong>DCI-P3 / Display P3</strong></p>
+<p>电影行业标准，覆盖人眼可见颜色的约 46%，比 sRGB 宽约 25%。主要体现在更丰富的红色和绿色。</p>
+<p>苹果将 P3 引入消费设备（iPhone 7 开始），华为高端笔记本也支持 P3。Apple TV、Netflix 的高清内容通常使用 P3 色域制作。</p>
+<p><strong>Adobe RGB</strong></p>
+<p>专业摄影/印刷行业标准，在绿色和青色方面比 DCI-P3 更宽，主要用于印刷色彩管理。</p>
+<p><strong>Rec. 2020</strong></p>
+<p>面向未来的 4K/8K 超高清广播标准，覆盖人眼可见颜色的约 76%。目前还没有任何消费级显示器能完整显示 Rec. 2020，只有一些专业显示器能覆盖其 85% 左右。</p>
+<p>对你而言：当你的屏幕支持 P3 色域时，看 Netflix 的 HDR 内容、看苹果的照片，色彩会比只支持 sRGB 的屏幕更鲜艳、更准确。但如果你把 P3 色域的内容显示在 sRGB 屏幕上，超出 sRGB 范围的颜色会被&quot;截断&quot;（压缩到 sRGB 边界内），失去部分色彩细节。</p>
+<h2 id="色深颜色的quot精细度quot">色深：颜色的&quot;精细度&quot;</h2>
+<p>我们在第一章提到，每个像素的 RGB 各通道有 256 个级别（8位），能表达约 1670 万种颜色。这叫做 <strong>8位色深（8-bit color）</strong>。</p>
+<p>如果是 <strong>10位色深（10-bit color）</strong>，每通道有 1024 个级别，总颜色数是 1024³ ≈ <strong>10.7 亿种颜色</strong>。</p>
+<p>这有什么实际意义？</p>
+<p>想象从深红色到浅橙色的渐变。8位色深下，这个渐变由 256 步完成，在某些情况下（尤其是大面积色彩过渡），肉眼可以看到明显的&quot;色带&quot;——渐变不连续，出现明显的色块分界。这叫做<strong>色带现象（Banding）</strong>。</p>
+<p>10位色深下，同样的渐变由 1024 步完成，过渡更丝滑，消除了色带现象。</p>
+<p>你的华为 MateBook X Pro 2024 屏幕支持 10bit 色深（需要开启 HDR 模式），这意味着它可以显示 10.7 亿种颜色。</p>
+<h2 id="hdr高动态范围">HDR：高动态范围</h2>
+<p>**HDR（High Dynamic Range，高动态范围）**是近年来视频和显示技术中最重要的进步之一。</p>
+<p>传统的 SDR（标准动态范围）内容和屏幕，亮度范围大约在 100 尼特（nits）左右。这意味着屏幕上最亮的白和最暗的黑之间的差距是有限的。</p>
+<p>而真实世界的光照范围远比这大得多——晴天的太阳光强约 100,000 尼特，阴影处约 100 尼特，人眼能同时适应几个数量级的亮度差。</p>
+<p>HDR 的目标是让屏幕更接近真实世界的亮度范围：</p>
+<ul>
+<li>HDR 内容的峰值亮度可以达到 1000 nits、4000 nits 甚至更高</li>
+<li>暗部细节（比如夜晚场景中的阴影）更丰富</li>
+<li>亮部细节（比如窗外阳光照射的场景）不会&quot;过曝&quot;成一片白</li>
+</ul>
+<p><strong>几种 HDR 标准：</strong></p>
+<div class="table-wrap"><table><thead><tr>
+<th>标准</th>
+<th>峰值亮度</th>
+<th>色深</th>
+<th>内容量</th>
+</tr>
+</thead><tbody><tr>
+<td>HDR10</td>
+<td>1000 nits</td>
+<td>10-bit</td>
+<td>最多</td>
+</tr>
+<tr>
+<td>HDR10+</td>
+<td>可变（动态元数据）</td>
+<td>10-bit</td>
+<td>较多</td>
+</tr>
+<tr>
+<td>Dolby Vision</td>
+<td>10000 nits（理论）</td>
+<td>12-bit</td>
+<td>较多</td>
+</tr>
+<tr>
+<td>HLG</td>
+<td>用于广播</td>
+<td>10-bit</td>
+<td>较多</td>
+</tr>
+</tbody></table></div>
+<p><strong>DisplayHDR 400/600/1000</strong> 是显示器 HDR 认证等级：</p>
+<ul>
+<li><strong>DisplayHDR 400</strong>：峰值亮度 400 nits，这是&quot;入门级 HDR&quot;，效果提升有限</li>
+<li><strong>DisplayHDR 600/1000</strong>：更高亮度，HDR 效果显著</li>
+<li>你的 AOC U27U3XD 支持 <strong>DisplayHDR 400</strong>，峰值亮度 450 nits，属于入门 HDR 档次</li>
+</ul>
+<p>真正的 HDR 体验需要屏幕硬件支持（足够高的峰值亮度和足够深的暗部），一些 LCD 屏幕虽然通过了 HDR 400 认证，但实际改善效果有限；OLED 屏幕因为能实现真正的纯黑，在 HDR 表现上通常远好于同亮度的 LCD。</p>
+<blockquote><p>以下数据均来自官方规格及权威媒体，所有设备信息更新至 2025-2026 年。</p>
+</blockquote>
+<h2 id="理解quot播放4kquot与quot显示4kquot的区别">理解&quot;播放4K&quot;与&quot;显示4K&quot;的区别</h2>
+<p>在讨论具体设备之前，有一个关键区别需要厘清：</p>
+<ul>
+<li><strong>播放 4K</strong>：设备能够解码并处理 4K 分辨率的视频文件（取决于处理器的解码能力）</li>
+<li><strong>显示 4K</strong>：设备的屏幕分辨率本身达到或超过 4K，能够逐像素呈现所有细节（取决于屏幕硬件）</li>
+</ul>
+<p>这两者是独立的。一台设备可以&quot;播放 4K&quot;但在一块 1080P 屏幕上显示——此时实际看到的只是屏幕缩放后的 1080P 画质。就像把一张 4000 万像素的照片显示在 100 万像素的屏幕上，信息丢失了大半。</p>
+<p>反过来，4K 屏幕播放 1080P 内容，屏幕会做<strong>上采样（Upscaling）</strong>，将 1080P 放大填满 4K 屏幕，效果介于原生 1080P 和真 4K 之间——通常还不错，因为算法会做一定程度的锐化补偿。</p>
+<h2 id="ipad-air-系列2024-2025">iPad Air 系列（2024-2025）</h2>
+<p><strong>iPad Air M2（2024年3月发布）</strong></p>
+<div class="table-wrap"><table><thead><tr>
+<th>规格</th>
+<th>11英寸</th>
+<th>13英寸</th>
+</tr>
+</thead><tbody><tr>
+<td>面板类型</td>
+<td>IPS Liquid Retina</td>
+<td>IPS Liquid Retina</td>
+</tr>
+<tr>
+<td>分辨率</td>
+<td>2360×1640</td>
+<td>2732×2048</td>
+</tr>
+<tr>
+<td>PPI</td>
+<td>264</td>
+<td>264</td>
+</tr>
+<tr>
+<td>刷新率</td>
+<td>60Hz（无 ProMotion）</td>
+<td>60Hz</td>
+</tr>
+<tr>
+<td>最大亮度</td>
+<td>500 nits</td>
+<td>500 nits</td>
+</tr>
+<tr>
+<td>色域</td>
+<td>P3</td>
+<td>P3</td>
+</tr>
+<tr>
+<td>HDR</td>
+<td>否</td>
+<td>否</td>
+</tr>
+</tbody></table></div>
+<p><strong>iPad Air M3（2025年3月发布）</strong></p>
+<p>规格与 M2 版本相同，屏幕本身没有升级，主要是处理器从 M2 升级到 M3，带来更好的 AV1 硬件解码性能和 AI 能力。</p>
+<p><strong>结论：</strong></p>
+<ul>
+<li>iPad Air 系列的屏幕是优质 IPS 屏，264 PPI 非常细腻，色域涵盖 P3</li>
+<li><strong>不支持 ProMotion</strong>，刷新率锁定 60Hz，滑动流畅度不如 iPad Pro</li>
+<li>分辨率远不及 4K（4K 是 3840×2160），但在 11-13 英寸的尺寸上，264 PPI 已经超出人眼极限，这个分辨率完全足够</li>
+<li>播放 4K 内容：M3 支持 AV1 硬件解码，播放 4K AV1/HEVC 视频完全没问题；但屏幕展示的是&quot;缩放后的高质量图像&quot;，并非真·逐像素 4K</li>
+<li><strong>视频推荐</strong>：在 iPad Air 上，下载 1080P 高码率版本（HEVC 或 AV1）是最高性价比的选择，因为屏幕不需要 4K，而高码率保证了画质</li>
+</ul>
+<h2 id="ipad-pro-系列2021-2024">iPad Pro 系列（2021-2024）</h2>
+<p><strong>iPad Pro M1（2021年，你的设备）</strong></p>
+<div class="table-wrap"><table><thead><tr>
+<th>规格</th>
+<th>11英寸</th>
+<th>12.9英寸</th>
+</tr>
+</thead><tbody><tr>
+<td>面板类型</td>
+<td>IPS Liquid Retina</td>
+<td>Mini-LED Liquid Retina XDR</td>
+</tr>
+<tr>
+<td>分辨率</td>
+<td>2388×1668</td>
+<td>2732×2048</td>
+</tr>
+<tr>
+<td>PPI</td>
+<td>264</td>
+<td>264</td>
+</tr>
+<tr>
+<td>刷新率</td>
+<td>ProMotion 10-120Hz</td>
+<td>ProMotion 10-120Hz</td>
+</tr>
+<tr>
+<td>最大亮度（SDR）</td>
+<td>600 nits</td>
+<td>1000 nits</td>
+</tr>
+<tr>
+<td>峰值亮度（HDR）</td>
+<td>600 nits</td>
+<td>1600 nits</td>
+</tr>
+<tr>
+<td>色域</td>
+<td>P3</td>
+<td>P3</td>
+</tr>
+<tr>
+<td>AV1 硬件解码</td>
+<td>✅（M1 支持）</td>
+<td>✅</td>
+</tr>
+</tbody></table></div>
+<p>注意：M1 芯片确实支持 AV1 硬件解码。苹果在 M1 中内置了 AV1 解码器，这与 Intel 或 ARM 的部分实现不同。</p>
+<p><strong>iPad Pro M4（2024年5月发布）</strong></p>
+<div class="table-wrap"><table><thead><tr>
+<th>规格</th>
+<th>11英寸</th>
+<th>13英寸</th>
+</tr>
+</thead><tbody><tr>
+<td>面板类型</td>
+<td>OLED Ultra Retina XDR（Tandem OLED）</td>
+<td>OLED Ultra Retina XDR</td>
+</tr>
+<tr>
+<td>分辨率</td>
+<td>2388×1668</td>
+<td>2752×2064</td>
+</tr>
+<tr>
+<td>PPI</td>
+<td>264</td>
+<td>264</td>
+</tr>
+<tr>
+<td>刷新率</td>
+<td>ProMotion 10-120Hz</td>
+<td>ProMotion 10-120Hz</td>
+</tr>
+<tr>
+<td>最大亮度（SDR）</td>
+<td>1000 nits</td>
+<td>1000 nits</td>
+</tr>
+<tr>
+<td>峰值亮度（HDR）</td>
+<td>1600 nits</td>
+<td>1600 nits</td>
+</tr>
+<tr>
+<td>色域</td>
+<td>P3</td>
+<td>P3</td>
+</tr>
+<tr>
+<td>色深</td>
+<td>10-bit</td>
+<td>10-bit</td>
+</tr>
+</tbody></table></div>
+<p>M4 iPad Pro 搭载的 Tandem OLED 屏幕是 2024 年最顶尖的平板显示技术，两层 OLED 叠加，大幅提升亮度同时保持 OLED 的纯黑优势。</p>
+<p><strong>结论：</strong></p>
+<ul>
+<li>iPad Pro（所有代）的屏幕分辨率都不是 4K，但 264 PPI 让屏幕内容极其精细</li>
+<li>12.9 英寸 iPad Pro M1 的 Mini-LED 屏幕有出色的 HDR 效果；M4 的 OLED 更进一步</li>
+<li>11 英寸 iPad Pro M1（你的设备）：优秀的 ProMotion IPS 屏，1080P 内容完全足够，4K 内容可以播放但屏幕无法展示全部细节</li>
+<li><strong>视频推荐</strong>：1080P 高码率 HEVC/AV1（文件小且画质好），或 AVC（最佳兼容性）</li>
+</ul>
+<h2 id="华为-matebook-x-pro2024款你的设备">华为 MateBook X Pro（2024款，你的设备）</h2>
+<p>这是你目前使用的主力电脑，规格非常出色：</p>
+<div class="table-wrap"><table><thead><tr>
+<th>规格</th>
+<th>参数</th>
+</tr>
+</thead><tbody><tr>
+<td>屏幕尺寸</td>
+<td>14.2英寸（对角线）</td>
+</tr>
+<tr>
+<td>面板类型</td>
+<td>柔性 OLED（华为首款柔性 OLED 笔记本）</td>
+</tr>
+<tr>
+<td>分辨率</td>
+<td>3120×2080（3.1K）</td>
+</tr>
+<tr>
+<td>PPI</td>
+<td>264</td>
+</tr>
+<tr>
+<td>刷新率</td>
+<td>最高 120Hz（支持自适应，出厂默认 60Hz，Fn+R 切换）</td>
+</tr>
+<tr>
+<td>峰值亮度</td>
+<td>1000 nits</td>
+</tr>
+<tr>
+<td>色域</td>
+<td>100% DCI-P3，94% Adobe RGB，100% sRGB</td>
+</tr>
+<tr>
+<td>色深</td>
+<td>10-bit（需 HDR 模式）</td>
+</tr>
+<tr>
+<td>色准</td>
+<td>ΔE &lt; 1（出厂逐台校准）</td>
+</tr>
+<tr>
+<td>PWM 调光频率</td>
+<td>1440Hz（高频，护眼）</td>
+</tr>
+<tr>
+<td>认证</td>
+<td>TÜV 莱茵 Eye Comfort 3.0</td>
+</tr>
+</tbody></table></div>
+<p><strong>分辨率分析：</strong></p>
+<p>3120×2080 ≈ &quot;3K&quot;，既不是 4K 也不是 2K，但它的 PPI 是 264——和 iPad 一样，这个密度在正常笔记本使用距离（50-60cm）下，是肉眼无法分辨单个像素的&quot;视网膜级别&quot;。</p>
+<p>对于 14.2 英寸的屏幕，追求 4K（3840×2160）在这个尺寸上的意义很有限（4K 在 14.2 英寸上约为 310 PPI，但你在 60cm 外的人眼极限约 150 PPI，多出的像素完全浪费），而且 4K OLED 小屏幕的功耗和成本都会大幅上升。</p>
+<p><strong>编解码支持：</strong></p>
+<ul>
+<li>Intel Ultra 7 155H 集成了 Intel Arc 显卡，支持 HEVC 和 AV1 的硬件解码</li>
+<li>播放 4K AV1 和 4K HEVC 视频都可以做到低功耗、流畅播放</li>
+</ul>
+<p><strong>结论：</strong></p>
+<ul>
+<li>屏幕素质极高（OLED + P3 + 10bit + 低蓝光 + 精确色准），是笔记本中的佼佼者</li>
+<li>不是 4K 屏幕，但 PPI 已经超出人眼极限，没有必要追求 4K</li>
+<li><strong>视频推荐</strong>：4K 内容在这块屏幕上会被缩放显示，下载 1080P 高码率（HEVC 或 AV1）性价比最高；如果格外追求画质享受，4K HEVC 也可以（屏幕硬件支持播放）</li>
+</ul>
+<h2 id="macbook-air-系列m3m4">MacBook Air 系列（M3/M4）</h2>
+<p><strong>MacBook Air M3（2024）/ M4（2025）</strong></p>
+<p>两代 Air 的屏幕规格相同，仅处理器升级：</p>
+<div class="table-wrap"><table><thead><tr>
+<th>规格</th>
+<th>13英寸</th>
+<th>15英寸</th>
+</tr>
+</thead><tbody><tr>
+<td>面板类型</td>
+<td>IPS Liquid Retina</td>
+<td>IPS Liquid Retina</td>
+</tr>
+<tr>
+<td>分辨率</td>
+<td>2560×1664</td>
+<td>2880×1864</td>
+</tr>
+<tr>
+<td>PPI</td>
+<td>224</td>
+<td>224</td>
+</tr>
+<tr>
+<td>刷新率</td>
+<td><strong>60Hz</strong>（固定，无 ProMotion）</td>
+<td><strong>60Hz</strong></td>
+</tr>
+<tr>
+<td>最大亮度</td>
+<td>500 nits</td>
+<td>500 nits</td>
+</tr>
+<tr>
+<td>色域</td>
+<td>P3</td>
+<td>P3</td>
+</tr>
+<tr>
+<td>HDR</td>
+<td>是</td>
+<td>是</td>
+</tr>
+</tbody></table></div>
+<p><strong>需要特别说明的是刷新率问题：</strong></p>
+<p>MacBook Air 至今（2026年）仍然是 60Hz 屏幕。这是 Mac 笔记本中一个长期被批评的短板。在 MacBook Pro 都已经标配 ProMotion 120Hz 的情况下，Air 仍然维持 60Hz，是苹果的产品线差异化策略。</p>
+<p>224 PPI 对于笔记本来说已经足够（正常使用距离 50-60cm 下，人眼极限约 150 PPI），但相比 MateBook X Pro 的 264 PPI，在凑近观看时细腻感略差一些。</p>
+<p><strong>AV1 解码：</strong></p>
+<ul>
+<li>MacBook Air M3：✅ 支持 AV1 硬件解码（M3 芯片内置）</li>
+<li>MacBook Air M4：✅ 支持 AV1 硬件解码</li>
+</ul>
+<h2 id="macbook-pro-系列m42024">MacBook Pro 系列（M4，2024）</h2>
+<p><strong>MacBook Pro 14英寸（M4/M4 Pro）</strong></p>
+<div class="table-wrap"><table><thead><tr>
+<th>规格</th>
+<th>参数</th>
+</tr>
+</thead><tbody><tr>
+<td>面板类型</td>
+<td>Mini-LED Liquid Retina XDR</td>
+</tr>
+<tr>
+<td>分辨率</td>
+<td>3024×1964</td>
+</tr>
+<tr>
+<td>屏幕尺寸</td>
+<td>14.2英寸</td>
+</tr>
+<tr>
+<td>PPI</td>
+<td>254</td>
+</tr>
+<tr>
+<td>刷新率</td>
+<td>ProMotion 10-120Hz</td>
+</tr>
+<tr>
+<td>最大亮度（SDR）</td>
+<td>1000 nits</td>
+</tr>
+<tr>
+<td>峰值亮度（HDR）</td>
+<td>1600 nits</td>
+</tr>
+<tr>
+<td>色域</td>
+<td>P3</td>
+</tr>
+<tr>
+<td>色深</td>
+<td>10-bit</td>
+</tr>
+<tr>
+<td>百万:1 对比度</td>
+<td>✅</td>
+</tr>
+</tbody></table></div>
+<p><strong>MacBook Pro 16英寸（M4 Pro/M4 Max）</strong></p>
+<div class="table-wrap"><table><thead><tr>
+<th>规格</th>
+<th>参数</th>
+</tr>
+</thead><tbody><tr>
+<td>面板类型</td>
+<td>Mini-LED Liquid Retina XDR</td>
+</tr>
+<tr>
+<td>分辨率</td>
+<td>3456×2234</td>
+</tr>
+<tr>
+<td>屏幕尺寸</td>
+<td>16.2英寸</td>
+</tr>
+<tr>
+<td>PPI</td>
+<td>254</td>
+</tr>
+<tr>
+<td>刷新率</td>
+<td>ProMotion 10-120Hz</td>
+</tr>
+<tr>
+<td>最大亮度（SDR）</td>
+<td>1000 nits</td>
+</tr>
+<tr>
+<td>峰值亮度（HDR）</td>
+<td>1600 nits</td>
+</tr>
+</tbody></table></div>
+<p>MacBook Pro 是 Mac 笔记本中唯一配备 ProMotion 高刷屏幕的，同时 Mini-LED 带来的 1600 nits HDR 峰值亮度和百万:1 的对比度，是看电影、做视频的极佳体验。</p>
+<p>你计划购买的是 <strong>16英寸 MacBook Pro M5 Pro</strong>（计划 2026 年底），届时该系列规格会进一步升级（M5 Pro 芯片），但屏幕规格预计与 M4 Pro 版本接近（历代 16&quot; Pro 屏幕改动很小）。</p>
+<p><strong>结论：</strong></p>
+<ul>
+<li>MacBook Pro 的内屏虽然不是 4K，但 254 PPI + ProMotion + Mini-LED HDR 是目前笔记本内屏中的顶级体验</li>
+<li>同样，下载 1080P 高码率内容已经足够；如果追求画质享受，4K 内容会被缩放显示，但高码率的视觉感受仍然好</li>
+</ul>
+<h2 id="aoc-u27u3xd-显示器">AOC U27U3XD 显示器</h2>
+<p>这是你的外接显示器，它是你所有设备中，<strong>唯一真正意义上能做到原生 4K 显示的设备</strong>。</p>
+<div class="table-wrap"><table><thead><tr>
+<th>规格</th>
+<th>参数</th>
+</tr>
+</thead><tbody><tr>
+<td>面板类型</td>
+<td>IPS</td>
+</tr>
+<tr>
+<td>屏幕尺寸</td>
+<td>27英寸</td>
+</tr>
+<tr>
+<td>分辨率（模式A）</td>
+<td>3840×2160（4K UHD）</td>
+</tr>
+<tr>
+<td>刷新率（模式A）</td>
+<td>144Hz</td>
+</tr>
+<tr>
+<td>分辨率（模式B）</td>
+<td>1920×1080（FHD）</td>
+</tr>
+<tr>
+<td>刷新率（模式B）</td>
+<td>288Hz</td>
+</tr>
+<tr>
+<td>最大亮度</td>
+<td>450 nits（HDR 模式），350 nits（SDR）</td>
+</tr>
+<tr>
+<td>色域</td>
+<td>98% DCI-P3，94% Adobe RGB，100% sRGB</td>
+</tr>
+<tr>
+<td>色深</td>
+<td>10-bit</td>
+</tr>
+<tr>
+<td>对比度</td>
+<td>2000:1</td>
+</tr>
+<tr>
+<td>响应时间</td>
+<td>4ms GTG</td>
+</tr>
+<tr>
+<td>HDR</td>
+<td>DisplayHDR 400</td>
+</tr>
+<tr>
+<td>接口</td>
+<td>HDMI 2.1 × 2，DisplayPort 1.4 × 1，USB-C 90W PD × 1</td>
+</tr>
+<tr>
+<td>特性</td>
+<td>双模切换、KVM、G-Sync 兼容、TÜV 护眼认证</td>
+</tr>
+<tr>
+<td>定价</td>
+<td>约 1799-1999 元（2025年11月国内上市价）</td>
+</tr>
+</tbody></table></div>
+<p><strong>U27U3XD 的独特之处——双模切换</strong></p>
+<p>这款显示器的最大亮点是可以在两种模式间切换：</p>
+<ul>
+<li><strong>4K 144Hz 模式</strong>：日常使用、看视频、创作工作</li>
+<li><strong>FHD 288Hz 模式</strong>：竞技游戏</li>
+</ul>
+<p>大多数显示器只能在高分辨率低刷新率和低分辨率高刷新率中选一个，而 U27U3XD 通过一键切换实现了两者兼顾。</p>
+<p><strong>在这块屏幕上，4K 内容有实际意义吗？</strong></p>
+<p>27英寸 4K = 约 163 PPI。你坐在 60cm 处，人眼极限 PPI ≈ 110，这款显示器的 PPI 已经超出人眼极限。</p>
+<p>但 27 英寸 1080P 只有约 82 PPI，在 60cm 的距离下，锯齿感和颗粒感是能看到的。所以，4K 在 27 英寸上确实有意义，尤其是在阅读文字、查看细节时。</p>
+<p><strong>接口说明：</strong></p>
+<p>要让 MacBook 或 MateBook 以 4K 144Hz 输出：</p>
+<ul>
+<li><strong>HDMI 2.1</strong>：支持 4K 144Hz（MacBook Pro M4 有 HDMI 2.1 接口，可以直连）</li>
+<li><strong>DisplayPort 1.4</strong>：支持 4K 144Hz（需要 DP 转接头或 Thunderbolt to DP 线）</li>
+<li><strong>USB-C</strong>：DisplayPort Alt Mode，最高 4K 60Hz（取决于主机支持的 DP 版本）</li>
+</ul>
+<p>MacBook Air M4 通过 Thunderbolt 4 接口，理论上可以驱动该显示器 4K 60Hz（Thunderbolt 4 支持 6K 60Hz 外接），但要达到 4K 144Hz 需要 HDMI 2.1，而 MacBook Air 没有 HDMI 接口——这是一个限制。</p>
+<h2 id="设备屏幕总览">设备屏幕总览</h2>
+<div class="table-wrap"><table><thead><tr>
+<th>设备</th>
+<th>分辨率</th>
+<th>尺寸</th>
+<th>PPI</th>
+<th>刷新率</th>
+<th>面板</th>
+<th>是否4K</th>
+</tr>
+</thead><tbody><tr>
+<td>iPad Pro 2021 11&quot;</td>
+<td>2388×1668</td>
+<td>11&quot;</td>
+<td>264</td>
+<td>10-120Hz</td>
+<td>IPS</td>
+<td>❌</td>
+</tr>
+<tr>
+<td>iPad Air M3 11&quot;</td>
+<td>2360×1640</td>
+<td>11&quot;</td>
+<td>264</td>
+<td>60Hz</td>
+<td>IPS</td>
+<td>❌</td>
+</tr>
+<tr>
+<td>iPad Air M3 13&quot;</td>
+<td>2732×2048</td>
+<td>13&quot;</td>
+<td>264</td>
+<td>60Hz</td>
+<td>IPS</td>
+<td>❌</td>
+</tr>
+<tr>
+<td>iPad Pro M4 11&quot;</td>
+<td>2388×1668</td>
+<td>11&quot;</td>
+<td>264</td>
+<td>10-120Hz</td>
+<td>OLED</td>
+<td>❌</td>
+</tr>
+<tr>
+<td>iPad Pro M4 13&quot;</td>
+<td>2752×2064</td>
+<td>13&quot;</td>
+<td>264</td>
+<td>10-120Hz</td>
+<td>OLED</td>
+<td>❌</td>
+</tr>
+<tr>
+<td>MateBook X Pro 2024</td>
+<td>3120×2080</td>
+<td>14.2&quot;</td>
+<td>264</td>
+<td>60-120Hz</td>
+<td>柔性OLED</td>
+<td>❌（3.1K）</td>
+</tr>
+<tr>
+<td>MacBook Air M4 13&quot;</td>
+<td>2560×1664</td>
+<td>13.6&quot;</td>
+<td>224</td>
+<td>60Hz</td>
+<td>IPS</td>
+<td>❌</td>
+</tr>
+<tr>
+<td>MacBook Air M4 15&quot;</td>
+<td>2880×1864</td>
+<td>15.3&quot;</td>
+<td>224</td>
+<td>60Hz</td>
+<td>IPS</td>
+<td>❌</td>
+</tr>
+<tr>
+<td>MacBook Pro M4 14&quot;</td>
+<td>3024×1964</td>
+<td>14.2&quot;</td>
+<td>254</td>
+<td>10-120Hz</td>
+<td>Mini-LED</td>
+<td>❌</td>
+</tr>
+<tr>
+<td>MacBook Pro M4 16&quot;</td>
+<td>3456×2234</td>
+<td>16.2&quot;</td>
+<td>254</td>
+<td>10-120Hz</td>
+<td>Mini-LED</td>
+<td>❌</td>
+</tr>
+<tr>
+<td>AOC U27U3XD</td>
+<td>3840×2160</td>
+<td>27&quot;</td>
+<td>163</td>
+<td>144Hz(4K)/288Hz(FHD)</td>
+<td>IPS</td>
+<td>✅</td>
+</tr>
+</tbody></table></div>
+<p><strong>关键发现：在你列出的所有设备中，只有 AOC U27U3XD 是真正的 4K 屏幕。</strong></p>
+
+    <nav class="pager">  <a href="03-bitrate-refresh.html">
+    <span class="label">← 上一章</span>
+    <span class="title">码率与刷新率：画质、文件大小与流畅度</span>
+  </a>  <a href="05-practice-glossary.html" class="next">
+    <span class="label">下一章 →</span>
+    <span class="title">实战选择与术语速查</span>
+  </a></nav>
+  </article>
+</div>
+
+<footer>
+  <div class="set">
+    <span>从像素到 4K：视频与屏幕技术指南</span>
+    <span>2026 · ZH-CN</span>
+  </div>
+  <div class="set">
+    <span>Mav</span>
+  </div>
+</footer>
+<div class="search-backdrop" id="search-overlay" role="dialog" aria-modal="true" aria-label="搜索" hidden>
+  <div class="search-modal">
+    <div class="search-input-wrap">
+      <input type="search" class="search-input" placeholder="搜索内容..." aria-label="搜索内容" autocomplete="off">
+      <kbd>ESC</kbd>
+    </div>
+    <div class="search-results" role="listbox" aria-label="搜索结果"></div>
+  </div>
+</div>
+
+<!-- Mobile TOC -->
+<button class="mtoc-fab" id="mtoc-fab" aria-label="目录">TOC</button>
+<div class="mtoc-drawer" id="mtoc-drawer">
+  <div class="mtoc-content"></div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/bash.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/typescript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/yaml.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/javascript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/json.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/python.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/css.min.js"></script>
+<script src="../assets/script.js"></script>
+</body>
+</html>

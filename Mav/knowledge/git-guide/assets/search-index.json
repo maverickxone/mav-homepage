@@ -1,0 +1,420 @@
+{
+  "documents": [
+    {
+      "id": "01-concepts",
+      "title": "概念入门：Git 是什么，为什么要学",
+      "chapter": "01",
+      "chapterTitle": "概念入门：Git 是什么，为什么要学",
+      "url": "chapters/01-concepts.html",
+      "body": "\n\n   没有 Git 的世界\n\n想象你正在写一篇大作业报告，你可能会这样命名文件：\n\n   \n报告.docx\n报告 最终版.docx\n报告 最终版2.docx\n报告 真的最终版.docx\n报告 绝对最终版 别改了.docx\n   \n\n这就是  没有版本控制  的状态。你不知道哪个是最好的版本，也不记得每个版本改了什么。\n\n现在，换成  写代码  的场景：你和三个队友一起做 RoboGame 的控制程序，每个人各写一部分，最后怎么合并？用 QQ 传文件？谁的版本算数？如果合并出了 Bug，怎么回退？\n\n这就是 Git 要解决的问题。\n\n   Git 能做什么\n\n  ✅   记录每一次修改  ：知道什么时候改了什么、谁改的\n  ✅   随时回退  ：代码写崩了？一键回到任意历史版本\n  ✅   并行开发  ：多人同时开发不同功能，互不干扰\n  ✅   合并代码  ：智能合并多人的修改\n  ✅   备份到云端  ：通过 GitHub 把代码存到服务器\n\n\n\n   一个大比喻：Git 是游戏存档系统\n\n把你的代码项目想象成一个  RPG 游戏  ：\n\n  游戏概念      Git 概念              说明          \n                                            \n  游戏存档        commit（提交）        保存当前状态的快照   \n  存档槽位列表      log（历史记录）         所有存档的时间线    \n  读取存档        checkout（读档）      回到某个历史状态    \n  新开一周目       branch（分支）        从某点开辟新的时间线  \n  合并两周目进度     merge（合并）         把两条时间线合并    \n  游戏云存档       GitHub / 远程仓库     把存档同步到云端    \n  下载别人的存档     clone（克隆）         把他人项目完整下载   \n\n   三个区域：工作区、暂存区、仓库\n\n这是 Git 最重要的概念，很多初学者在这里卡住。\n\n   \n┌─────────────────────────────────────────────────────┐\n│                    你的电脑                          │\n│                                                     │\n│  ┌──────────┐   git add   ┌──────────┐             │\n│  │          │ ──────────► │          │             │\n│  │  工作区   │             │  暂存区   │             │\n│  │ Working  │ ◄────────── │ Staging  │             │\n│  │  Tree    │  git restore│  Area    │             │\n│  │          │             │          │             │\n│  └──────────┘             └──────────┘             │\n│                                  │                  │\n│                           git commit                │\n│                                  ▼                  │\n│                           ┌──────────┐             │\n│                           │  本地仓库 │             │\n│                           │  Local   │             │\n│                           │  Repo    │             │\n│                           └──────────┘             │\n└─────────────────────────────────────────────────────┘\n                     "
+    },
+    {
+      "id": "01-concepts-没有-git-的世界",
+      "title": "没有 Git 的世界",
+      "chapter": "01",
+      "chapterTitle": "概念入门：Git 是什么，为什么要学",
+      "url": "chapters/01-concepts.html#没有-git-的世界",
+      "body": ""
+    },
+    {
+      "id": "01-concepts-git-能做什么",
+      "title": "Git 能做什么",
+      "chapter": "01",
+      "chapterTitle": "概念入门：Git 是什么，为什么要学",
+      "url": "chapters/01-concepts.html#git-能做什么",
+      "body": ""
+    },
+    {
+      "id": "01-concepts-一个大比喻git-是游戏存档系统",
+      "title": "一个大比喻：Git 是游戏存档系统",
+      "chapter": "01",
+      "chapterTitle": "概念入门：Git 是什么，为什么要学",
+      "url": "chapters/01-concepts.html#一个大比喻git-是游戏存档系统",
+      "body": ""
+    },
+    {
+      "id": "01-concepts-三个区域工作区暂存区仓库",
+      "title": "三个区域：工作区、暂存区、仓库",
+      "chapter": "01",
+      "chapterTitle": "概念入门：Git 是什么，为什么要学",
+      "url": "chapters/01-concepts.html#三个区域工作区暂存区仓库",
+      "body": ""
+    },
+    {
+      "id": "01-concepts-commit-是什么",
+      "title": "commit 是什么",
+      "chapter": "01",
+      "chapterTitle": "概念入门：Git 是什么，为什么要学",
+      "url": "chapters/01-concepts.html#commit-是什么",
+      "body": ""
+    },
+    {
+      "id": "02-local-ops",
+      "title": "本地操作：安装、配置与日常命令",
+      "chapter": "02",
+      "chapterTitle": "本地操作：安装、配置与日常命令",
+      "url": "chapters/02-local-ops.html",
+      "body": "     \n     只有当你想要看半年前的老代码时，Git 才会稍微花点时间，用最新的版本一层层“倒推”回去计算给你看。这种“牺牲历史代码读取速度，换取最新代码极致性能”的策略，非常划算。\n     \n     3. 针对文件结构的处理：\n     \n     我们已经理解了git如何处理一大堆文件（用哈希值判断有没有更新）和单个大文件多次更新（packfile和增量压缩），那么如果某次重构了代码的结构怎么办？比如移动，新增了某个文件夹？\n     \n     其实很简单：把文件夹看作是一个文件处理：在 Git 眼里，  文件夹（Tree 对象）本质上就是一个特殊格式的“文本文件”  ，只不过这个文件里存的不是代码，而是一张“目录清单”。\n     \n     每次移动或者修改了repo结构，针对现有结构生成一个新的文件即可，文本文件本身可能就几十KB，代价极小。\n\n\n\n   安装 Git\n\n  Windows：  \n\n1. 访问  https://git scm.com/download/win  https://git scm.com/download/win \n2. 下载并安装，一路 Next（默认配置即可）\n3. 安装完成后右键桌面，看到 \"Git Bash Here\" 表示成功\n\n  macOS：  \n\n   bash\n  方法1：安装 Xcode Command Line Tools（推荐）\nxcode select   install\n\n  方法2：使用 Homebrew\nbrew install git\n   \n\n  Linux（Ubuntu/Debian）：  \n\n   bash\nsudo apt update\nsudo apt install git\n   \n\n   验证安装\n\n   bash\n  查看 Git 版本，输出版本号说明安装成功\ngit   version\n  输出示例：git version 2.52.0.windows.1\n   \n\n   初始配置（必须做！）\n\n首次使用 Git，必须告诉它你是谁，否则提交时无法记录作者信息。\n\n   bash\n  设置你的用户名（建议与 GitHub 用户名一致）\ngit config   global user.name \"你的名字\"\n\n  设置你的邮箱（必须与 GitHub 注册邮箱一致！）\ngit config   global user.email \"你的邮箱@mail.ustc.edu.cn\"\n\n  设置默认编辑器为 VS Code（可选，默认是 vim）\ngit config   global core.editor \"code   wait\"\n\n  查看所有配置，确认设置正确\ngit config   global   list\n   \n\n    注意  ：   global  表示全局生效，即这台电脑上所有 Git 项目都用这个配置。如果某个项目需要不同的配置，去掉    global  即可单独设置。\n\n   配置 SSH 密钥（连接 GitHub 必备）\n\n密码验证 GitHub 的方式已被废弃，现在需要用 SSH 密钥。\n（也可以使用令牌，但是SSH最方便）\n\n   bash\n  第1步：生成 SSH 密钥对\n   t ed25519：使用 ed25519 算法（推荐）\n   C \"你的邮箱\"：注释，方便识别\nssh keygen  t ed25519  C \"你的邮箱@mail.ustc.edu.cn\"\n  一路按 Enter 使用默认路径即可\n\n  第2步：查看你的公钥\ncat  /.ssh/id ed25519.pub\n  复制输出的全部内容（以 ssh ed25519 开头）\n\n  第3步：将公钥添加到 GitHub\n  打开 GitHub → Settings → SSH and GPG keys → New SSH key\n  粘贴公钥内容，保存\n\n  第4步：测试连接\nssh  T git@github.com\n  成功时输出：Hi 你的用户名! You've successfully authenticated...\n   \n\n\n\n   git init — 初始化仓库\n\n   bash\n  创建一个新文件夹并初始化 Git 仓库\nmkdir my project          创建文件夹\ncd my project             进入文件夹\ngit init                  在当前目录初始化 Git 仓库\n\n  输出：Initialized empty Git repository in .../my project/.git/\n  这会创建一个隐藏的 .git 文件夹，Git 的所"
+    },
+    {
+      "id": "02-local-ops-安装-git",
+      "title": "安装 Git",
+      "chapter": "02",
+      "chapterTitle": "本地操作：安装、配置与日常命令",
+      "url": "chapters/02-local-ops.html#安装-git",
+      "body": ""
+    },
+    {
+      "id": "02-local-ops-验证安装",
+      "title": "验证安装",
+      "chapter": "02",
+      "chapterTitle": "本地操作：安装、配置与日常命令",
+      "url": "chapters/02-local-ops.html#验证安装",
+      "body": ""
+    },
+    {
+      "id": "02-local-ops-初始配置必须做",
+      "title": "初始配置（必须做！）",
+      "chapter": "02",
+      "chapterTitle": "本地操作：安装、配置与日常命令",
+      "url": "chapters/02-local-ops.html#初始配置必须做",
+      "body": ""
+    },
+    {
+      "id": "02-local-ops-配置-ssh-密钥连接-github-必备",
+      "title": "配置 SSH 密钥（连接 GitHub 必备）",
+      "chapter": "02",
+      "chapterTitle": "本地操作：安装、配置与日常命令",
+      "url": "chapters/02-local-ops.html#配置-ssh-密钥连接-github-必备",
+      "body": ""
+    },
+    {
+      "id": "02-local-ops-git-init-初始化仓库",
+      "title": "git init — 初始化仓库",
+      "chapter": "02",
+      "chapterTitle": "本地操作：安装、配置与日常命令",
+      "url": "chapters/02-local-ops.html#git-init-初始化仓库",
+      "body": ""
+    },
+    {
+      "id": "02-local-ops-git-status-查看状态",
+      "title": "git status — 查看状态",
+      "chapter": "02",
+      "chapterTitle": "本地操作：安装、配置与日常命令",
+      "url": "chapters/02-local-ops.html#git-status-查看状态",
+      "body": ""
+    },
+    {
+      "id": "02-local-ops-git-add-添加到暂存区",
+      "title": "git add — 添加到暂存区",
+      "chapter": "02",
+      "chapterTitle": "本地操作：安装、配置与日常命令",
+      "url": "chapters/02-local-ops.html#git-add-添加到暂存区",
+      "body": ""
+    },
+    {
+      "id": "02-local-ops-git-commit-把暂存区内容提交到本地仓库",
+      "title": "git commit — 把暂存区内容提交到本地仓库",
+      "chapter": "02",
+      "chapterTitle": "本地操作：安装、配置与日常命令",
+      "url": "chapters/02-local-ops.html#git-commit-把暂存区内容提交到本地仓库",
+      "body": ""
+    },
+    {
+      "id": "02-local-ops-git-log-查看历史记录",
+      "title": "git log — 查看历史记录",
+      "chapter": "02",
+      "chapterTitle": "本地操作：安装、配置与日常命令",
+      "url": "chapters/02-local-ops.html#git-log-查看历史记录",
+      "body": ""
+    },
+    {
+      "id": "02-local-ops-git-diff-查看差异",
+      "title": "git diff — 查看差异",
+      "chapter": "02",
+      "chapterTitle": "本地操作：安装、配置与日常命令",
+      "url": "chapters/02-local-ops.html#git-diff-查看差异",
+      "body": ""
+    },
+    {
+      "id": "02-local-ops-git-restore-撤销修改",
+      "title": "git restore — 撤销修改",
+      "chapter": "02",
+      "chapterTitle": "本地操作：安装、配置与日常命令",
+      "url": "chapters/02-local-ops.html#git-restore-撤销修改",
+      "body": ""
+    },
+    {
+      "id": "02-local-ops-git-rm-删除文件",
+      "title": "git rm — 删除文件",
+      "chapter": "02",
+      "chapterTitle": "本地操作：安装、配置与日常命令",
+      "url": "chapters/02-local-ops.html#git-rm-删除文件",
+      "body": ""
+    },
+    {
+      "id": "02-local-ops-gitignore-忽略不需要的文件",
+      "title": ".gitignore — 忽略不需要的文件",
+      "chapter": "02",
+      "chapterTitle": "本地操作：安装、配置与日常命令",
+      "url": "chapters/02-local-ops.html#gitignore-忽略不需要的文件",
+      "body": ""
+    },
+    {
+      "id": "03-branch-remote",
+      "title": "分支与远程：协作的基础",
+      "chapter": "03",
+      "chapterTitle": "分支与远程：协作的基础",
+      "url": "chapters/03-branch-remote.html",
+      "body": "\n   什么是分支\n\n回到游戏存档的比喻：\n\n  你在某个时间节点选择了两条不同的剧情分支，每条分支各自发展，互不影响。最后你可以决定把某个分支的结果合并到主线。\n\n在 Git 中，  分支（branch）   就是从某个提交点开辟的独立开发线路。\n\n  为什么要用分支？  \n\n  开发新功能时不影响主线（main 分支）的稳定性\n  多人并行开发不同功能\n  安全地实验新想法，不满意直接删掉分支\n\n   \nmain:     A     B     C                     G\n                       \\                   /\nfeature:                D     E     F     \n   \n\n   git branch — 管理分支\n\n   bash\n  查看所有本地分支（  号表示当前所在分支）\ngit branch\n\n  查看所有分支（包括远程分支）\ngit branch  a\n\n  创建一个新分支（但不切换过去）\ngit branch feature pid\n\n  删除分支（已合并的分支）\ngit branch  d feature pid\n\n  强制删除分支（未合并也删，谨慎使用！）\ngit branch  D feature pid\n\n  重命名当前分支\ngit branch  m new name\n   \n\n   git switch — 切换分支\n\n   bash\n  切换到已有分支\ngit switch feature pid\n\n  创建并切换到新分支（最常用！）\ngit switch  c feature sensor\n\n  切换到上一个分支（类似 cd  ）\ngit switch  \n   \n\n    注意  ：切换分支前，建议先提交或储藏（stash）当前改动，否则 Git 可能会拒绝切换。\n\n   git merge — 合并分支\n\n   bash\n  将 feature pid 合并到当前分支（通常在 main 上操作）\ngit switch main             先切换到目标分支\ngit merge feature pid       把 feature pid 合并进来\n   \n\n  合并时有三种结果：  \n\n1.   快进合并（Fast forward）  ：没有冲突，直接移动指针，最干净\n\n      \n   合并前：main: A B   feature: A B C D\n   合并后：main: A B C D\n      \n\n2.   三方合并（3 way merge）  ：两个分支都有新提交，Git 自动合并\n\n      \n   合并前：main: A B E   feature: A B C D\n   合并后：main: A B E C D M（M 是合并提交）\n      \n\n3.   冲突（Conflict）  ：两个分支修改了同一文件的同一部分，需要手动解决\n\n   处理合并冲突\n\n当两人修改了同一文件的同一行，Git 不知道该保留谁的版本，会产生冲突：\n\n   bash\ngit merge feature sensor\n  输出：CONFLICT  content : Merge conflict in motor.c\n  Automatic merge failed; fix conflicts and then commit the result.\n   \n\n打开冲突文件  motor.c ，会看到 Git 自动插入的标记：\n\n   c\n<<<<<<< HEAD                           // 当前分支（main）的内容\nint motor speed = 100;\nint motor speed = 150;\n        feature sensor                 // 被合并分支的内容\n   \n\n  解决步骤：  \n\n1. 手动编辑文件，保留正确的内容\n2. 删除  <<<<<<< 、 ======= 、          标记\n3. 保存文件\n4.  git add motor.c （告诉 Git 这个冲突已经解决）\n5.  git commit （完成合并）\n\n   c\n// 解决冲突后的文件（手动决定保留哪个版本）\nint motor speed = 150;  // 保留 feature sensor 的值\n   \n\n  现在很多编辑器（VS Code、JetBrains 等）都有图形化的冲突解决界面，会更友好。\n  解决完所有冲突后，一定要 git add 对应文件，否则无法继续。\n\n   git rebas"
+    },
+    {
+      "id": "03-branch-remote-什么是分支",
+      "title": "什么是分支",
+      "chapter": "03",
+      "chapterTitle": "分支与远程：协作的基础",
+      "url": "chapters/03-branch-remote.html#什么是分支",
+      "body": ""
+    },
+    {
+      "id": "03-branch-remote-git-branch-管理分支",
+      "title": "git branch — 管理分支",
+      "chapter": "03",
+      "chapterTitle": "分支与远程：协作的基础",
+      "url": "chapters/03-branch-remote.html#git-branch-管理分支",
+      "body": ""
+    },
+    {
+      "id": "03-branch-remote-git-switch-切换分支",
+      "title": "git switch — 切换分支",
+      "chapter": "03",
+      "chapterTitle": "分支与远程：协作的基础",
+      "url": "chapters/03-branch-remote.html#git-switch-切换分支",
+      "body": ""
+    },
+    {
+      "id": "03-branch-remote-git-merge-合并分支",
+      "title": "git merge — 合并分支",
+      "chapter": "03",
+      "chapterTitle": "分支与远程：协作的基础",
+      "url": "chapters/03-branch-remote.html#git-merge-合并分支",
+      "body": ""
+    },
+    {
+      "id": "03-branch-remote-处理合并冲突",
+      "title": "处理合并冲突",
+      "chapter": "03",
+      "chapterTitle": "分支与远程：协作的基础",
+      "url": "chapters/03-branch-remote.html#处理合并冲突",
+      "body": ""
+    },
+    {
+      "id": "03-branch-remote-git-rebase-变基整理提交历史",
+      "title": "git rebase — 变基（整理提交历史）",
+      "chapter": "03",
+      "chapterTitle": "分支与远程：协作的基础",
+      "url": "chapters/03-branch-remote.html#git-rebase-变基整理提交历史",
+      "body": ""
+    },
+    {
+      "id": "03-branch-remote-github-简介",
+      "title": "GitHub 简介",
+      "chapter": "03",
+      "chapterTitle": "分支与远程：协作的基础",
+      "url": "chapters/03-branch-remote.html#github-简介",
+      "body": ""
+    },
+    {
+      "id": "03-branch-remote-git-clone-克隆远程仓库",
+      "title": "git clone — 克隆远程仓库",
+      "chapter": "03",
+      "chapterTitle": "分支与远程：协作的基础",
+      "url": "chapters/03-branch-remote.html#git-clone-克隆远程仓库",
+      "body": ""
+    },
+    {
+      "id": "03-branch-remote-git-remote-管理远程连接",
+      "title": "git remote — 管理远程连接",
+      "chapter": "03",
+      "chapterTitle": "分支与远程：协作的基础",
+      "url": "chapters/03-branch-remote.html#git-remote-管理远程连接",
+      "body": ""
+    },
+    {
+      "id": "03-branch-remote-git-push-推送到远程",
+      "title": "git push — 推送到远程",
+      "chapter": "03",
+      "chapterTitle": "分支与远程：协作的基础",
+      "url": "chapters/03-branch-remote.html#git-push-推送到远程",
+      "body": ""
+    },
+    {
+      "id": "03-branch-remote-git-fetch-与-git-pull-从远程获取",
+      "title": "git fetch 与 git pull — 从远程获取",
+      "chapter": "03",
+      "chapterTitle": "分支与远程：协作的基础",
+      "url": "chapters/03-branch-remote.html#git-fetch-与-git-pull-从远程获取",
+      "body": ""
+    },
+    {
+      "id": "03-branch-remote-github-的-pull-requestpr",
+      "title": "GitHub 的 Pull Request（PR）",
+      "chapter": "03",
+      "chapterTitle": "分支与远程：协作的基础",
+      "url": "chapters/03-branch-remote.html#github-的-pull-requestpr",
+      "body": ""
+    },
+    {
+      "id": "03-branch-remote-git-tag-标签",
+      "title": "git tag — 标签",
+      "chapter": "03",
+      "chapterTitle": "分支与远程：协作的基础",
+      "url": "chapters/03-branch-remote.html#git-tag-标签",
+      "body": ""
+    },
+    {
+      "id": "04-cheatsheet-advanced",
+      "title": "速查表与进阶操作",
+      "chapter": "04",
+      "chapterTitle": "速查表与进阶操作",
+      "url": "chapters/04-cheatsheet-advanced.html",
+      "body": "\n   仓库初始化与配置\n\n  命令   说明  \n               \n   git init    初始化新仓库  \n   git clone <url     克隆远程仓库  \n   git config   global user.name \"名字\"    设置用户名  \n   git config   global user.email \"邮箱\"    设置邮箱  \n   git config   global   list    查看全局配置  \n\n   基础工作流\n\n  命令   说明  \n               \n   git status    查看当前状态（最常用！）  \n   git add <file     暂存指定文件  \n   git add .    暂存所有改动  \n   git commit  m \"msg\"    提交并附上信息  \n   git commit  am \"msg\"    暂存并提交已追踪文件  \n   git commit   amend    修改最近一次提交  \n   git log   oneline    简洁查看历史  \n   git log   oneline   graph   all    图形化查看全部分支  \n   git diff    查看未暂存的改动  \n   git diff   staged    查看已暂存的改动  \n   git show <hash     查看某次提交详情  \n\n   撤销与恢复\n\n  命令   说明  \n               \n   git restore <file     撤销工作区修改  \n   git restore   staged <file     从暂存区移出  \n   git reset   soft HEAD 1    撤销提交，保留暂存  \n   git reset HEAD 1    撤销提交，保留工作区  \n   git reset   hard HEAD 1    撤销提交，丢弃改动 ⚠️  \n   git revert HEAD    创建反向提交撤销  \n   git reflog    查看操作历史（救命稻草）  \n\n   分支操作\n\n  命令   说明  \n               \n   git branch    列出本地分支  \n   git branch  a    列出所有分支（含远程）  \n   git branch <name     创建新分支  \n   git switch <name     切换分支  \n   git switch  c <name     创建并切换到新分支  \n   git merge <branch     将指定分支合并到当前  \n   git branch  d <name     删除已合并分支  \n   git branch  D <name     强制删除分支  \n   git rebase <branch     变基到指定分支  \n\n   远程操作\n\n  命令   说明  \n               \n   git remote  v    查看远程配置  \n   git remote add origin <url     添加远程仓库  \n   git remote set url origin <url     修改远程 URL  \n   git push origin <branch     推送到远程  \n   git push  u origin <branch     推送并设置上游  \n   git push    推送到已设置上游  \n   git fetch origin    拉取远程变化（不合并）  \n   git pull    拉取并合并  \n   git pull   rebase    拉取并变基  \n\n   储藏与标签\n\n  命令   说明  \n               \n   git stash    储藏当前改动  \n   git stash pop    取出并删除最新储藏  \n   git stash list    查看储藏列表  \n   git stash drop    删除最新储藏  \n   git tag v1.0    创建轻量标签  \n   git tag  a v1.0  m \"msg\"    创建附注标签  \n   git push origin   tags    推送所有标签  \n\n   高级工具\n\n  命令   说明  \n               \n   git cherry pick <hash     应用指定提交 "
+    },
+    {
+      "id": "04-cheatsheet-advanced-仓库初始化与配置",
+      "title": "仓库初始化与配置",
+      "chapter": "04",
+      "chapterTitle": "速查表与进阶操作",
+      "url": "chapters/04-cheatsheet-advanced.html#仓库初始化与配置",
+      "body": ""
+    },
+    {
+      "id": "04-cheatsheet-advanced-基础工作流",
+      "title": "基础工作流",
+      "chapter": "04",
+      "chapterTitle": "速查表与进阶操作",
+      "url": "chapters/04-cheatsheet-advanced.html#基础工作流",
+      "body": ""
+    },
+    {
+      "id": "04-cheatsheet-advanced-撤销与恢复",
+      "title": "撤销与恢复",
+      "chapter": "04",
+      "chapterTitle": "速查表与进阶操作",
+      "url": "chapters/04-cheatsheet-advanced.html#撤销与恢复",
+      "body": ""
+    },
+    {
+      "id": "04-cheatsheet-advanced-分支操作",
+      "title": "分支操作",
+      "chapter": "04",
+      "chapterTitle": "速查表与进阶操作",
+      "url": "chapters/04-cheatsheet-advanced.html#分支操作",
+      "body": ""
+    },
+    {
+      "id": "04-cheatsheet-advanced-远程操作",
+      "title": "远程操作",
+      "chapter": "04",
+      "chapterTitle": "速查表与进阶操作",
+      "url": "chapters/04-cheatsheet-advanced.html#远程操作",
+      "body": ""
+    },
+    {
+      "id": "04-cheatsheet-advanced-储藏与标签",
+      "title": "储藏与标签",
+      "chapter": "04",
+      "chapterTitle": "速查表与进阶操作",
+      "url": "chapters/04-cheatsheet-advanced.html#储藏与标签",
+      "body": ""
+    },
+    {
+      "id": "04-cheatsheet-advanced-高级工具",
+      "title": "高级工具",
+      "chapter": "04",
+      "chapterTitle": "速查表与进阶操作",
+      "url": "chapters/04-cheatsheet-advanced.html#高级工具",
+      "body": ""
+    },
+    {
+      "id": "04-cheatsheet-advanced-附录git-学习资源",
+      "title": "附录：Git 学习资源",
+      "chapter": "04",
+      "chapterTitle": "速查表与进阶操作",
+      "url": "chapters/04-cheatsheet-advanced.html#附录git-学习资源",
+      "body": ""
+    },
+    {
+      "id": "04-cheatsheet-advanced-集中式工作流",
+      "title": "集中式工作流",
+      "chapter": "04",
+      "chapterTitle": "速查表与进阶操作",
+      "url": "chapters/04-cheatsheet-advanced.html#集中式工作流",
+      "body": ""
+    },
+    {
+      "id": "04-cheatsheet-advanced-功能分支工作流推荐",
+      "title": "功能分支工作流（推荐）",
+      "chapter": "04",
+      "chapterTitle": "速查表与进阶操作",
+      "url": "chapters/04-cheatsheet-advanced.html#功能分支工作流推荐",
+      "body": ""
+    },
+    {
+      "id": "04-cheatsheet-advanced-fork-工作流开源贡献",
+      "title": "Fork 工作流（开源贡献）",
+      "chapter": "04",
+      "chapterTitle": "速查表与进阶操作",
+      "url": "chapters/04-cheatsheet-advanced.html#fork-工作流开源贡献",
+      "body": ""
+    },
+    {
+      "id": "04-cheatsheet-advanced-git-stash-临时储藏",
+      "title": "git stash — 临时储藏",
+      "chapter": "04",
+      "chapterTitle": "速查表与进阶操作",
+      "url": "chapters/04-cheatsheet-advanced.html#git-stash-临时储藏",
+      "body": ""
+    },
+    {
+      "id": "04-cheatsheet-advanced-git-reset-重置提交",
+      "title": "git reset — 重置提交",
+      "chapter": "04",
+      "chapterTitle": "速查表与进阶操作",
+      "url": "chapters/04-cheatsheet-advanced.html#git-reset-重置提交",
+      "body": ""
+    },
+    {
+      "id": "04-cheatsheet-advanced-git-revert-安全地撤销",
+      "title": "git revert — 安全地撤销",
+      "chapter": "04",
+      "chapterTitle": "速查表与进阶操作",
+      "url": "chapters/04-cheatsheet-advanced.html#git-revert-安全地撤销",
+      "body": ""
+    },
+    {
+      "id": "04-cheatsheet-advanced-git-cherry-pick-精选提交",
+      "title": "git cherry-pick — 精选提交",
+      "chapter": "04",
+      "chapterTitle": "速查表与进阶操作",
+      "url": "chapters/04-cheatsheet-advanced.html#git-cherry-pick-精选提交",
+      "body": ""
+    },
+    {
+      "id": "04-cheatsheet-advanced-git-bisect-二分查找-bug",
+      "title": "git bisect — 二分查找 Bug",
+      "chapter": "04",
+      "chapterTitle": "速查表与进阶操作",
+      "url": "chapters/04-cheatsheet-advanced.html#git-bisect-二分查找-bug",
+      "body": ""
+    },
+    {
+      "id": "04-cheatsheet-advanced-git-reflog-后悔药",
+      "title": "git reflog — 后悔药",
+      "chapter": "04",
+      "chapterTitle": "速查表与进阶操作",
+      "url": "chapters/04-cheatsheet-advanced.html#git-reflog-后悔药",
+      "body": ""
+    }
+  ]
+}

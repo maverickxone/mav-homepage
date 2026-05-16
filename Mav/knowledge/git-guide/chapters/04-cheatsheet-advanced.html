@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>速查表与进阶操作 — Git：概念讲解与实操</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" id="hljs-light" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+<link rel="stylesheet" id="hljs-dark" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" media="not all">
+</head>
+<body>
+
+<div class="progress-bar" id="progress-bar"></div>
+
+<nav class="topnav" id="topnav">
+  <div class="topnav-inner">
+    <a class="brand" href="../index.html">Git：概念讲解与实操</a>
+    <div class="nav-links">
+      <a href="01-concepts.html">01</a>
+      <a href="02-local-ops.html">02</a>
+      <a href="03-branch-remote.html">03</a>
+      <a href="04-cheatsheet-advanced.html" class="active">04</a>
+    </div>
+    <div class="nav-controls">
+      <button class="nav-btn" id="search-btn" aria-label="搜索 (Ctrl+K)">⌘K</button>
+      <button class="nav-btn" id="settings-btn" aria-label="阅读设置">Aa</button>
+      <a class="nav-btn" href="../../index.html" aria-label="返回知识库">← 知识库</a>
+    </div>
+  </div>
+</nav>
+<div class="settings-pop" id="settings-pop">
+  <h5>主题</h5>
+  <div class="row">
+    <button class="seg" data-theme-set="light">明亮</button>
+    <button class="seg" data-theme-set="dark">暗色</button>
+  </div>
+  <h5>字号</h5>
+  <div class="row">
+    <button class="seg" data-size-set="s">小</button>
+    <button class="seg" data-size-set="m">中</button>
+    <button class="seg" data-size-set="l">大</button>
+  </div>
+</div>
+
+<div class="with-sidebar">
+  <aside class="sidebar">
+  <div class="chapter-num">CHAPTER 04</div>
+  <div class="chapter-name">速查表与进阶操作</div>
+  <h4>目录</h4>
+  <ul>
+    <li><a href="#仓库初始化与配置">仓库初始化与配置</a></li>
+    <li><a href="#基础工作流">基础工作流</a></li>
+    <li><a href="#撤销与恢复">撤销与恢复</a></li>
+    <li><a href="#分支操作">分支操作</a></li>
+    <li><a href="#远程操作">远程操作</a></li>
+    <li><a href="#储藏与标签">储藏与标签</a></li>
+    <li><a href="#高级工具">高级工具</a></li>
+    <li><a href="#附录git-学习资源">附录：Git 学习资源</a></li>
+    <li><a href="#集中式工作流">集中式工作流</a></li>
+    <li><a href="#功能分支工作流推荐">功能分支工作流（推荐）</a></li>
+    <li><a href="#fork-工作流开源贡献">Fork 工作流（开源贡献）</a></li>
+    <li><a href="#git-stash-临时储藏">git stash — 临时储藏</a></li>
+    <li><a href="#git-reset-重置提交">git reset — 重置提交</a></li>
+    <li><a href="#git-revert-安全地撤销">git revert — 安全地撤销</a></li>
+    <li><a href="#git-cherry-pick-精选提交">git cherry-pick — 精选提交</a></li>
+    <li><a href="#git-bisect-二分查找-bug">git bisect — 二分查找 Bug</a></li>
+    <li><a href="#git-reflog-后悔药">git reflog — 后悔药</a></li>
+  </ul>
+</aside>
+  <article class="chapter-body">
+    <header class="chapter-head">
+  <div class="chapter-head-meta">
+    <span class="num">CHAPTER 04</span>
+    <span>≈ 12 MIN READ</span>
+  </div>
+  <h1>速查表与进阶操作</h1>
+</header>
+    <h2 id="仓库初始化与配置">仓库初始化与配置</h2>
+<div class="table-wrap"><table><thead><tr>
+<th>命令</th>
+<th>说明</th>
+</tr>
+</thead><tbody><tr>
+<td><code>git init</code></td>
+<td>初始化新仓库</td>
+</tr>
+<tr>
+<td><code>git clone &lt;url&gt;</code></td>
+<td>克隆远程仓库</td>
+</tr>
+<tr>
+<td><code>git config --global user.name &quot;名字&quot;</code></td>
+<td>设置用户名</td>
+</tr>
+<tr>
+<td><code>git config --global user.email &quot;邮箱&quot;</code></td>
+<td>设置邮箱</td>
+</tr>
+<tr>
+<td><code>git config --global --list</code></td>
+<td>查看全局配置</td>
+</tr>
+</tbody></table></div>
+<h2 id="基础工作流">基础工作流</h2>
+<div class="table-wrap"><table><thead><tr>
+<th>命令</th>
+<th>说明</th>
+</tr>
+</thead><tbody><tr>
+<td><code>git status</code></td>
+<td>查看当前状态（最常用！）</td>
+</tr>
+<tr>
+<td><code>git add &lt;file&gt;</code></td>
+<td>暂存指定文件</td>
+</tr>
+<tr>
+<td><code>git add .</code></td>
+<td>暂存所有改动</td>
+</tr>
+<tr>
+<td><code>git commit -m &quot;msg&quot;</code></td>
+<td>提交并附上信息</td>
+</tr>
+<tr>
+<td><code>git commit -am &quot;msg&quot;</code></td>
+<td>暂存并提交已追踪文件</td>
+</tr>
+<tr>
+<td><code>git commit --amend</code></td>
+<td>修改最近一次提交</td>
+</tr>
+<tr>
+<td><code>git log --oneline</code></td>
+<td>简洁查看历史</td>
+</tr>
+<tr>
+<td><code>git log --oneline --graph --all</code></td>
+<td>图形化查看全部分支</td>
+</tr>
+<tr>
+<td><code>git diff</code></td>
+<td>查看未暂存的改动</td>
+</tr>
+<tr>
+<td><code>git diff --staged</code></td>
+<td>查看已暂存的改动</td>
+</tr>
+<tr>
+<td><code>git show &lt;hash&gt;</code></td>
+<td>查看某次提交详情</td>
+</tr>
+</tbody></table></div>
+<h2 id="撤销与恢复">撤销与恢复</h2>
+<div class="table-wrap"><table><thead><tr>
+<th>命令</th>
+<th>说明</th>
+</tr>
+</thead><tbody><tr>
+<td><code>git restore &lt;file&gt;</code></td>
+<td>撤销工作区修改</td>
+</tr>
+<tr>
+<td><code>git restore --staged &lt;file&gt;</code></td>
+<td>从暂存区移出</td>
+</tr>
+<tr>
+<td><code>git reset --soft HEAD~1</code></td>
+<td>撤销提交，保留暂存</td>
+</tr>
+<tr>
+<td><code>git reset HEAD~1</code></td>
+<td>撤销提交，保留工作区</td>
+</tr>
+<tr>
+<td><code>git reset --hard HEAD~1</code></td>
+<td>撤销提交，丢弃改动 ⚠️</td>
+</tr>
+<tr>
+<td><code>git revert HEAD</code></td>
+<td>创建反向提交撤销</td>
+</tr>
+<tr>
+<td><code>git reflog</code></td>
+<td>查看操作历史（救命稻草）</td>
+</tr>
+</tbody></table></div>
+<h2 id="分支操作">分支操作</h2>
+<div class="table-wrap"><table><thead><tr>
+<th>命令</th>
+<th>说明</th>
+</tr>
+</thead><tbody><tr>
+<td><code>git branch</code></td>
+<td>列出本地分支</td>
+</tr>
+<tr>
+<td><code>git branch -a</code></td>
+<td>列出所有分支（含远程）</td>
+</tr>
+<tr>
+<td><code>git branch &lt;name&gt;</code></td>
+<td>创建新分支</td>
+</tr>
+<tr>
+<td><code>git switch &lt;name&gt;</code></td>
+<td>切换分支</td>
+</tr>
+<tr>
+<td><code>git switch -c &lt;name&gt;</code></td>
+<td>创建并切换到新分支</td>
+</tr>
+<tr>
+<td><code>git merge &lt;branch&gt;</code></td>
+<td>将指定分支合并到当前</td>
+</tr>
+<tr>
+<td><code>git branch -d &lt;name&gt;</code></td>
+<td>删除已合并分支</td>
+</tr>
+<tr>
+<td><code>git branch -D &lt;name&gt;</code></td>
+<td>强制删除分支</td>
+</tr>
+<tr>
+<td><code>git rebase &lt;branch&gt;</code></td>
+<td>变基到指定分支</td>
+</tr>
+</tbody></table></div>
+<h2 id="远程操作">远程操作</h2>
+<div class="table-wrap"><table><thead><tr>
+<th>命令</th>
+<th>说明</th>
+</tr>
+</thead><tbody><tr>
+<td><code>git remote -v</code></td>
+<td>查看远程配置</td>
+</tr>
+<tr>
+<td><code>git remote add origin &lt;url&gt;</code></td>
+<td>添加远程仓库</td>
+</tr>
+<tr>
+<td><code>git remote set-url origin &lt;url&gt;</code></td>
+<td>修改远程 URL</td>
+</tr>
+<tr>
+<td><code>git push origin &lt;branch&gt;</code></td>
+<td>推送到远程</td>
+</tr>
+<tr>
+<td><code>git push -u origin &lt;branch&gt;</code></td>
+<td>推送并设置上游</td>
+</tr>
+<tr>
+<td><code>git push</code></td>
+<td>推送到已设置上游</td>
+</tr>
+<tr>
+<td><code>git fetch origin</code></td>
+<td>拉取远程变化（不合并）</td>
+</tr>
+<tr>
+<td><code>git pull</code></td>
+<td>拉取并合并</td>
+</tr>
+<tr>
+<td><code>git pull --rebase</code></td>
+<td>拉取并变基</td>
+</tr>
+</tbody></table></div>
+<h2 id="储藏与标签">储藏与标签</h2>
+<div class="table-wrap"><table><thead><tr>
+<th>命令</th>
+<th>说明</th>
+</tr>
+</thead><tbody><tr>
+<td><code>git stash</code></td>
+<td>储藏当前改动</td>
+</tr>
+<tr>
+<td><code>git stash pop</code></td>
+<td>取出并删除最新储藏</td>
+</tr>
+<tr>
+<td><code>git stash list</code></td>
+<td>查看储藏列表</td>
+</tr>
+<tr>
+<td><code>git stash drop</code></td>
+<td>删除最新储藏</td>
+</tr>
+<tr>
+<td><code>git tag v1.0</code></td>
+<td>创建轻量标签</td>
+</tr>
+<tr>
+<td><code>git tag -a v1.0 -m &quot;msg&quot;</code></td>
+<td>创建附注标签</td>
+</tr>
+<tr>
+<td><code>git push origin --tags</code></td>
+<td>推送所有标签</td>
+</tr>
+</tbody></table></div>
+<h2 id="高级工具">高级工具</h2>
+<div class="table-wrap"><table><thead><tr>
+<th>命令</th>
+<th>说明</th>
+</tr>
+</thead><tbody><tr>
+<td><code>git cherry-pick &lt;hash&gt;</code></td>
+<td>应用指定提交</td>
+</tr>
+<tr>
+<td><code>git bisect start/good/bad</code></td>
+<td>二分查找 Bug</td>
+</tr>
+<tr>
+<td><code>git blame &lt;file&gt;</code></td>
+<td>查看每行的最后修改者</td>
+</tr>
+<tr>
+<td><code>git rm --cached &lt;file&gt;</code></td>
+<td>取消文件的 Git 追踪</td>
+</tr>
+<tr>
+<td><code>git shortlog -sn</code></td>
+<td>统计每人提交次数</td>
+</tr>
+</tbody></table></div>
+<h2 id="附录git-学习资源">附录：Git 学习资源</h2>
+<div class="table-wrap"><table><thead><tr>
+<th>资源</th>
+<th>链接</th>
+<th>说明</th>
+</tr>
+</thead><tbody><tr>
+<td>🎮 Learn Git Branching</td>
+<td><a href="https://learngitbranching.js.org">learngitbranching.js.org</a></td>
+<td>交互式可视化学习，强烈推荐</td>
+</tr>
+<tr>
+<td>📚 Pro Git（中文版）</td>
+<td><a href="https://git-scm.com/book/zh/v2">git-scm.com/book/zh/v2</a></td>
+<td>官方免费电子书</td>
+</tr>
+<tr>
+<td>📖 官方文档</td>
+<td><a href="https://git-scm.com/doc">git-scm.com/doc</a></td>
+<td>命令参考手册</td>
+</tr>
+<tr>
+<td>🔧 gitignore 生成</td>
+<td><a href="https://www.toptal.com/developers/gitignore">gitignore.io</a></td>
+<td>自动生成 .gitignore</td>
+</tr>
+<tr>
+<td>💡 GitHub Skills</td>
+<td><a href="https://skills.github.com">skills.github.com</a></td>
+<td>GitHub 官方互动教程</td>
+</tr>
+</tbody></table></div>
+<blockquote><p>📝 <strong>最后的话</strong></p>
+<p>Git 的学习曲线初期比较陡峭，但掌握了核心概念（三个区域、commit、分支）之后，其余命令都是自然延伸。</p>
+<p><strong>最好的学习方法是实践</strong>：建一个自己的仓库，把课程作业、RoboGame 代码都用 Git 管理起来。犯错了不要怕——Git 几乎所有操作都可以撤销，<code>git reflog</code> 是你的最后防线。</p>
+<p>记住最重要的三句话：</p>
+<ol>
+<li><strong>多 commit，常 push</strong>：小步提交，不丢工作</li>
+<li><strong>分支是免费的</strong>：新功能开分支，主线保稳定</li>
+<li><strong>先 pull 再 push</strong>：协作时的黄金法则</li>
+</ol>
+<p>加油！💪</p>
+</blockquote>
+<p>以下是一些参考内容，阅读即可。（没有什么解析了）</p>
+<h2 id="集中式工作流">集中式工作流</h2>
+<p>最简单的团队协作方式，适合小团队：</p>
+<pre data-label="bash"><code class="language-bash"># 所有人在同一个分支（main）上工作
+
+# 1. 开始工作前，先拉取最新代码
+git pull origin main
+
+# 2. 做你的修改并提交
+git add .
+git commit -m "feat: 添加超声波传感器驱动"
+
+# 3. 推送前再次拉取（避免冲突）
+git pull origin main
+
+# 4. 解决冲突后推送
+git push origin main</code></pre>
+<h2 id="功能分支工作流推荐">功能分支工作流（推荐）</h2>
+<p>每个新功能在独立分支上开发：</p>
+<pre data-label="bash"><code class="language-bash"># 1. 从最新的 main 创建功能分支
+git switch main
+git pull
+git switch -c feature/ultrasonic-sensor
+
+# 2. 在功能分支上开发，频繁提交
+git add .
+git commit -m "feat: 添加超声波传感器头文件"
+
+git add .
+git commit -m "feat: 实现距离测量函数"
+
+git add .
+git commit -m "test: 添加传感器测试代码"
+
+# 3. 功能完成，推送到远程
+git push -u origin feature/ultrasonic-sensor
+
+# 4. 在 GitHub 上创建 Pull Request，请求合并到 main
+
+# 5. 审查通过后合并
+git switch main
+git merge feature/ultrasonic-sensor
+git push origin main
+
+# 6. 删除已合并的功能分支
+git branch -d feature/ultrasonic-sensor
+git push origin --delete feature/ultrasonic-sensor</code></pre>
+<h2 id="fork-工作流开源贡献">Fork 工作流（开源贡献）</h2>
+<pre data-label="bash"><code class="language-bash"># 1. 在 GitHub 上 Fork 原始仓库
+
+# 2. 克隆你的 Fork
+git clone git@github.com:YourName/project.git
+cd project
+
+# 3. 添加原始仓库为 upstream（上游）
+git remote add upstream git@github.com:OriginalOwner/project.git
+
+# 4. 同步原始仓库的最新改动
+git fetch upstream
+git merge upstream/main
+
+# 5. 创建功能分支并开发
+git switch -c fix/motor-bug
+
+# 6. 提交并推送到你的 Fork
+git push origin fix/motor-bug
+
+# 7. 在 GitHub 上向原始仓库发起 Pull Request</code></pre>
+<h2 id="git-stash-临时储藏">git stash — 临时储藏</h2>
+<p>场景：你正在写代码，突然需要切换分支处理紧急问题，但当前改动没写完不想提交。</p>
+<pre data-label="bash"><code class="language-bash"># 把当前工作区和暂存区的改动"藏"起来
+git stash
+
+# 查看储藏列表
+git stash list
+# 输出：stash@{0}: WIP on feature: 添加传感器驱动中...
+
+# 取出最近一次储藏并应用（最常用）
+git stash pop
+
+# 取出指定储藏（不删除）
+git stash apply stash@{1}
+
+# 删除某个储藏
+git stash drop stash@{0}
+
+# 清空所有储藏
+git stash clear</code></pre>
+<h2 id="git-reset-重置提交">git reset — 重置提交</h2>
+<pre data-label="bash"><code class="language-bash"># --soft：撤销提交，改动保留在暂存区（最安全）
+git reset --soft HEAD~1   # 撤销最近1次提交
+
+# --mixed（默认）：撤销提交，改动退到工作区
+git reset HEAD~1
+
+# --hard：撤销提交，改动全部丢弃（危险！）
+git reset --hard HEAD~1
+
+# 回到某个具体的提交
+git reset --hard a3f8c2d</code></pre>
+<blockquote><p>⚠️ <code>--hard</code> 会<strong>永久丢失</strong>改动，确认无误再用！已推送到远程的提交尽量不要 reset！</p>
+</blockquote>
+<h2 id="git-revert-安全地撤销">git revert — 安全地撤销</h2>
+<p>与 <code>reset</code> 不同，<code>revert</code> 通过<strong>新增一次提交</strong>来抵消之前的改动，不破坏历史：</p>
+<pre data-label="bash"><code class="language-bash"># 撤销最近一次提交（生成一个新的"撤销提交"）
+git revert HEAD
+
+# 撤销指定提交
+git revert a3f8c2d</code></pre>
+<p><strong>选择 reset 还是 revert？</strong></p>
+<div class="table-wrap"><table><thead><tr>
+<th>情况</th>
+<th>选择</th>
+</tr>
+</thead><tbody><tr>
+<td>改动还没推送到远程</td>
+<td>用 <code>reset</code></td>
+</tr>
+<tr>
+<td>改动已推送，团队已拉取</td>
+<td>用 <code>revert</code>（更安全）</td>
+</tr>
+</tbody></table></div>
+<h2 id="git-cherry-pick-精选提交">git cherry-pick — 精选提交</h2>
+<p>只想把某个分支上的某次提交应用到当前分支：</p>
+<pre data-label="bash"><code class="language-bash"># 将提交 a3f8c2d 应用到当前分支
+git cherry-pick a3f8c2d
+
+# 应用连续多个提交
+git cherry-pick a3f8c2d..7b9e1f3</code></pre>
+<h2 id="git-bisect-二分查找-bug">git bisect — 二分查找 Bug</h2>
+<p>当你知道某个版本有 Bug，某个版本没有，可以用二分法快速定位是哪次提交引入的：</p>
+<pre data-label="bash"><code class="language-bash"># 开始二分查找
+git bisect start
+
+# 标记当前版本有 Bug
+git bisect bad
+
+# 标记某个已知正确的版本
+git bisect good v1.0
+
+# Git 会自动切换到中间版本，你测试后标记：
+git bisect good  # 这个版本没问题
+git bisect bad   # 这个版本有问题
+
+# Git 不断二分，最终找到引入 Bug 的提交
+# 找到后退出
+git bisect reset</code></pre>
+<h2 id="git-reflog-后悔药">git reflog — 后悔药</h2>
+<p><code>reflog</code> 记录了 HEAD 的每一次移动，即使误操作了 <code>reset --hard</code>，也有机会恢复：</p>
+
+    <nav class="pager">  <a href="03-branch-remote.html">
+    <span class="label">← 上一章</span>
+    <span class="title">分支与远程：协作的基础</span>
+  </a>  <a class="disabled next"><span class="label">下一章 →</span><span class="title"></span></a></nav>
+  </article>
+</div>
+
+<footer>
+  <div class="set">
+    <span>GIT：概念讲解与实操</span>
+    <span>2026 · ZH-CN</span>
+  </div>
+  <div class="set">
+    <span>Mav</span>
+  </div>
+</footer>
+<div class="search-backdrop" id="search-overlay" role="dialog" aria-modal="true" aria-label="搜索" hidden>
+  <div class="search-modal">
+    <div class="search-input-wrap">
+      <input type="search" class="search-input" placeholder="搜索内容..." aria-label="搜索内容" autocomplete="off">
+      <kbd>ESC</kbd>
+    </div>
+    <div class="search-results" role="listbox" aria-label="搜索结果"></div>
+  </div>
+</div>
+
+<!-- Mobile TOC -->
+<button class="mtoc-fab" id="mtoc-fab" aria-label="目录">TOC</button>
+<div class="mtoc-drawer" id="mtoc-drawer">
+  <div class="mtoc-content"></div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/bash.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/typescript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/yaml.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/javascript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/json.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/python.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/css.min.js"></script>
+<script src="../assets/script.js"></script>
+</body>
+</html>

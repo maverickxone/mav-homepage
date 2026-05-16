@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Build Search Index</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #111;
+    --ink-soft: #555;
+    --muted: #888;
+    --line: #e5e5e5;
+    --bg-soft: #fafafa;
+    --code-bg: #1a1a1a;
+    --code-ink: #e8e8e8;
+    --code-dim: #777;
+    --sans: "Inter", -apple-system, "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+    --mono: "JetBrains Mono", "SF Mono", Menlo, Consolas, "Noto Sans Mono CJK SC", monospace;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: var(--sans);
+    color: var(--ink);
+    line-height: 1.6;
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 56px 24px 80px;
+    font-size: 15px;
+  }
+  h1 {
+    font-size: 24px;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    margin-bottom: 12px;
+  }
+  p { color: var(--ink-soft); margin-bottom: 24px; }
+  code {
+    font-family: var(--mono);
+    font-size: 0.86em;
+    background: var(--bg-soft);
+    border: 1px solid var(--line);
+    padding: 1px 5px;
+    border-radius: 3px;
+  }
+  .actions {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    flex-wrap: wrap;
+    margin: 24px 0 12px;
+  }
+  .btn {
+    appearance: none;
+    background: white;
+    border: 1px solid var(--ink);
+    color: var(--ink);
+    font-family: var(--mono);
+    font-size: 12px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    padding: 8px 14px;
+    cursor: pointer;
+    border-radius: 2px;
+    transition: background 0.15s, color 0.15s;
+  }
+  .btn:hover:not(:disabled) { background: var(--ink); color: white; }
+  .btn:disabled {
+    border-color: var(--line);
+    color: var(--muted);
+    cursor: not-allowed;
+  }
+  .status {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--muted);
+    margin-left: 4px;
+  }
+  .status.ok { color: var(--ink); }
+  .status.err { color: #c0392b; }
+  .log {
+    background: var(--code-bg);
+    color: var(--code-ink);
+    border-radius: 4px;
+    padding: 14px 16px;
+    font-family: var(--mono);
+    font-size: 12px;
+    line-height: 1.7;
+    max-height: 240px;
+    overflow: auto;
+    margin-top: 8px;
+  }
+  .log .line { display: block; }
+  .log .ok  { color: #4ade80; }
+  .log .err { color: #f87171; }
+  .log .info, .log .empty { color: var(--code-dim); }
+  .log .empty { font-style: italic; }
+  textarea.output {
+    width: 100%;
+    height: 240px;
+    font-family: var(--mono);
+    font-size: 11px;
+    line-height: 1.6;
+    background: var(--bg-soft);
+    border: 1px solid var(--line);
+    color: var(--ink-soft);
+    padding: 12px;
+    border-radius: 4px;
+    resize: vertical;
+    margin-top: 16px;
+  }
+  textarea.output:focus { outline: none; border-color: var(--ink); }
+</style>
+</head>
+<body>
+
+<h1>构建搜索索引</h1>
+<p>
+  扫描全部章节，按标题切段，构建 <code>MiniSearch</code> 索引。
+  生成完毕点 <strong>Download</strong>，下载的文件覆盖到 <code>assets/search-index.json</code> 即可。
+</p>
+
+<div class="actions">
+  <button id="build" class="btn">Build Index</button>
+  <button id="copy" class="btn" disabled>Copy</button>
+  <button id="download" class="btn" disabled>Download</button>
+  <span id="status" class="status">就绪</span>
+</div>
+
+<div class="log" id="log"><span class="line empty">点击 Build Index 开始。</span></div>
+
+<textarea id="output" class="output" placeholder="生成完毕后这里会显示 JSON 内容" readonly></textarea>
+
+<script src="https://cdn.jsdelivr.net/npm/minisearch@6.3.0/dist/umd/index.min.js"></script>
+<script>
+(function () {
+  'use strict';
+
+  const logEl = document.getElementById('log');
+  const outputEl = document.getElementById('output');
+  const statusEl = document.getElementById('status');
+  const buildBtn = document.getElementById('build');
+  const copyBtn = document.getElementById('copy');
+  const downloadBtn = document.getElementById('download');
+  let lastOutput = '';
+
+  function setStatus(text, kind) {
+    statusEl.textContent = text;
+    statusEl.className = 'status' + (kind ? ' ' + kind : '');
+  }
+
+  function log(msg, cls) {
+    const line = document.createElement('span');
+    line.className = 'line' + (cls ? ' ' + cls : '');
+    line.textContent = msg;
+    logEl.appendChild(line);
+    logEl.scrollTop = logEl.scrollHeight;
+  }
+
+  function clearLog() { logEl.innerHTML = ''; }
+
+  window.addEventListener('error', (e) => log('Uncaught: ' + e.message, 'err'));
+  window.addEventListener('unhandledrejection', (e) =>
+    log('Unhandled rejection: ' + (e.reason && e.reason.message || e.reason), 'err')
+  );
+
+  if (typeof MiniSearch === 'undefined') {
+    log('MiniSearch 未加载——CDN 可能不可达。', 'err');
+    setStatus('依赖加载失败', 'err');
+    buildBtn.disabled = true;
+  } else {
+    log('MiniSearch 已加载 ✓', 'ok');
+  }
+
+  buildBtn.addEventListener('click', async () => {
+    if (typeof MiniSearch === 'undefined') return;
+
+    buildBtn.disabled = true;
+    setStatus('构建中…', '');
+    clearLog();
+    outputEl.value = '';
+    copyBtn.disabled = true;
+    downloadBtn.disabled = true;
+
+    const pages = [
+      { file: 'chapters/01-what-is.html', chapter: '01', chapterTitle: '它到底是什么' },
+      { file: 'chapters/02-daily.html', chapter: '02', chapterTitle: '日常使用' },
+      { file: 'chapters/03-power.html', chapter: '03', chapterTitle: '进阶武器库' },
+      { file: 'chapters/04-mental.html', chapter: '04', chapterTitle: '心智模型与边界' },
+      { file: 'chapters/05-cache.html', chapter: '05', chapterTitle: '缓存' },
+      { file: 'chapters/06-easter-eggs.html', chapter: '06', chapterTitle: '彩蛋与冷知识' },
+      { file: 'chapters/reference.html', chapter: 'ref', chapterTitle: '速查表' },
+    ];
+
+    const documents = [];
+
+    for (const page of pages) {
+      const url = '../' + page.file;
+      try {
+        log('Fetching ' + url + ' ...', 'info');
+        const res = await fetch(url);
+        if (!res.ok) {
+          log('  HTTP ' + res.status + ' — 跳过', 'err');
+          continue;
+        }
+        const html = await res.text();
+        const doc = new DOMParser().parseFromString(html, 'text/html');
+
+        const article = doc.querySelector('.chapter-body') || doc.querySelector('article') || doc.body;
+        const headings = article.querySelectorAll('h2[id], h3[id]');
+        log('  found ' + headings.length + ' headings', 'info');
+
+        headings.forEach((heading) => {
+          const id = heading.id;
+          const title = heading.textContent.trim();
+          let body = '';
+          let sib = heading.nextElementSibling;
+          while (sib && !sib.matches('h2, h3')) {
+            body += sib.textContent + ' ';
+            sib = sib.nextElementSibling;
+          }
+          documents.push({
+            id: page.chapter + '#' + id,
+            title,
+            body: body.trim().slice(0, 500),
+            chapter: page.chapter,
+            chapterTitle: page.chapterTitle,
+            url: page.file + '#' + id,
+          });
+        });
+
+        const chTitle = doc.querySelector('.chapter-head h1');
+        if (chTitle) {
+          const sub = doc.querySelector('.chapter-head .sub');
+          documents.push({
+            id: page.chapter + '#top',
+            title: chTitle.textContent.trim(),
+            body: sub ? sub.textContent.trim() : '',
+            chapter: page.chapter,
+            chapterTitle: page.chapterTitle,
+            url: page.file,
+          });
+        }
+        log('  ✓ ' + page.file, 'ok');
+      } catch (err) {
+        log('  Error fetching ' + url + ': ' + err.message, 'err');
+      }
+    }
+
+    if (!documents.length) {
+      log('未收集到任何文档。检查 fetch 路径或服务器是否运行。', 'err');
+      setStatus('失败', 'err');
+      buildBtn.disabled = false;
+      return;
+    }
+
+    log('收集到 ' + documents.length + ' 个文档段，开始建索引...', 'info');
+
+    try {
+      const ms = new MiniSearch({
+        fields: ['title', 'body'],
+        storeFields: ['title', 'chapter', 'chapterTitle', 'url'],
+      });
+      ms.addAll(documents);
+
+      // MiniSearch v6+: toJSON() returns an object directly.
+      lastOutput = JSON.stringify(
+        { index: ms.toJSON(), documentCount: documents.length },
+        null,
+        2
+      );
+
+      outputEl.value = lastOutput;
+      copyBtn.disabled = false;
+      downloadBtn.disabled = false;
+      setStatus(
+        '完成 · ' + documents.length + ' 段 · ' + (lastOutput.length / 1024).toFixed(1) + ' KB',
+        'ok'
+      );
+      log('索引构建完成 ✓', 'ok');
+      log('点 Copy 复制到剪贴板，或 Download 下载文件。', 'info');
+    } catch (err) {
+      log('建索引失败: ' + err.message, 'err');
+      setStatus('失败', 'err');
+    } finally {
+      buildBtn.disabled = false;
+    }
+  });
+
+  copyBtn.addEventListener('click', async () => {
+    try {
+      await navigator.clipboard.writeText(lastOutput);
+      setStatus('已复制到剪贴板', 'ok');
+    } catch (err) {
+      log('复制失败（剪贴板需要 HTTPS 或 localhost）: ' + err.message, 'err');
+      log('请手动从下面文本框复制。', 'info');
+      outputEl.removeAttribute('readonly');
+      outputEl.focus();
+      outputEl.select();
+    }
+  });
+
+  downloadBtn.addEventListener('click', () => {
+    const blob = new Blob([lastOutput], { type: 'application/json' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'search-index.json';
+    a.click();
+    URL.revokeObjectURL(a.href);
+    setStatus('已下载 search-index.json', 'ok');
+  });
+})();
+</script>
+
+</body>
+</html>

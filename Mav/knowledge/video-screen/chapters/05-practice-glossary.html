@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>实战选择与术语速查 — 从像素到 4K：视频与屏幕技术指南</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" id="hljs-light" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+<link rel="stylesheet" id="hljs-dark" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" media="not all">
+</head>
+<body>
+
+<div class="progress-bar" id="progress-bar"></div>
+
+<nav class="topnav" id="topnav">
+  <div class="topnav-inner">
+    <a class="brand" href="../index.html">从像素到 4K：视频与屏幕技术指南</a>
+    <div class="nav-links">
+      <a href="01-pixel-resolution.html">01</a>
+      <a href="02-film-codec.html">02</a>
+      <a href="03-bitrate-refresh.html">03</a>
+      <a href="04-color-devices.html">04</a>
+      <a href="05-practice-glossary.html" class="active">05</a>
+    </div>
+    <div class="nav-controls">
+      <button class="nav-btn" id="search-btn" aria-label="搜索 (Ctrl+K)">⌘K</button>
+      <button class="nav-btn" id="settings-btn" aria-label="阅读设置">Aa</button>
+      <a class="nav-btn" href="../../index.html" aria-label="返回知识库">← 知识库</a>
+    </div>
+  </div>
+</nav>
+<div class="settings-pop" id="settings-pop">
+  <h5>主题</h5>
+  <div class="row">
+    <button class="seg" data-theme-set="light">明亮</button>
+    <button class="seg" data-theme-set="dark">暗色</button>
+  </div>
+  <h5>字号</h5>
+  <div class="row">
+    <button class="seg" data-size-set="s">小</button>
+    <button class="seg" data-size-set="m">中</button>
+    <button class="seg" data-size-set="l">大</button>
+  </div>
+</div>
+
+<div class="with-sidebar">
+  <aside class="sidebar">
+  <div class="chapter-num">CHAPTER 05</div>
+  <div class="chapter-name">实战选择与术语速查</div>
+  <h4>目录</h4>
+  <ul>
+    <li><a href="#场景一用-ipad-pro-202111英寸或-ipad-air-看">场景一：用 iPad Pro 2021（11英寸）或 iPad Air 看</a></li>
+    <li><a href="#场景二用-matebook-x-pro-看">场景二：用 MateBook X Pro 看</a></li>
+    <li><a href="#场景三外接-aoc-u27u3xd4k-144hz-模式看">场景三：外接 AOC U27U3XD（4K 144Hz 模式）看</a></li>
+    <li><a href="#场景四存储空间紧张只想快速看完">场景四：存储空间紧张，只想快速看完</a></li>
+    <li><a href="#选择速查表">选择速查表</a></li>
+    <li><a href="#附录常用术语速查表">附录：常用术语速查表</a></li>
+    <li><a href="#后记关于quot够用quot与quot更好quot">后记：关于&quot;够用&quot;与&quot;更好&quot;</a></li>
+  </ul>
+</aside>
+  <article class="chapter-body">
+    <header class="chapter-head">
+  <div class="chapter-head-meta">
+    <span class="num">CHAPTER 05</span>
+    <span>≈ 10 MIN READ</span>
+  </div>
+  <h1>实战选择与术语速查</h1>
+</header>
+    <h2 id="场景一用-ipad-pro-202111英寸或-ipad-air-看">场景一：用 iPad Pro 2021（11英寸）或 iPad Air 看</h2>
+<p>你的 iPad 屏幕分辨率大约是 2388×1668，不到 4K 的一半，而且是 11 英寸小屏，观看距离也近。</p>
+<p><strong>推荐选项：1080P 高码率 HEVC（序号 #5）或 1080P 高码率 AV1（序号 #4）</strong></p>
+<p>理由：</p>
+<ul>
+<li>屏幕不需要 4K，1080P 已经绰绰有余</li>
+<li>M1 芯片支持 HEVC 和 AV1 硬件解码，播放流畅、省电</li>
+<li>HEVC 938 MB，AV1 2531 Mbps（注意 AV1 在这里码率反而高于 HEVC），选 HEVC 节省空间</li>
+<li>若 HEVC 版本码率只有 938kbps 感觉不够，可考虑 1080P 高清 AV1（#7，883 Mbps，886 MB）</li>
+</ul>
+<p><strong>如果是 AVC 的忠实用户：1080P 高清 AVC（#6）</strong>，1.71GB，兼容性最好。</p>
+<h2 id="场景二用-matebook-x-pro-看">场景二：用 MateBook X Pro 看</h2>
+<p>14.2英寸屏幕，分辨率 3120×2080（3.1K），自己使用。</p>
+<p><strong>推荐选项：1080P 高码率 HEVC（#5）或 4K HEVC（#1）</strong></p>
+<ul>
+<li>1080P 高码率 HEVC：939 MB，画质够用，播放流畅</li>
+<li>4K HEVC：3.16 GB，屏幕会缩放显示，但高码率确保了细节丰富</li>
+<li>若在意文件大小：1080P AV1（#7，886MB），Intel Arc 显卡支持 AV1 硬件解码</li>
+</ul>
+<h2 id="场景三外接-aoc-u27u3xd4k-144hz-模式看">场景三：外接 AOC U27U3XD（4K 144Hz 模式）看</h2>
+<p>这是唯一一个 4K 视频<strong>真正有意义</strong>的场景。</p>
+<p><strong>推荐选项：4K AV1（#2，2.21GB）或 4K HEVC（#1，3.16GB）</strong></p>
+<p>理由：</p>
+<ul>
+<li>屏幕是原生 4K，4K 内容可以逐像素原生显示</li>
+<li>2262 kbps 的 4K AV1 码率对于电影来说稍偏低，如果内容动态场景多，可能出现轻微压缩痕迹</li>
+<li>4K HEVC（3228 kbps）码率更高，画质更稳定</li>
+<li>不推荐 4K AVC（8327 kbps），虽然码率最高，但文件是 4K AV1 的近 4 倍，而现代 HEVC/AV1 的画质效率远高于 AVC</li>
+</ul>
+<p><strong>音频建议：</strong> 配合 #0 音频（M4A 323kbps），全程沉浸式体验。</p>
+<h2 id="场景四存储空间紧张只想快速看完">场景四：存储空间紧张，只想快速看完</h2>
+<p><strong>推荐：720P HEVC（#11，310MB）或 480P AV1（#13，395MB）</strong></p>
+<p>在手机或 iPad 小屏上，720P 完全足够日常观看，310MB 的文件大小非常友好。</p>
+<h2 id="选择速查表">选择速查表</h2>
+<div class="table-wrap"><table><thead><tr>
+<th>观看设备</th>
+<th>首选</th>
+<th>备选</th>
+</tr>
+</thead><tbody><tr>
+<td>iPad（任何尺寸）</td>
+<td>1080P HEVC 或 AV1</td>
+<td>1080P AVC（最兼容）</td>
+</tr>
+<tr>
+<td>MateBook X Pro 2024</td>
+<td>1080P HEVC 或 AV1</td>
+<td>4K HEVC（追求画质）</td>
+</tr>
+<tr>
+<td>MacBook Air</td>
+<td>1080P HEVC 或 AV1</td>
+<td>1080P AVC</td>
+</tr>
+<tr>
+<td>MacBook Pro</td>
+<td>1080P HEVC 或 AV1</td>
+<td>4K HEVC</td>
+</tr>
+<tr>
+<td>AOC U27U3XD（4K模式）</td>
+<td>4K AV1</td>
+<td>4K HEVC</td>
+</tr>
+<tr>
+<td>网络差/流量有限</td>
+<td>720P HEVC</td>
+<td>480P HEVC</td>
+</tr>
+</tbody></table></div>
+<h2 id="附录常用术语速查表">附录：常用术语速查表</h2>
+<div class="table-wrap"><table><thead><tr>
+<th>术语</th>
+<th>全称</th>
+<th>含义</th>
+</tr>
+</thead><tbody><tr>
+<td>PPI</td>
+<td>Pixels Per Inch</td>
+<td>每英寸像素数，越高越细腻</td>
+</tr>
+<tr>
+<td>fps</td>
+<td>Frames Per Second</td>
+<td>帧率，每秒多少帧画面</td>
+</tr>
+<tr>
+<td>Hz</td>
+<td>Hertz（赫兹）</td>
+<td>刷新率单位，屏幕每秒刷新次数</td>
+</tr>
+<tr>
+<td>kbps</td>
+<td>Kilobits Per Second</td>
+<td>码率单位，每秒千比特</td>
+</tr>
+<tr>
+<td>Mbps</td>
+<td>Megabits Per Second</td>
+<td>码率单位，每秒兆比特</td>
+</tr>
+<tr>
+<td>AVC</td>
+<td>Advanced Video Coding</td>
+<td>H.264 编解码器</td>
+</tr>
+<tr>
+<td>HEVC</td>
+<td>High Efficiency Video Coding</td>
+<td>H.265 编解码器</td>
+</tr>
+<tr>
+<td>AV1</td>
+<td>AOMedia Video 1</td>
+<td>新一代开源编解码器</td>
+</tr>
+<tr>
+<td>HDR</td>
+<td>High Dynamic Range</td>
+<td>高动态范围</td>
+</tr>
+<tr>
+<td>SDR</td>
+<td>Standard Dynamic Range</td>
+<td>标准动态范围</td>
+</tr>
+<tr>
+<td>nits</td>
+<td>—</td>
+<td>亮度单位（尼特）</td>
+</tr>
+<tr>
+<td>IPS</td>
+<td>In-Plane Switching</td>
+<td>一种 LCD 面板技术，广视角</td>
+</tr>
+<tr>
+<td>OLED</td>
+<td>Organic Light-Emitting Diode</td>
+<td>有机发光二极管，自发光</td>
+</tr>
+<tr>
+<td>ProMotion</td>
+<td>—</td>
+<td>苹果的自适应刷新率技术</td>
+</tr>
+<tr>
+<td>LTPO</td>
+<td>Low-Temperature Polycrystalline Oxide</td>
+<td>支持自适应刷新率的面板底层技术</td>
+</tr>
+<tr>
+<td>sRGB</td>
+<td>Standard RGB</td>
+<td>标准色域，覆盖约 35% 人眼可见色</td>
+</tr>
+<tr>
+<td>DCI-P3</td>
+<td>—</td>
+<td>数字电影色域标准</td>
+</tr>
+<tr>
+<td>VBR</td>
+<td>Variable Bit Rate</td>
+<td>可变码率</td>
+</tr>
+<tr>
+<td>CBR</td>
+<td>Constant Bit Rate</td>
+<td>固定码率</td>
+</tr>
+<tr>
+<td>I-Frame</td>
+<td>Intra-coded Frame</td>
+<td>关键帧，完整的一帧信息</td>
+</tr>
+<tr>
+<td>P/B-Frame</td>
+<td>Predictive/Bi-dir Frame</td>
+<td>差异帧，只存储与参考帧的差异</td>
+</tr>
+<tr>
+<td>Codec</td>
+<td>Coder-Decoder</td>
+<td>编解码器</td>
+</tr>
+<tr>
+<td>VPU</td>
+<td>Video Processing Unit</td>
+<td>视频处理单元，硬件解码模块</td>
+</tr>
+<tr>
+<td>Upscaling</td>
+<td>—</td>
+<td>上采样，低分辨率内容放大到高分辨率</td>
+</tr>
+<tr>
+<td>DCI 4K</td>
+<td>—</td>
+<td>电影行业 4K 标准，4096×2160</td>
+</tr>
+<tr>
+<td>UHD 4K</td>
+<td>—</td>
+<td>消费级 4K 标准，3840×2160</td>
+</tr>
+<tr>
+<td>PWM</td>
+<td>Pulse Width Modulation</td>
+<td>屏幕调光方式</td>
+</tr>
+<tr>
+<td>ΔE</td>
+<td>Delta E</td>
+<td>色彩误差值，越低越准确</td>
+</tr>
+<tr>
+<td>KVM</td>
+<td>Keyboard, Video, Mouse</td>
+<td>一套外设控制多台电脑</td>
+</tr>
+</tbody></table></div>
+<h2 id="后记关于quot够用quot与quot更好quot">后记：关于&quot;够用&quot;与&quot;更好&quot;</h2>
+<p>学完这些技术知识，你可能会开始对自己的设备屏幕不满意——&quot;MateBook 不是 4K！Air 才 60Hz！iPad Pro 分辨率不够高！&quot;</p>
+<p>但请记住：<strong>技术规格是为使用服务的，不是为参数而存在的。</strong></p>
+<p>264 PPI 的屏幕，在正常使用距离下，人眼无法分辨单个像素——更高的 PPI 只是数字更好看。60Hz 的屏幕，用于看文档、写代码、浏览网页，和 120Hz 的差别肉眼难以察觉。1080P 的视频，在 13 英寸的屏幕上，配合高码率和良好的编解码，完全是精彩的视觉享受。</p>
+<p>真正重要的是：</p>
+<ul>
+<li>选择你的<strong>设备</strong>能流畅解码的格式</li>
+<li>选择<strong>码率</strong>足够高的版本（而不是只看分辨率标签）</li>
+<li>在<strong>合适的设备</strong>上观看对应分辨率的内容</li>
+<li>享受内容本身，而不是数字游戏</li>
+</ul>
+<p>希望这本小书，能让你在下次面对下载列表时，心里有一把清晰的尺子。</p>
+<p><em>本书写于 2026 年 4 月，所有硬件规格核查至 2025-2026 年。</em><br><em>如有疑问或想深入某个话题，随时可以继续探讨。</em></p>
+
+    <nav class="pager">  <a href="04-color-devices.html">
+    <span class="label">← 上一章</span>
+    <span class="title">色彩科学与设备横评</span>
+  </a>  <a class="disabled next"><span class="label">下一章 →</span><span class="title"></span></a></nav>
+  </article>
+</div>
+
+<footer>
+  <div class="set">
+    <span>从像素到 4K：视频与屏幕技术指南</span>
+    <span>2026 · ZH-CN</span>
+  </div>
+  <div class="set">
+    <span>Mav</span>
+  </div>
+</footer>
+<div class="search-backdrop" id="search-overlay" role="dialog" aria-modal="true" aria-label="搜索" hidden>
+  <div class="search-modal">
+    <div class="search-input-wrap">
+      <input type="search" class="search-input" placeholder="搜索内容..." aria-label="搜索内容" autocomplete="off">
+      <kbd>ESC</kbd>
+    </div>
+    <div class="search-results" role="listbox" aria-label="搜索结果"></div>
+  </div>
+</div>
+
+<!-- Mobile TOC -->
+<button class="mtoc-fab" id="mtoc-fab" aria-label="目录">TOC</button>
+<div class="mtoc-drawer" id="mtoc-drawer">
+  <div class="mtoc-content"></div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/bash.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/typescript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/yaml.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/javascript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/json.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/python.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/css.min.js"></script>
+<script src="../assets/script.js"></script>
+</body>
+</html>

@@ -1,0 +1,380 @@
+{
+  "documents": [
+    {
+      "id": "01-why-rust",
+      "title": "为什么会有 Rust——从 C 的原罪说起",
+      "chapter": "01",
+      "chapterTitle": "为什么会有 Rust——从 C 的原罪说起",
+      "url": "chapters/01-why-rust.html",
+      "body": "   1.1 C统治世界六十年靠的是什么\n\n     1.1.1 一门语言的长寿秘诀\n\nC语言诞生于1972年。那是阿波罗11号登月后三年，Unix刚刚被Dennis Ritchie和Ken Thompson在贝尔实验室里折腾出来的年代。那时候的程序员写代码，基本上是在和汇编语言搏斗——每换一台机器，代码就得重写一遍，因为不同处理器的指令集完全不同。\n\nC的出现解决了这个问题。它提供了一层薄薄的抽象：你写的是C，编译器帮你翻译成对应机器的汇编。这听起来简单，但在当时是革命性的。你终于可以写一份代码，然后在不同平台上编译运行——这个特性被称为\"可移植性\"（portability），它是C统治半个世纪的第一块基石。\n\n第二块基石是性能。C的抽象极其\"薄\"——薄到几乎透明。你写下的每一行C代码，基本上都能预测它会被编译成什么样的机器指令。没有隐藏的垃圾回收，没有虚拟机，没有运行时解释器，就是原始的机器码。这个特性让C成了性能敏感场景的首选：操作系统内核、数据库、网络协议栈、嵌入式系统。\n\n第三块基石是时间积累出来的生态。六十年来，几乎所有重要的系统软件都是用C写的或者暴露C接口的。Linux内核是C，Windows内核是C，macOS内核的核心部分是C，MySQL、PostgreSQL是C，Python的解释器CPython是C，Ruby的MRI是C，甚至V8——那个驱动Chrome和Node.js的JavaScript引擎——它的底层也大量使用了C和C++。你想和任何操作系统、任何硬件、任何已有的库打交道，你迟早要和C的ABI（应用二进制接口）握手。\n\n所以C的长寿不是偶然。它的成功是性能、可移植性和生态三者共同构成的护城河。\n\n     1.1.2 C的设计哲学：相信程序员\n\n但C有一个非常鲜明的设计哲学，几乎是它所有问题的根源：  相信程序员  。\n\nC假设程序员知道自己在做什么。你说你要访问数组的第100个元素？好，直接给你。你说要释放这块内存？好，释放了。你说要把这个指针当成另一个类型用？好，强转。\n\n这个哲学在1970年代是合理的。那时候写C的人大多是系统程序员，他们理解底层，知道内存怎么回事。而且程序规模小，团队也小，一个人可以把整个代码库装进脑子里。\n\n但软件工程发展到今天，代码库动辄几百万行，团队几十上百人，没有任何人能完整理解整个系统。在这种规模下，\"相信程序员\"变成了一场赌注——你在赌每个人每次都不会犯错。\n\n结果怎么样？我们来看数据。\n\n     1.1.3 六十年积累的技术债\n\n微软在2019年公开了一组数据：他们过去十年里修复的CVE（公开漏洞）中，  70%是内存安全问题  。谷歌分析了Chromium项目的漏洞，得出了相同的结论：  70%的严重安全漏洞是内存安全问题  。NSA（美国国家安全局）在2022年发布的报告里直接建议组织机构迁移到内存安全语言，点名批评了C和C++。\n\n这70%不是一个偶然的数字。它是C语言设计哲学在工业规模下的必然代价。\n\n内存安全问题本质上是：程序访问了它不应该访问的内存，或者用错了它应该管理的内存。这些问题有几个经典形式：\n\n  缓冲区溢出（Buffer Overflow）  ：你有一个长度为10的数组，但你往第15个位置写了数据。C不会阻止你，它会乖乖地把数据写进去，但那块内存可能属于别的变量，甚至是函数的返回地址。经典的栈溢出攻击就是利用这个——覆盖返回地址，让程序跳转到攻击者控制的代码。\n\n   c\n// 这段C代码会编译，会运行，但它是个定时炸弹\nchar buf 10 ;\nstrcpy buf, \"这个字符串比10个字节长多了\" ;\n// buf溢出了，覆盖了栈上的其他数据\n   \n\n  Use After Free（释放后使用）  ：你释放了一块内存，但还保留着指向它的指针，之后又用这个指针去读写数据。那块内存可能已经被分配给别的用途了，你在读的可能是完全不相关的数据，更糟糕的情况是你在写，覆盖了别人的数据。\n\n   c\nint  p = malloc sizeof int  ;\n p = 42;\nfree p ;\n// p现在是\"悬垂指针\"（dangling pointer）\n// 下面这行可能读到垃圾值，也可能导致崩溃，也可能看起来正常——不确定性是最可怕的\nprintf \"%d\\n\",  p ;\n   \n\n  Double Free（重复释放）  ：同一块内存释放两次。malloc/free的内部数据结构会被破坏，导致堆腐败（heap corruption），这是一类极难调试的问题。\n\n  空指针解引用  ：访问NULL指针。这个比前面几个\"温柔\"——通常直接崩溃，但总比悄悄破坏数据要好一点。\n\n这些问题在一个几千行的学生项目里可能永远不会暴露，但在"
+    },
+    {
+      "id": "01-why-rust-11-c统治世界六十年靠的是什么",
+      "title": "1.1 C统治世界六十年靠的是什么",
+      "chapter": "01",
+      "chapterTitle": "为什么会有 Rust——从 C 的原罪说起",
+      "url": "chapters/01-why-rust.html#11-c统治世界六十年靠的是什么",
+      "body": ""
+    },
+    {
+      "id": "01-why-rust-12-内存安全那70的漏洞从哪来",
+      "title": "1.2 内存安全：那70%的漏洞从哪来",
+      "chapter": "01",
+      "chapterTitle": "为什么会有 Rust——从 C 的原罪说起",
+      "url": "chapters/01-why-rust.html#12-内存安全那70的漏洞从哪来",
+      "body": ""
+    },
+    {
+      "id": "01-why-rust-13-c试图修补但越补越复杂",
+      "title": "1.3 C++试图修补，但越补越复杂",
+      "chapter": "01",
+      "chapterTitle": "为什么会有 Rust——从 C 的原罪说起",
+      "url": "chapters/01-why-rust.html#13-c试图修补但越补越复杂",
+      "body": ""
+    },
+    {
+      "id": "01-why-rust-14-mozilla的工程师为什么要重新造轮子",
+      "title": "1.4 Mozilla的工程师为什么要重新造轮子",
+      "chapter": "01",
+      "chapterTitle": "为什么会有 Rust——从 C 的原罪说起",
+      "url": "chapters/01-why-rust.html#14-mozilla的工程师为什么要重新造轮子",
+      "body": ""
+    },
+    {
+      "id": "01-why-rust-15-rust的诞生一个浏览器引擎的副产品",
+      "title": "1.5 Rust的诞生：一个浏览器引擎的副产品",
+      "chapter": "01",
+      "chapterTitle": "为什么会有 Rust——从 C 的原罪说起",
+      "url": "chapters/01-why-rust.html#15-rust的诞生一个浏览器引擎的副产品",
+      "body": ""
+    },
+    {
+      "id": "02-core-philosophy",
+      "title": "Rust 到底在解决什么问题——核心哲学",
+      "chapter": "02",
+      "chapterTitle": "Rust 到底在解决什么问题——核心哲学",
+      "url": "chapters/02-core-philosophy.html",
+      "body": "   2.1 \"零成本抽象\"是什么意思\n\n     2.1.1 抽象必然有代价吗\n\n\"抽象\"这个词在编程里随处可见，但它的代价因语言而异，差别悬殊。\n\nPython是（对机器而言）高度抽象的语言。你写 a + b ，Python会在运行时查询 a 的类型，调用   add   方法，做类型检查，然后执行加法。这背后是解释器的一大堆工作。单次操作的开销可能比C版本慢几十到几百倍。这个代价被认为是\"值得的\"，因为Python的开发效率极高。\n\nJava也有抽象代价：JVM（Java虚拟机）需要在运行时做方法调度、JIT编译、GC等工作。Java的泛型用\"类型擦除\"实现，在运行时实际上消除了类型信息，需要额外的转型。\n\nC的抽象极少，几乎没有运行时开销——你写的代码基本等价于汇编。但C的抽象能力也很弱，写复杂程序要手搓很多东西。\n\nC++在C的基础上增加了虚函数（用虚表实现，有间接跳转开销）、RTTI（运行时类型信息）等，这些特性有运行时成本。但C++也有模板（template），模板是在编译时展开的，不产生运行时开销。\n\nRust继承了C++模板的思路，但做得更彻底、更系统。Rust的口号是：  \"如果你不用某个特性，就不用为它付代价；如果你用了某个特性，你手写等效代码也无法做得更快。\"  \n\n     2.1.2 用迭代器做一个具体的例子\n\n来看一个具体例子。你有一个整数数组，想对每个元素乘以2，然后找出其中大于10的，求和。\n\n用C写：\n   c\nint arr   =  1, 2, 3, 4, 5, 6, 7, 8 ;\nint n = 8;\nlong sum = 0;\nfor  int i = 0; i < n; i++   \n    int doubled = arr i    2;\n    if  doubled   10   \n        sum += doubled;\n     \n \n   \n\n用Rust写，利用迭代器：\n   rust\nlet arr =  1, 2, 3, 4, 5, 6, 7, 8 ;\nlet sum: i64 = arr.iter  \n    .map  x  x   2 \n    .filter  x   x   10 \n    .sum  ;\n   \n\nRust版本看起来像函数式编程，很高级，很优雅。但问题来了：这比C版本慢吗？\n\n答案是：  不慢，甚至可能完全一样快  。Rust的编译器（加上LLVM后端）会把这段迭代器链展开（inline）成等价的循环，消除所有函数调用的开销，最终生成的机器码和C版本几乎相同。\n\n这就是零成本抽象的含义：你可以用高级、优雅的写法，不用担心性能损失。抽象是编译时的，不是运行时的。\n\n     2.1.3 和Python的对比：不同的取舍\n\n在Python里写同样的逻辑：\n   python\narr =  1, 2, 3, 4, 5, 6, 7, 8 \ntotal = sum x   2 for x in arr if x   2   10 \n   \n\n这很简洁，但每一步都有解释器开销：生成器、函数调用、动态类型检查……对于这个简单例子，差距在现代硬件上可能微不足道。但如果这个循环要跑几亿次，或者处理的是GB级别的数据，差距就会非常显著。\n\nPython的取舍是：用运行时性能换取开发速度和灵活性。Rust的取舍是：用学习难度（写起来比Python复杂）换取运行时性能（和C相当）。\n\n设计哲学本身没有对错，取决于你的场景。\n\n\n   2.2 所有权系统：不靠GC，也不靠程序员自律\n\n\n     2.2.1 所有权：一个简单的规则\n\nRust的内存安全靠的是  所有权系统  （Ownership System）。它建立在三条规则上：\n\n1. Rust中每一个值都有一个  所有者  （owner）。\n2. 每个值在同一时刻只能有  一个  所有者。\n3. 所有者离开其  作用域  （scope）时，值被自动丢弃（drop）——内存被释放。\n\n这三条规则听起来简单，但它们的推论解决了整个内存安全问题，而且是在  编译时  解决的，没有运行时开销。\n\n     2.2.2 作用域决定生命周期\n\n来看一个简单的例子：\n\n   rust\n \n    let s = String::from \"hello\" ; // s是这个String值的所有者\n    // 可以使用s\n    println! \"  \", s ;\n  // s的作用域结束，String自动被释放（等价于free）\n// 这里s已经不存在了，不能使用\n   \n\n这就是RAII原则在Rust里的体现，和C++的智能指针类似，但区别在于：在Rust里  没有例外  ，所有的值都遵循这个规则，没有\"我忘"
+    },
+    {
+      "id": "02-core-philosophy-21-quot零成本抽象quot是什么意思",
+      "title": "2.1 &quot;零成本抽象&quot;是什么意思",
+      "chapter": "02",
+      "chapterTitle": "Rust 到底在解决什么问题——核心哲学",
+      "url": "chapters/02-core-philosophy.html#21-quot零成本抽象quot是什么意思",
+      "body": ""
+    },
+    {
+      "id": "02-core-philosophy-22-所有权系统不靠gc也不靠程序员自律",
+      "title": "2.2 所有权系统：不靠GC，也不靠程序员自律",
+      "chapter": "02",
+      "chapterTitle": "Rust 到底在解决什么问题——核心哲学",
+      "url": "chapters/02-core-philosophy.html#22-所有权系统不靠gc也不靠程序员自律",
+      "body": ""
+    },
+    {
+      "id": "02-core-philosophy-23-借用检查器编译器当你的保姆",
+      "title": "2.3 借用检查器：编译器当你的保姆",
+      "chapter": "02",
+      "chapterTitle": "Rust 到底在解决什么问题——核心哲学",
+      "url": "chapters/02-core-philosophy.html#23-借用检查器编译器当你的保姆",
+      "body": ""
+    },
+    {
+      "id": "02-core-philosophy-24-和c对比同样快但更难写错",
+      "title": "2.4 和C对比：同样快，但更难写错",
+      "chapter": "02",
+      "chapterTitle": "Rust 到底在解决什么问题——核心哲学",
+      "url": "chapters/02-core-philosophy.html#24-和c对比同样快但更难写错",
+      "body": ""
+    },
+    {
+      "id": "02-core-philosophy-25-和python对比同样现代但完全不同的取舍",
+      "title": "2.5 和Python对比：同样现代，但完全不同的取舍",
+      "chapter": "02",
+      "chapterTitle": "Rust 到底在解决什么问题——核心哲学",
+      "url": "chapters/02-core-philosophy.html#25-和python对比同样现代但完全不同的取舍",
+      "body": ""
+    },
+    {
+      "id": "03-syntax",
+      "title": "Rust 长什么样——给 C 党的语法速览",
+      "chapter": "03",
+      "chapterTitle": "Rust 长什么样——给 C 党的语法速览",
+      "url": "chapters/03-syntax.html",
+      "body": "  这一章是可选的硬核内容。如果你只想了解Rust的存在价值和适用场景，可以跳过这章，直接看第四章，不影响理解。\n \n  如果你想看看Rust代码实际长什么样，这章给你一个概览——不求你现在就能写Rust，但求看懂基本结构，对语法有直觉。\n\n   3.1 变量、函数、控制流：和C像不像\n\n     3.1.1 变量声明：let和mut\n\nC里声明变量：\n   c\nint x = 5;\nx = 10; // 可以改\n   \n\nRust里：\n   rust\nlet x = 5;       // 不可变绑定，类型自动推断为i32\nx = 10;       // 编译错误！默认不可变！\nlet mut y = 5;   // 可变绑定\ny = 10;          // OK\n   \n\n最大的区别：Rust默认变量是  不可变的  （immutable）。想要可变必须显式加 mut 。这个设计初看有点烦，但它有几个好处：\n\n1. 不可变性让代码更容易推理——你看到一个没有 mut 的变量，就知道它不会变，不用追踪整个代码路径。\n2. 编译器可以做更激进的优化。\n3. 在多线程场景，不可变数据天然是安全的，不需要锁。\n\n这和C的设计哲学相反——C里 const 是显式加的，可变是默认。这个选择是有意义的：在1970年代，不可变性不是重要关注点；在现代软件工程里，不可变性被认为是好的实践。\n\n  遮蔽（Shadowing）  是Rust特有的一个小特性：\n\n   rust\nlet x = 5;\nlet x = x + 1;    // 重新声明x，遮蔽了上面的x\nlet x = x   2;    // 又遮蔽\nprintln! \"  \", x ; // 输出12\n   \n\n遮蔽允许你复用变量名，甚至改变类型，同时不需要 mut ——每次 let 都创建了一个新的绑定。\n\n     3.1.2 基本类型\n\nRust的基本类型和C类似，但更明确：\n\n  Rust类型   C类型   说明  \n                           \n   i8 ,  i16 ,  i32 ,  i64 ,  i128     int8 t 等   有符号整数，位数明确  \n   u8 ,  u16 ,  u32 ,  u64 ,  u128     uint8 t 等   无符号整数  \n   isize ,  usize     ptrdiff t ,  size t    指针大小的整数  \n   f32 ,  f64     float ,  double    浮点数  \n   bool      Bool  /  bool    布尔值，只有 true / false   \n   char     char      32位  Unicode字符，不是C的1字节char  \n   &str     const char     字符串切片（不可变，UTF 8）  \n   String     string    堆分配的可增长字符串  \n\n注意Rust的 char 是32位的——每个 char 是一个Unicode码点，不是字节。这和C的 char 本质不同，避免了很多字符编码的坑。\n\n     3.1.3 函数\n\nRust的函数：\n\n   rust\nfn add x: i32, y: i32     i32  \n    x + y  // 注意：没有return，最后一个表达式的值就是返回值\n \n\nfn greet name: &str     String  \n    format! \"你好，  \", name   // format!是宏，类似sprintf\n \n\nfn nothing    \n    // 没有显式返回类型表示返回  ，即unit类型（类似C的void）\n \n   \n\n两个值得注意的地方：\n\n  函数参数必须显式标注类型  ，没有自动推断。这是有意为之——函数签名是接口契约，必须明确。\n\n  最后一个表达式可以省略 return 和分号  ，它的值就是函数的返回值。在Rust里，几乎一切都是表达式，包括 if 、 match 、代码块。这一点来自函数式编程语言的影响。\n\n   rust\nfn abs x: i32     i32  \n    if x  = 0   x   else    x  \n    // if是表达式，整个if的值是x或 x\n \n   \n\n     3.1.4 控制流：熟悉但有差异\n\n  if/else  ：和C一样，但条件不需要括号，而且是表达式。\n\n   rust\nlet number = 7;\nif number < 5  \n    println! \"小\" ;\n  els"
+    },
+    {
+      "id": "03-syntax-31-变量函数控制流和c像不像",
+      "title": "3.1 变量、函数、控制流：和C像不像",
+      "chapter": "03",
+      "chapterTitle": "Rust 长什么样——给 C 党的语法速览",
+      "url": "chapters/03-syntax.html#31-变量函数控制流和c像不像",
+      "body": ""
+    },
+    {
+      "id": "03-syntax-32-所有权三板斧move-borrow-lifetime",
+      "title": "3.2 所有权三板斧：Move / Borrow / Lifetime",
+      "chapter": "03",
+      "chapterTitle": "Rust 长什么样——给 C 党的语法速览",
+      "url": "chapters/03-syntax.html#32-所有权三板斧move-borrow-lifetime",
+      "body": ""
+    },
+    {
+      "id": "03-syntax-33-枚举和模式匹配比c的union好在哪",
+      "title": "3.3 枚举和模式匹配：比C的union好在哪",
+      "chapter": "03",
+      "chapterTitle": "Rust 长什么样——给 C 党的语法速览",
+      "url": "chapters/03-syntax.html#33-枚举和模式匹配比c的union好在哪",
+      "body": ""
+    },
+    {
+      "id": "03-syntax-34-错误处理result代替异常",
+      "title": "3.4 错误处理：Result代替异常",
+      "chapter": "03",
+      "chapterTitle": "Rust 长什么样——给 C 党的语法速览",
+      "url": "chapters/03-syntax.html#34-错误处理result代替异常",
+      "body": ""
+    },
+    {
+      "id": "03-syntax-35-cargorust的包管理工具",
+      "title": "3.5 Cargo：Rust的包管理工具",
+      "chapter": "03",
+      "chapterTitle": "Rust 长什么样——给 C 党的语法速览",
+      "url": "chapters/03-syntax.html#35-cargorust的包管理工具",
+      "body": ""
+    },
+    {
+      "id": "04-where-rust",
+      "title": "Rust 在哪里出没——它的边界和地盘",
+      "chapter": "04",
+      "chapterTitle": "Rust 在哪里出没——它的边界和地盘",
+      "url": "chapters/04-where-rust.html",
+      "body": "   4.1 先说结论：Rust不是全能药\n\n在正式聊Rust的地盘之前，我想先说一件很多Rust布道者不愿意承认的事：  Rust不适合所有场景  。它是一把非常锋利的刀，但你不能拿它来切豆腐，那既浪费了刀，也没把豆腐切好。\n\n理解一门语言\"在哪里出没\"，不只是要知道它能干什么，更要知道它在哪里有竞争优势、在哪里根本不该出现。这一章我们就来拆解这件事。\n\nRust的核心价值主张是：  以接近C的性能，提供更安全的系统级编程能力  。这个定位本身就画出了它的地图——凡是需要\"低层次控制\"且\"不能容忍崩溃\"的地方，它就有机会。凡是对速度要求不高、对开发效率要求极高的地方，它大概率不是最优解。\n\n\n   4.2 系统编程：Rust的老家\n\n     4.2.1 操作系统：从理论到现实\n\n\"用Rust写操作系统\"在2015年听起来像一个大学生的课程项目，在2026年已经是真实发生在Linux主线里的事情。但我们先从头说起。\n\n操作系统是一个对内存控制要求极端严苛的场景。内核代码几乎不能使用垃圾回收，因为GC的停顿是不可预测的——你不能在处理中断的时候突然被GC暂停200毫秒。C语言几十年来是这个领域的唯一选项，C++在内核里也很少见（Linux内核明确拒绝C++，Linus对C++的评价是……不方便引用）。\n\nRust对这个场景的适应性体现在几个方面：\n\n  没有运行时，没有GC  。Rust的标准库有一个 no std 模式，去掉标准库的大部分内容后，你得到的是一个几乎没有运行时开销的裸机环境。编译出来的二进制和C的差不多，因为本质上Rust就是\"带类型检查的C\"，LLVM后端是一样的。\n\n  内存安全不依赖运行时  。所有权系统在编译期完成所有检查，运行时不需要额外的引用计数或GC扫描。这意味着\"Rust的内存安全\"对运行时性能的影响几乎为零。\n\n   unsafe 块的存在  。纯Rust在内核里无法做所有事情，因为内核需要操作裸指针、直接访问硬件寄存器、手动管理内存布局。 unsafe 块允许你在必要的地方绕过借用检查器，但它强迫你把\"不安全的代码\"显式标记出来，集中在有限的几个地方，而不是整个代码库都可能有问题。\n\n这和C的区别很微妙但很重要：C里随便哪一行都可能是内存问题的根源， unsafe Rust里只有被标记的那几块是\"危险区\"，其余的代码编译器已经帮你保证安全了。\n\n  Redox OS   是目前最成熟的纯Rust操作系统项目，从内核到用户态工具链全部用Rust写。它不是Linux的替代品，更像是一个实验室，用来探索\"如果用Rust从零设计一个OS能做到什么\"。Redox有自己的微内核架构、自己的libc实现（relibc）、自己的包管理器。跑起来的截图看着和一个古早的Unix桌面差不多，但背后的代码质量和安全属性是完全不同的量级。\n\n     4.2.2 驱动程序：另一个雷区\n\n驱动程序是内存漏洞的重灾区。Windows历史上大量的蓝屏死机（BSOD）源于第三方驱动，因为驱动运行在内核态，一个野指针直接就能让系统崩溃。\n\n微软正在推动用Rust写Windows驱动，这件事我们放到第六章细说。但从技术角度，Rust在这里的价值是一样的：  编译期的安全保证比运行时的崩溃恢复要好一个数量级  。驱动程序你无法\"捕获异常然后重试\"，所以让编译器在代码提交之前就揪出问题是最理想的。\n\n     4.2.3 嵌入式：STM32上的铁锈味\n\n这一节和尾声有重叠，我先在这里给一个整体视角，尾声里再给微电子方向的具体建议。\n\n嵌入式场景是Rust近年来发力很猛的地方。嵌入式的需求和操作系统类似：没有OS，没有动态内存分配（有时候），资源极其受限，绝对不能崩。传统上这是C和汇编的天下。\n\nRust的 embedded hal 生态在过去五年里从零发展到了相当可用的程度。HAL是Hardware Abstraction Layer（硬件抽象层）的缩写， embedded hal 定义了一套通用的trait接口——比如\"什么叫一个SPI设备\"、\"什么叫一个I2C总线\"——然后不同的芯片厂商或社区提供各自的实现。\n\n   rust\n// 一个简单的嵌入式Rust例子：点亮一个LED\n ! no std \n ! no main \n\nuse panic halt as  ;\nuse stm32f4xx hal:: pac, prelude::  ;\n\n  cortex m rt::entry \nfn main      !  \n    let dp = pac::Peripherals::take  .unwrap  ;\n    let gpioa = dp.GPIOA.split  ;\n    let mut led = gpioa."
+    },
+    {
+      "id": "04-where-rust-41-先说结论rust不是全能药",
+      "title": "4.1 先说结论：Rust不是全能药",
+      "chapter": "04",
+      "chapterTitle": "Rust 在哪里出没——它的边界和地盘",
+      "url": "chapters/04-where-rust.html#41-先说结论rust不是全能药",
+      "body": ""
+    },
+    {
+      "id": "04-where-rust-42-系统编程rust的老家",
+      "title": "4.2 系统编程：Rust的老家",
+      "chapter": "04",
+      "chapterTitle": "Rust 在哪里出没——它的边界和地盘",
+      "url": "chapters/04-where-rust.html#42-系统编程rust的老家",
+      "body": ""
+    },
+    {
+      "id": "04-where-rust-43-webassembly前端里的铁锈",
+      "title": "4.3 WebAssembly：前端里的铁锈",
+      "chapter": "04",
+      "chapterTitle": "Rust 在哪里出没——它的边界和地盘",
+      "url": "chapters/04-where-rust.html#43-webassembly前端里的铁锈",
+      "body": ""
+    },
+    {
+      "id": "04-where-rust-44-cli工具你可能已经在用rust写的东西",
+      "title": "4.4 CLI工具：你可能已经在用Rust写的东西",
+      "chapter": "04",
+      "chapterTitle": "Rust 在哪里出没——它的边界和地盘",
+      "url": "chapters/04-where-rust.html#44-cli工具你可能已经在用rust写的东西",
+      "body": ""
+    },
+    {
+      "id": "04-where-rust-45-编辑器与基础设施zed就是这里的代言人",
+      "title": "4.5 编辑器与基础设施：Zed就是这里的代言人",
+      "chapter": "04",
+      "chapterTitle": "Rust 在哪里出没——它的边界和地盘",
+      "url": "chapters/04-where-rust.html#45-编辑器与基础设施zed就是这里的代言人",
+      "body": ""
+    },
+    {
+      "id": "04-where-rust-46-rust不擅长什么划清边界",
+      "title": "4.6 Rust不擅长什么：划清边界",
+      "chapter": "04",
+      "chapterTitle": "Rust 在哪里出没——它的边界和地盘",
+      "url": "chapters/04-where-rust.html#46-rust不擅长什么划清边界",
+      "body": ""
+    },
+    {
+      "id": "05-public-opinion",
+      "title": "世界怎么看 Rust——舆论的演变史",
+      "chapter": "05",
+      "chapterTitle": "世界怎么看 Rust——舆论的演变史",
+      "url": "chapters/05-public-opinion.html",
+      "body": "   5.1 这是一部比技术本身更有趣的历史\n\n一门编程语言的技术特性只是故事的一半，另一半是这门语言怎么在人心中建立地位。Rust在过去十年里经历了从\"玩具项目\"到\"事实标准\"的演变，这个过程充满了戏剧性，值得细细梳理。\n\n我特别喜欢观察这种演变，因为它揭示的不只是Rust，而是整个技术社区是如何做集体决策的——哪些因素真正影响了工程师的选择，哪些是媒体炒作，哪些是真正的技术判断。\n\n\n   5.2 2010–2015年：从实验室到1.0\n\n     5.2.1 Mozilla的内部项目\n\nRust的起源可以追溯到2006年，Mozilla员工Graydon Hoare的个人项目。2009年Mozilla正式赞助，目标是为Firefox的渲染引擎Servo提供一门更安全的语言。\n\n这个阶段的Rust和后来的Rust差别极大。语言设计在快速迭代，很多特性加了又删，所有权系统的形态也和最终版本不同。早期的Rust有垃圾回收、有goroutine风格的任务系统，很多现在觉得理所当然的特性那时候都不存在。\n\n这不是贬义——这是正常的研究性语言开发。但这也意味着在这个阶段，关注Rust需要很高的风险承受能力，你写的代码可能下一个版本就无法编译了。\n\n     5.2.2 2015年：1.0发布，承诺稳定性\n\n2015年5月，Rust 1.0正式发布。这是一个里程碑，不是因为Rust语言在那一刻突然变好了，而是因为Rust团队做出了一个重要承诺：  向后兼容性  。从1.0开始，能在Rust 1.0上编译的代码，在后续版本上也应当能编译（除非你用了被显式标记为不稳定的特性）。\n\n这个承诺对于生产级使用至关重要。没有人愿意在一门每隔几个月就破坏性更新的语言上建设关键基础设施。\n\n1.0发布的时候，反应很平淡。技术媒体报了一下，Hacker News上有一些讨论，然后就过去了。没有人知道未来它会受到这么大的关注。\n\n\n   5.3 2016–2019年：小圈子狂热\n\n     5.3.1 \"最受喜爱语言\"的连续登顶\n\nStack Overflow每年做开发者调查，其中有一项是\"最受喜爱的语言\"（Most Loved Language）——注意，不是\"用得最多\"，而是\"用过之后最喜欢\"。\n\nRust从2016年开始连续霸榜。这个数据本身需要谨慎解读：喜爱度高不代表使用率高，早期喜欢Rust的人大多是那些专门去探索这门语言的技术狂热分子，样本有偏差。\n\n但这个数据也揭示了一件事：  用过Rust的人，大多数都很喜欢它  。这种口碑在技术社区里是稀缺的——大多数语言用过之后要么中性要么有人爱有人恨，Rust的喜爱率异常地高。\n\n     5.3.2 Rustacean文化的形成\n\n这个阶段，Rust社区形成了一种独特的文化——Rustacean（Rust用户自称，取螃蟹形象，因为Rust的吉祥物是一只螃蟹）。这个群体的特点是：技术上非常认真、讨论质量高、对语言设计有浓厚兴趣、彼此之间有一种\"我们在做一件重要的事\"的使命感。\n\nRust社区的行为准则（Code of Conduct）写得很详细，明确要求包容和友好，这和某些技术社区的\"精英主义\"文化形成对比。Rust的文档质量也在这个阶段建立了口碑——《Rust程序设计语言》（也叫\"The Book\"）被公认为开源项目文档的标杆。\n\n     5.3.3 第一批重量级采用者\n\n  npm  ：2019年，npm（Node.js的包管理器注册中心）宣布用Rust重写了CPU密集型的部分。具体来说是 @npmcli/arborist 的一部分逻辑。这是一个信号——工业界开始在真实的、影响数百万开发者的系统里用Rust。\n\n  Dropbox  ：Dropbox用Rust重写了其存储后端的核心同步引擎。原先是Python实现，面对海量文件同步时性能瓶颈明显。Rust实现在性能和内存使用上都有显著提升。\n\n  Discord  ：Discord在2020年发布了一篇著名的博客文章《Why Discord is switching from Go to Rust》，讲述了他们把处理消息读取状态的服务从Go换成Rust的经历。Go版本有定期的延迟峰值，因为GC在清理时会暂停。Rust版本没有GC，延迟更稳定，内存使用也更低。这篇文章在技术圈广泛传播，让很多人第一次认真考虑Rust。\n\n\n   5.4 2020年：Linux内核里的那场争论\n\n     5.4.1 \"Rust进Linux内核\"的提案\n\n2020年，一个名叫Nick Desaulniers的谷歌工程师在Linux内核邮件列表上提出了将Rust作为Linux内核的第二语言的想法。Linux内核几十年来只用C（和少量汇编），引入任何第二语言都是极其敏感"
+    },
+    {
+      "id": "05-public-opinion-51-这是一部比技术本身更有趣的历史",
+      "title": "5.1 这是一部比技术本身更有趣的历史",
+      "chapter": "05",
+      "chapterTitle": "世界怎么看 Rust——舆论的演变史",
+      "url": "chapters/05-public-opinion.html#51-这是一部比技术本身更有趣的历史",
+      "body": ""
+    },
+    {
+      "id": "05-public-opinion-52-20102015年从实验室到10",
+      "title": "5.2 2010–2015年：从实验室到1.0",
+      "chapter": "05",
+      "chapterTitle": "世界怎么看 Rust——舆论的演变史",
+      "url": "chapters/05-public-opinion.html#52-20102015年从实验室到10",
+      "body": ""
+    },
+    {
+      "id": "05-public-opinion-53-20162019年小圈子狂热",
+      "title": "5.3 2016–2019年：小圈子狂热",
+      "chapter": "05",
+      "chapterTitle": "世界怎么看 Rust——舆论的演变史",
+      "url": "chapters/05-public-opinion.html#53-20162019年小圈子狂热",
+      "body": ""
+    },
+    {
+      "id": "05-public-opinion-54-2020年linux内核里的那场争论",
+      "title": "5.4 2020年：Linux内核里的那场争论",
+      "chapter": "05",
+      "chapterTitle": "世界怎么看 Rust——舆论的演变史",
+      "url": "chapters/05-public-opinion.html#54-2020年linux内核里的那场争论",
+      "body": ""
+    },
+    {
+      "id": "05-public-opinion-55-2022年巨头集体站台",
+      "title": "5.5 2022年：巨头集体站台",
+      "chapter": "05",
+      "chapterTitle": "世界怎么看 Rust——舆论的演变史",
+      "url": "chapters/05-public-opinion.html#55-2022年巨头集体站台",
+      "body": ""
+    },
+    {
+      "id": "05-public-opinion-56-20232026年从quot值得尝试quot到部分领域的事实标准",
+      "title": "5.6 2023–2026年：从&quot;值得尝试&quot;到部分领域的事实标准",
+      "chapter": "05",
+      "chapterTitle": "世界怎么看 Rust——舆论的演变史",
+      "url": "chapters/05-public-opinion.html#56-20232026年从quot值得尝试quot到部分领域的事实标准",
+      "body": ""
+    },
+    {
+      "id": "05-public-opinion-57-quot最受喜爱quot背后的深层逻辑",
+      "title": "5.7 &quot;最受喜爱&quot;背后的深层逻辑",
+      "chapter": "05",
+      "chapterTitle": "世界怎么看 Rust——舆论的演变史",
+      "url": "chapters/05-public-opinion.html#57-quot最受喜爱quot背后的深层逻辑",
+      "body": ""
+    },
+    {
+      "id": "06-rust-2026",
+      "title": "2026 年的 Rust 现状——它在哪里，走向哪里",
+      "chapter": "06",
+      "chapterTitle": "2026 年的 Rust 现状——它在哪里，走向哪里",
+      "url": "chapters/06-rust-2026.html",
+      "body": "   6.1 站在2026年看Rust\n\n写这一章的时候是2026年，Rust 1.0发布已经过了十一年。十一年对一门编程语言来说不算长，但Rust的发展速度远超一般语言的成熟曲线。\n\n从技术上说，Rust核心语言已经相当稳定，大的变化主要集中在标准库的完善、异步编程模型的成熟、以及编译速度的持续优化。从生态上说，crates.io（Rust的包注册中心）上的crate数量已经超过15万，常见的应用场景基本都有可用的库。\n\n下面我们逐一看2026年各个战场的现状。\n\n\n   6.2 Linux内核：已经落地，正在扩展\n\n     6.2.1 从Linux 6.1到现在\n\nLinux 6.1（2022年12月）是Rust正式进入Linux主线的起点，但那时候的Rust支持非常基础——只是基础设施，没有什么实际的内核代码是用Rust写的。\n\n之后几个版本里，Rust的基础设施逐步完善。到2024 2025年，第一批用Rust写的实际内核驱动开始合并进主线。其中最值得关注的是Nova项目——用Rust重写NVIDIA GPU驱动的初始实现（不是完整驱动，是一个从零开始的开源替代，和NVIDIA的私有驱动独立）。\n\n     6.2.2 内核Rust的现状和争议\n\n进展不如乐观者预期，争议也没有消失。\n\n有几位内核老手明确表示不满，主要是对\"Rust代码加进来但维护责任不清晰\"的担忧。有一位内核维护者甚至在2024年以\"对Rust支持不满\"为由退出了维护团队，引发了较大讨论。\n\n但反过来，有Google、ARM等公司的工程师持续提交Rust相关的补丁，内核Rust基础设施在每个版本都有进步。Linus自己表示\"Rust在内核里的进展比我预期的慢，但这是正常的，内核不应该激进\"。\n\n内核里的Rust目前还是少数派，核心代码全部是C，Rust代码只存在于一些新的驱动和实验性的基础设施里。这个情况在未来五年内大概率不会有根本性变化——内核保守主义是有道理的，稳定性比引入新技术重要。\n\n     6.2.3 真正的影响：示范效应\n\nLinux内核引入Rust的最大意义，在前面提到过，是  示范效应  。它让很多保守的组织觉得\"连Linux内核都用了，我们也可以考虑\"。这种心理效应难以量化，但真实存在。\n\n\n   6.3 Windows：微软的Rust化进程\n\n     6.3.1 已经完成的部分\n\n微软在Windows里引入Rust的速度比Linux快，原因是微软可以内部决策，不需要开放式社区的共识。\n\nWindows内核（ntoskrnl.exe）的部分模块已经有Rust代码，字体渲染引擎、DNS客户端库的部分实现被重写了。最重要的是，  Windows驱动程序框架（WDF）提供了Rust绑定  ，第三方开发者现在可以用Rust写Windows驱动了。\n\n     6.3.2 Rust for Windows的开发者工具\n\n微软维护了 windows 这个Rust crate，它提供了对Windows API的完整访问，包括Win32、WinRT、COM接口。这是目前体积最大的单一Rust crate之一，自动从Windows SDK生成绑定。\n\n   rust\n// 用Rust调用Windows API的示例\nuse windows::Win32::UI::WindowsAndMessaging::MessageBoxW;\nuse windows::core::w;\n\nfn main    \n    unsafe  \n        MessageBoxW None, w! \"Hello from Rust!\" , w! \"Demo\" , Default::default   ;\n     \n \n   \n\n这段代码需要 unsafe 因为Win32 API本身没有安全保证，但这比用C写同样的代码要方便很多—— windows  crate自动处理了类型转换和调用约定。\n\n     6.3.3 Azure基础设施\n\nAzure（微软云）后端的很多新组件是Rust写的，尤其是需要高性能和高可靠性的那些，比如部分存储服务的内部组件。微软没有公开太多细节，但从他们在Rust工具链上的投入和招聘方向可以看出方向。\n\n\n   6.4 Android和Chrome：Google的Rust版图\n\n     6.4.1 Android里的150万行Rust代码\n\nGoogle在2021年开始向Android添加Rust代码，到2023年已经有约150万行Rust。这些代码主要集中在：\n\n    Bluetooth栈（Gabeldorsche）  ：Android 12引入的新蓝牙协议栈，主要用Rust写\n    DNS解析器  \n    各种媒体处理组件 "
+    },
+    {
+      "id": "06-rust-2026-61-站在2026年看rust",
+      "title": "6.1 站在2026年看Rust",
+      "chapter": "06",
+      "chapterTitle": "2026 年的 Rust 现状——它在哪里，走向哪里",
+      "url": "chapters/06-rust-2026.html#61-站在2026年看rust",
+      "body": ""
+    },
+    {
+      "id": "06-rust-2026-62-linux内核已经落地正在扩展",
+      "title": "6.2 Linux内核：已经落地，正在扩展",
+      "chapter": "06",
+      "chapterTitle": "2026 年的 Rust 现状——它在哪里，走向哪里",
+      "url": "chapters/06-rust-2026.html#62-linux内核已经落地正在扩展",
+      "body": ""
+    },
+    {
+      "id": "06-rust-2026-63-windows微软的rust化进程",
+      "title": "6.3 Windows：微软的Rust化进程",
+      "chapter": "06",
+      "chapterTitle": "2026 年的 Rust 现状——它在哪里，走向哪里",
+      "url": "chapters/06-rust-2026.html#63-windows微软的rust化进程",
+      "body": ""
+    },
+    {
+      "id": "06-rust-2026-64-android和chromegoogle的rust版图",
+      "title": "6.4 Android和Chrome：Google的Rust版图",
+      "chapter": "06",
+      "chapterTitle": "2026 年的 Rust 现状——它在哪里，走向哪里",
+      "url": "chapters/06-rust-2026.html#64-android和chromegoogle的rust版图",
+      "body": ""
+    },
+    {
+      "id": "06-rust-2026-65-2026年的明星项目",
+      "title": "6.5 2026年的明星项目",
+      "chapter": "06",
+      "chapterTitle": "2026 年的 Rust 现状——它在哪里，走向哪里",
+      "url": "chapters/06-rust-2026.html#65-2026年的明星项目",
+      "body": ""
+    },
+    {
+      "id": "06-rust-2026-66-rust基金会和社区生态",
+      "title": "6.6 Rust基金会和社区生态",
+      "chapter": "06",
+      "chapterTitle": "2026 年的 Rust 现状——它在哪里，走向哪里",
+      "url": "chapters/06-rust-2026.html#66-rust基金会和社区生态",
+      "body": ""
+    },
+    {
+      "id": "06-rust-2026-67-下一个十年会成为下一个c吗",
+      "title": "6.7 下一个十年：会成为下一个C吗",
+      "chapter": "06",
+      "chapterTitle": "2026 年的 Rust 现状——它在哪里，走向哪里",
+      "url": "chapters/06-rust-2026.html#67-下一个十年会成为下一个c吗",
+      "body": ""
+    },
+    {
+      "id": "07-should-i-learn",
+      "title": "我要不要学 Rust",
+      "chapter": "07",
+      "chapterTitle": "我要不要学 Rust",
+      "url": "chapters/07-should-i-learn.html",
+      "body": "   结语.1 先说结论\n\n如果你是大一，微电子和AI方向，已经熟悉C和Python，想知道\"我现在要不要学Rust\"，我的直接答案是：\n\n  现在不用专门学，但值得花两到三周时间了解它的核心思想。日后如果有需要，有C基础的你入门不会太难。  \n\n下面我来解释这个结论背后的逻辑。\n\n\n   结语.2 嵌入式场景：Rust对你意味着什么\n\n     结语.2.1 STM32有Rust支持吗\n\n有，但成熟度有差距。\n\n支持STM32的Rust生态主要是：\n   stm32f4xx hal 、 stm32f1xx hal 等系列——由社区维护，覆盖了F1/F4/L4等常见系列\n   stm32 rs 项目——维护从芯片SVD文件自动生成的底层外设访问库（PAC）\n\n可以用，但坑比用STM32CubeMX生成C代码多。原因：\n1. 工具链配置（调试器、OpenOCD/probe rs的集成）需要额外折腾\n2. 文档和社区资源远不如C生态，遇到问题搜不到答案的概率高\n3. 某些外设的HAL实现不完整，需要直接操作寄存器（即写 unsafe 代码）\n\n我的建议：  先用C学嵌入式，把基本功打好。等你对嵌入式架构有了感觉，再去探索Rust嵌入式生态。到那时候Rust嵌入式也会更成熟。  \n\n如果你对RP2040（树莓派Pico）感兴趣，这块板子的Rust支持是相对好的， rp hal 维护积极，文档比较完整，作为Rust嵌入式入门的平台比STM32更友好。\n\n     结语.2.2 RISC V上的Rust\n\nRISC V是微电子方向不可回避的话题，Rust的RISC V支持是真的好——因为RISC V是设计相对干净的指令集，Rust的LLVM后端对它支持很好。不管是裸机还是有OS的RISC V环境，Rust都是一个可行的选项。\n\n如果你的课程或研究有RISC V嵌入式的内容，Rust是值得考虑的工具，生态比STM32要活跃一些。\n\n\n   结语.3 AI基础设施：Rust在你的方向上扮演什么角色\n\n     结语.3.1 直接角色有限\n\n作为AI方向的学生，你直接写Rust代码的概率不高。你的主战场是Python（训练脚本、实验管理、模型评估）和CUDA C（如果你做底层优化）。Rust不在这个主线上。\n\n但Rust会以各种间接方式影响你的工作：\n\n  你用的  tokenizers  （HuggingFace的）核心是Rust的\n  你用的一些  命令行工具  （如果你在用rg、fd、bat）是Rust写的\n  你用的  IDE插件  背后可能有Rust（如果你用Zed）\n  未来你可能会用到的  推理服务框架  （如vllm等）的部分性能关键组件可能逐步迁移到Rust\n\n     结语.3.2 AI基础设施的底层趋势\n\n一个值得关注的趋势：AI基础设施（不是AI算法本身，而是训练/推理/部署的工程框架）正在越来越多地用Rust重写性能关键路径。原因是一样的：大规模AI推理对延迟、吞吐量、内存效率的要求极高，Rust在这里有竞争力。\n\nCandle（HuggingFace推出的纯Rust ML框架）、Burn（另一个Rust ML框架）、以及各种推理引擎的Rust实现正在出现。这些不是PyTorch的替代品，而是面向生产部署的轻量级推理工具，把模型从Python环境部署到不依赖Python运行时的场景。\n\n这对你的直接影响：如果你日后进入AI基础设施团队（不是做AI研究，而是做AI工程/MLOps），Rust的知识会有价值。如果你专注于AI研究，Rust大概率不是你需要掌握的技能。\n\n\n   结语.4 学习成本评估：有C基础需要多久入门\n\n     结语.4.1 你的优势\n\n有C基础的人学Rust，有几个明显优势：\n\n  理解内存布局  。Rust的很多设计（栈vs堆、所有权的移动语义、裸指针的 unsafe 使用）都假设你理解内存是怎么工作的。C背景让你对这些有直觉，这是Python用户很难有的。\n\n  理解指针和引用  。Rust的引用（ &T 和 &mut T ）在语义上类似C的指针，但有借用规则的约束。理解C指针的人能更快地理解借用检查器在保护什么。\n\n  命令行和工具链不陌生  。你不会被Makefile、编译选项、链接器脚本这些东西吓到，对新的构建系统（cargo）的学习曲线更小。\n\n     结语.4.2 你的劣势\n\n  C的自由主义习惯  。C允许你随便做内存操作，Rust不允许。从C切换到Rust，最开始会觉得\"为什么这么多限制\"，需要主动改变思维模式，不是\"绕过规则\"而是\"理解规则背后的逻辑\"。\n\n  某些抽象是新的  。枚举（Rust的enum比C丰富得多）、模式匹配、trait、泛型、迭代器适配器……这些概念如果"
+    },
+    {
+      "id": "07-should-i-learn-结语1-先说结论",
+      "title": "结语.1 先说结论",
+      "chapter": "07",
+      "chapterTitle": "我要不要学 Rust",
+      "url": "chapters/07-should-i-learn.html#结语1-先说结论",
+      "body": ""
+    },
+    {
+      "id": "07-should-i-learn-结语2-嵌入式场景rust对你意味着什么",
+      "title": "结语.2 嵌入式场景：Rust对你意味着什么",
+      "chapter": "07",
+      "chapterTitle": "我要不要学 Rust",
+      "url": "chapters/07-should-i-learn.html#结语2-嵌入式场景rust对你意味着什么",
+      "body": ""
+    },
+    {
+      "id": "07-should-i-learn-结语3-ai基础设施rust在你的方向上扮演什么角色",
+      "title": "结语.3 AI基础设施：Rust在你的方向上扮演什么角色",
+      "chapter": "07",
+      "chapterTitle": "我要不要学 Rust",
+      "url": "chapters/07-should-i-learn.html#结语3-ai基础设施rust在你的方向上扮演什么角色",
+      "body": ""
+    },
+    {
+      "id": "07-should-i-learn-结语4-学习成本评估有c基础需要多久入门",
+      "title": "结语.4 学习成本评估：有C基础需要多久入门",
+      "chapter": "07",
+      "chapterTitle": "我要不要学 Rust",
+      "url": "chapters/07-should-i-learn.html#结语4-学习成本评估有c基础需要多久入门",
+      "body": ""
+    },
+    {
+      "id": "07-should-i-learn-结语5-最终结论你和rust的关系",
+      "title": "结语.5 最终结论：你和Rust的关系",
+      "chapter": "07",
+      "chapterTitle": "我要不要学 Rust",
+      "url": "chapters/07-should-i-learn.html#结语5-最终结论你和rust的关系",
+      "body": ""
+    }
+  ]
+}

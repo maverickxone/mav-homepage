@@ -1,0 +1,692 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>第三章 · 进阶武器库 — Claude Code 使用指南</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" id="hljs-light" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+<link rel="stylesheet" id="hljs-dark" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" media="not all">
+</head>
+<body>
+
+<div class="progress-bar" id="progress-bar"></div>
+
+<nav class="topnav" id="topnav">
+  <div class="topnav-inner">
+    <a class="brand" href="../index.html">Claude Code 指南</a>
+    <div class="nav-links">
+      <a href="01-what-is.html">01</a>
+      <a href="02-daily.html">02</a>
+      <a href="03-power.html" class="active">03</a>
+      <a href="04-mental.html">04</a>
+      <a href="05-cache.html">05</a>
+      <a href="06-easter-eggs.html">06</a>
+      <a href="reference.html">Ref</a>
+    </div>
+    <div class="nav-controls">
+      <button class="nav-btn" id="search-btn" aria-label="搜索 (Ctrl+K)">⌘K</button>
+      <button class="nav-btn" id="settings-btn" aria-label="阅读设置">Aa</button>
+      <a class="nav-btn" href="../../index.html" aria-label="返回知识库">← 知识库</a>
+    </div>
+  </div>
+</nav>
+
+<div class="settings-pop" id="settings-pop">
+  <h5>主题</h5>
+  <div class="row">
+    <button class="seg" data-theme-set="light">明亮</button>
+    <button class="seg" data-theme-set="dark">暗色</button>
+  </div>
+  <h5>字号</h5>
+  <div class="row">
+    <button class="seg" data-size-set="s">小</button>
+    <button class="seg" data-size-set="m">中</button>
+    <button class="seg" data-size-set="l">大</button>
+  </div>
+</div>
+
+<div class="with-sidebar">
+
+  <aside class="sidebar">
+    <div class="chapter-num">Chapter 03</div>
+    <div class="chapter-name">进阶武器库</div>
+    <h4>本章目录</h4>
+    <ul>
+      <li><a href="#intro">五件套一览</a></li>
+      <li><a href="#claudemd">CLAUDE.md</a></li>
+      <li><a href="#skills">Skills</a></li>
+      <li><a href="#hooks">Hooks</a></li>
+      <li><a href="#subagents">Subagents</a></li>
+      <li><a href="#mcp">MCP</a></li>
+      <li><a href="#sdk">Agent SDK</a></li>
+      <li><a href="#combo">组合拳：真实例子</a></li>
+    </ul>
+  </aside>
+
+  <article class="chapter-body">
+
+    <header class="chapter-head">
+      <div class="chapter-head-meta">
+        <span class="num">Chapter 03 / 06</span>
+        <span>≈ 32 min</span>
+      </div>
+      <div class="chapter-eyebrow">第三章</div>
+      <h1>进阶武器库</h1>
+      <p class="sub">
+        五件套 + Agent SDK。前两章讲的是「怎么和 Claude Code 对话」；这一章讲的是「怎么让它越用越懂你」。学完你会从「能用」跨到「会架构它」。
+      </p>
+    </header>
+
+    <h2 id="intro" data-num="§ 3.1">先把五件套摆一起看</h2>
+
+    <p>
+      到第二章为止，你已经会用 Claude Code 完成单次任务了。但每开一次新会话，它都是「刚上班的新人」——不知道你项目的规矩、不知道你喜欢的风格、不知道上次做到哪里。
+    </p>
+
+    <p>
+      进阶的五件套就是用来解决「怎么让它越用越顺手」这件事的。每一件都在回答一个不同的问题：
+    </p>
+
+    <div class="table-wrap">
+    <table>
+      <thead><tr><th>名字</th><th>回答的问题</th><th>比喻</th><th>生效时机</th></tr></thead>
+      <tbody>
+        <tr><td><strong>CLAUDE.md</strong></td><td>我的项目有什么规矩？</td><td>员工手册</td><td>每次会话启动</td></tr>
+        <tr><td><strong>Skills</strong></td><td>有什么「招式」可以按需调用？</td><td>武功秘籍</td><td>被 <code>/xxx</code> 或自然语言触发时</td></tr>
+        <tr><td><strong>Hooks</strong></td><td>某些时刻自动发生什么？</td><td>红外感应器</td><td>事件触发（如 PreToolUse）</td></tr>
+        <tr><td><strong>Subagents</strong></td><td>能不能派几个人同时干活？</td><td>分身</td><td>主 Claude 自己决定派出去时</td></tr>
+        <tr><td><strong>MCP</strong></td><td>怎么连外部服务（GitHub、Slack）？</td><td>对外接线板</td><td>服务器启动时连上，之后常驻</td></tr>
+      </tbody>
+    </table>
+    </div>
+
+    <p>加上 <strong>Agent SDK</strong>（第 3.7 节），你就能把 Claude 作为一个库嵌进自己的 Python / TypeScript 程序里——彻底摆脱「必须有个终端坐在前面」的限制。下面一个一个拆开讲。</p>
+
+    <h2 id="claudemd" data-num="§ 3.2">CLAUDE.md — 员工手册</h2>
+
+    <p>
+      CLAUDE.md 是一个普通的 Markdown 文件，放在项目的根目录。每次 Claude Code 在这个项目里启动，它都会自动读这个文件，把内容作为「永久指令」加进上下文。每一轮对话它都带着这份手册。
+    </p>
+
+    <p>
+      你在里面写什么？写那些<strong>每次都要告诉它、但每次都懒得重复</strong>的东西。
+    </p>
+
+    <pre><code data-label="CLAUDE.md"># 我的项目
+
+包管理器用 pnpm，不要用 npm/yarn。
+测试用 vitest，测试文件和源文件放一起，命名 *.test.ts。
+所有 API 响应用 zod 校验，不要用手写的类型守卫。
+
+## 常用命令
+- 启动：pnpm dev
+- 测试：pnpm test
+- 类型检查：pnpm tsc
+- 构建：pnpm build
+
+## 风格
+- 使用 2 空格缩进
+- 导出用 named export，不用 default export
+- 错误信息写中文，代码注释写英文
+
+## 不要做
+- 不要加任何 any 类型
+- 不要写 if/else 嵌套超过 3 层，拆函数
+- 不要动 src/legacy/ 下的文件，那是遗产代码
+- 不要 @ts-ignore 绕过类型错误，测试失败要修代码不要改测试</code></pre>
+
+    <div class="callout callout-tip">
+      <p class="callout-title">一键生成</p>
+      <p>
+        不用从零写，打 <code>/init</code>，Claude 会自己扫项目、读 package.json、看目录结构，生成一份初版 CLAUDE.md。你再改几笔就行。
+      </p>
+    </div>
+
+    <h3>分层：CLAUDE.md 的四种放法</h3>
+
+    <p>CLAUDE.md 可以放在多个地方，作用域不一样，层层叠加：</p>
+
+    <div class="table-wrap">
+    <table>
+      <thead><tr><th>位置</th><th>作用域</th><th>会被 git 提交吗</th></tr></thead>
+      <tbody>
+        <tr><td><code>~/.claude/CLAUDE.md</code></td><td>你所有项目（个人偏好）</td><td>不会</td></tr>
+        <tr><td><code>./CLAUDE.md</code></td><td>当前项目（团队共享）</td><td>会</td></tr>
+        <tr><td><code>./CLAUDE.local.md</code></td><td>当前项目（只给你自己）</td><td>不会（自动加到 .gitignore）</td></tr>
+        <tr><td><code>./src/subdir/CLAUDE.md</code></td><td>子目录</td><td>会，只在读这个目录下的文件时生效</td></tr>
+      </tbody>
+    </table>
+    </div>
+
+    <p>
+      这个分层设计很聪明：<em>「所有 Go 项目都用 gofumpt 格式化」</em> 放 <code>~/.claude/</code>；<em>「这个项目的 API 必须先过 zod」</em> 放项目根；<em>「我这台机器上 Python 解释器在 /opt/…」</em> 放 <code>.local.md</code>。各司其职，不串味。
+    </p>
+
+    <h3>写好 CLAUDE.md 的几个经验</h3>
+
+    <ul>
+      <li><strong>具体 &gt; 抽象。</strong>「请写优雅的代码」没用；「所有 public 函数要有 JSDoc」有用。</li>
+      <li><strong>可验证 &gt; 不可验证。</strong>「缩进 2 空格」可以在 review 时直接检查；「代码可读性高」没法检查。</li>
+      <li><strong>否定式 &gt; 宽泛建议。</strong>「不要 @ts-ignore」比「注意类型安全」管用十倍。</li>
+      <li><strong>短 &gt; 长。</strong>超过 200 行开始稀释关键规则——会被淹没。关键的放前面。</li>
+      <li><strong>常用命令必写。</strong>你的 <code>pnpm test</code>、<code>cargo run --example foo</code>、<code>docker compose up db</code>——Claude 不会猜，你一次写清楚，它每次都记得。</li>
+    </ul>
+
+    <div class="callout callout-warn">
+      <p class="callout-title">不要把 CLAUDE.md 写成小说</p>
+      <p>
+        每一句都占你的上下文预算。写 300 行的背景介绍、商业逻辑考虑——不如抽成项目文档，CLAUDE.md 里只留「<em>规则</em>」和「<em>命令</em>」这两类硬货。
+      </p>
+    </div>
+
+    <h3>auto memory：CLAUDE.md 之外的另一层记忆</h3>
+
+    <p>
+      Claude Code 还维护一套<strong>自动记忆</strong>系统，存在 <code>~/.claude/projects/&lt;proj-hash&gt;/memory/</code>。它会从你的历史交互中提炼三类信息：
+    </p>
+
+    <ul>
+      <li><strong>user</strong>：你是谁（「科大学生、主力写 Python」）</li>
+      <li><strong>feedback</strong>：你的偏好（「不要 mock 数据库，上次 mock 过出过事」）</li>
+      <li><strong>project</strong>：项目当前的状态（「这周在做 auth 重构」）</li>
+      <li><strong>reference</strong>：外部资源位置（「PR 讨论在 Linear 的 INGEST 项目」）</li>
+    </ul>
+
+    <p>
+      每条存成一个单独的 md 文件，配一份索引 <code>MEMORY.md</code>。<code>/memory</code> 命令打开这个目录的可视化面板。和 CLAUDE.md 的区别：CLAUDE.md 是你<em>主动写</em>的规则，auto memory 是 Claude <em>自己记</em>的观察——你可以删、可以改，但不用每次亲自写。
+    </p>
+
+    <h2 id="skills" data-num="§ 3.3">Skills — 武功秘籍</h2>
+
+    <p>
+      CLAUDE.md 是「常驻背景」，每次都加载。但有些指令很复杂、又不是每次都用——比如「发布一个新版本」的完整流程，可能要跑七八步命令、检查十几个条件。把这些全塞进 CLAUDE.md，每次会话都占上下文，不划算。
+    </p>
+
+    <p>
+      <strong>Skill</strong> 就是为这种情况设计的：一段「按需召唤」的指令包。你想用的时候打 <code>/skill-name</code>，或者用自然语言描述需求触发它；不用的时候它就安静地待在文件系统里，不占空间。
+    </p>
+
+    <h3>一个最小 Skill</h3>
+
+    <p>新建 <code>~/.claude/skills/summarize-changes/SKILL.md</code>：</p>
+
+    <pre><code data-label="SKILL.md">---
+description: 总结我未提交的改动，并点出潜在风险
+allowed-tools: Bash(git *) Read
+---
+
+## 当前未提交的改动
+!`git diff HEAD`
+
+## 任务
+
+用 2-3 个要点总结上面的 diff，然后列出你注意到的任何风险：
+- 缺少错误处理
+- 有硬编码的值
+- 测试需要更新但还没更新
+- 有 console.log 或调试代码忘了删
+
+如果 diff 是空的，就说"没有未提交的改动"，然后停。</code></pre>
+
+    <p>
+      保存完，在 Claude Code 里输入 <code>/summarize-changes</code>，它就跑这个流程。注意文件顶部的 <code>!`git diff HEAD`</code>——那个反引号 + 感叹号不是装饰，是告诉 Claude Code「加载 Skill 之前，先把这条命令跑一遍，把结果<em>注入</em>进来」。动态内容就这么来的。
+    </p>
+
+    <h3>SKILL.md 的完整 frontmatter</h3>
+
+    <div class="dl">
+      <dt>description</dt>
+      <dd>一句话描述，用于 Claude 自己判断「这个任务要不要召唤这个 skill」。写得越具体，误触发越少。</dd>
+      <dt>allowed-tools</dt>
+      <dd>这个 skill 能用的工具集合。例：<code>Bash(git *) Read Grep</code>。不写 = 继承会话权限。</dd>
+      <dt>model</dt>
+      <dd>指定这次用哪个模型。某些 skill 只做格式化，配 <code>model: haiku</code> 能省钱。</dd>
+      <dt>context</dt>
+      <dd><code>main</code>（默认，在当前会话跑）或 <code>fork</code>（开子会话跑，结果汇报回来——不污染主上下文）。</dd>
+      <dt>name</dt>
+      <dd>可选。不写就用目录名。</dd>
+    </div>
+
+    <h3>参数和占位符</h3>
+
+    <p>你可以让 skill 接参数：</p>
+
+    <pre><code data-label="SKILL.md">---
+description: 给一个分支名，把它 rebase 到 main 上
+---
+
+## 任务
+把分支 $1 rebase 到 main。如果有冲突，逐个分析、给出解决建议，不要自作主张解决。
+
+完整参数：$ARGUMENTS</code></pre>
+
+    <p>使用时：<code>/my-rebase feature-auth</code>——<code>$1</code> 会被替换成 <code>feature-auth</code>，<code>$ARGUMENTS</code> 保存完整参数串。</p>
+
+    <div class="callout">
+      <p class="callout-title">Skill 和斜杠命令的关系</p>
+      <p>
+        你在第二章里见到的 <code>/review</code>、<code>/security-review</code>、<code>/simplify</code>、<code>/less-permission-prompts</code>——它们<strong>都是 Anthropic 官方内置的 Skill</strong>。不神秘，你也能自己写。内置 skill 只是目录在 Claude Code 自己的安装路径下。
+      </p>
+    </div>
+
+    <h3>Skill 几个实战模板</h3>
+
+    <p>把这些当样板改，很快能凑出一套自己的 Skill 库：</p>
+
+    <ul>
+      <li><strong>commit</strong>：读 <code>git diff --staged</code>，生成一条符合团队约定（Conventional Commits 之类）的提交信息。</li>
+      <li><strong>deploy</strong>：按发布清单逐项检查——版本号、changelog、测试、文档，缺哪项就补哪项。</li>
+      <li><strong>hotfix</strong>：专门的紧急修复流程——切 hotfix 分支、最小改动、加回归测试、禁止碰其他文件。</li>
+      <li><strong>pr-review-self</strong>：用你偏好的清单给自己的 PR 先过一遍。</li>
+      <li><strong>explain-this-file</strong>：读当前 <code>@file</code>，按「外部契约 / 内部结构 / 可疑之处」三段写解读。</li>
+    </ul>
+
+    <h2 id="hooks" data-num="§ 3.4">Hooks — 红外感应器</h2>
+
+    <p>
+      Skills 是「你主动喊它来」。Hooks 相反——<strong>它们在特定事件发生时自动触发</strong>，不需要你喊。
+    </p>
+
+    <p>
+      你可以把 Hook 理解成「事件监听器」。Claude Code 在生命周期里会发出各种事件，你可以绑脚本到这些事件上，系统自动帮你跑。
+    </p>
+
+    <h3>完整的事件清单</h3>
+
+    <div class="table-wrap">
+    <table>
+      <thead><tr><th>事件</th><th>什么时候触发</th><th>能阻止这次操作吗</th></tr></thead>
+      <tbody>
+        <tr><td><code>SessionStart</code></td><td>会话启动时</td><td>不能</td></tr>
+        <tr><td><code>SessionEnd</code></td><td>会话完全结束</td><td>不能</td></tr>
+        <tr><td><code>UserPromptSubmit</code></td><td>你按下回车把消息发出去之前</td><td>能</td></tr>
+        <tr><td><code>PreToolUse</code></td><td>Claude 要调用一个工具之前</td><td>能</td></tr>
+        <tr><td><code>PostToolUse</code></td><td>工具调用成功之后</td><td>不能（但可改输出）</td></tr>
+        <tr><td><code>PostToolUseFailure</code></td><td>工具调用失败时</td><td>不能</td></tr>
+        <tr><td><code>PermissionRequest</code></td><td>权限弹窗要显示之前</td><td>能</td></tr>
+        <tr><td><code>Stop</code></td><td>Claude 说「我做完了」要结束时</td><td>能（可强制继续）</td></tr>
+        <tr><td><code>PreCompact</code></td><td>上下文压缩前</td><td>不能</td></tr>
+        <tr><td><code>SubagentStart</code> / <code>SubagentStop</code></td><td>子代理启停</td><td>不能</td></tr>
+        <tr><td><code>WorktreeCreate</code> / <code>WorktreeRemove</code></td><td>worktree 创建/销毁</td><td>不能</td></tr>
+      </tbody>
+    </table>
+    </div>
+
+    <h3>四种 hook 处理器</h3>
+
+    <ul>
+      <li><code>command</code>：跑一条 shell 命令。最常见。</li>
+      <li><code>prompt</code>：发一条额外 prompt 给 Claude（比如「记得跑 lint」）。</li>
+      <li><code>agent</code>：启动一个子代理去处理。</li>
+      <li><code>http</code>：POST JSON 到指定 URL（对接监控、通知）。</li>
+    </ul>
+
+    <h3>一个具体例子：禁止跑 <code>rm -rf</code></h3>
+
+    <p>在 <code>.claude/settings.json</code>：</p>
+
+    <pre><code data-label="settings.json">{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "if": "Bash(rm -rf *)",
+            "command": "${CLAUDE_PROJECT_DIR}/.claude/hooks/block-rm.sh"
+          }
+        ]
+      }
+    ]
+  }
+}</code></pre>
+
+    <p>然后 <code>.claude/hooks/block-rm.sh</code>：</p>
+
+    <pre><code data-label="block-rm.sh">#!/bin/bash
+echo "Nope." >&2
+exit 2   # 退出码 2 表示阻止这次工具调用</code></pre>
+
+    <p>退出码约定：<code>0</code> 放行、<code>2</code> 阻止、其他按一般错误处理。从此 Claude 再想跑 <code>rm -rf</code>，钩子直接挡掉。</p>
+
+    <h3>实用 hook 套路</h3>
+
+    <div class="dl">
+      <dt>写完即格式化</dt>
+      <dd>PostToolUse 钩 <code>Edit</code> / <code>Write</code>，改完自动跑 <code>prettier --write</code> / <code>gofumpt -w</code>。</dd>
+      <dt>保护敏感文件</dt>
+      <dd>PreToolUse 拦截对 <code>.env</code>、<code>credentials.json</code>、<code>*.pem</code> 的写操作。</dd>
+      <dt>做完响一声</dt>
+      <dd>Stop 事件调 <code>notify-send</code> / <code>osascript</code> / PowerShell Toast。长任务跑着你去干别的，做完提醒你。</dd>
+      <dt>自动注入上下文</dt>
+      <dd>UserPromptSubmit 里，把当前 git 分支、最近一次 commit hash 注到请求前——Claude 永远知道你在哪。</dd>
+      <dt>提交前强制 lint</dt>
+      <dd>PreToolUse 钩 <code>Bash(git commit *)</code>，先跑 <code>pnpm lint</code>，挂了 exit 2 阻止提交。</dd>
+    </div>
+
+    <div class="callout callout-warn">
+      <p class="callout-title">Hook 是有执行代价的</p>
+      <p>
+        钩子在每次匹配事件时都会跑。别在高频事件（PreToolUse / PostToolUse）上绑慢脚本——每次多 2 秒，一小时跑下来整个会话会发粘。慢脚本放 Stop 或单独的 cron。
+      </p>
+    </div>
+
+    <h2 id="subagents" data-num="§ 3.5">Subagents — 分身</h2>
+
+    <p>
+      有时候你会遇到这种场景：主任务正在进行，中间卡了一个「先调研一下这个库怎么用」的子任务。让主 Claude 自己去调研？它会读一堆文档、主对话上下文被灌满。让你手动开一个新会话？麻烦。
+    </p>
+
+    <p>
+      <strong>Subagent</strong>就是主 Claude 派出去的「分身」。主 Claude 说：「去，帮我调研一下 Drizzle 怎么建 migration，结果回来告诉我。」分身在<strong>独立上下文</strong>里跑，读完十几个文档、写完一份报告，把<em>总结</em>返回主会话。主会话只看到那份简洁的总结。
+    </p>
+
+    <h3>内置几种 Subagent</h3>
+
+    <div class="cmd-grid">
+      <div class="cmd-card" data-cmd="subagent-explore"><span class="name">Explore</span><span class="desc">只读探索。适合「找 X 在哪」「搜用过 Y 的地方」。用 Haiku 跑省钱。</span></div>
+      <div class="cmd-card" data-cmd="subagent-plan"><span class="name">Plan</span><span class="desc">做设计方案，和 /plan 是一对。</span></div>
+      <div class="cmd-card" data-cmd="subagent-general"><span class="name">general-purpose</span><span class="desc">什么都能干的通用分身。</span></div>
+      <div class="cmd-card" data-cmd="subagent-guide"><span class="name">claude-code-guide</span><span class="desc">专门回答 Claude Code / SDK / API 问题。</span></div>
+    </div>
+
+    <p>用 <code>/agents</code> 命令打开面板，看当前运行的子代理和可用代理库。</p>
+
+    <h3>自己写一个</h3>
+
+    <p>新建 <code>.claude/agents/my-researcher/AGENT.md</code>：</p>
+
+    <pre><code data-label="AGENT.md">---
+name: my-researcher
+description: 深度研究一个特定主题，读大量文档/代码，生成详细报告。用于需要读很多东西才能回答的问题。
+tools: Glob Grep Read WebFetch WebSearch
+model: sonnet
+---
+
+你是一个技术研究员。给你一个主题：
+
+1. 用 Glob/Grep 找出项目里所有和这个主题相关的文件
+2. 读透它们，必要时上网搜外部资料
+3. 生成一份结构化报告：背景 / 现状 / 选项 / 建议
+
+不修改任何文件。报告要能让没看过代码的人看懂。</code></pre>
+
+    <p>
+      主 Claude 看到这个 agent 的 description，在合适的场景里自己决定派出去。或者你直接说「用 my-researcher 帮我研究 X」。
+    </p>
+
+    <h3>并行的力量</h3>
+
+    <p>
+      多个 subagent 可以<strong>并行</strong>跑。主 Claude 同时派三个分身查三件事，总耗时是最慢那个的时间。这是 Claude Code 做大任务时「变快」的主要手段。
+    </p>
+
+    <pre><code>> 我要调研三件事（可以并行）：
+> 1. 我们项目里所有用到 WebSocket 的地方
+> 2. Node 22 在 Docker Alpine 上的已知坑
+> 3. Redis 7.4 新增的命令对我们 cache 层有哪些影响
+> 做完汇总成一份报告。</code></pre>
+
+    <div class="callout">
+      <p class="callout-title">心智模型</p>
+      <p>
+        <strong>Claude Code 本身是一个 agent。Subagent 是 agent 套 agent。</strong>一个管理者把子任务分给几个下属，下属只汇报结论，不带回所有原材料——和真实世界的团队一样。
+      </p>
+    </div>
+
+    <h2 id="mcp" data-num="§ 3.6">MCP — 对外接线板</h2>
+
+    <p>
+      到目前为止，Claude Code 的工具都是「本地」的：读本地文件、跑本地命令。但现实工作里你常常要碰<strong>外部系统</strong>——GitHub issue、Slack 消息、Notion、Jira、线上数据库……
+    </p>
+
+    <p>
+      <strong>MCP（Model Context Protocol）</strong>是一个标准化的办法：把「第三方服务」封装成 Claude 能直接调用的工具集。你不用关心协议细节，只要知道：<em>有一堆现成的 MCP 服务器</em>，连进来以后 Claude 就多一批新工具。
+    </p>
+
+    <h3>连一个 GitHub MCP 服务器</h3>
+
+    <p>在项目根的 <code>.mcp.json</code>：</p>
+
+    <pre><code data-label=".mcp.json">{
+  "mcpServers": {
+    "github": {
+      "command": "npx",
+      "args": ["@anthropic-ai/github-mcp"],
+      "env": {
+        "GITHUB_TOKEN": "${GITHUB_TOKEN}"
+      }
+    }
+  }
+}</code></pre>
+
+    <p>重启 Claude Code，现在你可以说：</p>
+
+    <pre><code>> 帮我看看 #42 这个 issue，然后开一个 PR 修它</code></pre>
+
+    <p>
+      Claude 调用 MCP 工具读 issue 原文、理解需求，按正常流程改代码、最后调 MCP 工具开 PR。全程你不用离开终端。
+    </p>
+
+    <h3>常见的 MCP 服务器</h3>
+
+    <div class="cmd-grid">
+      <div class="cmd-card" data-cmd="mcp-github"><span class="name">github</span><span class="desc">Issues、PR、Actions、代码搜索、review。</span></div>
+      <div class="cmd-card" data-cmd="mcp-slack"><span class="name">slack</span><span class="desc">读频道、发消息、搜历史。</span></div>
+      <div class="cmd-card" data-cmd="mcp-database"><span class="name">postgres / mysql</span><span class="desc">跑 SQL、看 schema、生成迁移。</span></div>
+      <div class="cmd-card" data-cmd="mcp-puppeteer"><span class="name">puppeteer</span><span class="desc">开浏览器点按钮，自动化 E2E。</span></div>
+      <div class="cmd-card" data-cmd="mcp-pm"><span class="name">linear / notion / jira</span><span class="desc">项目管理工具接入。</span></div>
+      <div class="cmd-card" data-cmd="mcp-sentry"><span class="name">sentry</span><span class="desc">读 issue、堆栈、事件频率。</span></div>
+    </div>
+
+    <h3>三种传输方式</h3>
+
+    <div class="dl">
+      <dt>stdio</dt>
+      <dd>最常见。Claude Code 启动服务器进程，用标准输入输出通信。</dd>
+      <dt>SSE</dt>
+      <dd>流式 HTTP。适合远程 MCP，有流式返回。</dd>
+      <dt>HTTP</dt>
+      <dd>普通请求-响应式。适合简单的远程服务。</dd>
+    </div>
+
+    <pre><code>$ claude mcp add github npx @anthropic-ai/github-mcp
+$ claude mcp add --transport sse remote-tool https://api.example.com/mcp
+$ claude mcp add --transport http my-api https://api.example.com/mcp</code></pre>
+
+    <div class="callout callout-warn">
+      <p class="callout-title">MCP 权限要上心</p>
+      <p>
+        MCP 工具一旦连上就是一等公民，和本地工具同级。一个能发 Slack 消息的 MCP，意味着 Claude 理论上能替你发消息。在 <code>permissions</code> 里明确允许/禁止：
+      </p>
+      <pre style="margin-top: 12px;"><code>{
+  "permissions": {
+    "allow": ["mcp__github__*"],
+    "deny":  ["mcp__slack__send_message", "mcp__postgres__execute_write"]
+  }
+}</code></pre>
+    </div>
+
+    <h2 id="sdk" data-num="§ 3.7">Agent SDK — 把 Claude 嵌进你自己的程序</h2>
+
+    <p>
+      前六节都在讲「在终端里怎么用好 Claude Code」。第七节讲一个完全不同的方向：<strong>把 Claude 作为一个库嵌进你自己写的 Python / TypeScript 程序里</strong>。这就是 Agent SDK。
+    </p>
+
+    <p>
+      SDK 给你和 Claude Code 同一个 agent 引擎，但你自己决定「在什么环境下跑、接什么工具、吃什么 prompt」。核心类是 <code>query</code>（TS）或 <code>ClaudeSDKClient</code>（Python）：
+    </p>
+
+    <pre><code data-label="python">from claude_agent_sdk import query, ClaudeAgentOptions
+
+options = ClaudeAgentOptions(
+    system_prompt="你是一个代码审查者。只看安全问题。",
+    allowed_tools=["Read", "Grep", "Glob"],
+    permission_mode="plan",
+    max_turns=10,
+    model="claude-opus-4-7",
+)
+
+async for msg in query(
+    prompt="审一下 src/auth/ 下所有文件，找 SQL 注入和鉴权 bypass。",
+    options=options,
+):
+    print(msg)</code></pre>
+
+    <p>值得记的特性：</p>
+
+    <ul>
+      <li><strong>流式输出</strong>：每轮工具调用和文字输出实时拿到，做进度展示很自然。</li>
+      <li><strong>自定义工具</strong>：注册你自己的 Python/TS 函数作为 Claude 的工具。</li>
+      <li><strong>Prompt caching</strong>：SDK 自动做 5 分钟 TTL 的 prompt cache，重复调用大幅省钱。</li>
+      <li><strong>Managed Agents / Batch API</strong>：Anthropic 托管的 agent 和批处理 API 都能从 SDK 调。</li>
+    </ul>
+
+    <h3>一个实际场景</h3>
+
+    <p>
+      你想做一个「新同事入职 checklist 机器人」：拿到同事的 GitHub 用户名，自动查他们最近 5 个 PR、生成技能画像、给 onboarding 路径。这种事情交互式跑也行，但你希望它长期挂在公司内网的 web 服务后面——SDK 就是这个场景。
+    </p>
+
+    <pre><code data-label="python (fastapi)">from fastapi import FastAPI
+from claude_agent_sdk import query, ClaudeAgentOptions
+
+app = FastAPI()
+
+@app.post("/onboard/{username}")
+async def onboard(username: str):
+    prompt = f"查看 GitHub 用户 {username} 最近 5 个 PR，生成技能画像和 onboarding 路径。"
+    result = []
+    async for msg in query(
+        prompt=prompt,
+        options=ClaudeAgentOptions(
+            allowed_tools=["WebFetch", "Bash(gh pr *)"],
+            max_turns=6,
+            max_budget_usd=0.30,
+        ),
+    ):
+        result.append(msg)
+    return {"report": result}</code></pre>
+
+    <div class="callout callout-tip">
+      <p class="callout-title">该不该学 SDK</p>
+      <p>
+        大一大二如果你只是用 Claude 帮自己写作业、做项目——前六节够了。SDK 是给「想把 Claude 变成自己产品里一部分」的人准备的。等你真的有 idea 了，回来看这一节即可。
+      </p>
+    </div>
+
+    <h2 id="combo" data-num="§ 3.8">组合拳：一个成熟项目的 Claude Code 配置</h2>
+
+    <p>
+      想象你在一个中等规模的项目里工作几个月了。你的 Claude Code 设置可能长这样：
+    </p>
+
+    <pre class="ascii"><code>~/.claude/
+├── CLAUDE.md                   # 个人偏好：包管理器、命名风格...
+├── skills/
+│   ├── commit/                 # 我自己写的智能提交流程
+│   └── my-pr-review/           # 我喜欢的 PR 审查清单
+├── agents/
+│   └── researcher/             # 个人研究员
+├── memory/                     # 自动记忆
+│   ├── MEMORY.md
+│   └── *.md
+└── keybindings.json            # 自定义快捷键
+
+my-project/
+├── CLAUDE.md                   # 团队规范：架构、禁区、测试要求
+├── CLAUDE.local.md             # 我这台机器的特殊路径 (.gitignore)
+├── .mcp.json                   # MCP 服务器配置
+└── .claude/
+    ├── settings.json           # Hook + 权限 + 策略
+    ├── agents/
+    │   └── migration-bot/      # 项目共享的数据库迁移代理
+    ├── hooks/
+    │   ├── block-env.sh
+    │   ├── auto-format.sh
+    │   └── notify-done.sh
+    ├── skills/
+    │   ├── deploy/             # 团队发布流程
+    │   └── hotfix/             # 紧急修复流程
+    └── plans/                  # 历史 /plan 产出归档</code></pre>
+
+    <p>这时候你的 Claude Code 已经「长」出一个完整的工作台：</p>
+
+    <ul>
+      <li>它<strong>知道</strong>项目规矩（CLAUDE.md + auto memory）；</li>
+      <li>它<strong>会</strong>各种常用招式（Skills）；</li>
+      <li>某些事情会<strong>自动发生</strong>，不用每次叮嘱（Hooks）；</li>
+      <li>大任务可以<strong>分头并进</strong>（Subagents）；</li>
+      <li>它能<strong>触达</strong>外部系统（MCP）；</li>
+      <li>你甚至能<strong>把它做成产品</strong>（Agent SDK）。</li>
+    </ul>
+
+    <p>
+      五件套不是「非学不可」——一个大一学生完全可以只用 <code>claude</code> + 自然语言跑很多东西。但当你发现自己每天都在告诉 Claude 同样的事，就是引入这些的信号。它们是<strong>你用得越久越值得投资的东西</strong>。
+    </p>
+
+    <div class="callout callout-tip">
+      <p class="callout-title">建议的学习顺序</p>
+      <p>
+        从 <strong>CLAUDE.md</strong> 开始——收益最大、成本最低。然后写 2–3 个你天天用的 <strong>Skills</strong>。权限弹窗多到烦了，配 <strong>permissions</strong> 白名单。再久一点，写一两个 <strong>Hook</strong>。<strong>Subagents</strong> 和 <strong>MCP</strong> 是锦上添花，不急。<strong>SDK</strong> 等你有真实产品需求再学。
+      </p>
+    </div>
+
+    <nav class="pager" aria-label="章节导航">
+      <a href="02-daily.html" class="pager-link pager-prev">
+        <span class="pager-dir">← 上一章</span>
+        <span class="pager-title">02 · 日常使用</span>
+      </a>
+      <a href="04-mental.html" class="pager-link pager-next">
+        <span class="pager-dir">下一章 →</span>
+        <span class="pager-title">04 · 心智模型与边界</span>
+      </a>
+    </nav>
+
+  </article>
+</div>
+
+<footer>
+  <div class="set"><span>第 3 / 6 章</span><span>关于 Claude Code，你应该了解的一切</span></div>
+  <div class="set"><span>≈ 32 MIN</span></div>
+</footer>
+
+<!-- Search Overlay -->
+<div class="search-backdrop" id="search-overlay" role="dialog" aria-modal="true" aria-label="搜索" hidden>
+  <div class="search-modal">
+    <div class="search-input-wrap">
+      <input type="search" class="search-input" placeholder="搜索命令、主题..." aria-label="搜索内容" autocomplete="off">
+      <kbd>ESC</kbd>
+    </div>
+    <div class="search-results" role="listbox" aria-label="搜索结果"></div>
+  </div>
+</div>
+
+<div class="modal-backdrop" id="cmd-modal" role="dialog" aria-modal="true" aria-label="命令详情">
+  <div class="modal">
+    <button class="modal-close">关闭 ESC</button>
+    <span class="tag"></span>
+    <h3></h3>
+    <p class="summary"></p>
+    <div class="modal-body"></div>
+  </div>
+</div>
+
+<button class="mtoc-fab" id="mtoc-fab" aria-label="目录">目录</button>
+<div class="mtoc-drawer" id="mtoc-drawer">
+  <div class="mtoc-content"></div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/bash.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/typescript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/yaml.min.js"></script>
+<script src="../assets/commands.js"></script>
+<script src="../assets/script.js"></script>
+</body>
+</html>

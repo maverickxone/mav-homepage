@@ -1,0 +1,1316 @@
+{
+  "documents": [
+    {
+      "id": "01-why-blockchain",
+      "title": "第一部分：为什么需要区块链",
+      "chapter": "01",
+      "chapterTitle": "第一部分：为什么需要区块链",
+      "url": "chapters/01-why-blockchain.html",
+      "body": "\n   第1章 货币与信任的本质\n\n    1.1 一个思想实验：没有银行的世界\n\n想象你是一个生活在公元前3000年美索不达米亚平原上的农民。你种了一批小麦，你的邻居是个铁匠，他打了一把犁。你们想交换——但问题来了：你的小麦和他的犁，谁更值钱？怎么换？换多少？\n\n这就是  以物易物（Barter）  的经典困境，经济学家称之为\"需求的双重巧合\"（double coincidence of wants）。你必须恰好遇到一个人，他既有你想要的东西，又想要你手里的东西。这个概率在复杂社会里低得可怜。\n\n货币的出现解决了这个问题。它不是某个天才某天突然拍脑袋想出来的，而是人类社会在反复试错中自发演化出的工具。贝壳、石块、布帛、铜钱、金银——历史上担任过\"货币\"角色的东西五花八门，但它们有一个共同点：  大家都相信它有价值  。\n\n请注意这句话里最关键的词：  相信  。\n\n货币的本质，从来不是什么实物，而是  共识  。金子之所以值钱，不是因为它能吃能穿，而是因为几千年来全人类都约定俗成地认为它值钱。这种共识一旦崩溃，黄金就只是一块闪亮的金属。\n\n   \n\n    1.2 货币的三大功能与一个核心问题\n\n经济学教科书告诉我们，货币有三大功能：\n\n1.   交换媒介（Medium of Exchange）  ：省去以物易物的麻烦，让交易变得顺滑。\n2.   价值尺度（Unit of Account）  ：给所有商品和服务定一个统一的\"价格标签\"。\n3.   价值储藏（Store of Value）  ：把今天的劳动成果留到明天使用。\n\n这三个功能听起来各不相关，但它们指向同一个底层需求：  在时间和空间上传递价值  。\n\n你今天卖了一头牛，得到了一百枚铜钱。三个月后你用这一百枚铜钱买了一匹布。铜钱在这里充当了跨越时间的\"价值容器\"。同样，你把铜钱寄给远在另一座城市的朋友，铜钱又充当了跨越空间的\"价值载体\"。\n\n但这里有一个核心问题，也是整部区块链史的起点：\n\n    谁来保证这个价值传递过程是可靠的？  \n\n铜钱可以被剪边（把边缘的铜偷偷剪掉，以次充好）。纸币可以被伪造。数字账本可以被篡改。价值在传递过程中，始终面临被\"动手脚\"的风险。\n\n解决这个问题，人类发明了一个东西：  可信第三方  。\n\n   \n\n    1.3 可信第三方：银行、国家与信任的外包\n\n在古罗马，有一种叫做\"argentarii\"的银行家，他们坐在广场上，帮人保管财物、兑换货币、记录债务。你把钱存进去，他给你一张凭证。你拿着凭证，可以在另一城市的他的合伙人那里取钱。这就是早期的汇兑业务。\n\n这种模式的本质是：  把信任外包给一个中介  。\n\n你不需要相信对方，你只需要相信这个中介——银行、政府、或者某个有公信力的机构。这个中介维护一本账本，记录谁欠谁多少钱，谁有多少存款。所有的交易，本质上都是对这本账本的修改。\n\n现代金融体系就建立在这个逻辑之上，只不过规模大了很多，技术复杂了很多。今天你用支付宝转账100块钱给朋友，实际上发生的是：\n\n   \n你的账户（支付宝/银行数据库）  100\n朋友的账户（支付宝/银行数据库） +100\n   \n\n两个数字的修改，由一个你看不见的中央服务器完成。整个过程里，你信任的不是对方，而是阿里巴巴或者背后的银行系统。\n\n这个系统运转了几百年，总体上是有效的。但它有几个结构性缺陷，这些缺陷在2008年金融危机之后被越来越多的人看见。\n\n    1.4 中心化信任体系的四大裂缝\n\n  裂缝一：单点故障（Single Point of Failure）  \n\n中央账本是一个极其脆弱的东西。如果银行的服务器宕机，或者被黑客攻击，或者遭遇自然灾害，整个系统就会瘫痪。2010年海地地震后，大量民众因为银行系统崩溃而无法取出自己的存款——钱\"在那儿\"，但就是取不出来。\n\n更极端的例子：政府可以冻结你的账户。这在战乱国家、专制政权下是真实发生的。你名义上的财产，实际上随时可以被没收。\n\n  裂缝二：信任的滥用（Abuse of Trust）  \n\n你把信任交给了银行，但银行并不总是值得信任。2008年金融危机的根源之一，就是大型金融机构利用自己的中介地位，将高风险资产包装成低风险产品，欺骗投资者。Lehman Brothers倒塌时，无数普通人的储蓄化为乌有。\n\n中央银行可以超发货币，悄悄稀释你的购买力。津巴布韦在2008年通货膨胀率达到$2.2 \\times 10^ 11 $%，100万亿津元只够买几条面包。这是货币体系信任崩溃的极端案例，但它告诉我们：  中心化的货币权力可以被严重滥用  。\n\n  裂缝三：摩擦与排他（Friction and Exclusion）  \n\n全球有大约14亿成年人没有银行账户（\"unbanked\"人口）。他们不是"
+    },
+    {
+      "id": "01-why-blockchain-第1章-货币与信任的本质",
+      "title": "第1章 货币与信任的本质",
+      "chapter": "01",
+      "chapterTitle": "第一部分：为什么需要区块链",
+      "url": "chapters/01-why-blockchain.html#第1章-货币与信任的本质",
+      "body": ""
+    },
+    {
+      "id": "01-why-blockchain-11-一个思想实验没有银行的世界",
+      "title": "1.1 一个思想实验：没有银行的世界",
+      "chapter": "01",
+      "chapterTitle": "第一部分：为什么需要区块链",
+      "url": "chapters/01-why-blockchain.html#11-一个思想实验没有银行的世界",
+      "body": ""
+    },
+    {
+      "id": "01-why-blockchain-12-货币的三大功能与一个核心问题",
+      "title": "1.2 货币的三大功能与一个核心问题",
+      "chapter": "01",
+      "chapterTitle": "第一部分：为什么需要区块链",
+      "url": "chapters/01-why-blockchain.html#12-货币的三大功能与一个核心问题",
+      "body": ""
+    },
+    {
+      "id": "01-why-blockchain-13-可信第三方银行国家与信任的外包",
+      "title": "1.3 可信第三方：银行、国家与信任的外包",
+      "chapter": "01",
+      "chapterTitle": "第一部分：为什么需要区块链",
+      "url": "chapters/01-why-blockchain.html#13-可信第三方银行国家与信任的外包",
+      "body": ""
+    },
+    {
+      "id": "01-why-blockchain-14-中心化信任体系的四大裂缝",
+      "title": "1.4 中心化信任体系的四大裂缝",
+      "chapter": "01",
+      "chapterTitle": "第一部分：为什么需要区块链",
+      "url": "chapters/01-why-blockchain.html#14-中心化信任体系的四大裂缝",
+      "body": ""
+    },
+    {
+      "id": "01-why-blockchain-15-双花问题数字货币面临的独特挑战",
+      "title": "1.5 双花问题：数字货币面临的独特挑战",
+      "chapter": "01",
+      "chapterTitle": "第一部分：为什么需要区块链",
+      "url": "chapters/01-why-blockchain.html#15-双花问题数字货币面临的独特挑战",
+      "body": ""
+    },
+    {
+      "id": "01-why-blockchain-16-信任的解构什么让我们信任一个系统",
+      "title": "1.6 信任的解构：什么让我们信任一个系统？",
+      "chapter": "01",
+      "chapterTitle": "第一部分：为什么需要区块链",
+      "url": "chapters/01-why-blockchain.html#16-信任的解构什么让我们信任一个系统",
+      "body": ""
+    },
+    {
+      "id": "01-why-blockchain-17-货币的现代形态从实物到数字",
+      "title": "1.7 货币的现代形态：从实物到数字",
+      "chapter": "01",
+      "chapterTitle": "第一部分：为什么需要区块链",
+      "url": "chapters/01-why-blockchain.html#17-货币的现代形态从实物到数字",
+      "body": ""
+    },
+    {
+      "id": "01-why-blockchain-18-2008年比特币的历史背景",
+      "title": "1.8 2008年：比特币的历史背景",
+      "chapter": "01",
+      "chapterTitle": "第一部分：为什么需要区块链",
+      "url": "chapters/01-why-blockchain.html#18-2008年比特币的历史背景",
+      "body": ""
+    },
+    {
+      "id": "01-why-blockchain-19-直觉预览区块链如何解决信任问题",
+      "title": "1.9 直觉预览：区块链如何解决信任问题",
+      "chapter": "01",
+      "chapterTitle": "第一部分：为什么需要区块链",
+      "url": "chapters/01-why-blockchain.html#19-直觉预览区块链如何解决信任问题",
+      "body": ""
+    },
+    {
+      "id": "01-why-blockchain-chapter-1-summary",
+      "title": "本章小结",
+      "chapter": "01",
+      "chapterTitle": "第一部分：为什么需要区块链",
+      "url": "chapters/01-why-blockchain.html#chapter-1-summary",
+      "body": ""
+    },
+    {
+      "id": "01-why-blockchain-第2章-密码学基础区块链的地基",
+      "title": "第2章 密码学基础：区块链的地基",
+      "chapter": "01",
+      "chapterTitle": "第一部分：为什么需要区块链",
+      "url": "chapters/01-why-blockchain.html#第2章-密码学基础区块链的地基",
+      "body": ""
+    },
+    {
+      "id": "01-why-blockchain-21-为什么密码学是这里的关键",
+      "title": "2.1 为什么密码学是这里的关键",
+      "chapter": "01",
+      "chapterTitle": "第一部分：为什么需要区块链",
+      "url": "chapters/01-why-blockchain.html#21-为什么密码学是这里的关键",
+      "body": ""
+    },
+    {
+      "id": "01-why-blockchain-22-哈希函数数字世界的指纹机器",
+      "title": "2.2 哈希函数：数字世界的指纹机器",
+      "chapter": "01",
+      "chapterTitle": "第一部分：为什么需要区块链",
+      "url": "chapters/01-why-blockchain.html#22-哈希函数数字世界的指纹机器",
+      "body": ""
+    },
+    {
+      "id": "01-why-blockchain-23-公钥密码学在不安全的信道上安全通信",
+      "title": "2.3 公钥密码学：在不安全的信道上安全通信",
+      "chapter": "01",
+      "chapterTitle": "第一部分：为什么需要区块链",
+      "url": "chapters/01-why-blockchain.html#23-公钥密码学在不安全的信道上安全通信",
+      "body": ""
+    },
+    {
+      "id": "01-why-blockchain-24-数字签名我怎么证明quot这是我说的quot",
+      "title": "2.4 数字签名：我怎么证明&quot;这是我说的&quot;",
+      "chapter": "01",
+      "chapterTitle": "第一部分：为什么需要区块链",
+      "url": "chapters/01-why-blockchain.html#24-数字签名我怎么证明quot这是我说的quot",
+      "body": ""
+    },
+    {
+      "id": "01-why-blockchain-25-比特币地址从公钥到地址的转化",
+      "title": "2.5 比特币地址：从公钥到地址的转化",
+      "chapter": "01",
+      "chapterTitle": "第一部分：为什么需要区块链",
+      "url": "chapters/01-why-blockchain.html#25-比特币地址从公钥到地址的转化",
+      "body": ""
+    },
+    {
+      "id": "01-why-blockchain-26-merkle树高效验证大量数据",
+      "title": "2.6 Merkle树：高效验证大量数据",
+      "chapter": "01",
+      "chapterTitle": "第一部分：为什么需要区块链",
+      "url": "chapters/01-why-blockchain.html#26-merkle树高效验证大量数据",
+      "body": ""
+    },
+    {
+      "id": "01-why-blockchain-27-随机性与密钥生成的安全性",
+      "title": "2.7 随机性与密钥生成的安全性",
+      "chapter": "01",
+      "chapterTitle": "第一部分：为什么需要区块链",
+      "url": "chapters/01-why-blockchain.html#27-随机性与密钥生成的安全性",
+      "body": ""
+    },
+    {
+      "id": "01-why-blockchain-28-密码学的边界它能做什么不能做什么",
+      "title": "2.8 密码学的边界：它能做什么，不能做什么",
+      "chapter": "01",
+      "chapterTitle": "第一部分：为什么需要区块链",
+      "url": "chapters/01-why-blockchain.html#28-密码学的边界它能做什么不能做什么",
+      "body": ""
+    },
+    {
+      "id": "01-why-blockchain-29-把所有碎片拼在一起",
+      "title": "2.9 把所有碎片拼在一起",
+      "chapter": "01",
+      "chapterTitle": "第一部分：为什么需要区块链",
+      "url": "chapters/01-why-blockchain.html#29-把所有碎片拼在一起",
+      "body": ""
+    },
+    {
+      "id": "01-why-blockchain-chapter-2-summary",
+      "title": "本章小结",
+      "chapter": "01",
+      "chapterTitle": "第一部分：为什么需要区块链",
+      "url": "chapters/01-why-blockchain.html#chapter-2-summary",
+      "body": ""
+    },
+    {
+      "id": "02-bitcoin",
+      "title": "第二部分：比特币——第一个区块链",
+      "chapter": "02",
+      "chapterTitle": "第二部分：比特币——第一个区块链",
+      "url": "chapters/02-bitcoin.html",
+      "body": "\n   第3章 中本聪的白皮书：一个绝妙的设计\n\n    3.1　2008年的世界：一切从一场危机说起\n\n2008年9月15日，雷曼兄弟申请破产。这家拥有158年历史、资产规模超过6000亿美元的投资银行在一夜之间轰然倒塌，引爆了自1929年大萧条以来最严重的全球金融危机。数百万人失去工作，无数家庭的储蓄化为乌有，而那些\"大到不能倒\"的银行，则靠着纳税人的血汗钱勉强续命。\n\n就在这场危机肆虐的同年10月31日，一个自称\"中本聪（Satoshi Nakamoto）\"的匿名者，在一个密码学邮件列表上悄悄投下了一颗改变历史的种子：一篇题为《Bitcoin: A Peer to Peer Electronic Cash System》的九页白皮书。\n\n没有机构背书，没有风险投资，甚至没有真名。\n\n这篇白皮书的开场白只有一句话：\n\n  \"A purely peer to peer version of electronic cash would allow online payments to be sent directly from one party to another without going through a financial institution.\"\n\n翻译过来的意思是：  一种纯粹的点对点电子现金，可以让在线支付直接在双方之间完成，无需通过任何金融机构中转。  \n\n这句话听起来平淡，但背后藏着几十年来密码学家和计算机科学家反复折戟的一个终极难题。要理解比特币为什么是\"绝妙的设计\"，我们得先搞清楚，这个问题到底难在哪里。\n\n   \n\n    3.2　\"双花问题\"：数字货币的死穴\n\n假设你想发明一种数字货币。最直觉的想法是：一枚数字货币就是一串数字文件，比如一个编号为  000001 的比特文件，谁持有谁就\"拥有\"这枚币。\n\n但立刻出现了一个致命问题：  数字文件可以被无限复制。  \n\n你把一首MP3发给朋友，你的MP3还在。你把一枚\"数字硬币\"发给商家，你手里的数字文件还在——你可以把同一枚币发给一百个人，每人都以为自己收到了钱。这个问题被称为  双花（Double Spending）  ，是数字货币领域的原罪。\n\n传统的解决方案是：  引入一个可信的中央机构来记账。  \n\n你去咖啡店刷信用卡，银行的中央数据库记录\"张三账户减少10元，咖啡店账户增加10元\"。银行作为唯一的权威账本，保证了同一笔钱不会被花两次。这个模型运作得相当好——只要你信任银行。\n\n但2008年的金融危机用铁一般的事实告诉我们：  信任是脆弱的  。银行可以倒闭，政府可以通货膨胀，账户可以被冻结，跨境转账可以被审查。更深层的问题是：  为什么我们必须信任一个中间人？  \n\n中本聪的问题由此凝练成一句话：  能不能在没有可信第三方的情况下，解决双花问题？  \n\n这个问题在计算机科学里有一个经典的等价形式——  拜占庭将军问题（Byzantine Generals Problem）  。\n\n   \n\n    3.3　拜占庭将军问题：分布式系统的噩梦\n\n想象拜占庭帝国的军队正在围攻一座城市。多支军队驻扎在城市四周，每支军队由一位将军指挥。他们必须商定一个统一的行动方案——要么同时进攻，要么同时撤退。如果只有部分军队进攻，就会失败。\n\n将军们只能通过信使传递消息，不能聚在一起开会。问题在于：某些将军可能是  叛徒  ，他们会发送相互矛盾的消息，破坏共识。而且，信使也可能被截杀或者腐化。\n\n更正式地描述：在一个有 $n$ 个节点的分布式系统中，假设其中有 $f$ 个节点是\"拜占庭错误节点\"（即可以任意撒谎、发送矛盾信息），系统能否达成一致？\n\n理论上已经证明：  当 $f < n/3$ 时，系统可以达成拜占庭容错（BFT）共识  。\n\n传统BFT算法（如PBFT）确实能解决这个问题，但它们有个致命缺陷：  需要预先知道所有参与者的身份列表  。\n\n这在一个向全球开放、任何人都可以匿名加入的网络里根本行不通。中本聪面对的是一个更难的版本：节点数量未知，节点可以随时加入或离开，节点可以冒充多个身份（  女巫攻击，Sybil Attack  ），而且没有任何中央机构来验证身份。\n\n在2008年之前，几乎所有人都认为这个问题在开放网络中无解。\n\n   \n\n    3.4　中本聪的核心洞见：用算力投票\n\n中本聪的天才之处，在于他换了一个问题视角。\n\n传统BFT把问题建模为\"节点投票\"——每个节点有一票，只要超过2/3的节点诚实，系统就安全。但在开放网络中，一个人可以创建无数个账号，每个账号一票，这样就能轻松控制\"多数票\"。\n\n中本聪的洞见是：  别用身份投票，用算力投票。  \n\n规则很简单：你想要你的交易记录被承认，你就必须花费真实的计算资源来证明你的工作。这个机"
+    },
+    {
+      "id": "02-bitcoin-第3章-中本聪的白皮书一个绝妙的设计",
+      "title": "第3章 中本聪的白皮书：一个绝妙的设计",
+      "chapter": "02",
+      "chapterTitle": "第二部分：比特币——第一个区块链",
+      "url": "chapters/02-bitcoin.html#第3章-中本聪的白皮书一个绝妙的设计",
+      "body": ""
+    },
+    {
+      "id": "02-bitcoin-31-2008年的世界一切从一场危机说起",
+      "title": "3.1　2008年的世界：一切从一场危机说起",
+      "chapter": "02",
+      "chapterTitle": "第二部分：比特币——第一个区块链",
+      "url": "chapters/02-bitcoin.html#31-2008年的世界一切从一场危机说起",
+      "body": ""
+    },
+    {
+      "id": "02-bitcoin-32-quot双花问题quot数字货币的死穴",
+      "title": "3.2　&quot;双花问题&quot;：数字货币的死穴",
+      "chapter": "02",
+      "chapterTitle": "第二部分：比特币——第一个区块链",
+      "url": "chapters/02-bitcoin.html#32-quot双花问题quot数字货币的死穴",
+      "body": ""
+    },
+    {
+      "id": "02-bitcoin-33-拜占庭将军问题分布式系统的噩梦",
+      "title": "3.3　拜占庭将军问题：分布式系统的噩梦",
+      "chapter": "02",
+      "chapterTitle": "第二部分：比特币——第一个区块链",
+      "url": "chapters/02-bitcoin.html#33-拜占庭将军问题分布式系统的噩梦",
+      "body": ""
+    },
+    {
+      "id": "02-bitcoin-34-中本聪的核心洞见用算力投票",
+      "title": "3.4　中本聪的核心洞见：用算力投票",
+      "chapter": "02",
+      "chapterTitle": "第二部分：比特币——第一个区块链",
+      "url": "chapters/02-bitcoin.html#34-中本聪的核心洞见用算力投票",
+      "body": ""
+    },
+    {
+      "id": "02-bitcoin-35-白皮书的架构蓝图",
+      "title": "3.5　白皮书的架构蓝图",
+      "chapter": "02",
+      "chapterTitle": "第二部分：比特币——第一个区块链",
+      "url": "chapters/02-bitcoin.html#35-白皮书的架构蓝图",
+      "body": ""
+    },
+    {
+      "id": "02-bitcoin-36-白皮书的quot优雅quot在哪里",
+      "title": "3.6　白皮书的&quot;优雅&quot;在哪里？",
+      "chapter": "02",
+      "chapterTitle": "第二部分：比特币——第一个区块链",
+      "url": "chapters/02-bitcoin.html#36-白皮书的quot优雅quot在哪里",
+      "body": ""
+    },
+    {
+      "id": "02-bitcoin-37-中本聪是谁一个美丽的谜",
+      "title": "3.7　中本聪是谁？——一个美丽的谜",
+      "chapter": "02",
+      "chapterTitle": "第二部分：比特币——第一个区块链",
+      "url": "chapters/02-bitcoin.html#37-中本聪是谁一个美丽的谜",
+      "body": ""
+    },
+    {
+      "id": "02-bitcoin-38-白皮书之前站在巨人的肩膀上",
+      "title": "3.8　白皮书之前：站在巨人的肩膀上",
+      "chapter": "02",
+      "chapterTitle": "第二部分：比特币——第一个区块链",
+      "url": "chapters/02-bitcoin.html#38-白皮书之前站在巨人的肩膀上",
+      "body": ""
+    },
+    {
+      "id": "02-bitcoin-39-比特币网络的诞生创世区块",
+      "title": "3.9　比特币网络的诞生：创世区块",
+      "chapter": "02",
+      "chapterTitle": "第二部分：比特币——第一个区块链",
+      "url": "chapters/02-bitcoin.html#39-比特币网络的诞生创世区块",
+      "body": ""
+    },
+    {
+      "id": "02-bitcoin-chapter-3-summary",
+      "title": "本章小结",
+      "chapter": "02",
+      "chapterTitle": "第二部分：比特币——第一个区块链",
+      "url": "chapters/02-bitcoin.html#chapter-3-summary",
+      "body": ""
+    },
+    {
+      "id": "02-bitcoin-第4章-区块与链数据结构层面的解析",
+      "title": "第4章 区块与链：数据结构层面的解析",
+      "chapter": "02",
+      "chapterTitle": "第二部分：比特币——第一个区块链",
+      "url": "chapters/02-bitcoin.html#第4章-区块与链数据结构层面的解析",
+      "body": ""
+    },
+    {
+      "id": "02-bitcoin-41-为什么要关心数据结构",
+      "title": "4.1　为什么要关心数据结构？",
+      "chapter": "02",
+      "chapterTitle": "第二部分：比特币——第一个区块链",
+      "url": "chapters/02-bitcoin.html#41-为什么要关心数据结构",
+      "body": ""
+    },
+    {
+      "id": "02-bitcoin-42-哈希函数一切的基础",
+      "title": "4.2　哈希函数：一切的基础",
+      "chapter": "02",
+      "chapterTitle": "第二部分：比特币——第一个区块链",
+      "url": "chapters/02-bitcoin.html#42-哈希函数一切的基础",
+      "body": ""
+    },
+    {
+      "id": "02-bitcoin-43-区块的解剖一个区块里面有什么",
+      "title": "4.3　区块的解剖：一个区块里面有什么？",
+      "chapter": "02",
+      "chapterTitle": "第二部分：比特币——第一个区块链",
+      "url": "chapters/02-bitcoin.html#43-区块的解剖一个区块里面有什么",
+      "body": ""
+    },
+    {
+      "id": "02-bitcoin-44-merkle树高效验证交易的神器",
+      "title": "4.4　Merkle树：高效验证交易的神器",
+      "chapter": "02",
+      "chapterTitle": "第二部分：比特币——第一个区块链",
+      "url": "chapters/02-bitcoin.html#44-merkle树高效验证交易的神器",
+      "body": ""
+    },
+    {
+      "id": "02-bitcoin-45-区块如何连接成链",
+      "title": "4.5　区块如何连接成链？",
+      "chapter": "02",
+      "chapterTitle": "第二部分：比特币——第一个区块链",
+      "url": "chapters/02-bitcoin.html#45-区块如何连接成链",
+      "body": ""
+    },
+    {
+      "id": "02-bitcoin-46-创世区块链条的起点",
+      "title": "4.6　创世区块：链条的起点",
+      "chapter": "02",
+      "chapterTitle": "第二部分：比特币——第一个区块链",
+      "url": "chapters/02-bitcoin.html#46-创世区块链条的起点",
+      "body": ""
+    },
+    {
+      "id": "02-bitcoin-47-utxo模型比特币如何记账",
+      "title": "4.7　UTXO模型：比特币如何记账？",
+      "chapter": "02",
+      "chapterTitle": "第二部分：比特币——第一个区块链",
+      "url": "chapters/02-bitcoin.html#47-utxo模型比特币如何记账",
+      "body": ""
+    },
+    {
+      "id": "02-bitcoin-48-脚本系统可编程的锁与钥匙",
+      "title": "4.8　脚本系统：可编程的锁与钥匙",
+      "chapter": "02",
+      "chapterTitle": "第二部分：比特币——第一个区块链",
+      "url": "chapters/02-bitcoin.html#48-脚本系统可编程的锁与钥匙",
+      "body": ""
+    },
+    {
+      "id": "02-bitcoin-49-区块链数据结构的全景图",
+      "title": "4.9　区块链数据结构的全景图",
+      "chapter": "02",
+      "chapterTitle": "第二部分：比特币——第一个区块链",
+      "url": "chapters/02-bitcoin.html#49-区块链数据结构的全景图",
+      "body": ""
+    },
+    {
+      "id": "02-bitcoin-410-轻节点-vs-全节点数据结构决定信任模型",
+      "title": "4.10　轻节点 vs 全节点：数据结构决定信任模型",
+      "chapter": "02",
+      "chapterTitle": "第二部分：比特币——第一个区块链",
+      "url": "chapters/02-bitcoin.html#410-轻节点-vs-全节点数据结构决定信任模型",
+      "body": ""
+    },
+    {
+      "id": "02-bitcoin-chapter-4-summary",
+      "title": "本章小结",
+      "chapter": "02",
+      "chapterTitle": "第二部分：比特币——第一个区块链",
+      "url": "chapters/02-bitcoin.html#chapter-4-summary",
+      "body": ""
+    },
+    {
+      "id": "02-bitcoin-第5章-工作量证明pow与挖矿",
+      "title": "第5章 工作量证明（PoW）与挖矿",
+      "chapter": "02",
+      "chapterTitle": "第二部分：比特币——第一个区块链",
+      "url": "chapters/02-bitcoin.html#第5章-工作量证明pow与挖矿",
+      "body": ""
+    },
+    {
+      "id": "02-bitcoin-51-动机共识需要成本",
+      "title": "5.1　动机：共识需要成本",
+      "chapter": "02",
+      "chapterTitle": "第二部分：比特币——第一个区块链",
+      "url": "chapters/02-bitcoin.html#51-动机共识需要成本",
+      "body": ""
+    },
+    {
+      "id": "02-bitcoin-52-哈希谜题挖矿的本质",
+      "title": "5.2　哈希谜题：挖矿的本质",
+      "chapter": "02",
+      "chapterTitle": "第二部分：比特币——第一个区块链",
+      "url": "chapters/02-bitcoin.html#52-哈希谜题挖矿的本质",
+      "body": ""
+    },
+    {
+      "id": "02-bitcoin-53-难度调整让出块时间保持稳定",
+      "title": "5.3　难度调整：让出块时间保持稳定",
+      "chapter": "02",
+      "chapterTitle": "第二部分：比特币——第一个区块链",
+      "url": "chapters/02-bitcoin.html#53-难度调整让出块时间保持稳定",
+      "body": ""
+    },
+    {
+      "id": "02-bitcoin-54-挖矿硬件的演化史",
+      "title": "5.4　挖矿硬件的演化史",
+      "chapter": "02",
+      "chapterTitle": "第二部分：比特币——第一个区块链",
+      "url": "chapters/02-bitcoin.html#54-挖矿硬件的演化史",
+      "body": ""
+    },
+    {
+      "id": "02-bitcoin-55-矿池化整为零",
+      "title": "5.5　矿池：化整为零",
+      "chapter": "02",
+      "chapterTitle": "第二部分：比特币——第一个区块链",
+      "url": "chapters/02-bitcoin.html#55-矿池化整为零",
+      "body": ""
+    },
+    {
+      "id": "02-bitcoin-56-挖矿经济学理性计算",
+      "title": "5.6　挖矿经济学：理性计算",
+      "chapter": "02",
+      "chapterTitle": "第二部分：比特币——第一个区块链",
+      "url": "chapters/02-bitcoin.html#56-挖矿经济学理性计算",
+      "body": ""
+    },
+    {
+      "id": "02-bitcoin-57-51攻击pow安全的边界",
+      "title": "5.7　51%攻击：PoW安全的边界",
+      "chapter": "02",
+      "chapterTitle": "第二部分：比特币——第一个区块链",
+      "url": "chapters/02-bitcoin.html#57-51攻击pow安全的边界",
+      "body": ""
+    },
+    {
+      "id": "02-bitcoin-58-环境争议挖矿的电力消耗",
+      "title": "5.8　环境争议：挖矿的电力消耗",
+      "chapter": "02",
+      "chapterTitle": "第二部分：比特币——第一个区块链",
+      "url": "chapters/02-bitcoin.html#58-环境争议挖矿的电力消耗",
+      "body": ""
+    },
+    {
+      "id": "02-bitcoin-59-减半事件比特币的通缩机制",
+      "title": "5.9　减半事件：比特币的通缩机制",
+      "chapter": "02",
+      "chapterTitle": "第二部分：比特币——第一个区块链",
+      "url": "chapters/02-bitcoin.html#59-减半事件比特币的通缩机制",
+      "body": ""
+    },
+    {
+      "id": "02-bitcoin-510-pow的哲学意义物理世界的锚",
+      "title": "5.10　PoW的哲学意义：物理世界的锚",
+      "chapter": "02",
+      "chapterTitle": "第二部分：比特币——第一个区块链",
+      "url": "chapters/02-bitcoin.html#510-pow的哲学意义物理世界的锚",
+      "body": ""
+    },
+    {
+      "id": "02-bitcoin-chapter-5-summary",
+      "title": "本章小结",
+      "chapter": "02",
+      "chapterTitle": "第二部分：比特币——第一个区块链",
+      "url": "chapters/02-bitcoin.html#chapter-5-summary",
+      "body": ""
+    },
+    {
+      "id": "02-bitcoin-第6章-比特币网络节点钱包与交易",
+      "title": "第6章 比特币网络：节点、钱包与交易",
+      "chapter": "02",
+      "chapterTitle": "第二部分：比特币——第一个区块链",
+      "url": "chapters/02-bitcoin.html#第6章-比特币网络节点钱包与交易",
+      "body": ""
+    },
+    {
+      "id": "02-bitcoin-61-从数据结构到运行系统",
+      "title": "6.1　从数据结构到运行系统",
+      "chapter": "02",
+      "chapterTitle": "第二部分：比特币——第一个区块链",
+      "url": "chapters/02-bitcoin.html#61-从数据结构到运行系统",
+      "body": ""
+    },
+    {
+      "id": "02-bitcoin-62-p2p网络没有中心的网络",
+      "title": "6.2　P2P网络：没有中心的网络",
+      "chapter": "02",
+      "chapterTitle": "第二部分：比特币——第一个区块链",
+      "url": "chapters/02-bitcoin.html#62-p2p网络没有中心的网络",
+      "body": ""
+    },
+    {
+      "id": "02-bitcoin-63-密钥与地址从私钥到比特币地址",
+      "title": "6.3　密钥与地址：从私钥到比特币地址",
+      "chapter": "02",
+      "chapterTitle": "第二部分：比特币——第一个区块链",
+      "url": "chapters/02-bitcoin.html#63-密钥与地址从私钥到比特币地址",
+      "body": ""
+    },
+    {
+      "id": "02-bitcoin-64-钱包密钥的管理者",
+      "title": "6.4　钱包：密钥的管理者",
+      "chapter": "02",
+      "chapterTitle": "第二部分：比特币——第一个区块链",
+      "url": "chapters/02-bitcoin.html#64-钱包密钥的管理者",
+      "body": ""
+    },
+    {
+      "id": "02-bitcoin-65-一笔交易的完整生命周期",
+      "title": "6.5　一笔交易的完整生命周期",
+      "chapter": "02",
+      "chapterTitle": "第二部分：比特币——第一个区块链",
+      "url": "chapters/02-bitcoin.html#65-一笔交易的完整生命周期",
+      "body": ""
+    },
+    {
+      "id": "02-bitcoin-66-手续费市场拍卖区块空间",
+      "title": "6.6　手续费市场：拍卖区块空间",
+      "chapter": "02",
+      "chapterTitle": "第二部分：比特币——第一个区块链",
+      "url": "chapters/02-bitcoin.html#66-手续费市场拍卖区块空间",
+      "body": ""
+    },
+    {
+      "id": "02-bitcoin-67-segwit解决交易可塑性提升容量",
+      "title": "6.7　SegWit：解决交易可塑性，提升容量",
+      "chapter": "02",
+      "chapterTitle": "第二部分：比特币——第一个区块链",
+      "url": "chapters/02-bitcoin.html#67-segwit解决交易可塑性提升容量",
+      "body": ""
+    },
+    {
+      "id": "02-bitcoin-68-闪电网络比特币的layer-2",
+      "title": "6.8　闪电网络：比特币的Layer 2",
+      "chapter": "02",
+      "chapterTitle": "第二部分：比特币——第一个区块链",
+      "url": "chapters/02-bitcoin.html#68-闪电网络比特币的layer-2",
+      "body": ""
+    },
+    {
+      "id": "02-bitcoin-69-比特币脚本的进阶多签与时间锁",
+      "title": "6.9　比特币脚本的进阶：多签与时间锁",
+      "chapter": "02",
+      "chapterTitle": "第二部分：比特币——第一个区块链",
+      "url": "chapters/02-bitcoin.html#69-比特币脚本的进阶多签与时间锁",
+      "body": ""
+    },
+    {
+      "id": "02-bitcoin-610-比特币网络的现状与规模",
+      "title": "6.10　比特币网络的现状与规模",
+      "chapter": "02",
+      "chapterTitle": "第二部分：比特币——第一个区块链",
+      "url": "chapters/02-bitcoin.html#610-比特币网络的现状与规模",
+      "body": ""
+    },
+    {
+      "id": "02-bitcoin-chapter-6-summary",
+      "title": "本章小结",
+      "chapter": "02",
+      "chapterTitle": "第二部分：比特币——第一个区块链",
+      "url": "chapters/02-bitcoin.html#chapter-6-summary",
+      "body": ""
+    },
+    {
+      "id": "03-ethereum",
+      "title": "第三部分：以太坊与可编程区块链",
+      "chapter": "03",
+      "chapterTitle": "第三部分：以太坊与可编程区块链",
+      "url": "chapters/03-ethereum.html",
+      "body": "\n   第7章 以太坊：可编程的区块链\n\n    7.1 比特币留下的那个问题\n\n学完比特币，你可能会有一个感觉：这个系统很精妙，但也很\"死板\"。它只做一件事——转账。你可以把比特币从地址A发到地址B，仅此而已。\n\n这当然已经很了不起了。但工程师的天性就是：  看到一个好的基础设施，就会想在上面盖更多东西  。\n\n2013年，一个19岁的俄裔加拿大程序员 Vitalik Buterin（维塔利克·布特林）正在研究比特币。他看到了一些开发者试图在比特币上构建应用——比如去中心化域名系统 Namecoin，或者代表现实资产的彩色币（Colored Coins）。但他注意到一个根本性的问题：  比特币的脚本语言（Script）太弱了  。\n\n比特币的 Script 是故意设计成非图灵完备的。它没有循环，没有复杂的条件分支，这样做是为了安全——防止矿工在验证交易时陷入无限循环。但这也意味着，你没法在比特币上写复杂的逻辑。\n\nVitalik 的想法是：  与其为每种应用单独做一条链，不如做一条通用的链，让任何人都可以在上面部署任意逻辑。  \n\n这就像操作系统的诞生。在操作系统出现之前，每台机器只能跑一个程序；有了操作系统，你可以在同一台机器上运行无数应用。以太坊想做的，是  区块链的操作系统  。\n\n2013年底，Vitalik 发布了以太坊白皮书。2014年初，他在迈阿密比特币大会上公开介绍了这个想法。同年，以太坊团队通过 ICO（首次代币发行）筹集了约1800万美元。2015年7月30日，以太坊主网正式上线，这一天被称为\"创世纪元\"（Genesis Block）。\n\n   \n\n    7.2 以太坊的核心抽象：世界状态机\n\n要理解以太坊，最好的切入点是它的抽象模型。\n\n以太坊把自己定义为一台  基于交易的状态机（Transaction Based State Machine）  。\n\n什么是状态机？简单说：系统在任意时刻都处于某个  状态（State）  ，当接收到  输入（交易）  时，状态按照确定的规则转换到下一个状态。\n\n$$\\sigma  t+1  \\equiv \\Upsilon \\sigma t, T $$\n\n这里 $\\sigma t$ 是当前世界状态，$T$ 是一笔交易，$\\Upsilon$ 是以太坊的状态转换函数，$\\sigma  t+1 $ 是新状态。\n\n以太坊的  世界状态（World State）  是什么？它是所有账户地址到账户状态的一个映射：\n\n$$\\sigma: \\text address  \\rightarrow \\text account state $$\n\n每个账户状态包含四个字段：\n\n  字段   含义  \n               \n   nonce    该账户发出的交易数量（防重放攻击）  \n   balance    账户持有的 ETH 数量（单位：Wei，$1 \\text  ETH  = 10^ 18  \\text  Wei $）  \n   storageRoot    账户存储的 Merkle Patricia Trie 根哈希  \n   codeHash    账户代码的哈希（对于普通账户，是空字符串的哈希）  \n\n这里出现了两种账户：\n\n  外部账户（Externally Owned Account, EOA）  ：由私钥控制， codeHash  是空字符串哈希，没有存储。你我的钱包地址都是 EOA。\n\n  合约账户（Contract Account）  ：由代码控制，有  codeHash  和  storageRoot ，没有私钥，不能主动发起交易。合约只能被其他账户调用时\"醒来\"执行。\n\n这个区分非常重要。合约账户就像一个  自动执行的程序  ，住在区块链上，任何人都可以通过发送交易来触发它。\n\n   \n\n    7.3 以太坊虚拟机（EVM）：区块链上的 CPU\n\n以太坊能运行任意代码的关键，是  以太坊虚拟机（Ethereum Virtual Machine, EVM）  。\n\nEVM 是一个  基于栈的虚拟机  ，类似于 Java 的 JVM，但专门为区块链环境设计。它运行在全球所有以太坊节点上——每当有合约调用发生，每个节点都会在自己的 EVM 里执行相同的代码，得到相同的结果，从而保证共识。\n\nEVM 的主要组成部分：\n\n  1. 程序计数器（PC）  ：指向当前执行的指令。\n\n  2. 栈（Stack）  ：EVM 是栈机，所有操作都在栈上进行。栈最大深度为1024，每个元素是256位整数（32字节）。\n\n  3. 内存（Memory）  ：字节寻址的线性空间，每次调用时重新初始化，只在当前执行上下文中存在。内存扩展需要消耗 Gas。\n\n  4. 存储（Sto"
+    },
+    {
+      "id": "03-ethereum-第7章-以太坊可编程的区块链",
+      "title": "第7章 以太坊：可编程的区块链",
+      "chapter": "03",
+      "chapterTitle": "第三部分：以太坊与可编程区块链",
+      "url": "chapters/03-ethereum.html#第7章-以太坊可编程的区块链",
+      "body": ""
+    },
+    {
+      "id": "03-ethereum-71-比特币留下的那个问题",
+      "title": "7.1 比特币留下的那个问题",
+      "chapter": "03",
+      "chapterTitle": "第三部分：以太坊与可编程区块链",
+      "url": "chapters/03-ethereum.html#71-比特币留下的那个问题",
+      "body": ""
+    },
+    {
+      "id": "03-ethereum-72-以太坊的核心抽象世界状态机",
+      "title": "7.2 以太坊的核心抽象：世界状态机",
+      "chapter": "03",
+      "chapterTitle": "第三部分：以太坊与可编程区块链",
+      "url": "chapters/03-ethereum.html#72-以太坊的核心抽象世界状态机",
+      "body": ""
+    },
+    {
+      "id": "03-ethereum-73-以太坊虚拟机evm区块链上的-cpu",
+      "title": "7.3 以太坊虚拟机（EVM）：区块链上的 CPU",
+      "chapter": "03",
+      "chapterTitle": "第三部分：以太坊与可编程区块链",
+      "url": "chapters/03-ethereum.html#73-以太坊虚拟机evm区块链上的-cpu",
+      "body": ""
+    },
+    {
+      "id": "03-ethereum-74-gas给计算定价",
+      "title": "7.4 Gas：给计算定价",
+      "chapter": "03",
+      "chapterTitle": "第三部分：以太坊与可编程区块链",
+      "url": "chapters/03-ethereum.html#74-gas给计算定价",
+      "body": ""
+    },
+    {
+      "id": "03-ethereum-75-以太坊的账户与交易模型",
+      "title": "7.5 以太坊的账户与交易模型",
+      "chapter": "03",
+      "chapterTitle": "第三部分：以太坊与可编程区块链",
+      "url": "chapters/03-ethereum.html#75-以太坊的账户与交易模型",
+      "body": ""
+    },
+    {
+      "id": "03-ethereum-76-以太坊的数据结构merkle-patricia-trie",
+      "title": "7.6 以太坊的数据结构：Merkle Patricia Trie",
+      "chapter": "03",
+      "chapterTitle": "第三部分：以太坊与可编程区块链",
+      "url": "chapters/03-ethereum.html#76-以太坊的数据结构merkle-patricia-trie",
+      "body": ""
+    },
+    {
+      "id": "03-ethereum-77-以太坊的区块结构",
+      "title": "7.7 以太坊的区块结构",
+      "chapter": "03",
+      "chapterTitle": "第三部分：以太坊与可编程区块链",
+      "url": "chapters/03-ethereum.html#77-以太坊的区块结构",
+      "body": ""
+    },
+    {
+      "id": "03-ethereum-78-以太坊的生态从单一货币到通证经济",
+      "title": "7.8 以太坊的生态：从单一货币到通证经济",
+      "chapter": "03",
+      "chapterTitle": "第三部分：以太坊与可编程区块链",
+      "url": "chapters/03-ethereum.html#78-以太坊的生态从单一货币到通证经济",
+      "body": ""
+    },
+    {
+      "id": "03-ethereum-79-以太坊-20一场持续的升级",
+      "title": "7.9 以太坊 2.0：一场持续的升级",
+      "chapter": "03",
+      "chapterTitle": "第三部分：以太坊与可编程区块链",
+      "url": "chapters/03-ethereum.html#79-以太坊-20一场持续的升级",
+      "body": ""
+    },
+    {
+      "id": "03-ethereum-710-以太坊与比特币一个类比",
+      "title": "7.10 以太坊与比特币：一个类比",
+      "chapter": "03",
+      "chapterTitle": "第三部分：以太坊与可编程区块链",
+      "url": "chapters/03-ethereum.html#710-以太坊与比特币一个类比",
+      "body": ""
+    },
+    {
+      "id": "03-ethereum-711-直觉总结",
+      "title": "7.11 直觉总结",
+      "chapter": "03",
+      "chapterTitle": "第三部分：以太坊与可编程区块链",
+      "url": "chapters/03-ethereum.html#711-直觉总结",
+      "body": ""
+    },
+    {
+      "id": "03-ethereum-第8章-智能合约代码即法律",
+      "title": "第8章 智能合约：代码即法律",
+      "chapter": "03",
+      "chapterTitle": "第三部分：以太坊与可编程区块链",
+      "url": "chapters/03-ethereum.html#第8章-智能合约代码即法律",
+      "body": ""
+    },
+    {
+      "id": "03-ethereum-81-一个古老的设想",
+      "title": "8.1 一个古老的设想",
+      "chapter": "03",
+      "chapterTitle": "第三部分：以太坊与可编程区块链",
+      "url": "chapters/03-ethereum.html#81-一个古老的设想",
+      "body": ""
+    },
+    {
+      "id": "03-ethereum-82-solidity以太坊的主要编程语言",
+      "title": "8.2 Solidity：以太坊的主要编程语言",
+      "chapter": "03",
+      "chapterTitle": "第三部分：以太坊与可编程区块链",
+      "url": "chapters/03-ethereum.html#82-solidity以太坊的主要编程语言",
+      "body": ""
+    },
+    {
+      "id": "03-ethereum-83-深入-solidity类型系统与数据位置",
+      "title": "8.3 深入 Solidity：类型系统与数据位置",
+      "chapter": "03",
+      "chapterTitle": "第三部分：以太坊与可编程区块链",
+      "url": "chapters/03-ethereum.html#83-深入-solidity类型系统与数据位置",
+      "body": ""
+    },
+    {
+      "id": "03-ethereum-84-一个完整的代币合约erc-20-实现",
+      "title": "8.4 一个完整的代币合约：ERC-20 实现",
+      "chapter": "03",
+      "chapterTitle": "第三部分：以太坊与可编程区块链",
+      "url": "chapters/03-ethereum.html#84-一个完整的代币合约erc-20-实现",
+      "body": ""
+    },
+    {
+      "id": "03-ethereum-85-合约安全性那些昂贵的教训",
+      "title": "8.5 合约安全性：那些昂贵的教训",
+      "chapter": "03",
+      "chapterTitle": "第三部分：以太坊与可编程区块链",
+      "url": "chapters/03-ethereum.html#85-合约安全性那些昂贵的教训",
+      "body": ""
+    },
+    {
+      "id": "03-ethereum-86-合约升级不可变性的悖论",
+      "title": "8.6 合约升级：不可变性的悖论",
+      "chapter": "03",
+      "chapterTitle": "第三部分：以太坊与可编程区块链",
+      "url": "chapters/03-ethereum.html#86-合约升级不可变性的悖论",
+      "body": ""
+    },
+    {
+      "id": "03-ethereum-87-openzeppelin智能合约的标准库",
+      "title": "8.7 OpenZeppelin：智能合约的标准库",
+      "chapter": "03",
+      "chapterTitle": "第三部分：以太坊与可编程区块链",
+      "url": "chapters/03-ethereum.html#87-openzeppelin智能合约的标准库",
+      "body": ""
+    },
+    {
+      "id": "03-ethereum-88-智能合约的实际应用场景",
+      "title": "8.8 智能合约的实际应用场景",
+      "chapter": "03",
+      "chapterTitle": "第三部分：以太坊与可编程区块链",
+      "url": "chapters/03-ethereum.html#88-智能合约的实际应用场景",
+      "body": ""
+    },
+    {
+      "id": "03-ethereum-89-quot代码即法律quot的哲学反思",
+      "title": "8.9 &quot;代码即法律&quot;的哲学反思",
+      "chapter": "03",
+      "chapterTitle": "第三部分：以太坊与可编程区块链",
+      "url": "chapters/03-ethereum.html#89-quot代码即法律quot的哲学反思",
+      "body": ""
+    },
+    {
+      "id": "03-ethereum-810-开发工具链",
+      "title": "8.10 开发工具链",
+      "chapter": "03",
+      "chapterTitle": "第三部分：以太坊与可编程区块链",
+      "url": "chapters/03-ethereum.html#810-开发工具链",
+      "body": ""
+    },
+    {
+      "id": "03-ethereum-811-智能合约的-gas-优化",
+      "title": "8.11 智能合约的 Gas 优化",
+      "chapter": "03",
+      "chapterTitle": "第三部分：以太坊与可编程区块链",
+      "url": "chapters/03-ethereum.html#811-智能合约的-gas-优化",
+      "body": ""
+    },
+    {
+      "id": "03-ethereum-第9章-共识机制的演化从-pow-到-pos",
+      "title": "第9章 共识机制的演化：从 PoW 到 PoS",
+      "chapter": "03",
+      "chapterTitle": "第三部分：以太坊与可编程区块链",
+      "url": "chapters/03-ethereum.html#第9章-共识机制的演化从-pow-到-pos",
+      "body": ""
+    },
+    {
+      "id": "03-ethereum-91-共识问题为什么难",
+      "title": "9.1 共识问题：为什么难？",
+      "chapter": "03",
+      "chapterTitle": "第三部分：以太坊与可编程区块链",
+      "url": "chapters/03-ethereum.html#91-共识问题为什么难",
+      "body": ""
+    },
+    {
+      "id": "03-ethereum-92-工作量证明pow用物理世界约束数字世界",
+      "title": "9.2 工作量证明（PoW）：用物理世界约束数字世界",
+      "chapter": "03",
+      "chapterTitle": "第三部分：以太坊与可编程区块链",
+      "url": "chapters/03-ethereum.html#92-工作量证明pow用物理世界约束数字世界",
+      "body": ""
+    },
+    {
+      "id": "03-ethereum-93-pow-的局限性",
+      "title": "9.3 PoW 的局限性",
+      "chapter": "03",
+      "chapterTitle": "第三部分：以太坊与可编程区块链",
+      "url": "chapters/03-ethereum.html#93-pow-的局限性",
+      "body": ""
+    },
+    {
+      "id": "03-ethereum-94-权益证明pos用经济质押代替算力竞争",
+      "title": "9.4 权益证明（PoS）：用经济质押代替算力竞争",
+      "chapter": "03",
+      "chapterTitle": "第三部分：以太坊与可编程区块链",
+      "url": "chapters/03-ethereum.html#94-权益证明pos用经济质押代替算力竞争",
+      "body": ""
+    },
+    {
+      "id": "03-ethereum-95-slashing惩罚机制",
+      "title": "9.5 Slashing：惩罚机制",
+      "chapter": "03",
+      "chapterTitle": "第三部分：以太坊与可编程区块链",
+      "url": "chapters/03-ethereum.html#95-slashing惩罚机制",
+      "body": ""
+    },
+    {
+      "id": "03-ethereum-96-委托权益证明dpos与其他变体",
+      "title": "9.6 委托权益证明（DPoS）与其他变体",
+      "chapter": "03",
+      "chapterTitle": "第三部分：以太坊与可编程区块链",
+      "url": "chapters/03-ethereum.html#96-委托权益证明dpos与其他变体",
+      "body": ""
+    },
+    {
+      "id": "03-ethereum-97-quot区块链不可能三角quot",
+      "title": "9.7 &quot;区块链不可能三角&quot;",
+      "chapter": "03",
+      "chapterTitle": "第三部分：以太坊与可编程区块链",
+      "url": "chapters/03-ethereum.html#97-quot区块链不可能三角quot",
+      "body": ""
+    },
+    {
+      "id": "03-ethereum-98-the-merge一次工程奇迹",
+      "title": "9.8 The Merge：一次工程奇迹",
+      "chapter": "03",
+      "chapterTitle": "第三部分：以太坊与可编程区块链",
+      "url": "chapters/03-ethereum.html#98-the-merge一次工程奇迹",
+      "body": ""
+    },
+    {
+      "id": "03-ethereum-99-pos-的争议与批评",
+      "title": "9.9 PoS 的争议与批评",
+      "chapter": "03",
+      "chapterTitle": "第三部分：以太坊与可编程区块链",
+      "url": "chapters/03-ethereum.html#99-pos-的争议与批评",
+      "body": ""
+    },
+    {
+      "id": "03-ethereum-910-其他共识机制简述",
+      "title": "9.10 其他共识机制简述",
+      "chapter": "03",
+      "chapterTitle": "第三部分：以太坊与可编程区块链",
+      "url": "chapters/03-ethereum.html#910-其他共识机制简述",
+      "body": ""
+    },
+    {
+      "id": "03-ethereum-911-共识机制选择的本质",
+      "title": "9.11 共识机制选择的本质",
+      "chapter": "03",
+      "chapterTitle": "第三部分：以太坊与可编程区块链",
+      "url": "chapters/03-ethereum.html#911-共识机制选择的本质",
+      "body": ""
+    },
+    {
+      "id": "03-ethereum-912-以太坊的未来走向-danksharding",
+      "title": "9.12 以太坊的未来：走向 Danksharding",
+      "chapter": "03",
+      "chapterTitle": "第三部分：以太坊与可编程区块链",
+      "url": "chapters/03-ethereum.html#912-以太坊的未来走向-danksharding",
+      "body": ""
+    },
+    {
+      "id": "04-crypto-ecosystem",
+      "title": "第四部分：加密货币生态",
+      "chapter": "04",
+      "chapterTitle": "第四部分：加密货币生态",
+      "url": "chapters/04-crypto-ecosystem.html",
+      "body": "\n   第10章 稳定币：USDT、USDC与算法稳定币\n\n    10.0 动机：加密世界的\"晕船药\"\n\n如果你在2021年初买了1个比特币，大约花了3万美元。到2021年11月，它涨到了6.9万美元。到2022年6月，它跌回了2万美元以下。这中间的时间跨度不过18个月，但价格振幅超过了200%。\n\n对于投机者，这种波动是\"机会\"。但对于一个想用区块链完成日常支付的普通人来说，这简直是灾难——你早上用0.001 BTC买了一杯咖啡，下午比特币涨了10%，你会懊悔；下午涨了10%，商家也不愿意按早上的价格结账。没有人愿意用一种\"今天买咖啡，明天后悔\"的货币做日常结算。\n\n这就引出了一个关键问题：  能不能有一种既存在于区块链上（享受去中心化、可编程、无国界的优势），又保持价格相对稳定的数字资产？  \n\n答案是：  稳定币（Stablecoin）  。\n\n稳定币是加密货币生态里的\"压舱石\"和\"润滑剂\"。它让DeFi协议可以计价，让交易所可以提供避险品种，让跨境汇款有了实际载体。没有稳定币，整个加密货币生态就像一个没有本位货币的经济体——什么都能交换，但没有稳定的记账单位。\n\n本章我们来拆解三类主要的稳定币：  法币抵押型（以USDT、USDC为代表）、加密资产超额抵押型（以DAI为代表）、算法稳定币（以UST为代表，已崩溃）  。三条路径，三种命运，三个截然不同的信任假设。\n\n   \n\n    10.1 稳定币的分类框架\n\n在深入每一种之前，我们先建立一个分析框架。任何稳定币都需要回答一个核心问题：\n\n    凭什么说这个代币值1美元？谁来保证这个承诺？  \n\n这个\"凭什么\"的答案，就决定了稳定币的类型：\n\n  类型   锚定机制   信任来源   代表产品  \n                                         \n  法币抵押型   银行账户里放着真实美元   中心化机构的信用   USDT、USDC  \n  加密资产超额抵押型   智能合约锁定加密资产作抵押   代码 + 过度担保   DAI  \n  算法稳定币   套利机制 + 协议内生资产支撑   市场信心（博弈均衡）   UST（已崩）  \n  混合型   部分抵押 + 部分算法   两者结合   FRAX  \n\n这四种类型是一个从\"完全中心化信任\"到\"完全去中心化信任\"的光谱。越靠近去中心化，挑战越大，也越脆弱——正如我们将在算法稳定币部分看到的那样。\n\n   \n\n    10.2 法币抵押型稳定币：USDT与USDC\n\n     10.2.1 USDT：最大的稳定币，也是最大的黑箱\n\nUSDT（Tether）由Tether公司发行，是市值最大的稳定币，长期保持在700亿至1000亿美元规模之间。它的工作原理在概念上极其简单：\n\n1. 用户向Tether公司汇入100美元真实法币。\n2. Tether公司在区块链上铸造（mint）100个USDT发给用户。\n3. 用户想兑换回美元时，销毁（burn）USDT，Tether退回法币。\n\n这是一个1:1的\"影子美元\"系统。USDT本质上是一张存款证明，只不过这张凭证是链上的代币，可以在全球任何支持USDT的地址之间无摩擦地转移。\n\n  USDT的链上实现  \n\nUSDT最初基于比特币的Omni协议发行，后来迁移至以太坊（作为ERC 20代币）、Tron、Solana等多个链。在以太坊上，USDT就是一个标准的ERC 20合约，其中关键函数是 mint 和 burn ，只有合约的owner（即Tether公司）能调用：\n\n   solidity\n// 简化版USDT核心逻辑（概念示意，非完整代码）\ncontract TetherToken  \n    mapping address =  uint256  public balances;\n    uint256 public totalSupply;\n    address public owner;\n\n    modifier onlyOwner    \n        require msg.sender == owner, \"Not authorized\" ;\n         ;\n     \n\n    // 只有Tether公司可以增发\n    function mint address to, uint256 amount  external onlyOwner  \n        balances to  += amount;\n        totalSupply += amount;\n        emit Transfer address 0 , to, amount ;\n     \n\n    // 销毁USDT，对应退回"
+    },
+    {
+      "id": "04-crypto-ecosystem-第10章-稳定币usdtusdc与算法稳定币",
+      "title": "第10章 稳定币：USDT、USDC与算法稳定币",
+      "chapter": "04",
+      "chapterTitle": "第四部分：加密货币生态",
+      "url": "chapters/04-crypto-ecosystem.html#第10章-稳定币usdtusdc与算法稳定币",
+      "body": ""
+    },
+    {
+      "id": "04-crypto-ecosystem-100-动机加密世界的quot晕船药quot",
+      "title": "10.0 动机：加密世界的&quot;晕船药&quot;",
+      "chapter": "04",
+      "chapterTitle": "第四部分：加密货币生态",
+      "url": "chapters/04-crypto-ecosystem.html#100-动机加密世界的quot晕船药quot",
+      "body": ""
+    },
+    {
+      "id": "04-crypto-ecosystem-101-稳定币的分类框架",
+      "title": "10.1 稳定币的分类框架",
+      "chapter": "04",
+      "chapterTitle": "第四部分：加密货币生态",
+      "url": "chapters/04-crypto-ecosystem.html#101-稳定币的分类框架",
+      "body": ""
+    },
+    {
+      "id": "04-crypto-ecosystem-102-法币抵押型稳定币usdt与usdc",
+      "title": "10.2 法币抵押型稳定币：USDT与USDC",
+      "chapter": "04",
+      "chapterTitle": "第四部分：加密货币生态",
+      "url": "chapters/04-crypto-ecosystem.html#102-法币抵押型稳定币usdt与usdc",
+      "body": ""
+    },
+    {
+      "id": "04-crypto-ecosystem-103-加密资产超额抵押型dai与makerdao",
+      "title": "10.3 加密资产超额抵押型：DAI与MakerDAO",
+      "chapter": "04",
+      "chapterTitle": "第四部分：加密货币生态",
+      "url": "chapters/04-crypto-ecosystem.html#103-加密资产超额抵押型dai与makerdao",
+      "body": ""
+    },
+    {
+      "id": "04-crypto-ecosystem-104-算法稳定币最大胆的实验最惨烈的失败",
+      "title": "10.4 算法稳定币：最大胆的实验，最惨烈的失败",
+      "chapter": "04",
+      "chapterTitle": "第四部分：加密货币生态",
+      "url": "chapters/04-crypto-ecosystem.html#104-算法稳定币最大胆的实验最惨烈的失败",
+      "body": ""
+    },
+    {
+      "id": "04-crypto-ecosystem-105-稳定币的监管与未来",
+      "title": "10.5 稳定币的监管与未来",
+      "chapter": "04",
+      "chapterTitle": "第四部分：加密货币生态",
+      "url": "chapters/04-crypto-ecosystem.html#105-稳定币的监管与未来",
+      "body": ""
+    },
+    {
+      "id": "04-crypto-ecosystem-106-三种稳定币的直觉总结",
+      "title": "10.6 三种稳定币的直觉总结",
+      "chapter": "04",
+      "chapterTitle": "第四部分：加密货币生态",
+      "url": "chapters/04-crypto-ecosystem.html#106-三种稳定币的直觉总结",
+      "body": ""
+    },
+    {
+      "id": "04-crypto-ecosystem-第11章-defi去中心化金融",
+      "title": "第11章 DeFi：去中心化金融",
+      "chapter": "04",
+      "chapterTitle": "第四部分：加密货币生态",
+      "url": "chapters/04-crypto-ecosystem.html#第11章-defi去中心化金融",
+      "body": ""
+    },
+    {
+      "id": "04-crypto-ecosystem-110-动机把华尔街装进智能合约",
+      "title": "11.0 动机：把华尔街装进智能合约",
+      "chapter": "04",
+      "chapterTitle": "第四部分：加密货币生态",
+      "url": "chapters/04-crypto-ecosystem.html#110-动机把华尔街装进智能合约",
+      "body": ""
+    },
+    {
+      "id": "04-crypto-ecosystem-111-defi的基础设施",
+      "title": "11.1 DeFi的基础设施",
+      "chapter": "04",
+      "chapterTitle": "第四部分：加密货币生态",
+      "url": "chapters/04-crypto-ecosystem.html#111-defi的基础设施",
+      "body": ""
+    },
+    {
+      "id": "04-crypto-ecosystem-112-去中心化交易所dex",
+      "title": "11.2 去中心化交易所（DEX）",
+      "chapter": "04",
+      "chapterTitle": "第四部分：加密货币生态",
+      "url": "chapters/04-crypto-ecosystem.html#112-去中心化交易所dex",
+      "body": ""
+    },
+    {
+      "id": "04-crypto-ecosystem-113-去中心化借贷aave与compound",
+      "title": "11.3 去中心化借贷：Aave与Compound",
+      "chapter": "04",
+      "chapterTitle": "第四部分：加密货币生态",
+      "url": "chapters/04-crypto-ecosystem.html#113-去中心化借贷aave与compound",
+      "body": ""
+    },
+    {
+      "id": "04-crypto-ecosystem-114-收益耕作yield-farming与流动性挖矿",
+      "title": "11.4 收益耕作（Yield Farming）与流动性挖矿",
+      "chapter": "04",
+      "chapterTitle": "第四部分：加密货币生态",
+      "url": "chapters/04-crypto-ecosystem.html#114-收益耕作yield-farming与流动性挖矿",
+      "body": ""
+    },
+    {
+      "id": "04-crypto-ecosystem-115-预言机defi与现实世界的桥梁",
+      "title": "11.5 预言机：DeFi与现实世界的桥梁",
+      "chapter": "04",
+      "chapterTitle": "第四部分：加密货币生态",
+      "url": "chapters/04-crypto-ecosystem.html#115-预言机defi与现实世界的桥梁",
+      "body": ""
+    },
+    {
+      "id": "04-crypto-ecosystem-116-defi的风险全景",
+      "title": "11.6 DeFi的风险全景",
+      "chapter": "04",
+      "chapterTitle": "第四部分：加密货币生态",
+      "url": "chapters/04-crypto-ecosystem.html#116-defi的风险全景",
+      "body": ""
+    },
+    {
+      "id": "04-crypto-ecosystem-117-defi的现实评估",
+      "title": "11.7 DeFi的现实评估",
+      "chapter": "04",
+      "chapterTitle": "第四部分：加密货币生态",
+      "url": "chapters/04-crypto-ecosystem.html#117-defi的现实评估",
+      "body": ""
+    },
+    {
+      "id": "04-crypto-ecosystem-第12章-nft数字所有权的实验",
+      "title": "第12章 NFT：数字所有权的实验",
+      "chapter": "04",
+      "chapterTitle": "第四部分：加密货币生态",
+      "url": "chapters/04-crypto-ecosystem.html#第12章-nft数字所有权的实验",
+      "body": ""
+    },
+    {
+      "id": "04-crypto-ecosystem-120-动机数字物品能被quot拥有quot吗",
+      "title": "12.0 动机：数字物品能被&quot;拥有&quot;吗？",
+      "chapter": "04",
+      "chapterTitle": "第四部分：加密货币生态",
+      "url": "chapters/04-crypto-ecosystem.html#120-动机数字物品能被quot拥有quot吗",
+      "body": ""
+    },
+    {
+      "id": "04-crypto-ecosystem-121-同质化与非同质化一个关键区分",
+      "title": "12.1 同质化与非同质化：一个关键区分",
+      "chapter": "04",
+      "chapterTitle": "第四部分：加密货币生态",
+      "url": "chapters/04-crypto-ecosystem.html#121-同质化与非同质化一个关键区分",
+      "body": ""
+    },
+    {
+      "id": "04-crypto-ecosystem-122-erc-721标准nft的技术基础",
+      "title": "12.2 ERC-721标准：NFT的技术基础",
+      "chapter": "04",
+      "chapterTitle": "第四部分：加密货币生态",
+      "url": "chapters/04-crypto-ecosystem.html#122-erc-721标准nft的技术基础",
+      "body": ""
+    },
+    {
+      "id": "04-crypto-ecosystem-123-nft的应用全景",
+      "title": "12.3 NFT的应用全景",
+      "chapter": "04",
+      "chapterTitle": "第四部分：加密货币生态",
+      "url": "chapters/04-crypto-ecosystem.html#123-nft的应用全景",
+      "body": ""
+    },
+    {
+      "id": "04-crypto-ecosystem-124-nft的批判泡沫洗盘交易与版权混乱",
+      "title": "12.4 NFT的批判：泡沫、洗盘交易与版权混乱",
+      "chapter": "04",
+      "chapterTitle": "第四部分：加密货币生态",
+      "url": "chapters/04-crypto-ecosystem.html#124-nft的批判泡沫洗盘交易与版权混乱",
+      "body": ""
+    },
+    {
+      "id": "04-crypto-ecosystem-125-nft的重新审视真正的价值问题",
+      "title": "12.5 NFT的重新审视：真正的价值问题",
+      "chapter": "04",
+      "chapterTitle": "第四部分：加密货币生态",
+      "url": "chapters/04-crypto-ecosystem.html#125-nft的重新审视真正的价值问题",
+      "body": ""
+    },
+    {
+      "id": "04-crypto-ecosystem-126-nft-20的可能方向",
+      "title": "12.6 NFT 2.0的可能方向",
+      "chapter": "04",
+      "chapterTitle": "第四部分：加密货币生态",
+      "url": "chapters/04-crypto-ecosystem.html#126-nft-20的可能方向",
+      "body": ""
+    },
+    {
+      "id": "04-crypto-ecosystem-127-直觉总结nft是什么不是什么",
+      "title": "12.7 直觉总结：NFT是什么，不是什么",
+      "chapter": "04",
+      "chapterTitle": "第四部分：加密货币生态",
+      "url": "chapters/04-crypto-ecosystem.html#127-直觉总结nft是什么不是什么",
+      "body": ""
+    },
+    {
+      "id": "05-critique-future",
+      "title": "第五部分：批判与展望",
+      "chapter": "05",
+      "chapterTitle": "第五部分：批判与展望",
+      "url": "chapters/05-critique-future.html",
+      "body": "\n   第13章 区块链的争议与局限\n\n  \"技术不是万能的，但我们总是先爱上它，再发现这一点。\"\n\n    13.1 为什么要批判区块链？\n\n在前面十二章里，我们系统地拆解了区块链从比特币到以太坊、从智能合约到 DeFi 的整个技术脉络。如果你认真读到这里，大概已经对这套系统产生了相当的兴趣，甚至是敬意——它确实设计精妙，解决了一些在密码学和分布式系统领域长期悬而未决的问题。\n\n但一本诚实的技术科普书，不能只讲高光时刻。\n\n区块链诞生至今已超过十五年。在这十五年里，它经历过数次市场狂热，也经历过数次崩盘；它催生了真正有意思的技术创新，也滋生了大量骗局和泡沫。那些在白皮书里看起来完美的设计，在落地时往往撞上现实世界的坚硬边界。\n\n本章的任务，是把这些边界逐一描述清楚：  不是为了否定区块链，而是为了得到一张更准确的地图  。一个工程师在选择技术栈时，最需要的不是宣传册，而是故障报告。\n\n我们将依次讨论以下几个核心问题：\n1.   可扩展性困境  ：为什么区块链天然地\"慢\"和\"贵\"？\n2.   能耗与环境争议  ：PoW 真的是在烧地球吗？\n3.   安全性的真实边界  ：那些\"不可篡改\"的背后，有什么没说清楚？\n4.   隐私悖论  ：公开透明与个人隐私如何不可兼得？\n5.   治理困境  ：去中心化的系统，谁来拍板？\n6.   用户体验的鸿沟  ：为什么大多数人用不了区块链？\n7.   监管与合规  ：不受监管不等于不受约束。\n\n   \n\n    13.2 可扩展性困境：不可能三角\n\n     13.2.1 先从一组数字开始\n\n在讨论抽象原理之前，我们先看一组让人清醒的对比数据（约 2023 年水平）：\n\n  系统   每秒交易数（TPS）   确认延迟   手续费  \n        :                 : :        : :      : \n  Visa 网络    24,000 TPS   秒级   几美分  \n  比特币（基础层）    7 TPS   10–60 分钟   数美元至数十美元  \n  以太坊（基础层）    15–30 TPS   12 秒（确认），分钟级（安全）   高峰期数十至数百美元  \n  Solana    2,000–3,000 TPS   亚秒级   极低  \n\n比特币的 7 TPS，是由两个参数硬编码决定的：一个区块大小上限（约 1 MB）和约 10 分钟的出块间隔。这不是 bug，而是 Satoshi 在设计时做出的有意取舍——更小的区块让普通节点更容易参与，从而保证去中心化。\n\n     13.2.2 区块链不可能三角\n\n计算机科学家 Vitalik Buterin 将这个现象总结为\"  区块链不可能三角  \"（Blockchain Trilemma）：\n\n$$\\text 安全性（Security）  \\quad \\text 去中心化（Decentralization）  \\quad \\text 可扩展性（Scalability） $$\n\n  三者不能同时最优化。   你只能在三角形里选两条边，第三条边必然受损。\n\n    比特币  ：选择了安全性 + 去中心化，放弃了可扩展性。\n    早期以太坊  ：类似比特币，同样的牺牲。\n    Solana  ：选择了安全性 + 可扩展性，但其节点运行成本极高（需要高性能服务器），导致节点数量相对较少，去中心化程度降低。\n    传统数据库（如 MySQL）  ：没有去中心化诉求，因此可以同时做到高性能和安全，但那就不是\"区块链\"了。\n\n   \n          安全性\n          /    \\\n         /      \\\n        /   ???  \\\n去中心化           可扩展性\n   \n\n这个三角不是一个严格的数学定理，更像是一个经验性规律。但它背后有朴素的工程逻辑：  去中心化意味着数据需要在大量节点间同步，这天然限制了吞吐量  。你有 10,000 个节点，每笔交易必须在它们之间广播和验证，速度怎么可能赶上一台中心化数据库？\n\n     13.2.3 扩容方案及其代价\n\n工程师们并没有坐以待毙，围绕扩容，已经提出并实施了若干方案：\n\n  方案一：提高区块参数（Layer 1 扩容）  \n\n最直接的想法：把区块弄大、出块弄快。比特币曾经历过著名的\"区块大战\"——支持大区块的阵营最终分叉出了 Bitcoin Cash（BCH）。结果呢？BCH 的吞吐量确实高了，但节点运营成本上升，节点数量下降，市场也不买账——BCH 如今的市值和影响力远不如比特币。\n\n这说明，在去中心化社区里，改变基础层参数是极其困难的政治问题，不只是技术问题。\n\n  方案二：Layer 2（链下扩容）  \n"
+    },
+    {
+      "id": "05-critique-future-第13章-区块链的争议与局限",
+      "title": "第13章 区块链的争议与局限",
+      "chapter": "05",
+      "chapterTitle": "第五部分：批判与展望",
+      "url": "chapters/05-critique-future.html#第13章-区块链的争议与局限",
+      "body": ""
+    },
+    {
+      "id": "05-critique-future-131-为什么要批判区块链",
+      "title": "13.1 为什么要批判区块链？",
+      "chapter": "05",
+      "chapterTitle": "第五部分：批判与展望",
+      "url": "chapters/05-critique-future.html#131-为什么要批判区块链",
+      "body": ""
+    },
+    {
+      "id": "05-critique-future-132-可扩展性困境不可能三角",
+      "title": "13.2 可扩展性困境：不可能三角",
+      "chapter": "05",
+      "chapterTitle": "第五部分：批判与展望",
+      "url": "chapters/05-critique-future.html#132-可扩展性困境不可能三角",
+      "body": ""
+    },
+    {
+      "id": "05-critique-future-133-能耗争议pow-真的在烧地球吗",
+      "title": "13.3 能耗争议：PoW 真的在烧地球吗？",
+      "chapter": "05",
+      "chapterTitle": "第五部分：批判与展望",
+      "url": "chapters/05-critique-future.html#133-能耗争议pow-真的在烧地球吗",
+      "body": ""
+    },
+    {
+      "id": "05-critique-future-134-安全性的真实边界",
+      "title": "13.4 安全性的真实边界",
+      "chapter": "05",
+      "chapterTitle": "第五部分：批判与展望",
+      "url": "chapters/05-critique-future.html#134-安全性的真实边界",
+      "body": ""
+    },
+    {
+      "id": "05-critique-future-135-隐私悖论",
+      "title": "13.5 隐私悖论",
+      "chapter": "05",
+      "chapterTitle": "第五部分：批判与展望",
+      "url": "chapters/05-critique-future.html#135-隐私悖论",
+      "body": ""
+    },
+    {
+      "id": "05-critique-future-136-治理困境去中心化系统谁说了算",
+      "title": "13.6 治理困境：去中心化系统，谁说了算？",
+      "chapter": "05",
+      "chapterTitle": "第五部分：批判与展望",
+      "url": "chapters/05-critique-future.html#136-治理困境去中心化系统谁说了算",
+      "body": ""
+    },
+    {
+      "id": "05-critique-future-137-用户体验的鸿沟",
+      "title": "13.7 用户体验的鸿沟",
+      "chapter": "05",
+      "chapterTitle": "第五部分：批判与展望",
+      "url": "chapters/05-critique-future.html#137-用户体验的鸿沟",
+      "body": ""
+    },
+    {
+      "id": "05-critique-future-138-监管不受监管不等于不受约束",
+      "title": "13.8 监管：不受监管不等于不受约束",
+      "chapter": "05",
+      "chapterTitle": "第五部分：批判与展望",
+      "url": "chapters/05-critique-future.html#138-监管不受监管不等于不受约束",
+      "body": ""
+    },
+    {
+      "id": "05-critique-future-139-局限的全景图",
+      "title": "13.9 局限的全景图",
+      "chapter": "05",
+      "chapterTitle": "第五部分：批判与展望",
+      "url": "chapters/05-critique-future.html#139-局限的全景图",
+      "body": ""
+    },
+    {
+      "id": "05-critique-future-chapter-13-summary",
+      "title": "本章小结",
+      "chapter": "05",
+      "chapterTitle": "第五部分：批判与展望",
+      "url": "chapters/05-critique-future.html#chapter-13-summary",
+      "body": ""
+    },
+    {
+      "id": "05-critique-future-第14章-web3-是未来还是泡沫",
+      "title": "第14章 Web3 是未来还是泡沫？",
+      "chapter": "05",
+      "chapterTitle": "第五部分：批判与展望",
+      "url": "chapters/05-critique-future.html#第14章-web3-是未来还是泡沫",
+      "body": ""
+    },
+    {
+      "id": "05-critique-future-141-一个无法回避的问题",
+      "title": "14.1 一个无法回避的问题",
+      "chapter": "05",
+      "chapterTitle": "第五部分：批判与展望",
+      "url": "chapters/05-critique-future.html#141-一个无法回避的问题",
+      "body": ""
+    },
+    {
+      "id": "05-critique-future-142-web3-的愿景它想解决什么问题",
+      "title": "14.2 Web3 的愿景：它想解决什么问题？",
+      "chapter": "05",
+      "chapterTitle": "第五部分：批判与展望",
+      "url": "chapters/05-critique-future.html#142-web3-的愿景它想解决什么问题",
+      "body": ""
+    },
+    {
+      "id": "05-critique-future-143-支持者的论点为什么-web3-可能是未来",
+      "title": "14.3 支持者的论点：为什么 Web3 可能是未来",
+      "chapter": "05",
+      "chapterTitle": "第五部分：批判与展望",
+      "url": "chapters/05-critique-future.html#143-支持者的论点为什么-web3-可能是未来",
+      "body": ""
+    },
+    {
+      "id": "05-critique-future-144-批评者的论点为什么-web3-更像泡沫",
+      "title": "14.4 批评者的论点：为什么 Web3 更像泡沫",
+      "chapter": "05",
+      "chapterTitle": "第五部分：批判与展望",
+      "url": "chapters/05-critique-future.html#144-批评者的论点为什么-web3-更像泡沫",
+      "body": ""
+    },
+    {
+      "id": "05-critique-future-145-两种视角的综合哪些会留下哪些会消失",
+      "title": "14.5 两种视角的综合：哪些会留下，哪些会消失",
+      "chapter": "05",
+      "chapterTitle": "第五部分：批判与展望",
+      "url": "chapters/05-critique-future.html#145-两种视角的综合哪些会留下哪些会消失",
+      "body": ""
+    },
+    {
+      "id": "05-critique-future-146-web3-的quots-曲线quot现在在哪里",
+      "title": "14.6 Web3 的&quot;S 曲线&quot;：现在在哪里？",
+      "chapter": "05",
+      "chapterTitle": "第五部分：批判与展望",
+      "url": "chapters/05-critique-future.html#146-web3-的quots-曲线quot现在在哪里",
+      "body": ""
+    },
+    {
+      "id": "05-critique-future-147-给工程师的建议如何在这个领域找准定位",
+      "title": "14.7 给工程师的建议：如何在这个领域找准定位",
+      "chapter": "05",
+      "chapterTitle": "第五部分：批判与展望",
+      "url": "chapters/05-critique-future.html#147-给工程师的建议如何在这个领域找准定位",
+      "body": ""
+    },
+    {
+      "id": "05-critique-future-148-更大的视角区块链与数字主权",
+      "title": "14.8 更大的视角：区块链与数字主权",
+      "chapter": "05",
+      "chapterTitle": "第五部分：批判与展望",
+      "url": "chapters/05-critique-future.html#148-更大的视角区块链与数字主权",
+      "body": ""
+    },
+    {
+      "id": "05-critique-future-149-最终的判断",
+      "title": "14.9 最终的判断",
+      "chapter": "05",
+      "chapterTitle": "第五部分：批判与展望",
+      "url": "chapters/05-critique-future.html#149-最终的判断",
+      "body": ""
+    },
+    {
+      "id": "05-critique-future-chapter-14-summary",
+      "title": "本章小结",
+      "chapter": "05",
+      "chapterTitle": "第五部分：批判与展望",
+      "url": "chapters/05-critique-future.html#chapter-14-summary",
+      "body": ""
+    },
+    {
+      "id": "05-critique-future-全书结语一位工程师应有的姿态",
+      "title": "全书结语：一位工程师应有的姿态",
+      "chapter": "05",
+      "chapterTitle": "第五部分：批判与展望",
+      "url": "chapters/05-critique-future.html#全书结语一位工程师应有的姿态",
+      "body": ""
+    },
+    {
+      "id": "05-critique-future-技术永远在流动",
+      "title": "技术永远在流动",
+      "chapter": "05",
+      "chapterTitle": "第五部分：批判与展望",
+      "url": "chapters/05-critique-future.html#技术永远在流动",
+      "body": ""
+    },
+    {
+      "id": "05-critique-future-不要只记住答案要记住问题",
+      "title": "不要只记住答案，要记住问题",
+      "chapter": "05",
+      "chapterTitle": "第五部分：批判与展望",
+      "url": "chapters/05-critique-future.html#不要只记住答案要记住问题",
+      "body": ""
+    },
+    {
+      "id": "05-critique-future-作为工程师的清醒",
+      "title": "作为工程师的清醒",
+      "chapter": "05",
+      "chapterTitle": "第五部分：批判与展望",
+      "url": "chapters/05-critique-future.html#作为工程师的清醒",
+      "body": ""
+    },
+    {
+      "id": "05-critique-future-未完待续",
+      "title": "未完待续",
+      "chapter": "05",
+      "chapterTitle": "第五部分：批判与展望",
+      "url": "chapters/05-critique-future.html#未完待续",
+      "body": ""
+    }
+  ]
+}

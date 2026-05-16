@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rust 到底在解决什么问题——核心哲学 — Rust</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" id="hljs-light" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+<link rel="stylesheet" id="hljs-dark" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" media="not all">
+</head>
+<body>
+
+<div class="progress-bar" id="progress-bar"></div>
+
+<nav class="topnav" id="topnav">
+  <div class="topnav-inner">
+    <a class="brand" href="../index.html">Rust</a>
+    <div class="nav-links">
+      <a href="01-why-rust.html">01</a>
+      <a href="02-core-philosophy.html" class="active">02</a>
+      <a href="03-syntax.html">03</a>
+      <a href="04-where-rust.html">04</a>
+      <a href="05-public-opinion.html">05</a>
+      <a href="06-rust-2026.html">06</a>
+      <a href="07-should-i-learn.html">07</a>
+    </div>
+    <div class="nav-controls">
+      <button class="nav-btn" id="search-btn" aria-label="搜索 (Ctrl+K)">⌘K</button>
+      <button class="nav-btn" id="settings-btn" aria-label="阅读设置">Aa</button>
+      <a class="nav-btn" href="../../index.html" aria-label="返回知识库">← 知识库</a>
+    </div>
+  </div>
+</nav>
+<div class="settings-pop" id="settings-pop">
+  <h5>主题</h5>
+  <div class="row">
+    <button class="seg" data-theme-set="light">明亮</button>
+    <button class="seg" data-theme-set="dark">暗色</button>
+  </div>
+  <h5>字号</h5>
+  <div class="row">
+    <button class="seg" data-size-set="s">小</button>
+    <button class="seg" data-size-set="m">中</button>
+    <button class="seg" data-size-set="l">大</button>
+  </div>
+</div>
+
+<div class="with-sidebar">
+  <aside class="sidebar">
+  <div class="chapter-num">CHAPTER 02</div>
+  <div class="chapter-name">Rust 到底在解决什么问题——核心哲学</div>
+  <h4>目录</h4>
+  <ul>
+    <li><a href="#21-quot零成本抽象quot是什么意思">2.1 &quot;零成本抽象&quot;是什么意思</a></li>
+    <li><a href="#22-所有权系统不靠gc也不靠程序员自律">2.2 所有权系统：不靠GC，也不靠程序员自律</a></li>
+    <li><a href="#23-借用检查器编译器当你的保姆">2.3 借用检查器：编译器当你的保姆</a></li>
+    <li><a href="#24-和c对比同样快但更难写错">2.4 和C对比：同样快，但更难写错</a></li>
+    <li><a href="#25-和python对比同样现代但完全不同的取舍">2.5 和Python对比：同样现代，但完全不同的取舍</a></li>
+  </ul>
+</aside>
+  <article class="chapter-body">
+    <header class="chapter-head">
+  <div class="chapter-head-meta">
+    <span class="num">CHAPTER 02</span>
+    <span>≈ 28 MIN READ</span>
+  </div>
+  <h1>Rust 到底在解决什么问题——核心哲学</h1>
+</header>
+    <h2 id="21-quot零成本抽象quot是什么意思">2.1 &quot;零成本抽象&quot;是什么意思</h2>
+<h4 id="211-抽象必然有代价吗">2.1.1 抽象必然有代价吗</h4>
+<p>&quot;抽象&quot;这个词在编程里随处可见，但它的代价因语言而异，差别悬殊。</p>
+<p>Python是（对机器而言）高度抽象的语言。你写<code>a + b</code>，Python会在运行时查询<code>a</code>的类型，调用<code>__add__</code>方法，做类型检查，然后执行加法。这背后是解释器的一大堆工作。单次操作的开销可能比C版本慢几十到几百倍。这个代价被认为是&quot;值得的&quot;，因为Python的开发效率极高。</p>
+<p>Java也有抽象代价：JVM（Java虚拟机）需要在运行时做方法调度、JIT编译、GC等工作。Java的泛型用&quot;类型擦除&quot;实现，在运行时实际上消除了类型信息，需要额外的转型。</p>
+<p>C的抽象极少，几乎没有运行时开销——你写的代码基本等价于汇编。但C的抽象能力也很弱，写复杂程序要手搓很多东西。</p>
+<p>C++在C的基础上增加了虚函数（用虚表实现，有间接跳转开销）、RTTI（运行时类型信息）等，这些特性有运行时成本。但C++也有模板（template），模板是在编译时展开的，不产生运行时开销。</p>
+<p>Rust继承了C++模板的思路，但做得更彻底、更系统。Rust的口号是：<strong>&quot;如果你不用某个特性，就不用为它付代价；如果你用了某个特性，你手写等效代码也无法做得更快。&quot;</strong></p>
+<h4 id="212-用迭代器做一个具体的例子">2.1.2 用迭代器做一个具体的例子</h4>
+<p>来看一个具体例子。你有一个整数数组，想对每个元素乘以2，然后找出其中大于10的，求和。</p>
+<p>用C写：</p>
+<pre data-label="c"><code class="language-c">int arr[] = {1, 2, 3, 4, 5, 6, 7, 8};
+int n = 8;
+long sum = 0;
+for (int i = 0; i &lt; n; i++) {
+    int doubled = arr[i] * 2;
+    if (doubled &gt; 10) {
+        sum += doubled;
+    }
+}</code></pre>
+<p>用Rust写，利用迭代器：</p>
+<pre data-label="rust"><code class="language-rust">let arr = [1, 2, 3, 4, 5, 6, 7, 8];
+let sum: i64 = arr.iter()
+    .map(|x| x * 2)
+    .filter(|x| *x &gt; 10)
+    .sum();</code></pre>
+<p>Rust版本看起来像函数式编程，很高级，很优雅。但问题来了：这比C版本慢吗？</p>
+<p>答案是：<strong>不慢，甚至可能完全一样快</strong>。Rust的编译器（加上LLVM后端）会把这段迭代器链展开（inline）成等价的循环，消除所有函数调用的开销，最终生成的机器码和C版本几乎相同。</p>
+<p>这就是零成本抽象的含义：你可以用高级、优雅的写法，不用担心性能损失。抽象是编译时的，不是运行时的。</p>
+<h4 id="213-和python的对比不同的取舍">2.1.3 和Python的对比：不同的取舍</h4>
+<p>在Python里写同样的逻辑：</p>
+<pre data-label="python"><code class="language-python">arr = [1, 2, 3, 4, 5, 6, 7, 8]
+total = sum(x * 2 for x in arr if x * 2 &gt; 10)</code></pre>
+<p>这很简洁，但每一步都有解释器开销：生成器、函数调用、动态类型检查……对于这个简单例子，差距在现代硬件上可能微不足道。但如果这个循环要跑几亿次，或者处理的是GB级别的数据，差距就会非常显著。</p>
+<p>Python的取舍是：用运行时性能换取开发速度和灵活性。Rust的取舍是：用学习难度（写起来比Python复杂）换取运行时性能（和C相当）。</p>
+<p>设计哲学本身没有对错，取决于你的场景。</p>
+<h2 id="22-所有权系统不靠gc也不靠程序员自律">2.2 所有权系统：不靠GC，也不靠程序员自律</h2>
+<h4 id="221-所有权一个简单的规则">2.2.1 所有权：一个简单的规则</h4>
+<p>Rust的内存安全靠的是<strong>所有权系统</strong>（Ownership System）。它建立在三条规则上：</p>
+<ol>
+<li>Rust中每一个值都有一个<strong>所有者</strong>（owner）。</li>
+<li>每个值在同一时刻只能有<strong>一个</strong>所有者。</li>
+<li>所有者离开其<strong>作用域</strong>（scope）时，值被自动丢弃（drop）——内存被释放。</li>
+</ol>
+<p>这三条规则听起来简单，但它们的推论解决了整个内存安全问题，而且是在<strong>编译时</strong>解决的，没有运行时开销。</p>
+<h4 id="222-作用域决定生命周期">2.2.2 作用域决定生命周期</h4>
+<p>来看一个简单的例子：</p>
+<pre data-label="rust"><code class="language-rust">{
+    let s = String::from("hello"); // s是这个String值的所有者
+    // 可以使用s
+    println!("{}", s);
+} // s的作用域结束，String自动被释放（等价于free）
+// 这里s已经不存在了，不能使用</code></pre>
+<p>这就是RAII原则在Rust里的体现，和C++的智能指针类似，但区别在于：在Rust里<strong>没有例外</strong>，所有的值都遵循这个规则，没有&quot;我忘记用智能指针了&quot;的情况，因为Rust里根本没有裸指针式的手动free。</p>
+<h4 id="223-移动move转移所有权">2.2.3 移动（Move）：转移所有权</h4>
+<p>当你把一个值赋给另一个变量时，所有权发生<strong>转移</strong>：</p>
+<pre data-label="rust"><code class="language-rust">let s1 = String::from("hello");
+let s2 = s1; // 所有权从s1转移到s2
+
+// 下面这行会编译错误！
+// println!("{}", s1); // 错误：s1的值已经被移走了
+println!("{}", s2); // 正常</code></pre>
+<p>这和C/C++不同。在C++里，<code>s2 = s1</code>会触发拷贝构造函数，得到两个独立的字符串。在Rust里，对于需要堆分配的类型（比如String、Vec），默认是<strong>移动</strong>，不是拷贝——所有权转移了，原来的变量失效。</p>
+<p>为什么这样设计？因为如果允许同时有两个所有者，那么当两者都离开作用域时，就会发生double free。移动语义从根本上杜绝了这种可能。</p>
+<p>对于简单的、可以廉价复制的类型（比如整数、布尔值），Rust实现了<code>Copy</code> trait，这些类型赋值时是真正的拷贝，两个变量都有效。</p>
+<p>移动其实比你想的更加彻底，它并不只是在变量直接存在，甚至在函数调用参数时也存在：</p>
+<pre data-label="rust"><code class="language-rust">let s = String::from("hello");
+print_length(s);       // 把书"给"函数了
+println!("{}", s);     // ❌ 你手上已经没书了</code></pre>
+<p>是不是很震惊？函数调用一个参数居然也是一种所有权的转移，正是Rust如此苛刻的设计哲学，才从根本上解决了C里面的一系列矛盾。</p>
+<h4 id="224-这和c的free有什么本质不同">2.2.4 这和C的free有什么本质不同</h4>
+<p>在C里，你调用<code>free(p)</code>，编译器不知道你是否还有其他指针指向同一块内存。你可以在free之后继续使用p（use-after-free），也可以再free一次（double free）。这些行为是&quot;未定义行为&quot;，C规范说结果不可预测，但不阻止你写出这样的代码。</p>
+<p>在Rust里：</p>
+<ul>
+<li>所有权是独占的，不可能有两个所有者同时指向同一块堆内存（除非用了显式的共享类型，后面会说）。</li>
+<li>所有者离开作用域时，值被<strong>自动</strong>释放，不需要手动free，也就没有忘记释放和重复释放的问题。</li>
+<li>一旦值被移走，原变量就不能再使用，编译器强制检查，use-after-free在编译时就被发现。</li>
+</ul>
+<p>这不是运行时检查，不是sanitizer，是<strong>类型系统级别的静态分析</strong>。</p>
+<h2 id="23-借用检查器编译器当你的保姆">2.3 借用检查器：编译器当你的保姆</h2>
+<h4 id="231-借用borrow不转移所有权地使用值">2.3.1 借用（Borrow）：不转移所有权地使用值</h4>
+<p>所有权转移（move）解决了内存管理问题，但如果每次函数调用都要转移所有权，用起来会很麻烦——你把值传进函数，函数用完，值就消失了，你没法继续用。</p>
+<p>Rust引入了**借用（Borrowing）**机制，通过引用（reference）来临时访问值，而不转移所有权：</p>
+<pre data-label="rust"><code class="language-rust">fn print_length(s: &amp;String) { // &amp;String是对String的不可变引用
+    println!("长度是：{}", s.len());
+} // s（引用）在这里离开作用域，但它不拥有值，所以原来的String不会被释放
+
+fn main() {
+    let s = String::from("hello");
+    print_length(&amp;s); // 传引用，不移动所有权
+    println!("{}", s); // s在这里还可以用！
+}</code></pre>
+<p>引用有两种：</p>
+<ul>
+<li><strong>不可变引用</strong>（<code>&amp;T</code>）：可以读，不能写。</li>
+<li><strong>可变引用</strong>（<code>&amp;mut T</code>）：可以读，也可以写。</li>
+</ul>
+<h4 id="232-借用的规则为什么这么严格">2.3.2 借用的规则：为什么这么严格</h4>
+<p>借用规则：</p>
+<ol>
+<li>在任意时刻，一个值要么只有<strong>任意数量的不可变引用</strong>，要么只有<strong>一个可变引用</strong>，两者不能同时存在。</li>
+<li>引用的<strong>生命周期不能超过被引用的值</strong>。</li>
+</ol>
+<p>第一条规则是为了防止数据竞争（不管是多线程还是单线程的情况）。如果你允许同时有不可变引用和可变引用，不可变引用的持有者可能正在读数据，可变引用的持有者同时在改数据，读到的结果就是不一致的。</p>
+<pre data-label="rust"><code class="language-rust">let mut s = String::from("hello");
+let r1 = &amp;s;      // 不可变引用，OK
+let r2 = &amp;s;      // 又一个不可变引用，OK（可以同时有多个不可变引用）
+let r3 = &amp;mut s; // 编译错误！不能在有不可变引用的时候有可变引用
+
+println!("{} {}", r1, r2); // r1和r2在这里最后一次使用
+
+let r3 = &amp;mut s; // 现在OK了，因为r1和r2的生命周期已经结束
+r3.push_str(", world");</code></pre>
+<p>第二条规则是为了防止悬垂引用（dangling reference）——引用指向的内存已经被释放了。</p>
+<pre data-label="rust"><code class="language-rust">fn dangle() -&gt; &amp;String { // 返回对String的引用
+    let s = String::from("hello"); // s在这个函数里创建
+    &amp;s // 返回s的引用
+} // s在这里被释放！返回的引用指向已释放的内存！
+
+// 这段代码在Rust里编译不过，编译器会告诉你生命周期有问题。
+// 在C里，这可以编译，但运行时会产生悬垂指针。</code></pre>
+<h4 id="233-借用检查器让人又爱又恨">2.3.3 借用检查器：让人又爱又恨</h4>
+<p>负责检查这些规则的是Rust编译器里的<strong>借用检查器（borrow checker）</strong>。每个写过Rust的人都和借用检查器有过&quot;不愉快&quot;的经历——你觉得代码应该能跑，它说不行。</p>
+<p>一个经典的让新手头疼的例子：</p>
+<pre data-label="rust"><code class="language-rust">let mut v = vec![1, 2, 3];
+let first = &amp;v[0]; // 对v的不可变引用
+v.push(4);         // 编译错误！push需要可变引用，但first还活着
+println!("{}", first);</code></pre>
+<p>为什么push会报错？因为<code>Vec::push</code>可能在内部重新分配内存（当容量不足时），如果重新分配了，<code>first</code>就变成了悬垂引用——它还指向旧的内存地址，但那块内存已经被释放了。借用检查器发现了这个潜在问题，拒绝编译。</p>
+<p>这类问题在C++里会导致真实的bug（迭代器失效），但C++编译器不会报错，只会在运行时出问题。Rust把它变成了编译错误。</p>
+<h4 id="234-借用检查器的进化nll">2.3.4 借用检查器的进化：NLL</h4>
+<p>早期版本的借用检查器太保守了，会拒绝一些实际上安全的代码。2018年引入的**NLL（Non-Lexical Lifetimes，非词法生命周期）**解决了很多这类误判——借用检查器现在更智能地追踪引用的实际使用范围，而不是简单地把引用的作用域当作生命周期边界。</p>
+<p>Rust的生命周期系统还在不断改进，每个版本都会让借用检查器变得稍微更宽松、更聪明一些，同时不降低安全保证。这是Rust开发团队的持续工作之一。</p>
+<h2 id="24-和c对比同样快但更难写错">2.4 和C对比：同样快，但更难写错</h2>
+<h4 id="241-性能基本相当">2.4.1 性能：基本相当</h4>
+<p>Rust和C的性能非常接近，在很多基准测试里几乎没有区别，有时候Rust更快（因为所有权系统提供的信息让编译器能做更激进的优化，比如更好地分析别名情况），有时候C更快（因为C允许你做一些Rust认为不安全的优化）。</p>
+<p>在Computer Language Benchmarks Game这个著名的基准测试集里，Rust和C通常排在榜首附近，差距在几个百分点以内。对于绝大多数应用场景，这个差距完全可以忽略。</p>
+<h4 id="242-内存控制同样精细">2.4.2 内存控制：同样精细</h4>
+<p>Rust和C都可以精确控制内存分配。你可以选择在栈上还是堆上分配，可以选择内存布局，可以和C的malloc/free等价的allocator交互，可以写裸指针操作（但必须放在<code>unsafe</code>块里，后面会讲）。</p>
+<p>对于嵌入式场景，Rust可以在<code>no_std</code>模式下工作，不依赖标准库，不假设存在操作系统或堆分配器。这让Rust可以用在和C同样底层的场景里。</p>
+<h4 id="243-写错的难度差异显著">2.4.3 写错的难度：差异显著</h4>
+<p>但在&quot;更难写错&quot;这个维度上，Rust和C的差距非常大：</p>
+<p><strong>C的典型陷阱：</strong></p>
+<ul>
+<li>忘记初始化变量</li>
+<li>缓冲区溢出（写超过数组边界）</li>
+<li>Use-after-free（释放后继续使用指针）</li>
+<li>Double free</li>
+<li>整数溢出（C里默认不检查）</li>
+<li>空指针解引用</li>
+<li>数据竞争（多线程）</li>
+</ul>
+<p><strong>Rust默认帮你避免的：</strong></p>
+<ul>
+<li>变量必须初始化才能使用（编译器强制检查）</li>
+<li>数组越界在debug模式下会panic，release模式下也有边界检查选项</li>
+<li>所有权规则使use-after-free在编译时就被发现</li>
+<li>所有权规则使double free不可能发生</li>
+<li>整数溢出在debug模式下会panic，在release模式下可以选择行为</li>
+<li>借用规则使大多数数据竞争在编译时被发现</li>
+</ul>
+<p>Rust不是说它不会出bug，但它帮你消灭了一整类系统级的、最难调试的、最危险的bug。</p>
+<h4 id="244-unsaferust的逃生舱">2.4.4 unsafe：Rust的逃生舱</h4>
+<p>Rust有一个<code>unsafe</code>关键字，允许你在声明的&quot;不安全&quot;块里做C式的操作：裸指针、调用C函数（FFI）、修改全局状态等。</p>
+<pre data-label="rust"><code class="language-rust">unsafe {
+    let raw = 0x12345678 as *mut u32; // 裸指针
+    *raw = 42; // 直接写内存
+}</code></pre>
+<p>这是Rust的务实设计：对于真正需要底层控制的场景（比如实现内存分配器本身、和操作系统接口交互、SIMD优化），Rust提供逃生舱，但必须显式标注<code>unsafe</code>，让这些危险操作在代码里显眼可见，而不是藏在正常的C代码里悄悄危险。</p>
+<p>Rust 没有说&quot;禁止不安全操作&quot;，而是说：</p>
+<blockquote><p><strong>&quot;不安全的代码必须被显式标记出来。&quot;</strong></p>
+</blockquote>
+<p>这意味着：</p>
+<ul>
+<li>你看到没有 <code>unsafe</code> 的代码，可以<strong>完全信任</strong>编译器的安全保证</li>
+<li>出了 bug，你知道去哪里找——<strong>直接搜 <code>unsafe</code> 块</strong></li>
+<li>代码审查时，审查员知道重点盯哪里</li>
+</ul>
+<p>相比 C 的&quot;到处都可能有问题&quot;，Rust 把风险<strong>收拢到了明确的边界内</strong>。</p>
+<p>大多数Rust代码里<code>unsafe</code>块应该很少，如果你的代码到处是<code>unsafe</code>，说明你在用错误的方式写Rust。</p>
+<h2 id="25-和python对比同样现代但完全不同的取舍">2.5 和Python对比：同样现代，但完全不同的取舍</h2>
+<h4 id="251-表面相似本质不同">2.5.1 表面相似，本质不同</h4>
+<p>Rust和Python在语法表面上有一些相似：都有模式匹配、都有函数式风格的迭代器、都有类型推断（Python 3.5+的类型注解）、都注重错误处理、都有强大的包管理工具（Cargo vs pip）。</p>
+<p>但它们的设计目标完全不同：</p>
+<p><strong>Python的核心价值主张：</strong></p>
+<ul>
+<li>开发速度极快，适合原型和脚本</li>
+<li>动态类型，灵活</li>
+<li>极其丰富的生态（科学计算、ML、Web都有顶级库）</li>
+<li>适合&quot;代码写一次，可能改很多次&quot;的场景</li>
+</ul>
+<p><strong>Rust的核心价值主张：</strong></p>
+<ul>
+<li>运行时性能媲美C</li>
+<li>内存安全和线程安全有编译时保证</li>
+<li>适合对性能和可靠性都有严格要求的场景</li>
+<li>适合&quot;代码写好了不怎么改，但必须长期稳定运行&quot;的场景</li>
+</ul>
+<h4 id="252-类型系统静态-vs-动态">2.5.2 类型系统：静态 vs 动态</h4>
+<p>Python是动态类型语言：变量没有固定类型，一个变量今天装int，明天可以装string。</p>
+<pre data-label="python"><code class="language-python">x = 42
+x = "现在我是字符串了"  # 完全合法
+x = [1, 2, 3]           # 还可以变成列表</code></pre>
+<p>这非常灵活，但也意味着大量的错误只能在运行时发现。<code>TypeError: &#39;NoneType&#39; object is not subscriptable</code>——这是Python程序员的老朋友，通常是因为某个函数返回了None，但调用者没检查，继续当列表用了。</p>
+<p>Rust是静态类型语言，变量类型在编译时确定：</p>
+<pre data-label="rust"><code class="language-rust">let x: i32 = 42;
+// x = "字符串"; // 编译错误：类型不匹配</code></pre>
+<p>但Rust有<strong>类型推断</strong>（type inference），大多数情况下你不需要显式写类型，编译器能推断出来：</p>
+<pre data-label="rust"><code class="language-rust">let x = 42;        // 编译器知道这是整数
+let s = "hello";   // 编译器知道这是字符串切片</code></pre>
+<p>静态类型的好处是：大量的错误在编译时就被发现，而不是在生产环境。对于大型项目，这是巨大的优势。</p>
+<h4 id="253-并发不同的思路">2.5.3 并发：不同的思路</h4>
+<p>Python有著名的GIL（全局解释器锁），导致多线程Python程序在CPU密集型任务上几乎无法利用多核。这是Python的历史包袱，虽然Python 3.12开始尝试允许禁用GIL，但问题远未解决。Python的并发通常依赖多进程（multiprocessing）或者asyncio异步编程。</p>
+<p>Rust的所有权和借用系统天然适合并发。标准库里的<code>Arc</code>（原子引用计数）和<code>Mutex</code>、消息传递（channel）等并发原语，都和所有权系统深度集成。编译器可以检查你是否正确地同步了共享数据。</p>
+<pre data-label="rust"><code class="language-rust">use std::sync::{Arc, Mutex};
+use std::thread;
+
+let counter = Arc::new(Mutex::new(0));
+let mut handles = vec![];
+
+for _ in 0..10 {
+    let counter = Arc::clone(&amp;counter);
+    let handle = thread::spawn(move || {
+        let mut num = counter.lock().unwrap();
+        *num += 1;
+    });
+    handles.push(handle);
+}
+// Rust保证：counter不会有数据竞争</code></pre>
+<h4 id="254-生态和适用场景">2.5.4 生态和适用场景</h4>
+<p>Python在数据科学、机器学习、Web开发（Django/Flask）、脚本自动化方面有无与伦比的生态。NumPy、PyTorch、TensorFlow——这些库之所以是Python的，部分原因是它们的核心用C/C++/CUDA写的，对外暴露Python接口。换句话说，Python很多时候其实是在调用C写的东西。</p>
+<p>Rust的生态在2024-2026年已经相当成熟，但在机器学习这块比Python差很多。PyTorch已经有了一个叫<code>tch-rs</code>的Rust绑定，也有<code>candle</code>这样的纯Rust ML框架，但和Python生态的丰富程度无法相比。</p>
+<p>结论很简单：<strong>如果你要写机器学习训练脚本，用Python；如果你要写机器学习推理引擎、模型服务器或者底层框架，Rust是个认真的选项。</strong></p>
+
+    <nav class="pager">  <a href="01-why-rust.html">
+    <span class="label">← 上一章</span>
+    <span class="title">为什么会有 Rust——从 C 的原罪说起</span>
+  </a>  <a href="03-syntax.html" class="next">
+    <span class="label">下一章 →</span>
+    <span class="title">Rust 长什么样——给 C 党的语法速览</span>
+  </a></nav>
+  </article>
+</div>
+
+<footer>
+  <div class="set">
+    <span>RUST</span>
+    <span>2026 · ZH-CN</span>
+  </div>
+  <div class="set">
+    <span>Mav</span>
+  </div>
+</footer>
+<div class="search-backdrop" id="search-overlay" role="dialog" aria-modal="true" aria-label="搜索" hidden>
+  <div class="search-modal">
+    <div class="search-input-wrap">
+      <input type="search" class="search-input" placeholder="搜索内容..." aria-label="搜索内容" autocomplete="off">
+      <kbd>ESC</kbd>
+    </div>
+    <div class="search-results" role="listbox" aria-label="搜索结果"></div>
+  </div>
+</div>
+
+<!-- Mobile TOC -->
+<button class="mtoc-fab" id="mtoc-fab" aria-label="目录">TOC</button>
+<div class="mtoc-drawer" id="mtoc-drawer">
+  <div class="mtoc-content"></div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/bash.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/typescript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/yaml.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/javascript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/json.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/python.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/css.min.js"></script>
+<script src="../assets/script.js"></script>
+</body>
+</html>

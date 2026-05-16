@@ -1,0 +1,1636 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>第五章：实战选购——从需求到配置 — 电脑怎么工作的——给大一新生的计算机原理课</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" id="hljs-light" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+<link rel="stylesheet" id="hljs-dark" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" media="not all">
+</head>
+<body>
+
+<div class="progress-bar" id="progress-bar"></div>
+
+<nav class="topnav" id="topnav">
+  <div class="topnav-inner">
+    <a class="brand" href="../index.html">电脑怎么工作的——给大一新生的计算机原理课</a>
+    <div class="nav-links">
+      <a href="00-preface.html">01</a>
+      <a href="01-storage.html">02</a>
+      <a href="02-storage-appendix.html">03</a>
+      <a href="03-cpu-gpu.html">04</a>
+      <a href="04-operating-system.html">05</a>
+      <a href="05-motherboard-soc.html">06</a>
+      <a href="06-buying-guide.html" class="active">07</a>
+      <a href="07-system-cloud.html">08</a>
+    </div>
+    <div class="nav-controls">
+      <button class="nav-btn" id="search-btn" aria-label="搜索 (Ctrl+K)">⌘K</button>
+      <button class="nav-btn" id="settings-btn" aria-label="阅读设置">Aa</button>
+      <a class="nav-btn" href="../../index.html" aria-label="返回知识库">← 知识库</a>
+    </div>
+  </div>
+</nav>
+<div class="settings-pop" id="settings-pop">
+  <h5>主题</h5>
+  <div class="row">
+    <button class="seg" data-theme-set="light">明亮</button>
+    <button class="seg" data-theme-set="dark">暗色</button>
+  </div>
+  <h5>字号</h5>
+  <div class="row">
+    <button class="seg" data-size-set="s">小</button>
+    <button class="seg" data-size-set="m">中</button>
+    <button class="seg" data-size-set="l">大</button>
+  </div>
+</div>
+
+<div class="with-sidebar">
+  <aside class="sidebar">
+  <div class="chapter-num">CHAPTER 07</div>
+  <div class="chapter-name">第五章：实战选购——从需求到配置</div>
+  <h4>目录</h4>
+  <ul>
+    <li><a href="#本章引言">本章引言</a></li>
+    <li><a href="#51-轻薄本-vs-游戏本-vs-台式机选形态就是选生活方式">5.1 轻薄本 vs 游戏本 vs 台式机：选形态就是选生活方式</a></li>
+    <li><a href="#52-windows-pc-vs-mac不只是操作系统的战争">5.2 Windows PC vs Mac：不只是操作系统的战争</a></li>
+    <li><a href="#53-看懂电脑参数表每一行都在说什么">5.3 看懂电脑参数表：每一行都在说什么</a></li>
+    <li><a href="#54-二手组装品牌机的选择钱怎么花最值">5.4 二手、组装、品牌机的选择：钱怎么花最值</a></li>
+    <li><a href="#本章总结">本章总结</a></li>
+  </ul>
+</aside>
+  <article class="chapter-body">
+    <header class="chapter-head">
+  <div class="chapter-head-meta">
+    <span class="num">CHAPTER 07</span>
+    <span>≈ 40 MIN READ</span>
+  </div>
+  <h1>第五章：实战选购——从需求到配置</h1>
+</header>
+    <hr>
+<p>【上章回顾】上一章我们拆解了主板、芯片组和 SoC 的世界，理解了这些&quot;骨架&quot;和&quot;协调者&quot;如何把 CPU、内存、硬盘串联成一台完整的电脑。但一个关键问题始终悬而未决：<strong>知道了这些原理之后，我该怎么选电脑？</strong></p>
+<p>【本章目标】这一章会以实战为核心，带你从&quot;知道每个零件是什么&quot;走向&quot;知道该怎么买&quot;。我们不讨论玄学，只聊真实的需求匹配、真实的参数解读、真实的购买策略。</p>
+<hr>
+<h2 id="本章引言">本章引言</h2>
+<p>你打开京东，搜索&quot;笔记本电脑&quot;，弹出来 5000 多个结果。</p>
+<p>轻薄本、全能本、游戏本、商务本、创作本——分类就有五六种。点进去一看，参数表密密麻麻：i7-14700H、RTX 4060 Laptop、16GB LPDDR5x 7467MHz、2560×1600 165Hz……每个词你可能都在前几章见过，但组合在一起，你依然不知道<strong>这台机器适不适合你</strong>。</p>
+<p>更要命的是，价格从 3000 到 30000，跨度十倍。贵的一定好吗？便宜的一定坑吗？&quot;性价比&quot;这三个字到底意味着什么？</p>
+<p>这一章的目标就是打通从&quot;理论&quot;到&quot;行动&quot;的最后一公里。</p>
+<p><strong>读完本章，你会理解：</strong></p>
+<ul>
+<li>✅ 轻薄本、游戏本与台式机各自的设计哲学和适用人群</li>
+<li>✅ Windows PC 与 Mac 的真实差异，以及选择背后的逻辑</li>
+<li>✅ 如何逐项拆解一份参数表，判断每个指标的价值</li>
+<li>✅ 品牌机、组装机和二手机的选购策略与避坑指南</li>
+</ul>
+<p><strong>预计阅读时间</strong>：35–40 分钟</p>
+<hr>
+<h2 id="51-轻薄本-vs-游戏本-vs-台式机选形态就是选生活方式">5.1 轻薄本 vs 游戏本 vs 台式机：选形态就是选生活方式</h2>
+<h3 id="-开场一个大一新生的纠结">🎬 开场：一个大一新生的纠结</h3>
+<p>开学前一个月，你的购物车里躺着三台电脑：</p>
+<ul>
+<li>一台 <strong>1.2kg 的轻薄本</strong>，续航 15 小时，带去图书馆毫无压力，售价 5999 元；</li>
+<li>一台 <strong>2.5kg 的游戏本</strong>，RTX 4060 显卡，能在宿舍畅玩《黑神话：悟空》，售价 7499 元；</li>
+<li>一套 <strong>台式机配置单</strong>，同价位性能最强，但搬不进图书馆，售价 5500 元（不含显示器）。</li>
+</ul>
+<p>你妈问你：&quot;到底买哪个？&quot;你说：&quot;我也不知道。&quot;</p>
+<p>这不是一个技术问题，而是一个<strong>生活方式问题</strong>。让我们把三种形态的电脑放在解剖台上，看看它们的设计哲学到底有什么不同。</p>
+<hr>
+<h3 id="-核心概念三种形态的本质差异">📐 核心概念：三种形态的本质差异</h3>
+<h4 id="理解一个根本矛盾性能-vs-便携-vs-散热">理解一个根本矛盾：性能 vs 便携 vs 散热</h4>
+<p>在第二章我们讲过，CPU 和 GPU 工作时会产生大量热量。在第四章我们提到，散热系统的设计直接决定了芯片能释放多少性能。现在，这个知识要派上用场了。</p>
+<p>电脑设计中有一个经典的&quot;不可能三角&quot;：</p>
+<pre><code>        性能
+       /    \
+      /      \
+   便携 ———— 散热</code></pre>
+<p>你不可能同时拥有极致的性能、极致的便携和极致的散热。每一种电脑形态，都是在这个三角形中选择了不同的平衡点。</p>
+<h4 id="轻薄本便携优先性能够用">轻薄本：便携优先，性能够用</h4>
+<p><strong>设计哲学</strong>：把电脑做成&quot;随身工具&quot;，像课本一样塞进书包，全天候使用不需要找插座。</p>
+<p><strong>核心取舍</strong>：</p>
+<div class="table-wrap"><table><thead><tr>
+<th align="left">维度</th>
+<th align="left">轻薄本的选择</th>
+</tr>
+</thead><tbody><tr>
+<td align="left">重量</td>
+<td align="left">1.0–1.5kg（含电源适配器约 1.5–2.0kg）</td>
+</tr>
+<tr>
+<td align="left">厚度</td>
+<td align="left">12–16mm</td>
+</tr>
+<tr>
+<td align="left">CPU</td>
+<td align="left">低功耗版（TDP 通常 15–28W），如 Intel Core Ultra 5 125U、AMD Ryzen 7 8840U</td>
+</tr>
+<tr>
+<td align="left">GPU</td>
+<td align="left">核显（集成显卡）或入门级独显（如 MX 570A）</td>
+</tr>
+<tr>
+<td align="left">续航</td>
+<td align="left">8–15 小时（日常使用）</td>
+</tr>
+<tr>
+<td align="left">风扇噪音</td>
+<td align="left">日常使用几乎无声</td>
+</tr>
+<tr>
+<td align="left">典型价格</td>
+<td align="left">4000–8000 元（2025 年主流价位）</td>
+</tr>
+</tbody></table></div>
+<p><strong>谁适合轻薄本？</strong></p>
+<ul>
+<li>经常在教室、图书馆、咖啡厅之间迁移的同学</li>
+<li>主要用途是写文档、做 PPT、浏览网页、看网课、写代码（非大型项目编译）</li>
+<li>不玩大型 3A 游戏，或者可以接受&quot;游戏用别的设备&quot;</li>
+<li>看重续航，讨厌随身带大号充电器</li>
+</ul>
+<p><strong>一个直观的类比</strong>：轻薄本就像一辆<strong>城市代步车</strong>——油耗低、停车方便、堵车不慌，但你别指望它去越野或者拉货。</p>
+<blockquote><p>💡 <strong>关于&quot;全能本&quot;</strong>：近两年市场上出现了一个新品类叫&quot;全能本&quot;或&quot;高性能轻薄本&quot;，重量在 1.5–1.8kg，配备 RTX 4050/4060 级别独显，试图在轻薄和性能之间取一个折中。代表产品如联想小新 Pro 16、华硕无畏 Pro 系列等。它们确实是不错的选择，但请记住：物理规律不可违背，折中意味着两边都不会做到极致。</p>
+</blockquote>
+<h4 id="游戏本性能优先牺牲便携">游戏本：性能优先，牺牲便携</h4>
+<p><strong>设计哲学</strong>：在笔记本形态里塞入尽可能强的性能。你可以带着它移动，但它更像一台&quot;可以搬走的台式机&quot;。</p>
+<p><strong>核心取舍</strong>：</p>
+<div class="table-wrap"><table><thead><tr>
+<th align="left">维度</th>
+<th align="left">游戏本的选择</th>
+</tr>
+</thead><tbody><tr>
+<td align="left">重量</td>
+<td align="left">2.0–3.0kg（含电源适配器可达 3.5–4.5kg）</td>
+</tr>
+<tr>
+<td align="left">厚度</td>
+<td align="left">20–30mm</td>
+</tr>
+<tr>
+<td align="left">CPU</td>
+<td align="left">高性能版（TDP 通常 45–65W），如 Intel i7-14700HX、AMD Ryzen 9 8945HX</td>
+</tr>
+<tr>
+<td align="left">GPU</td>
+<td align="left">高性能独显，如 RTX 4060/4070/4080 Laptop</td>
+</tr>
+<tr>
+<td align="left">续航</td>
+<td align="left">3–6 小时（日常使用），游戏时 1–2 小时</td>
+</tr>
+<tr>
+<td align="left">风扇噪音</td>
+<td align="left">高负载时明显（可达 45–55 分贝，相当于正常对话音量）</td>
+</tr>
+<tr>
+<td align="left">典型价格</td>
+<td align="left">6000–15000 元（2025 年主流价位）</td>
+</tr>
+</tbody></table></div>
+<p><strong>谁适合游戏本？</strong></p>
+<ul>
+<li>爱玩 3A 大作或者竞技游戏（《CS2》《英雄联盟》倒是轻薄本也能跑）</li>
+<li>专业需要 GPU 算力：深度学习训练、3D 建模与渲染、视频剪辑</li>
+<li>能接受&quot;主要在寝室和实验室用&quot;，不介意背着重书包</li>
+<li>预算有限，不想同时买笔记本和台式机</li>
+</ul>
+<p><strong>一个直观的类比</strong>：游戏本就像一辆 <strong>SUV</strong>——动力够猛、空间够大，但油耗高、停车费劲，进城不如小车灵活。</p>
+<blockquote><p>⚠️ <strong>游戏本的&quot;Laptop 版&quot;显卡陷阱</strong>：同样叫 RTX 4060，笔记本版（Laptop）和桌面版（Desktop）的性能差距可达 <strong>20–40%</strong>。原因在第二章讲过——功耗限制导致 GPU 不能以满血功率运行。所以看到游戏本标称的显卡型号，不要直接和台式机画等号。</p>
+</blockquote>
+<h4 id="台式机性能拉满放弃便携">台式机：性能拉满，放弃便携</h4>
+<p><strong>设计哲学</strong>：没有体积限制，没有电池焦虑，所有预算都花在性能上。</p>
+<p><strong>核心取舍</strong>：</p>
+<div class="table-wrap"><table><thead><tr>
+<th align="left">维度</th>
+<th align="left">台式机的选择</th>
+</tr>
+</thead><tbody><tr>
+<td align="left">体积</td>
+<td align="left">中塔机箱约 45×20×45 cm（需要固定位置放置）</td>
+</tr>
+<tr>
+<td align="left">CPU</td>
+<td align="left">桌面版满血芯片（TDP 65–125W+），如 AMD Ryzen 5 9600X、Intel i5-14600KF</td>
+</tr>
+<tr>
+<td align="left">GPU</td>
+<td align="left">桌面版满血显卡，如 RTX 4060/4070 Desktop</td>
+</tr>
+<tr>
+<td align="left">散热空间</td>
+<td align="left">充足（支持大型塔式风冷或 240/360mm 水冷）</td>
+</tr>
+<tr>
+<td align="left">扩展性</td>
+<td align="left">高——可随时升级内存、显卡、硬盘</td>
+</tr>
+<tr>
+<td align="left">显示器</td>
+<td align="left">需单独购买（但可以选 27 寸大屏，体验远超笔记本）</td>
+</tr>
+<tr>
+<td align="left">电源</td>
+<td align="left">需要持续插电使用</td>
+</tr>
+<tr>
+<td align="left">典型价格</td>
+<td align="left">主机 4000–10000 元 + 显示器 800–3000 元（2025 年参考）</td>
+</tr>
+</tbody></table></div>
+<p><strong>谁适合台式机？</strong></p>
+<ul>
+<li>在宿舍/家里有固定工位，不需要经常带电脑出门</li>
+<li>追求极致性价比：同等预算，台式机性能通常比笔记本高 <strong>30–50%</strong></li>
+<li>有升级需求：大二买的显卡不够用了，大三换一块就行</li>
+<li>重度游戏玩家、深度学习研究者、视频创作者</li>
+</ul>
+<p><strong>一个直观的类比</strong>：台式机就像一台 <strong>家用健身房器材</strong>——效果最好、可以不断加配件，但你得有地方放，而且搬家的时候很头疼。</p>
+<hr>
+<h3 id="-同等预算下的性能对比">💰 同等预算下的性能对比</h3>
+<p>为了让你直观感受三种形态的差异，我们拿 <strong>7000 元</strong>（2025 年参考价）这个大学生常见预算做一个对比：</p>
+<div class="table-wrap"><table><thead><tr>
+<th align="left">项目</th>
+<th align="left">轻薄本（~7000元）</th>
+<th align="left">游戏本（~7000元）</th>
+<th align="left">台式机（~7000元，含显示器）</th>
+</tr>
+</thead><tbody><tr>
+<td align="left">CPU</td>
+<td align="left">Core Ultra 7 155H</td>
+<td align="left">i7-14700HX</td>
+<td align="left">Ryzen 5 9600X</td>
+</tr>
+<tr>
+<td align="left">GPU</td>
+<td align="left">Intel Arc 核显</td>
+<td align="left">RTX 4060 Laptop（80–100W）</td>
+<td align="left">RTX 4060 Desktop（115W）</td>
+</tr>
+<tr>
+<td align="left">内存</td>
+<td align="left">16GB LPDDR5x</td>
+<td align="left">16GB DDR5</td>
+<td align="left">32GB DDR5</td>
+</tr>
+<tr>
+<td align="left">硬盘</td>
+<td align="left">512GB SSD</td>
+<td align="left">512GB SSD</td>
+<td align="left">1TB NVMe SSD</td>
+</tr>
+<tr>
+<td align="left">屏幕</td>
+<td align="left">14 寸 2.8K OLED</td>
+<td align="left">16 寸 2.5K 165Hz</td>
+<td align="left">27 寸 2K 165Hz（单独购买）</td>
+</tr>
+<tr>
+<td align="left">便携性</td>
+<td align="left">⭐⭐⭐⭐⭐</td>
+<td align="left">⭐⭐</td>
+<td align="left">⭐（无法移动）</td>
+</tr>
+<tr>
+<td align="left">游戏性能</td>
+<td align="left">⭐⭐</td>
+<td align="left">⭐⭐⭐⭐</td>
+<td align="left">⭐⭐⭐⭐⭐</td>
+</tr>
+<tr>
+<td align="left">升级空间</td>
+<td align="left">⭐</td>
+<td align="left">⭐⭐</td>
+<td align="left">⭐⭐⭐⭐⭐</td>
+</tr>
+</tbody></table></div>
+<blockquote><p>📊 <strong>数据说明</strong>：以上配置为 2025 年市场参考，实际价格随促销活动和市场波动有所变化。建议购买前在京东、天猫等平台查询实时价格。</p>
+</blockquote>
+<p>同样的钱，台式机在性能层面几乎全方位碾压；游戏本在&quot;可移动&quot;和&quot;高性能&quot;之间取得平衡；轻薄本则用极致便携换取了最舒适的日常体验。</p>
+<hr>
+<h3 id="-常见误区">❌ 常见误区</h3>
+<p>❌ <strong>&quot;游戏本可以当轻薄本用，功能更全&quot;</strong>
+→ ✅ 游戏本确实&quot;能做&quot;轻薄本的活儿，但每天背着 3kg 的电脑 + 1kg 的电源走来走去，加上 3 小时的续航和嗡嗡作响的风扇，你的体验会非常糟糕。形态选择的核心不是&quot;能不能&quot;，而是&quot;爽不爽&quot;。</p>
+<p>❌ <strong>&quot;台式机已经过时了，现在都用笔记本&quot;</strong>
+→ ✅ 台式机在性价比、扩展性和大屏体验上依然无可替代。对于有固定工位的同学，台式机 + 一台便宜的平板/轻薄本做笔记，往往是比一台高价游戏本更好的组合。</p>
+<p>❌ <strong>&quot;买最贵的就是最好的&quot;</strong>
+→ ✅ 如果你不玩游戏、不做视频剪辑，一台 15000 元的游戏本对你来说就是在为你根本用不到的 GPU 性能买单。<strong>需求不匹配的高配置就是浪费</strong>。</p>
+<hr>
+<h3 id="-动手环节评估你自己的需求">🔧 动手环节：评估你自己的需求</h3>
+<p>在继续往下读之前，请你花 3 分钟做一个自我评估：</p>
+<p><strong>Step 1：列出你的使用场景</strong></p>
+<p>拿出一张纸（或者打开备忘录），写下你大学期间最常用电脑做的 5 件事。比如：</p>
+<ol>
+<li>写作业 / 写论文（Word / LaTeX）</li>
+<li>写代码（VS Code / PyCharm）</li>
+<li>看网课 / 刷 B 站</li>
+<li>玩游戏（具体是什么游戏？）</li>
+<li>跑深度学习模型 / 3D 建模 / 视频剪辑</li>
+</ol>
+<p><strong>Step 2：评估便携需求</strong></p>
+<p>问自己两个问题：</p>
+<ul>
+<li>我每周需要带电脑出门几次？（0–1 次 → 台式机友好 / 3 次以上 → 轻薄本友好）</li>
+<li>我有没有固定的使用位置？（有 → 台式机可选 / 没有 → 必须笔记本）</li>
+</ul>
+<p><strong>Step 3：对照下表，找到你的&quot;最优解&quot;</strong></p>
+<div class="table-wrap"><table><thead><tr>
+<th align="left">你的需求画像</th>
+<th align="left">推荐形态</th>
+<th align="left">推荐预算（2025年参考）</th>
+</tr>
+</thead><tbody><tr>
+<td align="left">文科/商科，日常学习为主</td>
+<td align="left">轻薄本</td>
+<td align="left">4000–6000 元</td>
+</tr>
+<tr>
+<td align="left">理工科，需要写代码但不跑大模型</td>
+<td align="left">轻薄本 或 全能本</td>
+<td align="left">5000–7000 元</td>
+</tr>
+<tr>
+<td align="left">需要 GPU 算力（深度学习/3D/视频）</td>
+<td align="left">游戏本 或 台式机</td>
+<td align="left">7000–12000 元</td>
+</tr>
+<tr>
+<td align="left">重度游戏玩家 + 不需要经常出门</td>
+<td align="left">台式机</td>
+<td align="left">5000–8000 元（主机）</td>
+</tr>
+<tr>
+<td align="left">重度游戏玩家 + 需要便携</td>
+<td align="left">游戏本</td>
+<td align="left">7000–12000 元</td>
+</tr>
+<tr>
+<td align="left">预算充足，想要最佳体验</td>
+<td align="left">台式机 + 轻薄本/平板</td>
+<td align="left">10000–15000 元（组合）</td>
+</tr>
+</tbody></table></div>
+<blockquote><p>💡 <strong>科大同学特别提示</strong>：如果你是计算机、信息、数据科学等专业，大二大三可能会需要用到 GPU 跑模型。但大一上学期的课程基本用不到独显，所以一个务实的策略是：<strong>先买一台轻薄本应付当下，等确定了研究方向再决定是否添置台式机或云 GPU</strong>。</p>
+</blockquote>
+<hr>
+<h3 id="-本节要点">✅ 本节要点</h3>
+<ul>
+<li>✓ 电脑形态选择的核心是<strong>性能—便携—散热</strong>的三角取舍</li>
+<li>✓ 轻薄本适合高频移动、日常办公的场景，像城市代步车</li>
+<li>✓ 游戏本在便携与性能之间取折中，但牺牲了续航和便携体验</li>
+<li>✓ 台式机在性价比和扩展性上无可替代，适合有固定工位的用户</li>
+<li>✓ <strong>先明确需求，再决定形态</strong>——这是选购的第一原则</li>
+</ul>
+<hr>
+<h2 id="52-windows-pc-vs-mac不只是操作系统的战争">5.2 Windows PC vs Mac：不只是操作系统的战争</h2>
+<h3 id="-开场宿舍里的quot信仰之争quot">🎬 开场：宿舍里的&quot;信仰之争&quot;</h3>
+<p>大一入学第一周，宿舍四个人的桌上摆着四台电脑。两台 Windows 笔记本，一台 MacBook Air，还有一台 MacBook Pro。</p>
+<p>用 Windows 的室友问：&quot;Mac 那么贵，花一万多就买了个 8GB 内存的，不亏吗？&quot;</p>
+<p>用 Mac 的室友反击：&quot;你那个 Windows 一天蓝屏两三次，还得装杀毒软件，不累吗？&quot;</p>
+<p>两边都说得有道理，也都有偏见。Windows 和 Mac 之间的选择，从来不是简单的&quot;谁更好&quot;——它涉及操作系统、硬件架构、软件生态和使用习惯。让我们把情绪放一边，从技术角度拆解这场&quot;信仰之争&quot;。</p>
+<hr>
+<h3 id="-核心概念两条完全不同的技术路线">📐 核心概念：两条完全不同的技术路线</h3>
+<h4 id="本质差异开放平台-vs-封闭生态">本质差异：开放平台 vs 封闭生态</h4>
+<p>在第二章我们讲过 x86 和 ARM 两种指令集架构，在第四章我们聊了苹果 M 系列 SoC 的革命性设计。现在这些知识要综合运用了。</p>
+<p>Windows PC 和 Mac 的差异，远不止&quot;装了不同的操作系统&quot;那么简单。它们代表了两种完全不同的产品哲学：</p>
+<div class="table-wrap"><table><thead><tr>
+<th align="left">维度</th>
+<th align="left">Windows PC</th>
+<th align="left">Mac</th>
+</tr>
+</thead><tbody><tr>
+<td align="left"><strong>硬件</strong></td>
+<td align="left">数百个品牌、数千款配置，开放硬件标准</td>
+<td align="left">苹果独家设计和制造，型号有限</td>
+</tr>
+<tr>
+<td align="left"><strong>芯片架构</strong></td>
+<td align="left">主要用 x86 架构（Intel/AMD）</td>
+<td align="left">Apple Silicon（ARM 架构，M1/M2/M3/M4/M5 系列）</td>
+</tr>
+<tr>
+<td align="left"><strong>操作系统</strong></td>
+<td align="left">Windows（微软开发，运行在各品牌硬件上）</td>
+<td align="left">macOS（苹果开发，只运行在苹果硬件上）</td>
+</tr>
+<tr>
+<td align="left"><strong>软硬件关系</strong></td>
+<td align="left">软硬件分离——操作系统和硬件来自不同公司</td>
+<td align="left">软硬件一体——苹果同时设计芯片、硬件和系统</td>
+</tr>
+</tbody></table></div>
+<p>这个区别可以用一个类比来理解：</p>
+<p><strong>Windows PC 就像安卓手机的生态</strong>——不同厂商用不同的硬件，跑同一个操作系统。选择多、价格跨度大，但体验参差不齐。</p>
+<p><strong>Mac 就像 iPhone</strong>——苹果自己设计一切，产品线简单，但每一款都经过深度优化。选择少，但&quot;开箱即用&quot;的体验通常更好。</p>
+<h4 id="apple-silicon-到底强在哪">Apple Silicon 到底强在哪？</h4>
+<p>在第四章我们已经介绍过 SoC（片上系统）的概念。苹果 M 系列芯片可能是目前消费级 SoC 最成功的案例。让我们具体聊聊它的优势和局限：</p>
+<p><strong>优势：</strong></p>
+<ol>
+<li><p><strong>能效比惊人</strong>：M4 芯片（2024 年发布）的 CPU 在 10W 功耗下就能达到 Intel i7-14700H 在 45W 下的单线程性能。这意味着 MacBook Air 完全无风扇设计，依然能跑出中端 Windows 笔记本的性能。</p>
+</li>
+<li><p><strong>统一内存架构（Unified Memory）</strong>：回忆第一章讲的存储金字塔——传统 PC 中，CPU 和 GPU 各有各的内存，数据要来回搬运。M 系列芯片让 CPU、GPU、NPU 共享同一块内存池，数据零拷贝。这就好比大厨和助手共用一张工作台，不需要把食材从一张桌子搬到另一张桌子。</p>
+</li>
+<li><p><strong>电池续航</strong>：MacBook Air M4 可以连续视频播放 18 小时。同价位 Windows 轻薄本通常在 8–12 小时。ARM 架构天生比 x86 省电（原因在第二章讲过）。</p>
+</li>
+<li><p><strong>macOS 的深度优化</strong>：因为苹果同时控制硬件和软件，macOS 可以针对 M 芯片做极致优化。你打开 Safari、Final Cut Pro 等苹果自家应用时，能明显感受到丝滑流畅。</p>
+</li>
+</ol>
+<p><strong>局限：</strong></p>
+<ol>
+<li><p><strong>内存不可升级</strong>：MacBook 的内存焊死在芯片上（和 SoC 封装在一起）。你买 8GB 就是 8GB，买 16GB 就是 16GB，以后不能加。这一点在第一章讲内存时提到过——焊接内存牺牲了升级自由度。</p>
+</li>
+<li><p><strong>游戏生态薄弱</strong>：大多数 PC 游戏是为 x86 + DirectX（Windows 图形 API）开发的。虽然苹果在积极推进 Metal API 和 Game Porting Toolkit，但目前 Mac 上能玩的 3A 大作远少于 Windows。</p>
+</li>
+<li><p><strong>专业软件兼容性</strong>：部分工程类软件（如某些 EDA 工具、MATLAB 的特定工具箱、一些教学实验平台）只有 Windows 版。虽然可以通过虚拟机（Parallels Desktop）运行 Windows，但这意味着额外的成本和性能损失。</p>
+</li>
+<li><p><strong>维修成本高</strong>：苹果产品一体化设计意味着一旦某个部件出问题，维修费可能非常夸张。换一块 MacBook Pro 的主板可能需要 4000–6000 元，而 Windows 笔记本换一块内存条可能只需要 200 元。</p>
+</li>
+</ol>
+<hr>
+<h3 id="-实际使用体验对比">💻 实际使用体验对比</h3>
+<p>抛开参数，我们来聊聊日常使用中两者的真实差异：</p>
+<h4 id="开机与日常操作">开机与日常操作</h4>
+<div class="table-wrap"><table><thead><tr>
+<th align="left">体验维度</th>
+<th align="left">Windows PC</th>
+<th align="left">Mac</th>
+</tr>
+</thead><tbody><tr>
+<td align="left">开机速度</td>
+<td align="left">SSD 时代差距缩小，通常 8–15 秒</td>
+<td align="left">M 芯片极快，通常 5–10 秒；且掀开盖子即醒</td>
+</tr>
+<tr>
+<td align="left">系统更新</td>
+<td align="left">有时会在你准备关机时强制更新 30 分钟</td>
+<td align="left">更新频率更低，可选择延后</td>
+</tr>
+<tr>
+<td align="left">触控板体验</td>
+<td align="left">大多数不错，但远不及 Mac</td>
+<td align="left">业界标杆——力度触控 + 手势操作极其丝滑</td>
+</tr>
+<tr>
+<td align="left">文件管理</td>
+<td align="left">资源管理器功能丰富</td>
+<td align="left">Finder 颜值高但功能相对简单，深度用户可能觉得不够强</td>
+</tr>
+<tr>
+<td align="left">快捷键体系</td>
+<td align="left">Ctrl 系列（Ctrl+C/V/Z）</td>
+<td align="left">Command 系列（⌘+C/V/Z），需要适应期</td>
+</tr>
+</tbody></table></div>
+<h4 id="软件生态">软件生态</h4>
+<div class="table-wrap"><table><thead><tr>
+<th align="left">使用场景</th>
+<th align="left">Windows</th>
+<th align="left">Mac</th>
+</tr>
+</thead><tbody><tr>
+<td align="left">Office 办公</td>
+<td align="left">原生支持，体验最好</td>
+<td align="left">有 Mac 版，但部分功能和排版与 Windows 有差异</td>
+</tr>
+<tr>
+<td align="left">编程开发</td>
+<td align="left">VS、VS Code、JetBrains 全支持；.NET 开发首选</td>
+<td align="left">终端/命令行体验优秀（基于 Unix）；Web 开发和 iOS 开发首选</td>
+</tr>
+<tr>
+<td align="left">创意设计</td>
+<td align="left">Adobe 全家桶、Blender 等跨平台可用</td>
+<td align="left">Final Cut Pro、Logic Pro 独占；Adobe 系列对 M 芯片优化良好</td>
+</tr>
+<tr>
+<td align="left">游戏</td>
+<td align="left"><strong>绝对优势</strong>——Steam 上数万款游戏</td>
+<td align="left">可选游戏数量远少于 Windows</td>
+</tr>
+<tr>
+<td align="left">科研工具</td>
+<td align="left">MATLAB、Mathematica、各种仿真工具，兼容性最好</td>
+<td align="left">大多数也有 Mac 版，但少数工具可能缺失或有 bug</td>
+</tr>
+</tbody></table></div>
+<h4 id="价格对比2025-年参考">价格对比（2025 年参考）</h4>
+<div class="table-wrap"><table><thead><tr>
+<th align="left">产品</th>
+<th align="left">配置概要</th>
+<th align="left">价格</th>
+</tr>
+</thead><tbody><tr>
+<td align="left">MacBook Air 13&quot; M4</td>
+<td align="left">8 核 CPU + 10 核 GPU / 16GB / 256GB</td>
+<td align="left">约 7999 元（教育优惠约 7199 元）</td>
+</tr>
+<tr>
+<td align="left">MacBook Air 15&quot; M4</td>
+<td align="left">10 核 CPU + 10 核 GPU / 16GB / 512GB</td>
+<td align="left">约 9999 元（教育优惠约 9199 元）</td>
+</tr>
+<tr>
+<td align="left">MacBook Pro 14&quot; M4 Pro</td>
+<td align="left">12 核 CPU + 16 核 GPU / 24GB / 512GB</td>
+<td align="left">约 14999 元（教育优惠约 13799 元）</td>
+</tr>
+<tr>
+<td align="left">同价位 Windows 轻薄本</td>
+<td align="left">i7 / 16GB / 512GB / 2.8K 屏</td>
+<td align="left">约 5500–7000 元</td>
+</tr>
+<tr>
+<td align="left">同价位 Windows 全能本</td>
+<td align="left">i7 + RTX 4060 / 16GB / 512GB</td>
+<td align="left">约 7000–8500 元</td>
+</tr>
+</tbody></table></div>
+<blockquote><p>📊 <strong>价格说明</strong>：以上为 2025 年参考价格。苹果教育优惠需通过 Apple 教育商店购买，大学生（含被录取的新生）凭学生身份验证即可享受。每年&quot;返校季&quot;（通常 7–9 月）还会额外赠送 AirPods 等产品。实际价格请以购买时的官方标价为准。</p>
+</blockquote>
+<p>你会发现，Mac 的&quot;账面参数&quot;看起来不如同价位的 Windows 机器——内存更小、存储更少、没有独立显卡。但这里有一个关键点：<strong>Apple Silicon 的 8GB/16GB 统一内存和 Windows PC 的 8GB/16GB 内存并不是同一回事</strong>。</p>
+<p>统一内存省去了数据在 CPU 内存和 GPU 显存之间的复制，效率更高。所以 Mac 上 16GB 的&quot;体感&quot;接近 Windows PC 上 24–32GB 的体验（在图形和视频处理场景下尤为明显）。但这不意味着你可以无视内存容量——如果你要同时开几十个 Chrome 标签页 + IDE + Slack + Zoom，16GB 也不够，Windows 和 Mac 都一样。</p>
+<hr>
+<h3 id="-科大同学的特殊考量">🎓 科大同学的特殊考量</h3>
+<p>作为中科大学生，你在选择时需要特别注意几个点：</p>
+<ol>
+<li><p><strong>课程软件兼容性</strong>：某些实验课可能指定使用 Windows 平台的软件（比如 Quartus、某些硬件仿真工具）。建议入学前向学长或老师确认。如果确实需要 Windows，Mac 可以通过 Parallels Desktop 虚拟机运行 Windows，但这是额外的成本（软件费约 500 元/年）并且性能会打折。</p>
+</li>
+<li><p><strong>编程环境</strong>：如果你的方向是 Web 开发、iOS 开发或 AI 研究，macOS 基于 Unix 的终端环境会非常舒适——<code>brew install</code> 一行命令就能配好大部分开发工具。但如果是 .NET 开发或者需要大量使用 Visual Studio（不是 VS Code），Windows 是更自然的选择。</p>
+</li>
+<li><p><strong>如果你需要 GPU 训练模型</strong>：MacBook 的 GPU 在深度学习方面的生态支持不如 NVIDIA（CUDA 不支持 Metal）。虽然 PyTorch 已支持 Apple GPU 加速（MPS 后端），但大部分教程和生产环境仍以 NVIDIA GPU + CUDA 为主。这种情况下，Windows 游戏本或台式机是更务实的选择，或者使用学校/云端的 GPU 资源。</p>
+</li>
+<li><p><strong>生态锁定效应</strong>：如果你已经有 iPhone、iPad 和 AirPods，MacBook 和这些设备之间的协作是 Windows 无法复制的——AirDrop 传文件、Handoff 接力编辑、iCloud 同步笔记、用 iPad 做 Mac 的扩展屏幕（Sidecar）。这些功能不是必须的，但用过之后会很难回到&quot;手动传文件&quot;的时代。</p>
+</li>
+</ol>
+<hr>
+<h3 id="-那么到底该选谁一张决策流程图">🤔 那么到底该选谁？——一张决策流程图</h3>
+<p>如果你还在犹豫，按下面的流程走：</p>
+<pre><code>你需要跑大型游戏吗？
+  ├── 是 → 选 Windows（游戏本或台式机）
+  └── 否 →
+        你的课程/专业是否要求特定 Windows 软件？
+          ├── 是，且没有 Mac 替代方案 → 选 Windows
+          └── 否，或者有替代方案 →
+                你已经深度使用 Apple 生态了吗？
+                  ├── 是 → MacBook 是很好的选择
+                  └── 否 →
+                        你的预算是否允许 Mac？
+                          ├── 7000+ 可以考虑 MacBook Air
+                          └── 7000 以下 → Windows 的选择更多</code></pre>
+<blockquote><p>💡 <strong>一句话总结</strong>：Windows 是&quot;什么都能做&quot;的万能选手，Mac 是&quot;很多事做得更好&quot;的专精选手。没有绝对的优劣，只有适不适合。</p>
+</blockquote>
+<hr>
+<h3 id="06-buying-guide--常见误区-2">❌ 常见误区</h3>
+<p>❌ <strong>&quot;Mac 的 8GB 内存完全够用，等于 Windows 的 16GB&quot;</strong>
+→ ✅ 这个说法有一定道理但过于夸张。苹果统一内存确实效率更高，但内存不足就是内存不足。2025 年购买 Mac，<strong>强烈建议至少 16GB 起步</strong>。幸运的是，苹果从 M4 起已将入门款内存提升到 16GB。</p>
+<p>❌ <strong>&quot;Mac 不能装 Windows 所以什么都用不了&quot;</strong>
+→ ✅ Apple Silicon 的 Mac 可以通过 Parallels Desktop 运行 ARM 版 Windows 11，绝大多数日常软件（包括 Office、微信等）都能正常运行。只是部分对 x86 强依赖的老旧软件可能有兼容问题。</p>
+<p>❌ <strong>&quot;Windows 总是蓝屏、卡顿、不稳定&quot;</strong>
+→ ✅ Windows 11 的稳定性已经非常好了。大多数&quot;不稳定&quot;是二手/旧电脑年久失修或驱动不兼容导致的，而非系统本身的问题。一台硬件正常的新 Windows 笔记本，体验完全可以做到流畅稳定。</p>
+<hr>
+<h3 id="-动手环节了解你现在的电脑">🔧 动手环节：了解你现在的电脑</h3>
+<p>如果你手边已经有一台电脑，做以下操作来了解它的&quot;身份信息&quot;：</p>
+<p><strong>Windows 用户：</strong></p>
+<ol>
+<li>按下 <code>Win + I</code> 打开设置</li>
+<li>点击「系统」→「关于」</li>
+<li>你会看到：<ul>
+<li><strong>设备名称</strong>：你的电脑名</li>
+<li><strong>处理器</strong>：CPU 型号（比如 Intel Core i5-12500H）</li>
+<li><strong>已安装的 RAM</strong>：内存大小</li>
+<li><strong>系统类型</strong>：64 位操作系统，x64 处理器（这就是第二章讲的 x86-64 架构）</li>
+</ul>
+</li>
+</ol>
+<p><strong>Mac 用户：</strong></p>
+<ol>
+<li>点击屏幕左上角的  → 「关于本机」</li>
+<li>你会看到：<ul>
+<li><strong>芯片</strong>：Apple M1/M2/M3/M4 等</li>
+<li><strong>内存</strong>：统一内存大小</li>
+<li><strong>序列号</strong>：可以到苹果官网查保修状态</li>
+</ul>
+</li>
+</ol>
+<pre data-label="bash"><code class="language-bash"># Mac 用户也可以在终端中查看详细信息
+system_profiler SPHardwareDataType</code></pre>
+<p><strong>看看你的电脑属于我们讨论的哪种形态，它的配置在对应形态中处于什么水位。</strong></p>
+<hr>
+<h3 id="06-buying-guide--本节要点-2">✅ 本节要点</h3>
+<ul>
+<li>✓ Windows PC 是开放平台（硬件多样 + 通用系统），Mac 是封闭生态（软硬件一体优化）</li>
+<li>✓ Apple Silicon 的核心优势在于能效比和统一内存，但游戏和部分专业软件兼容性是短板</li>
+<li>✓ 选择 Mac 还是 Windows，关键看<strong>软件需求、生态绑定和预算</strong></li>
+<li>✓ 科大同学特别注意：确认课程软件兼容性，GPU 训练首选 NVIDIA 生态</li>
+<li>✓ 两者没有绝对的好坏，只有&quot;适合&quot;与&quot;不适合&quot;</li>
+</ul>
+<hr>
+<h2 id="53-看懂电脑参数表每一行都在说什么">5.3 看懂电脑参数表：每一行都在说什么</h2>
+<h3 id="-开场那张让人头疼的表">🎬 开场：那张让人头疼的表</h3>
+<p>你终于决定买一台笔记本。打开京东的商品页面，拉到&quot;规格与包装&quot;一栏，看到了这样一张表：</p>
+<div class="table-wrap"><table><thead><tr>
+<th align="left">参数名</th>
+<th align="left">值</th>
+</tr>
+</thead><tbody><tr>
+<td align="left">处理器</td>
+<td align="left">Intel Core i7-14700HX</td>
+</tr>
+<tr>
+<td align="left">显卡</td>
+<td align="left">NVIDIA GeForce RTX 4060 Laptop GPU 8GB GDDR6</td>
+</tr>
+<tr>
+<td align="left">内存</td>
+<td align="left">16GB DDR5 5600MHz</td>
+</tr>
+<tr>
+<td align="left">硬盘</td>
+<td align="left">512GB PCIe 4.0 NVMe SSD</td>
+</tr>
+<tr>
+<td align="left">屏幕</td>
+<td align="left">16 英寸 2560×1600 IPS 165Hz 100% sRGB</td>
+</tr>
+<tr>
+<td align="left">电池</td>
+<td align="left">80Wh</td>
+</tr>
+<tr>
+<td align="left">重量</td>
+<td align="left">2.3kg</td>
+</tr>
+<tr>
+<td align="left">接口</td>
+<td align="left">2×USB-A 3.2、1×USB-C（雷电4）、1×HDMI 2.1、1×SD 卡槽</td>
+</tr>
+<tr>
+<td align="left">操作系统</td>
+<td align="left">Windows 11 家庭版</td>
+</tr>
+</tbody></table></div>
+<p>前几章的知识让你认识了其中一些术语，但&quot;5600MHz&quot;&quot;PCIe 4.0&quot;&quot;IPS&quot;&quot;165Hz&quot;&quot;sRGB&quot;&quot;雷电4&quot;又是什么？参数后面的数字越大一定越好吗？</p>
+<p>这一节，我们逐行拆解这张参数表——让你以后看到任何一台电脑的配置，都能像读菜谱一样理解它。</p>
+<hr>
+<h3 id="-核心概念逐项解读参数表">📐 核心概念：逐项解读参数表</h3>
+<h4 id="1-处理器cpu">1. 处理器（CPU）</h4>
+<p><strong>示例</strong>：<code>Intel Core i7-14700HX</code></p>
+<p>这个型号名的每一段都有含义：</p>
+<div class="table-wrap"><table><thead><tr>
+<th align="left">部分</th>
+<th align="left">含义</th>
+</tr>
+</thead><tbody><tr>
+<td align="left"><code>Intel Core</code></td>
+<td align="left">品牌和系列（Intel 的消费级产品线）</td>
+</tr>
+<tr>
+<td align="left"><code>i7</code></td>
+<td align="left">定位等级：i3（入门）&lt; i5（主流）&lt; i7（高性能）&lt; i9（旗舰）</td>
+</tr>
+<tr>
+<td align="left"><code>14</code></td>
+<td align="left">第 14 代架构（代数越新通常越好，但不是线性提升）</td>
+</tr>
+<tr>
+<td align="left"><code>700</code></td>
+<td align="left">同代同级中的具体型号编号</td>
+</tr>
+<tr>
+<td align="left"><code>H</code></td>
+<td align="left">后缀标识功耗/定位</td>
+</tr>
+</tbody></table></div>
+<p><strong>后缀是最容易被忽略但最重要的细节</strong>：</p>
+<div class="table-wrap"><table><thead><tr>
+<th align="left">后缀</th>
+<th align="left">含义</th>
+<th align="left">TDP（功耗）</th>
+<th align="left">适合形态</th>
+</tr>
+</thead><tbody><tr>
+<td align="left"><code>U</code></td>
+<td align="left">Ultra Low Power，超低功耗</td>
+<td align="left">15–28W</td>
+<td align="left">轻薄本</td>
+</tr>
+<tr>
+<td align="left"><code>P</code></td>
+<td align="left">Performance，性能优化低功耗</td>
+<td align="left">28W</td>
+<td align="left">轻薄本/全能本</td>
+</tr>
+<tr>
+<td align="left"><code>H</code></td>
+<td align="left">High Performance，高性能</td>
+<td align="left">45W</td>
+<td align="left">游戏本/全能本</td>
+</tr>
+<tr>
+<td align="left"><code>HX</code></td>
+<td align="left">Extreme High Performance，极致性能</td>
+<td align="left">55W+</td>
+<td align="left">高端游戏本/移动工作站</td>
+</tr>
+<tr>
+<td align="left"><code>K</code></td>
+<td align="left">不锁频（可超频）</td>
+<td align="left">65–125W</td>
+<td align="left">台式机</td>
+</tr>
+<tr>
+<td align="left"><code>F</code></td>
+<td align="left">无核显</td>
+<td align="left">视搭配而定</td>
+<td align="left">台式机（必须配独显）</td>
+</tr>
+<tr>
+<td align="left"><code>KF</code></td>
+<td align="left">不锁频 + 无核显</td>
+<td align="left">65–125W</td>
+<td align="left">台式机（高性价比之选）</td>
+</tr>
+</tbody></table></div>
+<p>AMD 的命名也有类似规律：</p>
+<p><strong>示例</strong>：<code>AMD Ryzen 7 8845HS</code></p>
+<div class="table-wrap"><table><thead><tr>
+<th align="left">部分</th>
+<th align="left">含义</th>
+</tr>
+</thead><tbody><tr>
+<td align="left"><code>Ryzen 7</code></td>
+<td align="left">定位等级（Ryzen 3/5/7/9，类似 Intel 的 i3/5/7/9）</td>
+</tr>
+<tr>
+<td align="left"><code>8</code></td>
+<td align="left">代数标识</td>
+</tr>
+<tr>
+<td align="left"><code>845</code></td>
+<td align="left">具体型号</td>
+</tr>
+<tr>
+<td align="left"><code>HS</code></td>
+<td align="left">后缀：H = 高性能，S = 特调版本（同样看后缀区分功耗）</td>
+</tr>
+</tbody></table></div>
+<blockquote><p>💡 <strong>实用建议</strong>：对于大多数大学生，<strong>i5/Ryzen 5 就够用了</strong>。i7/Ryzen 7 适合需要多任务处理或频繁编译大型项目的同学。i9/Ryzen 9 对学生来说通常是过剩的——除非你在做科研级的计算任务。</p>
+</blockquote>
+<h4 id="2-显卡gpu">2. 显卡（GPU）</h4>
+<p><strong>示例</strong>：<code>NVIDIA GeForce RTX 4060 Laptop GPU 8GB GDDR6</code></p>
+<p>拆解：</p>
+<div class="table-wrap"><table><thead><tr>
+<th align="left">部分</th>
+<th align="left">含义</th>
+</tr>
+</thead><tbody><tr>
+<td align="left"><code>NVIDIA GeForce</code></td>
+<td align="left">品牌和消费级系列（专业卡是 Quadro/RTX A 系列）</td>
+</tr>
+<tr>
+<td align="left"><code>RTX</code></td>
+<td align="left">支持光线追踪（Ray Tracing）和 AI 加速（Tensor Core）</td>
+</tr>
+<tr>
+<td align="left"><code>40</code></td>
+<td align="left">第 40 代架构（代数越新越好）</td>
+</tr>
+<tr>
+<td align="left"><code>60</code></td>
+<td align="left">定位：50（入门）&lt; 60（主流）&lt; 70（高性能）&lt; 80（旗舰）&lt; 90（顶级）</td>
+</tr>
+<tr>
+<td align="left"><code>Laptop GPU</code></td>
+<td align="left">笔记本版本（功耗和性能低于桌面版）</td>
+</tr>
+<tr>
+<td align="left"><code>8GB GDDR6</code></td>
+<td align="left">显存容量和类型</td>
+</tr>
+</tbody></table></div>
+<p><strong>显卡关键参数补充</strong>：</p>
+<ul>
+<li><strong>功耗（TGP，Total Graphics Power）</strong>：同一型号的 Laptop GPU，不同笔记本可能给它分配不同的功耗。比如 RTX 4060 Laptop 的功耗范围是 35W–115W，功耗越高性能越强。这就是为什么&quot;同型号不同本&quot;性能差距很大。</li>
+<li><strong>显存</strong>：对于游戏和 AI 推理，8GB 显存在 2025 年是够用的基准线。如果要训练大模型或处理 4K 视频，建议 12GB+。</li>
+</ul>
+<p><strong>AMD 显卡</strong>：AMD 的显卡叫 Radeon RX 系列（如 RX 7600）。在中端价位，AMD 显卡性价比不错，但 NVIDIA 在 AI/深度学习领域的 CUDA 生态仍然是绝对领先。</p>
+<blockquote><p>💡 <strong>&quot;核显够用吗？&quot;</strong>：现代核显（如 Intel Arc 核显、AMD Radeon 780M）已经可以流畅运行《英雄联盟》《CS2》等热门网游，以及处理日常办公、网页浏览、视频播放。只有在你需要跑 3A 大作、做 3D 渲染或深度学习时，才必须上独显。</p>
+</blockquote>
+<h4 id="3-内存ram">3. 内存（RAM）</h4>
+<p><strong>示例</strong>：<code>16GB DDR5 5600MHz</code></p>
+<div class="table-wrap"><table><thead><tr>
+<th align="left">部分</th>
+<th align="left">含义</th>
+</tr>
+</thead><tbody><tr>
+<td align="left"><code>16GB</code></td>
+<td align="left">内存容量——同时能处理多少数据（上菜桌面积）</td>
+</tr>
+<tr>
+<td align="left"><code>DDR5</code></td>
+<td align="left">内存代数——DDR4 → DDR5 是世代升级，DDR5 速度更快、功耗更低</td>
+</tr>
+<tr>
+<td align="left"><code>5600MHz</code></td>
+<td align="left">频率——数据传输速度（频率越高，理论带宽越大）</td>
+</tr>
+</tbody></table></div>
+<p><strong>关于内存，你真正需要关注的是：</strong></p>
+<ul>
+<li><p><strong>容量</strong>：这是最重要的参数。2025 年，<strong>16GB 是基准线</strong>。如果预算允许，32GB 会让你的电脑在多年后仍然不过时。8GB 在 2025 年已经偏少——同时开 Chrome + VS Code + 微信就可能吃紧。</p>
+</li>
+<li><p><strong>是否可扩展</strong>：</p>
+<ul>
+<li><strong>LPDDR5/LPDDR5x</strong>：焊死在主板上，不可升级（常见于轻薄本和 MacBook）</li>
+<li><strong>DDR5 SO-DIMM</strong>：插槽安装，可自行升级（常见于游戏本和部分全能本）</li>
+<li>购买前看清楚！如果是焊接内存，买的时候就要买够。</li>
+</ul>
+</li>
+<li><p><strong>双通道 vs 单通道</strong>：两条 8GB 组成的 16GB（双通道）比一条 16GB（单通道）的性能高约 <strong>10–30%</strong>——特别是对核显性能影响巨大。有些低价笔记本会用单通道 16GB 来降低成本，这是一个需要注意的坑。</p>
+</li>
+<li><p><strong>频率</strong>：日常使用中，DDR5 4800MHz 和 DDR5 5600MHz 的实际差距很小（通常 &lt; 5%）。不必为了&quot;频率高几百&quot;多花很多钱。</p>
+</li>
+</ul>
+<h4 id="4-硬盘ssd">4. 硬盘（SSD）</h4>
+<p><strong>示例</strong>：<code>512GB PCIe 4.0 NVMe SSD</code></p>
+<div class="table-wrap"><table><thead><tr>
+<th align="left">部分</th>
+<th align="left">含义</th>
+</tr>
+</thead><tbody><tr>
+<td align="left"><code>512GB</code></td>
+<td align="left">存储容量</td>
+</tr>
+<tr>
+<td align="left"><code>PCIe 4.0</code></td>
+<td align="left">接口协议版本——决定了最大传输速度</td>
+</tr>
+<tr>
+<td align="left"><code>NVMe</code></td>
+<td align="left">传输协议——比旧的 SATA 协议快 5–10 倍</td>
+</tr>
+<tr>
+<td align="left"><code>SSD</code></td>
+<td align="left">固态硬盘（而非 HDD 机械硬盘）</td>
+</tr>
+</tbody></table></div>
+<p><strong>你需要知道的实际差异：</strong></p>
+<div class="table-wrap"><table><thead><tr>
+<th align="left">类型</th>
+<th align="left">顺序读取速度</th>
+<th align="left">适合用途</th>
+<th align="left">2025年参考价（1TB）</th>
+</tr>
+</thead><tbody><tr>
+<td align="left">SATA SSD</td>
+<td align="left">~550 MB/s</td>
+<td align="left">预算有限的旧电脑升级</td>
+<td align="left">~350 元</td>
+</tr>
+<tr>
+<td align="left">PCIe 3.0 NVMe</td>
+<td align="left">~3500 MB/s</td>
+<td align="left">主流日常使用</td>
+<td align="left">~400 元</td>
+</tr>
+<tr>
+<td align="left">PCIe 4.0 NVMe</td>
+<td align="left">~7000 MB/s</td>
+<td align="left">高性能需求、大文件读写</td>
+<td align="left">~450 元</td>
+</tr>
+<tr>
+<td align="left">PCIe 5.0 NVMe</td>
+<td align="left">~12000 MB/s</td>
+<td align="left">极致性能（目前溢价较高）</td>
+<td align="left">~800 元</td>
+</tr>
+</tbody></table></div>
+<blockquote><p>💡 <strong>容量建议</strong>：2025 年，<strong>1TB 起步</strong>是最理性的选择。操作系统 + 常用软件就要占 100GB 以上，加上课程资料、项目代码、偶尔的游戏，512GB 很快就捉襟见肘。1TB NVMe SSD 目前价格约 400–500 元，不贵。</p>
+</blockquote>
+<h4 id="5-屏幕">5. 屏幕</h4>
+<p><strong>示例</strong>：<code>16 英寸 2560×1600 IPS 165Hz 100% sRGB</code></p>
+<p>屏幕参数是最容易被忽视、但对日常体验影响巨大的部分：</p>
+<div class="table-wrap"><table><thead><tr>
+<th align="left">参数</th>
+<th align="left">含义</th>
+<th align="left">怎么选</th>
+</tr>
+</thead><tbody><tr>
+<td align="left"><strong>尺寸</strong></td>
+<td align="left">屏幕对角线长度</td>
+<td align="left">14 寸便携，16 寸大屏舒适，二者折中选 15.6 寸</td>
+</tr>
+<tr>
+<td align="left"><strong>分辨率</strong></td>
+<td align="left">像素点的数量</td>
+<td align="left">1920×1080(1080P) 是及格线；2560×1600(2.5K) 是目前主流；3840×2400(4K) 适合设计</td>
+</tr>
+<tr>
+<td align="left"><strong>面板类型</strong></td>
+<td align="left">屏幕的显示技术</td>
+<td align="left">IPS（可视角度好、色彩准）、OLED（对比度极高、色彩艳丽但可能烧屏）、VA（适合高对比场景）</td>
+</tr>
+<tr>
+<td align="left"><strong>刷新率</strong></td>
+<td align="left">屏幕每秒刷新几次</td>
+<td align="left">60Hz 是基础；120Hz 让滚动更流畅；165Hz/240Hz 是游戏需求</td>
+</tr>
+<tr>
+<td align="left"><strong>色域</strong></td>
+<td align="left">能显示的颜色范围</td>
+<td align="left">100% sRGB 是标准线；P3 色域/100% DCI-P3 适合设计和影视</td>
+</tr>
+<tr>
+<td align="left"><strong>亮度</strong></td>
+<td align="left">屏幕最亮程度（nit）</td>
+<td align="left">300nit 室内够用；400nit+ 适合户外或光线强的环境</td>
+</tr>
+</tbody></table></div>
+<p><strong>一个生活化的理解：</strong></p>
+<p>如果把屏幕比作一面墙上的画：</p>
+<ul>
+<li><strong>分辨率</strong> = 这幅画用了多少种颜料的颗粒（颗粒越细，画面越精细）</li>
+<li><strong>刷新率</strong> = 这幅画每秒更新几次（更新越快，动态画面越流畅）</li>
+<li><strong>色域</strong> = 画家的颜料盘有多少种颜色（颜色越多，越接近真实世界）</li>
+</ul>
+<blockquote><p>⚠️ <strong>关于 OLED 屏</strong>：OLED 的显示效果确实惊艳（深邃的黑色、鲜艳的色彩），但它有一个潜在风险——<strong>烧屏</strong>（屏幕长时间显示固定内容后留下残影）。如果你经常盯着 IDE 写代码或者盯着 Word 文档，OLED 的烧屏风险比看视频时要高。目前新一代 OLED 面板烧屏概率已大幅降低，但如果你用一台屏幕五六年，还是 IPS 更稳妥。</p>
+</blockquote>
+<h4 id="6-电池">6. 电池</h4>
+<p><strong>示例</strong>：<code>80Wh</code></p>
+<p>电池容量用 <strong>Wh（瓦时）</strong> 表示。简单理解：</p>
+<p>$续航时间 \approx \frac{电池容量 (Wh)}{平均功耗 (W)}$</p>
+<p>比如一台 80Wh 电池的笔记本，如果日常使用平均功耗约 8W，理论续航约 10 小时。</p>
+<div class="table-wrap"><table><thead><tr>
+<th align="left">电池容量</th>
+<th align="left">典型续航（日常使用）</th>
+<th align="left">常见于</th>
+</tr>
+</thead><tbody><tr>
+<td align="left">40–55Wh</td>
+<td align="left">4–7 小时</td>
+<td align="left">入门轻薄本、部分游戏本</td>
+</tr>
+<tr>
+<td align="left">60–75Wh</td>
+<td align="left">8–12 小时</td>
+<td align="left">主流轻薄本</td>
+</tr>
+<tr>
+<td align="left">80–100Wh</td>
+<td align="left">10–15 小时</td>
+<td align="left">高端轻薄本、MacBook</td>
+</tr>
+</tbody></table></div>
+<blockquote><p>💡 <strong>注意</strong>：厂商标称的续航时间通常是在&quot;极端省电&quot;模式下测试的。实际使用中打八折甚至六折是常态。如果商品页写&quot;续航 15 小时&quot;，你预期 8–10 小时比较合理。</p>
+</blockquote>
+<h4 id="7-接口">7. 接口</h4>
+<p><strong>示例</strong>：<code>2×USB-A 3.2、1×USB-C（雷电4）、1×HDMI 2.1、1×SD 卡槽</code></p>
+<p>接口决定了你能插什么外设。2025 年最常见的接口类型：</p>
+<div class="table-wrap"><table><thead><tr>
+<th align="left">接口</th>
+<th align="left">长什么样</th>
+<th align="left">能干什么</th>
+<th align="left">速度</th>
+</tr>
+</thead><tbody><tr>
+<td align="left"><strong>USB-A</strong></td>
+<td align="left">传统长方形 USB 口</td>
+<td align="left">U 盘、鼠标、键盘等</td>
+<td align="left">USB 3.2 最高 20Gbps</td>
+</tr>
+<tr>
+<td align="left"><strong>USB-C</strong></td>
+<td align="left">小椭圆形，正反插</td>
+<td align="left">数据传输、充电、外接显示器（取决于协议）</td>
+<td align="left">取决于协议</td>
+</tr>
+<tr>
+<td align="left"><strong>雷电 4/5</strong>（Thunderbolt）</td>
+<td align="left">物理形状同 USB-C</td>
+<td align="left">高速数据 + 充电 + 外接显示器 + 外接 GPU</td>
+<td align="left">40/80 Gbps</td>
+</tr>
+<tr>
+<td align="left"><strong>HDMI</strong></td>
+<td align="left">梯形接口</td>
+<td align="left">外接显示器/投影仪</td>
+<td align="left">HDMI 2.1 支持 4K 120Hz</td>
+</tr>
+<tr>
+<td align="left"><strong>SD 卡槽</strong></td>
+<td align="left">半截信用卡大小的槽</td>
+<td align="left">读取相机 SD 卡</td>
+<td align="left">UHS-II 约 300MB/s</td>
+</tr>
+<tr>
+<td align="left"><strong>3.5mm 耳机孔</strong></td>
+<td align="left">圆形小孔</td>
+<td align="left">有线耳机/麦克风</td>
+<td align="left">模拟信号</td>
+</tr>
+</tbody></table></div>
+<p><strong>特别说明：USB-C 不等于雷电</strong></p>
+<p>这是最常见的接口混淆。USB-C 只是一个<strong>物理接口形状</strong>，插进去的线缆可能走的是 USB 2.0（480Mbps）、USB 3.2（10Gbps）、USB4（40Gbps）或雷电 4/5（40/80Gbps）。就像&quot;一条公路&quot;可以跑自行车也可以跑跑车——USB-C 口长得一样，但内部支持的协议决定了速度和功能。</p>
+<p>买电脑时，如果你有需要外接高速设备或显示器，<strong>一定要看这个 USB-C 口支持什么协议</strong>，不要只看&quot;有 USB-C 口&quot;就觉得万事大吉。</p>
+<hr>
+<h3 id="-一张quot参数优先级quot速查表">📋 一张&quot;参数优先级&quot;速查表</h3>
+<p>不是所有参数都同等重要。根据不同的使用场景，你应该优先关注不同的指标：</p>
+<div class="table-wrap"><table><thead><tr>
+<th align="left">使用场景</th>
+<th align="left">最重要</th>
+<th align="left">其次</th>
+<th align="left">锦上添花</th>
+</tr>
+</thead><tbody><tr>
+<td align="left">日常学习/办公</td>
+<td align="left">内存容量 ≥ 16GB、SSD ≥ 512GB</td>
+<td align="left">屏幕分辨率 ≥ 2K、续航 ≥ 8h</td>
+<td align="left">CPU 级别、接口数量</td>
+</tr>
+<tr>
+<td align="left">编程开发</td>
+<td align="left">内存 ≥ 16GB（最好 32GB）、SSD ≥ 1TB</td>
+<td align="left">CPU 多核性能、屏幕分辨率</td>
+<td align="left">键盘手感、接口丰富度</td>
+</tr>
+<tr>
+<td align="left">游戏</td>
+<td align="left">GPU 型号和功耗释放</td>
+<td align="left">屏幕刷新率 ≥ 120Hz、CPU 不拖后腿</td>
+<td align="left">散热设计、键盘 RGB</td>
+</tr>
+<tr>
+<td align="left">深度学习/AI</td>
+<td align="left">GPU 显存 ≥ 8GB（最好 12GB+）</td>
+<td align="left">内存 ≥ 32GB、SSD ≥ 1TB</td>
+<td align="left">GPU 架构（支持 CUDA 的 NVIDIA 卡）</td>
+</tr>
+<tr>
+<td align="left">设计/视频剪辑</td>
+<td align="left">屏幕色域 ≥ 100% sRGB</td>
+<td align="left">GPU + 内存、SSD 速度</td>
+<td align="left">屏幕亮度、色准</td>
+</tr>
+</tbody></table></div>
+<hr>
+<h3 id="06-buying-guide--常见误区-3">❌ 常见误区</h3>
+<p>❌ <strong>&quot;CPU 主频越高越好&quot;</strong>
+→ ✅ 主频只是性能的一个维度。架构、核心数、缓存大小同样重要。一颗 4.0GHz 的旧架构 CPU 可能打不过一颗 3.5GHz 的新架构 CPU（第二章讲过的 IPC 概念）。</p>
+<p>❌ <strong>&quot;512GB 硬盘足够了&quot;</strong>
+→ ✅ 2025 年，一个操作系统就要 40GB+，常用软件（Office、IDE、浏览器、Adobe）加起来轻松超过 50GB，再加上课程资料、项目文件、偶尔下载的游戏……512GB 很快会用完。<strong>1TB 才是 2025 年的&quot;够用线&quot;</strong>，况且 1TB SSD 的价格已经降到大约 400–500 元。</p>
+<p>❌ <strong>&quot;DDR5 一定比 DDR4 好&quot;</strong>
+→ ✅ 在同一平台下 DDR5 确实更快，但如果你在二手市场/预算有限的情况下选择上一代 DDR4 平台，DDR4 3200MHz 配合合适的 CPU 依然完全够用。不要为了追求内存代数而选择了一个整体配置更差的机器。</p>
+<p>❌ <strong>&quot;刷新率越高越好，165Hz 比 60Hz 好两倍&quot;</strong>
+→ ✅ 刷新率的提升是递减效应。从 60Hz → 120Hz 的改善非常明显（你能肉眼感觉到丝滑），但从 120Hz → 165Hz 的差异就不大了，240Hz → 360Hz 更是只有职业电竞选手才能感知。如果你不玩竞技游戏，120Hz 完全足够。</p>
+<hr>
+<h3 id="-动手环节拆解你自己电脑的参数">🔧 动手环节：拆解你自己电脑的参数</h3>
+<p>现在，让我们用你自己的电脑来练手。</p>
+<p><strong>Windows 用户：</strong></p>
+<ol>
+<li>按下 <code>Win + R</code>，输入 <code>dxdiag</code>，回车。</li>
+<li>你会看到 <strong>DirectX 诊断工具</strong>，包含以下信息：<ul>
+<li><strong>系统</strong>标签页：CPU 型号、内存容量、操作系统版本</li>
+<li><strong>显示</strong>标签页：GPU 型号、显存大小、驱动版本</li>
+</ul>
+</li>
+<li>查看硬盘信息：<ul>
+<li>按 <code>Win + R</code>，输入 <code>diskmgmt.msc</code>，打开磁盘管理</li>
+<li>你能看到每块硬盘的容量和分区情况</li>
+</ul>
+</li>
+</ol>
+<p>或者用命令行获取更完整的信息：</p>
+<pre data-label="powershell"><code class="language-powershell"># 查看 CPU 信息
+Get-CimInstance -ClassName Win32_Processor | Select-Object Name, NumberOfCores, MaxClockSpeed
+
+# 查看内存信息
+Get-CimInstance -ClassName Win32_PhysicalMemory | Select-Object Manufacturer, Capacity, Speed, MemoryType
+
+# 查看硬盘信息
+Get-CimInstance -ClassName Win32_DiskDrive | Select-Object Model, Size, MediaType
+
+# 查看显卡信息
+Get-CimInstance -ClassName Win32_VideoController | Select-Object Name, AdapterRAM, DriverVersion</code></pre>
+<p><strong>Mac 用户：</strong></p>
+<pre data-label="bash"><code class="language-bash"># 查看完整硬件信息
+system_profiler SPHardwareDataType
+
+# 查看硬盘信息
+diskutil list
+
+# 查看显卡/GPU 信息
+system_profiler SPDisplaysDataType</code></pre>
+<p><strong>练习</strong>：对照你的输出结果，回答以下问题：</p>
+<ol>
+<li>你的 CPU 是什么型号？属于 i 几/Ryzen 几？后缀是什么？</li>
+<li>你的内存有多大？是 DDR4 还是 DDR5？</li>
+<li>你的硬盘是 SSD 还是 HDD？容量多大？</li>
+<li>你有独立显卡吗？如果有，是什么型号？</li>
+</ol>
+<hr>
+<h3 id="06-buying-guide--本节要点-3">✅ 本节要点</h3>
+<ul>
+<li>✓ CPU 型号中的<strong>后缀字母</strong>（U/H/HX/K/F）决定了功耗和性能定位</li>
+<li>✓ 显卡的&quot;<strong>Laptop vs Desktop</strong>&quot;和<strong>功耗释放</strong>值比型号名更重要</li>
+<li>✓ 内存关注<strong>容量 &gt; 是否可升级 &gt; 双通道 &gt; 频率</strong></li>
+<li>✓ 硬盘优先保证<strong>容量（≥1TB）</strong>，NVMe PCIe 3.0 及以上速度都够用</li>
+<li>✓ 屏幕选购按场景优先排序：<strong>分辨率 &gt; 色域 &gt; 刷新率 &gt; 面板类型</strong></li>
+<li>✓ USB-C ≠ 雷电，接口的<strong>协议</strong>比<strong>形状</strong>更重要</li>
+</ul>
+<hr>
+<h2 id="54-二手组装品牌机的选择钱怎么花最值">5.4 二手、组装、品牌机的选择：钱怎么花最值</h2>
+<h3 id="-开场三条路三种风险">🎬 开场：三条路，三种风险</h3>
+<p>学长给你推荐了三个购买方案：</p>
+<blockquote><p>&quot;6000 块买一台全新联想小新 Pro 16，稳妥。&quot;
+&quot;6000 块在闲鱼买一台去年的顶配游戏本，性能翻倍。&quot;
+&quot;6000 块自己配一台台式机，最划算。&quot;</p>
+</blockquote>
+<p>你一头雾水：<strong>品牌机有品牌溢价吗？二手机会不会翻车？装机是不是只有大佬才能玩？</strong></p>
+<p>这三条路各有各的优势和风险。这一节，我们逐一拆解，帮你在预算有限的情况下做出最明智的选择。</p>
+<hr>
+<h3 id="-核心概念三种购买渠道的本质区别">📐 核心概念：三种购买渠道的本质区别</h3>
+<h4 id="品牌整机笔记本-amp-品牌台式机">品牌整机（笔记本 &amp; 品牌台式机）</h4>
+<p><strong>什么是品牌机？</strong> 联想、戴尔、惠普、华硕、华为、苹果等厂商出售的完整电脑产品，开箱即用。</p>
+<p><strong>优势：</strong></p>
+<ol>
+<li><strong>省心</strong>：硬件兼容性由厂商保证，不会出现&quot;CPU 和主板不匹配&quot;的问题</li>
+<li><strong>售后保障</strong>：全国联保，通常 1–3 年。出了问题打售后电话就行，有些品牌甚至提供上门维修</li>
+<li><strong>笔记本的唯一选择</strong>：你不可能&quot;自己组装一台笔记本&quot;——笔记本的模具、散热、主板都是定制的</li>
+<li><strong>预装系统</strong>：出厂自带正版 Windows（或 macOS），省去了安装和激活的麻烦</li>
+</ol>
+<p><strong>劣势：</strong></p>
+<ol>
+<li><strong>品牌溢价</strong>：你在为品牌名声、售后体系、营销成本买单。同样的硬件配置，品牌台式机通常比自己组装贵 <strong>15–30%</strong></li>
+<li><strong>配置不灵活</strong>：厂商给什么配置你就得接受什么。想要 32GB 内存 + 512GB 硬盘的组合？对不起，这个型号只有 16GB + 1TB</li>
+<li><strong>台式品牌机的隐藏坑</strong>：某些低价品牌台式机会使用&quot;缩水&quot;硬件——比如用功率不足的电源、用 OEM 版无法升级的主板、用慢速内存条。这些在参数表上不一定能看出来</li>
+</ol>
+<p><strong>推荐品牌（2025 年参考）：</strong></p>
+<div class="table-wrap"><table><thead><tr>
+<th align="left">定位</th>
+<th align="left">推荐品牌</th>
+<th align="left">代表产品线</th>
+</tr>
+</thead><tbody><tr>
+<td align="left">轻薄本（性价比）</td>
+<td align="left">小米/Redmi、荣耀</td>
+<td align="left">RedmiBook Pro、MagicBook</td>
+</tr>
+<tr>
+<td align="left">轻薄本（品质）</td>
+<td align="left">华为、联想 Yoga、ThinkPad</td>
+<td align="left">MateBook X Pro、Yoga Pro</td>
+</tr>
+<tr>
+<td align="left">游戏本</td>
+<td align="left">联想拯救者、华硕 ROG/天选、惠普暗影精灵</td>
+<td align="left">Legion Y7000/9000、ROG 枪神</td>
+</tr>
+<tr>
+<td align="left">全能本</td>
+<td align="left">联想小新 Pro、华硕无畏 Pro</td>
+<td align="left">小新 Pro 16、无畏 Pro 15</td>
+</tr>
+<tr>
+<td align="left">Mac</td>
+<td align="left">Apple</td>
+<td align="left">MacBook Air / Pro</td>
+</tr>
+</tbody></table></div>
+<h4 id="自己组装diy-台式机">自己组装（DIY 台式机）</h4>
+<p><strong>什么是 DIY 装机？</strong> 自己选购每一个零件（CPU、主板、内存、硬盘、显卡、电源、机箱、散热器），然后像拼乐高一样组装起来。</p>
+<p><strong>优势：</strong></p>
+<ol>
+<li><strong>性价比最高</strong>：没有品牌溢价，同样的预算能获得更强的性能。7000 元的 DIY 台式机，性能可能超过 10000 元的品牌游戏本</li>
+<li><strong>完全自由定制</strong>：你可以根据自己的需求精确配置——编程用途就把钱花在 CPU 和内存上，游戏用途就把钱花在显卡上</li>
+<li><strong>升级方便</strong>：任何一个部件不满意了，以后单独换掉就行。不像笔记本或品牌机很多部件焊死了</li>
+<li><strong>学习硬件知识</strong>：装机过程本身就是对前四章知识的最佳实践</li>
+</ol>
+<p><strong>劣势：</strong></p>
+<ol>
+<li><strong>需要学习成本</strong>：你需要了解兼容性（CPU 和主板的接口是否匹配、电源功率是否足够、机箱能否装下显卡……）</li>
+<li><strong>售后分散</strong>：每个零件的保修由各自的品牌负责。出了问题你需要判断是哪个部件的问题，然后联系对应的厂商</li>
+<li><strong>只适用于台式机</strong>：你没法组装笔记本</li>
+<li><strong>有&quot;翻车&quot;风险</strong>：新手可能遇到接线错误、散热安装不当等问题（不过现在有大量视频教程可以参考，风险已经很低）</li>
+</ol>
+<p><strong>2025 年 DIY 台式机推荐配置单（参考）：</strong></p>
+<p><strong>方案 A：5000 元档（1080P/2K 主流游戏 &amp; 日常学习）</strong></p>
+<div class="table-wrap"><table><thead><tr>
+<th align="left">部件</th>
+<th align="left">推荐</th>
+<th align="left">参考价</th>
+</tr>
+</thead><tbody><tr>
+<td align="left">CPU</td>
+<td align="left">AMD Ryzen 5 7500F</td>
+<td align="left">~700 元</td>
+</tr>
+<tr>
+<td align="left">主板</td>
+<td align="left">B650M（微星/华硕/技嘉一线品牌）</td>
+<td align="left">~600 元</td>
+</tr>
+<tr>
+<td align="left">内存</td>
+<td align="left">DDR5 6000MHz 16GB (8GB×2)</td>
+<td align="left">~350 元</td>
+</tr>
+<tr>
+<td align="left">硬盘</td>
+<td align="left">1TB NVMe PCIe 4.0 SSD</td>
+<td align="left">~450 元</td>
+</tr>
+<tr>
+<td align="left">显卡</td>
+<td align="left">RTX 4060 或 RX 6750 GRE</td>
+<td align="left">~1800 元</td>
+</tr>
+<tr>
+<td align="left">电源</td>
+<td align="left">额定 600W 80Plus 铜牌</td>
+<td align="left">~300 元</td>
+</tr>
+<tr>
+<td align="left">机箱</td>
+<td align="left">中塔 ATX/M-ATX 机箱</td>
+<td align="left">~200 元</td>
+</tr>
+<tr>
+<td align="left">散热</td>
+<td align="left">四热管塔式风冷</td>
+<td align="left">~100 元</td>
+</tr>
+<tr>
+<td align="left"><strong>合计</strong></td>
+<td align="left"></td>
+<td align="left"><strong>~4500 元</strong></td>
+</tr>
+</tbody></table></div>
+<p><strong>方案 B：8000 元档（2K 高画质 &amp; 多任务生产力）</strong></p>
+<div class="table-wrap"><table><thead><tr>
+<th align="left">部件</th>
+<th align="left">推荐</th>
+<th align="left">参考价</th>
+</tr>
+</thead><tbody><tr>
+<td align="left">CPU</td>
+<td align="left">AMD Ryzen 5 9600X</td>
+<td align="left">~1200 元</td>
+</tr>
+<tr>
+<td align="left">主板</td>
+<td align="left">B650（ATX，一线品牌）</td>
+<td align="left">~800 元</td>
+</tr>
+<tr>
+<td align="left">内存</td>
+<td align="left">DDR5 6000MHz 32GB (16GB×2)</td>
+<td align="left">~600 元</td>
+</tr>
+<tr>
+<td align="left">硬盘</td>
+<td align="left">1TB NVMe PCIe 4.0 SSD</td>
+<td align="left">~450 元</td>
+</tr>
+<tr>
+<td align="left">显卡</td>
+<td align="left">RTX 4070 或 RX 9070 XT</td>
+<td align="left">~3500 元</td>
+</tr>
+<tr>
+<td align="left">电源</td>
+<td align="left">额定 750W 80Plus 金牌全模组</td>
+<td align="left">~450 元</td>
+</tr>
+<tr>
+<td align="left">机箱</td>
+<td align="left">中塔 ATX 机箱</td>
+<td align="left">~250 元</td>
+</tr>
+<tr>
+<td align="left">散热</td>
+<td align="left">双塔风冷或 240mm 水冷</td>
+<td align="left">~200 元</td>
+</tr>
+<tr>
+<td align="left"><strong>合计</strong></td>
+<td align="left"></td>
+<td align="left"><strong>~7450 元</strong></td>
+</tr>
+</tbody></table></div>
+<blockquote><p>📊 <strong>价格说明</strong>：以上为 2025 年市场参考价，硬件价格波动较大。建议在京东、天猫查询实时价格，关注 618、双 11 等促销节点。配置单中 CPU 和主板推荐同时代平台（如 AM5 平台的 CPU 配 B650/X670 主板），确保兼容性。</p>
+</blockquote>
+<blockquote><p>💡 <strong>装机新手怎么办？</strong> 你不需要从零学起。B 站上有大量优质装机教程——搜索&quot;装机教程 2025&quot;，跟着视频一步步来就行。推荐频道：「硬件茶谈」「极客湾」「装机猿」。如果你不放心自己动手，很多电商平台也提供&quot;代装机&quot;服务，加 50–100 元由工程师帮你组装。</p>
+</blockquote>
+<h4 id="二手电脑">二手电脑</h4>
+<p><strong>什么是二手？</strong> 在闲鱼、转转等二手交易平台购买别人用过的电脑。</p>
+<p><strong>优势：</strong></p>
+<ol>
+<li><strong>价格低</strong>：一台发布 1–2 年的高配笔记本，二手价通常只有原价的 <strong>50–70%</strong></li>
+<li><strong>高配低价</strong>：用 5000 元的预算可能买到原价 10000 元级别的配置</li>
+</ol>
+<p><strong>风险：</strong></p>
+<ol>
+<li><strong>硬件暗病</strong>：电池损耗、屏幕老化、散热硅脂干涸、硬盘寿命接近极限……这些在外观上看不出来</li>
+<li><strong>无保修</strong>：二手交易通常没有售后保障，出了问题只能自己修</li>
+<li><strong>配置造假</strong>：不良商家可能刷改 BIOS 信息，让 i5 看起来像 i7</li>
+<li><strong>货源不明</strong>：可能是矿机、泡水机、翻新机</li>
+</ol>
+<p><strong>如果你决定买二手，务必做到以下几点：</strong></p>
+<p><strong>购买前：</strong></p>
+<ol>
+<li>查清楚目标型号的全新价格和典型二手价格，如果卖家报价<strong>低于市场价 30% 以上</strong>，要高度警惕</li>
+<li>优先选个人卖家（学生毕业换机等），远离从未见面的&quot;专业二手商&quot;</li>
+<li>坚持走平台付款，<strong>拒绝任何私下转账</strong></li>
+</ol>
+<p><strong>验机清单（验机工具准备一个 U 盘，装好&quot;图吧工具箱&quot;）：</strong></p>
+<div class="table-wrap"><table><thead><tr>
+<th align="left">检查项</th>
+<th align="left">怎么查</th>
+<th align="left">关注点</th>
+</tr>
+</thead><tbody><tr>
+<td align="left">CPU/GPU 真伪</td>
+<td align="left">CPU-Z、GPU-Z</td>
+<td align="left">型号是否与描述一致</td>
+</tr>
+<tr>
+<td align="left">硬盘健康</td>
+<td align="left">CrystalDiskInfo</td>
+<td align="left">通电时间、健康状态、坏道数</td>
+</tr>
+<tr>
+<td align="left">屏幕坏点</td>
+<td align="left">DisplayX 或在线纯色测试网页</td>
+<td align="left">纯色背景下有无亮点/暗点</td>
+</tr>
+<tr>
+<td align="left">电池健康</td>
+<td align="left"><code>powercfg /batteryreport</code>（Windows）</td>
+<td align="left">设计容量 vs 当前完全充电容量，健康度 &gt; 80%</td>
+</tr>
+<tr>
+<td align="left">内存真伪</td>
+<td align="left">CPU-Z 的 Memory 标签页</td>
+<td align="left">容量、频率、品牌是否与描述一致</td>
+</tr>
+<tr>
+<td align="left">外观</td>
+<td align="left">肉眼检查</td>
+<td align="left">边角磕碰、铰链松动、螺丝拧痕</td>
+</tr>
+<tr>
+<td align="left">接口</td>
+<td align="left">逐个测试</td>
+<td align="left">所有 USB、HDMI、耳机孔是否正常</td>
+</tr>
+<tr>
+<td align="left">稳定性</td>
+<td align="left">AIDA64 或 FurMark 烤机 15 分钟</td>
+<td align="left">是否出现蓝屏、死机、花屏、自动关机</td>
+</tr>
+</tbody></table></div>
+<pre data-label="powershell"><code class="language-powershell"># Windows 查看电池健康度报告
+powercfg /batteryreport /output "%USERPROFILE%\Desktop\battery-report.html"
+# 运行后会在桌面生成一个 HTML 文件，用浏览器打开查看</code></pre>
+<blockquote><p>⚠️ <strong>烤机测试是最关键的一步</strong>。很多暗病（修过的主板、散热失效）在正常使用时不会暴露，但在 CPU/GPU 满载 15–20 分钟后就会&quot;原形毕露&quot;——如果出现蓝屏、自动关机或温度直冲 100°C 以上，果断放弃。</p>
+</blockquote>
+<p><strong>二手 MacBook 的特殊注意事项：</strong></p>
+<ul>
+<li>检查是否解除了<strong>激活锁</strong>（iCloud 锁）——如果没解，你永远无法正常使用</li>
+<li>查看电池循环次数：「关于本机」→「系统报告」→「电源」→「循环计数」，建议 ≤ 500 次</li>
+<li>Apple Silicon 的 Mac 所有核心部件焊死，维修成本极高，<strong>务必仔细验机</strong></li>
+</ul>
+<hr>
+<h3 id="-三种方式的决策对比">🤔 三种方式的决策对比</h3>
+<div class="table-wrap"><table><thead><tr>
+<th align="left">维度</th>
+<th align="left">品牌整机</th>
+<th align="left">DIY 台式机</th>
+<th align="left">二手电脑</th>
+</tr>
+</thead><tbody><tr>
+<td align="left">性价比</td>
+<td align="left">⭐⭐⭐</td>
+<td align="left">⭐⭐⭐⭐⭐</td>
+<td align="left">⭐⭐⭐⭐</td>
+</tr>
+<tr>
+<td align="left">省心程度</td>
+<td align="left">⭐⭐⭐⭐⭐</td>
+<td align="left">⭐⭐⭐</td>
+<td align="left">⭐⭐</td>
+</tr>
+<tr>
+<td align="left">售后保障</td>
+<td align="left">⭐⭐⭐⭐⭐</td>
+<td align="left">⭐⭐⭐</td>
+<td align="left">⭐</td>
+</tr>
+<tr>
+<td align="left">翻车风险</td>
+<td align="left">⭐（极低）</td>
+<td align="left">⭐⭐（较低）</td>
+<td align="left">⭐⭐⭐⭐（较高）</td>
+</tr>
+<tr>
+<td align="left">适合新手</td>
+<td align="left">✅ 是</td>
+<td align="left">⚠️ 需要一点学习</td>
+<td align="left">❌ 不推荐新手</td>
+</tr>
+<tr>
+<td align="left">适用形态</td>
+<td align="left">笔记本/台式机</td>
+<td align="left">仅台式机</td>
+<td align="left">笔记本/台式机</td>
+</tr>
+</tbody></table></div>
+<p><strong>一句话建议：</strong></p>
+<ul>
+<li><strong>笔记本用户</strong> → 买品牌整机，没有第二条路</li>
+<li><strong>台式机用户，追求性价比</strong> → DIY 装机，跟着教程来</li>
+<li><strong>台式机用户，不想折腾</strong> → 品牌台式机或电商&quot;代装机&quot;服务</li>
+<li><strong>预算极其有限</strong> → 可以考虑二手，但<strong>必须</strong>学会验机</li>
+<li><strong>完全不懂电脑的新手</strong> → 品牌整机是最安全的选择</li>
+</ul>
+<hr>
+<h3 id="-购买渠道指南">🛒 购买渠道指南</h3>
+<p>无论你选择哪种方式，选对购买渠道能帮你省钱、避坑：</p>
+<div class="table-wrap"><table><thead><tr>
+<th align="left">渠道</th>
+<th align="left">适合</th>
+<th align="left">优势</th>
+<th align="left">注意事项</th>
+</tr>
+</thead><tbody><tr>
+<td align="left"><strong>京东自营</strong></td>
+<td align="left">品牌整机、DIY 零件</td>
+<td align="left">正品保障、七天无理由退换、物流快</td>
+<td align="left">价格未必最低，关注促销</td>
+</tr>
+<tr>
+<td align="left"><strong>天猫/品牌旗舰店</strong></td>
+<td align="left">品牌整机</td>
+<td align="left">官方正品、可能有品牌专属优惠</td>
+<td align="left">退换流程稍慢</td>
+</tr>
+<tr>
+<td align="left"><strong>Apple 教育商店</strong></td>
+<td align="left">MacBook</td>
+<td align="left">教育优惠价、返校季赠品</td>
+<td align="left">需要学生身份验证</td>
+</tr>
+<tr>
+<td align="left"><strong>拼多多（百亿补贴）</strong></td>
+<td align="left">品牌整机、DIY 零件</td>
+<td align="left">价格通常最低</td>
+<td align="left">注意辨别第三方商家，优先选&quot;品牌官方&quot;标识</td>
+</tr>
+<tr>
+<td align="left"><strong>闲鱼/转转</strong></td>
+<td align="left">二手电脑</td>
+<td align="left">价格最低</td>
+<td align="left">风险最高，必须验机</td>
+</tr>
+<tr>
+<td align="left"><strong>线下电脑城</strong></td>
+<td align="left">DIY 装机</td>
+<td align="left">可以现场看货、有些店提供装机服务</td>
+<td align="left">水深，宰客现象仍存在，事先查好网上报价再去</td>
+</tr>
+</tbody></table></div>
+<blockquote><p>💡 <strong>关于&quot;国补&quot;（政府消费补贴）</strong>：2025 年部分地区推出了针对电子产品的消费补贴政策，购买笔记本电脑可能享受 10–20% 的政府补贴。建议在购买前搜索&quot;你所在省份 + 国补&quot;了解最新政策——这可能为你的预算节省几百甚至上千元。</p>
+</blockquote>
+<hr>
+<h3 id="06-buying-guide--常见误区-4">❌ 常见误区</h3>
+<p>❌ <strong>&quot;品牌机都有品牌税，不值得买&quot;</strong>
+→ ✅ 笔记本市场中，品牌溢价已经被激烈竞争压得很低了。一台 5000 元的品牌轻薄本包含了设计、散热、屏幕、售后等综合体验，这不是简单的&quot;硬件堆砌&quot;能替代的。品牌溢价在台式机上更明显，但在笔记本领域并不严重。</p>
+<p>❌ <strong>&quot;组装电脑很难，一定会翻车&quot;</strong>
+→ ✅ 2025 年的 DIY 装机已经非常标准化了。CPU 有防呆设计（放反了装不进去）、内存条只能单方向插入、各种线缆接口都有明确标识。看一遍 B 站教程，大部分人第一次装机就能成功。</p>
+<p>❌ <strong>&quot;二手电脑不靠谱，千万别买&quot;</strong>
+→ ✅ 二手市场确实鱼龙混杂，但如果你学会了验机流程、选择靠谱的卖家、走平台保障，完全可以用很低的价格买到好机器。关键是<strong>你得具备判断力</strong>——而这正是前四章教给你的。</p>
+<hr>
+<h3 id="-动手环节模拟一次购买决策">🔧 动手环节：模拟一次购买决策</h3>
+<p>现在做一次完整的购买模拟练习（不需要真的下单！）：</p>
+<p><strong>Step 1：设定预算和需求</strong></p>
+<ul>
+<li>假设你的预算是 <strong>6000 元</strong></li>
+<li>用途：日常学习 + 写代码 + 偶尔玩《英雄联盟》</li>
+</ul>
+<p><strong>Step 2：到京东搜索对应的电脑</strong></p>
+<ol>
+<li>打开京东（jd.com）</li>
+<li>搜索&quot;笔记本电脑&quot;，设置价格筛选为 5000–7000 元</li>
+<li>随便点开两台不同品牌的电脑</li>
+<li>用 5.3 节学到的知识，把两台电脑的参数表做一个对比表</li>
+</ol>
+<p><strong>Step 3：回答以下问题</strong></p>
+<ol>
+<li>两台电脑的 CPU 后缀分别是什么？哪个在 5.1 节中更适合你的形态需求？</li>
+<li>两台电脑的内存分别是焊接还是可升级？</li>
+<li>屏幕分辨率和刷新率分别是多少？哪个对你更有价值？</li>
+<li>如果是你，你会选哪台？为什么？</li>
+</ol>
+<p><strong>这个练习的目的不是找到&quot;正确答案&quot;，而是让你体验&quot;用知识做决策&quot;的过程。</strong></p>
+<hr>
+<h3 id="06-buying-guide--本节要点-4">✅ 本节要点</h3>
+<ul>
+<li>✓ 笔记本只能买品牌整机；台式机可以选择 DIY 获得更高性价比</li>
+<li>✓ DIY 装机不难，跟着视频教程即可，关键是确保零件兼容</li>
+<li>✓ 二手电脑有价格优势，但<strong>必须学会验机</strong>——烤机测试是最关键的一步</li>
+<li>✓ 不同购买渠道各有优劣：京东自营最稳妥、拼多多百亿补贴最便宜、闲鱼最有风险</li>
+<li>✓ 买电脑之前，先查好目标配置的市场行情价——心里有底才不会被坑</li>
+</ul>
+<hr>
+<h2 id="本章总结">本章总结</h2>
+<h3 id="从quot不懂参数quot到quot心中有数quot">从&quot;不懂参数&quot;到&quot;心中有数&quot;</h3>
+<p>这一章，我们完成了从理论到实践的跨越：</p>
+<ol>
+<li><strong>5.1 节</strong>告诉你：电脑形态的选择是<strong>生活方式的选择</strong>——轻薄本、游戏本和台式机各有各的不可能三角</li>
+<li><strong>5.2 节</strong>告诉你：Windows 和 Mac 的选择不是&quot;信仰问题&quot;，而是<strong>软件生态、硬件架构和使用习惯</strong>的综合考量</li>
+<li><strong>5.3 节</strong>给了你一套<strong>参数解读的工具</strong>——以后看到任何一张参数表，你都能逐行拆解</li>
+<li><strong>5.4 节</strong>拆解了<strong>品牌机、DIY 和二手</strong>三条购买路径的风险与收益</li>
+</ol>
+<p>回顾前几章的知识，你会发现：</p>
+<ul>
+<li>第一章讲的存储层次，帮你理解了&quot;内存 vs 硬盘&quot;的参数差异</li>
+<li>第二章讲的 CPU 和 GPU 架构，让你看懂了处理器和显卡的型号命名</li>
+<li>第三章讲的操作系统，帮你理解了 Windows vs macOS 的深层差异</li>
+<li>第四章讲的主板和 SoC，让你明白了&quot;为什么苹果统一内存和传统 PC 不一样&quot;</li>
+</ul>
+<p><strong>现在，你不再是那个面对参数表一头雾水的新生了。</strong></p>
+<hr>
+<h3 id="与其他章节的联系">与其他章节的联系</h3>
+<p><strong>回顾</strong>：前四章让你理解了计算机的每一个核心部件；本章将这些知识应用到了最实际的场景——选购。</p>
+<p><strong>展望</strong>：下一章，我们将从&quot;个人电脑&quot;的视角跳出来。你会看到，一台电脑从按下电源键到运行一个游戏，所有你学过的部件是如何精密协作的。然后，我们会把视野扩展到&quot;云端&quot;——让你理解，为什么你手机上刷的每一个视频背后，都有一台你看不见的&quot;超级电脑&quot;。</p>
+<p>【下章预告】你的电脑启动时，CPU、内存、硬盘、GPU 是如何一步步协作的？那些你看不见的&quot;云服务器&quot;又是怎么回事？第六章，我们来看完整的全局图。</p>
+<hr>
+<h3 id="延伸资源">延伸资源</h3>
+<p><strong>视频推荐：</strong></p>
+<ul>
+<li>🎥 <a href="https://www.bilibili.com/video/BV1Pb4y1f7LF">硬件茶谈 - 2025 年装机指南</a> ⭐入门<ul>
+<li>国内最受欢迎的硬件科普 UP 主之一，讲解清晰，适合零基础同学</li>
+</ul>
+</li>
+</ul>
+<p><strong>文章推荐：</strong></p>
+<ul>
+<li>📝 <a href="https://zhuanlan.zhihu.com/p/634266995">笔吧评测室 - 2025 年笔记本选购指南</a> ⭐入门<ul>
+<li>知乎上最详细的笔记本选购系列文章，每季度更新，覆盖各价位段</li>
+</ul>
+</li>
+</ul>
+<blockquote><p>📌 <strong>注意</strong>：以上链接为截至写作时的参考地址，内容可能会更新。建议直接在 B 站搜索&quot;硬件茶谈 装机&quot;或在知乎搜索&quot;笔吧评测室 笔记本推荐&quot;获取最新版本。</p>
+</blockquote>
+<hr>
+
+    <nav class="pager">  <a href="05-motherboard-soc.html">
+    <span class="label">← 上一章</span>
+    <span class="title">第四章：完整拼图——主板、芯片组与融合架构</span>
+  </a>  <a href="07-system-cloud.html" class="next">
+    <span class="label">下一章 →</span>
+    <span class="title">第六章：系统视角——从单机到云端</span>
+  </a></nav>
+  </article>
+</div>
+
+<footer>
+  <div class="set">
+    <span>电脑怎么工作的——给大一新生的计算机原理课</span>
+    <span>2026 · ZH-CN</span>
+  </div>
+  <div class="set">
+    <span>Mav</span>
+  </div>
+</footer>
+<div class="search-backdrop" id="search-overlay" role="dialog" aria-modal="true" aria-label="搜索" hidden>
+  <div class="search-modal">
+    <div class="search-input-wrap">
+      <input type="search" class="search-input" placeholder="搜索内容..." aria-label="搜索内容" autocomplete="off">
+      <kbd>ESC</kbd>
+    </div>
+    <div class="search-results" role="listbox" aria-label="搜索结果"></div>
+  </div>
+</div>
+
+<!-- Mobile TOC -->
+<button class="mtoc-fab" id="mtoc-fab" aria-label="目录">TOC</button>
+<div class="mtoc-drawer" id="mtoc-drawer">
+  <div class="mtoc-content"></div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/bash.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/typescript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/yaml.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/javascript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/json.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/python.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/css.min.js"></script>
+<script src="../assets/script.js"></script>
+</body>
+</html>

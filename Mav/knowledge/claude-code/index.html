@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>关于 Claude Code，你应该了解的一切</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/style.css">
+<link rel="stylesheet" id="hljs-light" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+<link rel="stylesheet" id="hljs-dark" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" media="not all">
+</head>
+<body>
+
+<div class="progress-bar" id="progress-bar"></div>
+
+<nav class="topnav" id="topnav">
+  <div class="topnav-inner">
+    <a class="brand" href="index.html">Claude Code 指南</a>
+    <div class="nav-links">
+      <a href="chapters/01-what-is.html">01</a>
+      <a href="chapters/02-daily.html">02</a>
+      <a href="chapters/03-power.html">03</a>
+      <a href="chapters/04-mental.html">04</a>
+      <a href="chapters/05-cache.html">05</a>
+      <a href="chapters/06-easter-eggs.html">06</a>
+      <a href="chapters/reference.html">Ref</a>
+    </div>
+    <div class="nav-controls">
+      <button class="nav-btn" id="search-btn" aria-label="搜索 (Ctrl+K)">⌘K</button>
+      <button class="nav-btn" id="settings-btn" aria-label="阅读设置">Aa</button>
+      <a class="nav-btn" href="../index.html" aria-label="返回知识库">← 知识库</a>
+    </div>
+  </div>
+</nav>
+
+<div class="settings-pop" id="settings-pop">
+  <h5>主题</h5>
+  <div class="row">
+    <button class="seg" data-theme-set="light">明亮</button>
+    <button class="seg" data-theme-set="dark">暗色</button>
+  </div>
+  <h5>字号</h5>
+  <div class="row">
+    <button class="seg" data-size-set="s">小</button>
+    <button class="seg" data-size-set="m">中</button>
+    <button class="seg" data-size-set="l">大</button>
+  </div>
+</div>
+
+<main class="cover">
+
+  <section class="cover-hero">
+    <div class="cover-title-block">
+      <h1>
+        关于 Claude Code，<br>
+        你应该了解的一切。
+      </h1>
+    </div>
+
+    <div class="cover-meta-top">
+      <div><span class="k">读者</span><span class="v">对编程略有涉及，入门Claude Code的读者</span></div>
+      <div><span class="k">总长</span><span class="v">06 章 + 速查 · ≈ 108 min</span></div>
+      <div><span class="k">类别</span><span class="v">CLAUDE · TERMINAL · AI</span></div>
+      <div><span class="k">版本</span><span class="v">2026.05.13 · v2.1</span></div>
+    </div>
+
+    <div class="cover-lede-row">
+      <div>
+        <div class="num">§ 引子</div>
+        <p class="cover-lede">
+          它不是聊天框里的 AI。它住进你的终端，读你的代码、改你的文件、跑你的命令，
+          并且会在关键时刻停下来问你一句：是否允许我继续？
+        </p>
+        <p class="cover-lede">
+          这本小书想把它讲清楚——从它是什么，到它会怎么出错，到一些藏在源码里没人告诉你的东西。
+        </p>
+      </div>
+      <div>
+        <div class="num">§ 写给谁</div>
+        <p class="cover-lede">
+          所有初次和Claude Code打交道的人，你或多或少听过、用过 ChatGPT、写过 prompt，但 Claude Code 这个工具——它如何在终端里跑、为什么能改你的文件、什么时候会翻车——还是一团雾。这本书将带你完善每个细节，理解什么是真正的agent.
+        </p>
+        <p class="cover-lede">
+          前三章覆盖新手指导，第四章讲心智模型，第五章讲缓存与计费机制，第六章讲彩蛋和冷知识，最后一节是速查表——所有命令、快捷键、配置项一页打开。
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section class="cover-terminal-wrap">
+    <div class="label">
+      <span>FIG. 01 · A FIRST ENCOUNTER</span>
+      <span class="live">LIVE</span>
+    </div>
+    <div class="terminal">
+      <div class="terminal-bar">
+        <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+        <span class="title">~/my-project — claude</span>
+      </div>
+      <div class="terminal-body" id="term-demo"></div>
+    </div>
+    <span class="fig-num">这是一次 Claude Code 会话的前 30 秒。滚到这里时它会自动开始。</span>
+  </section>
+
+  <section>
+    <div class="cover-bottom">
+      <div>
+        <div class="label">目录 / INDEX</div>
+        <h3>六章，从陌生到会用，再到知道它的边界。</h3>
+        <p>
+          前两章让你会用，第三章让你用得长久，第四章让你用得安全，第五章让你用得便宜，第六章让你玩得开心。最后一节是速查，方便你回头查个命令。
+        </p>
+      </div>
+      <div>
+        <div class="label">阅读建议</div>
+        <h3>顺序读，不要跳。</h3>
+        <p>
+          每章 25–35 分钟。开着终端边读边试，效果最好——写到 <code>/plan</code> 的时候打开 Claude Code 输入 <code>/plan</code>，看实际是什么样。读到这本书最后一页的时候，你会明显感觉自己彻底熟悉整个操作了。
+        </p>
+      </div>
+    </div>
+
+    <div class="toc-grid">
+      <a class="toc-card" href="chapters/01-what-is.html">
+        <div class="num"><strong>01</strong><span>CH. ONE</span></div>
+        <div>
+          <h3>它到底是什么</h3>
+          <p>从网页版聊天到终端里的 agent——差的不是一个输入框，是一整套世界观。</p>
+        </div>
+        <div class="read"><span>开始阅读</span><span>→</span></div>
+      </a>
+      <a class="toc-card" href="chapters/02-daily.html">
+        <div class="num"><strong>02</strong><span>CH. TWO</span></div>
+        <div>
+          <h3>日常使用</h3>
+          <p>三种前缀、三十多个斜杠命令、权限系统。打开就能用的东西，本章讲全。</p>
+        </div>
+        <div class="read"><span>开始阅读</span><span>→</span></div>
+      </a>
+      <a class="toc-card" href="chapters/03-power.html">
+        <div class="num"><strong>03</strong><span>CH. THREE</span></div>
+        <div>
+          <h3>进阶武器库</h3>
+          <p>CLAUDE.md、Skills、Hooks、Subagents、MCP——让它长期为你服务的五件套。</p>
+        </div>
+        <div class="read"><span>开始阅读</span><span>→</span></div>
+      </a>
+      <a class="toc-card" href="chapters/04-mental.html">
+        <div class="num"><strong>04</strong><span>CH. FOUR</span></div>
+        <div>
+          <h3>心智模型与边界</h3>
+          <p>什么时候它会出错，你该怎么问，怎么让它不至于把你的周末毁掉。</p>
+        </div>
+        <div class="read"><span>开始阅读</span><span>→</span></div>
+      </a>
+    </div>
+
+    <div class="toc-grid">
+      <a class="toc-card" href="chapters/05-cache.html">
+        <div class="num"><strong>05</strong><span>CH. FIVE</span></div>
+        <div>
+          <h3>缓存</h3>
+          <p>为什么同样的问题第二次更便宜——理解 Prompt Caching、命中率、和怎么把账单稳住。</p>
+        </div>
+        <div class="read"><span>开始阅读</span><span>→</span></div>
+      </a>
+      <a class="toc-card" href="chapters/06-easter-eggs.html">
+        <div class="num"><strong>06</strong><span>CH. SIX</span></div>
+        <div>
+          <h3>彩蛋与冷知识</h3>
+          <p>/buddy、终端宠物、愚人节传统、版本号里的梗、源码里的 KAIROS 与 ULTRAPLAN——一些 Anthropic 没大声说的事。</p>
+        </div>
+        <div class="read"><span>开始阅读</span><span>→</span></div>
+      </a>
+      <a class="toc-card" href="chapters/reference.html">
+        <div class="num"><strong>R</strong><span>REFERENCE</span></div>
+        <div>
+          <h3>速查表</h3>
+          <p>所有斜杠命令、所有 CLI flag、所有快捷键、所有 settings.json 配置键、所有 hook 事件——按主题分组，可点开看详情。</p>
+        </div>
+        <div class="read"><span>查阅</span><span>→</span></div>
+      </a>
+    </div>
+
+    <div class="cover-bottom">
+      <div>
+        <div class="label">关于这本书 / COLOPHON</div>
+        <p>
+          排版使用 <code>Inter</code> 与 <code>JetBrains Mono</code>。
+          采用无衬线正文 + 等宽代码的双轴体系，以黑白为主调的极简设计。
+        </p>
+        <p>
+          内容覆盖截至 2026 年 5 月 14 日（v2.1.141）的 Claude Code 公开功能：包括 <code>/goal</code>（5/11 新增）、<code>/btw</code>、<code>/rename</code>、<code>/effort</code>、<code>/loop</code>、<code>/buddy</code>、<code>/ultrareview</code>、<code>/teleport</code>、<code>/rewind</code>、<code>/usage</code>、<code>/insights</code> 等近期新增命令，以及完整的 Hook、Skill、Subagent、MCP、Agent SDK 体系。
+        </p>
+      </div>
+      <div>
+        <div class="label">致读者 / NOTE</div>
+        <p>
+          你目前可能只认识 <code>/status</code>、<code>/exit</code>、<code>/btw</code>、<code>/rename</code> 这几个命令。读完这本书，你会从「能用它」变成「知道它在做什么」——后者比前者重要得多。
+        </p>
+        <p>
+          遇到不懂的地方，打开终端，敲 <code>claude</code>，问它。它自己就是关于自己最好的文档。读到第二章会发现，本指南里大量段落点击命令名能弹出详情——一边读一边查，比死记硬背快。
+        </p>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <div class="set">
+    <span>CC / FIELD GUIDE / 001</span>
+    <span>2026 · ZH-CN · EDITION 02</span>
+  </div>
+  <div class="set">
+    <span>06 CHAPTERS + REF</span>
+    <span>≈ 108 MIN</span>
+    <span>WRITTEN BY CLAUDE, ABOUT CLAUDE</span>
+  </div>
+</footer>
+
+<!-- Search Overlay -->
+<div class="search-backdrop" id="search-overlay" role="dialog" aria-modal="true" aria-label="搜索" hidden>
+  <div class="search-modal">
+    <div class="search-input-wrap">
+      <input type="search" class="search-input" placeholder="搜索命令、主题..." aria-label="搜索内容" autocomplete="off">
+      <kbd>ESC</kbd>
+    </div>
+    <div class="search-results" role="listbox" aria-label="搜索结果"></div>
+  </div>
+</div>
+
+<!-- Modal (shared across pages) -->
+<div class="modal-backdrop" id="cmd-modal" role="dialog" aria-modal="true" aria-label="命令详情">
+  <div class="modal">
+    <button class="modal-close">关闭 ESC</button>
+    <span class="tag"></span>
+    <h3></h3>
+    <p class="summary"></p>
+    <div class="modal-body"></div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/bash.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/typescript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/yaml.min.js"></script>
+<script src="assets/commands.js"></script>
+<script src="assets/script.js"></script>
+</body>
+</html>
