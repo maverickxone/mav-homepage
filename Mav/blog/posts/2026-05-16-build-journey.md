@@ -23,3 +23,5 @@ date: 2026-05-16
 HTML确实比单纯的markdown更有观赏性，阅读体验也更好，目前的md2HTML已经可以做到70分的水平，让AI稍微打磨一下就可以变成知识库里面的一环。
 
 详细的搭建记录见 [BUILD-JOURNEY-0516.md](https://github.com/maverickxone/mav-homepage/blob/main/BUILD-JOURNEY-0516.md)。
+
+**[→ 阅读完整搭建历程](build-journey.html)**

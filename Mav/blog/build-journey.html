@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>个人主页搭建历程 — Mav</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+
+<nav class="topnav">
+  <div class="topnav-inner">
+    <a class="brand" href="../index.html">← Mav</a>
+    <div class="nav-links">
+      <a href="../about/index.html">关于我</a>
+      <a href="../knowledge/index.html">知识库</a>
+      <a href="../blog/index.html" class="active">博客</a>
+    </div>
+  </div>
+</nav>
+
+<main class="page-wrap">
+<h1>个人主页的搭建历程</h1>
+<p><strong>Mav × Opus · 2026 年 5 月 15 日 至 5 月 16 日</strong></p>
+<p>一次从零开始的对话，从一本 Claude Code 讲义出发，最终搭建出一个完整的个人知识库网站。以下是完整的交互记录和搭建过程。</p>
+<hr>
+<h2>第一阶段：Claude Code 讲义的优化</h2>
+<h3>起点</h3>
+<blockquote>
+<p><strong>Mav</strong>: 我打算创建一个文件，用来写我觉得这个前端项目可以改进的地方。你有什么建议吗？</p>
+</blockquote>
+<p><strong>Opus</strong>: 读完了整个项目的 HTML/CSS/JS，列出了十几条改进建议——响应式问题、可访问性、性能、功能缺失。建议用 Markdown 记录，创建了 <code>docs/IMPROVEMENTS.md</code>。</p>
+<p>这是一切的起点。当时的项目是一本关于 Claude Code 的中文指南网站，6 章 + 速查表，设计风格极简（Inter + JetBrains Mono，黑白为主）。</p>
+<hr>
+<h3>终端动画触发时机</h3>
+<blockquote>
+<p><strong>Mav</strong>: 终端设计是划到那里就加载，但很多时候我们还没有划过去呢。能不能改成整个终端都露出来才开始加载？</p>
+</blockquote>
+<p><strong>Opus</strong>: 把 IntersectionObserver 的 <code>threshold</code> 从 <code>0.3</code> 改成 <code>0.9</code>。一行代码的事，但体验差别很大。</p>
+<hr>
+<h3>Copy 按钮逻辑反了</h3>
+<blockquote>
+<p><strong>Mav</strong>: 鼠标放上去的时候右侧的 copy 就亮起来了，鼠标靠近反而变淡了。是不是逻辑反了？</p>
+</blockquote>
+<p><strong>Opus</strong>: 改成三级渐进：隐藏 → 半透明出现（opacity 0.6）→ hover 时完全高亮（opacity 1 + 背景色）。</p>
+<hr>
+<h3>代码块在亮色模式下半黑半白</h3>
+<blockquote>
+<p><strong>Mav</strong>: 整本书都有这个 bug，就是在明亮模式下代码框非常奇怪，外圈黑色没有调整。</p>
+</blockquote>
+<p><strong>Opus</strong>: 根因是 highlight.js 的 light 主题给 <code>.hljs</code> 加了白色背景，和外层深色 <code>&lt;pre&gt;</code> 冲突。修了两处：JS 里永远用 dark hljs 主题 + CSS 里 <code>pre code.hljs { background: transparent }</code>。</p>
+<hr>
+<h3>文字选中看不见</h3>
+<blockquote>
+<p><strong>Mav</strong>: 现在我在终端里面划一段话的时候，也是黑色的，导致根本看不清。</p>
+</blockquote>
+<p><strong>Opus</strong>: 统一改成淡蓝色半透明选中 <code>rgba(100, 180, 255, 0.35)</code>，深色浅色背景上都能看清。</p>
+<hr>
+<h3>弹窗滚动位置不重置</h3>
+<blockquote>
+<p><strong>Mav</strong>: 我在第一个弹窗阅读，往下滑到底部，退出，再打开第二个弹窗，就直接在最底部了。</p>
+</blockquote>
+<p><strong>Opus</strong>: 花了三次才修好。</p>
+<ul>
+<li>第一次：重置了错误的元素（<code>modalBody</code> 而不是 <code>.modal</code>）</li>
+<li>第二次：重置了正确的元素，但时机不对（<code>display: none</code> 时设 scrollTop 无效）</li>
+<li>第三次：先 <code>classList.add(&#39;open&#39;)</code>，再用 <code>requestAnimationFrame</code> 等布局完成后设 scrollTop</li>
+</ul>
+<p>教训：操作 DOM 滚动属性时，元素必须处于可见且已布局的状态。</p>
+<hr>
+<h2>第二阶段：新增缓存章节</h2>
+<h3>决定单开一章</h3>
+<blockquote>
+<p><strong>Mav</strong>: 现在的 ClaudeCode 没有讲&quot;缓存 Cache&quot;的事情，这其实是很重要的概念。</p>
+</blockquote>
+<p><strong>Opus</strong>: 最初建议插入第四章作为一节，但 Mav 指出篇幅太长，决定单开一章。</p>
+<p>这意味着：</p>
+<ul>
+<li>原第五章（彩蛋）变成第六章</li>
+<li>所有导航、页脚、章节计数都要更新</li>
+<li>7 个 HTML 文件 + index.html 的批量修改</li>
+</ul>
+<hr>
+<h3>缓存章节的内容</h3>
+<p>新的第五章《缓存》包含 10 节：</p>
+<ol>
+<li>先打个比方（外卖 App 类比）</li>
+<li>计算机里到处都是缓存（CPU/浏览器/CDN 表格）</li>
+<li>为什么 LLM 也要缓存</li>
+<li>Prompt Cache 是什么</li>
+<li>命中和不命中</li>
+<li>怎么看缓存有没有命中</li>
+<li>怎么提高命中率</li>
+<li>算一笔账（Sonnet 单价对比表）</li>
+<li>KV Cache 是另一回事</li>
+<li>最后一段话</li>
+</ol>
+<hr>
+<h3>搜索算法讲解</h3>
+<blockquote>
+<p><strong>Mav</strong>: 针对这个搜索算法，给我超级详细，超级入门讲一讲👀</p>
+</blockquote>
+<p><strong>Opus</strong>: 写了一篇从零开始的 TF-IDF + 倒排索引教程，覆盖：</p>
+<ul>
+<li>为什么不能暴力遍历</li>
+<li>倒排索引怎么做到 O(1) 查找</li>
+<li>TF-IDF 怎么排序</li>
+<li>BM25 是什么</li>
+<li>MiniSearch 的 prefix/fuzzy/boost 加分项</li>
+<li>和 PageRank 的对比</li>
+</ul>
+<p>Mav 的评价：&quot;感觉很智能&quot;。</p>
+<hr>
+<h2>第三阶段：搜索功能修复</h2>
+<h3>搜索索引是空的</h3>
+<blockquote>
+<p><strong>Mav</strong>: 搜索功能我刚刚使用失败了。</p>
+</blockquote>
+<p><strong>Opus</strong>: 发现 <code>search-index.json</code> 里 <code>documentCount: 0</code>——索引从未被构建过。</p>
+<hr>
+<h3>构建工具报错</h3>
+<blockquote>
+<p><strong>Mav</strong>: 点击按钮没有反应。</p>
+</blockquote>
+<p><strong>Opus</strong>: 重写了 <code>tools/build-search-index.html</code>，加了错误日志、进度显示、Download 按钮。</p>
+<hr>
+<h3>MiniSearch v6 的 toJSON() 变了</h3>
+<blockquote>
+<p><strong>Mav</strong>: 建索引失败: &quot;[object Object]&quot; is not valid JSON</p>
+</blockquote>
+<p><strong>Opus</strong>: MiniSearch v6 的 <code>toJSON()</code> 已经返回对象而不是字符串，不需要再 <code>JSON.parse</code>。一行代码的 bug，但没有错误提示就很难发现。</p>
+<hr>
+<h2>第四阶段：事实核查与内容更新</h2>
+<h3>/buddy 已被移除</h3>
+<blockquote>
+<p><strong>Mav</strong>: 这里内容是不是有误？好像在某个版本已经被移除了。</p>
+</blockquote>
+<p><strong>Opus</strong>: 联网搜索确认：<code>/buddy</code> 只存活了约一周（v2.1.89 → v2.1.97），社区有&quot;Bring Back Buddy&quot;请求但官方未恢复。修改了第六章和 commands.js 的相关描述。</p>
+<hr>
+<h3>/dream 已正式上线</h3>
+<p><strong>Opus</strong>: 搜索发现 <code>/dream</code> 在 2026 年 5 月 6 日的&quot;Code with Claude&quot;开发者活动上正式发布，不再是泄漏里的未发布功能。更新了第六章的描述。</p>
+<hr>
+<h2>第五阶段：个人主页搭建</h2>
+<h3>架构设计</h3>
+<blockquote>
+<p><strong>Mav</strong>: 我打算建立一个个人主页。可能的架构是：关于我、知识库、博客。</p>
+</blockquote>
+<p><strong>Opus</strong>: 创建了 <code>Mav/</code> 文件夹，包含：</p>
+<ul>
+<li><code>index.html</code> — 主页（三张卡片 + 最近动态）</li>
+<li><code>about/</code> — 个人介绍 + 项目</li>
+<li><code>knowledge/</code> — 知识库首页（卡片网格）</li>
+<li><code>blog/</code> — 博客列表 + 示例文章</li>
+<li><code>assets/</code> — 统一的 CSS/JS</li>
+</ul>
+<p>风格完全继承 Claude Code 讲义的设计系统。</p>
+<hr>
+<h3>知识库批量构建</h3>
+<blockquote>
+<p><strong>Mav</strong>: 所有的 md 书籍都在 markdown 那个文件夹里面了，有七本书。</p>
+</blockquote>
+<p><strong>Opus</strong>: 写了 <code>build-all.sh</code> 脚本，一次性构建 7 本书并部署到 <code>Mav/knowledge/</code>：</p>
+<ul>
+<li>电脑怎么工作的（8 章）</li>
+<li>区块链与加密货币（5 章）</li>
+<li>深度学习讲义（4 章）</li>
+<li>Git 概念讲解与实操（4 章）</li>
+<li>银行体系与货币系统（8 章）</li>
+<li>Rust（7 章）</li>
+<li>视频与屏幕技术（5 章）</li>
+</ul>
+<hr>
+<h3>串台文件 bug</h3>
+<blockquote>
+<p><strong>Mav</strong>: 为什么每一个子文件夹里面都有一整套 html？</p>
+</blockquote>
+<p><strong>Opus</strong>: <code>build-all.sh</code> 的两个 bug：</p>
+<ol>
+<li>build 前没清空 <code>dist/</code>，上一本书的章节残留</li>
+<li>复制到目标时用 <code>cp -r</code>，不会删除目标里已有的多余文件</li>
+</ol>
+<p>修复：每次 build 前 <code>rm -rf dist</code>，复制前 <code>rm -rf</code> 目标文件夹再 <code>mkdir -p</code>。</p>
+<hr>
+<h3>区块链从 1 章拆成 5 章</h3>
+<blockquote>
+<p><strong>Mav</strong>: 区块链的，进去发现只有一个按钮，有点抽象。</p>
+</blockquote>
+<p><strong>Opus</strong>: 按原文的五个&quot;部分&quot;自然分割，写脚本 <code>sed</code> 切割 + 加 frontmatter + 重新 build。</p>
+<hr>
+<h3>银行体系从 1 章拆成 8 章</h3>
+<p>同样的操作，额外修了：</p>
+<ul>
+<li>重复标题（frontmatter title 和正文 <code>## 第X章</code> 重复）</li>
+<li>侧边栏为空（<code>###</code> 需要提升为 <code>##</code> 才能被侧边栏抓到）</li>
+</ul>
+<hr>
+<h3>Git 指南重构</h3>
+<p>从 11 个小章节合并为 4 个大章节，过程中遇到：</p>
+<ul>
+<li>md 切割时代码块被从中间截断（第二章末尾的 ``` 跑到了第三章开头）</li>
+<li>标题里的 <code>1.1</code>、<code>2.3</code> 编号前缀需要去掉</li>
+<li>原文的手写目录（<code>3. [安装与初始配置](#3-安装与初始配置)</code>）需要删除</li>
+</ul>
+<hr>
+<h3>CSS counter 自动编号</h3>
+<blockquote>
+<p><strong>Mav</strong>: 侧边栏是有 03、04 这种的，但是正文里面只有&quot;分支操作&quot;，应该改成&quot;04 分支操作&quot;。</p>
+</blockquote>
+<p><strong>Opus</strong>: 用 CSS counter 实现，不改任何 HTML：</p>
+<pre><code class="language-css">.chapter-body { counter-reset: section; }
+h2 { counter-increment: section; }
+.chapter-body h2::before {
+  content: counter(section, decimal-leading-zero) &quot;  &quot;;
+}
+</code></pre>
+<p>所有用 md2HTML 构建的书自动生效。</p>
+<hr>
+<h2>第六阶段：导航与用户体验</h2>
+<h3>&quot;返回知识库&quot;按钮</h3>
+<blockquote>
+<p><strong>Mav</strong>: 知识库的子页面&quot;回去&quot;怎么办？</p>
+</blockquote>
+<p><strong>Opus</strong>: 在 <code>build.js</code> 的 <code>nav-controls</code> 里加了 <code>← 知识库</code> 按钮，改一次模板所有书都生效。Claude Code 那本手动加（用 sed 脚本）。</p>
+<hr>
+<h3>子页面的 <code>← Mav</code> 返回</h3>
+<p>所有子页面的 brand 从 <code>Mav</code> 改为 <code>← Mav</code>，箭头暗示可返回主页。</p>
+<hr>
+<h3>博客&quot;返回列表&quot;样式</h3>
+<blockquote>
+<p><strong>Mav</strong>: 返回博客列表这个应该放下面一点，和正文要分开。</p>
+</blockquote>
+<p><strong>Opus</strong>: 加了 <code>border-top</code> 分割线 + mono 小号灰色字体，视觉上明确是导航而非正文。</p>
+<hr>
+<h2>第七阶段：部署上线</h2>
+<h3>GitHub 仓库</h3>
+<blockquote>
+<p><strong>Mav</strong>: 我打算把网站全部部署到服务器上，同时做一个 GitHub 端云同步。</p>
+</blockquote>
+<p>创建了 <a href="https://github.com/maverickxone/mav-homepage">maverickxone/mav-homepage</a> 仓库，包含：</p>
+<ul>
+<li><code>Mav/</code> — 静态站点（Nginx root）</li>
+<li><code>markdown-backups/</code> — 知识库 md 源文件</li>
+<li><code>md2HTML/</code> — 构建工具</li>
+</ul>
+<p>添加了 <code>.gitignore</code>（排除 node_modules、dist、Zone.Identifier）和 MIT LICENSE。</p>
+<hr>
+<h3>服务器配置</h3>
+<ul>
+<li><strong>Nginx</strong> 托管 <code>Mav/</code> 目录作为静态站点</li>
+<li><strong>GitHub Webhook</strong> 自动同步：push 到 GitHub 后服务器几秒内自动 pull</li>
+<li><strong>HTTPS</strong> 通过 Let&#39;s Encrypt 配置</li>
+<li>2 核 2G 阿里云服务器，绑绑有余</li>
+</ul>
+<p>工作流：本地改文件 → <code>git push</code> → webhook 触发 → 服务器 <code>git pull</code> → 几秒后上线。</p>
+<hr>
+<h3>WSL 文件权限的坑</h3>
+<p>推送过程中反复出现&quot;幽灵改动&quot;——git 把 WSL 和 Windows 之间的文件权限变更（644 → 755）当作改动。最终用 <code>git config core.fileMode false</code> 解决。</p>
+<hr>
+<h2>第八阶段：博客系统</h2>
+<h3>blog-build.js</h3>
+<blockquote>
+<p><strong>Mav</strong>: 有没有什么简单优雅的办法写博客？我想像管理 md 一样管理博客。</p>
+</blockquote>
+<p><strong>Opus</strong>: 写了 <code>blog-build.js</code>（约 150 行），实现：</p>
+<ul>
+<li>读取 <code>Mav/blog/posts/*.md</code></li>
+<li>每篇转成独立的 HTML 博客页面</li>
+<li>自动生成 <code>blog/index.html</code>（文章列表）</li>
+<li>自动更新主页&quot;最近在做的事&quot;（取最新 3 篇）</li>
+</ul>
+<p>写博客的流程变成：</p>
+<ol>
+<li>在 <code>posts/</code> 里写一个 <code>.md</code> 文件（带 frontmatter）</li>
+<li>跑 <code>node blog-build.js</code></li>
+<li><code>git push</code></li>
+</ol>
+<p>不需要手动改任何 HTML，不需要 AI，不需要记模板格式。</p>
+<hr>
+<h2>技术栈总结（最终版）</h2>
+<table>
+<thead>
+<tr>
+<th>层级</th>
+<th>技术</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>前端</td>
+<td>纯 HTML/CSS/JS，无框架</td>
+</tr>
+<tr>
+<td>字体</td>
+<td>Inter + JetBrains Mono</td>
+</tr>
+<tr>
+<td>知识库构建</td>
+<td>md2HTML（自研，Node.js）</td>
+</tr>
+<tr>
+<td>博客构建</td>
+<td>blog-build.js（自研，Node.js）</td>
+</tr>
+<tr>
+<td>搜索</td>
+<td>MiniSearch（客户端全文搜索）</td>
+</tr>
+<tr>
+<td>代码高亮</td>
+<td>highlight.js</td>
+</tr>
+<tr>
+<td>部署</td>
+<td>Nginx + GitHub Webhook 自动同步</td>
+</tr>
+<tr>
+<td>版本控制</td>
+<td>Git + GitHub</td>
+</tr>
+<tr>
+<td>证书</td>
+<td>Let&#39;s Encrypt（HTTPS）</td>
+</tr>
+</tbody></table>
+<hr>
+<h2>数字（最终）</h2>
+<ul>
+<li>对话轮次：150+</li>
+<li>修改的文件：300+</li>
+<li>新建的文件：80+</li>
+<li>知识库书籍：9 本</li>
+<li>总章节数：~50 章</li>
+<li>Bug 修复：25+</li>
+<li>联网搜索：5 次</li>
+<li>重新 build 次数：20+</li>
+<li>GitHub commits：6</li>
+</ul>
+<hr>
+<h2>感想</h2>
+<p>这次搭建过程本身就是 AI 辅助开发能力的一次完整展示：</p>
+<ul>
+<li>从前端 bug 修复到内容创作</li>
+<li>从 CSS 动画到搜索算法讲解</li>
+<li>从 shell 脚本到服务器架构设计</li>
+<li>从事实核查到用户体验优化</li>
+<li>从 GitHub 仓库管理到自动化部署</li>
+</ul>
+<p>一个人 + 一个 AI，两天之内，从一本讲义变成了一个完整的、自动化部署的个人网站。</p>
+<p>不是 AI 替你做了什么，是你和 AI 一起做了什么。</p>
+<hr>
+<p><em>Built with Claude and curiosity.</em></p>
+
+<p style="margin-top: var(--space-7);"><a href="index.html" style="display: inline-block; padding-top: var(--space-5); border-top: 1px solid var(--line); font-family: var(--mono); font-size: 12px; letter-spacing: 0.06em; color: var(--muted);">← 返回博客列表</a></p>
+</main>
+
+<footer>
+  <div class="footer-inner">
+    <span>Mav · 2026</span>
+    <span>Built with Claude and curiosity.</span>
+  </div>
+</footer>
+
+<script src="../assets/script.js"></script>
+</body>
+</html>
