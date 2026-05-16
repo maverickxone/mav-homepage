@@ -282,7 +282,7 @@ h2 { counter-increment: section; }
 - **Nginx** 托管 `Mav/` 目录作为静态站点
 - **GitHub Webhook** 自动同步：push 到 GitHub 后服务器几秒内自动 pull
 - **HTTPS** 通过 Let's Encrypt 配置
-- 2 核 2G 阿里云服务器，绑绑有余
+- 2 核 2G DO服务器，绑绑有余
 
 工作流：本地改文件 → `git push` → webhook 触发 → 服务器 `git pull` → 几秒后上线。
 
@@ -355,9 +355,7 @@ h2 { counter-increment: section; }
 - 从事实核查到用户体验优化
 - 从 GitHub 仓库管理到自动化部署
 
-一个人 + 一个 AI，两天之内，从一本讲义变成了一个完整的、自动化部署的个人网站。
-
-不是 AI 替你做了什么，是你和 AI 一起做了什么。
+以上就是本次开发的历程了！全程使用Opus4.6完成（感谢Kiro👿）
 
 ---
 

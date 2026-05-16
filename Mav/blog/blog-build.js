@@ -16,6 +16,7 @@ const { marked } = require(path.join(MD2HTML_DIR, 'node_modules', 'marked'));
 
 const BLOG_DIR = __dirname;
 const POSTS_DIR = path.join(BLOG_DIR, 'posts');
+const HTML_DIR = path.join(BLOG_DIR, 'html');
 const MAV_DIR = path.join(BLOG_DIR, '..');
 const MAIN_INDEX = path.join(MAV_DIR, 'index.html');
 
@@ -24,7 +25,7 @@ const MAIN_INDEX = path.join(MAV_DIR, 'index.html');
 // ============================================================
 function readPosts() {
   const files = fs.readdirSync(POSTS_DIR)
-    .filter(f => f.endsWith('.md'))
+    .filter(f => f.endsWith('.md') && !f.startsWith('BUILD-'))
     .sort()
     .reverse(); // newest first
 
@@ -53,17 +54,17 @@ function generatePostHTML(post) {
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" href="../../assets/style.css">
 </head>
 <body>
 
 <nav class="topnav">
   <div class="topnav-inner">
-    <a class="brand" href="../index.html">← Mav</a>
+    <a class="brand" href="../../index.html">← Mav</a>
     <div class="nav-links">
-      <a href="../about/index.html">关于我</a>
-      <a href="../knowledge/index.html">知识库</a>
-      <a href="../blog/index.html" class="active">博客</a>
+      <a href="../../about/index.html">关于我</a>
+      <a href="../../knowledge/index.html">知识库</a>
+      <a href="../index.html" class="active">博客</a>
     </div>
   </div>
 </nav>
@@ -76,7 +77,7 @@ function generatePostHTML(post) {
 
   ${html}
 
-  <p style="margin-top: var(--space-7);"><a href="index.html" style="display: inline-block; padding-top: var(--space-5); border-top: 1px solid var(--line); font-family: var(--mono); font-size: 12px; letter-spacing: 0.06em; color: var(--muted); transition: color 0.15s ease;">← 返回博客列表</a></p>
+  <p style="margin-top: var(--space-7);"><a href="../index.html" style="display: inline-block; padding-top: var(--space-5); border-top: 1px solid var(--line); font-family: var(--mono); font-size: 12px; letter-spacing: 0.06em; color: var(--muted); transition: color 0.15s ease;">← 返回博客列表</a></p>
 
 </main>
 
@@ -87,7 +88,7 @@ function generatePostHTML(post) {
   </div>
 </footer>
 
-<script src="../assets/script.js"></script>
+<script src="../../assets/script.js"></script>
 </body>
 </html>`;
 }
@@ -99,7 +100,7 @@ function generateBlogIndex(posts) {
   const listItems = posts.map(post => {
     const date = post.frontmatter.date ? new Date(post.frontmatter.date).toISOString().slice(0, 10).replace(/-/g, '.') : '';
     return `    <li>
-      <a href="${post.slug}.html">
+      <a href="html/${post.slug}.html">
         <span class="blog-date">${date}</span>
         <span class="blog-title">${post.frontmatter.title}</span>
       </a>
@@ -173,7 +174,7 @@ function updateMainPageRecent(posts) {
     return `      <li>
         <span class="date">${date}</span>
         <span class="title">${post.frontmatter.title}</span>
-        <a href="blog/${post.slug}.html" class="link">阅读 →</a>
+        <a href="blog/html/${post.slug}.html" class="link">阅读 →</a>
       </li>`;
   }).join('\n');
 
@@ -213,12 +214,17 @@ function build() {
   const posts = readPosts();
   console.log(`  Found ${posts.length} post(s):\n`);
 
+  // Ensure html output directory exists
+  if (!fs.existsSync(HTML_DIR)) {
+    fs.mkdirSync(HTML_DIR, { recursive: true });
+  }
+
   // Generate individual post pages
   posts.forEach(post => {
     const html = generatePostHTML(post);
-    const outPath = path.join(BLOG_DIR, `${post.slug}.html`);
+    const outPath = path.join(HTML_DIR, `${post.slug}.html`);
     fs.writeFileSync(outPath, html, 'utf-8');
-    console.log(`    ✓ ${post.slug}.html`);
+    console.log(`    ✓ html/${post.slug}.html`);
   });
 
   // Generate blog index
@@ -228,6 +234,50 @@ function build() {
 
   // Update main page recent section
   updateMainPageRecent(posts);
+
+  // Build BUILD-JOURNEY-0516.md as standalone page
+  const journeyPath = path.join(POSTS_DIR, 'BUILD-JOURNEY-0516.md');
+  if (fs.existsSync(journeyPath)) {
+    const journeyMd = fs.readFileSync(journeyPath, 'utf-8');
+    const journeyHtml = marked.parse(journeyMd);
+    const journeyPage = `<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>个人主页搭建历程 — Mav</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../assets/style.css">
+</head>
+<body>
+<nav class="topnav">
+  <div class="topnav-inner">
+    <a class="brand" href="../../index.html">← Mav</a>
+    <div class="nav-links">
+      <a href="../../about/index.html">关于我</a>
+      <a href="../../knowledge/index.html">知识库</a>
+      <a href="../index.html" class="active">博客</a>
+    </div>
+  </div>
+</nav>
+<main class="page-wrap">
+${journeyHtml}
+<p style="margin-top: var(--space-7);"><a href="../index.html" style="display: inline-block; padding-top: var(--space-5); border-top: 1px solid var(--line); font-family: var(--mono); font-size: 12px; letter-spacing: 0.06em; color: var(--muted);">← 返回博客列表</a></p>
+</main>
+<footer>
+  <div class="footer-inner">
+    <span>Mav · 2026</span>
+    <span>Built with Claude and curiosity.</span>
+  </div>
+</footer>
+<script src="../../assets/script.js"></script>
+</body>
+</html>`;
+    fs.writeFileSync(path.join(HTML_DIR, 'build-journey.html'), journeyPage, 'utf-8');
+    console.log('  ✓ html/build-journey.html (standalone journey page)');
+  }
 
   console.log('\n✅ Blog build complete!\n');
 }

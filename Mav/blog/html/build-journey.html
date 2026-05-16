@@ -7,21 +7,19 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" href="../../assets/style.css">
 </head>
 <body>
-
 <nav class="topnav">
   <div class="topnav-inner">
-    <a class="brand" href="../index.html">← Mav</a>
+    <a class="brand" href="../../index.html">← Mav</a>
     <div class="nav-links">
-      <a href="../about/index.html">关于我</a>
-      <a href="../knowledge/index.html">知识库</a>
-      <a href="../blog/index.html" class="active">博客</a>
+      <a href="../../about/index.html">关于我</a>
+      <a href="../../knowledge/index.html">知识库</a>
+      <a href="../index.html" class="active">博客</a>
     </div>
   </div>
 </nav>
-
 <main class="page-wrap">
 <h1>个人主页的搭建历程</h1>
 <p><strong>Mav × Opus · 2026 年 5 月 15 日 至 5 月 16 日</strong></p>
@@ -252,7 +250,7 @@ h2 { counter-increment: section; }
 <li><strong>Nginx</strong> 托管 <code>Mav/</code> 目录作为静态站点</li>
 <li><strong>GitHub Webhook</strong> 自动同步：push 到 GitHub 后服务器几秒内自动 pull</li>
 <li><strong>HTTPS</strong> 通过 Let&#39;s Encrypt 配置</li>
-<li>2 核 2G 阿里云服务器，绑绑有余</li>
+<li>2 核 2G DO服务器，绑绑有余</li>
 </ul>
 <p>工作流：本地改文件 → <code>git push</code> → webhook 触发 → 服务器 <code>git pull</code> → 几秒后上线。</p>
 <hr>
@@ -347,21 +345,18 @@ h2 { counter-increment: section; }
 <li>从事实核查到用户体验优化</li>
 <li>从 GitHub 仓库管理到自动化部署</li>
 </ul>
-<p>一个人 + 一个 AI，两天之内，从一本讲义变成了一个完整的、自动化部署的个人网站。</p>
-<p>不是 AI 替你做了什么，是你和 AI 一起做了什么。</p>
+<p>以上就是本次开发的历程了！全程使用Opus4.6完成（感谢Kiro👿）</p>
 <hr>
 <p><em>Built with Claude and curiosity.</em></p>
 
-<p style="margin-top: var(--space-7);"><a href="index.html" style="display: inline-block; padding-top: var(--space-5); border-top: 1px solid var(--line); font-family: var(--mono); font-size: 12px; letter-spacing: 0.06em; color: var(--muted);">← 返回博客列表</a></p>
+<p style="margin-top: var(--space-7);"><a href="../index.html" style="display: inline-block; padding-top: var(--space-5); border-top: 1px solid var(--line); font-family: var(--mono); font-size: 12px; letter-spacing: 0.06em; color: var(--muted);">← 返回博客列表</a></p>
 </main>
-
 <footer>
   <div class="footer-inner">
     <span>Mav · 2026</span>
     <span>Built with Claude and curiosity.</span>
   </div>
 </footer>
-
-<script src="../assets/script.js"></script>
+<script src="../../assets/script.js"></script>
 </body>
 </html>
