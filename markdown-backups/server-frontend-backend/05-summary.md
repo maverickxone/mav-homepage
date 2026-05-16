@@ -101,7 +101,7 @@ description: "回顾全书脉络，聊聊接下来可以探索的方向，以及
 
 ### 如果你对前端感兴趣
 
-:::collapsible 前端进阶路线
+#### 前端进阶路线
 **第一阶段：深入 JavaScript（1-2 个月）**
 - 异步编程：Promise、async/await、事件循环
 - ES6+ 语法：箭头函数、解构赋值、展开运算符、模块化
@@ -130,11 +130,10 @@ description: "回顾全书脉络，聊聊接下来可以探索的方向，以及
 - [javascript.info](https://javascript.info/)：最好的 JS 教程之一
 - [React 官方文档](https://react.dev/)：新版文档写得非常好
 - [Vue 官方文档](https://cn.vuejs.org/)：中文文档，入门友好
-:::
 
 ### 如果你对后端感兴趣
 
-:::collapsible 后端进阶路线
+#### 后端进阶路线
 **第一阶段：选一个框架深入（1-2 个月）**
 - Node.js 路线：Express → 学习中间件模式 → Nest.js（企业级框架）
 - Python 路线：Flask → FastAPI（现代、高性能、自动生成 API 文档）
@@ -169,11 +168,10 @@ description: "回顾全书脉络，聊聊接下来可以探索的方向，以及
 - [FastAPI 官方文档](https://fastapi.tiangolo.com/)：写得极好，有交互式示例
 - [The Odin Project](https://www.theodinproject.com/)：免费全栈学习路线
 - [freeCodeCamp](https://www.freecodecamp.org/)：免费，有证书
-:::
 
 ### 如果你对运维/DevOps 感兴趣
 
-:::collapsible 运维进阶路线
+#### 运维进阶路线
 **Linux 深入：**
 - Shell 脚本编程（Bash）
 - 进程管理：systemd、cron 定时任务
@@ -203,7 +201,6 @@ description: "回顾全书脉络，聊聊接下来可以探索的方向，以及
 - [Linux Journey](https://linuxjourney.com/)：交互式 Linux 学习
 - [Docker 官方文档](https://docs.docker.com/)
 - [GitHub Actions 文档](https://docs.github.com/en/actions)
-:::
 
 ---
 
@@ -341,7 +338,7 @@ wss.on('connection', (ws) => {
 
 ## 彩蛋
 
-:::collapsible 互联网的冷知识
+### 互联网的冷知识
 - 全球约 **67%** 的网站使用 Nginx 或 Apache 作为 Web 服务器
 - Let's Encrypt 已经颁发了超过 **30 亿**张免费 SSL 证书
 - 全球 DNS 根服务器只有 **13 组**（标记为 A 到 M），但通过 Anycast 技术，实际有上千台物理服务器分布在全球
@@ -351,9 +348,8 @@ wss.on('connection', (ws) => {
 - JavaScript 和 Java 没有任何关系——当年取这个名字纯粹是为了蹭 Java 的热度
 - CSS 的 `z-index` 最大值是 2147483647（32位有符号整数的最大值）。有些网站的弹窗 z-index 写到 99999999，其实已经溢出了
 - Google 的首页 HTML 只有约 **6KB**，是世界上最"轻"的高流量网站之一
-:::
 
-:::collapsible 关于这本书本身
+### 关于这本书本身
 这本书的制作流程本身就是一个完整的 Web 项目缩影：
 
 1. **内容创作**：用 Markdown 编写（纯文本，版本控制友好，AI 辅助生成）
@@ -371,9 +367,8 @@ wss.on('connection', (ws) => {
 - 浏览器（渲染显示）
 
 整个链路，就是这本书讲的所有东西。
-:::
 
-:::collapsible 推荐阅读和资源
+### 推荐阅读和资源
 **书籍：**
 - 《HTTP 权威指南》— 深入理解 HTTP 协议
 - 《图解 HTTP》— 日本人写的，图多易懂
@@ -390,7 +385,6 @@ wss.on('connection', (ws) => {
 - [SSL Labs](https://www.ssllabs.com/ssltest/) — 测试你的 HTTPS 配置评分
 - [PageSpeed Insights](https://pagespeed.web.dev/) — 测试网站性能
 - [DNS Checker](https://dnschecker.org/) — 检查 DNS 全球解析状态
-:::
 
 ---
 
