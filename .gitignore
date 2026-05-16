@@ -1,0 +1,5 @@
+node_modules/
+md2HTML/dist/
+*.Zone.Identifier
+.DS_Store
+Thumbs.db
