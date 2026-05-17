@@ -85,9 +85,32 @@
 <p>但这里有个关键问题：NeXT 电脑太贵了，普通人买不起。Web 要想普及，需要一个能在普通电脑上运行的浏览器。</p>
 <h3 id="113-1993mosaic-点燃了火">1.1.3 1993：Mosaic 点燃了火</h3>
 <p>1993 年，伊利诺伊大学的国家超级计算应用中心（NCSA）发布了 Mosaic 浏览器。它的核心开发者是一个 22 岁的本科生：Marc Andreessen。</p>
-<p>Mosaic 做了一件看似简单但改变一切的事：<strong>让图片和文字显示在同一个页面上</strong>。在此之前的浏览器要么是纯文本的，要么图片需要单独打开一个窗口查看。Mosaic 让网页第一次变得&quot;好看&quot;了。</p>
-<p>它还有 Windows 版本。这意味着任何有 PC 的人都能用它上网。</p>
-<p>Mosaic 的下载量在几个月内从零飙升到数百万。互联网从学术圈的玩具，变成了普通人能触碰的东西。</p>
+<p>Mosaic 做了一件看似简单但改变一切的事：<strong>让图片和文字显示在同一个页面上</strong>。</p>
+<p>这听起来理所当然——今天你打开任何网页，图片和文字混排是最基本的事情。但在 1993 年，这是一个真正的突破。让我解释为什么：</p>
+<p><strong>之前的浏览器是什么样的？</strong></p>
+<p>在 Mosaic 之前，浏览器基本上是&quot;美化版的终端&quot;。Tim Berners-Lee 的 WorldWideWeb 虽然能显示图片，但只能在 NeXT 系统上运行（全世界没几台）。其他平台上的浏览器——比如 Line Mode Browser——纯粹是文本界面，连鼠标都不支持，你得用键盘输入数字来选择链接。</p>
+<p>即使是稍微先进一点的浏览器（如 ViolaWWW），遇到图片时也是这样处理的：你点击一个链接，浏览器会<strong>单独打开一个外部程序</strong>（比如图片查看器）来显示那张图片。就像你在电脑上双击一个 <code>.jpg</code> 文件会弹出一个新窗口一样——图片和文字是完全分离的两个世界。</p>
+<p><strong>为什么&quot;混排&quot;是个技术难题？</strong></p>
+<p>把图片嵌入文字流中，需要解决一系列排版问题：</p>
+<ul>
+<li><strong>布局计算</strong>：一张图片插在段落中间，后面的文字要怎么环绕它？图片比屏幕宽怎么办？多张图片并排时如何对齐？</li>
+<li><strong>异步加载</strong>：图片文件比文字大得多（当时的网速通常只有 14.4kbps，一张图片可能要加载几十秒）。浏览器需要先显示文字，等图片下载完再把它&quot;插入&quot;正确的位置，同时重新计算整个页面的布局。</li>
+<li><strong>格式兼容</strong>：不同系统支持不同的图片格式，浏览器需要内置解码器。</li>
+<li><strong>内存管理</strong>：1993 年的电脑通常只有 4-8MB 内存，同时显示多张图片对内存管理是个挑战。</li>
+</ul>
+<p>Mosaic 的解决方案是引入 <code>&lt;img&gt;</code> 标签（这个标签今天还在用！），让 HTML 文档可以直接引用图片 URL，浏览器负责下载并在正确的位置渲染它。Marc Andreessen 在 1993 年 2 月的一封邮件中提出了这个标签的设计，当时还引发了激烈的讨论——有人认为应该用更通用的 <code>&lt;include&gt;</code> 标签，有人觉得图片会让网页变得臃肿。但 Andreessen 直接在 Mosaic 中实现了 <code>&lt;img&gt;</code>，用事实说话。</p>
+<p><strong>为什么这件事意义重大？</strong></p>
+<p>因为它彻底改变了&quot;网页&quot;这个概念的含义：</p>
+<ul>
+<li><strong>之前</strong>：网页 = 带超链接的文本文档（本质上是学术论文的电子版）</li>
+<li><strong>之后</strong>：网页 = 一个可以包含文字、图片、排版的<strong>视觉媒介</strong></li>
+</ul>
+<p>这个转变的意义远超技术本身。当网页变得&quot;好看&quot;了，它就不再只是科学家交换论文的工具——它可以是杂志、可以是广告、可以是商品目录、可以是新闻网站。<strong>视觉化让 Web 有了商业价值</strong>，而商业价值吸引了资本，资本推动了整个互联网的爆发式增长。</p>
+<p>没有 Mosaic 的 <code>&lt;img&gt;</code> 标签，就没有后来的网页设计行业，没有电子商务，没有社交媒体的图文信息流。一个小小的技术决策，改变了整个互联网的发展方向。</p>
+<p><strong>跨平台：让所有人都能上网</strong></p>
+<p>Mosaic 的另一个关键贡献是<strong>跨平台</strong>。它有 Unix、Windows 和 Mac 版本。在此之前，能上网的基本只有大学和研究机构里的 Unix 工作站用户。Windows 版 Mosaic 的出现意味着：任何有一台 PC 的普通人，都能体验万维网了。</p>
+<p>效果是爆炸性的。Mosaic 的下载量在几个月内从零飙升到数百万。1993 年初，全世界只有约 50 个网站；到 1993 年底，这个数字增长到了 500 多个；到 1994 年中，超过了 10,000 个。互联网从学术圈的玩具，变成了普通人能触碰的东西。</p>
+<p>《纽约时报》在 1993 年 12 月的报道中写道：&quot;Mosaic 是引发互联网商业化的导火索。&quot;这个评价毫不夸张。</p>
 <h3 id="114-为什么浏览器如此重要">1.1.4 为什么浏览器如此重要</h3>
 <p>在继续讲浏览器大战之前，让我们先理解一个根本问题：为什么浏览器这么重要？</p>
 <p>浏览器是普通用户接触互联网的<strong>唯一界面</strong>。你不需要理解 TCP/IP 协议，不需要知道 DNS 是什么，不需要会写 HTML——你只需要打开浏览器，输入一个地址或搜索词，就能访问全世界的信息。</p>
@@ -116,8 +139,8 @@
 <p>微软最初对互联网反应迟钝。Bill Gates 在 1995 年才写了那封著名的内部备忘录《The Internet Tidal Wave》，宣布微软要全力拥抱互联网。</p>
 <p>微软的策略简单粗暴：</p>
 <ol>
-<li><strong>授权 Mosaic 的代码</strong>，基于它开发了 Internet Explorer（IE）</li>
-<li><strong>完全免费</strong>——Netscape 当时对企业用户收费</li>
+<li><strong>花钱买了 Mosaic 的源代码许可</strong>——微软从 Spyglass 公司（NCSA 授权的 Mosaic 商业化代理）购买了 Mosaic 的代码使用权，在它的基础上快速开发出了 Internet Explorer 1.0。简单说就是：自己从零写太慢，不如买现成的代码来改。</li>
+<li><strong>完全免费</strong>——Netscape 当时对企业用户收费 39 美元，而 IE 分文不取</li>
 <li><strong>捆绑 Windows</strong>——从 Windows 95 OSR2 开始，IE 被预装在每一台 PC 上</li>
 </ol>
 <p>第三点是致命的。当时 Windows 占据了 90% 以上的 PC 市场。用户打开电脑，桌面上就有 IE 的图标，为什么还要专门去下载 Netscape？</p>
@@ -356,22 +379,73 @@ if (element.addEventListener) {
 </ul>
 <p>这就是为什么 Firefox 的存在很重要——即使它的市场份额只有 3-4%，它依然是唯一一个由非营利组织维护的、使用独立引擎的主流浏览器。它是 Web 多样性的最后一道防线。</p>
 <h2 id="16-时间线总结">1.6 时间线总结</h2>
-<pre><code>1989  Tim Berners-Lee 提出万维网提案
-1990  第一个浏览器 WorldWideWeb 诞生
-1993  Mosaic 发布，Web 开始普及
-1994  Netscape Navigator 发布
-1995  Netscape IPO / IE 开始捆绑 Windows / JavaScript 诞生
-1998  Netscape 开源 → Mozilla 项目 / DOJ 起诉微软
-2001  IE 6 发布，市场份额 95%，然后微软停止开发
-2004  Firefox 1.0 发布
-2008  Chrome 发布，带来 V8 引擎和多进程架构
-2012  Chrome 超越 IE 成为第一
-2015  Edge (EdgeHTML) 随 Windows 10 发布
-2018  微软宣布 Edge 转向 Chromium
-2020  Chromium Edge 发布 / DOJ 再次起诉 Google
-2024  法院裁定 Google 搜索垄断违法
-2025  法官裁定 Google 无需出售 Chrome
-2026  Chrome ~67%，Chromium 系 ~80%，引擎多样性告急</code></pre>
+
+<div class="timeline">
+  <div class="timeline-item">
+    <span class="timeline-year">1989</span>
+    <div class="timeline-content">Tim Berners-Lee 提出万维网提案</div>
+  </div>
+  <div class="timeline-item">
+    <span class="timeline-year">1990</span>
+    <div class="timeline-content">第一个浏览器 WorldWideWeb 诞生</div>
+  </div>
+  <div class="timeline-item">
+    <span class="timeline-year">1993</span>
+    <div class="timeline-content">Mosaic 发布，Web 开始普及</div>
+  </div>
+  <div class="timeline-item">
+    <span class="timeline-year">1994</span>
+    <div class="timeline-content">Netscape Navigator 发布</div>
+  </div>
+  <div class="timeline-item timeline-item--major">
+    <span class="timeline-year">1995</span>
+    <div class="timeline-content">Netscape IPO / IE 开始捆绑 Windows / JavaScript 诞生</div>
+  </div>
+  <div class="timeline-item">
+    <span class="timeline-year">1998</span>
+    <div class="timeline-content">Netscape 开源 → Mozilla 项目 / DOJ 起诉微软</div>
+  </div>
+  <div class="timeline-item timeline-item--major">
+    <span class="timeline-year">2001</span>
+    <div class="timeline-content">IE 6 发布，市场份额 95%，然后微软停止开发</div>
+  </div>
+  <div class="timeline-item">
+    <span class="timeline-year">2004</span>
+    <div class="timeline-content">Firefox 1.0 发布</div>
+  </div>
+  <div class="timeline-item timeline-item--major">
+    <span class="timeline-year">2008</span>
+    <div class="timeline-content">Chrome 发布，带来 V8 引擎和多进程架构</div>
+  </div>
+  <div class="timeline-item">
+    <span class="timeline-year">2012</span>
+    <div class="timeline-content">Chrome 超越 IE 成为第一</div>
+  </div>
+  <div class="timeline-item">
+    <span class="timeline-year">2015</span>
+    <div class="timeline-content">Edge (EdgeHTML) 随 Windows 10 发布</div>
+  </div>
+  <div class="timeline-item timeline-item--major">
+    <span class="timeline-year">2018</span>
+    <div class="timeline-content">微软宣布 Edge 转向 Chromium</div>
+  </div>
+  <div class="timeline-item">
+    <span class="timeline-year">2020</span>
+    <div class="timeline-content">Chromium Edge 发布 / DOJ 再次起诉 Google</div>
+  </div>
+  <div class="timeline-item">
+    <span class="timeline-year">2024</span>
+    <div class="timeline-content">法院裁定 Google 搜索垄断违法</div>
+  </div>
+  <div class="timeline-item">
+    <span class="timeline-year">2025</span>
+    <div class="timeline-content">法官裁定 Google 无需出售 Chrome</div>
+  </div>
+  <div class="timeline-item timeline-item--major">
+    <span class="timeline-year">2026</span>
+    <div class="timeline-content">Chrome ~67%，Chromium 系 ~80%，引擎多样性告急</div>
+  </div>
+</div>
 <p>三十年，从百花齐放到一家独大。浏览器的历史，本质上是一部关于&quot;平台控制权&quot;的商业战争史。技术创新很重要，但最终决定胜负的，往往是分发渠道和商业模式。</p>
 <h2 id="17-那些死去的浏览器们">1.7 那些死去的浏览器们</h2>
 <p>在这三十年里，无数浏览器诞生又消亡。让我们为它们立一块墓碑：</p>

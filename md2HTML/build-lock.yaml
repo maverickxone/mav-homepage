@@ -1,0 +1,14 @@
+# build-lock.yaml
+# Source files (md) listed here will be skipped during build.
+# Their corresponding HTML output won't be regenerated.
+# Use --force to override, or --unlock to remove entries.
+
+locked:
+  - Browser-War/01-browser-history.md
+  - Browser-War/02-engine-war.md
+  - server-frontend-backend/01-frontend.md
+  - server-frontend-backend/02-backend.md
+  - server-frontend-backend/03-server-hardware.md
+  - server-frontend-backend/04-server-software.md
+  - server-frontend-backend/05-summary.md
+  - server-frontend-backend/book.yaml

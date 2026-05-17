@@ -123,6 +123,35 @@ WebKit 的特点：
 - **Apple 强制要求**：在 iOS 上，所有浏览器（包括 Chrome for iOS）都必须使用 WebKit 引擎。这是 Apple 的 App Store 政策。所以 iPhone 上的 Chrome 本质上只是一个 WebKit 的壳。（注：欧盟 DMA 法案正在迫使 Apple 放松这一限制）
 - **JavaScriptCore**：WebKit 自带的 JS 引擎，也叫 Nitro，性能不错但通常略逊于 V8
 
+**Safari 的真正优势：为什么 Apple 用户应该认真考虑它**
+
+很多人觉得 Safari "功能少"、"扩展少"，但如果你用的是 Mac 或 iPhone，Safari 有几个 Chrome 无法匹敌的优势：
+
+1. **续航差距巨大**：Safari 针对 Apple Silicon 做了深度优化，使用效率核心而非性能核心来处理日常浏览。实测中，MacBook 用 Safari 比用 Chrome 多出 3-4 小时续航。这不是小数字——对于一台标称 18 小时续航的 MacBook Pro，这意味着 Safari 能让你多用 20% 的时间。Chrome 的多进程架构虽然稳定，但每个标签页都是独立进程，内存和功耗开销远高于 Safari 的轻量设计。
+
+2. **隐私保护是默认的**：Safari 内置了智能追踪防护（Intelligent Tracking Prevention），默认拦截第三方 Cookie 和跨站追踪。Chrome 在这方面一直犹豫不决（毕竟 Google 靠广告赚钱），直到 2025 年还在反复横跳要不要废弃第三方 Cookie。Safari 不需要装任何插件就能获得相当不错的隐私保护。
+
+3. **Apple 生态整合**：Handoff（Mac 上继续看 iPhone 打开的网页）、iCloud 标签页同步、Apple Pay 网页支付、Keychain 密码管理——这些功能在 Safari 里是无缝的，在 Chrome 里要么不支持要么体验差一截。
+
+4. **内存占用**：打开 20 个标签页，Safari 通常比 Chrome 少用 30-50% 的内存。Chrome 的"一个标签一个进程"设计带来了稳定性，但代价是内存爆炸。8GB 内存的 MacBook Air 用 Chrome 开多了标签页会明显卡顿，Safari 则从容得多。
+
+**Safari 的劣势**：
+
+- 扩展生态远不如 Chrome（虽然近年有改善）
+- 开发者工具不如 Chrome DevTools 强大
+- 对一些新 Web 标准的支持比 Chrome 慢（Apple 比较保守）
+- 只能在 Apple 设备上使用，没有 Windows/Android 版
+
+**所以在 Apple 设备上该选谁？**
+
+如果你是普通用户（浏览网页、看视频、网购）：**Safari**。续航好、隐私好、和系统整合好。
+
+如果你是开发者或重度 Chrome 扩展用户：**Chrome**，但建议日常浏览还是用 Safari，只在需要特定扩展或开发调试时切换到 Chrome。
+
+如果你在意隐私但又想要 Chrome 的扩展生态：考虑 **Firefox** 或 **Brave**。
+
+iPhone/iPad 上的选择其实不重要——因为 iOS 强制所有浏览器使用 WebKit 引擎，所以 Chrome for iOS 和 Safari 在渲染层面是一样的，区别只在 UI 和账号同步。
+
 ### 2.2.3 Blink：Google 的分家
 
 2013 年 4 月，Google 宣布将 Chrome 的渲染引擎从 WebKit 分叉为 Blink。
@@ -226,7 +255,33 @@ Chrome 比 Chromium 多了什么？
 
 其他基于 Chromium 的浏览器（Edge、Brave、Opera 等）也是类似的模式：拿 Chromium 的开源代码，去掉 Google 的私有部分，加上自己的功能。
 
-### 2.4.2 "开源"不等于"开放治理"
+### 2.4.2 "套壳浏览器"：意义何在？
+
+既然内核都是 Chromium，那这些"套壳"浏览器存在的意义是什么？这是很多人的疑问。
+
+**"套壳"这个词本身带有贬义**，暗示这些浏览器只是换了个皮肤，没有真正的技术含量。但实际情况比这复杂：
+
+**有价值的"套壳"**：
+
+- **Brave**：去掉了 Google 的追踪代码，内置广告拦截和指纹防护，用加密货币（BAT）奖励用户看广告。它的核心卖点是隐私，这是 Chrome 做不到的（因为 Google 靠广告赚钱）。
+- **Edge**：微软加了更好的内存管理（睡眠标签页）、垂直标签页、集成 Copilot AI、企业管理功能。对于 Windows 用户和企业环境，Edge 确实比 Chrome 更合适。
+- **Vivaldi**：极致的自定义能力——标签页堆叠、分屏浏览、自定义快捷键、内置邮件客户端。面向 Power User。
+- **Arc**：重新设计了浏览器的交互范式——侧边栏导航、空间（Spaces）概念、自动归档标签页。虽然底层是 Chromium，但用户体验完全不同。
+
+**没什么价值的"套壳"**：
+
+- 一些国产浏览器（如 360 浏览器、QQ 浏览器）：基本就是 Chromium 加了一堆广告、推送和"安全"功能，用户体验反而更差。
+- 一些小众浏览器只是改了图标和默认主页，没有任何实质性创新。
+
+**社区的看法**：
+
+技术社区对套壳浏览器的态度是分裂的。一方面，大家承认 Brave、Arc 这样的产品确实在用户体验和隐私上做了有意义的创新；另一方面，大家也担忧——当所有人都基于同一个引擎时，Google 对 Chromium 的任何决策（比如 Manifest V3 限制广告拦截）都会波及所有套壳浏览器，它们无法真正"反抗"。
+
+**本质问题**：套壳浏览器能改变 UI、能加功能、能调隐私策略，但它们改不了引擎层面的东西。如果 Google 在 Chromium 里做了某个你不喜欢的改动，套壳浏览器要么跟着接受，要么花巨大的工程成本去 revert（回退）那个改动——而且每次 Chromium 更新都要重新 revert。长期来看，这是不可持续的。
+
+所以，套壳浏览器是"在 Google 的地盘上做差异化"。它们能提供更好的体验，但无法从根本上挑战 Google 对 Web 标准的控制权。真正能做到这一点的，只有独立引擎（Firefox/Gecko）。
+
+### 2.4.3 "开源"不等于"开放治理"
 
 Chromium 是开源的，但这不意味着它是民主的。
 
@@ -239,7 +294,7 @@ Google 对 Chromium 项目拥有事实上的控制权：
 
 这就是所谓的"开源的垄断"——代码是开放的，但决策权是集中的。
 
-### 2.4.3 Manifest V3：一个典型案例
+### 2.4.4 Manifest V3：一个典型案例
 
 2024-2025 年发生的 Manifest V3 事件是 Google 控制力的一个典型体现。
 
@@ -315,7 +370,11 @@ V2 的方式像是一个"智能门卫"——可以检查每个人的证件，根
 
 ### 2.5.3 Web 标准是怎么制定的
 
-理解引擎多样性，还需要了解 Web 标准的制定过程：
+前面我们一直在讨论引擎的垄断和开源治理问题，但还有一个关键的维度没有涉及：**Web 标准本身是怎么来的？** 谁决定了 HTML 应该有哪些标签、CSS 应该支持哪些属性、JavaScript 应该有哪些 API？
+
+这个问题和引擎多样性直接相关——如果只有一个引擎，那标准就是"它实现了什么，什么就是标准"。多个引擎的存在，迫使标准必须通过多方协商来确定，而不是一家说了算。
+
+理解引擎多样性，需要了解 Web 标准的制定过程：
 
 **W3C（万维网联盟）**：由 Tim Berners-Lee 创立，负责制定 HTML、CSS 等标准。成员包括浏览器厂商、科技公司、学术机构。
 
@@ -342,154 +401,5 @@ V2 的方式像是一个"智能门卫"——可以检查每个人的证件，根
 3. **关注 Web 标准的讨论**：W3C（万维网联盟）和 WHATWG（Web 超文本应用技术工作组）是制定 Web 标准的组织。它们的讨论是公开的，任何人都可以参与。
 
 引擎之争的故事还没有结束。但有一点是确定的：**Web 的未来不应该由任何一家公司单独决定**。这是 Tim Berners-Lee 在 1989 年设计万维网时的初衷，也是我们今天仍然需要守护的原则。
-
-
-## 2.6 深入理解：引擎的性能差异
-
-### 2.6.1 JavaScript 引擎性能对比
-
-三大 JavaScript 引擎各有特色：
-
-**V8（Chrome/Edge/Node.js）**
-
-V8 的核心优势是它的多层编译架构：
-
-```
-JavaScript 源代码
-       │
-       ▼
-┌─────────────┐
-│  Ignition   │  ← 解释器：快速启动，逐行执行
-│  (解释器)    │     生成字节码，收集类型反馈
-└──────┬──────┘
-       │ 热点代码（被多次执行的函数）
-       ▼
-┌─────────────┐
-│ TurboFan    │  ← 优化编译器：根据类型反馈生成高效机器码
-│ (优化编译器) │     如果类型假设失败，回退到 Ignition
-└──────┬──────┘
-       │
-       ▼
-  优化的机器码（接近 C++ 的性能）
-```
-
-这种"先解释后编译"的策略让 V8 既能快速启动（不需要等编译完成），又能在运行时达到很高的性能。
-
-**SpiderMonkey（Firefox）**
-
-SpiderMonkey 是世界上第一个 JavaScript 引擎（1995 年由 Brendan Eich 编写），也是持续开发时间最长的。它的架构类似 V8，但有自己的优化策略：
-
-```
-JavaScript 源代码
-       │
-       ▼
-┌─────────────┐
-│  解释器      │  ← 快速启动
-└──────┬──────┘
-       │
-       ▼
-┌─────────────┐
-│  Baseline   │  ← 基线编译器：快速生成未优化的机器码
-└──────┬──────┘
-       │
-       ▼
-┌─────────────┐
-│  IonMonkey  │  ← 优化编译器：生成高度优化的机器码
-└─────────────┘
-```
-
-SpiderMonkey 的一个独特优势是它的部分组件用 Rust 重写了（Stylo 样式引擎），获得了更好的内存安全性。
-
-**JavaScriptCore / Nitro（Safari）**
-
-Apple 的 JS 引擎有四层编译管线，是三者中层数最多的：
-
-```
-LLInt → Baseline → DFG → FTL
-(解释)   (基线)    (中级优化)  (最高优化)
-```
-
-更多的层级意味着更细粒度的优化决策——代码可以根据"热度"逐步升级到更高的优化层级。
-
-### 2.6.2 实际性能差异
-
-在实际使用中，三大引擎的性能差异已经很小了（都在同一个数量级）。差异主要体现在：
-
-- **启动速度**：V8 和 JavaScriptCore 略快
-- **峰值性能**：V8 在计算密集型任务上通常领先
-- **内存效率**：JavaScriptCore 通常内存占用最低
-- **正则表达式**：V8 的 Irregexp 引擎性能突出
-
-对于普通用户来说，这些差异几乎不可感知。真正影响浏览体验的往往是网络延迟和页面本身的优化程度，而不是引擎性能。
-
-### 2.6.3 渲染性能：CSS 和布局
-
-渲染引擎的性能差异更多体现在 CSS 处理和布局计算上：
-
-```css
-/* 这种复杂选择器在不同引擎中的性能差异可能很大 */
-.container > div:nth-child(odd) .item:not(.hidden):hover {
-  transform: scale(1.1);
-  transition: all 0.3s ease;
-}
-```
-
-Blink 在处理复杂 CSS 动画和大量 DOM 节点时通常表现最好，这得益于 Google 在 GPU 加速合成方面的大量投入。
-
-Gecko 的 Stylo 引擎（用 Rust 编写）在 CSS 样式计算上有独特优势——它可以利用多核 CPU 并行计算样式，而 Blink 的样式计算仍然主要是单线程的。
-
-### 2.6.4 Web 标准支持
-
-不同引擎对 Web 标准的支持程度也有差异。你可以在 `caniuse.com` 上查看某个 CSS 属性或 JavaScript API 在不同浏览器中的支持情况。
-
-一般来说：
-- **Blink（Chrome）**：新特性支持最快（因为 Google 工程师多，迭代快）
-- **Gecko（Firefox）**：标准兼容性好，但新特性上线稍慢
-- **WebKit（Safari）**：某些现代 API 支持滞后（如 WebAssembly 的某些特性）
-
-这种差异对前端开发者来说是日常痛点——你需要确保你的网站在所有主流引擎中都能正常工作。
-
-### 2.6.5 如何测试跨引擎兼容性
-
-如果你是一个前端开发者（或者未来想成为一个），这里有一些实用的跨引擎测试方法：
-
-```bash
-# 在本地同时安装多个浏览器进行测试
-# macOS/Linux 用户可以用 Playwright 自动化测试：
-npm install playwright
-npx playwright install  # 自动下载 Chromium、Firefox、WebKit
-
-# 然后写一个简单的测试脚本：
-```
-
-```javascript
-// test.js - 用 Playwright 在三个引擎中测试你的网页
-const { chromium, firefox, webkit } = require('playwright');
-
-async function testInAllBrowsers() {
-  for (const browserType of [chromium, firefox, webkit]) {
-    const browser = await browserType.launch();
-    const page = await browser.newPage();
-    await page.goto('http://localhost:3000');
-    
-    // 截图对比
-    await page.screenshot({ 
-      path: `screenshot-${browserType.name()}.png` 
-    });
-    
-    console.log(`${browserType.name()}: 页面加载成功`);
-    await browser.close();
-  }
-}
-
-testInAllBrowsers();
-```
-
-在线工具：
-- **BrowserStack**：在真实设备和浏览器上测试
-- **Can I Use**（caniuse.com）：查看 API 和 CSS 属性的浏览器支持情况
-- **MDN Web Docs**：每个 API 文档底部都有浏览器兼容性表格
-
-作为普通用户，你不需要关心这些。但了解"不同引擎可能有不同表现"这个事实，能帮助你理解为什么有时候同一个网站在不同浏览器里看起来不一样。
 
 下一章，我们从宏观的产业格局转向微观的技术细节——当你在浏览器地址栏输入一个 URL 按下回车，到页面完整显示在屏幕上，这短短一秒钟里到底发生了什么？
