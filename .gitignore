@@ -1,5 +1,9 @@
 node_modules/
 md2HTML/dist/
-*.Zone.Identifier
+md2HTML/content/
+*Zone.Identifier
 .DS_Store
 Thumbs.db
+
+.kiro/
+Others/
