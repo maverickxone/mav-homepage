@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>浏览器简史——三十年战争 — 浏览器：从战争到垄断</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" id="hljs-light" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+<link rel="stylesheet" id="hljs-dark" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" media="not all">
+</head>
+<body>
+
+<div class="progress-bar" id="progress-bar"></div>
+
+<nav class="topnav" id="topnav">
+  <div class="topnav-inner">
+    <a class="brand" href="../index.html">浏览器：从战争到垄断</a>
+    <div class="nav-links">
+      <a href="01-browser-history.html" class="active">01</a>
+      <a href="02-engine-war.html">02</a>
+      <a href="03-how-browser-works.html">03</a>
+      <a href="04-cookies-storage.html">04</a>
+      <a href="05-fingerprint-privacy.html">05</a>
+      <a href="06-business-model.html">06</a>
+    </div>
+    <div class="nav-controls">
+      <button class="nav-btn" id="search-btn" aria-label="搜索 (Ctrl+K)">⌘K</button>
+      <button class="nav-btn" id="settings-btn" aria-label="阅读设置">Aa</button>
+      <a class="nav-btn" href="../../index.html" aria-label="返回知识库">← 知识库</a>
+      <a class="nav-btn" href="https://github.com/maverickxone/mav-homepage" target="_blank" rel="noopener" aria-label="GitHub" style="padding: 6px 8px;"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg></a>
+    </div>
+  </div>
+</nav>
+<div class="settings-pop" id="settings-pop">
+  <h5>主题</h5>
+  <div class="row">
+    <button class="seg" data-theme-set="light">明亮</button>
+    <button class="seg" data-theme-set="dark">暗色</button>
+  </div>
+  <h5>字号</h5>
+  <div class="row">
+    <button class="seg" data-size-set="s">小</button>
+    <button class="seg" data-size-set="m">中</button>
+    <button class="seg" data-size-set="l">大</button>
+  </div>
+</div>
+
+<div class="with-sidebar">
+  <aside class="sidebar">
+  <div class="chapter-num">CHAPTER 01</div>
+  <div class="chapter-name">浏览器简史——三十年战争</div>
+  <h4>目录</h4>
+  <ul>
+    <li><a href="#11-万维网的诞生一个物理学家的副业">1.1 万维网的诞生：一个物理学家的副业</a></li>
+    <li><a href="#12-第一次浏览器大战netscape-vs-internet-explorer">1.2 第一次浏览器大战：Netscape vs Internet Explorer</a></li>
+    <li><a href="#13-第二次浏览器大战firefox-的反击与-chrome-的崛起">1.3 第二次浏览器大战：Firefox 的反击与 Chrome 的崛起</a></li>
+    <li><a href="#14-ie-的终结与-edge-的诞生">1.4 IE 的终结与 Edge 的诞生</a></li>
+    <li><a href="#15-2026-年的浏览器格局">1.5 2026 年的浏览器格局</a></li>
+    <li><a href="#16-时间线总结">1.6 时间线总结</a></li>
+    <li><a href="#17-那些死去的浏览器们">1.7 那些死去的浏览器们</a></li>
+    <li><a href="#18-浏览器战争的规律">1.8 浏览器战争的规律</a></li>
+  </ul>
+</aside>
+  <article class="chapter-body">
+    <header class="chapter-head">
+  <div class="chapter-head-meta">
+    <span class="num">CHAPTER 01</span>
+    <span>≈ 25 MIN READ</span>
+  </div>
+  <h1>浏览器简史——三十年战争</h1>
+</header>
+    <h2 id="11-万维网的诞生一个物理学家的副业">1.1 万维网的诞生：一个物理学家的副业</h2>
+<h3 id="111-1989一份被忽视的提案">1.1.1 1989：一份被忽视的提案</h3>
+<p>1989 年 3 月，在瑞士日内瓦的 CERN（欧洲核子研究中心），一位英国计算机科学家 Tim Berners-Lee 提交了一份内部提案。标题很朴素：《Information Management: A Proposal》（信息管理：一项提案）。</p>
+<p>他的老板在提案上批了一句话：&quot;Vague, but exciting.&quot;（模糊，但令人兴奋。）</p>
+<p>这份提案要解决的问题很具体：CERN 有几千名物理学家，分布在不同国家，用不同的电脑系统，产生海量的实验数据和文档。这些信息散落在各种不兼容的系统里，找一篇同事写的论文比做实验还难。</p>
+<p>Berners-Lee 的方案是：用&quot;超文本&quot;（hypertext）把所有文档链接起来，通过一个统一的协议在网络上访问。这三样东西——超文本标记语言（HTML）、统一资源定位符（URL）、超文本传输协议（HTTP）——就是万维网（World Wide Web）的全部基础。</p>
+<h3 id="112-1990第一个浏览器">1.1.2 1990：第一个浏览器</h3>
+<p>1990 年下半年，Berners-Lee 在一台 NeXT 电脑上写出了世界上第一个浏览器。他给它起名叫 &quot;WorldWideWeb&quot;（没有空格），后来改名为 Nexus。</p>
+<p>这个浏览器长什么样？它其实更像一个文字编辑器——你不仅能浏览网页，还能直接编辑它们。Berners-Lee 最初的设想是，Web 应该是一个人人都能读写的空间，不只是被动消费内容。这个理念在三十年后的今天看来依然超前。</p>
+<p>同时他还写了第一个 Web 服务器，跑在同一台 NeXT 机器上。世界上第一个网站的地址是 <code>http://info.cern.ch</code>——这个网站今天还活着，你可以去看看。</p>
+<p>但这里有个关键问题：NeXT 电脑太贵了，普通人买不起。Web 要想普及，需要一个能在普通电脑上运行的浏览器。</p>
+<h3 id="113-1993mosaic-点燃了火">1.1.3 1993：Mosaic 点燃了火</h3>
+<p>1993 年，伊利诺伊大学的国家超级计算应用中心（NCSA）发布了 Mosaic 浏览器。它的核心开发者是一个 22 岁的本科生：Marc Andreessen。</p>
+<p>Mosaic 做了一件看似简单但改变一切的事：<strong>让图片和文字显示在同一个页面上</strong>。在此之前的浏览器要么是纯文本的，要么图片需要单独打开一个窗口查看。Mosaic 让网页第一次变得&quot;好看&quot;了。</p>
+<p>它还有 Windows 版本。这意味着任何有 PC 的人都能用它上网。</p>
+<p>Mosaic 的下载量在几个月内从零飙升到数百万。互联网从学术圈的玩具，变成了普通人能触碰的东西。</p>
+<h3 id="114-为什么浏览器如此重要">1.1.4 为什么浏览器如此重要</h3>
+<p>在继续讲浏览器大战之前，让我们先理解一个根本问题：为什么浏览器这么重要？</p>
+<p>浏览器是普通用户接触互联网的<strong>唯一界面</strong>。你不需要理解 TCP/IP 协议，不需要知道 DNS 是什么，不需要会写 HTML——你只需要打开浏览器，输入一个地址或搜索词，就能访问全世界的信息。</p>
+<p>这意味着：<strong>谁控制了浏览器，谁就控制了用户接触互联网的方式</strong>。</p>
+<ul>
+<li>浏览器决定了你能看到什么（内容过滤、广告拦截）</li>
+<li>浏览器决定了谁能追踪你（Cookie 策略、指纹防护）</li>
+<li>浏览器决定了 Web 能做什么（支持哪些 API 和标准）</li>
+<li>浏览器决定了你的默认搜索引擎（这直接影响数百亿美元的广告收入）</li>
+</ul>
+<p>这就是为什么科技巨头们愿意投入数十亿美元来开发和推广浏览器——它不是一个普通的软件产品，而是互联网的&quot;入口&quot;和&quot;控制点&quot;。</p>
+<p>理解了这一点，接下来的浏览器大战就不仅仅是技术竞争的故事，而是一场关于互联网控制权的商业战争。</p>
+<h2 id="12-第一次浏览器大战netscape-vs-internet-explorer">1.2 第一次浏览器大战：Netscape vs Internet Explorer</h2>
+<h3 id="121-netscape互联网的第一个摇滚明星">1.2.1 Netscape：互联网的第一个摇滚明星</h3>
+<p>1994 年，Marc Andreessen 从大学毕业，和硅谷传奇人物 Jim Clark（SGI 创始人）一起创办了 Mosaic Communications，后来改名为 Netscape Communications。</p>
+<p>他们的产品 Netscape Navigator 在 1994 年底发布。它比 Mosaic 更快、更稳定、功能更丰富。到 1995 年中，Navigator 占据了超过 70% 的浏览器市场。</p>
+<p>1995 年 8 月 9 日，Netscape 上市（IPO）。发行价 28 美元，开盘直接飙到 71 美元，收盘 58.25 美元。一家成立仅 16 个月、从未盈利的公司，市值接近 30 亿美元。</p>
+<p>这次 IPO 被认为是互联网商业化的&quot;大爆炸时刻&quot;。它向全世界宣告：互联网不是玩具，是真金白银的生意。</p>
+<p>Netscape 还做了几件影响深远的事：</p>
+<ul>
+<li><strong>发明了 JavaScript</strong>：1995 年，Brendan Eich 在 Netscape 用 10 天时间创造了 JavaScript（最初叫 Mocha，后来叫 LiveScript）。今天它是世界上使用最广泛的编程语言之一。</li>
+<li><strong>发明了 SSL</strong>：安全套接层协议，让网上购物和银行成为可能。今天的 HTTPS 就是它的后代。</li>
+<li><strong>发明了 Cookie</strong>：对，就是 Cookie。Netscape 的工程师 Lou Montulli 在 1994 年发明了它，用来解决&quot;HTTP 是无状态协议&quot;的问题。我们第四章会详细讲。</li>
+</ul>
+<h3 id="122-微软的反击免费-捆绑">1.2.2 微软的反击：免费 + 捆绑</h3>
+<p>微软最初对互联网反应迟钝。Bill Gates 在 1995 年才写了那封著名的内部备忘录《The Internet Tidal Wave》，宣布微软要全力拥抱互联网。</p>
+<p>微软的策略简单粗暴：</p>
+<ol>
+<li><strong>授权 Mosaic 的代码</strong>，基于它开发了 Internet Explorer（IE）</li>
+<li><strong>完全免费</strong>——Netscape 当时对企业用户收费</li>
+<li><strong>捆绑 Windows</strong>——从 Windows 95 OSR2 开始，IE 被预装在每一台 PC 上</li>
+</ol>
+<p>第三点是致命的。当时 Windows 占据了 90% 以上的 PC 市场。用户打开电脑，桌面上就有 IE 的图标，为什么还要专门去下载 Netscape？</p>
+<p>这不是技术竞争，是分发渠道的碾压。</p>
+<h3 id="123-netscape-的死亡与遗产">1.2.3 Netscape 的死亡与遗产</h3>
+<p>到 1999 年，IE 的市场份额超过了 Netscape。2003 年，IE 达到了约 95% 的市场份额——几乎是垄断。</p>
+<p>1998 年，Netscape 被 AOL 收购。同年，Netscape 做了一个影响深远的决定：<strong>将浏览器代码开源</strong>，成立了 Mozilla 项目。这个决定在当时看起来像是临终遗言，但它播下的种子在六年后发芽了。</p>
+<p>Netscape 的故事是互联网时代的经典悲剧：技术上领先，但在分发渠道上被垄断者碾压。这个模式在之后的科技史中反复出现。</p>
+<h3 id="124-美国司法部-vs-微软">1.2.4 美国司法部 vs 微软</h3>
+<p>1998 年，美国司法部（DOJ）对微软提起反垄断诉讼，核心指控就是微软将 IE 捆绑 Windows 的行为构成了非法垄断。</p>
+<p>2001 年，法院裁定微软确实违反了反垄断法。但最终的处罚相对温和——微软没有被拆分，只是被要求开放一些 API 接口。</p>
+<p>这场官司的意义不在于处罚本身，而在于它消耗了微软大量的管理层精力，让微软在接下来几年里对浏览器的投入大幅减少。IE 6 在 2001 年发布后，微软几乎停止了浏览器开发长达五年。</p>
+<p>这五年的空窗期，给了新玩家机会。</p>
+<h2 id="13-第二次浏览器大战firefox-的反击与-chrome-的崛起">1.3 第二次浏览器大战：Firefox 的反击与 Chrome 的崛起</h2>
+<h3 id="131-firefox从灰烬中重生">1.3.1 Firefox：从灰烬中重生</h3>
+<p>2004 年 11 月，Mozilla Firefox 1.0 正式发布。</p>
+<p>Firefox 脱胎于 Netscape 开源的 Mozilla 项目，但它做了一个关键决策：<strong>轻量化</strong>。Mozilla Suite 试图做一个包含浏览器、邮件客户端、网页编辑器的全家桶，而 Firefox 只做浏览器，做到极致。</p>
+<p>Firefox 带来了几个革命性的功能：</p>
+<ul>
+<li><strong>标签页浏览</strong>（Tabbed Browsing）：IE 6 还在用一个窗口一个页面的模式</li>
+<li><strong>弹窗拦截</strong>：IE 时代的互联网充斥着弹窗广告，Firefox 默认拦截它们</li>
+<li><strong>扩展系统</strong>：用户可以安装插件来定制浏览器功能</li>
+<li><strong>更好的安全性</strong>：IE 6 的 ActiveX 控件是恶意软件的温床</li>
+</ul>
+<p>Firefox 的增长速度惊人。发布后第一年就获得了超过 1 亿次下载，到 2009 年市场份额达到约 30%。它证明了一件事：即使面对预装在每台电脑上的 IE，一个更好的产品依然能赢得用户。</p>
+<h3 id="132-chromegoogle-的核武器">1.3.2 Chrome：Google 的核武器</h3>
+<p>2008 年 9 月 2 日，Google 发布了 Chrome 浏览器。</p>
+<p>Google 为什么要做浏览器？因为 Google 的核心业务是搜索和在线广告，而浏览器是用户接触这些服务的唯一入口。如果浏览器很慢、很不稳定，用户就不会频繁使用 Google 的服务。Google 需要一个快到极致的浏览器来推动整个 Web 生态向前发展。</p>
+<p>Chrome 的技术创新是颠覆性的：</p>
+<p><strong>多进程架构</strong></p>
+<p>在 Chrome 之前，所有浏览器都是单进程的——所有标签页共享一个进程。一个标签页崩溃，整个浏览器就崩溃。Chrome 给每个标签页分配独立的进程：</p>
+<pre><code>传统浏览器:
+┌─────────────────────────────┐
+│  Browser Process            │
+│  ┌─────┐ ┌─────┐ ┌─────┐  │
+│  │Tab 1│ │Tab 2│ │Tab 3│  │
+│  └─────┘ └─────┘ └─────┘  │
+│  一个崩溃 = 全部崩溃        │
+└─────────────────────────────┘
+
+Chrome:
+┌──────────────────┐
+│ Browser Process  │  (主进程：UI、协调)
+└──────────────────┘
+       │
+  ┌────┼────┐
+  ▼    ▼    ▼
+┌───┐┌───┐┌───┐
+│P1 ││P2 ││P3 │  (每个 Tab 独立进程)
+└───┘└───┘└───┘
+一个崩溃 ≠ 全部崩溃</code></pre>
+<p>这个设计直接借鉴了操作系统的进程隔离思想。代价是更高的内存占用（每个进程都有自己的内存空间），但换来了稳定性和安全性。</p>
+<p><strong>V8 JavaScript 引擎</strong></p>
+<p>Chrome 自带了一个全新的 JavaScript 引擎：V8。它的核心创新是 JIT（Just-In-Time）编译——不再像传统引擎那样逐行解释执行 JavaScript，而是在运行时将热点代码编译成机器码。</p>
+<pre data-label="javascript"><code class="language-javascript">// 这段代码在 V8 中的执行过程：
+function add(a, b) {
+  return a + b;
+}
+
+// 第一次调用：解释执行，同时收集类型信息
+add(1, 2);  // V8 记录：a 和 b 都是整数
+
+// 多次调用后：V8 将其编译为优化的机器码
+// 相当于直接执行 CPU 的 ADD 指令，跳过了解释器
+for (let i = 0; i &lt; 1000000; i++) {
+  add(i, i + 1);  // 这里跑的是编译后的机器码，极快
+}</code></pre>
+<p>V8 让 JavaScript 的执行速度提升了 10-100 倍。这不仅让网页更快，还直接催生了 Node.js——让 JavaScript 能在服务器端运行。</p>
+<p><strong>六周发布周期</strong></p>
+<p>IE 的版本之间间隔数年（IE 6 到 IE 7 隔了五年），Firefox 大约每年一个大版本。Chrome 采用了六周一个版本的激进策略，持续快速迭代。这个节奏后来被 Firefox 和其他浏览器效仿。</p>
+<p><strong>漫画书发布</strong></p>
+<p>Chrome 的发布方式也很独特——Google 委托漫画家 Scott McCloud 画了一本 38 页的漫画书来解释 Chrome 的技术架构。这本漫画用通俗易懂的方式解释了多进程架构、V8 引擎、沙箱安全模型等概念。这种&quot;用漫画解释技术&quot;的营销方式在当时非常新颖，也体现了 Google 想让普通用户理解&quot;为什么 Chrome 更好&quot;的意图。</p>
+<p><strong>开源策略</strong></p>
+<p>Chrome 的另一个关键决策是开源。Google 将 Chrome 的核心代码以 Chromium 项目的形式开源，任何人都可以基于它构建自己的浏览器。这个决策看似慷慨，实际上是一步精妙的棋——它让其他公司（Opera、后来的微软）放弃自己的引擎转向 Chromium，从而让 Google 的技术标准成为事实上的 Web 标准。开源不等于开放治理，这一点我们在第二章会详细讨论。</p>
+<h3 id="133-chrome-的增长曲线">1.3.3 Chrome 的增长曲线</h3>
+<p>Chrome 的市场份额增长是教科书级别的 S 曲线：</p>
+<div class="table-wrap"><table><thead><tr>
+<th>年份</th>
+<th>Chrome 份额</th>
+<th>IE 份额</th>
+<th>Firefox 份额</th>
+</tr>
+</thead><tbody><tr>
+<td>2008</td>
+<td>1%</td>
+<td>68%</td>
+<td>26%</td>
+</tr>
+<tr>
+<td>2010</td>
+<td>10%</td>
+<td>52%</td>
+<td>31%</td>
+</tr>
+<tr>
+<td>2012</td>
+<td>34%</td>
+<td>32%</td>
+<td>23%</td>
+</tr>
+<tr>
+<td>2014</td>
+<td>45%</td>
+<td>20%</td>
+<td>17%</td>
+</tr>
+<tr>
+<td>2016</td>
+<td>58%</td>
+<td>13%</td>
+<td>14%</td>
+</tr>
+<tr>
+<td>2018</td>
+<td>63%</td>
+<td>7%</td>
+<td>10%</td>
+</tr>
+<tr>
+<td>2020</td>
+<td>66%</td>
+<td>3%</td>
+<td>8%</td>
+</tr>
+</tbody></table></div>
+<p>Chrome 赢在哪里？</p>
+<ol>
+<li><strong>速度</strong>：V8 引擎让它在 JavaScript 性能上碾压对手</li>
+<li><strong>稳定性</strong>：多进程架构让&quot;一个标签页崩溃全部完蛋&quot;成为历史</li>
+<li><strong>简洁的 UI</strong>：地址栏和搜索栏合二为一（Omnibox），界面极简</li>
+<li><strong>Google 的分发能力</strong>：Google 搜索页面、Gmail、YouTube 都在推荐你下载 Chrome</li>
+<li><strong>快速迭代</strong>：六周一个版本，持续改进</li>
+</ol>
+<p>讽刺的是，Google 用来打败 IE 的策略——利用自己的平台优势推广浏览器——和当年微软捆绑 IE 的策略本质上是一样的。只不过 Google 的&quot;平台&quot;不是操作系统，而是搜索引擎和在线服务。</p>
+<h2 id="14-ie-的终结与-edge-的诞生">1.4 IE 的终结与 Edge 的诞生</h2>
+<h3 id="141-ie-为什么会死">1.4.1 IE 为什么会死</h3>
+<p>IE 的衰落不是因为某一个原因，而是系统性的失败：</p>
+<p><strong>技术债务</strong>：IE 6 时代积累了大量非标准的私有技术（ActiveX、VBScript、条件注释），这些东西让 IE 越来越难以支持现代 Web 标准。</p>
+<p><strong>安全噩梦</strong>：IE 的 ActiveX 控件允许网页直接调用系统级功能，这在设计上就是一个巨大的安全漏洞。无数恶意软件通过 IE 传播。</p>
+<p><strong>开发者的怨恨</strong>：任何在 2005-2015 年间做过前端开发的人都对 IE 有深深的怨念。同一段代码在 Chrome/Firefox 里正常运行，在 IE 里就各种奇怪的 bug。开发者不得不写大量的兼容代码：</p>
+<pre data-label="css"><code class="language-css">/* 2010 年代前端开发者的日常噩梦 */
+.container {
+  display: flex;           /* 现代浏览器 */
+  display: -ms-flexbox;   /* IE 10 */
+  display: -webkit-flex;  /* 旧版 Safari */
+}
+
+/* IE 专用 hack */
+_width: 100px;            /* 只有 IE 6 认识 */
+*width: 100px;            /* 只有 IE 6/7 认识 */</code></pre>
+<pre data-label="javascript"><code class="language-javascript">// 想给一个按钮绑定点击事件？
+// 标准方式：
+element.addEventListener('click', handler);
+
+// IE 8 及以下的方式：
+element.attachEvent('onclick', handler);
+
+// 所以你得这样写：
+if (element.addEventListener) {
+  element.addEventListener('click', handler);
+} else if (element.attachEvent) {
+  element.attachEvent('onclick', handler);
+}</code></pre>
+<p>这种痛苦持续了十年，直到 IE 的市场份额低到可以被忽略。</p>
+<h3 id="142-edge微软的两次尝试">1.4.2 Edge：微软的两次尝试</h3>
+<p><strong>第一次尝试：EdgeHTML（2015-2018）</strong></p>
+<p>2015 年，微软随 Windows 10 发布了全新的 Edge 浏览器，使用自研的 EdgeHTML 引擎。它比 IE 快得多，支持现代 Web 标准，界面也很现代。</p>
+<p>但问题是：市场份额始终上不去。原因很简单——Web 开发者已经习惯了针对 Chrome 开发和测试，很多网站在 Edge 上有兼容性问题。用户遇到问题就会切回 Chrome，形成恶性循环。</p>
+<p><strong>第二次尝试：Chromium Edge（2020 至今）</strong></p>
+<p>2018 年 12 月，微软宣布放弃 EdgeHTML，转而基于 Chromium 开源项目重建 Edge。2020 年 1 月，新版 Edge 正式发布。</p>
+<p>这是一个务实但令人唏嘘的决定。微软承认了一个现实：<strong>独立维护一个浏览器引擎的成本太高了</strong>，而且网站兼容性问题会永远存在，因为开发者只会针对市场份额最大的引擎做优化。</p>
+<p>新版 Edge 基于 Chromium，意味着它和 Chrome 共享同一个渲染引擎（Blink）和 JavaScript 引擎（V8）。微软在此基础上添加了自己的功能：更好的内存管理、集成 Bing AI、垂直标签页等。</p>
+<p>到 2025 年，Chromium Edge 在桌面端的份额约为 5-7%，成为第二大桌面浏览器。但这个&quot;成功&quot;是建立在放弃自主引擎的基础上的。</p>
+<h2 id="15-2026-年的浏览器格局">1.5 2026 年的浏览器格局</h2>
+<h3 id="151-chromium-的统治">1.5.1 Chromium 的统治</h3>
+<p>截至 2026 年，全球浏览器市场份额大致如下：</p>
+<div class="table-wrap"><table><thead><tr>
+<th>浏览器</th>
+<th>份额</th>
+<th>引擎</th>
+</tr>
+</thead><tbody><tr>
+<td>Google Chrome</td>
+<td>~65-69%</td>
+<td>Blink (Chromium)</td>
+</tr>
+<tr>
+<td>Apple Safari</td>
+<td>~14-15%</td>
+<td>WebKit</td>
+</tr>
+<tr>
+<td>Microsoft Edge</td>
+<td>~5-7%</td>
+<td>Blink (Chromium)</td>
+</tr>
+<tr>
+<td>Mozilla Firefox</td>
+<td>~3-4%</td>
+<td>Gecko</td>
+</tr>
+<tr>
+<td>Samsung Internet</td>
+<td>~2-3%</td>
+<td>Blink (Chromium)</td>
+</tr>
+<tr>
+<td>Opera</td>
+<td>~2%</td>
+<td>Blink (Chromium)</td>
+</tr>
+<tr>
+<td>Brave</td>
+<td>~1%</td>
+<td>Blink (Chromium)</td>
+</tr>
+</tbody></table></div>
+<p>如果按引擎来算，Blink（Chromium）系浏览器加起来占据了约 <strong>80%</strong> 的市场。加上 WebKit（Safari，和 Blink 同源），非 Chromium 系的独立引擎只剩下 Firefox 的 Gecko，份额不到 4%。</p>
+<p>这意味着什么？意味着 Google 通过 Chromium 项目，事实上控制了 Web 标准的走向。如果 Google 决定在 Chromium 中实现某个新特性，那它很快就会成为&quot;事实标准&quot;，因为 80% 的用户都在用基于 Chromium 的浏览器。</p>
+<h3 id="152-doj-反垄断案chrome-差点被拆分">1.5.2 DOJ 反垄断案：Chrome 差点被拆分</h3>
+<p>2020 年，美国司法部再次对 Google 提起反垄断诉讼，这次的核心指控是：Google 通过向 Apple、三星等公司支付巨额费用（据报道每年向 Apple 支付约 200 亿美元），让 Google 搜索成为这些设备的默认搜索引擎，从而维持搜索垄断。</p>
+<p>2024 年 8 月，法官裁定 Google 确实违反了反垄断法。DOJ 随后提出了激进的补救方案，其中包括<strong>强制 Google 出售 Chrome 浏览器</strong>。</p>
+<p>但在 2025 年 9 月，法官 Amit Mehta 做出了最终裁决：<strong>Google 不需要出售 Chrome</strong>，但必须停止与其他公司签订排他性的默认搜索协议，并被要求向竞争对手共享部分搜索数据。</p>
+<p>法官认为，Chrome 本身不是 Google 用来实施非法垄断的工具——Google 的违法行为是那些排他性合同，而不是拥有一个浏览器。</p>
+<p>这个裁决意味着 Chrome 在可预见的未来仍将属于 Google。但搜索市场可能会因为排他合同的禁止而变得更加开放。</p>
+<h3 id="153-引擎多样性为什么重要">1.5.3 引擎多样性为什么重要</h3>
+<p>你可能会想：大家都用 Chromium 不是挺好的吗？兼容性问题少了，开发者也轻松了。</p>
+<p>问题在于：<strong>单一引擎意味着单一控制权</strong>。</p>
+<p>类比一下：如果全世界只有一种操作系统，那这个操作系统的开发者就能决定你能运行什么软件、不能运行什么软件。浏览器引擎也是一样——它决定了网页能做什么、不能做什么。</p>
+<p>历史已经证明了这一点。IE 6 统治时代（2001-2006），微软几乎停止了浏览器开发，Web 技术停滞了五年。直到 Firefox 和 Chrome 出现，竞争才重新推动了创新。</p>
+<p>今天的情况虽然没有 IE 6 时代那么极端（Chromium 毕竟是开源的，其他公司可以参与贡献），但 Google 作为 Chromium 项目的主要维护者，依然拥有最终决策权。比如：</p>
+<ul>
+<li>Google 可以决定在 Chrome 中推广某些 API（如 Web Bluetooth、Web USB），即使其他浏览器厂商认为这些 API 有安全风险</li>
+<li>Google 可以决定废弃某些功能（如 Manifest V2 扩展 API），直接影响广告拦截器的工作方式</li>
+<li>Google 可以决定 Chromium 的开发方向，其他基于 Chromium 的浏览器只能跟随</li>
+</ul>
+<p>这就是为什么 Firefox 的存在很重要——即使它的市场份额只有 3-4%，它依然是唯一一个由非营利组织维护的、使用独立引擎的主流浏览器。它是 Web 多样性的最后一道防线。</p>
+<h2 id="16-时间线总结">1.6 时间线总结</h2>
+<pre><code>1989  Tim Berners-Lee 提出万维网提案
+1990  第一个浏览器 WorldWideWeb 诞生
+1993  Mosaic 发布，Web 开始普及
+1994  Netscape Navigator 发布
+1995  Netscape IPO / IE 开始捆绑 Windows / JavaScript 诞生
+1998  Netscape 开源 → Mozilla 项目 / DOJ 起诉微软
+2001  IE 6 发布，市场份额 95%，然后微软停止开发
+2004  Firefox 1.0 发布
+2008  Chrome 发布，带来 V8 引擎和多进程架构
+2012  Chrome 超越 IE 成为第一
+2015  Edge (EdgeHTML) 随 Windows 10 发布
+2018  微软宣布 Edge 转向 Chromium
+2020  Chromium Edge 发布 / DOJ 再次起诉 Google
+2024  法院裁定 Google 搜索垄断违法
+2025  法官裁定 Google 无需出售 Chrome
+2026  Chrome ~67%，Chromium 系 ~80%，引擎多样性告急</code></pre>
+<p>三十年，从百花齐放到一家独大。浏览器的历史，本质上是一部关于&quot;平台控制权&quot;的商业战争史。技术创新很重要，但最终决定胜负的，往往是分发渠道和商业模式。</p>
+<h2 id="17-那些死去的浏览器们">1.7 那些死去的浏览器们</h2>
+<p>在这三十年里，无数浏览器诞生又消亡。让我们为它们立一块墓碑：</p>
+<h3 id="171-opera1995-2013独立引擎时代">1.7.1 Opera（1995-2013，独立引擎时代）</h3>
+<p>Opera 是挪威公司 Opera Software 开发的浏览器，以创新著称。很多今天被认为是&quot;标配&quot;的功能，Opera 都是第一个实现的：</p>
+<ul>
+<li><strong>标签页浏览</strong>：Opera 在 2000 年就有了，比 Firefox 早四年</li>
+<li><strong>鼠标手势</strong>：右键拖动来执行操作</li>
+<li><strong>快速拨号</strong>：新标签页显示常用网站缩略图</li>
+<li><strong>内置广告拦截</strong></li>
+<li><strong>页面缩放</strong>（不是只放大文字，而是整个页面等比缩放）</li>
+</ul>
+<p>Opera 使用自研的 Presto 引擎，性能优秀，但市场份额始终在 2-3% 徘徊。2013 年，Opera 放弃 Presto 转向 Chromium——又一个独立引擎的死亡。</p>
+<p>2016 年，Opera 被中国昆仑万维收购。今天的 Opera 已经和当年那个创新先锋没什么关系了。</p>
+<h3 id="172-internet-explorer1995-2022">1.7.2 Internet Explorer（1995-2022）</h3>
+<p>IE 的正式死亡日期是 2022 年 6 月 15 日——微软在这一天停止了对 IE 11 的支持。从 IE 1.0（1995）到 IE 11（2013），IE 存活了 27 年。</p>
+<p>IE 的遗产是复杂的：</p>
+<ul>
+<li>它通过捆绑 Windows 杀死了 Netscape，这是反竞争行为</li>
+<li>但它也推动了 Web 的早期普及——在 IE 之前，上网对普通人来说太难了</li>
+<li>IE 6 的五年停滞是 Web 发展史上最黑暗的时期</li>
+<li>但 IE 的 ActiveX 和 DHTML 也催生了早期的 Web 应用（虽然是以非标准的方式）</li>
+</ul>
+<h3 id="173-其他值得记住的名字">1.7.3 其他值得记住的名字</h3>
+<ul>
+<li><strong>Netscape Navigator</strong>（1994-2008）：互联网的先驱，死于微软的捆绑策略</li>
+<li><strong>Konqueror</strong>（2000-至今）：KDE 的浏览器，KHTML 引擎的发源地——WebKit 和 Blink 的祖先</li>
+<li><strong>Camino</strong>（2002-2013）：Mac 上的 Gecko 浏览器，在 Safari 出现前是 Mac 用户的首选</li>
+<li><strong>Maxthon（傲游）</strong>（2003-至今）：中国开发的浏览器，曾经在国内很流行</li>
+<li><strong>UC Browser</strong>（2004-至今）：在移动互联网早期的中国和印度市场占有重要地位</li>
+</ul>
+<p>每一个死去的浏览器都代表着一种可能性的消失。它们的创新被后来者吸收，但它们独特的视角和方法论永远消失了。这就是为什么引擎多样性如此重要——当所有人都基于同一个代码库开发时，创新的空间就被压缩了。</p>
+<h2 id="18-浏览器战争的规律">1.8 浏览器战争的规律</h2>
+<p>回顾三十年的历史，我们可以总结出几条规律：</p>
+<h3 id="181-分发渠道-gt-技术优势">1.8.1 分发渠道 &gt; 技术优势</h3>
+<ul>
+<li>Netscape 技术上领先 IE，但 IE 捆绑了 Windows</li>
+<li>Firefox 技术上不输 Chrome，但 Chrome 有 Google 搜索页面的推广</li>
+<li>Edge (EdgeHTML) 技术上不差，但网站只为 Chrome 优化</li>
+</ul>
+<p>在浏览器市场，&quot;让用户知道你的存在&quot;比&quot;做一个更好的产品&quot;更重要。</p>
+<h3 id="182-网络效应形成垄断">1.8.2 网络效应形成垄断</h3>
+<p>浏览器市场有强烈的网络效应：</p>
+<ul>
+<li>用户多 → 开发者优先适配 → 兼容性好 → 更多用户</li>
+<li>用户少 → 开发者不适配 → 兼容性差 → 更少用户</li>
+</ul>
+<p>这个正反馈循环让市场天然趋向垄断。打破垄断需要颠覆性的技术创新（如 Chrome 的多进程架构和 V8 引擎）或外部力量（如反垄断诉讼）。</p>
+<h3 id="183-垄断者终将衰落">1.8.3 垄断者终将衰落</h3>
+<p>IE 曾经占据 95%，现在死了。Chrome 今天占据 67%，它也不会永远统治。</p>
+<p>历史告诉我们：每一代垄断者最终都会因为傲慢、停滞或外部变革而衰落。问题只是时间和方式。</p>
+<p>也许下一次变革来自 AI——当浏览器从&quot;你主动搜索&quot;变成&quot;AI 主动为你获取信息&quot;时，传统浏览器的形态可能会被彻底颠覆。也许那时候，我们需要的不再是一个&quot;浏览&quot;器，而是一个&quot;理解&quot;器。</p>
+<p>但那是未来的故事了。</p>
+<p>下一章，我们深入引擎内部，看看 Chromium 到底是什么，为什么连微软都选择了投降。</p>
+
+    <nav class="pager">  <a class="disabled"><span class="label">← 上一章</span><span class="title"></span></a>  <a href="02-engine-war.html" class="next">
+    <span class="label">下一章 →</span>
+    <span class="title">引擎之争——Chromium 为何一家独大</span>
+  </a></nav>
+  </article>
+</div>
+
+<footer>
+  <div class="set">
+    <span>浏览器：从战争到垄断</span>
+    <span>2026 · ZH-CN</span>
+  </div>
+  <div class="set">
+    <span>Mav</span>
+  </div>
+</footer>
+<div class="search-backdrop" id="search-overlay" role="dialog" aria-modal="true" aria-label="搜索" hidden>
+  <div class="search-modal">
+    <div class="search-input-wrap">
+      <input type="search" class="search-input" placeholder="搜索内容..." aria-label="搜索内容" autocomplete="off">
+      <kbd>ESC</kbd>
+    </div>
+    <div class="search-results" role="listbox" aria-label="搜索结果"></div>
+  </div>
+</div>
+
+<!-- Mobile TOC -->
+<button class="mtoc-fab" id="mtoc-fab" aria-label="目录">TOC</button>
+<div class="mtoc-drawer" id="mtoc-drawer">
+  <div class="mtoc-content"></div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/bash.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/typescript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/yaml.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/javascript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/json.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/python.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/css.min.js"></script>
+<script src="../assets/script.js"></script>
+</body>
+</html>

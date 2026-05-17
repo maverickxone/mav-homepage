@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>一次请求的旅程——浏览器到底在干什么 — 浏览器：从战争到垄断</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" id="hljs-light" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+<link rel="stylesheet" id="hljs-dark" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" media="not all">
+</head>
+<body>
+
+<div class="progress-bar" id="progress-bar"></div>
+
+<nav class="topnav" id="topnav">
+  <div class="topnav-inner">
+    <a class="brand" href="../index.html">浏览器：从战争到垄断</a>
+    <div class="nav-links">
+      <a href="01-browser-history.html">01</a>
+      <a href="02-engine-war.html">02</a>
+      <a href="03-how-browser-works.html" class="active">03</a>
+      <a href="04-cookies-storage.html">04</a>
+      <a href="05-fingerprint-privacy.html">05</a>
+      <a href="06-business-model.html">06</a>
+    </div>
+    <div class="nav-controls">
+      <button class="nav-btn" id="search-btn" aria-label="搜索 (Ctrl+K)">⌘K</button>
+      <button class="nav-btn" id="settings-btn" aria-label="阅读设置">Aa</button>
+      <a class="nav-btn" href="../../index.html" aria-label="返回知识库">← 知识库</a>
+      <a class="nav-btn" href="https://github.com/maverickxone/mav-homepage" target="_blank" rel="noopener" aria-label="GitHub" style="padding: 6px 8px;"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg></a>
+    </div>
+  </div>
+</nav>
+<div class="settings-pop" id="settings-pop">
+  <h5>主题</h5>
+  <div class="row">
+    <button class="seg" data-theme-set="light">明亮</button>
+    <button class="seg" data-theme-set="dark">暗色</button>
+  </div>
+  <h5>字号</h5>
+  <div class="row">
+    <button class="seg" data-size-set="s">小</button>
+    <button class="seg" data-size-set="m">中</button>
+    <button class="seg" data-size-set="l">大</button>
+  </div>
+</div>
+
+<div class="with-sidebar">
+  <aside class="sidebar">
+  <div class="chapter-num">CHAPTER 03</div>
+  <div class="chapter-name">一次请求的旅程——浏览器到底在干什么</div>
+  <h4>目录</h4>
+  <ul>
+    <li><a href="#31-序一秒钟的奇迹">3.1 序：一秒钟的奇迹</a></li>
+    <li><a href="#32-第一步url-解析">3.2 第一步：URL 解析</a></li>
+    <li><a href="#33-第二步dns-解析互联网的电话簿">3.3 第二步：DNS 解析——互联网的电话簿</a></li>
+    <li><a href="#34-第三步tcp-连接三次握手">3.4 第三步：TCP 连接——三次握手</a></li>
+    <li><a href="#35-第四步tls-握手建立加密通道">3.5 第四步：TLS 握手——建立加密通道</a></li>
+    <li><a href="#36-第五步http-请求与响应">3.6 第五步：HTTP 请求与响应</a></li>
+    <li><a href="#37-第六步html-解析与-dom-构建">3.7 第六步：HTML 解析与 DOM 构建</a></li>
+    <li><a href="#38-第七步css-解析与渲染树">3.8 第七步：CSS 解析与渲染树</a></li>
+    <li><a href="#39-第八步布局绘制与合成">3.9 第八步：布局、绘制与合成</a></li>
+    <li><a href="#310-完整时间线">3.10 完整时间线</a></li>
+    <li><a href="#311-浏览器的多进程架构以-chrome-为例">3.11 浏览器的多进程架构（以 Chrome 为例）</a></li>
+    <li><a href="#312-小结">3.12 小结</a></li>
+  </ul>
+</aside>
+  <article class="chapter-body">
+    <header class="chapter-head">
+  <div class="chapter-head-meta">
+    <span class="num">CHAPTER 03</span>
+    <span>≈ 30 MIN READ</span>
+  </div>
+  <h1>一次请求的旅程——浏览器到底在干什么</h1>
+</header>
+    <h2 id="31-序一秒钟的奇迹">3.1 序：一秒钟的奇迹</h2>
+<p>你在浏览器地址栏输入 <code>https://www.example.com</code>，按下回车。</p>
+<p>大约 0.5 到 2 秒后，一个完整的网页出现在你面前——有文字、有图片、有动画、有交互按钮。</p>
+<p>这短短的时间里，你的浏览器完成了以下所有事情：</p>
+<ol>
+<li>解析你输入的 URL</li>
+<li>查找域名对应的 IP 地址（DNS 解析）</li>
+<li>和服务器建立 TCP 连接（三次握手）</li>
+<li>在 TCP 之上建立加密通道（TLS 握手）</li>
+<li>发送 HTTP 请求</li>
+<li>接收服务器返回的 HTML</li>
+<li>解析 HTML，构建 DOM 树</li>
+<li>发现 CSS/JS/图片等资源，并行下载</li>
+<li>解析 CSS，构建 CSSOM 树</li>
+<li>执行 JavaScript</li>
+<li>合并 DOM 和 CSSOM，生成渲染树</li>
+<li>计算每个元素的位置和大小（布局）</li>
+<li>把元素画成像素（绘制）</li>
+<li>将图层合成并显示到屏幕上</li>
+</ol>
+<p>每一步都涉及复杂的协议和算法。让我们一步步拆解。</p>
+<h2 id="32-第一步url-解析">3.2 第一步：URL 解析</h2>
+<h3 id="321-url-的结构">3.2.1 URL 的结构</h3>
+<p>当你输入 <code>https://www.example.com:443/path/page.html?q=hello#section1</code> 时，浏览器首先要把这个字符串拆解成各个部分：</p>
+<pre><code>https://www.example.com:443/path/page.html?q=hello#section1
+│        │               │   │              │       │
+│        │               │   │              │       └── Fragment（片段）
+│        │               │   │              └── Query（查询参数）
+│        │               │   └── Path（路径）
+│        │               └── Port（端口号）
+│        └── Host（主机名/域名）
+└── Scheme（协议）</code></pre>
+<ul>
+<li><strong>Scheme（协议）</strong>：<code>https</code> 表示使用加密的 HTTP 协议。如果是 <code>http</code> 则不加密。</li>
+<li><strong>Host（主机名）</strong>：<code>www.example.com</code>，这是我们需要通过 DNS 解析成 IP 地址的部分。</li>
+<li><strong>Port（端口）</strong>：<code>443</code> 是 HTTPS 的默认端口，通常可以省略。HTTP 的默认端口是 <code>80</code>。</li>
+<li><strong>Path（路径）</strong>：<code>/path/page.html</code>，告诉服务器你要访问哪个资源。</li>
+<li><strong>Query（查询参数）</strong>：<code>?q=hello</code>，附加的参数，通常用于搜索或过滤。</li>
+<li><strong>Fragment（片段）</strong>：<code>#section1</code>，指向页面内的某个锚点。注意：这部分不会发送给服务器，只在浏览器端使用。</li>
+</ul>
+<h3 id="322-浏览器的quot猜测quot">3.2.2 浏览器的&quot;猜测&quot;</h3>
+<p>现代浏览器在你输入 URL 的过程中就已经开始工作了：</p>
+<ul>
+<li>如果你输入的不是完整 URL（比如只输入了 <code>example.com</code>），浏览器会自动补全协议（加上 <code>https://</code>）</li>
+<li>如果你输入的看起来像搜索词而不是域名（比如 <code>what is DNS</code>），浏览器会把它发送给默认搜索引擎</li>
+<li>浏览器还会根据你的历史记录提供自动补全建议</li>
+<li>有些浏览器甚至会在你还没按回车时就开始预解析 DNS（DNS prefetch）</li>
+</ul>
+<h2 id="33-第二步dns-解析互联网的电话簿">3.3 第二步：DNS 解析——互联网的电话簿</h2>
+<h3 id="331-为什么需要-dns">3.3.1 为什么需要 DNS</h3>
+<p>计算机之间通信用的是 IP 地址（比如 <code>142.250.80.46</code>），但人类记不住这些数字。DNS（Domain Name System，域名系统）就是互联网的&quot;电话簿&quot;——把人类能记住的域名（<code>www.google.com</code>）翻译成机器能理解的 IP 地址。</p>
+<h3 id="332-dns-解析的完整过程">3.3.2 DNS 解析的完整过程</h3>
+<p>当浏览器需要解析 <code>www.example.com</code> 时，它会按以下顺序查找：</p>
+<pre><code>1. 浏览器 DNS 缓存
+   │ 没找到？
+   ▼
+2. 操作系统 DNS 缓存
+   │ 没找到？
+   ▼
+3. 本地 hosts 文件
+   │ 没找到？
+   ▼
+4. 递归 DNS 解析器（通常是你的 ISP 或 8.8.8.8）
+   │ 没找到？
+   ▼
+5. 根域名服务器（全球 13 组）
+   │ "我不知道 example.com，但 .com 的管理者在这里"
+   ▼
+6. TLD 域名服务器（管理 .com 的服务器）
+   │ "我不知道 www.example.com，但 example.com 的权威服务器在这里"
+   ▼
+7. 权威域名服务器（example.com 的管理者）
+   │ "www.example.com 的 IP 是 93.184.216.34"
+   ▼
+8. 结果逐层返回并缓存</code></pre>
+<p>让我们用一个具体的类比来理解这个过程：</p>
+<p>你想找&quot;中国科学技术大学计算机学院张三教授&quot;的办公室电话。</p>
+<ol>
+<li>先看自己手机通讯录（浏览器缓存）</li>
+<li>问室友（操作系统缓存）</li>
+<li>查学校通讯录（hosts 文件）</li>
+<li>打学校总机（递归解析器）</li>
+<li>总机说：&quot;我不知道，但中国的大学归教育部管&quot;（根服务器）</li>
+<li>教育部说：&quot;科大的总机号码是 xxx&quot;（TLD 服务器）</li>
+<li>科大总机说：&quot;计算机学院张三的电话是 xxx&quot;（权威服务器）</li>
+</ol>
+<h3 id="333-dns-缓存与-ttl">3.3.3 DNS 缓存与 TTL</h3>
+<p>为了避免每次访问网站都要走完整个查询链路，DNS 结果会被缓存。每条 DNS 记录都有一个 TTL（Time To Live，生存时间），表示这条记录可以被缓存多久。</p>
+<pre><code>$ nslookup www.google.com
+# 在终端里你可以用 nslookup 或 dig 命令查看 DNS 解析结果
+
+# dig 命令的输出示例：
+$ dig www.example.com
+
+;; ANSWER SECTION:
+www.example.com.    3600    IN    A    93.184.216.34
+#                   ^^^^
+#                   TTL = 3600 秒 = 1 小时
+#                   在这 1 小时内，缓存的结果可以直接使用</code></pre>
+<p>DNS 解析通常耗时 20-100 毫秒。如果命中缓存，则接近 0 毫秒。</p>
+<h2 id="34-第三步tcp-连接三次握手">3.4 第三步：TCP 连接——三次握手</h2>
+<h3 id="341-为什么需要-tcp">3.4.1 为什么需要 TCP</h3>
+<p>有了 IP 地址，浏览器就知道要和哪台服务器通信了。但在发送 HTTP 请求之前，需要先建立一个可靠的连接通道。</p>
+<p>互联网的底层传输是不可靠的——数据包可能丢失、乱序、重复。TCP（Transmission Control Protocol，传输控制协议）的作用就是在不可靠的网络上建立可靠的连接：保证数据按顺序到达、不丢失、不重复。</p>
+<h3 id="342-三次握手">3.4.2 三次握手</h3>
+<p>TCP 连接的建立需要&quot;三次握手&quot;（Three-Way Handshake）：</p>
+<pre><code>客户端（浏览器）                    服务器
+    │                                │
+    │──── SYN (seq=x) ──────────────▶│  第一次：客户端说"我想建立连接"
+    │                                │
+    │◀─── SYN-ACK (seq=y, ack=x+1) ─│  第二次：服务器说"好的，我也准备好了"
+    │                                │
+    │──── ACK (ack=y+1) ────────────▶│  第三次：客户端说"收到，开始通信吧"
+    │                                │
+    │         连接建立完成             │</code></pre>
+<p>为什么需要三次而不是两次？因为双方都需要确认对方能正常收发数据：</p>
+<ul>
+<li>第一次握手：服务器确认&quot;客户端能发送数据&quot;</li>
+<li>第二次握手：客户端确认&quot;服务器能接收和发送数据&quot;</li>
+<li>第三次握手：服务器确认&quot;客户端能接收数据&quot;</li>
+</ul>
+<p>三次握手需要一个 RTT（Round-Trip Time，往返时间）。如果服务器在美国，RTT 大约是 150-200 毫秒。</p>
+<h3 id="343-tcp-的代价">3.4.3 TCP 的代价</h3>
+<p>TCP 的可靠性是有代价的：</p>
+<ul>
+<li><strong>建立连接需要时间</strong>：三次握手至少需要 1.5 个 RTT</li>
+<li><strong>慢启动</strong>：TCP 不会一开始就全速发送数据，而是逐步增加发送速率（拥塞控制）</li>
+<li><strong>队头阻塞</strong>：如果一个数据包丢失，后面的包都要等它重传</li>
+</ul>
+<p>这也是为什么 HTTP/3 选择了基于 UDP 的 QUIC 协议——它在应用层自己实现了可靠传输，避免了 TCP 的一些固有限制。但这是后话了。</p>
+<h2 id="35-第四步tls-握手建立加密通道">3.5 第四步：TLS 握手——建立加密通道</h2>
+<h3 id="351-为什么需要加密">3.5.1 为什么需要加密</h3>
+<p>TCP 连接建立后，数据是明文传输的。这意味着任何能截获网络流量的人（比如同一个 WiFi 下的攻击者、你的 ISP、网络中间的路由器）都能看到你发送和接收的所有内容——包括密码、银行卡号、私人消息。</p>
+<p>TLS（Transport Layer Security，传输层安全协议）在 TCP 之上建立了一个加密通道。HTTPS 中的 &quot;S&quot; 就是 Secure，指的就是 TLS 加密。</p>
+<h3 id="352-tls-13-握手过程">3.5.2 TLS 1.3 握手过程</h3>
+<p>TLS 1.3（2018 年发布的最新版本）将握手简化为只需要 1 个 RTT：</p>
+<pre><code>客户端（浏览器）                         服务器
+    │                                     │
+    │── ClientHello ─────────────────────▶│
+    │   • 支持的加密算法列表               │
+    │   • 客户端随机数                     │
+    │   • 客户端的 DH 公钥                 │
+    │                                     │
+    │◀─ ServerHello + 证书 + Finished ────│
+    │   • 选定的加密算法                   │
+    │   • 服务器随机数                     │
+    │   • 服务器的 DH 公钥                 │
+    │   • 服务器证书（证明身份）            │
+    │   • 握手完成确认                     │
+    │                                     │
+    │── Finished ────────────────────────▶│
+    │   （此后所有数据都是加密的）          │
+    │                                     │
+    │◀═══════ 加密通信开始 ═══════════════│</code></pre>
+<p>这里面有几个关键概念：</p>
+<p><strong>非对称加密 + 对称加密</strong></p>
+<p>TLS 使用两种加密方式的组合：</p>
+<ul>
+<li><strong>非对称加密</strong>（如 RSA、ECDH）：用于握手阶段交换密钥。特点是有公钥和私钥，公钥加密的数据只有私钥能解密。安全但慢。</li>
+<li><strong>对称加密</strong>（如 AES-256-GCM）：用于实际数据传输。特点是加密和解密用同一个密钥。快但需要双方事先共享密钥。</li>
+</ul>
+<p>TLS 的巧妙之处在于：用非对称加密安全地交换一个对称密钥，然后用这个对称密钥加密后续所有通信。</p>
+<p><strong>证书验证</strong></p>
+<p>服务器会发送一个数字证书，证明&quot;我确实是 <a href="http://www.example.com%22%E3%80%82%E6%B5%8F%E8%A7%88%E5%99%A8%E4%BC%9A%E9%AA%8C%E8%AF%81%EF%BC%9A">www.example.com&quot;。浏览器会验证：</a></p>
+<ol>
+<li>证书是否由受信任的证书颁发机构（CA）签发</li>
+<li>证书是否在有效期内</li>
+<li>证书上的域名是否和你访问的域名匹配</li>
+</ol>
+<p>如果验证失败，浏览器会显示那个可怕的&quot;您的连接不是私密连接&quot;警告页面。</p>
+<h3 id="353-时间开销">3.5.3 时间开销</h3>
+<p>TLS 1.3 握手需要 1 个 RTT（约 50-200ms，取决于服务器距离）。加上之前 TCP 的 1 个 RTT，光是建立连接就需要 2 个 RTT。</p>
+<p>如果你之前访问过这个网站，TLS 1.3 支持 &quot;0-RTT 恢复&quot;——利用之前保存的会话信息，可以在第一个数据包里就携带加密的请求数据，省去一个 RTT。</p>
+<h2 id="36-第五步http-请求与响应">3.6 第五步：HTTP 请求与响应</h2>
+<h3 id="361-发送请求">3.6.1 发送请求</h3>
+<p>加密通道建立后，浏览器终于可以发送 HTTP 请求了。一个典型的 HTTP GET 请求长这样：</p>
+<pre data-label="http"><code class="language-http">GET /index.html HTTP/2
+Host: www.example.com
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/125.0
+Accept: text/html,application/xhtml+xml
+Accept-Language: zh-CN,zh;q=0.9,en;q=0.8
+Accept-Encoding: gzip, br
+Connection: keep-alive
+Cookie: session_id=abc123; theme=dark</code></pre>
+<p>每一行都是一个&quot;请求头&quot;（Header），告诉服务器各种信息：</p>
+<ul>
+<li><code>GET /index.html</code>：我要获取（GET）这个路径的资源</li>
+<li><code>Host</code>：我要访问的域名（一台服务器可能托管多个网站）</li>
+<li><code>User-Agent</code>：我是什么浏览器（服务器可能根据这个返回不同内容）</li>
+<li><code>Accept</code>：我能接受什么格式的响应</li>
+<li><code>Accept-Encoding</code>：我支持什么压缩算法（gzip、brotli）</li>
+<li><code>Cookie</code>：我之前存储的 Cookie（第四章详细讲）</li>
+</ul>
+<h3 id="362-接收响应">3.6.2 接收响应</h3>
+<p>服务器处理请求后，返回一个 HTTP 响应：</p>
+<pre data-label="http"><code class="language-http">HTTP/2 200 OK
+Content-Type: text/html; charset=utf-8
+Content-Length: 45678
+Content-Encoding: br
+Cache-Control: max-age=3600
+Set-Cookie: visitor_id=xyz789; Path=/; Secure; HttpOnly
+
+&lt;!DOCTYPE html&gt;
+&lt;html lang="zh-CN"&gt;
+&lt;head&gt;
+  &lt;meta charset="UTF-8"&gt;
+  &lt;title&gt;示例网站&lt;/title&gt;
+  &lt;link rel="stylesheet" href="/css/style.css"&gt;
+  &lt;script src="/js/app.js" defer&gt;&lt;/script&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;h1&gt;欢迎&lt;/h1&gt;
+  &lt;img src="/images/hero.webp" alt="首页图片"&gt;
+  ...
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+<p>关键响应头：</p>
+<ul>
+<li><code>200 OK</code>：请求成功（404 = 没找到，500 = 服务器错误，301 = 永久重定向）</li>
+<li><code>Content-Type</code>：响应内容的类型（HTML、JSON、图片等）</li>
+<li><code>Content-Encoding: br</code>：内容用 Brotli 算法压缩了（浏览器需要解压）</li>
+<li><code>Cache-Control</code>：告诉浏览器可以缓存这个响应 3600 秒</li>
+<li><code>Set-Cookie</code>：让浏览器存储一个新的 Cookie</li>
+</ul>
+<h3 id="363-http2-和-http3">3.6.3 HTTP/2 和 HTTP/3</h3>
+<p>现代浏览器使用的是 HTTP/2 或 HTTP/3，相比古老的 HTTP/1.1 有巨大改进：</p>
+<div class="table-wrap"><table><thead><tr>
+<th>特性</th>
+<th>HTTP/1.1</th>
+<th>HTTP/2</th>
+<th>HTTP/3</th>
+</tr>
+</thead><tbody><tr>
+<td>多路复用</td>
+<td>✗（一个连接一次一个请求）</td>
+<td>✓（一个连接并行多个请求）</td>
+<td>✓</td>
+</tr>
+<tr>
+<td>头部压缩</td>
+<td>✗</td>
+<td>✓（HPACK）</td>
+<td>✓（QPACK）</td>
+</tr>
+<tr>
+<td>服务器推送</td>
+<td>✗</td>
+<td>✓</td>
+<td>✓</td>
+</tr>
+<tr>
+<td>底层协议</td>
+<td>TCP</td>
+<td>TCP</td>
+<td>QUIC (UDP)</td>
+</tr>
+<tr>
+<td>队头阻塞</td>
+<td>严重</td>
+<td>TCP 层仍有</td>
+<td>完全解决</td>
+</tr>
+</tbody></table></div>
+<p>HTTP/2 的多路复用是一个巨大的改进：在 HTTP/1.1 时代，浏览器要同时下载 CSS、JS、图片等多个资源，需要开多个 TCP 连接（通常 6 个）。HTTP/2 允许在一个连接上并行发送多个请求，大幅减少了连接开销。</p>
+<h2 id="37-第六步html-解析与-dom-构建">3.7 第六步：HTML 解析与 DOM 构建</h2>
+<h3 id="371-从文本到树">3.7.1 从文本到树</h3>
+<p>浏览器收到 HTML 文本后，需要把它解析成一个结构化的数据——DOM 树（Document Object Model，文档对象模型）。</p>
+<pre data-label="html"><code class="language-html">&lt;!-- 原始 HTML 文本 --&gt;
+&lt;html&gt;
+  &lt;head&gt;
+    &lt;title&gt;Hello&lt;/title&gt;
+  &lt;/head&gt;
+  &lt;body&gt;
+    &lt;h1&gt;标题&lt;/h1&gt;
+    &lt;p&gt;段落 &lt;a href="/link"&gt;链接&lt;/a&gt;&lt;/p&gt;
+  &lt;/body&gt;
+&lt;/html&gt;</code></pre>
+<p>解析后的 DOM 树：</p>
+<pre><code>Document
+└── html
+    ├── head
+    │   └── title
+    │       └── "Hello"
+    └── body
+        ├── h1
+        │   └── "标题"
+        └── p
+            ├── "段落 "
+            └── a (href="/link")
+                └── "链接"</code></pre>
+<p>DOM 树是浏览器内部对网页结构的表示。JavaScript 可以通过 DOM API 来读取和修改这棵树：</p>
+<pre data-label="javascript"><code class="language-javascript">// JavaScript 操作 DOM 的例子
+const title = document.querySelector('h1');
+console.log(title.textContent);  // "标题"
+
+title.textContent = '新标题';    // 修改 DOM → 页面立即更新
+title.style.color = 'red';       // 改变样式 → 触发重新渲染</code></pre>
+<h3 id="372-解析过程中的quot阻塞quot">3.7.2 解析过程中的&quot;阻塞&quot;</h3>
+<p>HTML 解析不是一帆风顺的。当解析器遇到某些标签时，它必须暂停：</p>
+<p><strong><code>&lt;script&gt;</code> 标签（无 defer/async）</strong>：解析器必须停下来，等 JavaScript 下载并执行完毕。因为 JS 可能会修改 DOM（比如 <code>document.write()</code>），解析器不知道后面的 HTML 还有没有意义。</p>
+<pre data-label="html"><code class="language-html">&lt;!-- 这会阻塞 HTML 解析 --&gt;
+&lt;script src="/js/heavy-script.js"&gt;&lt;/script&gt;
+
+&lt;!-- 这不会阻塞（defer = 延迟到 HTML 解析完再执行） --&gt;
+&lt;script src="/js/app.js" defer&gt;&lt;/script&gt;
+
+&lt;!-- 这也不会阻塞（async = 下载完就执行，不等 HTML 解析） --&gt;
+&lt;script src="/js/analytics.js" async&gt;&lt;/script&gt;</code></pre>
+<p>这就是为什么前端开发的最佳实践是：把 <code>&lt;script&gt;</code> 标签放在 <code>&lt;body&gt;</code> 底部，或者使用 <code>defer</code>/<code>async</code> 属性。</p>
+<p><strong><code>&lt;link rel=&quot;stylesheet&quot;&gt;</code> 标签</strong>：CSS 不会阻塞 HTML 解析，但会阻塞渲染——浏览器不会在 CSS 加载完之前显示任何内容，否则用户会看到一个没有样式的&quot;裸&quot;页面闪烁一下再变正常（这叫 FOUC，Flash of Unstyled Content）。</p>
+<h3 id="373-并行资源加载">3.7.3 并行资源加载</h3>
+<p>虽然 <code>&lt;script&gt;</code> 会阻塞解析，但现代浏览器有一个&quot;预加载扫描器&quot;（Preload Scanner）——它会在主解析器被阻塞时，提前扫描后面的 HTML，发现需要下载的资源（CSS、JS、图片），并提前开始下载。</p>
+<p>这是一个纯粹的性能优化，对最终结果没有影响，但能显著减少页面加载时间。</p>
+<h2 id="38-第七步css-解析与渲染树">3.8 第七步：CSS 解析与渲染树</h2>
+<h3 id="381-cssom-树">3.8.1 CSSOM 树</h3>
+<p>CSS 也会被解析成一棵树——CSSOM（CSS Object Model）：</p>
+<pre data-label="css"><code class="language-css">/* 原始 CSS */
+body { font-size: 16px; color: #333; }
+h1 { font-size: 2em; color: blue; }
+p { line-height: 1.6; }
+.hidden { display: none; }</code></pre>
+<p>CSSOM 树记录了每个元素应该有什么样式。它和 DOM 树的结构类似，但存储的是样式信息而不是内容。</p>
+<h3 id="382-样式计算级联与继承">3.8.2 样式计算：级联与继承</h3>
+<p>CSS 的全称是 Cascading Style Sheets（层叠样式表）。&quot;层叠&quot;意味着多个样式规则可以作用于同一个元素，浏览器需要按优先级决定最终使用哪个：</p>
+<pre data-label="css"><code class="language-css">/* 优先级从低到高 */
+p { color: black; }              /* 元素选择器：优先级 0,0,1 */
+.intro { color: blue; }          /* 类选择器：优先级 0,1,0 */
+#main { color: red; }            /* ID 选择器：优先级 1,0,0 */
+p { color: green !important; }   /* !important：最高优先级 */</code></pre>
+<p>浏览器还需要处理&quot;继承&quot;——某些属性（如 <code>color</code>、<code>font-size</code>）会从父元素传递给子元素，而另一些（如 <code>border</code>、<code>margin</code>）不会。</p>
+<p>对于一个复杂的网页，样式计算可能涉及数千条规则和数千个 DOM 节点的匹配，这是一个计算密集的过程。</p>
+<h3 id="383-渲染树">3.8.3 渲染树</h3>
+<p>DOM 树 + CSSOM 树 = 渲染树（Render Tree）。</p>
+<p>渲染树只包含需要显示的元素。<code>display: none</code> 的元素不会出现在渲染树中，<code>&lt;head&gt;</code> 标签里的内容也不会。</p>
+<pre><code>DOM 树                    CSSOM                渲染树
+─────                    ─────                ─────
+html                                          
+├── head (不可见)                              
+└── body                 body{16px}           body
+    ├── h1               h1{2em,blue}         ├── h1 "标题" [blue, 32px]
+    ├── p                p{1.6 line-height}   ├── p "段落..."  [#333, 16px]
+    └── div.hidden       .hidden{display:none} └── (不在渲染树中)</code></pre>
+<h2 id="39-第八步布局绘制与合成">3.9 第八步：布局、绘制与合成</h2>
+<h3 id="391-布局layout-reflow">3.9.1 布局（Layout / Reflow）</h3>
+<p>有了渲染树，浏览器知道了&quot;要显示什么&quot;和&quot;长什么样&quot;，但还不知道&quot;放在哪里&quot;。布局阶段计算每个元素的精确位置和大小。</p>
+<pre><code>视口宽度: 1200px
+
+body (width: 1200px, height: auto)
+├── header (width: 1200px, height: 60px, top: 0)
+├── main (width: 800px, height: 1500px, top: 60px, left: 200px)
+│   ├── h1 (width: 800px, height: 45px, top: 60px)
+│   ├── p  (width: 800px, height: 72px, top: 105px)
+│   └── img (width: 400px, height: 300px, top: 177px)
+└── sidebar (width: 200px, height: 1500px, top: 60px, left: 0)</code></pre>
+<p>布局是一个递归过程——父元素的大小可能取决于子元素的内容（比如 <code>height: auto</code>），而子元素的大小可能取决于父元素的宽度（比如 <code>width: 50%</code>）。浏览器需要多次遍历渲染树才能确定所有元素的最终位置。</p>
+<p><strong>回流（Reflow）</strong>：当 DOM 结构变化或元素尺寸变化时，浏览器需要重新计算布局。这是一个昂贵的操作。</p>
+<pre data-label="javascript"><code class="language-javascript">// 这段代码会触发多次回流（性能很差）：
+for (let i = 0; i &lt; 100; i++) {
+  const div = document.createElement('div');
+  div.style.width = container.offsetWidth + 'px';  // 读取 → 触发回流
+  div.textContent = `Item ${i}`;
+  container.appendChild(div);  // 写入 → 标记需要回流
+}
+
+// 优化后（只触发一次回流）：
+const width = container.offsetWidth;  // 只读取一次
+const fragment = document.createDocumentFragment();
+for (let i = 0; i &lt; 100; i++) {
+  const div = document.createElement('div');
+  div.style.width = width + 'px';
+  div.textContent = `Item ${i}`;
+  fragment.appendChild(div);
+}
+container.appendChild(fragment);  // 一次性插入</code></pre>
+<h3 id="392-绘制paint">3.9.2 绘制（Paint）</h3>
+<p>布局完成后，浏览器知道了每个元素的位置和大小，接下来要把它们&quot;画&quot;出来。</p>
+<p>绘制阶段将每个元素转换为绘制指令（类似于&quot;在坐标 (100, 200) 画一个 300×200 的蓝色矩形&quot;）。这些指令会被发送给图形系统（在 Chromium 中是 Skia 图形库）来生成实际的像素。</p>
+<p>绘制的顺序很重要——后绘制的元素会覆盖先绘制的。CSS 的 <code>z-index</code> 属性就是用来控制绘制顺序的。</p>
+<h3 id="393-合成composite">3.9.3 合成（Composite）</h3>
+<p>现代浏览器不会把整个页面画在一张&quot;画布&quot;上。它会把页面分成多个&quot;图层&quot;（Layer），分别绘制，然后由 GPU 合成最终画面。</p>
+<p>哪些情况会创建新图层？</p>
+<ul>
+<li><code>transform</code> 或 <code>opacity</code> 动画</li>
+<li><code>position: fixed</code> 的元素</li>
+<li><code>will-change</code> 属性</li>
+<li><code>&lt;video&gt;</code>、<code>&lt;canvas&gt;</code> 元素</li>
+<li>有 3D 变换的元素</li>
+</ul>
+<p>为什么要分层？因为当某个图层变化时（比如一个动画），只需要重新绘制那个图层，其他图层保持不变。GPU 擅长做图层合成，这比重新绘制整个页面快得多。</p>
+<pre data-label="css"><code class="language-css">/* 这个动画只触发合成，不触发布局和绘制，所以很流畅 */
+.smooth-animation {
+  transform: translateX(100px);
+  transition: transform 0.3s ease;
+  /* transform 变化只需要 GPU 重新合成图层 */
+}
+
+/* 这个动画会触发布局 + 绘制 + 合成，性能差 */
+.janky-animation {
+  left: 100px;
+  transition: left 0.3s ease;
+  /* left 变化需要重新计算布局 → 重新绘制 → 重新合成 */
+}</code></pre>
+<h2 id="310-完整时间线">3.10 完整时间线</h2>
+<p>让我们把整个过程的时间加起来，看看一次典型的页面加载需要多久：</p>
+<pre><code>假设：服务器在美国西海岸，RTT ≈ 150ms
+
+0ms     ─── URL 解析（瞬间）
+0ms     ─── DNS 查询（假设缓存命中，0ms；未命中约 50-100ms）
+0ms     ─── TCP 三次握手
+150ms   ─── TCP 连接建立
+150ms   ─── TLS 握手开始
+300ms   ─── TLS 握手完成，发送 HTTP 请求
+300ms   ─── 请求到达服务器
+450ms   ─── 服务器处理请求（假设 50ms）
+500ms   ─── 响应开始返回
+650ms   ─── 浏览器收到第一个字节（TTFB: Time To First Byte）
+650ms   ─── 开始解析 HTML
+700ms   ─── 发现 CSS/JS 资源，开始并行下载
+850ms   ─── CSS 下载完成，开始构建 CSSOM
+900ms   ─── DOM + CSSOM 就绪，构建渲染树
+920ms   ─── 布局计算完成
+940ms   ─── 绘制完成
+950ms   ─── 合成完成，第一帧显示（FCP: First Contentful Paint）
+        ...
+1200ms  ─── 图片加载完成，页面完全呈现（LCP: Largest Contentful Paint）</code></pre>
+<p>从按下回车到看到内容，大约 1 秒。这 1 秒里，你的浏览器跨越了半个地球，完成了数十次网络往返、数千次计算、数百万像素的绘制。</p>
+<h3 id="3101-性能指标">3.10.1 性能指标</h3>
+<p>Google 定义了几个关键的性能指标来衡量用户体验：</p>
+<div class="table-wrap"><table><thead><tr>
+<th>指标</th>
+<th>含义</th>
+<th>良好标准</th>
+</tr>
+</thead><tbody><tr>
+<td>TTFB</td>
+<td>从请求到收到第一个字节</td>
+<td>&lt; 800ms</td>
+</tr>
+<tr>
+<td>FCP</td>
+<td>第一次有内容显示</td>
+<td>&lt; 1.8s</td>
+</tr>
+<tr>
+<td>LCP</td>
+<td>最大内容元素显示</td>
+<td>&lt; 2.5s</td>
+</tr>
+<tr>
+<td>FID/INP</td>
+<td>用户首次交互到响应</td>
+<td>&lt; 200ms</td>
+</tr>
+<tr>
+<td>CLS</td>
+<td>页面布局偏移量</td>
+<td>&lt; 0.1</td>
+</tr>
+</tbody></table></div>
+<p>这些指标被称为 Core Web Vitals，Google 会用它们来影响搜索排名——加载慢的网站在搜索结果中排名更低。这也是为什么前端性能优化是一个重要的工程领域。</p>
+<h2 id="311-浏览器的多进程架构以-chrome-为例">3.11 浏览器的多进程架构（以 Chrome 为例）</h2>
+<h3 id="3111-进程分工">3.11.1 进程分工</h3>
+<p>前面讲的所有步骤不是在一个进程里完成的。Chrome 使用多进程架构，不同的工作由不同的进程负责：</p>
+<pre><code>┌─────────────────────────────────────────────────┐
+│              Browser Process（浏览器主进程）       │
+│  • 地址栏、书签、前进/后退按钮                     │
+│  • 网络请求的发起和管理                           │
+│  • 文件访问权限控制                               │
+└─────────────────────────────────────────────────┘
+         │              │              │
+         ▼              ▼              ▼
+┌──────────────┐ ┌──────────────┐ ┌──────────────┐
+│Renderer 进程 │ │Renderer 进程 │ │Renderer 进程 │
+│  (Tab 1)     │ │  (Tab 2)     │ │  (Tab 3)     │
+│  • HTML 解析 │ │  • HTML 解析 │ │  • HTML 解析 │
+│  • CSS 计算  │ │  • CSS 计算  │ │  • CSS 计算  │
+│  • JS 执行   │ │  • JS 执行   │ │  • JS 执行   │
+│  • 布局/绘制 │ │  • 布局/绘制 │ │  • 布局/绘制 │
+└──────────────┘ └──────────────┘ └──────────────┘
+         │
+         ▼
+┌──────────────┐ ┌──────────────┐
+│  GPU 进程    │ │ Network 进程 │
+│  • 图层合成  │ │  • 网络请求  │
+│  • 3D 加速   │ │  • DNS/TLS   │
+└──────────────┘ └──────────────┘</code></pre>
+<p><strong>为什么这样设计？</strong></p>
+<ol>
+<li><strong>安全性</strong>：Renderer 进程运行在沙箱（Sandbox）中，即使网页中的恶意代码获得了 Renderer 进程的控制权，它也无法访问文件系统或其他标签页的数据。</li>
+<li><strong>稳定性</strong>：一个标签页崩溃不会影响其他标签页。</li>
+<li><strong>性能</strong>：多个 Renderer 进程可以利用多核 CPU 并行工作。</li>
+</ol>
+<p><strong>代价</strong>：每个进程都有自己的内存空间，所以 Chrome 的内存占用比单进程浏览器高得多。这就是为什么 Chrome 是&quot;内存大户&quot;的原因。</p>
+<h3 id="3112-站点隔离site-isolation">3.11.2 站点隔离（Site Isolation）</h3>
+<p>从 2018 年开始，Chrome 实施了&quot;站点隔离&quot;——不同网站的内容运行在不同的 Renderer 进程中，即使它们在同一个标签页里（比如通过 iframe 嵌入）。</p>
+<p>这是为了防御 Spectre 等 CPU 侧信道攻击——这类攻击可以让一个进程读取同一进程中其他网站的数据。站点隔离确保不同网站的数据在物理上就是隔离的。</p>
+<p>代价是更高的内存占用，但安全性的提升是值得的。</p>
+<h2 id="312-小结">3.12 小结</h2>
+<p>一次看似简单的网页访问，背后是数十年计算机科学积累的结晶：</p>
+<ul>
+<li><strong>DNS</strong>：分布式数据库系统</li>
+<li><strong>TCP</strong>：可靠传输协议</li>
+<li><strong>TLS</strong>：现代密码学的工程应用</li>
+<li><strong>HTTP</strong>：应用层协议设计</li>
+<li><strong>HTML/CSS 解析</strong>：编译原理（词法分析、语法分析）</li>
+<li><strong>布局算法</strong>：约束求解</li>
+<li><strong>GPU 合成</strong>：计算机图形学</li>
+<li><strong>多进程架构</strong>：操作系统原理</li>
+</ul>
+<p>浏览器可能是普通用户每天使用的最复杂的软件之一。它把所有这些复杂性隐藏在一个简洁的界面后面，让你只需要输入一个地址就能访问全世界的信息。</p>
+<p>下一章，我们聚焦于一个具体的技术细节：Cookie。它是怎么来的，为什么网站需要它，以及为什么现在每个网站都要你&quot;Accept Cookies&quot;。</p>
+
+    <nav class="pager">  <a href="02-engine-war.html">
+    <span class="label">← 上一章</span>
+    <span class="title">引擎之争——Chromium 为何一家独大</span>
+  </a>  <a href="04-cookies-storage.html" class="next">
+    <span class="label">下一章 →</span>
+    <span class="title">Cookies、存储与登录态</span>
+  </a></nav>
+  </article>
+</div>
+
+<footer>
+  <div class="set">
+    <span>浏览器：从战争到垄断</span>
+    <span>2026 · ZH-CN</span>
+  </div>
+  <div class="set">
+    <span>Mav</span>
+  </div>
+</footer>
+<div class="search-backdrop" id="search-overlay" role="dialog" aria-modal="true" aria-label="搜索" hidden>
+  <div class="search-modal">
+    <div class="search-input-wrap">
+      <input type="search" class="search-input" placeholder="搜索内容..." aria-label="搜索内容" autocomplete="off">
+      <kbd>ESC</kbd>
+    </div>
+    <div class="search-results" role="listbox" aria-label="搜索结果"></div>
+  </div>
+</div>
+
+<!-- Mobile TOC -->
+<button class="mtoc-fab" id="mtoc-fab" aria-label="目录">TOC</button>
+<div class="mtoc-drawer" id="mtoc-drawer">
+  <div class="mtoc-content"></div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/bash.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/typescript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/yaml.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/javascript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/json.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/python.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/css.min.js"></script>
+<script src="../assets/script.js"></script>
+</body>
+</html>

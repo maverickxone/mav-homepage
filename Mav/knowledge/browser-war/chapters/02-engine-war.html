@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>引擎之争——Chromium 为何一家独大 — 浏览器：从战争到垄断</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" id="hljs-light" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+<link rel="stylesheet" id="hljs-dark" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" media="not all">
+</head>
+<body>
+
+<div class="progress-bar" id="progress-bar"></div>
+
+<nav class="topnav" id="topnav">
+  <div class="topnav-inner">
+    <a class="brand" href="../index.html">浏览器：从战争到垄断</a>
+    <div class="nav-links">
+      <a href="01-browser-history.html">01</a>
+      <a href="02-engine-war.html" class="active">02</a>
+      <a href="03-how-browser-works.html">03</a>
+      <a href="04-cookies-storage.html">04</a>
+      <a href="05-fingerprint-privacy.html">05</a>
+      <a href="06-business-model.html">06</a>
+    </div>
+    <div class="nav-controls">
+      <button class="nav-btn" id="search-btn" aria-label="搜索 (Ctrl+K)">⌘K</button>
+      <button class="nav-btn" id="settings-btn" aria-label="阅读设置">Aa</button>
+      <a class="nav-btn" href="../../index.html" aria-label="返回知识库">← 知识库</a>
+      <a class="nav-btn" href="https://github.com/maverickxone/mav-homepage" target="_blank" rel="noopener" aria-label="GitHub" style="padding: 6px 8px;"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg></a>
+    </div>
+  </div>
+</nav>
+<div class="settings-pop" id="settings-pop">
+  <h5>主题</h5>
+  <div class="row">
+    <button class="seg" data-theme-set="light">明亮</button>
+    <button class="seg" data-theme-set="dark">暗色</button>
+  </div>
+  <h5>字号</h5>
+  <div class="row">
+    <button class="seg" data-size-set="s">小</button>
+    <button class="seg" data-size-set="m">中</button>
+    <button class="seg" data-size-set="l">大</button>
+  </div>
+</div>
+
+<div class="with-sidebar">
+  <aside class="sidebar">
+  <div class="chapter-num">CHAPTER 02</div>
+  <div class="chapter-name">引擎之争——Chromium 为何一家独大</div>
+  <h4>目录</h4>
+  <ul>
+    <li><a href="#21-浏览器引擎到底是什么">2.1 浏览器引擎到底是什么</a></li>
+    <li><a href="#22-三大引擎的前世今生">2.2 三大引擎的前世今生</a></li>
+    <li><a href="#23-为什么-edge-选择了投降">2.3 为什么 Edge 选择了投降</a></li>
+    <li><a href="#24-chromium开源的垄断">2.4 Chromium：开源的垄断</a></li>
+    <li><a href="#25-引擎多样性的未来">2.5 引擎多样性的未来</a></li>
+    <li><a href="#26-深入理解引擎的性能差异">2.6 深入理解：引擎的性能差异</a></li>
+  </ul>
+</aside>
+  <article class="chapter-body">
+    <header class="chapter-head">
+  <div class="chapter-head-meta">
+    <span class="num">CHAPTER 02</span>
+    <span>≈ 25 MIN READ</span>
+  </div>
+  <h1>引擎之争——Chromium 为何一家独大</h1>
+</header>
+    <h2 id="21-浏览器引擎到底是什么">2.1 浏览器引擎到底是什么</h2>
+<h3 id="211-引擎-浏览器">2.1.1 引擎 ≠ 浏览器</h3>
+<p>很多人把&quot;浏览器&quot;和&quot;浏览器引擎&quot;混为一谈，但它们是两个不同的东西。</p>
+<p><strong>浏览器</strong>是你看到的那个应用程序——有地址栏、标签页、书签、设置界面、扩展系统。这些是&quot;壳&quot;。</p>
+<p><strong>浏览器引擎</strong>（也叫渲染引擎或排版引擎）是浏览器的&quot;心脏&quot;——它负责把 HTML、CSS、JavaScript 这些代码变成你屏幕上看到的像素。</p>
+<p>类比一下：浏览器是一辆车，引擎就是发动机。不同品牌的车可以用同一款发动机——Chrome、Edge、Brave、Opera、Vivaldi 这些浏览器看起来不一样，但它们的&quot;发动机&quot;都是同一个：Blink。</p>
+<h3 id="212-引擎的组成">2.1.2 引擎的组成</h3>
+<p>一个完整的浏览器引擎通常包含两个核心部分：</p>
+<pre><code>浏览器引擎
+├── 渲染引擎（Rendering Engine）
+│   ├── HTML 解析器 → 构建 DOM 树
+│   ├── CSS 解析器 → 构建 CSSOM 树
+│   ├── 布局引擎 → 计算每个元素的位置和大小
+│   └── 绘制引擎 → 把计算结果画成像素
+│
+└── JavaScript 引擎（JS Engine）
+    ├── 解析器 → 把 JS 代码变成抽象语法树（AST）
+    ├── 解释器 → 逐行执行 AST
+    └── JIT 编译器 → 把热点代码编译成机器码</code></pre>
+<div class="table-wrap"><table><thead><tr>
+<th>浏览器</th>
+<th>渲染引擎</th>
+<th>JS 引擎</th>
+</tr>
+</thead><tbody><tr>
+<td>Chrome / Edge / Brave / Opera</td>
+<td>Blink</td>
+<td>V8</td>
+</tr>
+<tr>
+<td>Safari</td>
+<td>WebKit</td>
+<td>JavaScriptCore (Nitro)</td>
+</tr>
+<tr>
+<td>Firefox</td>
+<td>Gecko</td>
+<td>SpiderMonkey</td>
+</tr>
+</tbody></table></div>
+<p>注意：渲染引擎和 JS 引擎是可以分开的。比如 Node.js 用的是 V8（Chrome 的 JS 引擎），但它没有渲染引擎，因为它不需要显示网页。</p>
+<h3 id="213-渲染引擎的工作流程">2.1.3 渲染引擎的工作流程</h3>
+<p>当你打开一个网页时，渲染引擎做了以下事情（我们第三章会更详细地讲）：</p>
+<pre><code>HTML 文本                CSS 文本
+    │                       │
+    ▼                       ▼
+┌─────────┐          ┌──────────┐
+│HTML 解析│          │CSS 解析  │
+└────┬────┘          └────┬─────┘
+     │                    │
+     ▼                    ▼
+┌─────────┐          ┌──────────┐
+│ DOM 树  │          │ CSSOM 树 │
+└────┬────┘          └────┬─────┘
+     │                    │
+     └────────┬───────────┘
+              ▼
+       ┌─────────────┐
+       │  渲染树      │  (合并 DOM + CSSOM)
+       │  Render Tree │
+       └──────┬──────┘
+              ▼
+       ┌─────────────┐
+       │  布局 Layout │  (计算位置和大小)
+       └──────┬──────┘
+              ▼
+       ┌─────────────┐
+       │  绘制 Paint  │  (生成像素)
+       └──────┬──────┘
+              ▼
+       ┌─────────────┐
+       │  合成 Composite │  (GPU 加速合成图层)
+       └─────────────┘
+              ▼
+         屏幕上的像素</code></pre>
+<p>不同的引擎在实现这个流程时有不同的优化策略，这就是为什么同一个网页在不同浏览器里可能渲染速度不同、甚至显示效果略有差异。</p>
+<h2 id="22-三大引擎的前世今生">2.2 三大引擎的前世今生</h2>
+<h3 id="221-家族树一切始于-khtml">2.2.1 家族树：一切始于 KHTML</h3>
+<p>今天的三大引擎中，有两个是&quot;亲戚&quot;。让我们画一棵家族树：</p>
+<pre><code>1998  KHTML (KDE 项目，Linux 桌面环境的浏览器引擎)
+        │
+        │ 2001: Apple fork
+        ▼
+2003  WebKit (Apple Safari 的引擎)
+        │
+        │ 2013: Google fork
+        ▼
+2013  Blink (Google Chrome 的引擎)
+
+
+独立血统：
+1998  Gecko (Mozilla/Netscape → Firefox)</code></pre>
+<p>是的，Blink 和 WebKit 是&quot;父子关系&quot;——Blink 是 Google 在 2013 年从 WebKit 分叉（fork）出来的。而 WebKit 本身是 Apple 在 2001 年从 KDE 项目的 KHTML 分叉出来的。</p>
+<p>KHTML 是什么？它是 Linux 桌面环境 KDE 的一个浏览器组件，由一群开源志愿者开发。Apple 选择它的原因很务实：代码量小（不到 14 万行），设计干净，标准兼容性好。相比之下，当时的 Gecko（Mozilla 的引擎）代码量庞大且复杂。</p>
+<h3 id="222-webkitapple-的选择">2.2.2 WebKit：Apple 的选择</h3>
+<p>2003 年 1 月，Steve Jobs 在 Macworld 上发布了 Safari 浏览器，宣布 Apple 不再依赖 IE for Mac（是的，微软曾经为 Mac 开发过 IE）。</p>
+<p>Safari 的引擎就是 WebKit。Apple 最初是秘密开发的，这让 KHTML 的原始开发者很不满——Apple 拿了他们的代码，私下改了很久才公开。后来 Apple 逐步开源了 WebKit，但始终保持着对项目的主导权。</p>
+<p>WebKit 的特点：</p>
+<ul>
+<li><strong>轻量高效</strong>：特别适合移动设备（这也是为什么 iPhone 从第一天起就用 WebKit）</li>
+<li><strong>Apple 强制要求</strong>：在 iOS 上，所有浏览器（包括 Chrome for iOS）都必须使用 WebKit 引擎。这是 Apple 的 App Store 政策。所以 iPhone 上的 Chrome 本质上只是一个 WebKit 的壳。（注：欧盟 DMA 法案正在迫使 Apple 放松这一限制）</li>
+<li><strong>JavaScriptCore</strong>：WebKit 自带的 JS 引擎，也叫 Nitro，性能不错但通常略逊于 V8</li>
+</ul>
+<h3 id="223-blinkgoogle-的分家">2.2.3 Blink：Google 的分家</h3>
+<p>2013 年 4 月，Google 宣布将 Chrome 的渲染引擎从 WebKit 分叉为 Blink。</p>
+<p>为什么要分家？Google 和 Apple 在 WebKit 的开发方向上产生了分歧。Google 想要实现多进程架构的深度优化，而这需要对引擎做大量的结构性改动。在同一个项目里，两家公司的需求越来越难以调和。</p>
+<p>分叉之后，Blink 和 WebKit 各自独立发展了十多年，虽然底层有共同的祖先代码，但现在已经是两个差异很大的引擎了。</p>
+<p>Blink 的特点：</p>
+<ul>
+<li><strong>激进的性能优化</strong>：得益于 Google 的工程资源，Blink 在渲染性能上持续领先</li>
+<li><strong>快速迭代</strong>：每六周一个版本，新特性上线速度极快</li>
+<li><strong>V8 引擎</strong>：JavaScript 执行性能长期领先</li>
+<li><strong>庞大的代码库</strong>：Chromium 的代码量超过 3500 万行，是世界上最大的开源项目之一</li>
+</ul>
+<h3 id="224-gecko最后的独立者">2.2.4 Gecko：最后的独立者</h3>
+<p>Gecko 引擎诞生于 1998 年的 Mozilla 项目（Netscape 开源的产物）。它是今天唯一一个不属于任何科技巨头的主流浏览器引擎。</p>
+<p>Gecko 的特点：</p>
+<ul>
+<li><strong>由非营利组织维护</strong>：Mozilla Foundation 是一个非营利组织，其使命是&quot;保持互联网的开放和可访问&quot;</li>
+<li><strong>隐私优先</strong>：Firefox 默认启用了很多隐私保护功能（如增强型追踪保护）</li>
+<li><strong>Rust 重写</strong>：Mozilla 从 2016 年开始用 Rust 语言重写 Gecko 的关键组件（项目代号 Quantum/Stylo），提升了性能和安全性</li>
+<li><strong>市场份额困境</strong>：尽管技术上不差，但 Firefox 的市场份额持续下滑（从 2009 年的 30% 到 2026 年的不到 4%）</li>
+</ul>
+<p>Gecko 面临的最大问题不是技术，而是资金。Mozilla 的主要收入来源是 Google 支付的搜索引擎默认协议费用（每年约 4-5 亿美元）。讽刺的是，Firefox 的生存依赖于它最大的竞争对手的施舍。</p>
+<h2 id="23-为什么-edge-选择了投降">2.3 为什么 Edge 选择了投降</h2>
+<h3 id="231-edgehtml-的困境">2.3.1 EdgeHTML 的困境</h3>
+<p>2015 年，微软随 Windows 10 发布了 Edge 浏览器，使用全新的 EdgeHTML 引擎。从技术角度看，EdgeHTML 并不差——它比 IE 的 Trident 引擎快得多，支持现代 Web 标准，内存占用也比 Chrome 低。</p>
+<p>但它面临一个无解的问题：<strong>兼容性恶性循环</strong>。</p>
+<pre><code>Web 开发者只针对 Chrome 测试
+         │
+         ▼
+网站在 Edge 上有 bug
+         │
+         ▼
+用户遇到问题，切回 Chrome
+         │
+         ▼
+Edge 市场份额上不去
+         │
+         ▼
+Web 开发者更没动力适配 Edge
+         │
+         └──────→ 回到起点</code></pre>
+<p>这个循环和当年 IE 6 统治时期一模一样——只不过角色互换了。当年是&quot;网站只为 IE 优化，其他浏览器打不开&quot;，现在是&quot;网站只为 Chrome 优化，其他浏览器有 bug&quot;。</p>
+<p>微软的工程师们发现，他们花了大量时间在&quot;修复网站兼容性问题&quot;上，而不是&quot;开发新功能&quot;。维护一个独立引擎的成本越来越高，收益却越来越低。</p>
+<h3 id="232-投降的逻辑">2.3.2 投降的逻辑</h3>
+<p>2018 年 12 月，微软宣布放弃 EdgeHTML，转向 Chromium。这个决定背后的逻辑是：</p>
+<ol>
+<li><strong>工程成本</strong>：维护一个独立的浏览器引擎需要数百名工程师。微软宁愿把这些人力投入到 Azure、Office 365 等核心业务上。</li>
+<li><strong>兼容性</strong>：基于 Chromium 意味着自动获得和 Chrome 一样的网站兼容性。</li>
+<li><strong>扩展生态</strong>：Chrome Web Store 有超过 20 万个扩展，EdgeHTML 版 Edge 的扩展生态几乎为零。基于 Chromium 后可以直接使用 Chrome 的扩展。</li>
+<li><strong>微软的核心业务不是浏览器</strong>：微软靠 Azure 云服务和 Office 365 赚钱，浏览器只是一个入口。用 Chromium 做一个&quot;够好&quot;的浏览器，比自己维护引擎划算得多。</li>
+</ol>
+<h3 id="233-投降的代价">2.3.3 投降的代价</h3>
+<p>微软的决定是理性的，但它对整个 Web 生态有深远的负面影响：</p>
+<ul>
+<li><strong>引擎多样性进一步下降</strong>：从四个主流引擎（Blink、WebKit、Gecko、EdgeHTML）变成了三个</li>
+<li><strong>Google 的话语权进一步增强</strong>：微软虽然是 Chromium 的贡献者，但 Google 依然是项目的主导者</li>
+<li><strong>先例效应</strong>：如果连微软这样的巨头都维护不起独立引擎，还有谁能？</li>
+</ul>
+<p>Opera 在 2013 年就已经放弃了自己的 Presto 引擎转向 Chromium。现在微软也投降了。独立引擎只剩下 Apple 的 WebKit 和 Mozilla 的 Gecko。</p>
+<p>而 Apple 维护 WebKit 的动力主要来自 iOS 的封闭生态（强制所有 iOS 浏览器使用 WebKit），而不是桌面市场的竞争。如果有一天 Apple 被迫开放 iOS 的浏览器引擎限制（欧盟正在推动这件事），WebKit 的未来也不确定。</p>
+<h2 id="24-chromium开源的垄断">2.4 Chromium：开源的垄断</h2>
+<h3 id="241-chromium-和-chrome-的区别">2.4.1 Chromium 和 Chrome 的区别</h3>
+<p>很多人分不清 Chromium 和 Chrome。简单说：</p>
+<ul>
+<li><strong>Chromium</strong> 是一个开源项目，任何人都可以下载源码、编译、修改</li>
+<li><strong>Chrome</strong> 是 Google 基于 Chromium 添加了一些私有功能后发布的产品</li>
+</ul>
+<p>Chrome 比 Chromium 多了什么？</p>
+<div class="table-wrap"><table><thead><tr>
+<th>功能</th>
+<th>Chromium</th>
+<th>Chrome</th>
+</tr>
+</thead><tbody><tr>
+<td>自动更新</td>
+<td>✗</td>
+<td>✓</td>
+</tr>
+<tr>
+<td>PDF 阅读器</td>
+<td>✗</td>
+<td>✓</td>
+</tr>
+<tr>
+<td>崩溃报告</td>
+<td>✗</td>
+<td>✓</td>
+</tr>
+<tr>
+<td>Google 账号同步</td>
+<td>✗</td>
+<td>✓</td>
+</tr>
+<tr>
+<td>Widevine DRM（看 Netflix）</td>
+<td>✗</td>
+<td>✓</td>
+</tr>
+<tr>
+<td>使用统计收集</td>
+<td>✗</td>
+<td>✓</td>
+</tr>
+</tbody></table></div>
+<p>其他基于 Chromium 的浏览器（Edge、Brave、Opera 等）也是类似的模式：拿 Chromium 的开源代码，去掉 Google 的私有部分，加上自己的功能。</p>
+<h3 id="242-quot开源quot不等于quot开放治理quot">2.4.2 &quot;开源&quot;不等于&quot;开放治理&quot;</h3>
+<p>Chromium 是开源的，但这不意味着它是民主的。</p>
+<p>Google 对 Chromium 项目拥有事实上的控制权：</p>
+<ul>
+<li><strong>代码审查权</strong>：所有提交到 Chromium 的代码都需要通过 Google 员工的审查</li>
+<li><strong>方向决策权</strong>：Chromium 的技术路线图由 Google 制定</li>
+<li><strong>资源优势</strong>：Google 雇佣了 Chromium 项目绝大多数的全职开发者。其他公司（微软、Brave、Opera）虽然也有贡献，但规模远小于 Google</li>
+<li><strong>功能否决权</strong>：如果 Google 不想要某个功能，它就不会被合并到 Chromium 主线</li>
+</ul>
+<p>这就是所谓的&quot;开源的垄断&quot;——代码是开放的，但决策权是集中的。</p>
+<h3 id="243-manifest-v3一个典型案例">2.4.3 Manifest V3：一个典型案例</h3>
+<p>2024-2025 年发生的 Manifest V3 事件是 Google 控制力的一个典型体现。</p>
+<p><strong>背景</strong>：Chrome 的扩展系统使用一套叫 &quot;Manifest&quot; 的 API 规范。Manifest V2 允许扩展拦截和修改网络请求（这是广告拦截器的核心工作原理）。</p>
+<p><strong>Google 的决定</strong>：从 2024 年开始，Chrome 强制所有扩展迁移到 Manifest V3。V3 限制了扩展拦截网络请求的能力，改用一种叫 <code>declarativeNetRequest</code> 的新 API，规则数量有上限。</p>
+<p><strong>争议</strong>：批评者认为这是 Google 在削弱广告拦截器——毕竟 Google 80% 以上的收入来自广告。Google 则声称 V3 是为了&quot;安全和性能&quot;。</p>
+<p><strong>影响</strong>：uBlock Origin（最流行的广告拦截器）的开发者表示 V3 的限制让他无法完全复现 V2 版本的功能，因此发布了功能缩减的 &quot;uBlock Origin Lite&quot;。</p>
+<p><strong>Firefox 的态度</strong>：Mozilla 宣布 Firefox 将同时支持 Manifest V2 和 V3，确保用户可以继续使用完整功能的广告拦截器。</p>
+<p>这个事件完美展示了引擎垄断的风险：当一家公司控制了 80% 用户使用的浏览器引擎，它的每一个技术决策都会影响整个 Web 生态——即使这个决策可能与它的商业利益有关。</p>
+<pre data-label="javascript"><code class="language-javascript">// Manifest V2 的广告拦截方式（被废弃）：
+chrome.webRequest.onBeforeRequest.addListener(
+  function(details) {
+    // 可以检查每一个网络请求，动态决定是否拦截
+    if (isAdUrl(details.url)) {
+      return { cancel: true };  // 拦截这个请求
+    }
+  },
+  { urls: ["&lt;all_urls&gt;"] },
+  ["blocking"]  // "blocking" 意味着可以同步拦截
+);
+
+// Manifest V3 的方式（新规范）：
+// 必须预先声明静态规则，不能动态判断
+chrome.declarativeNetRequest.updateDynamicRules({
+  addRules: [{
+    id: 1,
+    priority: 1,
+    action: { type: "block" },
+    condition: {
+      urlFilter: "ads.example.com",  // 只能用模式匹配
+      resourceTypes: ["script", "image"]
+    }
+  }]
+  // 规则数量有上限（静态规则 30 万条，动态规则 5000 条）
+});</code></pre>
+<p>V2 的方式像是一个&quot;智能门卫&quot;——可以检查每个人的证件，根据复杂的逻辑决定放不放行。V3 的方式像是一个&quot;名单&quot;——只能提前写好谁不能进，名单长度还有限制。对于不断变化的广告网络来说，静态名单的效果天然不如动态判断。</p>
+<h2 id="25-引擎多样性的未来">2.5 引擎多样性的未来</h2>
+<h3 id="251-为什么我们需要多个引擎">2.5.1 为什么我们需要多个引擎</h3>
+<p>引擎多样性的价值类似于生物多样性：</p>
+<ol>
+<li><p><strong>竞争推动创新</strong>：Chrome 的 V8 引擎逼迫 Firefox 的 SpiderMonkey 不断优化，反过来也是。没有竞争，就没有进步的动力。</p>
+</li>
+<li><p><strong>制衡权力</strong>：如果只有一个引擎，那它的开发者就能单方面决定 Web 标准的实现方式。多个引擎意味着标准需要在多方协商后才能确定。</p>
+</li>
+<li><p><strong>安全冗余</strong>：如果所有浏览器都用同一个引擎，那一个引擎的漏洞就是所有浏览器的漏洞。多个引擎意味着攻击面更分散。</p>
+</li>
+<li><p><strong>避免历史重演</strong>：IE 6 的垄断导致 Web 停滞五年。我们不想再经历一次。</p>
+</li>
+</ol>
+<h3 id="252-新的希望">2.5.2 新的希望？</h3>
+<p>尽管形势严峻，但也有一些积极的信号：</p>
+<p><strong>Servo 项目</strong>：最初由 Mozilla 发起，用 Rust 语言从零开始写一个新的浏览器引擎。虽然 Mozilla 在 2020 年裁员时解散了 Servo 团队，但项目后来被 Linux Foundation 接管，继续开发中。它可能是未来唯一有潜力成为第四个独立引擎的项目。</p>
+<p><strong>Ladybird 项目</strong>：一个从零开始用 C++ 编写的新浏览器引擎，由 SerenityOS 的创始人 Andreas Kling 发起。虽然还很早期，但它代表了社区对引擎多样性的渴望。</p>
+<p><strong>欧盟 DMA（数字市场法案）</strong>：要求 Apple 在 iOS 上允许第三方浏览器引擎。如果执行到位，这意味着 Firefox 和 Chrome 可以在 iPhone 上使用自己的引擎，而不是被迫使用 WebKit。这可能会改变移动端的引擎格局。</p>
+<p><strong>Google 与 Linux Foundation 合作</strong>：2025 年初，Google 宣布与 Linux Foundation 合作成立 &quot;Supporters of Chromium-Based Browsers&quot; 组织，旨在让 Chromium 的治理更加开放。但批评者认为这更多是公关行为，实质性的权力转移有限。</p>
+<h3 id="253-web-标准是怎么制定的">2.5.3 Web 标准是怎么制定的</h3>
+<p>理解引擎多样性，还需要了解 Web 标准的制定过程：</p>
+<p><strong>W3C（万维网联盟）</strong>：由 Tim Berners-Lee 创立，负责制定 HTML、CSS 等标准。成员包括浏览器厂商、科技公司、学术机构。</p>
+<p><strong>WHATWG（Web 超文本应用技术工作组）</strong>：2004 年由 Apple、Mozilla、Opera 创立（因为不满 W3C 的缓慢进度）。现在 HTML 标准（Living Standard）由 WHATWG 维护。</p>
+<p><strong>TC39</strong>：负责 JavaScript（ECMAScript）标准的委员会。</p>
+<p>标准的制定过程通常是：</p>
+<ol>
+<li>某个浏览器厂商提出一个新特性的提案</li>
+<li>在标准组织中讨论、修改</li>
+<li>多个浏览器实现原型</li>
+<li>经过实际使用验证后，正式纳入标准</li>
+</ol>
+<p>问题在于：当一个引擎占据 80% 的市场时，它可以&quot;先实现后标准化&quot;——先在 Chrome 中实现某个特性，等开发者都用上了，再推动它成为标准。其他引擎只能被动跟随。这就是&quot;事实标准&quot;（de facto standard）的力量。</p>
+<h3 id="254-作为用户你能做什么">2.5.4 作为用户，你能做什么</h3>
+<p>如果你关心 Web 的多样性和开放性：</p>
+<ol>
+<li><p><strong>试试 Firefox</strong>：它是唯一一个由非营利组织维护的、使用独立引擎的主流浏览器。即使你不把它当主力浏览器，偶尔用用也是一种支持。</p>
+</li>
+<li><p><strong>了解你的浏览器用的是什么引擎</strong>：很多人以为自己在用&quot;不同的浏览器&quot;，其实底层都是 Chromium。Edge、Brave、Opera、Vivaldi、Arc——它们的&quot;发动机&quot;都是一样的。</p>
+</li>
+<li><p><strong>关注 Web 标准的讨论</strong>：W3C（万维网联盟）和 WHATWG（Web 超文本应用技术工作组）是制定 Web 标准的组织。它们的讨论是公开的，任何人都可以参与。</p>
+</li>
+</ol>
+<p>引擎之争的故事还没有结束。但有一点是确定的：<strong>Web 的未来不应该由任何一家公司单独决定</strong>。这是 Tim Berners-Lee 在 1989 年设计万维网时的初衷，也是我们今天仍然需要守护的原则。</p>
+<h2 id="26-深入理解引擎的性能差异">2.6 深入理解：引擎的性能差异</h2>
+<h3 id="261-javascript-引擎性能对比">2.6.1 JavaScript 引擎性能对比</h3>
+<p>三大 JavaScript 引擎各有特色：</p>
+<p><strong>V8（Chrome/Edge/Node.js）</strong></p>
+<p>V8 的核心优势是它的多层编译架构：</p>
+<pre><code>JavaScript 源代码
+       │
+       ▼
+┌─────────────┐
+│  Ignition   │  ← 解释器：快速启动，逐行执行
+│  (解释器)    │     生成字节码，收集类型反馈
+└──────┬──────┘
+       │ 热点代码（被多次执行的函数）
+       ▼
+┌─────────────┐
+│ TurboFan    │  ← 优化编译器：根据类型反馈生成高效机器码
+│ (优化编译器) │     如果类型假设失败，回退到 Ignition
+└──────┬──────┘
+       │
+       ▼
+  优化的机器码（接近 C++ 的性能）</code></pre>
+<p>这种&quot;先解释后编译&quot;的策略让 V8 既能快速启动（不需要等编译完成），又能在运行时达到很高的性能。</p>
+<p><strong>SpiderMonkey（Firefox）</strong></p>
+<p>SpiderMonkey 是世界上第一个 JavaScript 引擎（1995 年由 Brendan Eich 编写），也是持续开发时间最长的。它的架构类似 V8，但有自己的优化策略：</p>
+<pre><code>JavaScript 源代码
+       │
+       ▼
+┌─────────────┐
+│  解释器      │  ← 快速启动
+└──────┬──────┘
+       │
+       ▼
+┌─────────────┐
+│  Baseline   │  ← 基线编译器：快速生成未优化的机器码
+└──────┬──────┘
+       │
+       ▼
+┌─────────────┐
+│  IonMonkey  │  ← 优化编译器：生成高度优化的机器码
+└─────────────┘</code></pre>
+<p>SpiderMonkey 的一个独特优势是它的部分组件用 Rust 重写了（Stylo 样式引擎），获得了更好的内存安全性。</p>
+<p><strong>JavaScriptCore / Nitro（Safari）</strong></p>
+<p>Apple 的 JS 引擎有四层编译管线，是三者中层数最多的：</p>
+<pre><code>LLInt → Baseline → DFG → FTL
+(解释)   (基线)    (中级优化)  (最高优化)</code></pre>
+<p>更多的层级意味着更细粒度的优化决策——代码可以根据&quot;热度&quot;逐步升级到更高的优化层级。</p>
+<h3 id="262-实际性能差异">2.6.2 实际性能差异</h3>
+<p>在实际使用中，三大引擎的性能差异已经很小了（都在同一个数量级）。差异主要体现在：</p>
+<ul>
+<li><strong>启动速度</strong>：V8 和 JavaScriptCore 略快</li>
+<li><strong>峰值性能</strong>：V8 在计算密集型任务上通常领先</li>
+<li><strong>内存效率</strong>：JavaScriptCore 通常内存占用最低</li>
+<li><strong>正则表达式</strong>：V8 的 Irregexp 引擎性能突出</li>
+</ul>
+<p>对于普通用户来说，这些差异几乎不可感知。真正影响浏览体验的往往是网络延迟和页面本身的优化程度，而不是引擎性能。</p>
+<h3 id="263-渲染性能css-和布局">2.6.3 渲染性能：CSS 和布局</h3>
+<p>渲染引擎的性能差异更多体现在 CSS 处理和布局计算上：</p>
+<pre data-label="css"><code class="language-css">/* 这种复杂选择器在不同引擎中的性能差异可能很大 */
+.container &gt; div:nth-child(odd) .item:not(.hidden):hover {
+  transform: scale(1.1);
+  transition: all 0.3s ease;
+}</code></pre>
+<p>Blink 在处理复杂 CSS 动画和大量 DOM 节点时通常表现最好，这得益于 Google 在 GPU 加速合成方面的大量投入。</p>
+<p>Gecko 的 Stylo 引擎（用 Rust 编写）在 CSS 样式计算上有独特优势——它可以利用多核 CPU 并行计算样式，而 Blink 的样式计算仍然主要是单线程的。</p>
+<h3 id="264-web-标准支持">2.6.4 Web 标准支持</h3>
+<p>不同引擎对 Web 标准的支持程度也有差异。你可以在 <code>caniuse.com</code> 上查看某个 CSS 属性或 JavaScript API 在不同浏览器中的支持情况。</p>
+<p>一般来说：</p>
+<ul>
+<li><strong>Blink（Chrome）</strong>：新特性支持最快（因为 Google 工程师多，迭代快）</li>
+<li><strong>Gecko（Firefox）</strong>：标准兼容性好，但新特性上线稍慢</li>
+<li><strong>WebKit（Safari）</strong>：某些现代 API 支持滞后（如 WebAssembly 的某些特性）</li>
+</ul>
+<p>这种差异对前端开发者来说是日常痛点——你需要确保你的网站在所有主流引擎中都能正常工作。</p>
+<h3 id="265-如何测试跨引擎兼容性">2.6.5 如何测试跨引擎兼容性</h3>
+<p>如果你是一个前端开发者（或者未来想成为一个），这里有一些实用的跨引擎测试方法：</p>
+<pre data-label="bash"><code class="language-bash"># 在本地同时安装多个浏览器进行测试
+# macOS/Linux 用户可以用 Playwright 自动化测试：
+npm install playwright
+npx playwright install  # 自动下载 Chromium、Firefox、WebKit
+
+# 然后写一个简单的测试脚本：</code></pre>
+<pre data-label="javascript"><code class="language-javascript">// test.js - 用 Playwright 在三个引擎中测试你的网页
+const { chromium, firefox, webkit } = require('playwright');
+
+async function testInAllBrowsers() {
+  for (const browserType of [chromium, firefox, webkit]) {
+    const browser = await browserType.launch();
+    const page = await browser.newPage();
+    await page.goto('http://localhost:3000');
+    
+    // 截图对比
+    await page.screenshot({ 
+      path: `screenshot-${browserType.name()}.png` 
+    });
+    
+    console.log(`${browserType.name()}: 页面加载成功`);
+    await browser.close();
+  }
+}
+
+testInAllBrowsers();</code></pre>
+<p>在线工具：</p>
+<ul>
+<li><strong>BrowserStack</strong>：在真实设备和浏览器上测试</li>
+<li><strong>Can I Use</strong>（caniuse.com）：查看 API 和 CSS 属性的浏览器支持情况</li>
+<li><strong>MDN Web Docs</strong>：每个 API 文档底部都有浏览器兼容性表格</li>
+</ul>
+<p>作为普通用户，你不需要关心这些。但了解&quot;不同引擎可能有不同表现&quot;这个事实，能帮助你理解为什么有时候同一个网站在不同浏览器里看起来不一样。</p>
+<p>下一章，我们从宏观的产业格局转向微观的技术细节——当你在浏览器地址栏输入一个 URL 按下回车，到页面完整显示在屏幕上，这短短一秒钟里到底发生了什么？</p>
+
+    <nav class="pager">  <a href="01-browser-history.html">
+    <span class="label">← 上一章</span>
+    <span class="title">浏览器简史——三十年战争</span>
+  </a>  <a href="03-how-browser-works.html" class="next">
+    <span class="label">下一章 →</span>
+    <span class="title">一次请求的旅程——浏览器到底在干什么</span>
+  </a></nav>
+  </article>
+</div>
+
+<footer>
+  <div class="set">
+    <span>浏览器：从战争到垄断</span>
+    <span>2026 · ZH-CN</span>
+  </div>
+  <div class="set">
+    <span>Mav</span>
+  </div>
+</footer>
+<div class="search-backdrop" id="search-overlay" role="dialog" aria-modal="true" aria-label="搜索" hidden>
+  <div class="search-modal">
+    <div class="search-input-wrap">
+      <input type="search" class="search-input" placeholder="搜索内容..." aria-label="搜索内容" autocomplete="off">
+      <kbd>ESC</kbd>
+    </div>
+    <div class="search-results" role="listbox" aria-label="搜索结果"></div>
+  </div>
+</div>
+
+<!-- Mobile TOC -->
+<button class="mtoc-fab" id="mtoc-fab" aria-label="目录">TOC</button>
+<div class="mtoc-drawer" id="mtoc-drawer">
+  <div class="mtoc-content"></div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/bash.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/typescript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/yaml.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/javascript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/json.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/python.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/css.min.js"></script>
+<script src="../assets/script.js"></script>
+</body>
+</html>

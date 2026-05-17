@@ -1,0 +1,1660 @@
+{
+  "documents": [
+    {
+      "id": "01-browser-history",
+      "title": "浏览器简史——三十年战争",
+      "chapter": "01",
+      "chapterTitle": "浏览器简史——三十年战争",
+      "url": "chapters/01-browser-history.html",
+      "body": "\r\n   1.1 万维网的诞生：一个物理学家的副业\r\n\r\n    1.1.1 1989：一份被忽视的提案\r\n\r\n1989 年 3 月，在瑞士日内瓦的 CERN（欧洲核子研究中心），一位英国计算机科学家 Tim Berners Lee 提交了一份内部提案。标题很朴素：《Information Management: A Proposal》（信息管理：一项提案）。\r\n\r\n他的老板在提案上批了一句话：\"Vague, but exciting.\"（模糊，但令人兴奋。）\r\n\r\n这份提案要解决的问题很具体：CERN 有几千名物理学家，分布在不同国家，用不同的电脑系统，产生海量的实验数据和文档。这些信息散落在各种不兼容的系统里，找一篇同事写的论文比做实验还难。\r\n\r\nBerners Lee 的方案是：用\"超文本\"（hypertext）把所有文档链接起来，通过一个统一的协议在网络上访问。这三样东西——超文本标记语言（HTML）、统一资源定位符（URL）、超文本传输协议（HTTP）——就是万维网（World Wide Web）的全部基础。\r\n\r\n    1.1.2 1990：第一个浏览器\r\n\r\n1990 年下半年，Berners Lee 在一台 NeXT 电脑上写出了世界上第一个浏览器。他给它起名叫 \"WorldWideWeb\"（没有空格），后来改名为 Nexus。\r\n\r\n这个浏览器长什么样？它其实更像一个文字编辑器——你不仅能浏览网页，还能直接编辑它们。Berners Lee 最初的设想是，Web 应该是一个人人都能读写的空间，不只是被动消费内容。这个理念在三十年后的今天看来依然超前。\r\n\r\n同时他还写了第一个 Web 服务器，跑在同一台 NeXT 机器上。世界上第一个网站的地址是  http://info.cern.ch ——这个网站今天还活着，你可以去看看。\r\n\r\n但这里有个关键问题：NeXT 电脑太贵了，普通人买不起。Web 要想普及，需要一个能在普通电脑上运行的浏览器。\r\n\r\n    1.1.3 1993：Mosaic 点燃了火\r\n\r\n1993 年，伊利诺伊大学的国家超级计算应用中心（NCSA）发布了 Mosaic 浏览器。它的核心开发者是一个 22 岁的本科生：Marc Andreessen。\r\n\r\nMosaic 做了一件看似简单但改变一切的事：  让图片和文字显示在同一个页面上  。在此之前的浏览器要么是纯文本的，要么图片需要单独打开一个窗口查看。Mosaic 让网页第一次变得\"好看\"了。\r\n\r\n它还有 Windows 版本。这意味着任何有 PC 的人都能用它上网。\r\n\r\nMosaic 的下载量在几个月内从零飙升到数百万。互联网从学术圈的玩具，变成了普通人能触碰的东西。\r\n\r\n    1.1.4 为什么浏览器如此重要\r\n\r\n在继续讲浏览器大战之前，让我们先理解一个根本问题：为什么浏览器这么重要？\r\n\r\n浏览器是普通用户接触互联网的  唯一界面  。你不需要理解 TCP/IP 协议，不需要知道 DNS 是什么，不需要会写 HTML——你只需要打开浏览器，输入一个地址或搜索词，就能访问全世界的信息。\r\n\r\n这意味着：  谁控制了浏览器，谁就控制了用户接触互联网的方式  。\r\n\r\n  浏览器决定了你能看到什么（内容过滤、广告拦截）\r\n  浏览器决定了谁能追踪你（Cookie 策略、指纹防护）\r\n  浏览器决定了 Web 能做什么（支持哪些 API 和标准）\r\n  浏览器决定了你的默认搜索引擎（这直接影响数百亿美元的广告收入）\r\n\r\n这就是为什么科技巨头们愿意投入数十亿美元来开发和推广浏览器——它不是一个普通的软件产品，而是互联网的\"入口\"和\"控制点\"。\r\n\r\n理解了这一点，接下来的浏览器大战就不仅仅是技术竞争的故事，而是一场关于互联网控制权的商业战争。\r\n\r\n\r\n   1.2 第一次浏览器大战：Netscape vs Internet Explorer\r\n\r\n    1.2.1 Netscape：互联网的第一个摇滚明星\r\n\r\n1994 年，Marc Andreessen 从大学毕业，和硅谷传奇人物 Jim Clark（SGI 创始人）一起创办了 Mosaic Communications，后来改名为 Netscape Communications。\r\n\r\n他们的产品 Netscape Navigator 在 1994 年底发布。它比 Mosaic 更快、更稳定、功能更丰富。到 1995 年中，Navigator 占据了超过 70% 的浏览器市场。\r\n\r\n1995 年 8 月 9 日，Netscape 上市（IPO）。发行价 28 美元，开盘直接飙到 71 美元，收盘 58.25 美元。一家成立仅 16 个月、从未盈利的公司，市值接近 3"
+    },
+    {
+      "id": "01-browser-history-11-万维网的诞生一个物理学家的副业",
+      "title": "1.1 万维网的诞生：一个物理学家的副业",
+      "chapter": "01",
+      "chapterTitle": "浏览器简史——三十年战争",
+      "url": "chapters/01-browser-history.html#11-万维网的诞生一个物理学家的副业",
+      "body": ""
+    },
+    {
+      "id": "01-browser-history-111-1989一份被忽视的提案",
+      "title": "1.1.1 1989：一份被忽视的提案",
+      "chapter": "01",
+      "chapterTitle": "浏览器简史——三十年战争",
+      "url": "chapters/01-browser-history.html#111-1989一份被忽视的提案",
+      "body": ""
+    },
+    {
+      "id": "01-browser-history-112-1990第一个浏览器",
+      "title": "1.1.2 1990：第一个浏览器",
+      "chapter": "01",
+      "chapterTitle": "浏览器简史——三十年战争",
+      "url": "chapters/01-browser-history.html#112-1990第一个浏览器",
+      "body": ""
+    },
+    {
+      "id": "01-browser-history-113-1993mosaic-点燃了火",
+      "title": "1.1.3 1993：Mosaic 点燃了火",
+      "chapter": "01",
+      "chapterTitle": "浏览器简史——三十年战争",
+      "url": "chapters/01-browser-history.html#113-1993mosaic-点燃了火",
+      "body": ""
+    },
+    {
+      "id": "01-browser-history-114-为什么浏览器如此重要",
+      "title": "1.1.4 为什么浏览器如此重要",
+      "chapter": "01",
+      "chapterTitle": "浏览器简史——三十年战争",
+      "url": "chapters/01-browser-history.html#114-为什么浏览器如此重要",
+      "body": ""
+    },
+    {
+      "id": "01-browser-history-12-第一次浏览器大战netscape-vs-internet-explorer",
+      "title": "1.2 第一次浏览器大战：Netscape vs Internet Explorer",
+      "chapter": "01",
+      "chapterTitle": "浏览器简史——三十年战争",
+      "url": "chapters/01-browser-history.html#12-第一次浏览器大战netscape-vs-internet-explorer",
+      "body": ""
+    },
+    {
+      "id": "01-browser-history-121-netscape互联网的第一个摇滚明星",
+      "title": "1.2.1 Netscape：互联网的第一个摇滚明星",
+      "chapter": "01",
+      "chapterTitle": "浏览器简史——三十年战争",
+      "url": "chapters/01-browser-history.html#121-netscape互联网的第一个摇滚明星",
+      "body": ""
+    },
+    {
+      "id": "01-browser-history-122-微软的反击免费-捆绑",
+      "title": "1.2.2 微软的反击：免费 + 捆绑",
+      "chapter": "01",
+      "chapterTitle": "浏览器简史——三十年战争",
+      "url": "chapters/01-browser-history.html#122-微软的反击免费-捆绑",
+      "body": ""
+    },
+    {
+      "id": "01-browser-history-123-netscape-的死亡与遗产",
+      "title": "1.2.3 Netscape 的死亡与遗产",
+      "chapter": "01",
+      "chapterTitle": "浏览器简史——三十年战争",
+      "url": "chapters/01-browser-history.html#123-netscape-的死亡与遗产",
+      "body": ""
+    },
+    {
+      "id": "01-browser-history-124-美国司法部-vs-微软",
+      "title": "1.2.4 美国司法部 vs 微软",
+      "chapter": "01",
+      "chapterTitle": "浏览器简史——三十年战争",
+      "url": "chapters/01-browser-history.html#124-美国司法部-vs-微软",
+      "body": ""
+    },
+    {
+      "id": "01-browser-history-13-第二次浏览器大战firefox-的反击与-chrome-的崛起",
+      "title": "1.3 第二次浏览器大战：Firefox 的反击与 Chrome 的崛起",
+      "chapter": "01",
+      "chapterTitle": "浏览器简史——三十年战争",
+      "url": "chapters/01-browser-history.html#13-第二次浏览器大战firefox-的反击与-chrome-的崛起",
+      "body": ""
+    },
+    {
+      "id": "01-browser-history-131-firefox从灰烬中重生",
+      "title": "1.3.1 Firefox：从灰烬中重生",
+      "chapter": "01",
+      "chapterTitle": "浏览器简史——三十年战争",
+      "url": "chapters/01-browser-history.html#131-firefox从灰烬中重生",
+      "body": ""
+    },
+    {
+      "id": "01-browser-history-132-chromegoogle-的核武器",
+      "title": "1.3.2 Chrome：Google 的核武器",
+      "chapter": "01",
+      "chapterTitle": "浏览器简史——三十年战争",
+      "url": "chapters/01-browser-history.html#132-chromegoogle-的核武器",
+      "body": ""
+    },
+    {
+      "id": "01-browser-history-133-chrome-的增长曲线",
+      "title": "1.3.3 Chrome 的增长曲线",
+      "chapter": "01",
+      "chapterTitle": "浏览器简史——三十年战争",
+      "url": "chapters/01-browser-history.html#133-chrome-的增长曲线",
+      "body": ""
+    },
+    {
+      "id": "01-browser-history-14-ie-的终结与-edge-的诞生",
+      "title": "1.4 IE 的终结与 Edge 的诞生",
+      "chapter": "01",
+      "chapterTitle": "浏览器简史——三十年战争",
+      "url": "chapters/01-browser-history.html#14-ie-的终结与-edge-的诞生",
+      "body": ""
+    },
+    {
+      "id": "01-browser-history-141-ie-为什么会死",
+      "title": "1.4.1 IE 为什么会死",
+      "chapter": "01",
+      "chapterTitle": "浏览器简史——三十年战争",
+      "url": "chapters/01-browser-history.html#141-ie-为什么会死",
+      "body": ""
+    },
+    {
+      "id": "01-browser-history-142-edge微软的两次尝试",
+      "title": "1.4.2 Edge：微软的两次尝试",
+      "chapter": "01",
+      "chapterTitle": "浏览器简史——三十年战争",
+      "url": "chapters/01-browser-history.html#142-edge微软的两次尝试",
+      "body": ""
+    },
+    {
+      "id": "01-browser-history-15-2026-年的浏览器格局",
+      "title": "1.5 2026 年的浏览器格局",
+      "chapter": "01",
+      "chapterTitle": "浏览器简史——三十年战争",
+      "url": "chapters/01-browser-history.html#15-2026-年的浏览器格局",
+      "body": ""
+    },
+    {
+      "id": "01-browser-history-151-chromium-的统治",
+      "title": "1.5.1 Chromium 的统治",
+      "chapter": "01",
+      "chapterTitle": "浏览器简史——三十年战争",
+      "url": "chapters/01-browser-history.html#151-chromium-的统治",
+      "body": ""
+    },
+    {
+      "id": "01-browser-history-152-doj-反垄断案chrome-差点被拆分",
+      "title": "1.5.2 DOJ 反垄断案：Chrome 差点被拆分",
+      "chapter": "01",
+      "chapterTitle": "浏览器简史——三十年战争",
+      "url": "chapters/01-browser-history.html#152-doj-反垄断案chrome-差点被拆分",
+      "body": ""
+    },
+    {
+      "id": "01-browser-history-153-引擎多样性为什么重要",
+      "title": "1.5.3 引擎多样性为什么重要",
+      "chapter": "01",
+      "chapterTitle": "浏览器简史——三十年战争",
+      "url": "chapters/01-browser-history.html#153-引擎多样性为什么重要",
+      "body": ""
+    },
+    {
+      "id": "01-browser-history-16-时间线总结",
+      "title": "1.6 时间线总结",
+      "chapter": "01",
+      "chapterTitle": "浏览器简史——三十年战争",
+      "url": "chapters/01-browser-history.html#16-时间线总结",
+      "body": ""
+    },
+    {
+      "id": "01-browser-history-17-那些死去的浏览器们",
+      "title": "1.7 那些死去的浏览器们",
+      "chapter": "01",
+      "chapterTitle": "浏览器简史——三十年战争",
+      "url": "chapters/01-browser-history.html#17-那些死去的浏览器们",
+      "body": ""
+    },
+    {
+      "id": "01-browser-history-171-opera1995-2013独立引擎时代",
+      "title": "1.7.1 Opera（1995-2013，独立引擎时代）",
+      "chapter": "01",
+      "chapterTitle": "浏览器简史——三十年战争",
+      "url": "chapters/01-browser-history.html#171-opera1995-2013独立引擎时代",
+      "body": ""
+    },
+    {
+      "id": "01-browser-history-172-internet-explorer1995-2022",
+      "title": "1.7.2 Internet Explorer（1995-2022）",
+      "chapter": "01",
+      "chapterTitle": "浏览器简史——三十年战争",
+      "url": "chapters/01-browser-history.html#172-internet-explorer1995-2022",
+      "body": ""
+    },
+    {
+      "id": "01-browser-history-173-其他值得记住的名字",
+      "title": "1.7.3 其他值得记住的名字",
+      "chapter": "01",
+      "chapterTitle": "浏览器简史——三十年战争",
+      "url": "chapters/01-browser-history.html#173-其他值得记住的名字",
+      "body": ""
+    },
+    {
+      "id": "01-browser-history-18-浏览器战争的规律",
+      "title": "1.8 浏览器战争的规律",
+      "chapter": "01",
+      "chapterTitle": "浏览器简史——三十年战争",
+      "url": "chapters/01-browser-history.html#18-浏览器战争的规律",
+      "body": ""
+    },
+    {
+      "id": "01-browser-history-181-分发渠道-gt-技术优势",
+      "title": "1.8.1 分发渠道 &gt; 技术优势",
+      "chapter": "01",
+      "chapterTitle": "浏览器简史——三十年战争",
+      "url": "chapters/01-browser-history.html#181-分发渠道-gt-技术优势",
+      "body": ""
+    },
+    {
+      "id": "01-browser-history-182-网络效应形成垄断",
+      "title": "1.8.2 网络效应形成垄断",
+      "chapter": "01",
+      "chapterTitle": "浏览器简史——三十年战争",
+      "url": "chapters/01-browser-history.html#182-网络效应形成垄断",
+      "body": ""
+    },
+    {
+      "id": "01-browser-history-183-垄断者终将衰落",
+      "title": "1.8.3 垄断者终将衰落",
+      "chapter": "01",
+      "chapterTitle": "浏览器简史——三十年战争",
+      "url": "chapters/01-browser-history.html#183-垄断者终将衰落",
+      "body": ""
+    },
+    {
+      "id": "02-engine-war",
+      "title": "引擎之争——Chromium 为何一家独大",
+      "chapter": "02",
+      "chapterTitle": "引擎之争——Chromium 为何一家独大",
+      "url": "chapters/02-engine-war.html",
+      "body": "\r\n   2.1 浏览器引擎到底是什么\r\n\r\n    2.1.1 引擎 ≠ 浏览器\r\n\r\n很多人把\"浏览器\"和\"浏览器引擎\"混为一谈，但它们是两个不同的东西。\r\n\r\n  浏览器  是你看到的那个应用程序——有地址栏、标签页、书签、设置界面、扩展系统。这些是\"壳\"。\r\n\r\n  浏览器引擎  （也叫渲染引擎或排版引擎）是浏览器的\"心脏\"——它负责把 HTML、CSS、JavaScript 这些代码变成你屏幕上看到的像素。\r\n\r\n类比一下：浏览器是一辆车，引擎就是发动机。不同品牌的车可以用同一款发动机——Chrome、Edge、Brave、Opera、Vivaldi 这些浏览器看起来不一样，但它们的\"发动机\"都是同一个：Blink。\r\n\r\n    2.1.2 引擎的组成\r\n\r\n一个完整的浏览器引擎通常包含两个核心部分：\r\n\r\n   \r\n浏览器引擎\r\n├── 渲染引擎（Rendering Engine）\r\n│   ├── HTML 解析器 → 构建 DOM 树\r\n│   ├── CSS 解析器 → 构建 CSSOM 树\r\n│   ├── 布局引擎 → 计算每个元素的位置和大小\r\n│   └── 绘制引擎 → 把计算结果画成像素\r\n│\r\n└── JavaScript 引擎（JS Engine）\r\n    ├── 解析器 → 把 JS 代码变成抽象语法树（AST）\r\n    ├── 解释器 → 逐行执行 AST\r\n    └── JIT 编译器 → 把热点代码编译成机器码\r\n   \r\n\r\n  浏览器   渲染引擎   JS 引擎  \r\n                               \r\n  Chrome / Edge / Brave / Opera   Blink   V8  \r\n  Safari   WebKit   JavaScriptCore  Nitro   \r\n  Firefox   Gecko   SpiderMonkey  \r\n\r\n注意：渲染引擎和 JS 引擎是可以分开的。比如 Node.js 用的是 V8（Chrome 的 JS 引擎），但它没有渲染引擎，因为它不需要显示网页。\r\n\r\n    2.1.3 渲染引擎的工作流程\r\n\r\n当你打开一个网页时，渲染引擎做了以下事情（我们第三章会更详细地讲）：\r\n\r\n   \r\nHTML 文本                CSS 文本\r\n    │                       │\r\n    ▼                       ▼\r\n┌─────────┐          ┌──────────┐\r\n│HTML 解析│          │CSS 解析  │\r\n└────┬────┘          └────┬─────┘\r\n     │                    │\r\n     ▼                    ▼\r\n┌─────────┐          ┌──────────┐\r\n│ DOM 树  │          │ CSSOM 树 │\r\n└────┬────┘          └────┬─────┘\r\n     │                    │\r\n     └────────┬───────────┘\r\n              ▼\r\n       ┌─────────────┐\r\n       │  渲染树      │   合并 DOM + CSSOM \r\n       │  Render Tree │\r\n       └──────┬──────┘\r\n              ▼\r\n       ┌─────────────┐\r\n       │  布局 Layout │   计算位置和大小 \r\n       └──────┬──────┘\r\n              ▼\r\n       ┌─────────────┐\r\n       │  绘制 Paint  │   生成像素 \r\n       └──────┬──────┘\r\n              ▼\r\n       ┌─────────────┐\r\n       │  合成 Composite │   GPU 加速合成图层 \r\n       └─────────────┘\r\n              ▼\r\n         屏幕上的像素\r\n   \r\n\r\n不同的引擎在实现这个流程时有不同的优化策略，这就是为什么同一个网页在不同浏览器里可能渲染速度不同、甚至显示效果略有差异。\r\n\r\n\r\n   2.2 三大引擎的前世今生\r\n\r\n    2.2.1 家族树：一切始于 KHTML\r\n\r\n今天的三大引擎中，有两个是\"亲戚\"。让"
+    },
+    {
+      "id": "02-engine-war-21-浏览器引擎到底是什么",
+      "title": "2.1 浏览器引擎到底是什么",
+      "chapter": "02",
+      "chapterTitle": "引擎之争——Chromium 为何一家独大",
+      "url": "chapters/02-engine-war.html#21-浏览器引擎到底是什么",
+      "body": ""
+    },
+    {
+      "id": "02-engine-war-211-引擎-浏览器",
+      "title": "2.1.1 引擎 ≠ 浏览器",
+      "chapter": "02",
+      "chapterTitle": "引擎之争——Chromium 为何一家独大",
+      "url": "chapters/02-engine-war.html#211-引擎-浏览器",
+      "body": ""
+    },
+    {
+      "id": "02-engine-war-212-引擎的组成",
+      "title": "2.1.2 引擎的组成",
+      "chapter": "02",
+      "chapterTitle": "引擎之争——Chromium 为何一家独大",
+      "url": "chapters/02-engine-war.html#212-引擎的组成",
+      "body": ""
+    },
+    {
+      "id": "02-engine-war-213-渲染引擎的工作流程",
+      "title": "2.1.3 渲染引擎的工作流程",
+      "chapter": "02",
+      "chapterTitle": "引擎之争——Chromium 为何一家独大",
+      "url": "chapters/02-engine-war.html#213-渲染引擎的工作流程",
+      "body": ""
+    },
+    {
+      "id": "02-engine-war-22-三大引擎的前世今生",
+      "title": "2.2 三大引擎的前世今生",
+      "chapter": "02",
+      "chapterTitle": "引擎之争——Chromium 为何一家独大",
+      "url": "chapters/02-engine-war.html#22-三大引擎的前世今生",
+      "body": ""
+    },
+    {
+      "id": "02-engine-war-221-家族树一切始于-khtml",
+      "title": "2.2.1 家族树：一切始于 KHTML",
+      "chapter": "02",
+      "chapterTitle": "引擎之争——Chromium 为何一家独大",
+      "url": "chapters/02-engine-war.html#221-家族树一切始于-khtml",
+      "body": ""
+    },
+    {
+      "id": "02-engine-war-222-webkitapple-的选择",
+      "title": "2.2.2 WebKit：Apple 的选择",
+      "chapter": "02",
+      "chapterTitle": "引擎之争——Chromium 为何一家独大",
+      "url": "chapters/02-engine-war.html#222-webkitapple-的选择",
+      "body": ""
+    },
+    {
+      "id": "02-engine-war-223-blinkgoogle-的分家",
+      "title": "2.2.3 Blink：Google 的分家",
+      "chapter": "02",
+      "chapterTitle": "引擎之争——Chromium 为何一家独大",
+      "url": "chapters/02-engine-war.html#223-blinkgoogle-的分家",
+      "body": ""
+    },
+    {
+      "id": "02-engine-war-224-gecko最后的独立者",
+      "title": "2.2.4 Gecko：最后的独立者",
+      "chapter": "02",
+      "chapterTitle": "引擎之争——Chromium 为何一家独大",
+      "url": "chapters/02-engine-war.html#224-gecko最后的独立者",
+      "body": ""
+    },
+    {
+      "id": "02-engine-war-23-为什么-edge-选择了投降",
+      "title": "2.3 为什么 Edge 选择了投降",
+      "chapter": "02",
+      "chapterTitle": "引擎之争——Chromium 为何一家独大",
+      "url": "chapters/02-engine-war.html#23-为什么-edge-选择了投降",
+      "body": ""
+    },
+    {
+      "id": "02-engine-war-231-edgehtml-的困境",
+      "title": "2.3.1 EdgeHTML 的困境",
+      "chapter": "02",
+      "chapterTitle": "引擎之争——Chromium 为何一家独大",
+      "url": "chapters/02-engine-war.html#231-edgehtml-的困境",
+      "body": ""
+    },
+    {
+      "id": "02-engine-war-232-投降的逻辑",
+      "title": "2.3.2 投降的逻辑",
+      "chapter": "02",
+      "chapterTitle": "引擎之争——Chromium 为何一家独大",
+      "url": "chapters/02-engine-war.html#232-投降的逻辑",
+      "body": ""
+    },
+    {
+      "id": "02-engine-war-233-投降的代价",
+      "title": "2.3.3 投降的代价",
+      "chapter": "02",
+      "chapterTitle": "引擎之争——Chromium 为何一家独大",
+      "url": "chapters/02-engine-war.html#233-投降的代价",
+      "body": ""
+    },
+    {
+      "id": "02-engine-war-24-chromium开源的垄断",
+      "title": "2.4 Chromium：开源的垄断",
+      "chapter": "02",
+      "chapterTitle": "引擎之争——Chromium 为何一家独大",
+      "url": "chapters/02-engine-war.html#24-chromium开源的垄断",
+      "body": ""
+    },
+    {
+      "id": "02-engine-war-241-chromium-和-chrome-的区别",
+      "title": "2.4.1 Chromium 和 Chrome 的区别",
+      "chapter": "02",
+      "chapterTitle": "引擎之争——Chromium 为何一家独大",
+      "url": "chapters/02-engine-war.html#241-chromium-和-chrome-的区别",
+      "body": ""
+    },
+    {
+      "id": "02-engine-war-242-quot开源quot不等于quot开放治理quot",
+      "title": "2.4.2 &quot;开源&quot;不等于&quot;开放治理&quot;",
+      "chapter": "02",
+      "chapterTitle": "引擎之争——Chromium 为何一家独大",
+      "url": "chapters/02-engine-war.html#242-quot开源quot不等于quot开放治理quot",
+      "body": ""
+    },
+    {
+      "id": "02-engine-war-243-manifest-v3一个典型案例",
+      "title": "2.4.3 Manifest V3：一个典型案例",
+      "chapter": "02",
+      "chapterTitle": "引擎之争——Chromium 为何一家独大",
+      "url": "chapters/02-engine-war.html#243-manifest-v3一个典型案例",
+      "body": ""
+    },
+    {
+      "id": "02-engine-war-25-引擎多样性的未来",
+      "title": "2.5 引擎多样性的未来",
+      "chapter": "02",
+      "chapterTitle": "引擎之争——Chromium 为何一家独大",
+      "url": "chapters/02-engine-war.html#25-引擎多样性的未来",
+      "body": ""
+    },
+    {
+      "id": "02-engine-war-251-为什么我们需要多个引擎",
+      "title": "2.5.1 为什么我们需要多个引擎",
+      "chapter": "02",
+      "chapterTitle": "引擎之争——Chromium 为何一家独大",
+      "url": "chapters/02-engine-war.html#251-为什么我们需要多个引擎",
+      "body": ""
+    },
+    {
+      "id": "02-engine-war-252-新的希望",
+      "title": "2.5.2 新的希望？",
+      "chapter": "02",
+      "chapterTitle": "引擎之争——Chromium 为何一家独大",
+      "url": "chapters/02-engine-war.html#252-新的希望",
+      "body": ""
+    },
+    {
+      "id": "02-engine-war-253-web-标准是怎么制定的",
+      "title": "2.5.3 Web 标准是怎么制定的",
+      "chapter": "02",
+      "chapterTitle": "引擎之争——Chromium 为何一家独大",
+      "url": "chapters/02-engine-war.html#253-web-标准是怎么制定的",
+      "body": ""
+    },
+    {
+      "id": "02-engine-war-254-作为用户你能做什么",
+      "title": "2.5.4 作为用户，你能做什么",
+      "chapter": "02",
+      "chapterTitle": "引擎之争——Chromium 为何一家独大",
+      "url": "chapters/02-engine-war.html#254-作为用户你能做什么",
+      "body": ""
+    },
+    {
+      "id": "02-engine-war-26-深入理解引擎的性能差异",
+      "title": "2.6 深入理解：引擎的性能差异",
+      "chapter": "02",
+      "chapterTitle": "引擎之争——Chromium 为何一家独大",
+      "url": "chapters/02-engine-war.html#26-深入理解引擎的性能差异",
+      "body": ""
+    },
+    {
+      "id": "02-engine-war-261-javascript-引擎性能对比",
+      "title": "2.6.1 JavaScript 引擎性能对比",
+      "chapter": "02",
+      "chapterTitle": "引擎之争——Chromium 为何一家独大",
+      "url": "chapters/02-engine-war.html#261-javascript-引擎性能对比",
+      "body": ""
+    },
+    {
+      "id": "02-engine-war-262-实际性能差异",
+      "title": "2.6.2 实际性能差异",
+      "chapter": "02",
+      "chapterTitle": "引擎之争——Chromium 为何一家独大",
+      "url": "chapters/02-engine-war.html#262-实际性能差异",
+      "body": ""
+    },
+    {
+      "id": "02-engine-war-263-渲染性能css-和布局",
+      "title": "2.6.3 渲染性能：CSS 和布局",
+      "chapter": "02",
+      "chapterTitle": "引擎之争——Chromium 为何一家独大",
+      "url": "chapters/02-engine-war.html#263-渲染性能css-和布局",
+      "body": ""
+    },
+    {
+      "id": "02-engine-war-264-web-标准支持",
+      "title": "2.6.4 Web 标准支持",
+      "chapter": "02",
+      "chapterTitle": "引擎之争——Chromium 为何一家独大",
+      "url": "chapters/02-engine-war.html#264-web-标准支持",
+      "body": ""
+    },
+    {
+      "id": "02-engine-war-265-如何测试跨引擎兼容性",
+      "title": "2.6.5 如何测试跨引擎兼容性",
+      "chapter": "02",
+      "chapterTitle": "引擎之争——Chromium 为何一家独大",
+      "url": "chapters/02-engine-war.html#265-如何测试跨引擎兼容性",
+      "body": ""
+    },
+    {
+      "id": "03-how-browser-works",
+      "title": "一次请求的旅程——浏览器到底在干什么",
+      "chapter": "03",
+      "chapterTitle": "一次请求的旅程——浏览器到底在干什么",
+      "url": "chapters/03-how-browser-works.html",
+      "body": "\r\n   3.1 序：一秒钟的奇迹\r\n\r\n你在浏览器地址栏输入  https://www.example.com ，按下回车。\r\n\r\n大约 0.5 到 2 秒后，一个完整的网页出现在你面前——有文字、有图片、有动画、有交互按钮。\r\n\r\n这短短的时间里，你的浏览器完成了以下所有事情：\r\n\r\n1. 解析你输入的 URL\r\n2. 查找域名对应的 IP 地址（DNS 解析）\r\n3. 和服务器建立 TCP 连接（三次握手）\r\n4. 在 TCP 之上建立加密通道（TLS 握手）\r\n5. 发送 HTTP 请求\r\n6. 接收服务器返回的 HTML\r\n7. 解析 HTML，构建 DOM 树\r\n8. 发现 CSS/JS/图片等资源，并行下载\r\n9. 解析 CSS，构建 CSSOM 树\r\n10. 执行 JavaScript\r\n11. 合并 DOM 和 CSSOM，生成渲染树\r\n12. 计算每个元素的位置和大小（布局）\r\n13. 把元素画成像素（绘制）\r\n14. 将图层合成并显示到屏幕上\r\n\r\n每一步都涉及复杂的协议和算法。让我们一步步拆解。\r\n\r\n\r\n   3.2 第一步：URL 解析\r\n\r\n    3.2.1 URL 的结构\r\n\r\n当你输入  https://www.example.com:443/path/page.html?q=hello section1  时，浏览器首先要把这个字符串拆解成各个部分：\r\n\r\n   \r\nhttps://www.example.com:443/path/page.html?q=hello section1\r\n│        │               │   │              │       │\r\n│        │               │   │              │       └── Fragment（片段）\r\n│        │               │   │              └── Query（查询参数）\r\n│        │               │   └── Path（路径）\r\n│        │               └── Port（端口号）\r\n│        └── Host（主机名/域名）\r\n└── Scheme（协议）\r\n   \r\n\r\n    Scheme（协议）  ： https  表示使用加密的 HTTP 协议。如果是  http  则不加密。\r\n    Host（主机名）  ： www.example.com ，这是我们需要通过 DNS 解析成 IP 地址的部分。\r\n    Port（端口）  ： 443  是 HTTPS 的默认端口，通常可以省略。HTTP 的默认端口是  80 。\r\n    Path（路径）  ： /path/page.html ，告诉服务器你要访问哪个资源。\r\n    Query（查询参数）  ： ?q=hello ，附加的参数，通常用于搜索或过滤。\r\n    Fragment（片段）  ：  section1 ，指向页面内的某个锚点。注意：这部分不会发送给服务器，只在浏览器端使用。\r\n\r\n    3.2.2 浏览器的\"猜测\"\r\n\r\n现代浏览器在你输入 URL 的过程中就已经开始工作了：\r\n\r\n  如果你输入的不是完整 URL（比如只输入了  example.com ），浏览器会自动补全协议（加上  https:// ）\r\n  如果你输入的看起来像搜索词而不是域名（比如  what is DNS ），浏览器会把它发送给默认搜索引擎\r\n  浏览器还会根据你的历史记录提供自动补全建议\r\n  有些浏览器甚至会在你还没按回车时就开始预解析 DNS（DNS prefetch）\r\n\r\n\r\n   3.3 第二步：DNS 解析——互联网的电话簿\r\n\r\n    3.3.1 为什么需要 DNS\r\n\r\n计算机之间通信用的是 IP 地址（比如  142.250.80.46 ），但人类记不住这些数字。DNS（Domain Name System，域名系统）就是互联网的\"电话簿\"——把人类能记住的域名（ www.google.com ）翻译成机器能理解的 IP 地址。\r\n\r\n    3.3.2 DNS 解析的完整过程\r\n\r\n当浏览器需要解析  www.example.com  时，它会按以下顺序查找：\r\n\r\n   \r\n1. 浏览器 DNS 缓存\r\n   │ 没找到？\r\n   ▼\r\n2. 操作系统 DNS 缓存\r\n   │ 没找到？\r\n   ▼\r\n3. 本地 hosts 文件\r\n   │ 没找到？\r\n   ▼\r\n4. 递归 DNS 解析器（通常是你的 ISP 或 8.8.8.8）\r\n   │ 没找到？\r\n   ▼\r"
+    },
+    {
+      "id": "03-how-browser-works-31-序一秒钟的奇迹",
+      "title": "3.1 序：一秒钟的奇迹",
+      "chapter": "03",
+      "chapterTitle": "一次请求的旅程——浏览器到底在干什么",
+      "url": "chapters/03-how-browser-works.html#31-序一秒钟的奇迹",
+      "body": ""
+    },
+    {
+      "id": "03-how-browser-works-32-第一步url-解析",
+      "title": "3.2 第一步：URL 解析",
+      "chapter": "03",
+      "chapterTitle": "一次请求的旅程——浏览器到底在干什么",
+      "url": "chapters/03-how-browser-works.html#32-第一步url-解析",
+      "body": ""
+    },
+    {
+      "id": "03-how-browser-works-321-url-的结构",
+      "title": "3.2.1 URL 的结构",
+      "chapter": "03",
+      "chapterTitle": "一次请求的旅程——浏览器到底在干什么",
+      "url": "chapters/03-how-browser-works.html#321-url-的结构",
+      "body": ""
+    },
+    {
+      "id": "03-how-browser-works-322-浏览器的quot猜测quot",
+      "title": "3.2.2 浏览器的&quot;猜测&quot;",
+      "chapter": "03",
+      "chapterTitle": "一次请求的旅程——浏览器到底在干什么",
+      "url": "chapters/03-how-browser-works.html#322-浏览器的quot猜测quot",
+      "body": ""
+    },
+    {
+      "id": "03-how-browser-works-33-第二步dns-解析互联网的电话簿",
+      "title": "3.3 第二步：DNS 解析——互联网的电话簿",
+      "chapter": "03",
+      "chapterTitle": "一次请求的旅程——浏览器到底在干什么",
+      "url": "chapters/03-how-browser-works.html#33-第二步dns-解析互联网的电话簿",
+      "body": ""
+    },
+    {
+      "id": "03-how-browser-works-331-为什么需要-dns",
+      "title": "3.3.1 为什么需要 DNS",
+      "chapter": "03",
+      "chapterTitle": "一次请求的旅程——浏览器到底在干什么",
+      "url": "chapters/03-how-browser-works.html#331-为什么需要-dns",
+      "body": ""
+    },
+    {
+      "id": "03-how-browser-works-332-dns-解析的完整过程",
+      "title": "3.3.2 DNS 解析的完整过程",
+      "chapter": "03",
+      "chapterTitle": "一次请求的旅程——浏览器到底在干什么",
+      "url": "chapters/03-how-browser-works.html#332-dns-解析的完整过程",
+      "body": ""
+    },
+    {
+      "id": "03-how-browser-works-333-dns-缓存与-ttl",
+      "title": "3.3.3 DNS 缓存与 TTL",
+      "chapter": "03",
+      "chapterTitle": "一次请求的旅程——浏览器到底在干什么",
+      "url": "chapters/03-how-browser-works.html#333-dns-缓存与-ttl",
+      "body": ""
+    },
+    {
+      "id": "03-how-browser-works-34-第三步tcp-连接三次握手",
+      "title": "3.4 第三步：TCP 连接——三次握手",
+      "chapter": "03",
+      "chapterTitle": "一次请求的旅程——浏览器到底在干什么",
+      "url": "chapters/03-how-browser-works.html#34-第三步tcp-连接三次握手",
+      "body": ""
+    },
+    {
+      "id": "03-how-browser-works-341-为什么需要-tcp",
+      "title": "3.4.1 为什么需要 TCP",
+      "chapter": "03",
+      "chapterTitle": "一次请求的旅程——浏览器到底在干什么",
+      "url": "chapters/03-how-browser-works.html#341-为什么需要-tcp",
+      "body": ""
+    },
+    {
+      "id": "03-how-browser-works-342-三次握手",
+      "title": "3.4.2 三次握手",
+      "chapter": "03",
+      "chapterTitle": "一次请求的旅程——浏览器到底在干什么",
+      "url": "chapters/03-how-browser-works.html#342-三次握手",
+      "body": ""
+    },
+    {
+      "id": "03-how-browser-works-343-tcp-的代价",
+      "title": "3.4.3 TCP 的代价",
+      "chapter": "03",
+      "chapterTitle": "一次请求的旅程——浏览器到底在干什么",
+      "url": "chapters/03-how-browser-works.html#343-tcp-的代价",
+      "body": ""
+    },
+    {
+      "id": "03-how-browser-works-35-第四步tls-握手建立加密通道",
+      "title": "3.5 第四步：TLS 握手——建立加密通道",
+      "chapter": "03",
+      "chapterTitle": "一次请求的旅程——浏览器到底在干什么",
+      "url": "chapters/03-how-browser-works.html#35-第四步tls-握手建立加密通道",
+      "body": ""
+    },
+    {
+      "id": "03-how-browser-works-351-为什么需要加密",
+      "title": "3.5.1 为什么需要加密",
+      "chapter": "03",
+      "chapterTitle": "一次请求的旅程——浏览器到底在干什么",
+      "url": "chapters/03-how-browser-works.html#351-为什么需要加密",
+      "body": ""
+    },
+    {
+      "id": "03-how-browser-works-352-tls-13-握手过程",
+      "title": "3.5.2 TLS 1.3 握手过程",
+      "chapter": "03",
+      "chapterTitle": "一次请求的旅程——浏览器到底在干什么",
+      "url": "chapters/03-how-browser-works.html#352-tls-13-握手过程",
+      "body": ""
+    },
+    {
+      "id": "03-how-browser-works-353-时间开销",
+      "title": "3.5.3 时间开销",
+      "chapter": "03",
+      "chapterTitle": "一次请求的旅程——浏览器到底在干什么",
+      "url": "chapters/03-how-browser-works.html#353-时间开销",
+      "body": ""
+    },
+    {
+      "id": "03-how-browser-works-36-第五步http-请求与响应",
+      "title": "3.6 第五步：HTTP 请求与响应",
+      "chapter": "03",
+      "chapterTitle": "一次请求的旅程——浏览器到底在干什么",
+      "url": "chapters/03-how-browser-works.html#36-第五步http-请求与响应",
+      "body": ""
+    },
+    {
+      "id": "03-how-browser-works-361-发送请求",
+      "title": "3.6.1 发送请求",
+      "chapter": "03",
+      "chapterTitle": "一次请求的旅程——浏览器到底在干什么",
+      "url": "chapters/03-how-browser-works.html#361-发送请求",
+      "body": ""
+    },
+    {
+      "id": "03-how-browser-works-362-接收响应",
+      "title": "3.6.2 接收响应",
+      "chapter": "03",
+      "chapterTitle": "一次请求的旅程——浏览器到底在干什么",
+      "url": "chapters/03-how-browser-works.html#362-接收响应",
+      "body": ""
+    },
+    {
+      "id": "03-how-browser-works-363-http2-和-http3",
+      "title": "3.6.3 HTTP/2 和 HTTP/3",
+      "chapter": "03",
+      "chapterTitle": "一次请求的旅程——浏览器到底在干什么",
+      "url": "chapters/03-how-browser-works.html#363-http2-和-http3",
+      "body": ""
+    },
+    {
+      "id": "03-how-browser-works-37-第六步html-解析与-dom-构建",
+      "title": "3.7 第六步：HTML 解析与 DOM 构建",
+      "chapter": "03",
+      "chapterTitle": "一次请求的旅程——浏览器到底在干什么",
+      "url": "chapters/03-how-browser-works.html#37-第六步html-解析与-dom-构建",
+      "body": ""
+    },
+    {
+      "id": "03-how-browser-works-371-从文本到树",
+      "title": "3.7.1 从文本到树",
+      "chapter": "03",
+      "chapterTitle": "一次请求的旅程——浏览器到底在干什么",
+      "url": "chapters/03-how-browser-works.html#371-从文本到树",
+      "body": ""
+    },
+    {
+      "id": "03-how-browser-works-372-解析过程中的quot阻塞quot",
+      "title": "3.7.2 解析过程中的&quot;阻塞&quot;",
+      "chapter": "03",
+      "chapterTitle": "一次请求的旅程——浏览器到底在干什么",
+      "url": "chapters/03-how-browser-works.html#372-解析过程中的quot阻塞quot",
+      "body": ""
+    },
+    {
+      "id": "03-how-browser-works-373-并行资源加载",
+      "title": "3.7.3 并行资源加载",
+      "chapter": "03",
+      "chapterTitle": "一次请求的旅程——浏览器到底在干什么",
+      "url": "chapters/03-how-browser-works.html#373-并行资源加载",
+      "body": ""
+    },
+    {
+      "id": "03-how-browser-works-38-第七步css-解析与渲染树",
+      "title": "3.8 第七步：CSS 解析与渲染树",
+      "chapter": "03",
+      "chapterTitle": "一次请求的旅程——浏览器到底在干什么",
+      "url": "chapters/03-how-browser-works.html#38-第七步css-解析与渲染树",
+      "body": ""
+    },
+    {
+      "id": "03-how-browser-works-381-cssom-树",
+      "title": "3.8.1 CSSOM 树",
+      "chapter": "03",
+      "chapterTitle": "一次请求的旅程——浏览器到底在干什么",
+      "url": "chapters/03-how-browser-works.html#381-cssom-树",
+      "body": ""
+    },
+    {
+      "id": "03-how-browser-works-382-样式计算级联与继承",
+      "title": "3.8.2 样式计算：级联与继承",
+      "chapter": "03",
+      "chapterTitle": "一次请求的旅程——浏览器到底在干什么",
+      "url": "chapters/03-how-browser-works.html#382-样式计算级联与继承",
+      "body": ""
+    },
+    {
+      "id": "03-how-browser-works-383-渲染树",
+      "title": "3.8.3 渲染树",
+      "chapter": "03",
+      "chapterTitle": "一次请求的旅程——浏览器到底在干什么",
+      "url": "chapters/03-how-browser-works.html#383-渲染树",
+      "body": ""
+    },
+    {
+      "id": "03-how-browser-works-39-第八步布局绘制与合成",
+      "title": "3.9 第八步：布局、绘制与合成",
+      "chapter": "03",
+      "chapterTitle": "一次请求的旅程——浏览器到底在干什么",
+      "url": "chapters/03-how-browser-works.html#39-第八步布局绘制与合成",
+      "body": ""
+    },
+    {
+      "id": "03-how-browser-works-391-布局layout-reflow",
+      "title": "3.9.1 布局（Layout / Reflow）",
+      "chapter": "03",
+      "chapterTitle": "一次请求的旅程——浏览器到底在干什么",
+      "url": "chapters/03-how-browser-works.html#391-布局layout-reflow",
+      "body": ""
+    },
+    {
+      "id": "03-how-browser-works-392-绘制paint",
+      "title": "3.9.2 绘制（Paint）",
+      "chapter": "03",
+      "chapterTitle": "一次请求的旅程——浏览器到底在干什么",
+      "url": "chapters/03-how-browser-works.html#392-绘制paint",
+      "body": ""
+    },
+    {
+      "id": "03-how-browser-works-393-合成composite",
+      "title": "3.9.3 合成（Composite）",
+      "chapter": "03",
+      "chapterTitle": "一次请求的旅程——浏览器到底在干什么",
+      "url": "chapters/03-how-browser-works.html#393-合成composite",
+      "body": ""
+    },
+    {
+      "id": "03-how-browser-works-310-完整时间线",
+      "title": "3.10 完整时间线",
+      "chapter": "03",
+      "chapterTitle": "一次请求的旅程——浏览器到底在干什么",
+      "url": "chapters/03-how-browser-works.html#310-完整时间线",
+      "body": ""
+    },
+    {
+      "id": "03-how-browser-works-3101-性能指标",
+      "title": "3.10.1 性能指标",
+      "chapter": "03",
+      "chapterTitle": "一次请求的旅程——浏览器到底在干什么",
+      "url": "chapters/03-how-browser-works.html#3101-性能指标",
+      "body": ""
+    },
+    {
+      "id": "03-how-browser-works-311-浏览器的多进程架构以-chrome-为例",
+      "title": "3.11 浏览器的多进程架构（以 Chrome 为例）",
+      "chapter": "03",
+      "chapterTitle": "一次请求的旅程——浏览器到底在干什么",
+      "url": "chapters/03-how-browser-works.html#311-浏览器的多进程架构以-chrome-为例",
+      "body": ""
+    },
+    {
+      "id": "03-how-browser-works-3111-进程分工",
+      "title": "3.11.1 进程分工",
+      "chapter": "03",
+      "chapterTitle": "一次请求的旅程——浏览器到底在干什么",
+      "url": "chapters/03-how-browser-works.html#3111-进程分工",
+      "body": ""
+    },
+    {
+      "id": "03-how-browser-works-3112-站点隔离site-isolation",
+      "title": "3.11.2 站点隔离（Site Isolation）",
+      "chapter": "03",
+      "chapterTitle": "一次请求的旅程——浏览器到底在干什么",
+      "url": "chapters/03-how-browser-works.html#3112-站点隔离site-isolation",
+      "body": ""
+    },
+    {
+      "id": "03-how-browser-works-312-小结",
+      "title": "3.12 小结",
+      "chapter": "03",
+      "chapterTitle": "一次请求的旅程——浏览器到底在干什么",
+      "url": "chapters/03-how-browser-works.html#312-小结",
+      "body": ""
+    },
+    {
+      "id": "04-cookies-storage",
+      "title": "Cookies、存储与登录态",
+      "chapter": "04",
+      "chapterTitle": "Cookies、存储与登录态",
+      "url": "chapters/04-cookies-storage.html",
+      "body": "\r\n   4.1 HTTP 的\"失忆症\"\r\n\r\n    4.1.1 无状态协议的问题\r\n\r\nHTTP 协议有一个根本特性：  无状态  （Stateless）。\r\n\r\n这意味着服务器不会记住你是谁。每一次 HTTP 请求对服务器来说都是全新的、独立的——它不知道这个请求和上一个请求来自同一个人。\r\n\r\n类比一下：想象一个患有短期失忆症的店员。你走进店里说\"我要买一杯咖啡\"，他给你做了。你说\"再加一块蛋糕\"，他问\"你是谁？你要什么咖啡？\"——因为他已经忘了你刚才说过什么。\r\n\r\n这在 Web 的早期不是问题——那时候网页就是静态文档，你点一个链接看一篇文章，不需要\"登录\"或\"购物车\"这种概念。\r\n\r\n但当 Web 开始商业化，问题就来了：\r\n\r\n  电商网站怎么记住你的购物车？\r\n  网站怎么知道你已经登录了？\r\n  论坛怎么记住你的语言偏好？\r\n\r\n如果没有某种\"记忆\"机制，用户每点击一个链接、每加载一个新页面，都需要重新登录、重新选择偏好。这显然不可接受。\r\n\r\n    4.1.2 为什么 HTTP 要设计成无状态的\r\n\r\n你可能会问：为什么不直接让 HTTP 有状态呢？\r\n\r\n答案是：  简单性和可扩展性  。\r\n\r\n无状态意味着服务器不需要为每个用户维护会话信息。一台服务器可以处理来自数百万用户的请求，而不需要记住每个人的状态。请求之间是独立的，可以被任何一台服务器处理——这让负载均衡和水平扩展变得简单。\r\n\r\n有状态的协议（比如 FTP）需要维护连接状态，一旦连接断开，所有状态都丢失了。HTTP 的无状态设计让它天然适合互联网这种不可靠的网络环境。\r\n\r\n所以解决方案不是改变 HTTP 协议本身，而是在 HTTP 之上加一层\"记忆\"机制。这就是 Cookie。\r\n\r\n\r\n   4.2 Cookie 的诞生\r\n\r\n    4.2.1 Lou Montulli 的发明\r\n\r\n1994 年秋天，Netscape 的一位 23 岁的工程师 Lou Montulli 面临一个具体的问题：Netscape 的在线商店需要一个购物车功能，但 HTTP 的无状态特性让这变得不可能。\r\n\r\nMontulli 考虑了几种方案：\r\n\r\n  方案一：给每个用户一个永久 ID  \r\n\r\n最简单的方法是让浏览器自动向每个网站发送一个唯一的用户标识符。但 Montulli 和 Netscape 团队否决了这个方案——因为这意味着任何网站都能追踪你的浏览行为。一个广告商只要在多个网站上放置追踪代码，就能知道你访问了哪些网站。\r\n\r\n  方案二：把状态存在 URL 里  \r\n\r\n把用户信息编码在 URL 中（比如  ?user id=12345&cart=item1,item2 ）。问题是 URL 会出现在浏览器历史、服务器日志、书签里，不安全也不优雅。\r\n\r\n  方案三：Cookie  \r\n\r\nMontulli 最终设计了 Cookie：一小段文本数据，由服务器发送给浏览器存储，浏览器在后续请求中自动带回给  同一个  服务器。关键设计决策是：Cookie 只会被发送回设置它的那个域名，不会泄露给其他网站。\r\n\r\n这个名字来源于计算机科学中的\"magic cookie\"概念——一个在程序之间传递的不透明数据令牌。\r\n\r\nMontulli 写下了第一条 Cookie 的规范：\r\n\r\n   \r\nSet Cookie: CUSTOMER=WILE E COYOTE; path=/; expires=Wednesday, 09 Nov 99 23:12:40 GMT\r\n   \r\n\r\n这行代码改变了互联网的历史。\r\n\r\n    4.2.2 Cookie 的讽刺\r\n\r\nMontulli 发明 Cookie 的初衷是  保护隐私  ——相比给每个用户一个全局 ID，Cookie 的设计确保了数据只在用户和特定网站之间流通。\r\n\r\n但在两年之内，广告商就找到了绕过这个限制的方法：  第三方 Cookie  。这让 Cookie 从一个隐私保护工具变成了互联网上最大的隐私威胁之一。\r\n\r\nMontulli 本人在后来的采访中说：\"我确实对世界的现状感到有些责任。\"\r\n\r\n\r\n   4.3 Cookie 的工作原理\r\n\r\n    4.3.1 设置和发送\r\n\r\nCookie 的工作流程非常简单：\r\n\r\n   \r\n第一次访问：\r\n浏览器 ──── GET /index.html ────────────────────▶ 服务器\r\n浏览器 ◀─── 200 OK + Set Cookie: session=abc123 ── 服务器\r\n                     （服务器说：\"记住这个\"）\r\n\r\n第二次访问：\r\n浏览器 ──── GET /profile + "
+    },
+    {
+      "id": "04-cookies-storage-41-http-的quot失忆症quot",
+      "title": "4.1 HTTP 的&quot;失忆症&quot;",
+      "chapter": "04",
+      "chapterTitle": "Cookies、存储与登录态",
+      "url": "chapters/04-cookies-storage.html#41-http-的quot失忆症quot",
+      "body": ""
+    },
+    {
+      "id": "04-cookies-storage-411-无状态协议的问题",
+      "title": "4.1.1 无状态协议的问题",
+      "chapter": "04",
+      "chapterTitle": "Cookies、存储与登录态",
+      "url": "chapters/04-cookies-storage.html#411-无状态协议的问题",
+      "body": ""
+    },
+    {
+      "id": "04-cookies-storage-412-为什么-http-要设计成无状态的",
+      "title": "4.1.2 为什么 HTTP 要设计成无状态的",
+      "chapter": "04",
+      "chapterTitle": "Cookies、存储与登录态",
+      "url": "chapters/04-cookies-storage.html#412-为什么-http-要设计成无状态的",
+      "body": ""
+    },
+    {
+      "id": "04-cookies-storage-42-cookie-的诞生",
+      "title": "4.2 Cookie 的诞生",
+      "chapter": "04",
+      "chapterTitle": "Cookies、存储与登录态",
+      "url": "chapters/04-cookies-storage.html#42-cookie-的诞生",
+      "body": ""
+    },
+    {
+      "id": "04-cookies-storage-421-lou-montulli-的发明",
+      "title": "4.2.1 Lou Montulli 的发明",
+      "chapter": "04",
+      "chapterTitle": "Cookies、存储与登录态",
+      "url": "chapters/04-cookies-storage.html#421-lou-montulli-的发明",
+      "body": ""
+    },
+    {
+      "id": "04-cookies-storage-422-cookie-的讽刺",
+      "title": "4.2.2 Cookie 的讽刺",
+      "chapter": "04",
+      "chapterTitle": "Cookies、存储与登录态",
+      "url": "chapters/04-cookies-storage.html#422-cookie-的讽刺",
+      "body": ""
+    },
+    {
+      "id": "04-cookies-storage-43-cookie-的工作原理",
+      "title": "4.3 Cookie 的工作原理",
+      "chapter": "04",
+      "chapterTitle": "Cookies、存储与登录态",
+      "url": "chapters/04-cookies-storage.html#43-cookie-的工作原理",
+      "body": ""
+    },
+    {
+      "id": "04-cookies-storage-431-设置和发送",
+      "title": "4.3.1 设置和发送",
+      "chapter": "04",
+      "chapterTitle": "Cookies、存储与登录态",
+      "url": "chapters/04-cookies-storage.html#431-设置和发送",
+      "body": ""
+    },
+    {
+      "id": "04-cookies-storage-432-cookie-的属性",
+      "title": "4.3.2 Cookie 的属性",
+      "chapter": "04",
+      "chapterTitle": "Cookies、存储与登录态",
+      "url": "chapters/04-cookies-storage.html#432-cookie-的属性",
+      "body": ""
+    },
+    {
+      "id": "04-cookies-storage-433-用代码理解-cookie",
+      "title": "4.3.3 用代码理解 Cookie",
+      "chapter": "04",
+      "chapterTitle": "Cookies、存储与登录态",
+      "url": "chapters/04-cookies-storage.html#433-用代码理解-cookie",
+      "body": ""
+    },
+    {
+      "id": "04-cookies-storage-434-cookie-的限制",
+      "title": "4.3.4 Cookie 的限制",
+      "chapter": "04",
+      "chapterTitle": "Cookies、存储与登录态",
+      "url": "chapters/04-cookies-storage.html#434-cookie-的限制",
+      "body": ""
+    },
+    {
+      "id": "04-cookies-storage-44-sessiontoken-与登录态",
+      "title": "4.4 Session、Token 与登录态",
+      "chapter": "04",
+      "chapterTitle": "Cookies、存储与登录态",
+      "url": "chapters/04-cookies-storage.html#44-sessiontoken-与登录态",
+      "body": ""
+    },
+    {
+      "id": "04-cookies-storage-441-session会话",
+      "title": "4.4.1 Session（会话）",
+      "chapter": "04",
+      "chapterTitle": "Cookies、存储与登录态",
+      "url": "chapters/04-cookies-storage.html#441-session会话",
+      "body": ""
+    },
+    {
+      "id": "04-cookies-storage-442-jwt-tokenjson-web-token",
+      "title": "4.4.2 JWT Token（JSON Web Token）",
+      "chapter": "04",
+      "chapterTitle": "Cookies、存储与登录态",
+      "url": "chapters/04-cookies-storage.html#442-jwt-tokenjson-web-token",
+      "body": ""
+    },
+    {
+      "id": "04-cookies-storage-443-session-vs-jwt-对比",
+      "title": "4.4.3 Session vs JWT 对比",
+      "chapter": "04",
+      "chapterTitle": "Cookies、存储与登录态",
+      "url": "chapters/04-cookies-storage.html#443-session-vs-jwt-对比",
+      "body": ""
+    },
+    {
+      "id": "04-cookies-storage-45-第一方-cookie-vs-第三方-cookie",
+      "title": "4.5 第一方 Cookie vs 第三方 Cookie",
+      "chapter": "04",
+      "chapterTitle": "Cookies、存储与登录态",
+      "url": "chapters/04-cookies-storage.html#45-第一方-cookie-vs-第三方-cookie",
+      "body": ""
+    },
+    {
+      "id": "04-cookies-storage-451-区别",
+      "title": "4.5.1 区别",
+      "chapter": "04",
+      "chapterTitle": "Cookies、存储与登录态",
+      "url": "chapters/04-cookies-storage.html#451-区别",
+      "body": ""
+    },
+    {
+      "id": "04-cookies-storage-452-第三方-cookie-如何实现跨站追踪",
+      "title": "4.5.2 第三方 Cookie 如何实现跨站追踪",
+      "chapter": "04",
+      "chapterTitle": "Cookies、存储与登录态",
+      "url": "chapters/04-cookies-storage.html#452-第三方-cookie-如何实现跨站追踪",
+      "body": ""
+    },
+    {
+      "id": "04-cookies-storage-453-第三方-cookie-的消亡和反转",
+      "title": "4.5.3 第三方 Cookie 的消亡（和反转）",
+      "chapter": "04",
+      "chapterTitle": "Cookies、存储与登录态",
+      "url": "chapters/04-cookies-storage.html#453-第三方-cookie-的消亡和反转",
+      "body": ""
+    },
+    {
+      "id": "04-cookies-storage-46-为什么网站要你-quotaccept-cookiesquot",
+      "title": "4.6 为什么网站要你 &quot;Accept Cookies&quot;",
+      "chapter": "04",
+      "chapterTitle": "Cookies、存储与登录态",
+      "url": "chapters/04-cookies-storage.html#46-为什么网站要你-quotaccept-cookiesquot",
+      "body": ""
+    },
+    {
+      "id": "04-cookies-storage-461-gdpr-和-eprivacy-指令",
+      "title": "4.6.1 GDPR 和 ePrivacy 指令",
+      "chapter": "04",
+      "chapterTitle": "Cookies、存储与登录态",
+      "url": "chapters/04-cookies-storage.html#461-gdpr-和-eprivacy-指令",
+      "body": ""
+    },
+    {
+      "id": "04-cookies-storage-462-cookie-的分类",
+      "title": "4.6.2 Cookie 的分类",
+      "chapter": "04",
+      "chapterTitle": "Cookies、存储与登录态",
+      "url": "chapters/04-cookies-storage.html#462-cookie-的分类",
+      "body": ""
+    },
+    {
+      "id": "04-cookies-storage-463-为什么弹窗这么烦人",
+      "title": "4.6.3 为什么弹窗这么烦人",
+      "chapter": "04",
+      "chapterTitle": "Cookies、存储与登录态",
+      "url": "chapters/04-cookies-storage.html#463-为什么弹窗这么烦人",
+      "body": ""
+    },
+    {
+      "id": "04-cookies-storage-464-实际建议",
+      "title": "4.6.4 实际建议",
+      "chapter": "04",
+      "chapterTitle": "Cookies、存储与登录态",
+      "url": "chapters/04-cookies-storage.html#464-实际建议",
+      "body": ""
+    },
+    {
+      "id": "04-cookies-storage-47-浏览器的其他存储机制",
+      "title": "4.7 浏览器的其他存储机制",
+      "chapter": "04",
+      "chapterTitle": "Cookies、存储与登录态",
+      "url": "chapters/04-cookies-storage.html#47-浏览器的其他存储机制",
+      "body": ""
+    },
+    {
+      "id": "04-cookies-storage-471-localstorage-和-sessionstorage",
+      "title": "4.7.1 LocalStorage 和 SessionStorage",
+      "chapter": "04",
+      "chapterTitle": "Cookies、存储与登录态",
+      "url": "chapters/04-cookies-storage.html#471-localstorage-和-sessionstorage",
+      "body": ""
+    },
+    {
+      "id": "04-cookies-storage-472-indexeddb",
+      "title": "4.7.2 IndexedDB",
+      "chapter": "04",
+      "chapterTitle": "Cookies、存储与登录态",
+      "url": "chapters/04-cookies-storage.html#472-indexeddb",
+      "body": ""
+    },
+    {
+      "id": "04-cookies-storage-473-存储机制总览",
+      "title": "4.7.3 存储机制总览",
+      "chapter": "04",
+      "chapterTitle": "Cookies、存储与登录态",
+      "url": "chapters/04-cookies-storage.html#473-存储机制总览",
+      "body": ""
+    },
+    {
+      "id": "04-cookies-storage-48-小结",
+      "title": "4.8 小结",
+      "chapter": "04",
+      "chapterTitle": "Cookies、存储与登录态",
+      "url": "chapters/04-cookies-storage.html#48-小结",
+      "body": ""
+    },
+    {
+      "id": "04-cookies-storage-49-动手实验观察你的-cookie",
+      "title": "4.9 动手实验：观察你的 Cookie",
+      "chapter": "04",
+      "chapterTitle": "Cookies、存储与登录态",
+      "url": "chapters/04-cookies-storage.html#49-动手实验观察你的-cookie",
+      "body": ""
+    },
+    {
+      "id": "04-cookies-storage-491-用开发者工具查看-cookie",
+      "title": "4.9.1 用开发者工具查看 Cookie",
+      "chapter": "04",
+      "chapterTitle": "Cookies、存储与登录态",
+      "url": "chapters/04-cookies-storage.html#491-用开发者工具查看-cookie",
+      "body": ""
+    },
+    {
+      "id": "04-cookies-storage-492-用-curl-观察-http-头",
+      "title": "4.9.2 用 curl 观察 HTTP 头",
+      "chapter": "04",
+      "chapterTitle": "Cookies、存储与登录态",
+      "url": "chapters/04-cookies-storage.html#492-用-curl-观察-http-头",
+      "body": ""
+    },
+    {
+      "id": "04-cookies-storage-493-一个简单的-cookie-实验",
+      "title": "4.9.3 一个简单的 Cookie 实验",
+      "chapter": "04",
+      "chapterTitle": "Cookies、存储与登录态",
+      "url": "chapters/04-cookies-storage.html#493-一个简单的-cookie-实验",
+      "body": ""
+    },
+    {
+      "id": "05-fingerprint-privacy",
+      "title": "指纹、追踪与隐私",
+      "chapter": "05",
+      "chapterTitle": "指纹、追踪与隐私",
+      "url": "chapters/05-fingerprint-privacy.html",
+      "body": "\r\n   5.1 当 Cookie 不够用了\r\n\r\n    5.1.1 Cookie 的局限\r\n\r\n上一章我们讲了第三方 Cookie 如何被用于跨站追踪。但 Cookie 有一个\"致命缺陷\"（对追踪者来说）：  用户可以删除它  。\r\n\r\n  清除浏览器数据 → Cookie 消失\r\n  使用隐私模式 → Cookie 不会被保存\r\n  Safari/Firefox 默认阻止第三方 Cookie → 追踪失效\r\n  安装广告拦截器 → 追踪脚本被阻止\r\n\r\n广告行业需要一种更\"持久\"的追踪方式——即使用户清除了所有 Cookie、使用了隐私模式，依然能识别出\"这是同一个人\"。\r\n\r\n这就是浏览器指纹（Browser Fingerprinting）。\r\n\r\n    5.1.3 指纹追踪 vs Cookie 追踪的本质区别\r\n\r\nCookie 追踪是\"主动标记\"——服务器给你贴一个标签，下次见到这个标签就认出你。你可以撕掉标签（删除 Cookie）。\r\n\r\n指纹追踪是\"被动识别\"——不需要给你贴任何标签，只需要观察你的\"长相\"（设备特征）就能认出你。你不能改变自己的\"长相\"（除非换设备）。\r\n\r\n   \r\nCookie 追踪（主动标记）：\r\n服务器: \"给你贴个标签  12345\"\r\n浏览器:  存储标签 \r\n下次访问: \"我看到标签  12345 了，是你！\"\r\n用户清除 Cookie: \"标签没了，我不认识你了\"\r\n\r\n指纹追踪（被动识别）：\r\n服务器: \"让我看看你的特征...\"\r\n服务器: \"1920×1080 + RTX 4060 + 23种字体 + Chrome 125...\"\r\n服务器: \"这个组合我见过，是你！\"\r\n用户清除 Cookie: \"没用，你的特征没变，我还是认识你\"\r\n   \r\n\r\n    5.1.2 什么是浏览器指纹\r\n\r\n浏览器指纹的原理很简单：  你的浏览器在访问网页时，会暴露大量关于你设备的信息。把这些信息组合起来，就能生成一个几乎唯一的标识符——就像人的指纹一样。  \r\n\r\n单独看每一项信息都不足以识别你：\r\n\r\n  屏幕分辨率是 1920×1080？全世界有几亿人都是这个分辨率。\r\n  操作系统是 Windows 11？几亿人。\r\n  浏览器是 Chrome 125？几千万人。\r\n  时区是 UTC+8？十几亿人。\r\n\r\n但当你把几十项这样的信息组合起来：\r\n\r\n  1920×1080 + Windows 11 + Chrome 125 + UTC+8 + 安装了 23 种字体 + GPU 是 NVIDIA RTX 4060 + 语言是 zh CN + 有 3 个浏览器插件 + Canvas 渲染哈希是  a7f3b2c1  + WebGL 渲染哈希是  d4e5f6a7  + AudioContext 指纹是  b8c9d0e1  + ...\r\n\r\n这个组合在全球可能只有你一个人匹配。研究表明，浏览器指纹通常有超过 30 比特的熵（entropy），这意味着它可以在超过 10 亿人中唯一识别一个用户。\r\n\r\n\r\n   5.2 指纹采集的技术手段\r\n\r\n    5.2.1 基础信息\r\n\r\n网站可以通过 JavaScript 轻松获取的基础信息：\r\n\r\n   javascript\r\n// 这些信息任何网页都可以读取，不需要任何权限\r\nconst fingerprint =  \r\n  // 屏幕信息\r\n  screenWidth: screen.width,           // 1920\r\n  screenHeight: screen.height,         // 1080\r\n  colorDepth: screen.colorDepth,       // 24\r\n  devicePixelRatio: window.devicePixelRatio,  // 1.5\r\n\r\n  // 浏览器信息\r\n  userAgent: navigator.userAgent,      // \"Mozilla/5.0  Windows NT 10.0...\"\r\n  language: navigator.language,        // \"zh CN\"\r\n  languages: navigator.languages,      //  \"zh CN\", \"zh\", \"en\" \r\n  platform: navigator.platform,        // \"Win32\"\r\n  hardwareConcurrency: navigator.hardwareConcurrency,  // 8  CPU 核心数 \r\n  deviceMemory: navigator.devic"
+    },
+    {
+      "id": "05-fingerprint-privacy-51-当-cookie-不够用了",
+      "title": "5.1 当 Cookie 不够用了",
+      "chapter": "05",
+      "chapterTitle": "指纹、追踪与隐私",
+      "url": "chapters/05-fingerprint-privacy.html#51-当-cookie-不够用了",
+      "body": ""
+    },
+    {
+      "id": "05-fingerprint-privacy-511-cookie-的局限",
+      "title": "5.1.1 Cookie 的局限",
+      "chapter": "05",
+      "chapterTitle": "指纹、追踪与隐私",
+      "url": "chapters/05-fingerprint-privacy.html#511-cookie-的局限",
+      "body": ""
+    },
+    {
+      "id": "05-fingerprint-privacy-513-指纹追踪-vs-cookie-追踪的本质区别",
+      "title": "5.1.3 指纹追踪 vs Cookie 追踪的本质区别",
+      "chapter": "05",
+      "chapterTitle": "指纹、追踪与隐私",
+      "url": "chapters/05-fingerprint-privacy.html#513-指纹追踪-vs-cookie-追踪的本质区别",
+      "body": ""
+    },
+    {
+      "id": "05-fingerprint-privacy-512-什么是浏览器指纹",
+      "title": "5.1.2 什么是浏览器指纹",
+      "chapter": "05",
+      "chapterTitle": "指纹、追踪与隐私",
+      "url": "chapters/05-fingerprint-privacy.html#512-什么是浏览器指纹",
+      "body": ""
+    },
+    {
+      "id": "05-fingerprint-privacy-52-指纹采集的技术手段",
+      "title": "5.2 指纹采集的技术手段",
+      "chapter": "05",
+      "chapterTitle": "指纹、追踪与隐私",
+      "url": "chapters/05-fingerprint-privacy.html#52-指纹采集的技术手段",
+      "body": ""
+    },
+    {
+      "id": "05-fingerprint-privacy-521-基础信息",
+      "title": "5.2.1 基础信息",
+      "chapter": "05",
+      "chapterTitle": "指纹、追踪与隐私",
+      "url": "chapters/05-fingerprint-privacy.html#521-基础信息",
+      "body": ""
+    },
+    {
+      "id": "05-fingerprint-privacy-522-canvas-指纹",
+      "title": "5.2.2 Canvas 指纹",
+      "chapter": "05",
+      "chapterTitle": "指纹、追踪与隐私",
+      "url": "chapters/05-fingerprint-privacy.html#522-canvas-指纹",
+      "body": ""
+    },
+    {
+      "id": "05-fingerprint-privacy-523-webgl-指纹",
+      "title": "5.2.3 WebGL 指纹",
+      "chapter": "05",
+      "chapterTitle": "指纹、追踪与隐私",
+      "url": "chapters/05-fingerprint-privacy.html#523-webgl-指纹",
+      "body": ""
+    },
+    {
+      "id": "05-fingerprint-privacy-524-audiocontext-指纹",
+      "title": "5.2.4 AudioContext 指纹",
+      "chapter": "05",
+      "chapterTitle": "指纹、追踪与隐私",
+      "url": "chapters/05-fingerprint-privacy.html#524-audiocontext-指纹",
+      "body": ""
+    },
+    {
+      "id": "05-fingerprint-privacy-525-字体指纹",
+      "title": "5.2.5 字体指纹",
+      "chapter": "05",
+      "chapterTitle": "指纹、追踪与隐私",
+      "url": "chapters/05-fingerprint-privacy.html#525-字体指纹",
+      "body": ""
+    },
+    {
+      "id": "05-fingerprint-privacy-53-指纹的威力为什么它比-cookie-更可怕",
+      "title": "5.3 指纹的威力：为什么它比 Cookie 更可怕",
+      "chapter": "05",
+      "chapterTitle": "指纹、追踪与隐私",
+      "url": "chapters/05-fingerprint-privacy.html#53-指纹的威力为什么它比-cookie-更可怕",
+      "body": ""
+    },
+    {
+      "id": "05-fingerprint-privacy-531-cookie-vs-指纹对比",
+      "title": "5.3.1 Cookie vs 指纹对比",
+      "chapter": "05",
+      "chapterTitle": "指纹、追踪与隐私",
+      "url": "chapters/05-fingerprint-privacy.html#531-cookie-vs-指纹对比",
+      "body": ""
+    },
+    {
+      "id": "05-fingerprint-privacy-532-指纹追踪的规模",
+      "title": "5.3.2 指纹追踪的规模",
+      "chapter": "05",
+      "chapterTitle": "指纹、追踪与隐私",
+      "url": "chapters/05-fingerprint-privacy.html#532-指纹追踪的规模",
+      "body": ""
+    },
+    {
+      "id": "05-fingerprint-privacy-533-合法用途",
+      "title": "5.3.3 合法用途",
+      "chapter": "05",
+      "chapterTitle": "指纹、追踪与隐私",
+      "url": "chapters/05-fingerprint-privacy.html#533-合法用途",
+      "body": ""
+    },
+    {
+      "id": "05-fingerprint-privacy-54-指纹浏览器反向利用指纹技术",
+      "title": "5.4 指纹浏览器：反向利用指纹技术",
+      "chapter": "05",
+      "chapterTitle": "指纹、追踪与隐私",
+      "url": "chapters/05-fingerprint-privacy.html#54-指纹浏览器反向利用指纹技术",
+      "body": ""
+    },
+    {
+      "id": "05-fingerprint-privacy-541-什么是指纹浏览器",
+      "title": "5.4.1 什么是指纹浏览器",
+      "chapter": "05",
+      "chapterTitle": "指纹、追踪与隐私",
+      "url": "chapters/05-fingerprint-privacy.html#541-什么是指纹浏览器",
+      "body": ""
+    },
+    {
+      "id": "05-fingerprint-privacy-542-工作原理",
+      "title": "5.4.2 工作原理",
+      "chapter": "05",
+      "chapterTitle": "指纹、追踪与隐私",
+      "url": "chapters/05-fingerprint-privacy.html#542-工作原理",
+      "body": ""
+    },
+    {
+      "id": "05-fingerprint-privacy-543-使用场景",
+      "title": "5.4.3 使用场景",
+      "chapter": "05",
+      "chapterTitle": "指纹、追踪与隐私",
+      "url": "chapters/05-fingerprint-privacy.html#543-使用场景",
+      "body": ""
+    },
+    {
+      "id": "05-fingerprint-privacy-544-指纹浏览器-vs-隐私浏览器",
+      "title": "5.4.4 指纹浏览器 vs 隐私浏览器",
+      "chapter": "05",
+      "chapterTitle": "指纹、追踪与隐私",
+      "url": "chapters/05-fingerprint-privacy.html#544-指纹浏览器-vs-隐私浏览器",
+      "body": ""
+    },
+    {
+      "id": "05-fingerprint-privacy-55-隐私浏览器对比",
+      "title": "5.5 隐私浏览器对比",
+      "chapter": "05",
+      "chapterTitle": "指纹、追踪与隐私",
+      "url": "chapters/05-fingerprint-privacy.html#55-隐私浏览器对比",
+      "body": ""
+    },
+    {
+      "id": "05-fingerprint-privacy-551-各浏览器的隐私防护策略",
+      "title": "5.5.1 各浏览器的隐私防护策略",
+      "chapter": "05",
+      "chapterTitle": "指纹、追踪与隐私",
+      "url": "chapters/05-fingerprint-privacy.html#551-各浏览器的隐私防护策略",
+      "body": ""
+    },
+    {
+      "id": "05-fingerprint-privacy-552-隐私浏览器推荐",
+      "title": "5.5.2 隐私浏览器推荐",
+      "chapter": "05",
+      "chapterTitle": "指纹、追踪与隐私",
+      "url": "chapters/05-fingerprint-privacy.html#552-隐私浏览器推荐",
+      "body": ""
+    },
+    {
+      "id": "05-fingerprint-privacy-56-你能做什么实用隐私指南",
+      "title": "5.6 你能做什么：实用隐私指南",
+      "chapter": "05",
+      "chapterTitle": "指纹、追踪与隐私",
+      "url": "chapters/05-fingerprint-privacy.html#56-你能做什么实用隐私指南",
+      "body": ""
+    },
+    {
+      "id": "05-fingerprint-privacy-561-基础防护适合所有人",
+      "title": "5.6.1 基础防护（适合所有人）",
+      "chapter": "05",
+      "chapterTitle": "指纹、追踪与隐私",
+      "url": "chapters/05-fingerprint-privacy.html#561-基础防护适合所有人",
+      "body": ""
+    },
+    {
+      "id": "05-fingerprint-privacy-562-进阶防护",
+      "title": "5.6.2 进阶防护",
+      "chapter": "05",
+      "chapterTitle": "指纹、追踪与隐私",
+      "url": "chapters/05-fingerprint-privacy.html#562-进阶防护",
+      "body": ""
+    },
+    {
+      "id": "05-fingerprint-privacy-563-检测你的指纹唯一性",
+      "title": "5.6.3 检测你的指纹唯一性",
+      "chapter": "05",
+      "chapterTitle": "指纹、追踪与隐私",
+      "url": "chapters/05-fingerprint-privacy.html#563-检测你的指纹唯一性",
+      "body": ""
+    },
+    {
+      "id": "05-fingerprint-privacy-57-隐私的未来",
+      "title": "5.7 隐私的未来",
+      "chapter": "05",
+      "chapterTitle": "指纹、追踪与隐私",
+      "url": "chapters/05-fingerprint-privacy.html#57-隐私的未来",
+      "body": ""
+    },
+    {
+      "id": "05-fingerprint-privacy-571-技术军备竞赛",
+      "title": "5.7.1 技术军备竞赛",
+      "chapter": "05",
+      "chapterTitle": "指纹、追踪与隐私",
+      "url": "chapters/05-fingerprint-privacy.html#571-技术军备竞赛",
+      "body": ""
+    },
+    {
+      "id": "05-fingerprint-privacy-572-服务器端追踪下一个战场",
+      "title": "5.7.2 服务器端追踪：下一个战场",
+      "chapter": "05",
+      "chapterTitle": "指纹、追踪与隐私",
+      "url": "chapters/05-fingerprint-privacy.html#572-服务器端追踪下一个战场",
+      "body": ""
+    },
+    {
+      "id": "05-fingerprint-privacy-573-立法是最终答案吗",
+      "title": "5.7.3 立法是最终答案吗",
+      "chapter": "05",
+      "chapterTitle": "指纹、追踪与隐私",
+      "url": "chapters/05-fingerprint-privacy.html#573-立法是最终答案吗",
+      "body": ""
+    },
+    {
+      "id": "05-fingerprint-privacy-574-一个思想实验",
+      "title": "5.7.4 一个思想实验",
+      "chapter": "05",
+      "chapterTitle": "指纹、追踪与隐私",
+      "url": "chapters/05-fingerprint-privacy.html#574-一个思想实验",
+      "body": ""
+    },
+    {
+      "id": "05-fingerprint-privacy-575-隐私不是quot我没做坏事所以不怕quot",
+      "title": "5.7.5 隐私不是&quot;我没做坏事所以不怕&quot;",
+      "chapter": "05",
+      "chapterTitle": "指纹、追踪与隐私",
+      "url": "chapters/05-fingerprint-privacy.html#575-隐私不是quot我没做坏事所以不怕quot",
+      "body": ""
+    },
+    {
+      "id": "06-business-model",
+      "title": "浏览器背后的公司与商业模式",
+      "chapter": "06",
+      "chapterTitle": "浏览器背后的公司与商业模式",
+      "url": "chapters/06-business-model.html",
+      "body": "\r\n   6.1 浏览器是入口，不是产品\r\n\r\n    6.1.1 为什么浏览器都是免费的\r\n\r\n你有没有想过一个问题：浏览器这么复杂的软件（Chromium 有 3500 万行代码，需要数百名工程师维护），为什么所有主流浏览器都是免费的？\r\n\r\n答案是：  浏览器本身不是产品，而是通往真正产品的入口。  \r\n\r\n类比一下：超市的购物车是免费的，因为超市靠你买的东西赚钱，不靠购物车。浏览器也是一样——它是你接触互联网服务的\"购物车\"，真正赚钱的是你通过浏览器使用的那些服务。\r\n\r\n不同公司做浏览器的动机完全不同：\r\n\r\n  公司   浏览器   做浏览器的真正目的  \r\n                                     \r\n  Google   Chrome   确保用户使用 Google 搜索和服务 → 广告收入  \r\n  Apple   Safari   锁定用户在 Apple 生态中 → 硬件销售  \r\n  Microsoft   Edge   推广 Bing 搜索和 Microsoft 365 → 云服务收入  \r\n  Mozilla   Firefox   使命驱动（保持互联网开放） → 搜索引擎分成  \r\n  Brave   Brave   重新定义广告模式 → BAT 代币生态  \r\n\r\n    6.1.2 默认搜索引擎：浏览器最值钱的\"位置\"\r\n\r\n浏览器里最值钱的东西不是任何功能，而是  默认搜索引擎的位置  。\r\n\r\n当你在地址栏输入一个搜索词按回车，它会被发送到默认搜索引擎。大多数用户从不更改默认设置——这意味着谁控制了默认搜索引擎，谁就控制了用户的搜索流量。\r\n\r\n搜索流量 = 广告收入。这就是为什么 Google 每年向 Apple 支付约 200 亿美元，只为让 Google 搜索成为 Safari 的默认搜索引擎。\r\n\r\n这也是 2025 年 DOJ 反垄断案的核心：Google 通过这些排他性协议维持了搜索垄断。法官最终禁止了这类排他合同，但允许 Google 继续竞标默认位置（只是不能要求\"只能是 Google\"）。\r\n\r\n\r\n   6.2 Google Chrome：广告帝国的基石\r\n\r\n    6.2.1 Chrome 的商业逻辑\r\n\r\nGoogle（Alphabet）2025 年的总收入超过 4000 亿美元，其中约 75 80% 来自广告业务。Google 搜索广告一项就贡献了超过 2000 亿美元。\r\n\r\nChrome 在这个商业模式中扮演什么角色？\r\n\r\n   \r\n用户使用 Chrome\r\n    │\r\n    ├── 默认搜索引擎是 Google → 搜索广告收入\r\n    │\r\n    ├── 登录 Google 账号 → 跨设备数据同步 → 更精准的广告定向\r\n    │\r\n    ├── 使用 Google 服务（Gmail, YouTube, Maps）→ 更多广告展示机会\r\n    │\r\n    ├── 浏览数据收集 → 用户画像 → 广告定向优化\r\n    │\r\n    └── 控制 Web 标准走向 → 确保 Google 服务始终有最好的体验\r\n   \r\n\r\nChrome 本身不直接产生收入，但它是整个广告生态的\"管道\"。没有 Chrome，Google 的广告业务不会消失，但会失去对用户入口的控制权。\r\n\r\n    6.2.2 数据收集\r\n\r\nChrome 收集的用户数据包括：\r\n\r\n    浏览历史  ：你访问了哪些网站（如果登录了 Google 账号并开启了同步）\r\n    搜索历史  ：你搜索了什么\r\n    使用统计  ：你使用了哪些功能、遇到了哪些错误\r\n    自动填充数据  ：你的地址、电话、信用卡信息（加密存储）\r\n    位置数据  ：如果允许了位置权限\r\n\r\nGoogle 声称这些数据用于\"改善用户体验\"，但它们同时也被用于广告定向。这就是为什么你在 Chrome 里搜索了\"跑步鞋\"，然后在 YouTube 上看到跑步鞋广告。\r\n\r\n    6.2.3 Chrome 的\"免费\"代价\r\n\r\n一个流行的说法是：\"如果你不是客户，你就是产品。\"\r\n\r\nChrome 是免费的，但你用你的注意力和数据\"付费\"了。Google 把你的注意力卖给广告商，这就是 Chrome 的商业模式。\r\n\r\n这不一定是\"邪恶\"的——Google 确实提供了优秀的产品和服务。但理解这个商业模式很重要，因为它解释了 Google 的很多决策：\r\n\r\n  为什么 Chrome 不阻止第三方 Cookie？因为广告定向需要它。\r\n  为什么 Manifest V3 限制广告拦截器？因为广告是 Google 的命脉。\r\n  为什么 Chrome 不实现指纹"
+    },
+    {
+      "id": "06-business-model-61-浏览器是入口不是产品",
+      "title": "6.1 浏览器是入口，不是产品",
+      "chapter": "06",
+      "chapterTitle": "浏览器背后的公司与商业模式",
+      "url": "chapters/06-business-model.html#61-浏览器是入口不是产品",
+      "body": ""
+    },
+    {
+      "id": "06-business-model-611-为什么浏览器都是免费的",
+      "title": "6.1.1 为什么浏览器都是免费的",
+      "chapter": "06",
+      "chapterTitle": "浏览器背后的公司与商业模式",
+      "url": "chapters/06-business-model.html#611-为什么浏览器都是免费的",
+      "body": ""
+    },
+    {
+      "id": "06-business-model-612-默认搜索引擎浏览器最值钱的quot位置quot",
+      "title": "6.1.2 默认搜索引擎：浏览器最值钱的&quot;位置&quot;",
+      "chapter": "06",
+      "chapterTitle": "浏览器背后的公司与商业模式",
+      "url": "chapters/06-business-model.html#612-默认搜索引擎浏览器最值钱的quot位置quot",
+      "body": ""
+    },
+    {
+      "id": "06-business-model-62-google-chrome广告帝国的基石",
+      "title": "6.2 Google Chrome：广告帝国的基石",
+      "chapter": "06",
+      "chapterTitle": "浏览器背后的公司与商业模式",
+      "url": "chapters/06-business-model.html#62-google-chrome广告帝国的基石",
+      "body": ""
+    },
+    {
+      "id": "06-business-model-621-chrome-的商业逻辑",
+      "title": "6.2.1 Chrome 的商业逻辑",
+      "chapter": "06",
+      "chapterTitle": "浏览器背后的公司与商业模式",
+      "url": "chapters/06-business-model.html#621-chrome-的商业逻辑",
+      "body": ""
+    },
+    {
+      "id": "06-business-model-622-数据收集",
+      "title": "6.2.2 数据收集",
+      "chapter": "06",
+      "chapterTitle": "浏览器背后的公司与商业模式",
+      "url": "chapters/06-business-model.html#622-数据收集",
+      "body": ""
+    },
+    {
+      "id": "06-business-model-623-chrome-的quot免费quot代价",
+      "title": "6.2.3 Chrome 的&quot;免费&quot;代价",
+      "chapter": "06",
+      "chapterTitle": "浏览器背后的公司与商业模式",
+      "url": "chapters/06-business-model.html#623-chrome-的quot免费quot代价",
+      "body": ""
+    },
+    {
+      "id": "06-business-model-63-apple-safari生态锁定的工具",
+      "title": "6.3 Apple Safari：生态锁定的工具",
+      "chapter": "06",
+      "chapterTitle": "浏览器背后的公司与商业模式",
+      "url": "chapters/06-business-model.html#63-apple-safari生态锁定的工具",
+      "body": ""
+    },
+    {
+      "id": "06-business-model-631-apple-的商业模式",
+      "title": "6.3.1 Apple 的商业模式",
+      "chapter": "06",
+      "chapterTitle": "浏览器背后的公司与商业模式",
+      "url": "chapters/06-business-model.html#631-apple-的商业模式",
+      "body": ""
+    },
+    {
+      "id": "06-business-model-632-ios-的浏览器垄断",
+      "title": "6.3.2 iOS 的浏览器垄断",
+      "chapter": "06",
+      "chapterTitle": "浏览器背后的公司与商业模式",
+      "url": "chapters/06-business-model.html#632-ios-的浏览器垄断",
+      "body": ""
+    },
+    {
+      "id": "06-business-model-633-apple-的矛盾",
+      "title": "6.3.3 Apple 的矛盾",
+      "chapter": "06",
+      "chapterTitle": "浏览器背后的公司与商业模式",
+      "url": "chapters/06-business-model.html#633-apple-的矛盾",
+      "body": ""
+    },
+    {
+      "id": "06-business-model-64-mozilla-firefox理想主义的困境",
+      "title": "6.4 Mozilla Firefox：理想主义的困境",
+      "chapter": "06",
+      "chapterTitle": "浏览器背后的公司与商业模式",
+      "url": "chapters/06-business-model.html#64-mozilla-firefox理想主义的困境",
+      "body": ""
+    },
+    {
+      "id": "06-business-model-641-非营利组织做浏览器",
+      "title": "6.4.1 非营利组织做浏览器",
+      "chapter": "06",
+      "chapterTitle": "浏览器背后的公司与商业模式",
+      "url": "chapters/06-business-model.html#641-非营利组织做浏览器",
+      "body": ""
+    },
+    {
+      "id": "06-business-model-642-mozilla-的收入来源",
+      "title": "6.4.2 Mozilla 的收入来源",
+      "chapter": "06",
+      "chapterTitle": "浏览器背后的公司与商业模式",
+      "url": "chapters/06-business-model.html#642-mozilla-的收入来源",
+      "body": ""
+    },
+    {
+      "id": "06-business-model-643-致命的依赖",
+      "title": "6.4.3 致命的依赖",
+      "chapter": "06",
+      "chapterTitle": "浏览器背后的公司与商业模式",
+      "url": "chapters/06-business-model.html#643-致命的依赖",
+      "body": ""
+    },
+    {
+      "id": "06-business-model-644-mozilla-的多元化尝试",
+      "title": "6.4.4 Mozilla 的多元化尝试",
+      "chapter": "06",
+      "chapterTitle": "浏览器背后的公司与商业模式",
+      "url": "chapters/06-business-model.html#644-mozilla-的多元化尝试",
+      "body": ""
+    },
+    {
+      "id": "06-business-model-65-brave重新发明广告",
+      "title": "6.5 Brave：重新发明广告",
+      "chapter": "06",
+      "chapterTitle": "浏览器背后的公司与商业模式",
+      "url": "chapters/06-business-model.html#65-brave重新发明广告",
+      "body": ""
+    },
+    {
+      "id": "06-business-model-651-brendan-eich-的第二次创业",
+      "title": "6.5.1 Brendan Eich 的第二次创业",
+      "chapter": "06",
+      "chapterTitle": "浏览器背后的公司与商业模式",
+      "url": "chapters/06-business-model.html#651-brendan-eich-的第二次创业",
+      "body": ""
+    },
+    {
+      "id": "06-business-model-652-batbasic-attention-token",
+      "title": "6.5.2 BAT（Basic Attention Token）",
+      "chapter": "06",
+      "chapterTitle": "浏览器背后的公司与商业模式",
+      "url": "chapters/06-business-model.html#652-batbasic-attention-token",
+      "body": ""
+    },
+    {
+      "id": "06-business-model-653-brave-的其他收入来源",
+      "title": "6.5.3 Brave 的其他收入来源",
+      "chapter": "06",
+      "chapterTitle": "浏览器背后的公司与商业模式",
+      "url": "chapters/06-business-model.html#653-brave-的其他收入来源",
+      "body": ""
+    },
+    {
+      "id": "06-business-model-654-brave-的争议",
+      "title": "6.5.4 Brave 的争议",
+      "chapter": "06",
+      "chapterTitle": "浏览器背后的公司与商业模式",
+      "url": "chapters/06-business-model.html#654-brave-的争议",
+      "body": ""
+    },
+    {
+      "id": "06-business-model-66-microsoft-edge云服务的入口",
+      "title": "6.6 Microsoft Edge：云服务的入口",
+      "chapter": "06",
+      "chapterTitle": "浏览器背后的公司与商业模式",
+      "url": "chapters/06-business-model.html#66-microsoft-edge云服务的入口",
+      "body": ""
+    },
+    {
+      "id": "06-business-model-661-微软为什么还要做浏览器",
+      "title": "6.6.1 微软为什么还要做浏览器",
+      "chapter": "06",
+      "chapterTitle": "浏览器背后的公司与商业模式",
+      "url": "chapters/06-business-model.html#661-微软为什么还要做浏览器",
+      "body": ""
+    },
+    {
+      "id": "06-business-model-662-edge-的quot激进推广quot",
+      "title": "6.6.2 Edge 的&quot;激进推广&quot;",
+      "chapter": "06",
+      "chapterTitle": "浏览器背后的公司与商业模式",
+      "url": "chapters/06-business-model.html#662-edge-的quot激进推广quot",
+      "body": ""
+    },
+    {
+      "id": "06-business-model-67-浏览器经济学总结",
+      "title": "6.7 浏览器经济学总结",
+      "chapter": "06",
+      "chapterTitle": "浏览器背后的公司与商业模式",
+      "url": "chapters/06-business-model.html#67-浏览器经济学总结",
+      "body": ""
+    },
+    {
+      "id": "06-business-model-671-收入对比",
+      "title": "6.7.1 收入对比",
+      "chapter": "06",
+      "chapterTitle": "浏览器背后的公司与商业模式",
+      "url": "chapters/06-business-model.html#671-收入对比",
+      "body": ""
+    },
+    {
+      "id": "06-business-model-672-谁在为quot免费quot买单",
+      "title": "6.7.2 谁在为&quot;免费&quot;买单",
+      "chapter": "06",
+      "chapterTitle": "浏览器背后的公司与商业模式",
+      "url": "chapters/06-business-model.html#672-谁在为quot免费quot买单",
+      "body": ""
+    },
+    {
+      "id": "06-business-model-673-有没有其他可能",
+      "title": "6.7.3 有没有其他可能",
+      "chapter": "06",
+      "chapterTitle": "浏览器背后的公司与商业模式",
+      "url": "chapters/06-business-model.html#673-有没有其他可能",
+      "body": ""
+    },
+    {
+      "id": "06-business-model-68-结语选择你的浏览器",
+      "title": "6.8 结语：选择你的浏览器",
+      "chapter": "06",
+      "chapterTitle": "浏览器背后的公司与商业模式",
+      "url": "chapters/06-business-model.html#68-结语选择你的浏览器",
+      "body": ""
+    },
+    {
+      "id": "06-business-model-681-没有完美的选择",
+      "title": "6.8.1 没有完美的选择",
+      "chapter": "06",
+      "chapterTitle": "浏览器背后的公司与商业模式",
+      "url": "chapters/06-business-model.html#681-没有完美的选择",
+      "body": ""
+    },
+    {
+      "id": "06-business-model-682-我的建议",
+      "title": "6.8.2 我的建议",
+      "chapter": "06",
+      "chapterTitle": "浏览器背后的公司与商业模式",
+      "url": "chapters/06-business-model.html#682-我的建议",
+      "body": ""
+    },
+    {
+      "id": "06-business-model-683-浏览器的未来",
+      "title": "6.8.3 浏览器的未来",
+      "chapter": "06",
+      "chapterTitle": "浏览器背后的公司与商业模式",
+      "url": "chapters/06-business-model.html#683-浏览器的未来",
+      "body": ""
+    },
+    {
+      "id": "06-business-model-684-ai-与浏览器的融合",
+      "title": "6.8.4 AI 与浏览器的融合",
+      "chapter": "06",
+      "chapterTitle": "浏览器背后的公司与商业模式",
+      "url": "chapters/06-business-model.html#684-ai-与浏览器的融合",
+      "body": ""
+    },
+    {
+      "id": "06-business-model-685-从quot浏览quot到quot理解quot",
+      "title": "6.8.5 从&quot;浏览&quot;到&quot;理解&quot;",
+      "chapter": "06",
+      "chapterTitle": "浏览器背后的公司与商业模式",
+      "url": "chapters/06-business-model.html#685-从quot浏览quot到quot理解quot",
+      "body": ""
+    },
+    {
+      "id": "06-business-model-686-写给科大同学",
+      "title": "6.8.6 写给科大同学",
+      "chapter": "06",
+      "chapterTitle": "浏览器背后的公司与商业模式",
+      "url": "chapters/06-business-model.html#686-写给科大同学",
+      "body": ""
+    },
+    {
+      "id": "06-business-model-69-附录浏览器选择速查表",
+      "title": "6.9 附录：浏览器选择速查表",
+      "chapter": "06",
+      "chapterTitle": "浏览器背后的公司与商业模式",
+      "url": "chapters/06-business-model.html#69-附录浏览器选择速查表",
+      "body": ""
+    },
+    {
+      "id": "06-business-model-691-按使用场景推荐",
+      "title": "6.9.1 按使用场景推荐",
+      "chapter": "06",
+      "chapterTitle": "浏览器背后的公司与商业模式",
+      "url": "chapters/06-business-model.html#691-按使用场景推荐",
+      "body": ""
+    },
+    {
+      "id": "06-business-model-692-必装扩展推荐",
+      "title": "6.9.2 必装扩展推荐",
+      "chapter": "06",
+      "chapterTitle": "浏览器背后的公司与商业模式",
+      "url": "chapters/06-business-model.html#692-必装扩展推荐",
+      "body": ""
+    },
+    {
+      "id": "06-business-model-693-浏览器安全基础设置",
+      "title": "6.9.3 浏览器安全基础设置",
+      "chapter": "06",
+      "chapterTitle": "浏览器背后的公司与商业模式",
+      "url": "chapters/06-business-model.html#693-浏览器安全基础设置",
+      "body": ""
+    },
+    {
+      "id": "06-business-model-694-最后的话",
+      "title": "6.9.4 最后的话",
+      "chapter": "06",
+      "chapterTitle": "浏览器背后的公司与商业模式",
+      "url": "chapters/06-business-model.html#694-最后的话",
+      "body": ""
+    }
+  ]
+}
