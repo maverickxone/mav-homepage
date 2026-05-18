@@ -239,7 +239,7 @@ www.example.com.    3600    IN    A    93.184.216.34
 </ul>
 <p>TLS 的巧妙之处在于：用非对称加密安全地交换一个对称密钥，然后用这个对称密钥加密后续所有通信。</p>
 <p><strong>证书验证</strong></p>
-<p>服务器会发送一个数字证书，证明&quot;我确实是 <a href="http://www.example.com%22%E3%80%82%E6%B5%8F%E8%A7%88%E5%99%A8%E4%BC%9A%E9%AA%8C%E8%AF%81%EF%BC%9A">www.example.com&quot;。浏览器会验证：</a></p>
+<p>服务器会发送一个数字证书，证明&quot;我确实是 <code>www.example.com</code>&quot;。浏览器会验证：</p>
 <ol>
 <li>证书是否由受信任的证书颁发机构（CA）签发</li>
 <li>证书是否在有效期内</li>
@@ -616,6 +616,20 @@ container.appendChild(fragment);  // 一次性插入</code></pre>
     <div class="search-results" role="listbox" aria-label="搜索结果"></div>
   </div>
 </div>
+
+<!-- Side Panel -->
+<div class="side-panel" id="side-panel">
+  <div class="side-panel-resize" id="side-panel-resize"></div>
+  <div class="side-panel-header">
+    <div class="side-panel-tabs">
+      <button class="side-panel-tab active" data-mode="sidenote">补充</button>
+      <button class="side-panel-tab" data-mode="notepad">笔记</button>
+    </div>
+    <button class="side-panel-close" aria-label="关闭">×</button>
+  </div>
+  <div class="side-panel-body"></div>
+</div>
+<button class="notepad-fab" id="notepad-fab" aria-label="便利贴">✎</button>
 
 <!-- Mobile TOC -->
 <button class="mtoc-fab" id="mtoc-fab" aria-label="目录">TOC</button>

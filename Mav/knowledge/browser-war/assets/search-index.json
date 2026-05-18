@@ -377,19 +377,27 @@
       "body": ""
     },
     {
-      "id": "02-engine-war-242-quot开源quot不等于quot开放治理quot",
-      "title": "2.4.2 &quot;开源&quot;不等于&quot;开放治理&quot;",
+      "id": "02-engine-war-242-quot套壳浏览器quot意义何在",
+      "title": "2.4.2 &quot;套壳浏览器&quot;：意义何在？",
       "chapter": "02",
       "chapterTitle": "引擎之争——Chromium 为何一家独大",
-      "url": "chapters/02-engine-war.html#242-quot开源quot不等于quot开放治理quot",
+      "url": "chapters/02-engine-war.html#242-quot套壳浏览器quot意义何在",
       "body": ""
     },
     {
-      "id": "02-engine-war-243-manifest-v3一个典型案例",
-      "title": "2.4.3 Manifest V3：一个典型案例",
+      "id": "02-engine-war-243-quot开源quot不等于quot开放治理quot",
+      "title": "2.4.3 &quot;开源&quot;不等于&quot;开放治理&quot;",
       "chapter": "02",
       "chapterTitle": "引擎之争——Chromium 为何一家独大",
-      "url": "chapters/02-engine-war.html#243-manifest-v3一个典型案例",
+      "url": "chapters/02-engine-war.html#243-quot开源quot不等于quot开放治理quot",
+      "body": ""
+    },
+    {
+      "id": "02-engine-war-244-manifest-v3一个典型案例",
+      "title": "2.4.4 Manifest V3：一个典型案例",
+      "chapter": "02",
+      "chapterTitle": "引擎之争——Chromium 为何一家独大",
+      "url": "chapters/02-engine-war.html#244-manifest-v3一个典型案例",
       "body": ""
     },
     {
@@ -430,54 +438,6 @@
       "chapter": "02",
       "chapterTitle": "引擎之争——Chromium 为何一家独大",
       "url": "chapters/02-engine-war.html#254-作为用户你能做什么",
-      "body": ""
-    },
-    {
-      "id": "02-engine-war-26-深入理解引擎的性能差异",
-      "title": "2.6 深入理解：引擎的性能差异",
-      "chapter": "02",
-      "chapterTitle": "引擎之争——Chromium 为何一家独大",
-      "url": "chapters/02-engine-war.html#26-深入理解引擎的性能差异",
-      "body": ""
-    },
-    {
-      "id": "02-engine-war-261-javascript-引擎性能对比",
-      "title": "2.6.1 JavaScript 引擎性能对比",
-      "chapter": "02",
-      "chapterTitle": "引擎之争——Chromium 为何一家独大",
-      "url": "chapters/02-engine-war.html#261-javascript-引擎性能对比",
-      "body": ""
-    },
-    {
-      "id": "02-engine-war-262-实际性能差异",
-      "title": "2.6.2 实际性能差异",
-      "chapter": "02",
-      "chapterTitle": "引擎之争——Chromium 为何一家独大",
-      "url": "chapters/02-engine-war.html#262-实际性能差异",
-      "body": ""
-    },
-    {
-      "id": "02-engine-war-263-渲染性能css-和布局",
-      "title": "2.6.3 渲染性能：CSS 和布局",
-      "chapter": "02",
-      "chapterTitle": "引擎之争——Chromium 为何一家独大",
-      "url": "chapters/02-engine-war.html#263-渲染性能css-和布局",
-      "body": ""
-    },
-    {
-      "id": "02-engine-war-264-web-标准支持",
-      "title": "2.6.4 Web 标准支持",
-      "chapter": "02",
-      "chapterTitle": "引擎之争——Chromium 为何一家独大",
-      "url": "chapters/02-engine-war.html#264-web-标准支持",
-      "body": ""
-    },
-    {
-      "id": "02-engine-war-265-如何测试跨引擎兼容性",
-      "title": "2.6.5 如何测试跨引擎兼容性",
-      "chapter": "02",
-      "chapterTitle": "引擎之争——Chromium 为何一家独大",
-      "url": "chapters/02-engine-war.html#265-如何测试跨引擎兼容性",
       "body": ""
     },
     {

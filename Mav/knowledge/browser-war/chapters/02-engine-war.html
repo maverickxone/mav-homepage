@@ -272,7 +272,7 @@
 <p>WebKit 的特点：</p>
 <ul>
 <li><strong>轻量高效</strong>：特别适合移动设备（这也是为什么 iPhone 从第一天起就用 WebKit）</li>
-<li><strong>Apple 强制要求</strong>：在 iOS 上，所有浏览器（包括 Chrome for iOS）都必须使用 WebKit 引擎。这是 Apple 的 App Store 政策。所以 iPhone 上的 Chrome 本质上只是一个 WebKit 的壳。（注：欧盟 DMA 法案正在迫使 Apple 放松这一限制）</li>
+<li><strong>Apple 强制要求</strong>：在 iOS 上，所有浏览器（包括 Chrome for iOS）都必须使用 WebKit 引擎。这是 Apple 的 App Store 政策。所以 iPhone 上的 Chrome 本质上只是一个 WebKit 的壳。<span class="sidenote-mark" data-note="<strong>为什么是欧盟在管这些事？</strong><br><br>你可能注意到了，科技反垄断的新闻里总是欧盟在出手（DMA、GDPR、天价罚款），而不是联合国或者什么全球性机构。原因很简单：<br><br><strong>1. 联合国没有执法权。</strong>联合国是协调机构，不是政府。它可以发声明、出报告，但不能罚款、不能强制企业改行为。<br><br><strong>2. 欧盟有统一市场 + 立法权。</strong>欧盟 27 国是一个 4.5 亿人的统一市场，有自己的议会和法院。它制定的法律对所有在欧盟做生意的公司都有约束力——包括美国公司。苹果想在欧洲卖 iPhone，就必须遵守欧盟的规则。<br><br><strong>3. 美国自己不太管。</strong>美国的反垄断执法相对宽松（受自由市场理念影响），而且科技巨头在美国有强大的游说力量。所以很多时候是欧盟先动手，美国后面才跟上。<br><br><strong>4. DMA 的具体要求：</strong>数字市场法案（Digital Markets Act，2024 年生效）要求'守门人'平台（Apple、Google、Meta 等）不能利用平台优势打压竞争。对浏览器来说，就是 Apple 不能强制 iOS 上所有浏览器都用 WebKit——用户应该有选择引擎的权利。">tips</span>（注：欧盟 DMA 法案正在迫使 Apple 放松这一限制）</li>
 <li><strong>JavaScriptCore</strong>：WebKit 自带的 JS 引擎，也叫 Nitro，性能不错但通常略逊于 V8</li>
 </ul>
 <p><strong>Safari 的真正优势：为什么 Apple 用户应该认真考虑它</strong></p>
@@ -402,7 +402,7 @@ Web 开发者更没动力适配 Edge
 <p><strong>"套壳"这个词本身带有贬义</strong>，暗示这些浏览器只是换了个皮肤，没有真正的技术含量。但实际情况比这复杂：</p>
 <p><strong>有价值的"套壳"</strong>：</p>
 <ul>
-<li><strong>Brave</strong>：去掉了 Google 的追踪代码，内置广告拦截和指纹防护，用加密货币（BAT）奖励用户看广告。它的核心卖点是隐私，这是 Chrome 做不到的（因为 Google 靠广告赚钱）。</li>
+<li><strong>Brave</strong>：去掉了 Google 的追踪代码，内置广告拦截和指纹防护，用加密货币（BAT）奖励用户看广告<span class="sidenote-mark" data-note="<strong>BAT（Basic Attention Token）</strong>是 Brave 浏览器的核心商业模式。原理是这样的：Brave 默认拦截所有第三方广告，但用户可以选择开启 Brave 自己的隐私广告（以系统通知的形式推送，不追踪你的浏览行为）。看了广告的用户会获得 BAT 代币作为奖励，可以用来打赏网站创作者，或者兑换成真钱。截至 2025 年，Brave 有超过 7000 万月活用户，BAT 的市值约 2-3 亿美元。这个模式试图解决一个根本矛盾：用户讨厌广告，但内容创作者需要收入。Brave 的答案是'让用户自己选择看不看广告，看了就给钱'。">tips</span>。它的核心卖点是隐私，这是 Chrome 做不到的（因为 Google 靠广告赚钱）。</li>
 <li><strong>Edge</strong>：微软加了更好的内存管理（睡眠标签页）、垂直标签页、集成 Copilot AI、企业管理功能。对于 Windows 用户和企业环境，Edge 确实比 Chrome 更合适。</li>
 <li><strong>Vivaldi</strong>：极致的自定义能力——标签页堆叠、分屏浏览、自定义快捷键、内置邮件客户端。面向 Power User。</li>
 <li><strong>Arc</strong>：重新设计了浏览器的交互范式——侧边栏导航、空间（Spaces）概念、自动归档标签页。虽然底层是 Chromium，但用户体验完全不同。</li>
@@ -536,6 +536,20 @@ chrome.declarativeNetRequest.updateDynamicRules({
     <div class="search-results" role="listbox" aria-label="搜索结果"></div>
   </div>
 </div>
+
+<!-- Side Panel -->
+<div class="side-panel" id="side-panel">
+  <div class="side-panel-resize" id="side-panel-resize"></div>
+  <div class="side-panel-header">
+    <div class="side-panel-tabs">
+      <button class="side-panel-tab active" data-mode="sidenote">补充</button>
+      <button class="side-panel-tab" data-mode="notepad">笔记</button>
+    </div>
+    <button class="side-panel-close" aria-label="关闭">×</button>
+  </div>
+  <div class="side-panel-body"></div>
+</div>
+<button class="notepad-fab" id="notepad-fab" aria-label="便利贴">✎</button>
 
 <!-- Mobile TOC -->
 <button class="mtoc-fab" id="mtoc-fab" aria-label="目录">TOC</button>

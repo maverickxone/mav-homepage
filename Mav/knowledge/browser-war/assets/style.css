@@ -1043,3 +1043,235 @@ kbd {
   .pager { flex-direction: column; gap: var(--space-5); }
   .pager a.next { text-align: left; }
 }
+
+
+/* ============================================================
+   Side Panel (Sidenote + Notepad)
+   ============================================================ */
+
+/* --- Tips trigger mark --- */
+.sidenote-mark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #5ba3d9;
+  background: rgba(135, 206, 250, 0.1);
+  border: 1px solid rgba(135, 206, 250, 0.4);
+  border-radius: 9px;
+  padding: 1px 6px;
+  margin-left: 4px;
+  cursor: pointer;
+  vertical-align: middle;
+  line-height: 1.4;
+  transition: border-color 0.15s, color 0.15s, background 0.15s;
+  user-select: none;
+}
+.sidenote-mark:hover {
+  border-color: rgba(135, 206, 250, 0.8);
+  color: #3d8abf;
+  background: rgba(135, 206, 250, 0.18);
+}
+
+/* --- Notepad floating button --- */
+.notepad-fab {
+  position: fixed;
+  bottom: var(--space-5);
+  right: 72px;
+  z-index: 80;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 1px solid var(--line-2);
+  background: var(--bg-elev);
+  color: var(--muted);
+  font-family: var(--mono);
+  font-size: 14px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 16px -4px rgba(0, 0, 0, 0.15);
+  transition: border-color 0.15s, color 0.15s, box-shadow 0.15s;
+}
+.notepad-fab:hover {
+  border-color: var(--ink-soft);
+  color: var(--ink);
+  box-shadow: 0 6px 20px -4px rgba(0, 0, 0, 0.2);
+}
+
+/* --- Side panel container --- */
+.side-panel {
+  position: fixed;
+  z-index: 400;
+  width: 320px;
+  min-height: 200px;
+  min-width: 240px;
+  background: var(--bg-elev);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  box-shadow: 0 12px 40px -8px rgba(0, 0, 0, 0.18);
+  display: none;
+  flex-direction: column;
+  overflow: hidden;
+  /* Default position */
+  top: 120px;
+  right: 40px;
+  /* Breathing glow */
+  animation: panel-breathe 3s ease-in-out infinite;
+}
+.side-panel > * {
+  direction: ltr;
+}
+.side-panel.open {
+  display: flex;
+  animation: panel-pop 0.25s cubic-bezier(0.34, 1.56, 0.64, 1) forwards, panel-breathe 3s ease-in-out 0.3s infinite;
+}
+.side-panel.typing {
+  animation: none;
+  box-shadow: 0 0 18px 4px rgba(135, 206, 250, 0.5), 0 12px 40px -8px rgba(0, 0, 0, 0.18);
+}
+
+/* --- Custom resize handle (bottom-left) --- */
+.side-panel-resize {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 16px;
+  height: 16px;
+  cursor: nesw-resize;
+  z-index: 10;
+  opacity: 0.4;
+  transition: opacity 0.15s;
+}
+.side-panel-resize:hover { opacity: 0.8; }
+.side-panel-resize::before {
+  content: "";
+  position: absolute;
+  bottom: 4px;
+  left: 4px;
+  width: 8px;
+  height: 8px;
+  border-left: 2px solid var(--muted);
+  border-bottom: 2px solid var(--muted);
+}
+
+@keyframes panel-pop {
+  0% { transform: scale(0.3); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+@keyframes panel-breathe {
+  0%, 100% { box-shadow: 0 0 10px 2px rgba(135, 206, 250, 0.22), 0 12px 40px -8px rgba(0, 0, 0, 0.18); }
+  50% { box-shadow: 0 0 20px 5px rgba(135, 206, 250, 0.45), 0 12px 40px -8px rgba(0, 0, 0, 0.18); }
+}
+
+/* --- Panel header (drag handle + tabs + close) --- */
+.side-panel-header {
+  display: flex;
+  align-items: center;
+  padding: var(--space-2) var(--space-3);
+  border-bottom: 1px solid var(--line);
+  cursor: grab;
+  user-select: none;
+  flex-shrink: 0;
+}
+.side-panel-header:active { cursor: grabbing; }
+
+.side-panel-tabs {
+  display: flex;
+  gap: 0;
+  flex: 1;
+}
+.side-panel-tab {
+  appearance: none;
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid transparent;
+  padding: var(--space-2) var(--space-3);
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+  cursor: pointer;
+  transition: color 0.15s, border-color 0.15s;
+}
+.side-panel-tab:hover { color: var(--ink); }
+.side-panel-tab.active {
+  color: var(--ink);
+  border-bottom-color: var(--ink);
+}
+
+.side-panel-close {
+  appearance: none;
+  background: transparent;
+  border: none;
+  color: var(--muted);
+  font-size: 16px;
+  cursor: pointer;
+  padding: var(--space-1) var(--space-2);
+  line-height: 1;
+  transition: color 0.15s;
+}
+.side-panel-close:hover { color: var(--ink); }
+
+/* --- Panel body --- */
+.side-panel-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: var(--space-4);
+  font-family: var(--sans);
+  font-size: var(--text-sm);
+  line-height: var(--leading-normal);
+  color: var(--ink-2);
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE/Edge */
+}
+.side-panel-body::-webkit-scrollbar { display: none; }
+
+/* --- Notepad textarea --- */
+.side-panel-notepad {
+  width: 100%;
+  height: 100%;
+  min-height: 120px;
+  resize: none;
+  border: none;
+  background: transparent;
+  font-family: var(--sans);
+  font-size: var(--text-sm);
+  line-height: var(--leading-normal);
+  color: var(--ink-2);
+  outline: none;
+}
+.side-panel-notepad::placeholder { color: var(--muted); }
+
+/* --- Dark theme adjustments --- */
+[data-theme="dark"] .side-panel {
+  box-shadow: 0 12px 40px -8px rgba(0, 0, 0, 0.5);
+}
+[data-theme="dark"] .side-panel.open {
+  animation: panel-pop 0.25s cubic-bezier(0.34, 1.56, 0.64, 1) forwards, panel-breathe-dark 3s ease-in-out 0.3s infinite;
+}
+@keyframes panel-breathe-dark {
+  0%, 100% { box-shadow: 0 0 10px 2px rgba(100, 180, 235, 0.15), 0 12px 40px -8px rgba(0, 0, 0, 0.5); }
+  50% { box-shadow: 0 0 20px 5px rgba(100, 180, 235, 0.3), 0 12px 40px -8px rgba(0, 0, 0, 0.5); }
+}
+[data-theme="dark"] .side-panel.typing {
+  animation: none;
+  box-shadow: 0 0 18px 4px rgba(100, 180, 235, 0.4), 0 12px 40px -8px rgba(0, 0, 0, 0.5);
+}
+
+@media (max-width: 768px) {
+  .side-panel {
+    width: calc(100vw - 32px);
+    right: 16px;
+    top: auto;
+    bottom: 80px;
+    max-height: 50vh;
+  }
+  .notepad-fab { right: 20px; bottom: var(--space-5); }
+}
