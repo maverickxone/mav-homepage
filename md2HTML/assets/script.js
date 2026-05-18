@@ -86,6 +86,208 @@
     map.forEach((_, el) => io.observe(el));
   })();
 
+// ── Comments & Likes ──────────────────────────────────────────────
+
+const API_BASE = '/api';
+
+function getOrCreateUser() {
+  if (!localStorage.getItem('mavUserId')) {
+    localStorage.setItem('mavUserId', crypto.randomUUID());
+    localStorage.setItem('mavUsername', `读者#${Math.floor(Math.random() * 9000 + 1000)}`);
+  }
+  return {
+    userId: localStorage.getItem('mavUserId'),
+    username: localStorage.getItem('mavUsername'),
+  };
+}
+
+function getBookChapter() {
+  const m = location.pathname.match(/\/knowledge\/([^/]+)\/chapters\/([^/]+)\.html/);
+  if (!m) return null;
+  return { book: m[1], chapter: m[2] };
+}
+
+function formatTime(ts) {
+  const d = new Date(ts);
+  const pad = n => String(n).padStart(2, '0');
+  return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
+}
+
+function buildCommentsHTML() {
+  const colId = 'comments-panel';
+  return `
+<div class="comments-section">
+  <div class="collapsible">
+    <button class="collapsible-trigger" aria-controls="${colId}" aria-expanded="false">
+      <span class="comments-trigger-label" id="comments-trigger-label">0 条留言，点击展开</span>
+      <svg class="collapsible-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
+        <path d="M6 3l5 5-5 5"/>
+      </svg>
+    </button>
+    <div class="collapsible-content" id="${colId}" hidden>
+      <div class="collapsible-inner">
+        <button class="like-btn" id="like-btn">
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
+            <path d="M8 13.5S1.5 9.5 1.5 5.5a3 3 0 0 1 6-1 3 3 0 0 1 6 1c0 4-6.5 8-6.5 8z"/>
+          </svg>
+          <span id="like-count">0</span>
+        </button>
+        <div class="comments-list" id="comments-list"></div>
+        <div class="comment-form">
+          <div class="comment-identity">
+            <span class="comment-identity-name" id="identity-name"></span>
+            <button class="username-edit-btn" id="username-edit-btn">修改用户名</button>
+          </div>
+          <textarea class="comment-input" id="comment-input" placeholder="写下你的想法…" rows="3"></textarea>
+          <div class="comment-form-footer">
+            <button class="comment-submit" id="comment-submit">发送</button>
+          </div>
+          <div class="comment-error" id="comment-error"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>`;
+}
+
+function renderComments(comments) {
+  const list = document.getElementById('comments-list');
+  if (!list) return;
+  if (comments.length === 0) {
+    list.innerHTML = '<p class="comments-empty">还没有评论，来第一个吧。</p>';
+    return;
+  }
+  list.innerHTML = comments.map(c => `
+    <div class="comment-item">
+      <div class="comment-meta">
+        <span class="comment-username">${escapeHtml(c.username)}</span>
+        <span class="comment-time">${formatTime(c.created_at)}</span>
+      </div>
+      <div class="comment-content">${escapeHtml(c.content)}</div>
+    </div>`).join('');
+}
+
+function escapeHtml(s) {
+  return String(s)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
+}
+
+async function initComments() {
+  const loc = getBookChapter();
+  if (!loc) return;
+  const { book, chapter } = loc;
+  const { userId, username } = getOrCreateUser();
+
+  const pager = document.querySelector('.pager');
+  if (!pager) return;
+  pager.insertAdjacentHTML('afterend', buildCommentsHTML());
+
+  // Re-init this collapsible (general init already ran on page load)
+  const trigger = pager.nextElementSibling.querySelector('.collapsible-trigger');
+  const contentEl = document.getElementById('comments-panel');
+  if (trigger && contentEl) {
+    contentEl.hidden = true;
+    trigger.setAttribute('aria-expanded', 'false');
+    trigger.addEventListener('click', () => {
+      const expanded = trigger.getAttribute('aria-expanded') === 'true';
+      trigger.setAttribute('aria-expanded', String(!expanded));
+      contentEl.hidden = expanded;
+      if (!expanded) fetchComments();
+    });
+  }
+
+  document.getElementById('identity-name').textContent = username;
+
+  document.getElementById('username-edit-btn').addEventListener('click', () => {
+    const cur = localStorage.getItem('mavUsername');
+    const next = prompt('修改用户名：', cur);
+    if (next && next.trim()) {
+      const trimmed = next.trim().slice(0, 50);
+      localStorage.setItem('mavUsername', trimmed);
+      document.getElementById('identity-name').textContent = trimmed;
+    }
+  });
+
+  const likeBtn = document.getElementById('like-btn');
+  likeBtn.addEventListener('click', async () => {
+    likeBtn.disabled = true;
+    try {
+      const r = await fetch(`${API_BASE}/likes/${book}/${chapter}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ userId }),
+      });
+      if (r.ok) {
+        const data = await r.json();
+        document.getElementById('like-count').textContent = data.likeCount;
+        likeBtn.classList.toggle('liked', data.liked);
+      }
+    } finally {
+      likeBtn.disabled = false;
+    }
+  });
+
+  const submitBtn = document.getElementById('comment-submit');
+  const input = document.getElementById('comment-input');
+  const errorEl = document.getElementById('comment-error');
+
+  submitBtn.addEventListener('click', async () => {
+    const content = input.value.trim();
+    if (!content) return;
+    errorEl.textContent = '';
+    submitBtn.disabled = true;
+    try {
+      const r = await fetch(`${API_BASE}/comments/${book}/${chapter}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          userId,
+          username: localStorage.getItem('mavUsername'),
+          content,
+        }),
+      });
+      if (r.ok) {
+        input.value = '';
+        await fetchComments();
+      } else {
+        const data = await r.json();
+        errorEl.textContent = data.error || '发送失败，请重试';
+      }
+    } catch {
+      errorEl.textContent = '网络错误，请重试';
+    } finally {
+      submitBtn.disabled = false;
+    }
+  });
+
+  async function fetchComments() {
+    try {
+      const r = await fetch(`${API_BASE}/comments/${book}/${chapter}?userId=${encodeURIComponent(userId)}`);
+      if (!r.ok) return;
+      const data = await r.json();
+      const label = document.getElementById('comments-trigger-label');
+      if (label) label.textContent = `${data.comments.length} 条留言，点击展开`;
+      document.getElementById('like-count').textContent = data.likeCount;
+      likeBtn.classList.toggle('liked', data.liked);
+      renderComments(data.comments);
+    } catch {
+      // silently ignore fetch errors
+    }
+  }
+
+  // Load comment count on page load (without expanding)
+  fetchComments();
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  if (location.pathname.includes('/chapters/')) {
+    initComments();
+  }
+});
+
   // ---------- 4. Settings popover (theme + size) ----------
   (function () {
     const btn = document.getElementById('settings-btn');

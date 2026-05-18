@@ -86,6 +86,208 @@
     map.forEach((_, el) => io.observe(el));
   })();
 
+// ── Comments & Likes ──────────────────────────────────────────────
+
+const API_BASE = '/api';
+
+function getOrCreateUser() {
+  if (!localStorage.getItem('mavUserId')) {
+    localStorage.setItem('mavUserId', crypto.randomUUID());
+    localStorage.setItem('mavUsername', `读者#${Math.floor(Math.random() * 9000 + 1000)}`);
+  }
+  return {
+    userId: localStorage.getItem('mavUserId'),
+    username: localStorage.getItem('mavUsername'),
+  };
+}
+
+function getBookChapter() {
+  const m = location.pathname.match(/\/knowledge\/([^/]+)\/chapters\/([^/]+)\.html/);
+  if (!m) return null;
+  return { book: m[1], chapter: m[2] };
+}
+
+function formatTime(ts) {
+  const d = new Date(ts);
+  const pad = n => String(n).padStart(2, '0');
+  return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
+}
+
+function buildCommentsHTML() {
+  const colId = 'comments-panel';
+  return `
+<div class="comments-section">
+  <div class="collapsible">
+    <button class="collapsible-trigger" aria-controls="${colId}" aria-expanded="false">
+      <span class="comments-trigger-label" id="comments-trigger-label">0 条留言，点击展开</span>
+      <svg class="collapsible-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
+        <path d="M6 3l5 5-5 5"/>
+      </svg>
+    </button>
+    <div class="collapsible-content" id="${colId}" hidden>
+      <div class="collapsible-inner">
+        <button class="like-btn" id="like-btn">
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
+            <path d="M8 13.5S1.5 9.5 1.5 5.5a3 3 0 0 1 6-1 3 3 0 0 1 6 1c0 4-6.5 8-6.5 8z"/>
+          </svg>
+          <span id="like-count">0</span>
+        </button>
+        <div class="comments-list" id="comments-list"></div>
+        <div class="comment-form">
+          <div class="comment-identity">
+            <span class="comment-identity-name" id="identity-name"></span>
+            <button class="username-edit-btn" id="username-edit-btn">修改用户名</button>
+          </div>
+          <textarea class="comment-input" id="comment-input" placeholder="写下你的想法…" rows="3"></textarea>
+          <div class="comment-form-footer">
+            <button class="comment-submit" id="comment-submit">发送</button>
+          </div>
+          <div class="comment-error" id="comment-error"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>`;
+}
+
+function renderComments(comments) {
+  const list = document.getElementById('comments-list');
+  if (!list) return;
+  if (comments.length === 0) {
+    list.innerHTML = '<p class="comments-empty">还没有评论，来第一个吧。</p>';
+    return;
+  }
+  list.innerHTML = comments.map(c => `
+    <div class="comment-item">
+      <div class="comment-meta">
+        <span class="comment-username">${escapeHtml(c.username)}</span>
+        <span class="comment-time">${formatTime(c.created_at)}</span>
+      </div>
+      <div class="comment-content">${escapeHtml(c.content)}</div>
+    </div>`).join('');
+}
+
+function escapeHtml(s) {
+  return String(s)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
+}
+
+async function initComments() {
+  const loc = getBookChapter();
+  if (!loc) return;
+  const { book, chapter } = loc;
+  const { userId, username } = getOrCreateUser();
+
+  const pager = document.querySelector('.pager');
+  if (!pager) return;
+  pager.insertAdjacentHTML('afterend', buildCommentsHTML());
+
+  // Re-init this collapsible (general init already ran on page load)
+  const trigger = pager.nextElementSibling.querySelector('.collapsible-trigger');
+  const contentEl = document.getElementById('comments-panel');
+  if (trigger && contentEl) {
+    contentEl.hidden = true;
+    trigger.setAttribute('aria-expanded', 'false');
+    trigger.addEventListener('click', () => {
+      const expanded = trigger.getAttribute('aria-expanded') === 'true';
+      trigger.setAttribute('aria-expanded', String(!expanded));
+      contentEl.hidden = expanded;
+      if (!expanded) fetchComments();
+    });
+  }
+
+  document.getElementById('identity-name').textContent = username;
+
+  document.getElementById('username-edit-btn').addEventListener('click', () => {
+    const cur = localStorage.getItem('mavUsername');
+    const next = prompt('修改用户名：', cur);
+    if (next && next.trim()) {
+      const trimmed = next.trim().slice(0, 50);
+      localStorage.setItem('mavUsername', trimmed);
+      document.getElementById('identity-name').textContent = trimmed;
+    }
+  });
+
+  const likeBtn = document.getElementById('like-btn');
+  likeBtn.addEventListener('click', async () => {
+    likeBtn.disabled = true;
+    try {
+      const r = await fetch(`${API_BASE}/likes/${book}/${chapter}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ userId }),
+      });
+      if (r.ok) {
+        const data = await r.json();
+        document.getElementById('like-count').textContent = data.likeCount;
+        likeBtn.classList.toggle('liked', data.liked);
+      }
+    } finally {
+      likeBtn.disabled = false;
+    }
+  });
+
+  const submitBtn = document.getElementById('comment-submit');
+  const input = document.getElementById('comment-input');
+  const errorEl = document.getElementById('comment-error');
+
+  submitBtn.addEventListener('click', async () => {
+    const content = input.value.trim();
+    if (!content) return;
+    errorEl.textContent = '';
+    submitBtn.disabled = true;
+    try {
+      const r = await fetch(`${API_BASE}/comments/${book}/${chapter}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          userId,
+          username: localStorage.getItem('mavUsername'),
+          content,
+        }),
+      });
+      if (r.ok) {
+        input.value = '';
+        await fetchComments();
+      } else {
+        const data = await r.json();
+        errorEl.textContent = data.error || '发送失败，请重试';
+      }
+    } catch {
+      errorEl.textContent = '网络错误，请重试';
+    } finally {
+      submitBtn.disabled = false;
+    }
+  });
+
+  async function fetchComments() {
+    try {
+      const r = await fetch(`${API_BASE}/comments/${book}/${chapter}?userId=${encodeURIComponent(userId)}`);
+      if (!r.ok) return;
+      const data = await r.json();
+      const label = document.getElementById('comments-trigger-label');
+      if (label) label.textContent = `${data.comments.length} 条留言，点击展开`;
+      document.getElementById('like-count').textContent = data.likeCount;
+      likeBtn.classList.toggle('liked', data.liked);
+      renderComments(data.comments);
+    } catch {
+      // silently ignore fetch errors
+    }
+  }
+
+  // Load comment count on page load (without expanding)
+  fetchComments();
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  if (location.pathname.includes('/chapters/')) {
+    initComments();
+  }
+});
+
   // ---------- 4. Settings popover (theme + size) ----------
   (function () {
     const btn = document.getElementById('settings-btn');
@@ -418,3 +620,311 @@
   })();
 
 })();
+
+
+  // ---------- 11. Side Panel (Sidenote + Notepad) ----------
+  (function () {
+    const panel = document.getElementById('side-panel');
+    if (!panel) return;
+
+    const tabBtns = panel.querySelectorAll('.side-panel-tab');
+    const bodyEl = panel.querySelector('.side-panel-body');
+    const closeBtn = panel.querySelector('.side-panel-close');
+    const header = panel.querySelector('.side-panel-header');
+    const notepadFab = document.getElementById('notepad-fab');
+
+    // Book slug for localStorage key
+    const pathParts = window.location.pathname.split('/');
+    const knowledgeIdx = pathParts.indexOf('knowledge');
+    const bookSlug = knowledgeIdx >= 0 ? pathParts[knowledgeIdx + 1] : 'default';
+    const NOTES_KEY = 'md2html-notes-' + bookSlug;
+
+    let currentMode = null; // 'sidenote' or 'notepad'
+    let notepadDirty = false;
+
+    // --- Open / Close ---
+    function openPanel(mode, content) {
+      currentMode = mode;
+      panel.classList.add('open');
+      panel.classList.remove('typing');
+
+      // Update tabs
+      tabBtns.forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.mode === mode);
+      });
+
+      if (mode === 'sidenote') {
+        bodyEl.innerHTML = '<div class="side-panel-sidenote-content">' + content + '</div>';
+      } else {
+        const saved = localStorage.getItem(NOTES_KEY) || '';
+        bodyEl.innerHTML = '<textarea class="side-panel-notepad" placeholder="随手记点什么...">' + escapeHtml(saved) + '</textarea>';
+        const textarea = bodyEl.querySelector('.side-panel-notepad');
+        textarea.addEventListener('input', () => {
+          localStorage.setItem(NOTES_KEY, textarea.value);
+          notepadDirty = textarea.value.trim().length > 0;
+        });
+        textarea.addEventListener('focus', () => panel.classList.add('typing'));
+        textarea.addEventListener('blur', () => panel.classList.remove('typing'));
+        notepadDirty = saved.trim().length > 0;
+      }
+    }
+
+    function closePanel() {
+      panel.classList.remove('open', 'typing');
+      currentMode = null;
+    }
+
+    function escapeHtml(str) {
+      const div = document.createElement('div');
+      div.textContent = str;
+      return div.innerHTML;
+    }
+
+    // --- Close button ---
+    if (closeBtn) closeBtn.addEventListener('click', closePanel);
+
+    // --- Click outside to close (only in sidenote mode) ---
+    document.addEventListener('mousedown', (e) => {
+      if (panel.classList.contains('open') && currentMode === 'sidenote' &&
+          !panel.contains(e.target) && 
+          !e.target.closest('.sidenote-mark') && !e.target.closest('.notepad-fab')) {
+        closePanel();
+      }
+    });
+
+    // --- Tab switching ---
+    tabBtns.forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const mode = btn.dataset.mode;
+        if (mode === 'notepad') {
+          openPanel('notepad');
+        } else if (mode === 'sidenote') {
+          // Show tips directory for this page
+          openPanel('sidenote', buildTipsDirectory());
+        }
+      });
+    });
+
+    // --- Build tips directory from page content ---
+    function buildTipsDirectory() {
+      const marks = document.querySelectorAll('.sidenote-mark');
+      if (marks.length === 0) {
+        return '<p style="color:var(--muted)">本章暂无补充内容</p>';
+      }
+
+      let html = '<p style="color:var(--muted);margin-bottom:12px;">点击下方条目跳转到对应位置</p>';
+      html += '<div style="display:flex;flex-direction:column;gap:8px;">';
+
+      marks.forEach((mark, i) => {
+        // Find nearest heading above this mark
+        let heading = '';
+        let el = mark;
+        while (el) {
+          el = el.previousElementSibling || (el.parentElement !== document.body ? el.parentElement : null);
+          if (el && /^H[23]$/.test(el.tagName)) {
+            heading = el.textContent.trim();
+            break;
+          }
+        }
+        if (!heading) {
+          // Walk up DOM to find heading
+          let parent = mark.closest('h2, h3, li, p');
+          let walker = parent || mark;
+          while (walker && walker !== document.body) {
+            let prev = walker.previousElementSibling;
+            while (prev) {
+              if (/^H[23]$/.test(prev.tagName)) { heading = prev.textContent.trim(); break; }
+              prev = prev.previousElementSibling;
+            }
+            if (heading) break;
+            walker = walker.parentElement;
+          }
+        }
+
+        // Extract summary from data-note (strip HTML, first 30 chars)
+        const rawNote = mark.getAttribute('data-note') || '';
+        const tempDiv = document.createElement('div');
+        tempDiv.innerHTML = rawNote;
+        const summary = tempDiv.textContent.trim().substring(0, 40) + (tempDiv.textContent.length > 40 ? '...' : '');
+
+        html += '<a class="tips-dir-item" data-tips-index="' + i + '" style="display:block;padding:8px 10px;border:1px solid var(--line);border-radius:4px;cursor:pointer;text-decoration:none;transition:background 0.15s;">';
+        html += '<div style="font-family:var(--mono);font-size:10px;color:var(--muted);letter-spacing:0.04em;margin-bottom:2px;">' + escapeHtml(heading || '—') + '</div>';
+        html += '<div style="font-size:13px;color:var(--ink-2);">' + escapeHtml(summary) + '</div>';
+        html += '</a>';
+      });
+
+      html += '</div>';
+      return html;
+    }
+
+    // --- Tips directory click handler (delegated) ---
+    bodyEl.addEventListener('click', (e) => {
+      const item = e.target.closest('.tips-dir-item');
+      if (!item) return;
+      const index = parseInt(item.dataset.tipsIndex);
+      const marks = document.querySelectorAll('.sidenote-mark');
+      if (marks[index]) {
+        marks[index].scrollIntoView({ behavior: 'smooth', block: 'center' });
+        // Trigger the tips content
+        setTimeout(() => {
+          const note = marks[index].getAttribute('data-note') || '';
+          openPanel('sidenote', note);
+        }, 400);
+      }
+    });
+
+    // --- Sidenote marks ---
+    document.querySelectorAll('.sidenote-mark').forEach(mark => {
+      mark.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const note = mark.getAttribute('data-note') || mark.getAttribute('title') || '';
+        if (panel.classList.contains('open') && currentMode === 'sidenote') {
+          // Toggle off if clicking same mark
+          closePanel();
+        } else {
+          openPanel('sidenote', note);
+        }
+      });
+    });
+
+    // --- Notepad FAB ---
+    if (notepadFab) {
+      notepadFab.addEventListener('click', (e) => {
+        e.stopPropagation();
+        if (panel.classList.contains('open') && currentMode === 'notepad') {
+          closePanel();
+        } else {
+          openPanel('notepad');
+        }
+      });
+    }
+
+    // --- Persist panel state across chapters ---
+    const PANEL_STATE_KEY = 'md2html-panel-state-' + bookSlug;
+
+    function savePanelState() {
+      const state = { open: panel.classList.contains('open'), mode: currentMode };
+      localStorage.setItem(PANEL_STATE_KEY, JSON.stringify(state));
+    }
+
+    function restorePanelState() {
+      try {
+        const raw = localStorage.getItem(PANEL_STATE_KEY);
+        if (!raw) return;
+        const state = JSON.parse(raw);
+        if (state.open && state.mode === 'notepad') {
+          openPanel('notepad');
+        }
+      } catch {}
+    }
+
+    // Override openPanel/closePanel to persist state
+    const _origOpen = openPanel;
+    const _origClose = closePanel;
+    openPanel = function(mode, content) {
+      _origOpen(mode, content);
+      savePanelState();
+    };
+    closePanel = function() {
+      _origClose();
+      savePanelState();
+    };
+
+    // Restore on page load
+    restorePanelState();
+
+    // --- Link click interception (warn only when leaving this book) ---
+    const bookPathPrefix = '/knowledge/' + bookSlug + '/';
+
+    document.addEventListener('click', (e) => {
+      const link = e.target.closest('a[href]');
+      if (!link) return;
+      if (!notepadDirty) return;
+
+      const href = link.getAttribute('href');
+      // Skip anchors, javascript:, etc.
+      if (!href || href.startsWith('#') || href.startsWith('javascript:')) return;
+
+      // Resolve relative URL to absolute
+      const resolved = new URL(href, window.location.href);
+
+      // Check if destination is within the same book
+      if (resolved.pathname.includes(bookPathPrefix)) {
+        // Same book — let it go, no warning
+        return;
+      }
+
+      // Leaving the book — ask for confirmation
+      const confirmed = window.confirm('你的便利贴还有内容，确定要离开这本书吗？');
+      if (!confirmed) {
+        e.preventDefault();
+      }
+    });
+
+    // --- Draggable ---
+    let isDragging = false;
+    let isResizing = false;
+    let dragOffsetX = 0;
+    let dragOffsetY = 0;
+
+    if (header) {
+      header.addEventListener('mousedown', (e) => {
+        // Only drag from header, not from buttons
+        if (e.target.closest('button')) return;
+        isDragging = true;
+        const rect = panel.getBoundingClientRect();
+        dragOffsetX = e.clientX - rect.left;
+        dragOffsetY = e.clientY - rect.top;
+        panel.style.transition = 'none';
+        e.preventDefault();
+      });
+    }
+
+    // --- Resizable (bottom-left handle) ---
+    const resizeHandle = document.getElementById('side-panel-resize');
+    if (resizeHandle) {
+      resizeHandle.addEventListener('mousedown', (e) => {
+        isResizing = true;
+        panel.style.transition = 'none';
+        e.preventDefault();
+        e.stopPropagation();
+      });
+    }
+
+    document.addEventListener('mousemove', (e) => {
+      if (isDragging) {
+        const x = e.clientX - dragOffsetX;
+        const y = e.clientY - dragOffsetY;
+        panel.style.left = x + 'px';
+        panel.style.top = y + 'px';
+        panel.style.right = 'auto';
+      }
+      if (isResizing) {
+        const rect = panel.getBoundingClientRect();
+        // Resize from bottom-left: width grows leftward, height grows downward
+        const newWidth = rect.right - e.clientX;
+        const newHeight = e.clientY - rect.top;
+        if (newWidth >= 240) {
+          panel.style.width = newWidth + 'px';
+          panel.style.left = e.clientX + 'px';
+          panel.style.right = 'auto';
+        }
+        if (newHeight >= 200) {
+          panel.style.height = newHeight + 'px';
+        }
+      }
+    });
+
+    document.addEventListener('mouseup', () => {
+      if (isDragging) {
+        isDragging = false;
+        panel.style.transition = '';
+      }
+      if (isResizing) {
+        isResizing = false;
+        panel.style.transition = '';
+      }
+    });
+
+  })();

@@ -585,6 +585,14 @@
       "body": ""
     },
     {
+      "id": "03-server-hardware-命令行-vs-图形界面一个例子",
+      "title": "命令行 vs 图形界面：一个例子",
+      "chapter": "03",
+      "chapterTitle": "服务器——硬件篇",
+      "url": "chapters/03-server-hardware.html#命令行-vs-图形界面一个例子",
+      "body": ""
+    },
+    {
       "id": "03-server-hardware-cpu核数怎么选",
       "title": "CPU：核数怎么选？",
       "chapter": "03",
@@ -673,11 +681,11 @@
       "body": ""
     },
     {
-      "id": "03-server-hardware-关于你的疑问quotssd-慢一点但便宜quot",
-      "title": "关于你的疑问：&quot;SSD 慢一点但便宜？&quot;",
+      "id": "03-server-hardware-nvme-ssd-vs-普通-ssd",
+      "title": "NVMe SSD vs 普通 SSD",
       "chapter": "03",
       "chapterTitle": "服务器——硬件篇",
-      "url": "chapters/03-server-hardware.html#关于你的疑问quotssd-慢一点但便宜quot",
+      "url": "chapters/03-server-hardware.html#nvme-ssd-vs-普通-ssd",
       "body": ""
     },
     {
@@ -1446,6 +1454,30 @@
       "chapter": "05",
       "chapterTitle": "总结、拓展与下一步",
       "url": "chapters/05-summary.html#彩蛋",
+      "body": ""
+    },
+    {
+      "id": "05-summary-互联网的冷知识",
+      "title": "互联网的冷知识",
+      "chapter": "05",
+      "chapterTitle": "总结、拓展与下一步",
+      "url": "chapters/05-summary.html#互联网的冷知识",
+      "body": ""
+    },
+    {
+      "id": "05-summary-关于这本书本身",
+      "title": "关于这本书本身",
+      "chapter": "05",
+      "chapterTitle": "总结、拓展与下一步",
+      "url": "chapters/05-summary.html#关于这本书本身",
+      "body": ""
+    },
+    {
+      "id": "05-summary-推荐阅读和资源",
+      "title": "推荐阅读和资源",
+      "chapter": "05",
+      "chapterTitle": "总结、拓展与下一步",
+      "url": "chapters/05-summary.html#推荐阅读和资源",
       "body": ""
     },
     {

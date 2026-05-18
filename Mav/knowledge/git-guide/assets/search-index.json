@@ -415,6 +415,86 @@
       "chapterTitle": "速查表与进阶操作",
       "url": "chapters/04-cheatsheet-advanced.html#git-reflog-后悔药",
       "body": ""
+    },
+    {
+      "id": "05-practice-troubleshoot",
+      "title": "实战场景与常见排错",
+      "chapter": "05",
+      "chapterTitle": "实战场景与常见排错",
+      "url": "chapters/05-practice-troubleshoot.html",
+      "body": "   bash\n  查看 HEAD 的移动历史\ngit reflog\n  输出：\n  a3f8c2d HEAD@ 0 : reset: moving to HEAD 1\n  7b9e1f3 HEAD@ 1 : commit: feat: 添加传感器\n\n  恢复到误操作之前的状态\ngit reset   hard HEAD@ 1 \n   \n\n\n\n下面通过三个完整场景，把前面学到的所有知识串联起来。\n\n\n   实战一：独立开发并发布到 GitHub\n\n  场景  ：你独自开发一个 RoboGame 的电机控制库，从零建立项目并发布到 GitHub。\n\n     第1步：在 GitHub 创建仓库\n\n1. 登录 GitHub，点击右上角   \"+\"   →   \"New repository\"  \n2. 填写仓库名： motor control lib \n3. 选择   Public   或   Private  \n4. 勾选   \"Add a README file\"  \n5. 在  .gitignore  下拉中选择   C  \n6. 点击   \"Create repository\"  \n\n     第2步：克隆到本地\n\n   bash\n  复制 GitHub 上的 SSH 地址（点击 Code 按钮获取）\ngit clone git@github.com:YourName/motor control lib.git\n\n  进入项目目录\ncd motor control lib\n\n  查看状态（此时应该是干净的）\ngit status\n   \n\n     第3步：创建项目结构\n\n   bash\n  创建目录结构\nmkdir  p src include tests\n   \n\n创建  include/motor.h ：\n\n   c\n ifndef MOTOR H\n define MOTOR H\n\n/  电机方向枚举  /\ntypedef enum  \n    MOTOR FORWARD  =  1,\n    MOTOR BACKWARD =  1,\n    MOTOR STOP     =  0\n  MotorDir t;\n\n/  初始化电机驱动（调用一次即可）  /\nvoid motor init void ;\n\n/  设置电机速度，speed 范围  100 到 100  /\nvoid motor set speed int channel, int speed ;\n\n/  停止所有电机  /\nvoid motor stop all void ;\n\n endif /  MOTOR H  /\n   \n\n创建  src/motor.c ：\n\n   c\n include \"motor.h\"\n include \"stm32f4xx hal.h\"   /  根据你的 MCU 修改头文件  /\n\n/  \n   @brief 初始化电机驱动\n          需要在 main   最开始调用一次\n  /\nvoid motor init void   \n    /  TODO: 初始化 PWM 定时器和方向控制 GPIO  /\n \n\n/  \n   @brief 设置指定通道电机速度\n   @param channel  通道编号，范围 1 4\n   @param speed    速度，范围  100 100\n                   正数前进，负数后退，0 停止\n  /\nvoid motor set speed int channel, int speed   \n    /  限幅：确保速度在合法范围内，防止 PWM 越界  /\n    if  speed   100   speed = 100;\n    if  speed <  100  speed =  100;\n\n    /  TODO: 根据 speed 符号设置方向 GPIO  /\n    /  TODO: 将 speed 绝对值映射到 PWM 占空比  /\n \n\n/  \n   @brief 紧急停止所有电机\n  /\nvoid motor stop all void   \n    int i;\n    /  遍历所有通道，全部设为 0  /\n    for  i = 1; i <= 4; i++   \n        motor set speed i, 0 ;\n     \n \n   \n\n     第4步：第一次提交\n\n   bash\n  查看哪些文件需要提交\ngit status\n\n  暂存所有新文件\ngit add .\n\n  再次确认暂存内容\ngit status\n\n  提交（使用多行信息）\ngit commit  m \"feat: 添加电机控制模块基础框架\n\n"
+    },
+    {
+      "id": "05-practice-troubleshoot-实战一独立开发并发布到-github",
+      "title": "实战一：独立开发并发布到 GitHub",
+      "chapter": "05",
+      "chapterTitle": "实战场景与常见排错",
+      "url": "chapters/05-practice-troubleshoot.html#实战一独立开发并发布到-github",
+      "body": ""
+    },
+    {
+      "id": "05-practice-troubleshoot-实战二多人协作开发",
+      "title": "实战二：多人协作开发",
+      "chapter": "05",
+      "chapterTitle": "实战场景与常见排错",
+      "url": "chapters/05-practice-troubleshoot.html#实战二多人协作开发",
+      "body": ""
+    },
+    {
+      "id": "05-practice-troubleshoot-实战三救援操作误操作后恢复",
+      "title": "实战三：救援操作——误操作后恢复",
+      "chapter": "05",
+      "chapterTitle": "实战场景与常见排错",
+      "url": "chapters/05-practice-troubleshoot.html#实战三救援操作误操作后恢复",
+      "body": ""
+    },
+    {
+      "id": "05-practice-troubleshoot-q1git-push-报错-quotpermission-denied-publickeyquot",
+      "title": "Q1：git push 报错 &quot;Permission denied (publickey)&quot;",
+      "chapter": "05",
+      "chapterTitle": "实战场景与常见排错",
+      "url": "chapters/05-practice-troubleshoot.html#q1git-push-报错-quotpermission-denied-publickeyquot",
+      "body": ""
+    },
+    {
+      "id": "05-practice-troubleshoot-q2如何查看某次提交的完整改动",
+      "title": "Q2：如何查看某次提交的完整改动",
+      "chapter": "05",
+      "chapterTitle": "实战场景与常见排错",
+      "url": "chapters/05-practice-troubleshoot.html#q2如何查看某次提交的完整改动",
+      "body": ""
+    },
+    {
+      "id": "05-practice-troubleshoot-q3如何彻底放弃所有未提交改动",
+      "title": "Q3：如何彻底放弃所有未提交改动",
+      "chapter": "05",
+      "chapterTitle": "实战场景与常见排错",
+      "url": "chapters/05-practice-troubleshoot.html#q3如何彻底放弃所有未提交改动",
+      "body": ""
+    },
+    {
+      "id": "05-practice-troubleshoot-q4中文文件名显示乱码",
+      "title": "Q4：中文文件名显示乱码",
+      "chapter": "05",
+      "chapterTitle": "实战场景与常见排错",
+      "url": "chapters/05-practice-troubleshoot.html#q4中文文件名显示乱码",
+      "body": ""
+    },
+    {
+      "id": "05-practice-troubleshoot-q5每次-push-都要输密码",
+      "title": "Q5：每次 push 都要输密码",
+      "chapter": "05",
+      "chapterTitle": "实战场景与常见排错",
+      "url": "chapters/05-practice-troubleshoot.html#q5每次-push-都要输密码",
+      "body": ""
+    },
+    {
+      "id": "05-practice-troubleshoot-q6如何查看是谁修改了某一行代码",
+      "title": "Q6：如何查看是谁修改了某一行代码",
+      "chapter": "05",
+      "chapterTitle": "实战场景与常见排错",
+      "url": "chapters/05-practice-troubleshoot.html#q6如何查看是谁修改了某一行代码",
+      "body": ""
     }
   ]
 }

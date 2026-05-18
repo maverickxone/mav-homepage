@@ -70,6 +70,7 @@
     <span>≈ 30 MIN READ</span>
   </div>
   <h1>第四章：完整拼图——主板、芯片组与融合架构</h1>
+
 </header>
     <hr>
 <p>【上章回顾】上一章，我们深入了操作系统这位&quot;看不见的管家&quot;——从进程调度到文件系统，从驱动程序到资源管理，你已经知道了软件层面是如何指挥硬件干活的。但我们留下了一个关键问题：CPU、内存、硬盘、GPU……这些部件物理上到底是怎么连在一起的？谁来决定它们的&quot;座位安排&quot;？</p>
@@ -1176,6 +1177,20 @@ Get-WmiObject MSAcpi_ThermalZoneTemperature -Namespace "root/wmi" 2&gt;$null |
     <div class="search-results" role="listbox" aria-label="搜索结果"></div>
   </div>
 </div>
+
+<!-- Side Panel -->
+<div class="side-panel" id="side-panel">
+  <div class="side-panel-resize" id="side-panel-resize"></div>
+  <div class="side-panel-header">
+    <div class="side-panel-tabs">
+      <button class="side-panel-tab active" data-mode="sidenote">补充</button>
+      <button class="side-panel-tab" data-mode="notepad">笔记</button>
+    </div>
+    <button class="side-panel-close" aria-label="关闭">×</button>
+  </div>
+  <div class="side-panel-body"></div>
+</div>
+<button class="notepad-fab" id="notepad-fab" aria-label="便利贴">✎</button>
 
 <!-- Mobile TOC -->
 <button class="mtoc-fab" id="mtoc-fab" aria-label="目录">TOC</button>
