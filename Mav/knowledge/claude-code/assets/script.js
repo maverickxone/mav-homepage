@@ -1,7 +1,5 @@
 // ============================================================
-// md2HTML — Core Interactions
-// Theme toggle, progress bar, TOC highlighting, collapsible,
-// tabs, search, syntax highlighting, reading progress tracker
+// Claude Code 使用指南 — interactions
 // ============================================================
 
 (function () {
@@ -9,8 +7,8 @@
 
   // ---------- 0. Theme & size preference ----------
   const root = document.documentElement;
-  const savedTheme = localStorage.getItem('md2html-theme');
-  const savedSize = localStorage.getItem('md2html-size');
+  const savedTheme = localStorage.getItem('cc-theme');
+  const savedSize = localStorage.getItem('cc-size');
   if (savedTheme === 'dark') root.setAttribute('data-theme', 'dark');
   if (savedSize) root.setAttribute('data-size', savedSize);
   else root.setAttribute('data-size', 'm');
@@ -86,209 +84,216 @@
     map.forEach((_, el) => io.observe(el));
   })();
 
-// ── Comments & Likes ──────────────────────────────────────────────
+  // ---------- 4. Terminal typing demo ----------
+  (function () {
+    const demo = document.getElementById('term-demo');
+    if (!demo) return;
 
-const API_BASE = '/api';
+    const script = [
+      { type: 'prompt' },
+      { type: 'type', text: 'claude', cls: 't-cmd', speed: 55 },
+      { type: 'enter' },
+      { type: 'claude', text: '欢迎使用 Claude Code。我可以读写项目文件、运行命令，也可以只陪你聊代码。', delay: 500 },
+      { type: 'prompt', delay: 700 },
+      { type: 'type', text: '帮我看看 src/ 下有哪些 TypeScript 文件，选三个最重要的解释一下。', cls: 't-user', speed: 26 },
+      { type: 'enter' },
+      { type: 'dim', text: '调用工具 Glob (**/*.ts)', delay: 450 },
+      { type: 'dim', text: '找到 47 个文件', delay: 280 },
+      { type: 'dim', text: '调用工具 Read ×3', delay: 380 },
+      { type: 'claude', text: '核心三个：index.ts 是入口，router.ts 挂载了所有路由，db.ts 封装了连接池。要我继续深入吗？', delay: 580 },
+      { type: 'prompt', delay: 500 },
+      { type: 'cursor' },
+    ];
 
-function getOrCreateUser() {
-  if (!localStorage.getItem('mavUserId')) {
-    localStorage.setItem('mavUserId', crypto.randomUUID());
-    localStorage.setItem('mavUsername', `读者#${Math.floor(Math.random() * 9000 + 1000)}`);
-  }
-  return {
-    userId: localStorage.getItem('mavUserId'),
-    username: localStorage.getItem('mavUsername'),
-  };
-}
+    let i = 0;
+    let current = null;
+    const addLine = () => { const line = document.createElement('div'); demo.appendChild(line); return line; };
 
-function getBookChapter() {
-  const m = location.pathname.match(/\/knowledge\/([^/]+)\/chapters\/([^/]+)\.html/);
-  if (!m) return null;
-  return { book: m[1], chapter: m[2] };
-}
+    function run() {
+      if (i >= script.length) return;
+      const step = script[i++];
 
-function formatTime(ts) {
-  const d = new Date(ts);
-  const pad = n => String(n).padStart(2, '0');
-  return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
-}
+      if (step.type === 'prompt') {
+        setTimeout(() => {
+          current = addLine();
+          const span = document.createElement('span');
+          span.className = 't-prompt';
+          current.appendChild(span);
+          run();
+        }, step.delay || 0);
+        return;
+      }
+      if (step.type === 'type') {
+        const span = document.createElement('span');
+        span.className = step.cls || 't-user';
+        current.appendChild(span);
+        let j = 0;
+        const tick = () => {
+          if (j < step.text.length) {
+            span.textContent += step.text[j++];
+            setTimeout(tick, step.speed || 30);
+          } else run();
+        };
+        tick();
+        return;
+      }
+      if (step.type === 'enter') { current = null; run(); return; }
+      if (step.type === 'claude' || step.type === 'dim') {
+        setTimeout(() => {
+          const line = addLine();
+          const span = document.createElement('span');
+          span.className = step.type === 'claude' ? 't-claude' : 't-dim';
+          span.textContent = step.text;
+          line.appendChild(span);
+          run();
+        }, step.delay || 0);
+        return;
+      }
+      if (step.type === 'cursor') {
+        const line = addLine();
+        const span = document.createElement('span');
+        span.className = 't-prompt';
+        line.appendChild(span);
+        const cur = document.createElement('span');
+        cur.className = 'cursor';
+        line.appendChild(cur);
+        return;
+      }
+    }
 
-function buildCommentsHTML() {
-  const colId = 'comments-panel';
-  return `
-<div class="comments-section">
-  <div class="collapsible">
-    <button class="collapsible-trigger" aria-controls="${colId}" aria-expanded="false">
-      <span class="comments-trigger-label" id="comments-trigger-label">0 条留言，点击展开</span>
-      <svg class="collapsible-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
-        <path d="M6 3l5 5-5 5"/>
-      </svg>
-    </button>
-    <div class="collapsible-content" id="${colId}" hidden>
-      <div class="collapsible-inner">
-        <button class="like-btn" id="like-btn">
-          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
-            <path d="M8 13.5S1.5 9.5 1.5 5.5a3 3 0 0 1 6-1 3 3 0 0 1 6 1c0 4-6.5 8-6.5 8z"/>
-          </svg>
-          <span id="like-count">0</span>
-        </button>
-        <div class="comments-list" id="comments-list"></div>
-        <div class="comment-form">
-          <div class="comment-identity">
-            <span class="comment-identity-name" id="identity-name"></span>
-            <button class="username-edit-btn" id="username-edit-btn">修改用户名</button>
-          </div>
-          <textarea class="comment-input" id="comment-input" placeholder="写下你的想法…" rows="3"></textarea>
-          <div class="comment-form-footer">
-            <button class="comment-submit" id="comment-submit">发送</button>
-          </div>
-          <div class="comment-error" id="comment-error"></div>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>`;
-}
+    const startObs = new IntersectionObserver(
+      (entries, obs) => {
+        entries.forEach((e) => {
+          if (e.isIntersecting) { run(); obs.disconnect(); }
+        });
+      },
+      { threshold: 0.9 }
+    );
+    startObs.observe(demo);
+  })();
 
-function renderComments(comments) {
-  const list = document.getElementById('comments-list');
-  if (!list) return;
-  if (comments.length === 0) {
-    list.innerHTML = '<p class="comments-empty">还没有评论，来第一个吧。</p>';
-    return;
-  }
-  list.innerHTML = comments.map(c => `
-    <div class="comment-item">
-      <div class="comment-meta">
-        <span class="comment-username">${escapeHtml(c.username)}</span>
-        <span class="comment-time">${formatTime(c.created_at)}</span>
-      </div>
-      <div class="comment-content">${escapeHtml(c.content)}</div>
-    </div>`).join('');
-}
+  // ---------- 5. Command modal ----------
+  (function () {
+    const backdrop = document.getElementById('cmd-modal');
+    if (!backdrop) return;
+    const modalBody = backdrop.querySelector('.modal-body');
+    const modalTag = backdrop.querySelector('.tag');
+    const modalName = backdrop.querySelector('h3');
+    const modalSummary = backdrop.querySelector('.summary');
+    const closeBtn = backdrop.querySelector('.modal-close');
 
-function escapeHtml(s) {
-  return String(s)
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;');
-}
+    function renderBody(blocks) {
+      modalBody.innerHTML = '';
+      blocks.forEach((b) => {
+        if (b.type === 'p') {
+          const p = document.createElement('p');
+          p.textContent = b.text;
+          modalBody.appendChild(p);
+        } else if (b.type === 'h') {
+          const h = document.createElement('h4');
+          h.textContent = b.text;
+          modalBody.appendChild(h);
+        } else if (b.type === 'ul') {
+          const ul = document.createElement('ul');
+          b.items.forEach((it) => {
+            const li = document.createElement('li');
+            li.textContent = it;
+            ul.appendChild(li);
+          });
+          modalBody.appendChild(ul);
+        } else if (b.type === 'code') {
+          const pre = document.createElement('pre');
+          pre.setAttribute('data-label', b.lang || 'bash');
+          const c = document.createElement('code');
+          c.textContent = b.text;
+          pre.appendChild(c);
+          modalBody.appendChild(pre);
+        } else if (b.type === 'tip' || b.type === 'warn') {
+          const co = document.createElement('div');
+          co.className = 'callout ' + (b.type === 'warn' ? 'callout-warn' : 'callout-tip');
+          const t = document.createElement('p');
+          t.className = 'callout-title';
+          t.textContent = b.type === 'warn' ? '注意' : '提示';
+          const p = document.createElement('p');
+          p.textContent = b.text;
+          co.appendChild(t);
+          co.appendChild(p);
+          modalBody.appendChild(co);
+        } else if (b.type === 'table') {
+          const wrap = document.createElement('div');
+          wrap.className = 'table-wrap';
+          const tbl = document.createElement('table');
+          if (b.head) {
+            const thead = document.createElement('thead');
+            const tr = document.createElement('tr');
+            b.head.forEach((h) => { const th = document.createElement('th'); th.textContent = h; tr.appendChild(th); });
+            thead.appendChild(tr);
+            tbl.appendChild(thead);
+          }
+          const tbody = document.createElement('tbody');
+          b.rows.forEach((row) => {
+            const tr = document.createElement('tr');
+            row.forEach((c) => { const td = document.createElement('td'); td.textContent = c; tr.appendChild(td); });
+            tbody.appendChild(tr);
+          });
+          tbl.appendChild(tbody);
+          wrap.appendChild(tbl);
+          modalBody.appendChild(wrap);
+        }
+      });
+      // Re-attach copy buttons in modal
+      modalBody.querySelectorAll('pre').forEach((pre) => {
+        if (pre.querySelector('.copy-btn')) return;
+        const btn = document.createElement('button');
+        btn.className = 'copy-btn';
+        btn.textContent = 'Copy';
+        btn.addEventListener('click', async () => {
+          const code = pre.querySelector('code') || pre;
+          try {
+            await navigator.clipboard.writeText(code.innerText);
+            btn.textContent = 'Copied'; btn.classList.add('copied');
+            setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 1500);
+          } catch { btn.textContent = 'Err'; }
+        });
+        pre.appendChild(btn);
+      });
+    }
 
-async function initComments() {
-  const loc = getBookChapter();
-  if (!loc) return;
-  const { book, chapter } = loc;
-  const { userId, username } = getOrCreateUser();
+    function open(cmd) {
+      const data = (window.CC_COMMANDS || {})[cmd];
+      if (!data) return;
+      modalTag.textContent = data.tag || '';
+      modalName.textContent = cmd;
+      modalSummary.textContent = data.summary || '';
+      renderBody(data.body || []);
+      backdrop.classList.add('open');
+      document.body.style.overflow = 'hidden';
+      // Reset scroll after the modal is visible (display:none → flex transition)
+      const modal = backdrop.querySelector('.modal');
+      requestAnimationFrame(() => {
+        modal.scrollTop = 0;
+        modalBody.scrollTop = 0;
+      });
+    }
 
-  const pager = document.querySelector('.pager');
-  if (!pager) return;
-  pager.insertAdjacentHTML('afterend', buildCommentsHTML());
+    function close() {
+      backdrop.classList.remove('open');
+      document.body.style.overflow = '';
+    }
 
-  // Re-init this collapsible (general init already ran on page load)
-  const trigger = pager.nextElementSibling.querySelector('.collapsible-trigger');
-  const contentEl = document.getElementById('comments-panel');
-  if (trigger && contentEl) {
-    contentEl.hidden = true;
-    trigger.setAttribute('aria-expanded', 'false');
-    trigger.addEventListener('click', () => {
-      const expanded = trigger.getAttribute('aria-expanded') === 'true';
-      trigger.setAttribute('aria-expanded', String(!expanded));
-      contentEl.hidden = expanded;
-      if (!expanded) fetchComments();
+    document.addEventListener('click', (e) => {
+      const card = e.target.closest('[data-cmd]');
+      if (card) {
+        e.preventDefault();
+        open(card.getAttribute('data-cmd'));
+      }
     });
-  }
+    closeBtn.addEventListener('click', close);
+    backdrop.addEventListener('click', (e) => { if (e.target === backdrop) close(); });
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && backdrop.classList.contains('open')) close(); });
+  })();
 
-  document.getElementById('identity-name').textContent = username;
-
-  document.getElementById('username-edit-btn').addEventListener('click', () => {
-    const cur = localStorage.getItem('mavUsername');
-    const next = prompt('修改用户名：', cur);
-    if (next && next.trim()) {
-      const trimmed = next.trim().slice(0, 50);
-      localStorage.setItem('mavUsername', trimmed);
-      document.getElementById('identity-name').textContent = trimmed;
-    }
-  });
-
-  const likeBtn = document.getElementById('like-btn');
-  likeBtn.addEventListener('click', async () => {
-    likeBtn.disabled = true;
-    try {
-      const r = await fetch(`${API_BASE}/likes/${book}/${chapter}`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ userId }),
-      });
-      if (r.ok) {
-        const data = await r.json();
-        document.getElementById('like-count').textContent = data.likeCount;
-        likeBtn.classList.toggle('liked', data.liked);
-      }
-    } finally {
-      likeBtn.disabled = false;
-    }
-  });
-
-  const submitBtn = document.getElementById('comment-submit');
-  const input = document.getElementById('comment-input');
-  const errorEl = document.getElementById('comment-error');
-
-  submitBtn.addEventListener('click', async () => {
-    const content = input.value.trim();
-    if (!content) return;
-    errorEl.textContent = '';
-    submitBtn.disabled = true;
-    try {
-      const r = await fetch(`${API_BASE}/comments/${book}/${chapter}`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          userId,
-          username: localStorage.getItem('mavUsername'),
-          content,
-        }),
-      });
-      if (r.ok) {
-        input.value = '';
-        await fetchComments();
-      } else {
-        const data = await r.json();
-        errorEl.textContent = data.error || '发送失败，请重试';
-      }
-    } catch {
-      errorEl.textContent = '网络错误，请重试';
-    } finally {
-      submitBtn.disabled = false;
-    }
-  });
-
-  async function fetchComments() {
-    try {
-      const r = await fetch(`${API_BASE}/comments/${book}/${chapter}?userId=${encodeURIComponent(userId)}`);
-      if (!r.ok) return;
-      const data = await r.json();
-      const label = document.getElementById('comments-trigger-label');
-      if (label) label.textContent = `${data.comments.length} 条留言，点击展开`;
-      document.getElementById('like-count').textContent = data.likeCount;
-      likeBtn.classList.toggle('liked', data.liked);
-      renderComments(data.comments);
-    } catch {
-      // silently ignore fetch errors
-    }
-  }
-
-  // Load comment count on page load (without expanding)
-  fetchComments();
-}
-
-document.addEventListener('DOMContentLoaded', () => {
-  if (location.pathname.includes('/chapters/')) {
-    initComments();
-  }
-});
-
-  // ---------- 4. Settings popover (theme + size) ----------
+  // ---------- 6. Settings popover (theme + size) ----------
   (function () {
     const btn = document.getElementById('settings-btn');
     const pop = document.getElementById('settings-pop');
@@ -316,27 +321,28 @@ document.addEventListener('DOMContentLoaded', () => {
       const t = e.target.closest('[data-theme-set]');
       if (t) {
         const mode = t.getAttribute('data-theme-set');
-        if (mode === 'light') { root.removeAttribute('data-theme'); localStorage.setItem('md2html-theme', 'light'); }
-        else { root.setAttribute('data-theme', 'dark'); localStorage.setItem('md2html-theme', 'dark'); }
+        if (mode === 'light') { root.removeAttribute('data-theme'); localStorage.setItem('cc-theme', 'light'); }
+        else { root.setAttribute('data-theme', 'dark'); localStorage.setItem('cc-theme', 'dark'); }
         syncActive();
       }
       const s = e.target.closest('[data-size-set]');
       if (s) {
         const size = s.getAttribute('data-size-set');
         root.setAttribute('data-size', size);
-        localStorage.setItem('md2html-size', size);
+        localStorage.setItem('cc-size', size);
         syncActive();
       }
     });
     syncActive();
   })();
 
-  // ---------- 5. Mobile TOC drawer ----------
+  // ---------- 7. Mobile TOC drawer ----------
   (function () {
     const fab = document.getElementById('mtoc-fab');
     const drawer = document.getElementById('mtoc-drawer');
     if (!fab || !drawer) return;
 
+    // Clone sidebar contents into drawer
     const sidebar = document.querySelector('.sidebar');
     const holder = drawer.querySelector('.mtoc-content');
     if (sidebar && holder && !holder.childNodes.length) {
@@ -352,13 +358,14 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   })();
 
-  // ---------- 6. Collapsible sections ----------
+  // ---------- 8. Collapsible sections ----------
   (function () {
     document.querySelectorAll('.collapsible-trigger').forEach(trigger => {
       const contentId = trigger.getAttribute('aria-controls');
       const content = document.getElementById(contentId);
       if (!content) return;
 
+      // Initialize: collapse by default (progressive enhancement)
       content.hidden = true;
       trigger.setAttribute('aria-expanded', 'false');
 
@@ -378,7 +385,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   })();
 
-  // ---------- 7. Tab panels ----------
+  // ---------- 9. Tab panels ----------
   (function () {
     document.querySelectorAll('.tabs').forEach(tabsContainer => {
       const tablist = tabsContainer.querySelector('[role="tablist"]');
@@ -390,6 +397,7 @@ document.addEventListener('DOMContentLoaded', () => {
         return document.getElementById(panelId);
       }).filter(Boolean);
 
+      // Initialize: hide all panels except the first
       tabs.forEach((tab, i) => {
         if (i === 0) {
           tab.setAttribute('aria-selected', 'true');
@@ -421,19 +429,27 @@ document.addEventListener('DOMContentLoaded', () => {
       tablist.addEventListener('keydown', (e) => {
         const currentIndex = tabs.indexOf(document.activeElement);
         if (currentIndex < 0) return;
+
         let newIndex;
-        if (e.key === 'ArrowRight') newIndex = (currentIndex + 1) % tabs.length;
-        else if (e.key === 'ArrowLeft') newIndex = (currentIndex - 1 + tabs.length) % tabs.length;
-        else if (e.key === 'Home') newIndex = 0;
-        else if (e.key === 'End') newIndex = tabs.length - 1;
-        else return;
+        if (e.key === 'ArrowRight') {
+          newIndex = (currentIndex + 1) % tabs.length;
+        } else if (e.key === 'ArrowLeft') {
+          newIndex = (currentIndex - 1 + tabs.length) % tabs.length;
+        } else if (e.key === 'Home') {
+          newIndex = 0;
+        } else if (e.key === 'End') {
+          newIndex = tabs.length - 1;
+        } else {
+          return;
+        }
+
         e.preventDefault();
         activateTab(newIndex);
       });
     });
   })();
 
-  // ---------- 8. Search overlay ----------
+  // ---------- 10. Search overlay ----------
   (function () {
     const overlay = document.getElementById('search-overlay');
     const searchBtn = document.getElementById('search-btn');
@@ -441,7 +457,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const input = overlay.querySelector('.search-input');
     const resultsContainer = overlay.querySelector('.search-results');
-    let searchData = null;
+    let searchIndex = null;
     let debounceTimer = null;
 
     function open() {
@@ -457,6 +473,7 @@ document.addEventListener('DOMContentLoaded', () => {
       resultsContainer.innerHTML = '';
     }
 
+    // Keyboard shortcut: Ctrl+K / Cmd+K
     document.addEventListener('keydown', (e) => {
       if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
         e.preventDefault();
@@ -466,33 +483,66 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     if (searchBtn) searchBtn.addEventListener('click', open);
-    overlay.addEventListener('click', (e) => { if (e.target === overlay) close(); });
 
+    // Close on backdrop click
+    overlay.addEventListener('click', (e) => {
+      if (e.target === overlay) close();
+    });
+
+    // Close when a result is clicked (so the overlay doesn't linger after navigation)
+    resultsContainer.addEventListener('click', (e) => {
+      if (e.target.closest('.search-result')) close();
+    });
+
+    // Lazy load search index
     async function loadIndex() {
-      if (searchData) return searchData;
+      if (searchIndex) return searchIndex;
       try {
+        // Determine base path (are we in chapters/ or root?)
         const isChapter = window.location.pathname.includes('/chapters/');
         const basePath = isChapter ? '../assets/search-index.json' : 'assets/search-index.json';
+
         const res = await fetch(basePath);
         if (!res.ok) throw new Error('Failed to load index');
-        searchData = await res.json();
-        return searchData;
+        const data = await res.json();
+
+        // Load MiniSearch from CDN if not already loaded
+        if (!window.MiniSearch) {
+          await new Promise((resolve, reject) => {
+            const script = document.createElement('script');
+            script.src = 'https://cdn.jsdelivr.net/npm/minisearch@6.3.0/dist/umd/index.min.js';
+            script.onload = resolve;
+            script.onerror = reject;
+            document.head.appendChild(script);
+          });
+        }
+
+        searchIndex = window.MiniSearch.loadJSON(JSON.stringify(data.index), {
+          fields: ['title', 'body'],
+          storeFields: ['title', 'chapter', 'chapterTitle', 'url']
+        });
+        return searchIndex;
       } catch (err) {
-        resultsContainer.innerHTML = '<div class="search-empty">搜索索引加载失败</div>';
+        resultsContainer.innerHTML = '<div class="search-empty">搜索索引加载失败，请刷新页面重试</div>';
         return null;
       }
     }
 
+    // Search and render results
     async function doSearch(query) {
-      if (!query.trim()) { resultsContainer.innerHTML = ''; return; }
-      const data = await loadIndex();
-      if (!data || !data.documents) return;
+      if (!query.trim()) {
+        resultsContainer.innerHTML = '';
+        return;
+      }
 
-      const q = query.toLowerCase();
-      const results = data.documents.filter(doc =>
-        doc.title.toLowerCase().includes(q) ||
-        (doc.body && doc.body.toLowerCase().includes(q))
-      );
+      const index = await loadIndex();
+      if (!index) return;
+
+      const results = index.search(query, {
+        prefix: true,
+        fuzzy: 0.2,
+        boost: { title: 3 }
+      });
 
       if (results.length === 0) {
         resultsContainer.innerHTML = '<div class="search-empty">未找到相关内容</div>';
@@ -501,10 +551,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
       const isChapter = window.location.pathname.includes('/chapters/');
       resultsContainer.innerHTML = results.slice(0, 10).map(r => {
+        // Adjust URL based on current location
         const href = isChapter ? (r.url.startsWith('chapters/') ? r.url.replace('chapters/', '') : '../' + r.url) : r.url;
-        return `<a class="search-result" href="${href}">
+        return `<a class="search-result" href="${href}" role="option">
           <span class="search-result-title">${escapeHtml(r.title)}</span>
-          <span class="search-result-chapter">${escapeHtml(r.chapterTitle || '')}</span>
+          <span class="search-result-chapter">${escapeHtml(r.chapterTitle || r.chapter)}</span>
         </a>`;
       }).join('');
     }
@@ -515,26 +566,36 @@ document.addEventListener('DOMContentLoaded', () => {
       return div.innerHTML;
     }
 
+    // Debounced input
     if (input) {
       input.addEventListener('input', () => {
         clearTimeout(debounceTimer);
         debounceTimer = setTimeout(() => doSearch(input.value), 150);
       });
+
+      // Enter navigates to first result
       input.addEventListener('keydown', (e) => {
         if (e.key === 'Enter') {
           const firstResult = resultsContainer.querySelector('.search-result');
-          if (firstResult) window.location.href = firstResult.href;
+          if (firstResult) {
+            close();
+            window.location.href = firstResult.href;
+          }
         }
       });
     }
   })();
 
-  // ---------- 9. Syntax highlighting ----------
+  // ---------- 11. Syntax highlighting ----------
   (function () {
     if (!window.hljs) return;
 
+    // Highlight all code blocks
     document.querySelectorAll('pre code').forEach(el => {
-      if (el.classList.contains('hljs')) return;
+      // Skip if already highlighted or is ASCII art
+      if (el.closest('.ascii') || el.classList.contains('hljs')) return;
+
+      // Try to detect language from data-label or class
       const pre = el.closest('pre');
       const label = pre && pre.getAttribute('data-label');
       if (label) {
@@ -549,46 +610,63 @@ document.addEventListener('DOMContentLoaded', () => {
         const lang = langMap[label.toLowerCase()];
         if (lang) el.classList.add('language-' + lang);
       }
+
       hljs.highlightElement(el);
     });
 
-    // Code blocks are always terminal-dark regardless of page theme
+    // Theme integration: code blocks are always terminal-dark regardless of page theme,
+    // so we always keep the dark hljs stylesheet active.
     function syncHljsTheme() {
       const lightSheet = document.getElementById('hljs-light');
       const darkSheet = document.getElementById('hljs-dark');
       if (lightSheet) lightSheet.media = 'not all';
       if (darkSheet) darkSheet.media = '';
     }
+
+    // Initial sync
     syncHljsTheme();
+
+    // Watch for theme changes (observe data-theme attribute)
     const observer = new MutationObserver(syncHljsTheme);
     observer.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
   })();
 
-  // ---------- 10. Reading progress tracker ----------
+  // ---------- 12. Reading progress tracker ----------
   (function () {
-    const STORAGE_KEY = 'md2html-progress';
-
+    const STORAGE_KEY = 'cc-progress';
+    
     function getProgress() {
       try {
         const data = localStorage.getItem(STORAGE_KEY);
         if (!data) return {};
-        return JSON.parse(data) || {};
-      } catch { return {}; }
+        const parsed = JSON.parse(data);
+        if (typeof parsed !== 'object' || parsed === null) return {};
+        return parsed;
+      } catch {
+        return {};
+      }
     }
-
+    
     function setProgress(key, value) {
       try {
         const progress = getProgress();
         progress[key] = value;
         localStorage.setItem(STORAGE_KEY, JSON.stringify(progress));
-      } catch {}
+      } catch {
+        // localStorage unavailable — silently degrade
+      }
     }
-
-    // Detect chapter from URL
+    
+    // Detect which chapter we're on
     const path = window.location.pathname;
-    const chapterMatch = path.match(/(\d{2})-/);
-    const chapterKey = chapterMatch ? chapterMatch[1] : null;
-
+    let chapterKey = null;
+    if (path.includes('01-what-is')) chapterKey = '01';
+    else if (path.includes('02-daily')) chapterKey = '02';
+    else if (path.includes('03-power')) chapterKey = '03';
+    else if (path.includes('04-mental')) chapterKey = '04';
+    else if (path.includes('05-easter-eggs')) chapterKey = '05';
+    else if (path.includes('reference')) chapterKey = 'ref';
+    
     // On chapter pages: track scroll progress
     if (chapterKey) {
       let marked = false;
@@ -605,14 +683,16 @@ document.addEventListener('DOMContentLoaded', () => {
       window.addEventListener('scroll', checkScroll, { passive: true });
       checkScroll();
     }
-
+    
     // On index page: show completion indicators
-    if (!path.includes('/chapters/')) {
+    if (path.endsWith('index.html') || path.endsWith('/') || path === '' || (!path.includes('chapters/'))) {
       const progress = getProgress();
-      document.querySelectorAll('.toc-card').forEach(card => {
-        const href = card.getAttribute('href') || '';
-        const m = href.match(/(\d{2})-/);
-        if (m && progress[m[1]]) {
+      const cards = document.querySelectorAll('.toc-card');
+      const chapterMap = ['01', '02', '03', '04', '05', 'ref'];
+      
+      cards.forEach((card, i) => {
+        const key = chapterMap[i];
+        if (key && progress[key]) {
           card.classList.add('completed');
         }
       });
@@ -621,310 +701,461 @@ document.addEventListener('DOMContentLoaded', () => {
 
 })();
 
+// ── Comments & Likes ──────────────────────────────────────────────
 
-  // ---------- 11. Side Panel (Sidenote + Notepad) ----------
-  (function () {
-    const panel = document.getElementById('side-panel');
-    if (!panel) return;
+(function () {
+  const API_BASE = '/api';
 
-    const tabBtns = panel.querySelectorAll('.side-panel-tab');
-    const bodyEl = panel.querySelector('.side-panel-body');
-    const closeBtn = panel.querySelector('.side-panel-close');
-    const header = panel.querySelector('.side-panel-header');
-    const notepadFab = document.getElementById('notepad-fab');
+  function getOrCreateUser() {
+    if (!localStorage.getItem('mavUserId')) {
+      localStorage.setItem('mavUserId', crypto.randomUUID());
+      localStorage.setItem('mavUsername', '读者#' + Math.floor(Math.random() * 9000 + 1000));
+    }
+    return {
+      userId: localStorage.getItem('mavUserId'),
+      username: localStorage.getItem('mavUsername'),
+    };
+  }
 
-    // Book slug for localStorage key
-    const pathParts = window.location.pathname.split('/');
-    const knowledgeIdx = pathParts.indexOf('knowledge');
-    const bookSlug = knowledgeIdx >= 0 ? pathParts[knowledgeIdx + 1] : 'default';
-    const NOTES_KEY = 'md2html-notes-' + bookSlug;
+  function getBookChapter() {
+    const m = location.pathname.match(/\/knowledge\/([^/]+)\/chapters\/([^/]+)\.html/);
+    if (!m) return null;
+    return { book: m[1], chapter: m[2] };
+  }
 
-    let currentMode = null; // 'sidenote' or 'notepad'
-    let notepadDirty = false;
+  function formatTime(ts) {
+    const d = new Date(ts);
+    const pad = n => String(n).padStart(2, '0');
+    return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate()) + ' ' + pad(d.getHours()) + ':' + pad(d.getMinutes());
+  }
 
-    // --- Open / Close ---
-    function openPanel(mode, content) {
-      currentMode = mode;
-      panel.classList.add('open');
-      panel.classList.remove('typing');
+  function escapeHtml(s) {
+    return String(s)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;');
+  }
 
-      // Update tabs
-      tabBtns.forEach(btn => {
-        btn.classList.toggle('active', btn.dataset.mode === mode);
-      });
+  function buildCommentsHTML() {
+    return '<div class="comments-section">' +
+      '<div class="comments-divider" id="comments-toggle">' +
+        '<span class="comments-divider-label" id="comments-divider-label">展开 0 条留言</span>' +
+      '</div>' +
+      '<div class="comments-body" id="comments-body">' +
+        '<button class="like-btn" id="like-btn">' +
+          '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">' +
+            '<path d="M8 13.5S1.5 9.5 1.5 5.5a3 3 0 0 1 6-1 3 3 0 0 1 6 1c0 4-6.5 8-6.5 8z"/>' +
+          '</svg>' +
+          '<span id="like-count">0</span>' +
+        '</button>' +
+        '<div class="comments-list" id="comments-list"></div>' +
+        '<div class="comment-form">' +
+          '<div class="comment-identity">' +
+            '<span class="comment-identity-name" id="identity-name"></span>' +
+            '<button class="username-edit-btn" id="username-edit-btn">修改用户名</button>' +
+          '</div>' +
+          '<textarea class="comment-input" id="comment-input" placeholder="写下你的想法…" rows="3"></textarea>' +
+          '<div class="comment-form-footer">' +
+            '<button class="comment-submit" id="comment-submit">发送</button>' +
+          '</div>' +
+          '<div class="comment-error" id="comment-error"></div>' +
+        '</div>' +
+      '</div>' +
+    '</div>';
+  }
 
-      if (mode === 'sidenote') {
-        bodyEl.innerHTML = '<div class="side-panel-sidenote-content">' + content + '</div>';
+  function renderComments(comments) {
+    const list = document.getElementById('comments-list');
+    if (!list) return;
+    if (comments.length === 0) {
+      list.innerHTML = '<p class="comments-empty">还没有评论，来第一个吧。</p>';
+      return;
+    }
+    list.innerHTML = comments.map(function (c) {
+      return '<div class="comment-item">' +
+        '<div class="comment-meta">' +
+          '<span class="comment-username">' + escapeHtml(c.username) + '</span>' +
+          '<span class="comment-time">' + formatTime(c.created_at) + '</span>' +
+        '</div>' +
+        '<div class="comment-content">' + escapeHtml(c.content) + '</div>' +
+      '</div>';
+    }).join('');
+  }
+
+  function initComments() {
+    const loc = getBookChapter();
+    if (!loc) return;
+    var book = loc.book, chapter = loc.chapter;
+    var user = getOrCreateUser();
+    var userId = user.userId, username = user.username;
+
+    var pager = document.querySelector('.pager');
+    if (!pager) return;
+    pager.insertAdjacentHTML('afterend', buildCommentsHTML());
+
+    var toggle = document.getElementById('comments-toggle');
+    var body = document.getElementById('comments-body');
+    var expanded = false;
+
+    toggle.addEventListener('click', function () {
+      expanded = !expanded;
+      if (expanded) {
+        body.classList.add('open');
+        fetchComments();
       } else {
-        const saved = localStorage.getItem(NOTES_KEY) || '';
-        bodyEl.innerHTML = '<textarea class="side-panel-notepad" placeholder="随手记点什么...">' + escapeHtml(saved) + '</textarea>';
-        const textarea = bodyEl.querySelector('.side-panel-notepad');
-        textarea.addEventListener('input', () => {
-          localStorage.setItem(NOTES_KEY, textarea.value);
-          notepadDirty = textarea.value.trim().length > 0;
-        });
-        textarea.addEventListener('focus', () => panel.classList.add('typing'));
-        textarea.addEventListener('blur', () => panel.classList.remove('typing'));
-        notepadDirty = saved.trim().length > 0;
-      }
-    }
-
-    function closePanel() {
-      panel.classList.remove('open', 'typing');
-      currentMode = null;
-    }
-
-    function escapeHtml(str) {
-      const div = document.createElement('div');
-      div.textContent = str;
-      return div.innerHTML;
-    }
-
-    // --- Close button ---
-    if (closeBtn) closeBtn.addEventListener('click', closePanel);
-
-    // --- Click outside to close (only in sidenote mode) ---
-    document.addEventListener('mousedown', (e) => {
-      if (panel.classList.contains('open') && currentMode === 'sidenote' &&
-          !panel.contains(e.target) && 
-          !e.target.closest('.sidenote-mark') && !e.target.closest('.notepad-fab')) {
-        closePanel();
+        body.classList.remove('open');
       }
     });
 
-    // --- Tab switching ---
-    tabBtns.forEach(btn => {
-      btn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        const mode = btn.dataset.mode;
-        if (mode === 'notepad') {
-          openPanel('notepad');
-        } else if (mode === 'sidenote') {
-          // Show tips directory for this page
-          openPanel('sidenote', buildTipsDirectory());
-        }
-      });
-    });
+    document.getElementById('identity-name').textContent = username;
 
-    // --- Build tips directory from page content ---
-    function buildTipsDirectory() {
-      const marks = document.querySelectorAll('.sidenote-mark');
-      if (marks.length === 0) {
-        return '<p style="color:var(--muted)">本章暂无补充内容</p>';
-      }
-
-      let html = '<p style="color:var(--muted);margin-bottom:12px;">点击下方条目跳转到对应位置</p>';
-      html += '<div style="display:flex;flex-direction:column;gap:8px;">';
-
-      marks.forEach((mark, i) => {
-        // Find nearest heading above this mark
-        let heading = '';
-        let el = mark;
-        while (el) {
-          el = el.previousElementSibling || (el.parentElement !== document.body ? el.parentElement : null);
-          if (el && /^H[23]$/.test(el.tagName)) {
-            heading = el.textContent.trim();
-            break;
-          }
-        }
-        if (!heading) {
-          // Walk up DOM to find heading
-          let parent = mark.closest('h2, h3, li, p');
-          let walker = parent || mark;
-          while (walker && walker !== document.body) {
-            let prev = walker.previousElementSibling;
-            while (prev) {
-              if (/^H[23]$/.test(prev.tagName)) { heading = prev.textContent.trim(); break; }
-              prev = prev.previousElementSibling;
-            }
-            if (heading) break;
-            walker = walker.parentElement;
-          }
-        }
-
-        // Extract summary from data-note (strip HTML, first 30 chars)
-        const rawNote = mark.getAttribute('data-note') || '';
-        const tempDiv = document.createElement('div');
-        tempDiv.innerHTML = rawNote;
-        const summary = tempDiv.textContent.trim().substring(0, 40) + (tempDiv.textContent.length > 40 ? '...' : '');
-
-        html += '<a class="tips-dir-item" data-tips-index="' + i + '" style="display:block;padding:8px 10px;border:1px solid var(--line);border-radius:4px;cursor:pointer;text-decoration:none;transition:background 0.15s;">';
-        html += '<div style="font-family:var(--mono);font-size:10px;color:var(--muted);letter-spacing:0.04em;margin-bottom:2px;">' + escapeHtml(heading || '—') + '</div>';
-        html += '<div style="font-size:13px;color:var(--ink-2);">' + escapeHtml(summary) + '</div>';
-        html += '</a>';
-      });
-
-      html += '</div>';
-      return html;
-    }
-
-    // --- Tips directory click handler (delegated) ---
-    bodyEl.addEventListener('click', (e) => {
-      const item = e.target.closest('.tips-dir-item');
-      if (!item) return;
-      const index = parseInt(item.dataset.tipsIndex);
-      const marks = document.querySelectorAll('.sidenote-mark');
-      if (marks[index]) {
-        marks[index].scrollIntoView({ behavior: 'smooth', block: 'center' });
-        // Trigger the tips content
-        setTimeout(() => {
-          const note = marks[index].getAttribute('data-note') || '';
-          openPanel('sidenote', note);
-        }, 400);
+    document.getElementById('username-edit-btn').addEventListener('click', function () {
+      var cur = localStorage.getItem('mavUsername');
+      var next = prompt('修改用户名：', cur);
+      if (next && next.trim()) {
+        var trimmed = next.trim().slice(0, 50);
+        localStorage.setItem('mavUsername', trimmed);
+        document.getElementById('identity-name').textContent = trimmed;
       }
     });
 
-    // --- Sidenote marks ---
-    document.querySelectorAll('.sidenote-mark').forEach(mark => {
-      mark.addEventListener('click', (e) => {
-        e.stopPropagation();
-        const note = mark.getAttribute('data-note') || mark.getAttribute('title') || '';
-        if (panel.classList.contains('open') && currentMode === 'sidenote') {
-          // Toggle off if clicking same mark
-          closePanel();
-        } else {
-          openPanel('sidenote', note);
-        }
-      });
-    });
-
-    // --- Notepad FAB ---
-    if (notepadFab) {
-      notepadFab.addEventListener('click', (e) => {
-        e.stopPropagation();
-        if (panel.classList.contains('open') && currentMode === 'notepad') {
-          closePanel();
-        } else {
-          openPanel('notepad');
-        }
-      });
-    }
-
-    // --- Persist panel state across chapters ---
-    const PANEL_STATE_KEY = 'md2html-panel-state-' + bookSlug;
-
-    function savePanelState() {
-      const state = { open: panel.classList.contains('open'), mode: currentMode };
-      localStorage.setItem(PANEL_STATE_KEY, JSON.stringify(state));
-    }
-
-    function restorePanelState() {
+    var likeBtn = document.getElementById('like-btn');
+    likeBtn.addEventListener('click', async function () {
+      likeBtn.disabled = true;
       try {
-        const raw = localStorage.getItem(PANEL_STATE_KEY);
-        if (!raw) return;
-        const state = JSON.parse(raw);
-        if (state.open && state.mode === 'notepad') {
-          openPanel('notepad');
+        var r = await fetch(API_BASE + '/likes/' + book + '/' + chapter, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ userId: userId }),
+        });
+        if (r.ok) {
+          var data = await r.json();
+          document.getElementById('like-count').textContent = data.likeCount;
+          likeBtn.classList.toggle('liked', data.liked);
         }
-      } catch {}
-    }
-
-    // Override openPanel/closePanel to persist state
-    const _origOpen = openPanel;
-    const _origClose = closePanel;
-    openPanel = function(mode, content) {
-      _origOpen(mode, content);
-      savePanelState();
-    };
-    closePanel = function() {
-      _origClose();
-      savePanelState();
-    };
-
-    // Restore on page load
-    restorePanelState();
-
-    // --- Link click interception (warn only when leaving this book) ---
-    const bookPathPrefix = '/knowledge/' + bookSlug + '/';
-
-    document.addEventListener('click', (e) => {
-      const link = e.target.closest('a[href]');
-      if (!link) return;
-      if (!notepadDirty) return;
-
-      const href = link.getAttribute('href');
-      // Skip anchors, javascript:, etc.
-      if (!href || href.startsWith('#') || href.startsWith('javascript:')) return;
-
-      // Resolve relative URL to absolute
-      const resolved = new URL(href, window.location.href);
-
-      // Check if destination is within the same book
-      if (resolved.pathname.includes(bookPathPrefix)) {
-        // Same book — let it go, no warning
-        return;
-      }
-
-      // Leaving the book — ask for confirmation
-      const confirmed = window.confirm('你的便利贴还有内容，确定要离开这本书吗？');
-      if (!confirmed) {
-        e.preventDefault();
+      } finally {
+        likeBtn.disabled = false;
       }
     });
 
-    // --- Draggable ---
-    let isDragging = false;
-    let isResizing = false;
-    let dragOffsetX = 0;
-    let dragOffsetY = 0;
+    var submitBtn = document.getElementById('comment-submit');
+    var input = document.getElementById('comment-input');
+    var errorEl = document.getElementById('comment-error');
 
-    if (header) {
-      header.addEventListener('mousedown', (e) => {
-        // Only drag from header, not from buttons
-        if (e.target.closest('button')) return;
-        isDragging = true;
-        const rect = panel.getBoundingClientRect();
-        dragOffsetX = e.clientX - rect.left;
-        dragOffsetY = e.clientY - rect.top;
-        panel.style.transition = 'none';
-        e.preventDefault();
-      });
+    submitBtn.addEventListener('click', async function () {
+      var content = input.value.trim();
+      if (!content) return;
+      errorEl.textContent = '';
+      submitBtn.disabled = true;
+      try {
+        var r = await fetch(API_BASE + '/comments/' + book + '/' + chapter, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            userId: userId,
+            username: localStorage.getItem('mavUsername'),
+            content: content,
+          }),
+        });
+        if (r.ok) {
+          input.value = '';
+          await fetchComments();
+        } else {
+          var data = await r.json();
+          errorEl.textContent = data.error || '发送失败，请重试';
+        }
+      } catch (e) {
+        errorEl.textContent = '网络错误，请重试';
+      } finally {
+        submitBtn.disabled = false;
+      }
+    });
+
+    async function fetchComments() {
+      try {
+        var r = await fetch(API_BASE + '/comments/' + book + '/' + chapter + '?userId=' + encodeURIComponent(userId));
+        if (!r.ok) return;
+        var data = await r.json();
+        var label = document.getElementById('comments-divider-label');
+        var count = data.comments.length;
+        if (label) {
+          label.textContent = expanded
+            ? (count > 0 ? '收起 ' + count + ' 条留言' : '收起留言')
+            : '展开 ' + count + ' 条留言';
+        }
+        document.getElementById('like-count').textContent = data.likeCount;
+        likeBtn.classList.toggle('liked', data.liked);
+        renderComments(data.comments);
+      } catch (e) {
+        // silently ignore
+      }
     }
 
-    // --- Resizable (bottom-left handle) ---
-    const resizeHandle = document.getElementById('side-panel-resize');
-    if (resizeHandle) {
-      resizeHandle.addEventListener('mousedown', (e) => {
-        isResizing = true;
-        panel.style.transition = 'none';
-        e.preventDefault();
-        e.stopPropagation();
+    // Initial load to get comment count
+    fetchComments();
+  }
+
+  document.addEventListener('DOMContentLoaded', function () {
+    if (location.pathname.includes('/chapters/')) {
+      initComments();
+    }
+  });
+})();
+
+
+// ── Side Panel (Sidenote + Notepad) ──────────────────────────────
+
+(function () {
+  const panel = document.getElementById('side-panel');
+  if (!panel) return;
+
+  const tabBtns = panel.querySelectorAll('.side-panel-tab');
+  const bodyEl = panel.querySelector('.side-panel-body');
+  const closeBtn = panel.querySelector('.side-panel-close');
+  const header = panel.querySelector('.side-panel-header');
+  const notepadFab = document.getElementById('notepad-fab');
+
+  const pathParts = window.location.pathname.split('/');
+  const knowledgeIdx = pathParts.indexOf('knowledge');
+  const bookSlug = knowledgeIdx >= 0 ? pathParts[knowledgeIdx + 1] : 'default';
+  const NOTES_KEY = 'md2html-notes-' + bookSlug;
+
+  let currentMode = null;
+  let notepadDirty = false;
+
+  function openPanel(mode, content) {
+    currentMode = mode;
+    panel.classList.add('open');
+    panel.classList.remove('typing');
+
+    tabBtns.forEach(function (btn) {
+      btn.classList.toggle('active', btn.dataset.mode === mode);
+    });
+
+    if (mode === 'sidenote') {
+      bodyEl.innerHTML = '<div class="side-panel-sidenote-content">' + content + '</div>';
+    } else {
+      var saved = localStorage.getItem(NOTES_KEY) || '';
+      bodyEl.innerHTML = '<textarea class="side-panel-notepad" placeholder="随手记点什么...">' + escapeHtml(saved) + '</textarea>';
+      var textarea = bodyEl.querySelector('.side-panel-notepad');
+      textarea.addEventListener('input', function () {
+        localStorage.setItem(NOTES_KEY, textarea.value);
+        notepadDirty = textarea.value.trim().length > 0;
       });
+      textarea.addEventListener('focus', function () { panel.classList.add('typing'); });
+      textarea.addEventListener('blur', function () { panel.classList.remove('typing'); });
+      notepadDirty = saved.trim().length > 0;
+    }
+  }
+
+  function closePanel() {
+    panel.classList.remove('open', 'typing');
+    currentMode = null;
+  }
+
+  function escapeHtml(str) {
+    var div = document.createElement('div');
+    div.textContent = str;
+    return div.innerHTML;
+  }
+
+  if (closeBtn) closeBtn.addEventListener('click', closePanel);
+
+  document.addEventListener('mousedown', function (e) {
+    if (panel.classList.contains('open') && currentMode === 'sidenote' &&
+        !panel.contains(e.target) &&
+        !e.target.closest('.sidenote-mark') && !e.target.closest('.notepad-fab')) {
+      closePanel();
+    }
+  });
+
+  tabBtns.forEach(function (btn) {
+    btn.addEventListener('click', function (e) {
+      e.stopPropagation();
+      var mode = btn.dataset.mode;
+      if (mode === 'notepad') {
+        openPanel('notepad');
+      } else if (mode === 'sidenote') {
+        openPanel('sidenote', buildTipsDirectory());
+      }
+    });
+  });
+
+  function buildTipsDirectory() {
+    var marks = document.querySelectorAll('.sidenote-mark');
+    if (marks.length === 0) {
+      return '<p style="color:var(--muted)">本章暂无补充内容</p>';
     }
 
-    document.addEventListener('mousemove', (e) => {
-      if (isDragging) {
-        const x = e.clientX - dragOffsetX;
-        const y = e.clientY - dragOffsetY;
-        panel.style.left = x + 'px';
-        panel.style.top = y + 'px';
+    var html = '<p style="color:var(--muted);margin-bottom:12px;">点击下方条目跳转到对应位置</p>';
+    html += '<div style="display:flex;flex-direction:column;gap:8px;">';
+
+    marks.forEach(function (mark, i) {
+      var heading = '';
+      var el = mark;
+      while (el) {
+        el = el.previousElementSibling || (el.parentElement !== document.body ? el.parentElement : null);
+        if (el && /^H[23]$/.test(el.tagName)) {
+          heading = el.textContent.trim();
+          break;
+        }
+      }
+      if (!heading) {
+        var walker = mark.closest('h2, h3, li, p') || mark;
+        while (walker && walker !== document.body) {
+          var prev = walker.previousElementSibling;
+          while (prev) {
+            if (/^H[23]$/.test(prev.tagName)) { heading = prev.textContent.trim(); break; }
+            prev = prev.previousElementSibling;
+          }
+          if (heading) break;
+          walker = walker.parentElement;
+        }
+      }
+
+      var rawNote = mark.getAttribute('data-note') || '';
+      var tempDiv = document.createElement('div');
+      tempDiv.innerHTML = rawNote;
+      var summary = tempDiv.textContent.trim().substring(0, 40) + (tempDiv.textContent.length > 40 ? '...' : '');
+
+      html += '<a class="tips-dir-item" data-tips-index="' + i + '" style="display:block;padding:8px 10px;border:1px solid var(--line);border-radius:4px;cursor:pointer;text-decoration:none;transition:background 0.15s;">';
+      html += '<div style="font-family:var(--mono);font-size:10px;color:var(--muted);letter-spacing:0.04em;margin-bottom:2px;">' + escapeHtml(heading || '—') + '</div>';
+      html += '<div style="font-size:13px;color:var(--ink-2);">' + escapeHtml(summary) + '</div>';
+      html += '</a>';
+    });
+
+    html += '</div>';
+    return html;
+  }
+
+  bodyEl.addEventListener('click', function (e) {
+    var item = e.target.closest('.tips-dir-item');
+    if (!item) return;
+    var index = parseInt(item.dataset.tipsIndex);
+    var marks = document.querySelectorAll('.sidenote-mark');
+    if (marks[index]) {
+      marks[index].scrollIntoView({ behavior: 'smooth', block: 'center' });
+      setTimeout(function () {
+        var note = marks[index].getAttribute('data-note') || '';
+        openPanel('sidenote', note);
+      }, 400);
+    }
+  });
+
+  document.querySelectorAll('.sidenote-mark').forEach(function (mark) {
+    mark.addEventListener('click', function (e) {
+      e.stopPropagation();
+      var note = mark.getAttribute('data-note') || mark.getAttribute('title') || '';
+      if (panel.classList.contains('open') && currentMode === 'sidenote') {
+        closePanel();
+      } else {
+        openPanel('sidenote', note);
+      }
+    });
+  });
+
+  if (notepadFab) {
+    notepadFab.addEventListener('click', function (e) {
+      e.stopPropagation();
+      if (panel.classList.contains('open') && currentMode === 'notepad') {
+        closePanel();
+      } else {
+        openPanel('notepad');
+      }
+    });
+  }
+
+  // Persist panel state
+  var PANEL_STATE_KEY = 'md2html-panel-state-' + bookSlug;
+
+  var _origOpen = openPanel;
+  var _origClose = closePanel;
+  openPanel = function (mode, content) {
+    _origOpen(mode, content);
+    localStorage.setItem(PANEL_STATE_KEY, JSON.stringify({ open: true, mode: mode }));
+  };
+  closePanel = function () {
+    _origClose();
+    localStorage.setItem(PANEL_STATE_KEY, JSON.stringify({ open: false, mode: null }));
+  };
+
+  // Restore notepad on load
+  try {
+    var raw = localStorage.getItem(PANEL_STATE_KEY);
+    if (raw) {
+      var state = JSON.parse(raw);
+      if (state.open && state.mode === 'notepad') {
+        openPanel('notepad');
+      }
+    }
+  } catch (e) {}
+
+  // Warn before leaving book if notepad has content
+  var bookPathPrefix = '/knowledge/' + bookSlug + '/';
+  document.addEventListener('click', function (e) {
+    var link = e.target.closest('a[href]');
+    if (!link) return;
+    if (!notepadDirty) return;
+    var href = link.getAttribute('href');
+    if (!href || href.startsWith('#') || href.startsWith('javascript:')) return;
+    var resolved = new URL(href, window.location.href);
+    if (resolved.pathname.includes(bookPathPrefix)) return;
+    var confirmed = window.confirm('你的便利贴还有内容，确定要离开这本书吗？');
+    if (!confirmed) e.preventDefault();
+  });
+
+  // Draggable
+  var isDragging = false;
+  var isResizing = false;
+  var dragOffsetX = 0;
+  var dragOffsetY = 0;
+
+  if (header) {
+    header.addEventListener('mousedown', function (e) {
+      if (e.target.closest('button')) return;
+      isDragging = true;
+      var rect = panel.getBoundingClientRect();
+      dragOffsetX = e.clientX - rect.left;
+      dragOffsetY = e.clientY - rect.top;
+      panel.style.transition = 'none';
+      e.preventDefault();
+    });
+  }
+
+  var resizeHandle = document.getElementById('side-panel-resize');
+  if (resizeHandle) {
+    resizeHandle.addEventListener('mousedown', function (e) {
+      isResizing = true;
+      panel.style.transition = 'none';
+      e.preventDefault();
+      e.stopPropagation();
+    });
+  }
+
+  document.addEventListener('mousemove', function (e) {
+    if (isDragging) {
+      panel.style.left = (e.clientX - dragOffsetX) + 'px';
+      panel.style.top = (e.clientY - dragOffsetY) + 'px';
+      panel.style.right = 'auto';
+    }
+    if (isResizing) {
+      var rect = panel.getBoundingClientRect();
+      var newWidth = rect.right - e.clientX;
+      var newHeight = e.clientY - rect.top;
+      if (newWidth >= 240) {
+        panel.style.width = newWidth + 'px';
+        panel.style.left = e.clientX + 'px';
         panel.style.right = 'auto';
       }
-      if (isResizing) {
-        const rect = panel.getBoundingClientRect();
-        // Resize from bottom-left: width grows leftward, height grows downward
-        const newWidth = rect.right - e.clientX;
-        const newHeight = e.clientY - rect.top;
-        if (newWidth >= 240) {
-          panel.style.width = newWidth + 'px';
-          panel.style.left = e.clientX + 'px';
-          panel.style.right = 'auto';
-        }
-        if (newHeight >= 200) {
-          panel.style.height = newHeight + 'px';
-        }
+      if (newHeight >= 200) {
+        panel.style.height = newHeight + 'px';
       }
-    });
+    }
+  });
 
-    document.addEventListener('mouseup', () => {
-      if (isDragging) {
-        isDragging = false;
-        panel.style.transition = '';
-      }
-      if (isResizing) {
-        isResizing = false;
-        panel.style.transition = '';
-      }
-    });
-
-  })();
+  document.addEventListener('mouseup', function () {
+    if (isDragging) { isDragging = false; panel.style.transition = ''; }
+    if (isResizing) { isResizing = false; panel.style.transition = ''; }
+  });
+})();
