@@ -93,6 +93,9 @@ function generateChapterHead(chapter) {
   const num = String(chapter.frontmatter.chapter || '').padStart(2, '0');
   const title = chapter.frontmatter.title || 'Untitled';
   const readTime = chapter.frontmatter.readTime || '10';
+  const infoCutoff = chapter.frontmatter.infoCutoff
+    ? `  <div class="chapter-info-cutoff">${chapter.frontmatter.infoCutoff}</div>\n`
+    : '';
 
   return `<header class="chapter-head">
   <div class="chapter-head-meta">
@@ -100,6 +103,7 @@ function generateChapterHead(chapter) {
     <span>≈ ${readTime} MIN READ</span>
   </div>
   <h1>${title}</h1>
+${infoCutoff}
 </header>`;
 }
 

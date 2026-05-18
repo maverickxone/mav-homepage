@@ -60,12 +60,11 @@ Cookie 追踪（主动标记）：
 
 ## 5.2 指纹采集的技术手段
 
-### 5.2.1 基础信息
+### 5.2.1 基础信息：你的浏览器在"自我介绍"
 
-网站可以通过 JavaScript 轻松获取的基础信息：
+网站可以通过 JavaScript 轻松获取大量关于你设备的信息——不需要任何权限，不会弹出任何提示：
 
 ```javascript
-// 这些信息任何网页都可以读取，不需要任何权限
 const fingerprint = {
   // 屏幕信息
   screenWidth: screen.width,           // 1920
@@ -85,144 +84,151 @@ const fingerprint = {
   timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,  // "Asia/Shanghai"
   timezoneOffset: new Date().getTimezoneOffset(),  // -480
 
-  // 存储和功能检测
-  cookieEnabled: navigator.cookieEnabled,
-  localStorage: !!window.localStorage,
-  sessionStorage: !!window.sessionStorage,
-  indexedDB: !!window.indexedDB,
-
   // 触控支持
   touchSupport: navigator.maxTouchPoints,  // 0 (桌面) 或 10 (触屏)
 };
 ```
 
-这些信息本身是浏览器正常工作所需要暴露的——网页需要知道屏幕大小来做响应式布局，需要知道语言来显示正确的内容。但它们被追踪者"借用"了。
+**这些信息为什么能识别你？** 单独看每一项都很普通——很多人的屏幕都是 1920×1080。但组合起来就不一样了：1920×1080 + 24 位色深 + 1.5 倍缩放 + 中文 + 8 核 CPU + 8GB 内存 + 亚洲/上海时区 + 无触屏——这个组合可能只有几千人符合。再加上后面的 Canvas、WebGL 等信息，就能缩小到几乎唯一。
 
-### 5.2.2 Canvas 指纹
+这些信息本来是浏览器正常工作需要暴露的——网页需要知道屏幕大小来做响应式布局，需要知道语言来显示正确的内容。但它们被追踪者"借用"了。
 
-Canvas 指纹是最强大的指纹技术之一。原理是：让浏览器在一个隐藏的 `<canvas>` 元素上绘制特定的图形和文字，然后读取渲染结果的像素数据。
+### 5.2.2 Canvas 指纹：让你的 GPU "签名"
+
+Canvas 指纹是最强大的指纹技术之一。原理是：让浏览器在一个**隐藏的**画布上绘制特定的图形和文字，然后读取渲染结果的像素数据。
 
 ```javascript
-// Canvas 指纹采集示例
 function getCanvasFingerprint() {
+  // 创建一个隐藏的画布（用户看不见）
   const canvas = document.createElement('canvas');
   canvas.width = 200;
   canvas.height = 50;
   const ctx = canvas.getContext('2d');
 
-  // 绘制文字（不同系统的字体渲染有微小差异）
+  // 绘制一些文字和图形
   ctx.textBaseline = 'top';
   ctx.font = '14px Arial';
   ctx.fillStyle = '#f60';
-  ctx.fillRect(0, 0, 200, 50);
+  ctx.fillRect(0, 0, 200, 50);       // 画一个橙色矩形
   ctx.fillStyle = '#069';
-  ctx.fillText('Browser Fingerprint 🖐️', 2, 15);
+  ctx.fillText('Browser Fingerprint 🖐️', 2, 15);  // 写一行字
 
-  // 绘制图形
+  // 画一个半透明的绿色圆
   ctx.fillStyle = 'rgba(102, 204, 0, 0.7)';
   ctx.beginPath();
   ctx.arc(50, 30, 10, 0, Math.PI * 2);
   ctx.fill();
 
-  // 读取像素数据并生成哈希
+  // 把画布内容导出为像素数据，生成哈希值
   const dataURL = canvas.toDataURL();
-  return hashFunction(dataURL);  // 返回一个唯一的哈希值
+  return hashFunction(dataURL);
 }
 ```
 
-为什么同样的绘制指令在不同设备上会产生不同的结果？因为：
+**关键问题：同样的绘制指令，为什么不同设备画出来的不一样？**
 
-- 不同的 GPU 有不同的渲染精度和抗锯齿算法
-- 不同的操作系统有不同的字体渲染引擎（Windows 用 DirectWrite，macOS 用 Core Text）
-- 不同的字体版本有微小的字形差异
-- 不同的显卡驱动有不同的颜色处理方式
+因为"画一个字"这件事，底层涉及大量硬件和软件的差异：
 
-这些差异在肉眼看来完全相同，但在像素级别是不同的。
+- **GPU 不同**：NVIDIA 和 AMD 的抗锯齿算法不一样，像素边缘的处理方式有微小差异
+- **操作系统不同**：Windows 用 DirectWrite 渲染字体，macOS 用 Core Text，同一个"Arial"字体在两个系统上的像素输出不完全一致
+- **字体版本不同**：同一个字体的不同版本，字形可能有 0.1 像素的差异
+- **显卡驱动不同**：不同版本的驱动对颜色混合的计算精度不同
 
-### 5.2.3 WebGL 指纹
+这些差异**肉眼完全看不出来**——两台电脑上画出来的图看起来一模一样。但把像素数据导出来做哈希，得到的值就是不同的。这就是你的 GPU 的"签名"。
 
-WebGL 指纹利用了 3D 图形渲染的差异：
+### 5.2.3 WebGL 指纹：直接暴露你的显卡型号
+
+WebGL 是浏览器里的 3D 图形接口。它能做的事情比 Canvas 更多——包括**直接读取你的 GPU 型号**：
 
 ```javascript
 function getWebGLFingerprint() {
   const canvas = document.createElement('canvas');
   const gl = canvas.getContext('webgl');
 
-  // 获取 GPU 信息
+  // 这个扩展能直接读取 GPU 信息
   const debugInfo = gl.getExtension('WEBGL_debug_renderer_info');
+
+  // UNMASKED_VENDOR_WEBGL: GPU 厂商
   const vendor = gl.getParameter(debugInfo.UNMASKED_VENDOR_WEBGL);
+  // 例如: "NVIDIA Corporation"
+
+  // UNMASKED_RENDERER_WEBGL: GPU 具体型号
   const renderer = gl.getParameter(debugInfo.UNMASKED_RENDERER_WEBGL);
-  // 例如: "NVIDIA Corporation", "NVIDIA GeForce RTX 4060/PCIe/SSE2"
+  // 例如: "NVIDIA GeForce RTX 4060/PCIe/SSE2"
 
-  // 获取支持的扩展列表
+  // 你的 GPU 还支持哪些 3D 功能
   const extensions = gl.getSupportedExtensions();
-
-  // 渲染一个 3D 场景并读取像素
-  // ...（类似 Canvas，但用 3D 渲染）
+  // 返回一个列表，不同 GPU 支持的扩展不同
 
   return { vendor, renderer, extensions };
 }
 ```
 
-WebGL 指纹能直接暴露你的 GPU 型号——这是一个非常强的标识符，因为 GPU 型号的组合比操作系统或浏览器版本的组合多得多。
+**为什么这个很强？** 因为 "RTX 4060 + 特定驱动版本 + 特定扩展列表" 这个组合非常独特。GPU 型号有几百种，驱动版本有几十种，扩展组合更是千变万化。光这一项就能把你从几百万人中缩小到几千人。
 
-### 5.2.4 AudioContext 指纹
+而且这个信息是**硬件决定的**——你换浏览器、清 Cookie、开无痕模式，GPU 型号都不会变。
 
-音频处理也能产生指纹：
+### 5.2.4 AudioContext 指纹：连声卡都不放过
+
+音频处理也能产生指纹。原理是：生成一段音频信号，分析你的声卡处理后的输出：
 
 ```javascript
 function getAudioFingerprint() {
-  const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-  const oscillator = audioCtx.createOscillator();
-  const analyser = audioCtx.createAnalyser();
-  const gain = audioCtx.createGain();
-  const processor = audioCtx.createScriptProcessor(4096, 1, 1);
+  // 创建一个音频处理环境
+  const audioCtx = new AudioContext();
 
-  // 生成一个音频信号并分析其频谱
+  // 创建一个音频信号源（三角波，10000Hz）
+  const oscillator = audioCtx.createOscillator();
   oscillator.type = 'triangle';
   oscillator.frequency.value = 10000;
-  gain.gain.value = 0;  // 静音（用户听不到）
 
+  // 创建一个分析器，用来读取处理后的频谱数据
+  const analyser = audioCtx.createAnalyser();
+
+  // 静音——用户完全听不到任何声音
+  const gain = audioCtx.createGain();
+  gain.gain.value = 0;
+
+  // 连接：信号源 → 分析器 → 静音 → 输出
   oscillator.connect(analyser);
-  analyser.connect(processor);
-  processor.connect(gain);
+  analyser.connect(gain);
   gain.connect(audioCtx.destination);
 
-  // 不同设备的音频处理硬件会产生微小的差异
-  // 这些差异可以被检测到并用作指纹
+  // 不同设备的音频处理芯片对同一个信号的处理结果有微小差异
+  // 这些差异可以被分析器检测到，形成指纹
 }
 ```
 
-### 5.2.5 字体指纹
+**原理**：不同的声卡芯片、不同的音频驱动、不同的操作系统音频栈，对同一个数字信号的处理方式有微小的数值差异（比如浮点精度不同）。这些差异人耳听不出来，但代码能检测到。
 
-通过检测你的系统安装了哪些字体：
+### 5.2.5 字体指纹：你装了什么字体
+
+通过检测你的系统安装了哪些字体来识别你：
 
 ```javascript
 function detectFonts() {
   const testFonts = [
     'Arial', 'Verdana', 'Times New Roman', 'Courier New',
-    'Georgia', 'Palatino', 'Garamond', 'Comic Sans MS',
-    'Impact', 'Lucida Console', '微软雅黑', '宋体', '黑体',
+    'Georgia', 'Comic Sans MS', 'Impact', 'Lucida Console',
+    '微软雅黑', '宋体', '黑体',
     // ... 测试几百种字体
   ];
 
-  const baseFonts = ['monospace', 'sans-serif', 'serif'];
-  const testString = 'mmmmmmmmmmlli';
-  const testSize = '72px';
-
-  // 原理：用特定字体渲染文字，测量宽度
-  // 如果宽度和默认字体不同，说明该字体存在
-  const detected = [];
+  const testString = 'mmmmmmmmmmlli';  // 用这些字符测试宽度
   const span = document.createElement('span');
-  span.style.fontSize = testSize;
+  span.style.fontSize = '72px';
   span.textContent = testString;
   document.body.appendChild(span);
 
+  const detected = [];
   for (const font of testFonts) {
+    // 设置字体为"目标字体 + 后备字体"
     span.style.fontFamily = `'${font}', monospace`;
     const width = span.offsetWidth;
-    // 如果宽度和纯 monospace 不同，说明字体存在
-    if (width !== baseWidth) {
+
+    // 如果渲染宽度和纯 monospace 不同，说明目标字体存在
+    // （因为浏览器用了目标字体来渲染，字形宽度不同）
+    if (width !== baseMonospaceWidth) {
       detected.push(font);
     }
   }
@@ -231,7 +237,9 @@ function detectFonts() {
 }
 ```
 
-不同用户安装的字体集合差异很大——设计师可能安装了几百种字体，普通用户只有系统默认的几十种。这个差异是很好的指纹信号。
+**原理**：浏览器渲染文字时，如果指定的字体存在就用它，不存在就用后备字体。不同字体的同一个字符宽度不同。所以通过测量渲染宽度，就能判断某个字体是否安装了。
+
+**为什么有效？** 设计师可能装了几百种字体，程序员可能装了各种等宽字体（Fira Code、JetBrains Mono），普通用户只有系统默认的几十种。你的字体列表就像你的"软件指纹"——反映了你的职业和使用习惯。
 
 
 ## 5.3 指纹的威力：为什么它比 Cookie 更可怕
@@ -415,50 +423,55 @@ Tor Browser 采用最极端的方法——让所有用户看起来一模一样�
 如果你更在意引擎多样性和开源理念，**Firefox + uBlock Origin + 隐私设置调优** 是另一个好选择。
 
 
-## 5.6 你能做什么：实用隐私指南
+## 5.6 说实话，普通人能做什么
 
-### 5.6.1 基础防护（适合所有人）
+### 5.6.1 先承认一个现实
 
-1. **换一个有隐私保护的浏览器**：Brave 或配置好的 Firefox
-2. **安装 uBlock Origin**：最好的广告和追踪拦截器（Firefox 版功能最完整）
-3. **使用 HTTPS Everywhere**（或确保浏览器开启了"仅 HTTPS 模式"）
-4. **不要随便安装浏览器扩展**：每个扩展都能读取你访问的所有网页内容
-5. **定期清理 Cookie**：或设置浏览器关闭时自动清除
+前面讲了这么多追踪技术，你可能在想："那我该怎么办？"
 
-### 5.6.2 进阶防护
+网上很多隐私指南上来就说"换 Brave"、"装 Firefox"、"用 Tor"。但说实话，对大多数人来说这些建议**不现实**：
 
-1. **使用 DNS over HTTPS（DoH）**：防止 ISP 看到你的 DNS 查询
-   - Firefox：设置 → 隐私与安全 → DNS over HTTPS → 开启
-   - 推荐 DNS：Cloudflare（1.1.1.1）或 Quad9（9.9.9.9）
+- **换浏览器？** Chrome 里的书签、密码、扩展、登录状态、同步数据——迁移成本太高了。而且很多人的工作流依赖 Chrome 的特定功能或扩展，换了就没法用。100 个人里可能找不到 1 个愿意为了"隐私"放弃这些便利。
 
-2. **使用 VPN**：隐藏你的真实 IP 地址（但注意：VPN 提供商本身可以看到你的流量）
+- **装隐私插件？** 有门槛。而且一个插件负责决定"要不要拦截这个请求"，它本身就需要读取你所有的浏览数据——把隐私决策交给一个插件，这件事本身就有点讽刺。你怎么确定这个插件不收集你的数据？
 
-3. **Firefox 容器标签页**：把不同网站隔离在不同的"容器"中，防止跨站追踪
-   ```
-   容器 1 [工作]: Gmail, Google Drive
-   容器 2 [社交]: Twitter, Reddit
-   容器 3 [购物]: Amazon, 淘宝
-   容器 4 [银行]: 网银
-   → 每个容器有独立的 Cookie，互不干扰
-   ```
+- **完全拒绝追踪？** 不可能。指纹追踪是无感的，你没有"拒绝"的按钮。
 
-4. **关闭不需要的浏览器 API**：
-   ```
-   Firefox about:config:
-   media.peerconnection.enabled = false  // 防止 WebRTC 泄露真实 IP
-   geo.enabled = false                   // 禁用地理位置
-   dom.battery.enabled = false           // 禁用电池状态 API
-   ```
+所以现实是：**大多数人会继续用 Chrome，不会装什么特殊插件，也不会做什么复杂配置**。在这个前提下，能做什么？
 
-### 5.6.3 检测你的指纹唯一性
+### 5.6.2 零成本的事情（不需要换浏览器、不需要装插件）
 
-你可以访问以下网站来查看你的浏览器指纹有多独特：
+这些是你现在就能做的，不改变任何习惯：
 
-- **Cover Your Tracks**（EFF 的工具）：`coveryourtracks.eff.org`
-- **BrowserLeaks**：`browserleaks.com`
-- **CreepJS**：`abrahamjuliot.github.io/creepjs`
+1. **Cookie 弹窗直接点"拒绝全部"**：第四章讲过了，不影响网站功能，只是拒绝被追踪。
 
-这些工具会告诉你：你的浏览器指纹在它们的数据库中有多独特。如果结果是"你的指纹在 X 万个样本中是唯一的"，那说明你很容易被追踪。
+2. **Chrome 设置里关闭"广告主题"**：设置 → 隐私和安全 → 广告隐私 → 把"广告主题"、"网站建议的广告"、"广告效果衡量"全部关掉。这是 Chrome 自带的追踪功能，关掉不影响任何网站使用。
+
+3. **不要用 Google 账号登录第三方网站**：很多网站提供"用 Google 登录"的选项。方便是方便，但这让 Google 知道你在哪些网站有账号。能用邮箱注册就用邮箱。
+
+> [Tips: "用 Google 登录"(OAuth) vs "用 Gmail 邮箱注册"的区别——OAuth 没有独立密码，Google 封号则所有第三方网站全部无法访问；邮箱注册有独立密码，Google 封号后仍可用密码登录再换绑邮箱。鸡蛋不要放一个篮子里。]
+
+4. **偶尔用无痕模式**：搜索敏感内容、访问不常去的网站时，开个无痕窗口。不能防指纹，但至少不留 Cookie 和历史记录。
+
+### 5.6.3 低成本的事情（稍微花点时间）
+
+如果你愿意花 5 分钟做一次性设置：
+
+1. **Chrome 设置里阻止第三方 Cookie**：设置 → 隐私和安全 → 第三方 Cookie → 选择"阻止第三方 Cookie"。这一个设置就能干掉大部分跨站追踪，而且几乎不影响网站功能（极少数网站可能需要你手动允许）。
+
+2. **安装 uBlock Origin**（如果你愿意装一个插件的话）：这是最受信任的广告拦截器，开源、无商业利益、不收集数据。它不仅拦截广告，也拦截大量追踪脚本。Firefox 版功能最完整，Chrome 版因为 Manifest V3 限制稍弱但仍然有用。
+
+3. **检查一下你的指纹唯一性**：访问 `coveryourtracks.eff.org`（EFF 的工具），它会告诉你你的浏览器指纹有多独特。看看结果，心里有个数。
+
+### 5.6.4 接受不完美
+
+最后说一句大实话：**完美的隐私保护在 2026 年是不存在的**。
+
+即使你做了上面所有事情，Google 仍然通过你的 Google 账号知道你搜索了什么、看了什么 YouTube 视频、去了什么地方（如果你用 Google Maps）。你的手机运营商知道你的位置。你的 ISP 知道你访问了哪些网站。
+
+隐私保护不是"全有或全无"的事情。它是一个光谱——你在方便和隐私之间找到自己舒服的平衡点就行。有些人愿意为了隐私放弃便利（用 Tor、不用智能手机），有些人觉得"被追踪就被追踪吧，反正我也没什么秘密"。大多数人在中间——**稍微注意一下，但不至于影响正常生活**。
+
+关掉 Chrome 的广告追踪设置、Cookie 弹窗点拒绝、不用 Google 登录乱七八糟的网站——做到这三点，你已经比 90% 的人更注意隐私了。不需要焦虑。
 
 
 ## 5.7 隐私的未来
@@ -472,7 +485,7 @@ Tor Browser 采用最极端的方法——让所有用户看起来一模一样�
 追踪者发明第三方 Cookie → 浏览器阻止第三方 Cookie
 追踪者发明指纹追踪 → 浏览器随机化指纹
 追踪者发明 CNAME 伪装 → 浏览器检测 CNAME 追踪
-追踪者发明服务器端追踪 → ???
+追踪者发明服务器端追踪 → 监管、审计与更严格的第一方数据治理
 ```
 
 每当一种追踪技术被防御，追踪者就会发明新的技术。这场竞赛不会结束。

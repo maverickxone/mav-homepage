@@ -758,174 +758,206 @@
       "chapter": "04",
       "chapterTitle": "Cookies、存储与登录态",
       "url": "chapters/04-cookies-storage.html",
-      "body": "\r\n   4.1 HTTP 的\"失忆症\"\r\n\r\n    4.1.1 无状态协议的问题\r\n\r\nHTTP 协议有一个根本特性：  无状态  （Stateless）。\r\n\r\n这意味着服务器不会记住你是谁。每一次 HTTP 请求对服务器来说都是全新的、独立的——它不知道这个请求和上一个请求来自同一个人。\r\n\r\n类比一下：想象一个患有短期失忆症的店员。你走进店里说\"我要买一杯咖啡\"，他给你做了。你说\"再加一块蛋糕\"，他问\"你是谁？你要什么咖啡？\"——因为他已经忘了你刚才说过什么。\r\n\r\n这在 Web 的早期不是问题——那时候网页就是静态文档，你点一个链接看一篇文章，不需要\"登录\"或\"购物车\"这种概念。\r\n\r\n但当 Web 开始商业化，问题就来了：\r\n\r\n  电商网站怎么记住你的购物车？\r\n  网站怎么知道你已经登录了？\r\n  论坛怎么记住你的语言偏好？\r\n\r\n如果没有某种\"记忆\"机制，用户每点击一个链接、每加载一个新页面，都需要重新登录、重新选择偏好。这显然不可接受。\r\n\r\n    4.1.2 为什么 HTTP 要设计成无状态的\r\n\r\n你可能会问：为什么不直接让 HTTP 有状态呢？\r\n\r\n答案是：  简单性和可扩展性  。\r\n\r\n无状态意味着服务器不需要为每个用户维护会话信息。一台服务器可以处理来自数百万用户的请求，而不需要记住每个人的状态。请求之间是独立的，可以被任何一台服务器处理——这让负载均衡和水平扩展变得简单。\r\n\r\n有状态的协议（比如 FTP）需要维护连接状态，一旦连接断开，所有状态都丢失了。HTTP 的无状态设计让它天然适合互联网这种不可靠的网络环境。\r\n\r\n所以解决方案不是改变 HTTP 协议本身，而是在 HTTP 之上加一层\"记忆\"机制。这就是 Cookie。\r\n\r\n\r\n   4.2 Cookie 的诞生\r\n\r\n    4.2.1 Lou Montulli 的发明\r\n\r\n1994 年秋天，Netscape 的一位 23 岁的工程师 Lou Montulli 面临一个具体的问题：Netscape 的在线商店需要一个购物车功能，但 HTTP 的无状态特性让这变得不可能。\r\n\r\nMontulli 考虑了几种方案：\r\n\r\n  方案一：给每个用户一个永久 ID  \r\n\r\n最简单的方法是让浏览器自动向每个网站发送一个唯一的用户标识符。但 Montulli 和 Netscape 团队否决了这个方案——因为这意味着任何网站都能追踪你的浏览行为。一个广告商只要在多个网站上放置追踪代码，就能知道你访问了哪些网站。\r\n\r\n  方案二：把状态存在 URL 里  \r\n\r\n把用户信息编码在 URL 中（比如  ?user id=12345&cart=item1,item2 ）。问题是 URL 会出现在浏览器历史、服务器日志、书签里，不安全也不优雅。\r\n\r\n  方案三：Cookie  \r\n\r\nMontulli 最终设计了 Cookie：一小段文本数据，由服务器发送给浏览器存储，浏览器在后续请求中自动带回给  同一个  服务器。关键设计决策是：Cookie 只会被发送回设置它的那个域名，不会泄露给其他网站。\r\n\r\n这个名字来源于计算机科学中的\"magic cookie\"概念——一个在程序之间传递的不透明数据令牌。\r\n\r\nMontulli 写下了第一条 Cookie 的规范：\r\n\r\n   \r\nSet Cookie: CUSTOMER=WILE E COYOTE; path=/; expires=Wednesday, 09 Nov 99 23:12:40 GMT\r\n   \r\n\r\n这行代码改变了互联网的历史。\r\n\r\n    4.2.2 Cookie 的讽刺\r\n\r\nMontulli 发明 Cookie 的初衷是  保护隐私  ——相比给每个用户一个全局 ID，Cookie 的设计确保了数据只在用户和特定网站之间流通。\r\n\r\n但在两年之内，广告商就找到了绕过这个限制的方法：  第三方 Cookie  。这让 Cookie 从一个隐私保护工具变成了互联网上最大的隐私威胁之一。\r\n\r\nMontulli 本人在后来的采访中说：\"我确实对世界的现状感到有些责任。\"\r\n\r\n\r\n   4.3 Cookie 的工作原理\r\n\r\n    4.3.1 设置和发送\r\n\r\nCookie 的工作流程非常简单：\r\n\r\n   \r\n第一次访问：\r\n浏览器 ──── GET /index.html ────────────────────▶ 服务器\r\n浏览器 ◀─── 200 OK + Set Cookie: session=abc123 ── 服务器\r\n                     （服务器说：\"记住这个\"）\r\n\r\n第二次访问：\r\n浏览器 ──── GET /profile + "
+      "body": "\r\n   4.1 一个你每天都在经历的场景\r\n\r\n    4.1.1 为什么你不需要每次都登录\r\n\r\n打开手机，点开淘宝——你直接就进去了，不需要输密码。打开 B 站——你的头像在右上角，推荐页是你的口味。打开微博——你的关注列表就在那里。\r\n\r\n你有没有想过：  这些网站是怎么记住你的？  \r\n\r\n你可能觉得这是理所当然的事。但从技术角度看，这其实很不自然。因为 HTTP 协议——也就是浏览器和服务器之间通信的规则——有一个根本特性：  无状态  。\r\n\r\n    4.1.2 什么叫\"无状态\"\r\n\r\n\"无状态\"的意思是：服务器不会记住你是谁。你发的每一个请求，对服务器来说都是全新的、陌生的。\r\n\r\n想象一个极端的场景：你去一家咖啡店，点了一杯拿铁。店员做好了递给你。你说\"再加一块蛋糕\"。店员一脸茫然地看着你：\"你是谁？你要什么？\"——因为他完全不记得 30 秒前刚给你做过咖啡。\r\n\r\n这就是 HTTP 的工作方式。你点击\"加入购物车\"，服务器处理了。你点击\"去结算\"，服务器问：\"购物车？什么购物车？你是谁？\"\r\n\r\n    4.1.3 为什么要设计成无状态\r\n\r\n这听起来很蠢，但其实是故意的。HTTP 设计成无状态有一个很实际的原因：  可扩展性  。\r\n\r\n淘宝有几亿用户。如果服务器要记住每一个用户的状态（谁登录了、谁的购物车里有什么、谁在看哪个页面），那服务器的内存会爆炸。而且淘宝不是一台服务器，是几万台——你的第一个请求可能被服务器 A 处理，第二个请求被服务器 B 处理。如果状态存在服务器 A 上，服务器 B 就不认识你了。\r\n\r\n无状态意味着：每个请求都是独立的，任何一台服务器都能处理，不需要知道\"之前发生了什么\"。这让系统可以轻松地加机器、做负载均衡。\r\n\r\n但用户体验不能是无状态的。所以需要一个机制，让浏览器在每次请求时\"自报家门\"——告诉服务器\"我是谁、我之前做了什么\"。\r\n\r\n这个机制就是   Cookie  。\r\n\r\n\r\n   4.2 Cookie：互联网的\"记忆\"\r\n\r\n    4.2.1 Cookie 到底是什么\r\n\r\nCookie 就是一小段文本，存在你的浏览器里。它的唯一作用是：  告诉服务器\"我是谁\"  。\r\n\r\n注意：Cookie 本身不包含你的数据（不存你的收藏列表、不存你的密码、不存你的个人信息）。它只是一个  编号  ——就像酒店房卡上的房间号。\r\n\r\n你刷房卡，前台看到\"302\"，然后去电脑系统里查：302 住的是 Mav，入住日期是 5/18。房卡本身不包含你的信息，真正的信息在酒店的电脑系统（服务器的数据库）里。\r\n\r\n所以完整的流程是：\r\n1. 你带着 Cookie 访问网站（\"我是 sess abc123\"）\r\n2. 服务器验证这个 Cookie：这个 ID 是我签发的吗？还没过期吗？\r\n3. 验证通过 → 服务器在  自己的数据库  里查找对应的用户信息\r\n4. 服务器处理你的请求（显示你的收藏、处理你的订单等）\r\n\r\n伪造一个假 Cookie 是没用的——服务器那边没有对应的记录，验证不通过。\r\n\r\n    4.2.2 一个完整的例子\r\n\r\n  场景：你登录 bilibili.com，然后点收藏  \r\n\r\n   \r\n第一步：登录\r\n\r\n浏览器 ──── POST /login  user: \"mav\", pass: \"   \"  ────▶ B站服务器\r\n                                                          │\r\n                                                          │ 验证密码通过！\r\n                                                          │ 在数据库里记录：\r\n                                                          │   \"sess 7f3a\" → 用户 mav\r\n                                                          ▼\r\n浏览器 ◀─── 200 OK                                    ── B站服务器\r\n             Set Cookie: session=sess 7f3a; HttpOnly\r\n             \r\n             （服务器说：\"以后带着这个编号来找我\"）\r\n   \r\n\r\n   \r\n第二步：点击收藏某个视频\r\n\r\n浏览器 ──── POST /favorite?video=BV"
     },
     {
-      "id": "04-cookies-storage-41-http-的quot失忆症quot",
-      "title": "4.1 HTTP 的&quot;失忆症&quot;",
+      "id": "04-cookies-storage-41-一个你每天都在经历的场景",
+      "title": "4.1 一个你每天都在经历的场景",
       "chapter": "04",
       "chapterTitle": "Cookies、存储与登录态",
-      "url": "chapters/04-cookies-storage.html#41-http-的quot失忆症quot",
+      "url": "chapters/04-cookies-storage.html#41-一个你每天都在经历的场景",
       "body": ""
     },
     {
-      "id": "04-cookies-storage-411-无状态协议的问题",
-      "title": "4.1.1 无状态协议的问题",
+      "id": "04-cookies-storage-411-为什么你不需要每次都登录",
+      "title": "4.1.1 为什么你不需要每次都登录",
       "chapter": "04",
       "chapterTitle": "Cookies、存储与登录态",
-      "url": "chapters/04-cookies-storage.html#411-无状态协议的问题",
+      "url": "chapters/04-cookies-storage.html#411-为什么你不需要每次都登录",
       "body": ""
     },
     {
-      "id": "04-cookies-storage-412-为什么-http-要设计成无状态的",
-      "title": "4.1.2 为什么 HTTP 要设计成无状态的",
+      "id": "04-cookies-storage-412-什么叫quot无状态quot",
+      "title": "4.1.2 什么叫&quot;无状态&quot;",
       "chapter": "04",
       "chapterTitle": "Cookies、存储与登录态",
-      "url": "chapters/04-cookies-storage.html#412-为什么-http-要设计成无状态的",
+      "url": "chapters/04-cookies-storage.html#412-什么叫quot无状态quot",
       "body": ""
     },
     {
-      "id": "04-cookies-storage-42-cookie-的诞生",
-      "title": "4.2 Cookie 的诞生",
+      "id": "04-cookies-storage-413-为什么要设计成无状态",
+      "title": "4.1.3 为什么要设计成无状态",
       "chapter": "04",
       "chapterTitle": "Cookies、存储与登录态",
-      "url": "chapters/04-cookies-storage.html#42-cookie-的诞生",
+      "url": "chapters/04-cookies-storage.html#413-为什么要设计成无状态",
       "body": ""
     },
     {
-      "id": "04-cookies-storage-421-lou-montulli-的发明",
-      "title": "4.2.1 Lou Montulli 的发明",
+      "id": "04-cookies-storage-42-cookie互联网的quot记忆quot",
+      "title": "4.2 Cookie：互联网的&quot;记忆&quot;",
       "chapter": "04",
       "chapterTitle": "Cookies、存储与登录态",
-      "url": "chapters/04-cookies-storage.html#421-lou-montulli-的发明",
+      "url": "chapters/04-cookies-storage.html#42-cookie互联网的quot记忆quot",
       "body": ""
     },
     {
-      "id": "04-cookies-storage-422-cookie-的讽刺",
-      "title": "4.2.2 Cookie 的讽刺",
+      "id": "04-cookies-storage-421-cookie-到底是什么",
+      "title": "4.2.1 Cookie 到底是什么",
       "chapter": "04",
       "chapterTitle": "Cookies、存储与登录态",
-      "url": "chapters/04-cookies-storage.html#422-cookie-的讽刺",
+      "url": "chapters/04-cookies-storage.html#421-cookie-到底是什么",
       "body": ""
     },
     {
-      "id": "04-cookies-storage-43-cookie-的工作原理",
-      "title": "4.3 Cookie 的工作原理",
+      "id": "04-cookies-storage-422-一个完整的例子",
+      "title": "4.2.2 一个完整的例子",
       "chapter": "04",
       "chapterTitle": "Cookies、存储与登录态",
-      "url": "chapters/04-cookies-storage.html#43-cookie-的工作原理",
+      "url": "chapters/04-cookies-storage.html#422-一个完整的例子",
       "body": ""
     },
     {
-      "id": "04-cookies-storage-431-设置和发送",
-      "title": "4.3.1 设置和发送",
+      "id": "04-cookies-storage-423-cookie-的发明者和设计哲学",
+      "title": "4.2.3 Cookie 的发明者和设计哲学",
       "chapter": "04",
       "chapterTitle": "Cookies、存储与登录态",
-      "url": "chapters/04-cookies-storage.html#431-设置和发送",
+      "url": "chapters/04-cookies-storage.html#423-cookie-的发明者和设计哲学",
       "body": ""
     },
     {
-      "id": "04-cookies-storage-432-cookie-的属性",
-      "title": "4.3.2 Cookie 的属性",
+      "id": "04-cookies-storage-43-cookie-的细节",
+      "title": "4.3 Cookie 的细节",
       "chapter": "04",
       "chapterTitle": "Cookies、存储与登录态",
-      "url": "chapters/04-cookies-storage.html#432-cookie-的属性",
+      "url": "chapters/04-cookies-storage.html#43-cookie-的细节",
       "body": ""
     },
     {
-      "id": "04-cookies-storage-433-用代码理解-cookie",
-      "title": "4.3.3 用代码理解 Cookie",
+      "id": "04-cookies-storage-431-cookie-长什么样",
+      "title": "4.3.1 Cookie 长什么样",
       "chapter": "04",
       "chapterTitle": "Cookies、存储与登录态",
-      "url": "chapters/04-cookies-storage.html#433-用代码理解-cookie",
+      "url": "chapters/04-cookies-storage.html#431-cookie-长什么样",
       "body": ""
     },
     {
-      "id": "04-cookies-storage-434-cookie-的限制",
-      "title": "4.3.4 Cookie 的限制",
+      "id": "04-cookies-storage-432-有效期为什么有些网站要重新登录",
+      "title": "4.3.2 有效期：为什么有些网站要重新登录",
       "chapter": "04",
       "chapterTitle": "Cookies、存储与登录态",
-      "url": "chapters/04-cookies-storage.html#434-cookie-的限制",
+      "url": "chapters/04-cookies-storage.html#432-有效期为什么有些网站要重新登录",
       "body": ""
     },
     {
-      "id": "04-cookies-storage-44-sessiontoken-与登录态",
-      "title": "4.4 Session、Token 与登录态",
+      "id": "04-cookies-storage-433-session-cookie-vs-persistent-cookie",
+      "title": "4.3.3 Session Cookie vs Persistent Cookie",
       "chapter": "04",
       "chapterTitle": "Cookies、存储与登录态",
-      "url": "chapters/04-cookies-storage.html#44-sessiontoken-与登录态",
+      "url": "chapters/04-cookies-storage.html#433-session-cookie-vs-persistent-cookie",
       "body": ""
     },
     {
-      "id": "04-cookies-storage-441-session会话",
-      "title": "4.4.1 Session（会话）",
+      "id": "04-cookies-storage-434-动手看看",
+      "title": "4.3.4 动手看看",
       "chapter": "04",
       "chapterTitle": "Cookies、存储与登录态",
-      "url": "chapters/04-cookies-storage.html#441-session会话",
+      "url": "chapters/04-cookies-storage.html#434-动手看看",
       "body": ""
     },
     {
-      "id": "04-cookies-storage-442-jwt-tokenjson-web-token",
-      "title": "4.4.2 JWT Token（JSON Web Token）",
+      "id": "04-cookies-storage-44-登录是怎么实现的",
+      "title": "4.4 登录是怎么实现的",
       "chapter": "04",
       "chapterTitle": "Cookies、存储与登录态",
-      "url": "chapters/04-cookies-storage.html#442-jwt-tokenjson-web-token",
+      "url": "chapters/04-cookies-storage.html#44-登录是怎么实现的",
       "body": ""
     },
     {
-      "id": "04-cookies-storage-443-session-vs-jwt-对比",
-      "title": "4.4.3 Session vs JWT 对比",
+      "id": "04-cookies-storage-441-两种思路",
+      "title": "4.4.1 两种思路",
       "chapter": "04",
       "chapterTitle": "Cookies、存储与登录态",
-      "url": "chapters/04-cookies-storage.html#443-session-vs-jwt-对比",
+      "url": "chapters/04-cookies-storage.html#441-两种思路",
       "body": ""
     },
     {
-      "id": "04-cookies-storage-45-第一方-cookie-vs-第三方-cookie",
-      "title": "4.5 第一方 Cookie vs 第三方 Cookie",
+      "id": "04-cookies-storage-442-session服务器记住你",
+      "title": "4.4.2 Session：服务器记住你",
       "chapter": "04",
       "chapterTitle": "Cookies、存储与登录态",
-      "url": "chapters/04-cookies-storage.html#45-第一方-cookie-vs-第三方-cookie",
+      "url": "chapters/04-cookies-storage.html#442-session服务器记住你",
       "body": ""
     },
     {
-      "id": "04-cookies-storage-451-区别",
-      "title": "4.5.1 区别",
+      "id": "04-cookies-storage-443-jwt你自己带着quot公证书quot",
+      "title": "4.4.3 JWT：你自己带着&quot;公证书&quot;",
       "chapter": "04",
       "chapterTitle": "Cookies、存储与登录态",
-      "url": "chapters/04-cookies-storage.html#451-区别",
+      "url": "chapters/04-cookies-storage.html#443-jwt你自己带着quot公证书quot",
       "body": ""
     },
     {
-      "id": "04-cookies-storage-452-第三方-cookie-如何实现跨站追踪",
-      "title": "4.5.2 第三方 Cookie 如何实现跨站追踪",
+      "id": "04-cookies-storage-444-你日常遇到的登录方式",
+      "title": "4.4.4 你日常遇到的登录方式",
       "chapter": "04",
       "chapterTitle": "Cookies、存储与登录态",
-      "url": "chapters/04-cookies-storage.html#452-第三方-cookie-如何实现跨站追踪",
+      "url": "chapters/04-cookies-storage.html#444-你日常遇到的登录方式",
       "body": ""
     },
     {
-      "id": "04-cookies-storage-453-第三方-cookie-的消亡和反转",
-      "title": "4.5.3 第三方 Cookie 的消亡（和反转）",
+      "id": "04-cookies-storage-45-第三方-cookie从工具到武器",
+      "title": "4.5 第三方 Cookie：从工具到武器",
       "chapter": "04",
       "chapterTitle": "Cookies、存储与登录态",
-      "url": "chapters/04-cookies-storage.html#453-第三方-cookie-的消亡和反转",
+      "url": "chapters/04-cookies-storage.html#45-第三方-cookie从工具到武器",
       "body": ""
     },
     {
-      "id": "04-cookies-storage-46-为什么网站要你-quotaccept-cookiesquot",
-      "title": "4.6 为什么网站要你 &quot;Accept Cookies&quot;",
+      "id": "04-cookies-storage-451-第一方-vs-第三方",
+      "title": "4.5.1 第一方 vs 第三方",
       "chapter": "04",
       "chapterTitle": "Cookies、存储与登录态",
-      "url": "chapters/04-cookies-storage.html#46-为什么网站要你-quotaccept-cookiesquot",
+      "url": "chapters/04-cookies-storage.html#451-第一方-vs-第三方",
       "body": ""
     },
     {
-      "id": "04-cookies-storage-461-gdpr-和-eprivacy-指令",
-      "title": "4.6.1 GDPR 和 ePrivacy 指令",
+      "id": "04-cookies-storage-452-跨站追踪一个真实的场景",
+      "title": "4.5.2 跨站追踪：一个真实的场景",
       "chapter": "04",
       "chapterTitle": "Cookies、存储与登录态",
-      "url": "chapters/04-cookies-storage.html#461-gdpr-和-eprivacy-指令",
+      "url": "chapters/04-cookies-storage.html#452-跨站追踪一个真实的场景",
+      "body": ""
+    },
+    {
+      "id": "04-cookies-storage-453-为什么你搜了什么就看到什么广告",
+      "title": "4.5.3 为什么你搜了什么就看到什么广告",
+      "chapter": "04",
+      "chapterTitle": "Cookies、存储与登录态",
+      "url": "chapters/04-cookies-storage.html#453-为什么你搜了什么就看到什么广告",
+      "body": ""
+    },
+    {
+      "id": "04-cookies-storage-454-各浏览器的态度",
+      "title": "4.5.4 各浏览器的态度",
+      "chapter": "04",
+      "chapterTitle": "Cookies、存储与登录态",
+      "url": "chapters/04-cookies-storage.html#454-各浏览器的态度",
+      "body": ""
+    },
+    {
+      "id": "04-cookies-storage-46-cookie-弹窗为什么每个网站都在烦你",
+      "title": "4.6 Cookie 弹窗：为什么每个网站都在烦你",
+      "chapter": "04",
+      "chapterTitle": "Cookies、存储与登录态",
+      "url": "chapters/04-cookies-storage.html#46-cookie-弹窗为什么每个网站都在烦你",
+      "body": ""
+    },
+    {
+      "id": "04-cookies-storage-461-法律要求",
+      "title": "4.6.1 法律要求",
+      "chapter": "04",
+      "chapterTitle": "Cookies、存储与登录态",
+      "url": "chapters/04-cookies-storage.html#461-法律要求",
       "body": ""
     },
     {
@@ -937,91 +969,171 @@
       "body": ""
     },
     {
-      "id": "04-cookies-storage-463-为什么弹窗这么烦人",
-      "title": "4.6.3 为什么弹窗这么烦人",
+      "id": "04-cookies-storage-463-暗黑模式为什么quot拒绝quot这么难",
+      "title": "4.6.3 暗黑模式：为什么&quot;拒绝&quot;这么难",
       "chapter": "04",
       "chapterTitle": "Cookies、存储与登录态",
-      "url": "chapters/04-cookies-storage.html#463-为什么弹窗这么烦人",
+      "url": "chapters/04-cookies-storage.html#463-暗黑模式为什么quot拒绝quot这么难",
       "body": ""
     },
     {
-      "id": "04-cookies-storage-464-实际建议",
-      "title": "4.6.4 实际建议",
+      "id": "04-cookies-storage-464-你应该怎么做",
+      "title": "4.6.4 你应该怎么做",
       "chapter": "04",
       "chapterTitle": "Cookies、存储与登录态",
-      "url": "chapters/04-cookies-storage.html#464-实际建议",
+      "url": "chapters/04-cookies-storage.html#464-你应该怎么做",
       "body": ""
     },
     {
-      "id": "04-cookies-storage-47-浏览器的其他存储机制",
-      "title": "4.7 浏览器的其他存储机制",
+      "id": "04-cookies-storage-47-除了-cookie浏览器还能存什么",
+      "title": "4.7 除了 Cookie，浏览器还能存什么",
       "chapter": "04",
       "chapterTitle": "Cookies、存储与登录态",
-      "url": "chapters/04-cookies-storage.html#47-浏览器的其他存储机制",
+      "url": "chapters/04-cookies-storage.html#47-除了-cookie浏览器还能存什么",
       "body": ""
     },
     {
-      "id": "04-cookies-storage-471-localstorage-和-sessionstorage",
-      "title": "4.7.1 LocalStorage 和 SessionStorage",
+      "id": "04-cookies-storage-471-localstorage浏览器里的quot记事本quot",
+      "title": "4.7.1 LocalStorage：浏览器里的&quot;记事本&quot;",
       "chapter": "04",
       "chapterTitle": "Cookies、存储与登录态",
-      "url": "chapters/04-cookies-storage.html#471-localstorage-和-sessionstorage",
+      "url": "chapters/04-cookies-storage.html#471-localstorage浏览器里的quot记事本quot",
       "body": ""
     },
     {
-      "id": "04-cookies-storage-472-indexeddb",
-      "title": "4.7.2 IndexedDB",
+      "id": "04-cookies-storage-472-sessionstorage关了就没了",
+      "title": "4.7.2 SessionStorage：关了就没了",
       "chapter": "04",
       "chapterTitle": "Cookies、存储与登录态",
-      "url": "chapters/04-cookies-storage.html#472-indexeddb",
+      "url": "chapters/04-cookies-storage.html#472-sessionstorage关了就没了",
       "body": ""
     },
     {
-      "id": "04-cookies-storage-473-存储机制总览",
-      "title": "4.7.3 存储机制总览",
+      "id": "04-cookies-storage-473-indexeddb浏览器里的数据库",
+      "title": "4.7.3 IndexedDB：浏览器里的数据库",
       "chapter": "04",
       "chapterTitle": "Cookies、存储与登录态",
-      "url": "chapters/04-cookies-storage.html#473-存储机制总览",
+      "url": "chapters/04-cookies-storage.html#473-indexeddb浏览器里的数据库",
       "body": ""
     },
     {
-      "id": "04-cookies-storage-48-小结",
-      "title": "4.8 小结",
+      "id": "04-cookies-storage-474-对比总结",
+      "title": "4.7.4 对比总结",
       "chapter": "04",
       "chapterTitle": "Cookies、存储与登录态",
-      "url": "chapters/04-cookies-storage.html#48-小结",
+      "url": "chapters/04-cookies-storage.html#474-对比总结",
       "body": ""
     },
     {
-      "id": "04-cookies-storage-49-动手实验观察你的-cookie",
-      "title": "4.9 动手实验：观察你的 Cookie",
+      "id": "04-cookies-storage-48-无痕浏览真的quot无痕quot吗",
+      "title": "4.8 无痕浏览：真的&quot;无痕&quot;吗",
       "chapter": "04",
       "chapterTitle": "Cookies、存储与登录态",
-      "url": "chapters/04-cookies-storage.html#49-动手实验观察你的-cookie",
+      "url": "chapters/04-cookies-storage.html#48-无痕浏览真的quot无痕quot吗",
       "body": ""
     },
     {
-      "id": "04-cookies-storage-491-用开发者工具查看-cookie",
-      "title": "4.9.1 用开发者工具查看 Cookie",
+      "id": "04-cookies-storage-481-无痕模式做了什么",
+      "title": "4.8.1 无痕模式做了什么",
       "chapter": "04",
       "chapterTitle": "Cookies、存储与登录态",
-      "url": "chapters/04-cookies-storage.html#491-用开发者工具查看-cookie",
+      "url": "chapters/04-cookies-storage.html#481-无痕模式做了什么",
       "body": ""
     },
     {
-      "id": "04-cookies-storage-492-用-curl-观察-http-头",
-      "title": "4.9.2 用 curl 观察 HTTP 头",
+      "id": "04-cookies-storage-482-无痕模式防得了什么防不了什么",
+      "title": "4.8.2 无痕模式防得了什么、防不了什么",
       "chapter": "04",
       "chapterTitle": "Cookies、存储与登录态",
-      "url": "chapters/04-cookies-storage.html#492-用-curl-观察-http-头",
+      "url": "chapters/04-cookies-storage.html#482-无痕模式防得了什么防不了什么",
       "body": ""
     },
     {
-      "id": "04-cookies-storage-493-一个简单的-cookie-实验",
-      "title": "4.9.3 一个简单的 Cookie 实验",
+      "id": "04-cookies-storage-483-什么时候该用无痕模式",
+      "title": "4.8.3 什么时候该用无痕模式",
       "chapter": "04",
       "chapterTitle": "Cookies、存储与登录态",
-      "url": "chapters/04-cookies-storage.html#493-一个简单的-cookie-实验",
+      "url": "chapters/04-cookies-storage.html#483-什么时候该用无痕模式",
+      "body": ""
+    },
+    {
+      "id": "04-cookies-storage-484-一个常见误解",
+      "title": "4.8.4 一个常见误解",
+      "chapter": "04",
+      "chapterTitle": "Cookies、存储与登录态",
+      "url": "chapters/04-cookies-storage.html#484-一个常见误解",
+      "body": ""
+    },
+    {
+      "id": "04-cookies-storage-49-实用指南你应该怎么管理-cookie-和浏览数据",
+      "title": "4.9 实用指南：你应该怎么管理 Cookie 和浏览数据",
+      "chapter": "04",
+      "chapterTitle": "Cookies、存储与登录态",
+      "url": "chapters/04-cookies-storage.html#49-实用指南你应该怎么管理-cookie-和浏览数据",
+      "body": ""
+    },
+    {
+      "id": "04-cookies-storage-491-quot删除-cookiequot能解决什么问题",
+      "title": "4.9.1 &quot;删除 Cookie&quot;能解决什么问题",
+      "chapter": "04",
+      "chapterTitle": "Cookies、存储与登录态",
+      "url": "chapters/04-cookies-storage.html#491-quot删除-cookiequot能解决什么问题",
+      "body": ""
+    },
+    {
+      "id": "04-cookies-storage-492-chrome-quot清除浏览数据quot里每一项是什么",
+      "title": "4.9.2 Chrome &quot;清除浏览数据&quot;里每一项是什么",
+      "chapter": "04",
+      "chapterTitle": "Cookies、存储与登录态",
+      "url": "chapters/04-cookies-storage.html#492-chrome-quot清除浏览数据quot里每一项是什么",
+      "body": ""
+    },
+    {
+      "id": "04-cookies-storage-493-到底该删哪些",
+      "title": "4.9.3 到底该删哪些",
+      "chapter": "04",
+      "chapterTitle": "Cookies、存储与登录态",
+      "url": "chapters/04-cookies-storage.html#493-到底该删哪些",
+      "body": ""
+    },
+    {
+      "id": "04-cookies-storage-494-quot定期清理-cookiequot有必要吗",
+      "title": "4.9.4 &quot;定期清理 Cookie&quot;有必要吗",
+      "chapter": "04",
+      "chapterTitle": "Cookies、存储与登录态",
+      "url": "chapters/04-cookies-storage.html#494-quot定期清理-cookiequot有必要吗",
+      "body": ""
+    },
+    {
+      "id": "04-cookies-storage-495-一个实用技巧按时间范围清理",
+      "title": "4.9.5 一个实用技巧：按时间范围清理",
+      "chapter": "04",
+      "chapterTitle": "Cookies、存储与登录态",
+      "url": "chapters/04-cookies-storage.html#495-一个实用技巧按时间范围清理",
+      "body": ""
+    },
+    {
+      "id": "04-cookies-storage-410-cookie-的未来",
+      "title": "4.10 Cookie 的未来",
+      "chapter": "04",
+      "chapterTitle": "Cookies、存储与登录态",
+      "url": "chapters/04-cookies-storage.html#410-cookie-的未来",
+      "body": ""
+    },
+    {
+      "id": "04-cookies-storage-4101-cookie-会消失吗",
+      "title": "4.10.1 Cookie 会消失吗",
+      "chapter": "04",
+      "chapterTitle": "Cookies、存储与登录态",
+      "url": "chapters/04-cookies-storage.html#4101-cookie-会消失吗",
+      "body": ""
+    },
+    {
+      "id": "04-cookies-storage-4102-后-cookie-时代的追踪",
+      "title": "4.10.2 后 Cookie 时代的追踪",
+      "chapter": "04",
+      "chapterTitle": "Cookies、存储与登录态",
+      "url": "chapters/04-cookies-storage.html#4102-后-cookie-时代的追踪",
       "body": ""
     },
     {
@@ -1030,7 +1142,7 @@
       "chapter": "05",
       "chapterTitle": "指纹、追踪与隐私",
       "url": "chapters/05-fingerprint-privacy.html",
-      "body": "\r\n   5.1 当 Cookie 不够用了\r\n\r\n    5.1.1 Cookie 的局限\r\n\r\n上一章我们讲了第三方 Cookie 如何被用于跨站追踪。但 Cookie 有一个\"致命缺陷\"（对追踪者来说）：  用户可以删除它  。\r\n\r\n  清除浏览器数据 → Cookie 消失\r\n  使用隐私模式 → Cookie 不会被保存\r\n  Safari/Firefox 默认阻止第三方 Cookie → 追踪失效\r\n  安装广告拦截器 → 追踪脚本被阻止\r\n\r\n广告行业需要一种更\"持久\"的追踪方式——即使用户清除了所有 Cookie、使用了隐私模式，依然能识别出\"这是同一个人\"。\r\n\r\n这就是浏览器指纹（Browser Fingerprinting）。\r\n\r\n    5.1.3 指纹追踪 vs Cookie 追踪的本质区别\r\n\r\nCookie 追踪是\"主动标记\"——服务器给你贴一个标签，下次见到这个标签就认出你。你可以撕掉标签（删除 Cookie）。\r\n\r\n指纹追踪是\"被动识别\"——不需要给你贴任何标签，只需要观察你的\"长相\"（设备特征）就能认出你。你不能改变自己的\"长相\"（除非换设备）。\r\n\r\n   \r\nCookie 追踪（主动标记）：\r\n服务器: \"给你贴个标签  12345\"\r\n浏览器:  存储标签 \r\n下次访问: \"我看到标签  12345 了，是你！\"\r\n用户清除 Cookie: \"标签没了，我不认识你了\"\r\n\r\n指纹追踪（被动识别）：\r\n服务器: \"让我看看你的特征...\"\r\n服务器: \"1920×1080 + RTX 4060 + 23种字体 + Chrome 125...\"\r\n服务器: \"这个组合我见过，是你！\"\r\n用户清除 Cookie: \"没用，你的特征没变，我还是认识你\"\r\n   \r\n\r\n    5.1.2 什么是浏览器指纹\r\n\r\n浏览器指纹的原理很简单：  你的浏览器在访问网页时，会暴露大量关于你设备的信息。把这些信息组合起来，就能生成一个几乎唯一的标识符——就像人的指纹一样。  \r\n\r\n单独看每一项信息都不足以识别你：\r\n\r\n  屏幕分辨率是 1920×1080？全世界有几亿人都是这个分辨率。\r\n  操作系统是 Windows 11？几亿人。\r\n  浏览器是 Chrome 125？几千万人。\r\n  时区是 UTC+8？十几亿人。\r\n\r\n但当你把几十项这样的信息组合起来：\r\n\r\n  1920×1080 + Windows 11 + Chrome 125 + UTC+8 + 安装了 23 种字体 + GPU 是 NVIDIA RTX 4060 + 语言是 zh CN + 有 3 个浏览器插件 + Canvas 渲染哈希是  a7f3b2c1  + WebGL 渲染哈希是  d4e5f6a7  + AudioContext 指纹是  b8c9d0e1  + ...\r\n\r\n这个组合在全球可能只有你一个人匹配。研究表明，浏览器指纹通常有超过 30 比特的熵（entropy），这意味着它可以在超过 10 亿人中唯一识别一个用户。\r\n\r\n\r\n   5.2 指纹采集的技术手段\r\n\r\n    5.2.1 基础信息\r\n\r\n网站可以通过 JavaScript 轻松获取的基础信息：\r\n\r\n   javascript\r\n// 这些信息任何网页都可以读取，不需要任何权限\r\nconst fingerprint =  \r\n  // 屏幕信息\r\n  screenWidth: screen.width,           // 1920\r\n  screenHeight: screen.height,         // 1080\r\n  colorDepth: screen.colorDepth,       // 24\r\n  devicePixelRatio: window.devicePixelRatio,  // 1.5\r\n\r\n  // 浏览器信息\r\n  userAgent: navigator.userAgent,      // \"Mozilla/5.0  Windows NT 10.0...\"\r\n  language: navigator.language,        // \"zh CN\"\r\n  languages: navigator.languages,      //  \"zh CN\", \"zh\", \"en\" \r\n  platform: navigator.platform,        // \"Win32\"\r\n  hardwareConcurrency: navigator.hardwareConcurrency,  // 8  CPU 核心数 \r\n  deviceMemory: navigator.devic"
+      "body": "\r\n   5.1 当 Cookie 不够用了\r\n\r\n    5.1.1 Cookie 的局限\r\n\r\n上一章我们讲了第三方 Cookie 如何被用于跨站追踪。但 Cookie 有一个\"致命缺陷\"（对追踪者来说）：  用户可以删除它  。\r\n\r\n  清除浏览器数据 → Cookie 消失\r\n  使用隐私模式 → Cookie 不会被保存\r\n  Safari/Firefox 默认阻止第三方 Cookie → 追踪失效\r\n  安装广告拦截器 → 追踪脚本被阻止\r\n\r\n广告行业需要一种更\"持久\"的追踪方式——即使用户清除了所有 Cookie、使用了隐私模式，依然能识别出\"这是同一个人\"。\r\n\r\n这就是浏览器指纹（Browser Fingerprinting）。\r\n\r\n    5.1.3 指纹追踪 vs Cookie 追踪的本质区别\r\n\r\nCookie 追踪是\"主动标记\"——服务器给你贴一个标签，下次见到这个标签就认出你。你可以撕掉标签（删除 Cookie）。\r\n\r\n指纹追踪是\"被动识别\"——不需要给你贴任何标签，只需要观察你的\"长相\"（设备特征）就能认出你。你不能改变自己的\"长相\"（除非换设备）。\r\n\r\n   \r\nCookie 追踪（主动标记）：\r\n服务器: \"给你贴个标签  12345\"\r\n浏览器:  存储标签 \r\n下次访问: \"我看到标签  12345 了，是你！\"\r\n用户清除 Cookie: \"标签没了，我不认识你了\"\r\n\r\n指纹追踪（被动识别）：\r\n服务器: \"让我看看你的特征...\"\r\n服务器: \"1920×1080 + RTX 4060 + 23种字体 + Chrome 125...\"\r\n服务器: \"这个组合我见过，是你！\"\r\n用户清除 Cookie: \"没用，你的特征没变，我还是认识你\"\r\n   \r\n\r\n    5.1.2 什么是浏览器指纹\r\n\r\n浏览器指纹的原理很简单：  你的浏览器在访问网页时，会暴露大量关于你设备的信息。把这些信息组合起来，就能生成一个几乎唯一的标识符——就像人的指纹一样。  \r\n\r\n单独看每一项信息都不足以识别你：\r\n\r\n  屏幕分辨率是 1920×1080？全世界有几亿人都是这个分辨率。\r\n  操作系统是 Windows 11？几亿人。\r\n  浏览器是 Chrome 125？几千万人。\r\n  时区是 UTC+8？十几亿人。\r\n\r\n但当你把几十项这样的信息组合起来：\r\n\r\n  1920×1080 + Windows 11 + Chrome 125 + UTC+8 + 安装了 23 种字体 + GPU 是 NVIDIA RTX 4060 + 语言是 zh CN + 有 3 个浏览器插件 + Canvas 渲染哈希是  a7f3b2c1  + WebGL 渲染哈希是  d4e5f6a7  + AudioContext 指纹是  b8c9d0e1  + ...\r\n\r\n这个组合在全球可能只有你一个人匹配。研究表明，浏览器指纹通常有超过 30 比特的熵（entropy），这意味着它可以在超过 10 亿人中唯一识别一个用户。\r\n\r\n\r\n   5.2 指纹采集的技术手段\r\n\r\n    5.2.1 基础信息：你的浏览器在\"自我介绍\"\r\n\r\n网站可以通过 JavaScript 轻松获取大量关于你设备的信息——不需要任何权限，不会弹出任何提示：\r\n\r\n   javascript\r\nconst fingerprint =  \r\n  // 屏幕信息\r\n  screenWidth: screen.width,           // 1920\r\n  screenHeight: screen.height,         // 1080\r\n  colorDepth: screen.colorDepth,       // 24\r\n  devicePixelRatio: window.devicePixelRatio,  // 1.5\r\n\r\n  // 浏览器信息\r\n  userAgent: navigator.userAgent,      // \"Mozilla/5.0  Windows NT 10.0...\"\r\n  language: navigator.language,        // \"zh CN\"\r\n  languages: navigator.languages,      //  \"zh CN\", \"zh\", \"en\" \r\n  platform: navigator.platform,        // \"Win32\"\r\n  hardwareConcurrency: navigator.hardwareConcurrency,  // 8  CPU 核心数 \r\n  deviceMemory: navig"
     },
     {
       "id": "05-fingerprint-privacy-51-当-cookie-不够用了",
@@ -1073,43 +1185,43 @@
       "body": ""
     },
     {
-      "id": "05-fingerprint-privacy-521-基础信息",
-      "title": "5.2.1 基础信息",
+      "id": "05-fingerprint-privacy-521-基础信息你的浏览器在quot自我介绍quot",
+      "title": "5.2.1 基础信息：你的浏览器在&quot;自我介绍&quot;",
       "chapter": "05",
       "chapterTitle": "指纹、追踪与隐私",
-      "url": "chapters/05-fingerprint-privacy.html#521-基础信息",
+      "url": "chapters/05-fingerprint-privacy.html#521-基础信息你的浏览器在quot自我介绍quot",
       "body": ""
     },
     {
-      "id": "05-fingerprint-privacy-522-canvas-指纹",
-      "title": "5.2.2 Canvas 指纹",
+      "id": "05-fingerprint-privacy-522-canvas-指纹让你的-gpu-quot签名quot",
+      "title": "5.2.2 Canvas 指纹：让你的 GPU &quot;签名&quot;",
       "chapter": "05",
       "chapterTitle": "指纹、追踪与隐私",
-      "url": "chapters/05-fingerprint-privacy.html#522-canvas-指纹",
+      "url": "chapters/05-fingerprint-privacy.html#522-canvas-指纹让你的-gpu-quot签名quot",
       "body": ""
     },
     {
-      "id": "05-fingerprint-privacy-523-webgl-指纹",
-      "title": "5.2.3 WebGL 指纹",
+      "id": "05-fingerprint-privacy-523-webgl-指纹直接暴露你的显卡型号",
+      "title": "5.2.3 WebGL 指纹：直接暴露你的显卡型号",
       "chapter": "05",
       "chapterTitle": "指纹、追踪与隐私",
-      "url": "chapters/05-fingerprint-privacy.html#523-webgl-指纹",
+      "url": "chapters/05-fingerprint-privacy.html#523-webgl-指纹直接暴露你的显卡型号",
       "body": ""
     },
     {
-      "id": "05-fingerprint-privacy-524-audiocontext-指纹",
-      "title": "5.2.4 AudioContext 指纹",
+      "id": "05-fingerprint-privacy-524-audiocontext-指纹连声卡都不放过",
+      "title": "5.2.4 AudioContext 指纹：连声卡都不放过",
       "chapter": "05",
       "chapterTitle": "指纹、追踪与隐私",
-      "url": "chapters/05-fingerprint-privacy.html#524-audiocontext-指纹",
+      "url": "chapters/05-fingerprint-privacy.html#524-audiocontext-指纹连声卡都不放过",
       "body": ""
     },
     {
-      "id": "05-fingerprint-privacy-525-字体指纹",
-      "title": "5.2.5 字体指纹",
+      "id": "05-fingerprint-privacy-525-字体指纹你装了什么字体",
+      "title": "5.2.5 字体指纹：你装了什么字体",
       "chapter": "05",
       "chapterTitle": "指纹、追踪与隐私",
-      "url": "chapters/05-fingerprint-privacy.html#525-字体指纹",
+      "url": "chapters/05-fingerprint-privacy.html#525-字体指纹你装了什么字体",
       "body": ""
     },
     {
@@ -1209,35 +1321,43 @@
       "body": ""
     },
     {
-      "id": "05-fingerprint-privacy-56-你能做什么实用隐私指南",
-      "title": "5.6 你能做什么：实用隐私指南",
+      "id": "05-fingerprint-privacy-56-说实话普通人能做什么",
+      "title": "5.6 说实话，普通人能做什么",
       "chapter": "05",
       "chapterTitle": "指纹、追踪与隐私",
-      "url": "chapters/05-fingerprint-privacy.html#56-你能做什么实用隐私指南",
+      "url": "chapters/05-fingerprint-privacy.html#56-说实话普通人能做什么",
       "body": ""
     },
     {
-      "id": "05-fingerprint-privacy-561-基础防护适合所有人",
-      "title": "5.6.1 基础防护（适合所有人）",
+      "id": "05-fingerprint-privacy-561-先承认一个现实",
+      "title": "5.6.1 先承认一个现实",
       "chapter": "05",
       "chapterTitle": "指纹、追踪与隐私",
-      "url": "chapters/05-fingerprint-privacy.html#561-基础防护适合所有人",
+      "url": "chapters/05-fingerprint-privacy.html#561-先承认一个现实",
       "body": ""
     },
     {
-      "id": "05-fingerprint-privacy-562-进阶防护",
-      "title": "5.6.2 进阶防护",
+      "id": "05-fingerprint-privacy-562-零成本的事情不需要换浏览器不需要装插件",
+      "title": "5.6.2 零成本的事情（不需要换浏览器、不需要装插件）",
       "chapter": "05",
       "chapterTitle": "指纹、追踪与隐私",
-      "url": "chapters/05-fingerprint-privacy.html#562-进阶防护",
+      "url": "chapters/05-fingerprint-privacy.html#562-零成本的事情不需要换浏览器不需要装插件",
       "body": ""
     },
     {
-      "id": "05-fingerprint-privacy-563-检测你的指纹唯一性",
-      "title": "5.6.3 检测你的指纹唯一性",
+      "id": "05-fingerprint-privacy-563-低成本的事情稍微花点时间",
+      "title": "5.6.3 低成本的事情（稍微花点时间）",
       "chapter": "05",
       "chapterTitle": "指纹、追踪与隐私",
-      "url": "chapters/05-fingerprint-privacy.html#563-检测你的指纹唯一性",
+      "url": "chapters/05-fingerprint-privacy.html#563-低成本的事情稍微花点时间",
+      "body": ""
+    },
+    {
+      "id": "05-fingerprint-privacy-564-接受不完美",
+      "title": "5.6.4 接受不完美",
+      "chapter": "05",
+      "chapterTitle": "指纹、追踪与隐私",
+      "url": "chapters/05-fingerprint-privacy.html#564-接受不完美",
       "body": ""
     },
     {
@@ -1553,67 +1673,339 @@
       "body": ""
     },
     {
-      "id": "06-business-model-684-ai-与浏览器的融合",
-      "title": "6.8.4 AI 与浏览器的融合",
+      "id": "06-business-model-684-写给科大同学",
+      "title": "6.8.4 写给科大同学",
       "chapter": "06",
       "chapterTitle": "浏览器背后的公司与商业模式",
-      "url": "chapters/06-business-model.html#684-ai-与浏览器的融合",
+      "url": "chapters/06-business-model.html#684-写给科大同学",
       "body": ""
     },
     {
-      "id": "06-business-model-685-从quot浏览quot到quot理解quot",
-      "title": "6.8.5 从&quot;浏览&quot;到&quot;理解&quot;",
-      "chapter": "06",
-      "chapterTitle": "浏览器背后的公司与商业模式",
-      "url": "chapters/06-business-model.html#685-从quot浏览quot到quot理解quot",
+      "id": "07-ai-browser",
+      "title": "AI 与浏览器：从搜索到代理",
+      "chapter": "07",
+      "chapterTitle": "AI 与浏览器：从搜索到代理",
+      "url": "chapters/07-ai-browser.html",
+      "body": "\r\n   7.1 一个你可能已经有的习惯\r\n\r\n    7.1.1 你上一次\"翻搜索结果\"是什么时候\r\n\r\n想一个场景：你想知道 SSH 连接和 Mosh 有什么区别。\r\n\r\n一年前，你会打开 Google，输入\"SSH vs Mosh\"，然后看到 10 个蓝色链接。点开第一个是 Stack Overflow 的一个 2019 年的回答，信息可能过时了。点开第二个是一篇博客，写得太长了，你只想要一个简洁的对比。点开第三个终于找到一个不错的表格，但它没有覆盖你关心的所有维度。你花了 5 分钟，自己在脑子里拼凑出一个答案。\r\n\r\n现在呢？你可能直接在 Perplexity 或 ChatGPT 里问一句，2 秒后得到一个结构化的对比表格，附上来源链接。或者你在 Chrome 地址栏里输入问题，Gemini 直接在搜索结果顶部给你一个 AI 生成的回答。\r\n\r\n这个转变发生得很快——快到你可能没有意识到自己的搜索习惯已经变了。\r\n\r\n    7.1.2 为什么是浏览器\r\n\r\nAI 搜索可以是一个独立的 App（ChatGPT、Perplexity 网页版），但把它集成到浏览器里有一个本质的优势：  上下文  。\r\n\r\n你在浏览器里看一篇英文论文，想问\"这段话什么意思\"。如果 AI 是一个独立 App，你需要：复制文字 → 切换到 AI App → 粘贴 → 等回答 → 切回浏览器。如果 AI 就在浏览器的侧边栏里，它已经看到了你正在读的页面，你只需要说\"解释一下第三段\"。\r\n\r\n这就是为什么 2025 2026 年，所有主流浏览器都在疯狂集成 AI——不是因为 AI 是新鲜事物，而是因为浏览器是 AI 最自然的\"栖息地\"。你已经在浏览器里了，AI 应该在你身边，而不是在另一个窗口里等你。\r\n\r\n\r\n   7.2 AI 搜索：不再翻链接\r\n\r\n    7.2.1 传统搜索出了什么问题\r\n\r\nGoogle 搜索在 2024 2026 年面临一个越来越严重的问题：  搜索结果的质量在下降  。\r\n\r\n原因很简单：SEO（搜索引擎优化）产业太成熟了。大量网站专门为了排名而写内容，而不是为了回答你的问题。你搜\"最好的笔记本电脑 2026\"，前几个结果可能是广告、联盟营销文章、或者 AI 批量生成的\"评测\"——它们的目标是让你点击购买链接，而不是真正帮你做决定。\r\n\r\nGoogle 自己也意识到了这个问题。所以它推出了 AI Mode——用 Gemini 直接给你一个综合性的回答，而不是让你自己去翻那些质量参差不齐的链接。\r\n\r\n    7.2.2 Google AI Mode：搜索的\"自我革命\"\r\n\r\n2025 年 Google I/O 上发布，2026 年对所有免费用户开放。体验是这样的：\r\n\r\n你在 Google 搜索框输入\"美国旅游签证是 B1 还是 B2\"。以前你会看到 10 个蓝色链接。现在，顶部直接出现一个 AI 生成的回答：\"B2 是旅游/探亲签证，B1 是商务签证。如果你是去旅游，申请 B2。有效期通常 10 年，每次入境最多停留 6 个月。\"下面才是传统链接。\r\n\r\n  好处  ：快，不用翻链接了。对于事实性问题（\"X 是什么\"、\"A 和 B 有什么区别\"），效率提升巨大。\r\n\r\n  问题  ：\r\n  AI 有时会\"幻觉\"——自信地给出错误答案。而且因为它出现在 Google 搜索结果的最顶部，用户很容易不加验证就信任\r\n  Google 默认开启，没问过你要不要。2026 年 5 月，安全研究者 Alexander Hanff 发现 Chrome 在没有任何通知的情况下，自动往用户设备上下载了一个   4GB 的 Gemini Nano 模型  。更离谱的是：用户手动删除后它会自动重新下载，且没有提供任何关闭选项。Chrome 甚至不会在下载过程中显示任何提示——你的硬盘突然少了 4GB，你完全不知道为什么\r\n  本质上还是 Google 的广告生意——AI 回答里可能夹带推广内容，而且你很难分辨哪些是\"客观回答\"哪些是\"付费推荐\"\r\n\r\n    7.2.3 Perplexity：为什么有人愿意为搜索付费\r\n\r\nPerplexity 做了一件看起来不可能的事：让人们为\"搜索\"付费。在 Google 免费搜索统治了 20 年的世界里，Perplexity 在 2026 年初达到了 4500 万月活用户和约 2 亿美元年收入。\r\n\r\n它凭什么？\r\n\r\n  核心体验  ：你问一个问题 → Perplexity 实时搜索互联网上的多个来源 → 用 AI（可选 Claude Sonnet、GPT 4o 等模型）综合这些来源 → 给你一个带引用标注的结构化回答。每个事实后面都有  1  2  3  的来源标注，点击可以跳转到原文验证。\r"
+    },
+    {
+      "id": "07-ai-browser-71-一个你可能已经有的习惯",
+      "title": "7.1 一个你可能已经有的习惯",
+      "chapter": "07",
+      "chapterTitle": "AI 与浏览器：从搜索到代理",
+      "url": "chapters/07-ai-browser.html#71-一个你可能已经有的习惯",
       "body": ""
     },
     {
-      "id": "06-business-model-686-写给科大同学",
-      "title": "6.8.6 写给科大同学",
-      "chapter": "06",
-      "chapterTitle": "浏览器背后的公司与商业模式",
-      "url": "chapters/06-business-model.html#686-写给科大同学",
+      "id": "07-ai-browser-711-你上一次quot翻搜索结果quot是什么时候",
+      "title": "7.1.1 你上一次&quot;翻搜索结果&quot;是什么时候",
+      "chapter": "07",
+      "chapterTitle": "AI 与浏览器：从搜索到代理",
+      "url": "chapters/07-ai-browser.html#711-你上一次quot翻搜索结果quot是什么时候",
       "body": ""
     },
     {
-      "id": "06-business-model-69-附录浏览器选择速查表",
-      "title": "6.9 附录：浏览器选择速查表",
-      "chapter": "06",
-      "chapterTitle": "浏览器背后的公司与商业模式",
-      "url": "chapters/06-business-model.html#69-附录浏览器选择速查表",
+      "id": "07-ai-browser-712-为什么是浏览器",
+      "title": "7.1.2 为什么是浏览器",
+      "chapter": "07",
+      "chapterTitle": "AI 与浏览器：从搜索到代理",
+      "url": "chapters/07-ai-browser.html#712-为什么是浏览器",
       "body": ""
     },
     {
-      "id": "06-business-model-691-按使用场景推荐",
-      "title": "6.9.1 按使用场景推荐",
-      "chapter": "06",
-      "chapterTitle": "浏览器背后的公司与商业模式",
-      "url": "chapters/06-business-model.html#691-按使用场景推荐",
+      "id": "07-ai-browser-72-ai-搜索不再翻链接",
+      "title": "7.2 AI 搜索：不再翻链接",
+      "chapter": "07",
+      "chapterTitle": "AI 与浏览器：从搜索到代理",
+      "url": "chapters/07-ai-browser.html#72-ai-搜索不再翻链接",
       "body": ""
     },
     {
-      "id": "06-business-model-692-必装扩展推荐",
-      "title": "6.9.2 必装扩展推荐",
-      "chapter": "06",
-      "chapterTitle": "浏览器背后的公司与商业模式",
-      "url": "chapters/06-business-model.html#692-必装扩展推荐",
+      "id": "07-ai-browser-721-传统搜索出了什么问题",
+      "title": "7.2.1 传统搜索出了什么问题",
+      "chapter": "07",
+      "chapterTitle": "AI 与浏览器：从搜索到代理",
+      "url": "chapters/07-ai-browser.html#721-传统搜索出了什么问题",
       "body": ""
     },
     {
-      "id": "06-business-model-693-浏览器安全基础设置",
-      "title": "6.9.3 浏览器安全基础设置",
-      "chapter": "06",
-      "chapterTitle": "浏览器背后的公司与商业模式",
-      "url": "chapters/06-business-model.html#693-浏览器安全基础设置",
+      "id": "07-ai-browser-722-google-ai-mode搜索的quot自我革命quot",
+      "title": "7.2.2 Google AI Mode：搜索的&quot;自我革命&quot;",
+      "chapter": "07",
+      "chapterTitle": "AI 与浏览器：从搜索到代理",
+      "url": "chapters/07-ai-browser.html#722-google-ai-mode搜索的quot自我革命quot",
       "body": ""
     },
     {
-      "id": "06-business-model-694-最后的话",
-      "title": "6.9.4 最后的话",
-      "chapter": "06",
-      "chapterTitle": "浏览器背后的公司与商业模式",
-      "url": "chapters/06-business-model.html#694-最后的话",
+      "id": "07-ai-browser-723-perplexity为什么有人愿意为搜索付费",
+      "title": "7.2.3 Perplexity：为什么有人愿意为搜索付费",
+      "chapter": "07",
+      "chapterTitle": "AI 与浏览器：从搜索到代理",
+      "url": "chapters/07-ai-browser.html#723-perplexity为什么有人愿意为搜索付费",
+      "body": ""
+    },
+    {
+      "id": "07-ai-browser-724-什么时候-ai-搜索好用什么时候不行",
+      "title": "7.2.4 什么时候 AI 搜索好用，什么时候不行",
+      "chapter": "07",
+      "chapterTitle": "AI 与浏览器：从搜索到代理",
+      "url": "chapters/07-ai-browser.html#724-什么时候-ai-搜索好用什么时候不行",
+      "body": ""
+    },
+    {
+      "id": "07-ai-browser-73-ai-侧边栏它能看到你在看什么",
+      "title": "7.3 AI 侧边栏：它能看到你在看什么",
+      "chapter": "07",
+      "chapterTitle": "AI 与浏览器：从搜索到代理",
+      "url": "chapters/07-ai-browser.html#73-ai-侧边栏它能看到你在看什么",
+      "body": ""
+    },
+    {
+      "id": "07-ai-browser-731-一个场景",
+      "title": "7.3.1 一个场景",
+      "chapter": "07",
+      "chapterTitle": "AI 与浏览器：从搜索到代理",
+      "url": "chapters/07-ai-browser.html#731-一个场景",
+      "body": ""
+    },
+    {
+      "id": "07-ai-browser-732-各家的实现",
+      "title": "7.3.2 各家的实现",
+      "chapter": "07",
+      "chapterTitle": "AI 与浏览器：从搜索到代理",
+      "url": "chapters/07-ai-browser.html#732-各家的实现",
+      "body": ""
+    },
+    {
+      "id": "07-ai-browser-733-我该用哪个",
+      "title": "7.3.3 我该用哪个",
+      "chapter": "07",
+      "chapterTitle": "AI 与浏览器：从搜索到代理",
+      "url": "chapters/07-ai-browser.html#733-我该用哪个",
+      "body": ""
+    },
+    {
+      "id": "07-ai-browser-74-ai-代理从quot帮你看quot到quot帮你做quot",
+      "title": "7.4 AI 代理：从&quot;帮你看&quot;到&quot;帮你做&quot;",
+      "chapter": "07",
+      "chapterTitle": "AI 与浏览器：从搜索到代理",
+      "url": "chapters/07-ai-browser.html#74-ai-代理从quot帮你看quot到quot帮你做quot",
+      "body": ""
+    },
+    {
+      "id": "07-ai-browser-741-一个质的飞跃",
+      "title": "7.4.1 一个质的飞跃",
+      "chapter": "07",
+      "chapterTitle": "AI 与浏览器：从搜索到代理",
+      "url": "chapters/07-ai-browser.html#741-一个质的飞跃",
+      "body": ""
+    },
+    {
+      "id": "07-ai-browser-742-谁在做这件事",
+      "title": "7.4.2 谁在做这件事",
+      "chapter": "07",
+      "chapterTitle": "AI 与浏览器：从搜索到代理",
+      "url": "chapters/07-ai-browser.html#742-谁在做这件事",
+      "body": ""
+    },
+    {
+      "id": "07-ai-browser-743-这真的安全吗",
+      "title": "7.4.3 这真的安全吗",
+      "chapter": "07",
+      "chapterTitle": "AI 与浏览器：从搜索到代理",
+      "url": "chapters/07-ai-browser.html#743-这真的安全吗",
+      "body": ""
+    },
+    {
+      "id": "07-ai-browser-75-隐私的新维度",
+      "title": "7.5 隐私的新维度",
+      "chapter": "07",
+      "chapterTitle": "AI 与浏览器：从搜索到代理",
+      "url": "chapters/07-ai-browser.html#75-隐私的新维度",
+      "body": ""
+    },
+    {
+      "id": "07-ai-browser-751-ai-侧边栏看到了什么",
+      "title": "7.5.1 AI 侧边栏看到了什么",
+      "chapter": "07",
+      "chapterTitle": "AI 与浏览器：从搜索到代理",
+      "url": "chapters/07-ai-browser.html#751-ai-侧边栏看到了什么",
+      "body": ""
+    },
+    {
+      "id": "07-ai-browser-752-一个基本原则",
+      "title": "7.5.2 一个基本原则",
+      "chapter": "07",
+      "chapterTitle": "AI 与浏览器：从搜索到代理",
+      "url": "chapters/07-ai-browser.html#752-一个基本原则",
+      "body": ""
+    },
+    {
+      "id": "07-ai-browser-753-我的做法",
+      "title": "7.5.3 我的做法",
+      "chapter": "07",
+      "chapterTitle": "AI 与浏览器：从搜索到代理",
+      "url": "chapters/07-ai-browser.html#753-我的做法",
+      "body": ""
+    },
+    {
+      "id": "07-ai-browser-76-尾声从quot浏览quot到quot理解quot",
+      "title": "7.6 尾声：从&quot;浏览&quot;到&quot;理解&quot;",
+      "chapter": "07",
+      "chapterTitle": "AI 与浏览器：从搜索到代理",
+      "url": "chapters/07-ai-browser.html#76-尾声从quot浏览quot到quot理解quot",
+      "body": ""
+    },
+    {
+      "id": "07-ai-browser-761-竞争格局",
+      "title": "7.6.1 竞争格局",
+      "chapter": "07",
+      "chapterTitle": "AI 与浏览器：从搜索到代理",
+      "url": "chapters/07-ai-browser.html#761-竞争格局",
+      "body": ""
+    },
+    {
+      "id": "07-ai-browser-762-演进线",
+      "title": "7.6.2 演进线",
+      "chapter": "07",
+      "chapterTitle": "AI 与浏览器：从搜索到代理",
+      "url": "chapters/07-ai-browser.html#762-演进线",
+      "body": ""
+    },
+    {
+      "id": "08-appendix",
+      "title": "附录：浏览器选择与配置速查",
+      "chapter": "08",
+      "chapterTitle": "附录：浏览器选择与配置速查",
+      "url": "chapters/08-appendix.html",
+      "body": "\r\n   8.1 按场景选浏览器\r\n\r\n读完前面七章，你对浏览器的格局、隐私问题、商业模式都有了了解。但最终还是要落到一个实际问题：  我该用哪个？  \r\n\r\n没有\"最好的浏览器\"——只有最适合你当前场景的。\r\n\r\n    8.1.1 日常浏览（注重隐私）\r\n\r\n  首选：Brave  \r\n\r\n理由：开箱即用的广告拦截和指纹防护，Chrome 扩展全兼容（因为同是 Chromium），几乎零配置成本。你不需要装任何插件、不需要改任何设置，打开就比 Chrome 安全。\r\n\r\n适合：不想折腾但又想比 Chrome 好一点的人。\r\n\r\n    8.1.2 日常浏览（注重兼容性和生态）\r\n\r\n  首选：Chrome + uBlock Origin  \r\n\r\n理由：兼容性最好（毕竟 65% 的人在用，网站都优先适配它），扩展生态最丰富，DevTools 最强。但  务必  安装 uBlock Origin——裸奔的 Chrome 是追踪者的天堂。\r\n\r\n适合：已经深度依赖 Chrome 生态（书签、密码、同步）不想迁移的人。\r\n\r\n    8.1.3 开发和调试\r\n\r\n  主力：Chrome  （DevTools 生态最完善，Lighthouse、Performance 面板、Network 面板都是行业标准）\r\n\r\n  辅助：Firefox  （独立引擎，用于跨引擎兼容性测试。它的 CSS Grid/Flexbox 调试工具比 Chrome 好用）\r\n\r\n    8.1.4 企业/办公环境\r\n\r\n  首选：Edge  \r\n\r\n理由：和 Microsoft 365、Azure AD、Intune 深度集成，IT 管理方便。Copilot 集成对办公场景有实际价值（总结文档、对比方案）。\r\n\r\n    8.1.5 极端隐私需求\r\n\r\n  首选：Tor Browser 或 Mullvad Browser  \r\n\r\n理由：最强的匿名性——流量经过多层加密和中继，网站几乎无法追踪你。但代价是速度很慢（因为流量要绕好几个节点），而且很多网站会拒绝 Tor 的访问。\r\n\r\n适合：记者、活动人士、或者有特殊隐私需求的人。日常使用不推荐。\r\n\r\n    8.1.6 Apple 生态用户\r\n\r\n  首选：Safari  \r\n\r\n理由：第二章详细讲过了——续航好 3 4 小时、内存占用低 30 50%、隐私保护默认开启、和 Apple 设备无缝集成（Handoff、iCloud 标签页、Apple Pay）。\r\n\r\niPhone/iPad 上用什么浏览器其实无所谓——iOS 强制所有浏览器使用 WebKit 引擎，区别只在 UI。\r\n\r\n    8.1.7 AI 搜索重度用户\r\n\r\n  首选：Comet（Perplexity 浏览器）  \r\n\r\n理由：第七章讲过了——AI 搜索和浏览器无缝合一，不需要在浏览器和 AI 工具之间来回切换。Chrome 扩展全兼容，迁移成本低。\r\n\r\n\r\n   8.2 必装扩展\r\n\r\n无论你用什么浏览器（Chromium 系或 Firefox），这几个扩展值得考虑：\r\n\r\n  扩展   做什么   为什么推荐   支持  \r\n                                    \r\n    uBlock Origin     广告和追踪拦截   开源、无商业利益、不收集数据、效果最好   Firefox, Chrome, Edge  \r\n    Bitwarden     密码管理器   开源、免费版够用、跨平台同步   全平台  \r\n    Consent O Matic     自动处理 Cookie 弹窗   按你的偏好自动拒绝非必要 Cookie   Firefox, Chrome, Edge  \r\n\r\n  关于扩展的一个提醒  ：每个扩展都能读取你访问的网页内容。装得越多，攻击面越大。只装你真正需要的，定期审查已安装的扩展，删除不用的。\r\n\r\n\r\n   8.3 安全设置速查\r\n\r\n不管你用哪个浏览器，花 5 分钟做这些一次性设置：\r\n\r\n    8.3.1 Chrome\r\n\r\n   \r\n设置 → 隐私和安全 → 第三方 Cookie → 阻止第三方 Cookie\r\n设置 → 隐私和安全 → 安全 → 使用安全 DNS → 开启（选 Cloudflare 1.1.1.1）\r\n设置 → 隐私和安全 → 广告隐私 → 全部关闭\r\n设置 → 隐私和安全 → 安全 → 始终使用安全连接 → 开启\r\n   \r\n\r\n    8.3.2 Firefox\r\n\r\n   \r\n设置 → 隐私与安全 → 增强型追踪保护 → 严格\r\n设置 → 隐私与安全 → DNS over HTTPS → 最大保护\r\n设置 → 隐私与安全"
+    },
+    {
+      "id": "08-appendix-81-按场景选浏览器",
+      "title": "8.1 按场景选浏览器",
+      "chapter": "08",
+      "chapterTitle": "附录：浏览器选择与配置速查",
+      "url": "chapters/08-appendix.html#81-按场景选浏览器",
+      "body": ""
+    },
+    {
+      "id": "08-appendix-811-日常浏览注重隐私",
+      "title": "8.1.1 日常浏览（注重隐私）",
+      "chapter": "08",
+      "chapterTitle": "附录：浏览器选择与配置速查",
+      "url": "chapters/08-appendix.html#811-日常浏览注重隐私",
+      "body": ""
+    },
+    {
+      "id": "08-appendix-812-日常浏览注重兼容性和生态",
+      "title": "8.1.2 日常浏览（注重兼容性和生态）",
+      "chapter": "08",
+      "chapterTitle": "附录：浏览器选择与配置速查",
+      "url": "chapters/08-appendix.html#812-日常浏览注重兼容性和生态",
+      "body": ""
+    },
+    {
+      "id": "08-appendix-813-开发和调试",
+      "title": "8.1.3 开发和调试",
+      "chapter": "08",
+      "chapterTitle": "附录：浏览器选择与配置速查",
+      "url": "chapters/08-appendix.html#813-开发和调试",
+      "body": ""
+    },
+    {
+      "id": "08-appendix-814-企业办公环境",
+      "title": "8.1.4 企业/办公环境",
+      "chapter": "08",
+      "chapterTitle": "附录：浏览器选择与配置速查",
+      "url": "chapters/08-appendix.html#814-企业办公环境",
+      "body": ""
+    },
+    {
+      "id": "08-appendix-815-极端隐私需求",
+      "title": "8.1.5 极端隐私需求",
+      "chapter": "08",
+      "chapterTitle": "附录：浏览器选择与配置速查",
+      "url": "chapters/08-appendix.html#815-极端隐私需求",
+      "body": ""
+    },
+    {
+      "id": "08-appendix-816-apple-生态用户",
+      "title": "8.1.6 Apple 生态用户",
+      "chapter": "08",
+      "chapterTitle": "附录：浏览器选择与配置速查",
+      "url": "chapters/08-appendix.html#816-apple-生态用户",
+      "body": ""
+    },
+    {
+      "id": "08-appendix-817-ai-搜索重度用户",
+      "title": "8.1.7 AI 搜索重度用户",
+      "chapter": "08",
+      "chapterTitle": "附录：浏览器选择与配置速查",
+      "url": "chapters/08-appendix.html#817-ai-搜索重度用户",
+      "body": ""
+    },
+    {
+      "id": "08-appendix-82-必装扩展",
+      "title": "8.2 必装扩展",
+      "chapter": "08",
+      "chapterTitle": "附录：浏览器选择与配置速查",
+      "url": "chapters/08-appendix.html#82-必装扩展",
+      "body": ""
+    },
+    {
+      "id": "08-appendix-83-安全设置速查",
+      "title": "8.3 安全设置速查",
+      "chapter": "08",
+      "chapterTitle": "附录：浏览器选择与配置速查",
+      "url": "chapters/08-appendix.html#83-安全设置速查",
+      "body": ""
+    },
+    {
+      "id": "08-appendix-831-chrome",
+      "title": "8.3.1 Chrome",
+      "chapter": "08",
+      "chapterTitle": "附录：浏览器选择与配置速查",
+      "url": "chapters/08-appendix.html#831-chrome",
+      "body": ""
+    },
+    {
+      "id": "08-appendix-832-firefox",
+      "title": "8.3.2 Firefox",
+      "chapter": "08",
+      "chapterTitle": "附录：浏览器选择与配置速查",
+      "url": "chapters/08-appendix.html#832-firefox",
+      "body": ""
+    },
+    {
+      "id": "08-appendix-833-brave",
+      "title": "8.3.3 Brave",
+      "chapter": "08",
+      "chapterTitle": "附录：浏览器选择与配置速查",
+      "url": "chapters/08-appendix.html#833-brave",
+      "body": ""
+    },
+    {
+      "id": "08-appendix-834-safari",
+      "title": "8.3.4 Safari",
+      "chapter": "08",
+      "chapterTitle": "附录：浏览器选择与配置速查",
+      "url": "chapters/08-appendix.html#834-safari",
+      "body": ""
+    },
+    {
+      "id": "08-appendix-84-检测你的隐私状态",
+      "title": "8.4 检测你的隐私状态",
+      "chapter": "08",
+      "chapterTitle": "附录：浏览器选择与配置速查",
+      "url": "chapters/08-appendix.html#84-检测你的隐私状态",
+      "body": ""
+    },
+    {
+      "id": "08-appendix-85-最后的话",
+      "title": "8.5 最后的话",
+      "chapter": "08",
+      "chapterTitle": "附录：浏览器选择与配置速查",
+      "url": "chapters/08-appendix.html#85-最后的话",
       "body": ""
     }
   ]

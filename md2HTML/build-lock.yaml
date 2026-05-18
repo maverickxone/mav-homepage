@@ -6,6 +6,8 @@
 locked:
   - Browser-War/01-browser-history.md
   - Browser-War/02-engine-war.md
+  - Browser-War/04-cookies-storage.md
+  - Browser-War/05-fingerprint-privacy.md
   - server-frontend-backend/01-frontend.md
   - server-frontend-backend/02-backend.md
   - server-frontend-backend/03-server-hardware.md

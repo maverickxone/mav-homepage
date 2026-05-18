@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>附录：浏览器选择与配置速查 — 浏览器：从战争到垄断</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" id="hljs-light" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+<link rel="stylesheet" id="hljs-dark" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" media="not all">
+</head>
+<body>
+
+<div class="progress-bar" id="progress-bar"></div>
+
+<nav class="topnav" id="topnav">
+  <div class="topnav-inner">
+    <a class="brand" href="../index.html">浏览器：从战争到垄断</a>
+    <div class="nav-links">
+      <a href="01-browser-history.html">01</a>
+      <a href="02-engine-war.html">02</a>
+      <a href="03-how-browser-works.html">03</a>
+      <a href="04-cookies-storage.html">04</a>
+      <a href="05-fingerprint-privacy.html">05</a>
+      <a href="06-business-model.html">06</a>
+      <a href="07-ai-browser.html">07</a>
+      <a href="08-appendix.html" class="active">08</a>
+    </div>
+    <div class="nav-controls">
+      <button class="nav-btn" id="search-btn" aria-label="搜索 (Ctrl+K)">⌘K</button>
+      <button class="nav-btn" id="settings-btn" aria-label="阅读设置">Aa</button>
+      <a class="nav-btn" href="../../index.html" aria-label="返回知识库">← 知识库</a>
+      <a class="nav-btn" href="https://github.com/maverickxone/mav-homepage" target="_blank" rel="noopener" aria-label="GitHub" style="padding: 6px 8px;"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg></a>
+    </div>
+  </div>
+</nav>
+<div class="settings-pop" id="settings-pop">
+  <h5>主题</h5>
+  <div class="row">
+    <button class="seg" data-theme-set="light">明亮</button>
+    <button class="seg" data-theme-set="dark">暗色</button>
+  </div>
+  <h5>字号</h5>
+  <div class="row">
+    <button class="seg" data-size-set="s">小</button>
+    <button class="seg" data-size-set="m">中</button>
+    <button class="seg" data-size-set="l">大</button>
+  </div>
+</div>
+
+<div class="with-sidebar">
+  <aside class="sidebar">
+  <div class="chapter-num">CHAPTER 08</div>
+  <div class="chapter-name">附录：浏览器选择与配置速查</div>
+  <h4>目录</h4>
+  <ul>
+    <li><a href="#81-按场景选浏览器">8.1 按场景选浏览器</a></li>
+    <li><a href="#82-必装扩展">8.2 必装扩展</a></li>
+    <li><a href="#83-安全设置速查">8.3 安全设置速查</a></li>
+    <li><a href="#84-检测你的隐私状态">8.4 检测你的隐私状态</a></li>
+    <li><a href="#85-最后的话">8.5 最后的话</a></li>
+  </ul>
+</aside>
+  <article class="chapter-body">
+    <header class="chapter-head">
+  <div class="chapter-head-meta">
+    <span class="num">CHAPTER 08</span>
+    <span>≈ 10 MIN READ</span>
+  </div>
+  <h1>附录：浏览器选择与配置速查</h1>
+</header>
+    <h2 id="81-按场景选浏览器">8.1 按场景选浏览器</h2>
+<p>读完前面七章，你对浏览器的格局、隐私问题、商业模式都有了了解。但最终还是要落到一个实际问题：<strong>我该用哪个？</strong></p>
+<p>没有&quot;最好的浏览器&quot;——只有最适合你当前场景的。</p>
+<h3 id="811-日常浏览注重隐私">8.1.1 日常浏览（注重隐私）</h3>
+<p><strong>首选：Brave</strong></p>
+<p>理由：开箱即用的广告拦截和指纹防护，Chrome 扩展全兼容（因为同是 Chromium），几乎零配置成本。你不需要装任何插件、不需要改任何设置，打开就比 Chrome 安全。</p>
+<p>适合：不想折腾但又想比 Chrome 好一点的人。</p>
+<h3 id="812-日常浏览注重兼容性和生态">8.1.2 日常浏览（注重兼容性和生态）</h3>
+<p><strong>首选：Chrome + uBlock Origin</strong></p>
+<p>理由：兼容性最好（毕竟 65% 的人在用，网站都优先适配它），扩展生态最丰富，DevTools 最强。但<strong>务必</strong>安装 uBlock Origin——裸奔的 Chrome 是追踪者的天堂。</p>
+<p>适合：已经深度依赖 Chrome 生态（书签、密码、同步）不想迁移的人。</p>
+<h3 id="813-开发和调试">8.1.3 开发和调试</h3>
+<p><strong>主力：Chrome</strong>（DevTools 生态最完善，Lighthouse、Performance 面板、Network 面板都是行业标准）</p>
+<p><strong>辅助：Firefox</strong>（独立引擎，用于跨引擎兼容性测试。它的 CSS Grid/Flexbox 调试工具比 Chrome 好用）</p>
+<h3 id="814-企业办公环境">8.1.4 企业/办公环境</h3>
+<p><strong>首选：Edge</strong></p>
+<p>理由：和 Microsoft 365、Azure AD、Intune 深度集成，IT 管理方便。Copilot 集成对办公场景有实际价值（总结文档、对比方案）。</p>
+<h3 id="815-极端隐私需求">8.1.5 极端隐私需求</h3>
+<p><strong>首选：Tor Browser 或 Mullvad Browser</strong></p>
+<p>理由：最强的匿名性——流量经过多层加密和中继，网站几乎无法追踪你。但代价是速度很慢（因为流量要绕好几个节点），而且很多网站会拒绝 Tor 的访问。</p>
+<p>适合：记者、活动人士、或者有特殊隐私需求的人。日常使用不推荐。</p>
+<h3 id="816-apple-生态用户">8.1.6 Apple 生态用户</h3>
+<p><strong>首选：Safari</strong></p>
+<p>理由：第二章详细讲过了——续航好 3-4 小时、内存占用低 30-50%、隐私保护默认开启、和 Apple 设备无缝集成（Handoff、iCloud 标签页、Apple Pay）。</p>
+<p>iPhone/iPad 上用什么浏览器其实无所谓——iOS 强制所有浏览器使用 WebKit 引擎，区别只在 UI。</p>
+<h3 id="817-ai-搜索重度用户">8.1.7 AI 搜索重度用户</h3>
+<p><strong>首选：Comet（Perplexity 浏览器）</strong></p>
+<p>理由：第七章讲过了——AI 搜索和浏览器无缝合一，不需要在浏览器和 AI 工具之间来回切换。Chrome 扩展全兼容，迁移成本低。</p>
+<h2 id="82-必装扩展">8.2 必装扩展</h2>
+<p>无论你用什么浏览器（Chromium 系或 Firefox），这几个扩展值得考虑：</p>
+<div class="table-wrap"><table><thead><tr>
+<th>扩展</th>
+<th>做什么</th>
+<th>为什么推荐</th>
+<th>支持</th>
+</tr>
+</thead><tbody><tr>
+<td><strong>uBlock Origin</strong></td>
+<td>广告和追踪拦截</td>
+<td>开源、无商业利益、不收集数据、效果最好</td>
+<td>Firefox, Chrome, Edge</td>
+</tr>
+<tr>
+<td><strong>Bitwarden</strong></td>
+<td>密码管理器</td>
+<td>开源、免费版够用、跨平台同步</td>
+<td>全平台</td>
+</tr>
+<tr>
+<td><strong>Consent-O-Matic</strong></td>
+<td>自动处理 Cookie 弹窗</td>
+<td>按你的偏好自动拒绝非必要 Cookie</td>
+<td>Firefox, Chrome, Edge</td>
+</tr>
+</tbody></table></div>
+<p><strong>关于扩展的一个提醒</strong>：每个扩展都能读取你访问的网页内容。装得越多，攻击面越大。只装你真正需要的，定期审查已安装的扩展，删除不用的。</p>
+<h2 id="83-安全设置速查">8.3 安全设置速查</h2>
+<p>不管你用哪个浏览器，花 5 分钟做这些一次性设置：</p>
+<h3 id="831-chrome">8.3.1 Chrome</h3>
+<pre><code>设置 → 隐私和安全 → 第三方 Cookie → 阻止第三方 Cookie
+设置 → 隐私和安全 → 安全 → 使用安全 DNS → 开启（选 Cloudflare 1.1.1.1）
+设置 → 隐私和安全 → 广告隐私 → 全部关闭
+设置 → 隐私和安全 → 安全 → 始终使用安全连接 → 开启</code></pre>
+<h3 id="832-firefox">8.3.2 Firefox</h3>
+<pre><code>设置 → 隐私与安全 → 增强型追踪保护 → 严格
+设置 → 隐私与安全 → DNS over HTTPS → 最大保护
+设置 → 隐私与安全 → HTTPS-Only 模式 → 在所有窗口中启用</code></pre>
+<h3 id="833-brave">8.3.3 Brave</h3>
+<p>Brave 默认已开启大部分保护（广告拦截、指纹防护、第三方 Cookie 阻止），几乎不需要额外配置。你可以在 <code>brave://settings/shields</code> 里查看和调整防护级别。</p>
+<h3 id="834-safari">8.3.4 Safari</h3>
+<pre><code>设置 → Safari → 隐私与安全 → 阻止跨站追踪 → 开启（默认已开启）
+设置 → Safari → 隐私与安全 → 隐藏 IP 地址 → 对追踪器隐藏</code></pre>
+<h2 id="84-检测你的隐私状态">8.4 检测你的隐私状态</h2>
+<p>想知道你的浏览器有多&quot;暴露&quot;？访问这些工具：</p>
+<ul>
+<li><strong>Cover Your Tracks</strong>（<code>coveryourtracks.eff.org</code>）：EFF 的工具，检测你的浏览器指纹唯一性和追踪防护效果</li>
+<li><strong>BrowserLeaks</strong>（<code>browserleaks.com</code>）：详细展示你的浏览器泄露了哪些信息（IP、WebRTC、Canvas、字体等）</li>
+<li><strong>Permission.site</strong>（<code>permission.site</code>）：测试你的浏览器对各种权限请求（摄像头、麦克风、位置）的默认行为</li>
+</ul>
+<p>建议：用你的日常浏览器访问 Cover Your Tracks，看看结果。如果显示&quot;你的浏览器指纹是唯一的&quot;，说明你很容易被追踪。然后换 Brave 或配置好的 Firefox 再测一次，对比差异。</p>
+<h2 id="85-最后的话">8.5 最后的话</h2>
+<p>浏览器是你每天使用时间最长的软件之一。它是你和整个互联网之间的唯一接口。选择什么浏览器、如何配置它，直接决定了你的在线体验、隐私水平和安全程度。</p>
+<p>希望读完这本书后，你不再只是一个被动的浏览器用户，而是一个理解浏览器如何工作、知道背后利益关系、能做出明智选择的知情用户。</p>
+<p>互联网是人类最伟大的发明之一。浏览器是我们探索这个发明的窗口。让我们一起守护这扇窗口的开放和多样性。</p>
+
+    <nav class="pager">  <a href="07-ai-browser.html">
+    <span class="label">← 上一章</span>
+    <span class="title">AI 与浏览器：从搜索到代理</span>
+  </a>  <a class="disabled next"><span class="label">下一章 →</span><span class="title"></span></a></nav>
+  </article>
+</div>
+
+<footer>
+  <div class="set">
+    <span>浏览器：从战争到垄断</span>
+    <span>2026 · ZH-CN</span>
+  </div>
+  <div class="set">
+    <span>Mav</span>
+  </div>
+</footer>
+<div class="search-backdrop" id="search-overlay" role="dialog" aria-modal="true" aria-label="搜索" hidden>
+  <div class="search-modal">
+    <div class="search-input-wrap">
+      <input type="search" class="search-input" placeholder="搜索内容..." aria-label="搜索内容" autocomplete="off">
+      <kbd>ESC</kbd>
+    </div>
+    <div class="search-results" role="listbox" aria-label="搜索结果"></div>
+  </div>
+</div>
+
+<!-- Side Panel -->
+<div class="side-panel" id="side-panel">
+  <div class="side-panel-resize" id="side-panel-resize"></div>
+  <div class="side-panel-header">
+    <div class="side-panel-tabs">
+      <button class="side-panel-tab active" data-mode="sidenote">补充</button>
+      <button class="side-panel-tab" data-mode="notepad">笔记</button>
+    </div>
+    <button class="side-panel-close" aria-label="关闭">×</button>
+  </div>
+  <div class="side-panel-body"></div>
+</div>
+<button class="notepad-fab" id="notepad-fab" aria-label="便利贴">✎</button>
+
+<!-- Mobile TOC -->
+<button class="mtoc-fab" id="mtoc-fab" aria-label="目录">TOC</button>
+<div class="mtoc-drawer" id="mtoc-drawer">
+  <div class="mtoc-content"></div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/bash.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/typescript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/yaml.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/javascript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/json.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/python.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/css.min.js"></script>
+<script src="../assets/script.js"></script>
+</body>
+</html>
