@@ -16,3 +16,5 @@ locked:
   - euv-lithography/assets/style.css
   - euv-lithography/assets/script.js
   - EUV-Lithography/01-overview.md
+  - EUV-Lithography/02-light-source.md
+  - EUV-Lithography/03-illumination-mask.md
