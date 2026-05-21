@@ -15,7 +15,7 @@ mav-homepage/
 │   ├── index.html          ← 主页
 │   ├── about/              ← 关于我
 │   ├── blog/               ← 博客
-│   ├── knowledge/          ← 知识库（9 本）
+│   ├── knowledge/          ← 知识库（11 本）
 │   └── assets/             ← 全站 CSS/JS
 ├── markdown-backups/       ← 知识库的 Markdown 源文件
 └── md2HTML/                ← Markdown → HTML 构建工具
@@ -35,6 +35,7 @@ mav-homepage/
 | 视频与屏幕技术 | 5 | 数字媒体 |
 | 服务器与前后端 | 5 | 计算机 |
 | 浏览器：从战争到垄断 | 8 | 计算机 |
+| EUV 光刻机 | 7 | 半导体 |
 
 ## 使用 md2HTML 构建知识库
 
