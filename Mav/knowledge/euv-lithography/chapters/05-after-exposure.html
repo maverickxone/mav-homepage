@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>从曝光到芯片：图案怎么变成真实结构 — EUV 光刻机：一束光如何造出芯片</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" id="hljs-light" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+<link rel="stylesheet" id="hljs-dark" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" media="not all">
+</head>
+<body>
+
+<div class="progress-bar" id="progress-bar"></div>
+
+<nav class="topnav" id="topnav">
+  <div class="topnav-inner">
+    <a class="brand" href="../index.html">EUV 光刻机：一束光如何造出芯片</a>
+    <div class="nav-links">
+      <a href="00-preface.html">01</a>
+      <a href="01-overview.html">02</a>
+      <a href="02-light-source.html">03</a>
+      <a href="03-illumination-mask.html">04</a>
+      <a href="04-projection-wafer.html">05</a>
+      <a href="05-after-exposure.html" class="active">06</a>
+      <a href="06-limits-future.html">07</a>
+    </div>
+    <div class="nav-controls">
+      <button class="nav-btn" id="search-btn" aria-label="搜索 (Ctrl+K)">⌘K</button>
+      <button class="nav-btn" id="settings-btn" aria-label="阅读设置">Aa</button>
+      <a class="nav-btn" href="../../index.html" aria-label="返回知识库">← 知识库</a>
+      <a class="nav-btn" href="https://github.com/maverickxone/mav-homepage" target="_blank" rel="noopener" aria-label="GitHub" style="padding: 6px 8px;"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg></a>
+    </div>
+  </div>
+</nav>
+<div class="settings-pop" id="settings-pop">
+  <h5>主题</h5>
+  <div class="row">
+    <button class="seg" data-theme-set="light">明亮</button>
+    <button class="seg" data-theme-set="dark">暗色</button>
+  </div>
+  <h5>字号</h5>
+  <div class="row">
+    <button class="seg" data-size-set="s">小</button>
+    <button class="seg" data-size-set="m">中</button>
+    <button class="seg" data-size-set="l">大</button>
+  </div>
+</div>
+
+<div class="with-sidebar">
+  <aside class="sidebar">
+  <div class="chapter-num">CHAPTER 06</div>
+  <div class="chapter-name">从曝光到芯片：图案怎么变成真实结构</div>
+  <h4>目录</h4>
+  <ul>
+    <li><a href="#总览曝光之后发生了什么">总览：曝光之后发生了什么</a></li>
+    <li><a href="#光刻胶把光变成化学信号">光刻胶：把光变成化学信号</a></li>
+    <li><a href="#显影把潜像变成物理模板">显影：把潜像变成物理模板</a></li>
+    <li><a href="#图案转移三种方式把模板变成实物">图案转移：三种方式把模板变成实物</a></li>
+    <li><a href="#cmp磨平一切准备下一层">CMP：磨平一切，准备下一层</a></li>
+    <li><a href="#一层完成循环再来">一层完成，循环再来</a></li>
+    <li><a href="#本章要点">本章要点</a></li>
+  </ul>
+</aside>
+  <article class="chapter-body">
+    <header class="chapter-head">
+  <div class="chapter-head-meta">
+    <span class="num">CHAPTER 06</span>
+    <span>≈ 20 MIN READ</span>
+  </div>
+  <h1>从曝光到芯片：图案怎么变成真实结构</h1>
+
+</header>
+    <h2 id="总览曝光之后发生了什么">总览：曝光之后发生了什么</h2>
+<p>上一章结尾，EUV 光完成了它的使命——把光罩上的纳米级图案&quot;印&quot;在了晶圆表面的光刻胶上。但到这一步为止，晶圆上并没有真正的电路结构。光刻胶上只是有了一个&quot;潜像&quot;——被光照过的区域化学性质改变了，但物理上还什么都没动。</p>
+<p>从曝光完成到真正形成一层电路结构，晶圆还要经历一系列步骤。我们先看全貌，再逐一展开：</p>
+<ol>
+<li><strong>光刻胶化学反应</strong>——EUV 光子在胶内触发化学变化</li>
+<li><strong>显影</strong>——用显影液把&quot;该去掉的&quot;光刻胶溶解掉，形成物理上的模板</li>
+<li><strong>图案转移</strong>——通过刻蚀、离子注入或金属沉积，把模板图案变成真实的硅结构/金属导线</li>
+<li><strong>清除光刻胶 + CMP 抛光</strong>——收尾，准备做下一层</li>
+</ol>
+<p>这四步完成后，芯片的一层就做好了。然后从头再来——涂新光刻胶、换一块光罩、再曝光——做下一层。一颗芯片重复这个循环约 80 次。</p>
+<h2 id="光刻胶把光变成化学信号">光刻胶：把光变成化学信号</h2>
+<h3 id="正胶与负胶">正胶与负胶</h3>
+<p>光刻胶根据对光的响应方式分为两类：</p>
+<p><strong>正胶（Positive Tone Resist）</strong>：被光照过的区域变得<strong>可溶</strong>，显影后被洗掉。最终留下来的图案和光罩上&quot;挡光&quot;的部分一致。EUV 光刻目前主要用正胶。</p>
+<p><strong>负胶（Negative Tone Resist）</strong>：被光照过的区域变得<strong>不可溶</strong>（交联固化），显影后反而留下来。最终留下来的图案和光罩上&quot;透光&quot;的部分一致。</p>
+<p>两者各有适用场景——正胶分辨率通常更高，负胶在某些特殊结构（如通孔）上有优势。现代工艺会根据每一层的特点选择用哪种。</p>
+<h3 id="euv-光刻胶的化学放大机制">EUV 光刻胶的化学放大机制</h3>
+<p>目前 EUV 光刻主流使用的是<strong>化学放大型光刻胶（Chemically Amplified Resist, CAR）</strong>。它的名字暗示了核心设计思路：一个光子的能量，被&quot;放大&quot;成大范围的化学变化。</p>
+<p>CAR 的成分：</p>
+<ul>
+<li><strong>聚合物基体</strong>：构成薄膜的骨架，上面挂着酸敏感的&quot;保护基团&quot;</li>
+<li><strong>光酸发生剂（PAG）</strong>：受到 EUV 光子激发后，释放出强酸分子</li>
+<li><strong>猝灭剂（Quencher）</strong>：碱性分子，限制酸的扩散范围，保证图案边缘锐利</li>
+</ul>
+<p>反应链条：</p>
+<ol>
+<li><strong>EUV 光子（92eV）击中光刻胶</strong> → 电离产生高能光电子</li>
+<li><strong>光电子在胶内飞行几纳米</strong> → 沿途撞击分子产生 2–4 个次级电子（级联效应）</li>
+<li><strong>次级电子撞击 PAG 分子</strong> → PAG 分解释放强酸</li>
+<li><strong>后烘加热（Post-Exposure Bake）</strong> → 酸获得动能开始扩散，一个酸分子催化切除聚合物上的几十个保护基团——这就是&quot;化学放大&quot;</li>
+<li><strong>去保护的区域暴露出亲水基团</strong> → 变为可溶于碱性显影液</li>
+</ol>
+<p>关键点：一个光子最终导致几十个化学键被切断。这种&quot;放大&quot;机制让光刻胶对 EUV 光非常灵敏——不需要太高的曝光剂量就能完成化学翻转，有利于提高产能。</p>
+<h3 id="对比度非黑即白">对比度：非黑即白</h3>
+<p>CAR 的一个重要特性是<strong>高对比度</strong>：</p>
+<ul>
+<li>曝光剂量超过阈值 → 完全溶解</li>
+<li>曝光剂量低于阈值 → 完全不溶</li>
+</ul>
+<p>没有模糊的中间态。这保证了显影后的图案边缘极其锐利——在几纳米的宽度内从&quot;完全保留&quot;跳变到&quot;完全去除&quot;。</p>
+<p>猝灭剂在这里起到关键作用：它限制了酸的扩散半径。如果没有猝灭剂，酸会不受控地扩散到相邻区域，把不该去保护的地方也破坏了——图案就模糊了。</p>
+<h3 id="下一代金属氧化物光刻胶mox">下一代：金属氧化物光刻胶（MOx）</h3>
+<p>CAR 虽然是主流，但有一个根本矛盾：<strong>分辨率（Resolution）、线宽粗糙度（LWR）、灵敏度（Sensitivity）三者不可兼得</strong>——这叫做&quot;RLS 三角困境&quot;。</p>
+<p>新一代 EUV 光刻胶正在转向<strong>金属氧化物型（Metal Oxide Resist, MOx）</strong>——比如含锡、含铪的无机-有机杂化材料。它们不依赖化学放大机制，而是通过 EUV 光直接改变金属-氧键的结构来实现溶解性翻转。优势是更高的 EUV 吸收效率和更低的线宽粗糙度。</p>
+<p>2024–2026 年，多家半导体厂商（包括英特尔和三星）已在先进节点的部分层级上导入 MOx 光刻胶。</p>
+<h2 id="显影把潜像变成物理模板">显影：把潜像变成物理模板</h2>
+<p>曝光和后烘完成后，晶圆被送回 Track 设备（涂胶显影一体机）。</p>
+<p>显影的过程很直观：把碱性显影液（通常是 TMAH，四甲基氢氧化铵溶液，浓度约 2.38%）均匀喷洒在晶圆表面。被去保护的区域（正胶中被曝光的区域）溶解在显影液中被冲走，未被曝光的区域完好保留。</p>
+<p>显影完成后，晶圆表面形成了精确的<strong>光刻胶模板</strong>——该露出来的地方露出来了，该覆盖的地方还有光刻胶保护着。</p>
+<p>这个模板本身不是最终产品——它只是一个&quot;施工面具&quot;，告诉后续的刻蚀/沉积设备&quot;哪里该动，哪里不该动&quot;。</p>
+<h2 id="图案转移三种方式把模板变成实物">图案转移：三种方式把模板变成实物</h2>
+<p>有了光刻胶模板之后，接下来的操作取决于这一层要做什么。主要有三种：</p>
+<h3 id="刻蚀etchingquot挖坑quot">刻蚀（Etching）——&quot;挖坑&quot;</h3>
+<p>目标：把没有光刻胶保护的区域材料&quot;挖掉&quot;。</p>
+<p>现代芯片制造几乎全部使用<strong>干法刻蚀</strong>——具体来说是<strong>反应性离子刻蚀（Reactive Ion Etching, RIE）</strong>：</p>
+<ol>
+<li>晶圆被放入一个真空腔体</li>
+<li>通入反应性气体（如 CF₄、SF₆、Cl₂ 等，取决于要刻蚀的材料）</li>
+<li>用射频电场把气体激发成等离子体</li>
+<li>等离子体中的活性离子被电场加速，<strong>垂直向下轰击</strong>晶圆表面</li>
+<li>离子和暴露区域的材料发生化学反应，生成挥发性产物被抽走</li>
+</ol>
+<p>RIE 的关键优势是<strong>各向异性</strong>——离子是被电场加速的，方向几乎垂直向下，所以刻出来的沟槽侧壁是直的（不像湿法刻蚀会向侧面扩散）。在 10nm 尺度下，侧壁的垂直度决定了器件能否正常工作。</p>
+<p>刻蚀完成后，把残留的光刻胶用氧等离子体灰化（Ashing）去除——模板用完了就扔掉。</p>
+<h3 id="离子注入ion-implantationquot掺杂quot">离子注入（Ion Implantation）——&quot;掺杂&quot;</h3>
+<p>目标：在特定区域的硅中注入杂质原子，改变其导电性。</p>
+<p>纯硅几乎不导电。要让它变成半导体器件，需要精确控制某些区域的导电类型：</p>
+<ul>
+<li>注入<strong>硼（B）</strong>→ 产生空穴（正电荷载流子）→ P 型半导体</li>
+<li>注入<strong>磷（P）或砷（As）</strong>→ 产生自由电子 → N 型半导体</li>
+</ul>
+<p>离子注入的过程：把目标元素的原子电离，用电场加速到几十到几百 keV 的能量，然后像子弹一样&quot;射入&quot;硅表面。注入深度由加速能量控制，注入剂量由时间控制。</p>
+<p>光刻胶模板在这里的作用是：挡住不该被注入的区域。只有模板开口处的硅会被&quot;打入&quot;杂质。</p>
+<p>注入后需要一步<strong>退火（Annealing）</strong>——高温加热让注入的原子&quot;归位&quot;到硅晶格中，修复注入过程对晶格造成的损伤。</p>
+<h3 id="金属沉积depositionquot填线quot">金属沉积（Deposition）——&quot;填线&quot;</h3>
+<p>目标：在沟槽中填入金属，形成导线。</p>
+<p>芯片中连接晶体管的金属布线（互连线）主要用铜。但铜不能直接刻蚀（铜没有合适的挥发性反应产物），所以用一种特殊工艺——<strong>大马士革工艺（Damascene Process）</strong>：</p>
+<ol>
+<li>先在介电层（绝缘层）上用光刻+刻蚀挖出沟槽</li>
+<li>沉积一层极薄的<strong>阻挡层</strong>（如 TaN/Ta）——防止铜扩散进硅</li>
+<li>沉积一层铜<strong>种子层</strong>（PVD 溅射，只有几纳米厚）</li>
+<li><strong>电镀铜</strong>——把晶圆浸入铜电解液，用电化学方法让铜从底部往上生长，填满沟槽</li>
+<li>电镀会在整面晶圆上覆盖多余的铜——接下来用 CMP 磨掉</li>
+</ol>
+<p>&quot;大马士革&quot;这个名字来自大马士革钢刀——那种刀的纹路也是先挖槽再填金属。</p>
+<p>对于更底层的金属布线（线宽 &lt; 20nm），铜的电阻率会因为尺寸效应急剧上升，所以最先进的工艺（如 3nm 节点以下）正在用**钌（Ru）<strong>或</strong>钼（Mo）**替代铜作为底层互连材料。</p>
+<h2 id="cmp磨平一切准备下一层">CMP：磨平一切，准备下一层</h2>
+<p>每一层做完之后，晶圆表面通常不是平整的——有凸起、有多余的金属、有不均匀的地方。在做下一层之前，必须把表面磨到<strong>原子级平整</strong>，否则下一层光刻时焦平面无法对准。</p>
+<p><strong>CMP（Chemical Mechanical Planarization，化学机械抛光）</strong>：</p>
+<ul>
+<li>把晶圆面朝下压在一个旋转的抛光垫上</li>
+<li>抛光垫表面有研磨浆料——里面含有纳米级磨粒（SiO₂ 或 CeO₂）和化学腐蚀液</li>
+<li>化学侵蚀让材料表面&quot;软化&quot;，机械研磨把凸起的部分磨掉</li>
+<li>最终晶圆表面平整度可以达到纳米级</li>
+</ul>
+<p>CMP 是每一层完成后的必经步骤。一颗芯片做 80 层，就要 CMP 几十次。</p>
+<h2 id="一层完成循环再来">一层完成，循环再来</h2>
+<p>到这里，一层结构就做好了。整个流程回顾：</p>
+<p><strong>涂胶 → 曝光 → 后烘 → 显影 → 刻蚀/注入/沉积 → 去胶 → CMP → 涂新胶 → 换光罩 → 再曝光……</strong></p>
+<p>每做一层，就重复这个循环一次。一颗 GPU 约 80 层，意味着这整套流程要跑大约 80 遍——每遍的光罩不同，对应芯片不同层级的设计。</p>
+<p>整个过程耗时约 4 个月。中间任何一步出问题（光刻胶缺陷、刻蚀不均匀、CMP 过磨、离子注入剂量偏差），那一层的所有芯片都可能报废。</p>
+<p>这就是为什么芯片良率（Good Die 的比例）如此重要——1000 道工序中每一步都要几乎完美，最终良率才能保持在经济可行的范围内。</p>
+<h2 id="本章要点">本章要点</h2>
+<ul>
+<li>✓ 光刻胶分正胶（曝光区溶解）和负胶（曝光区保留），EUV 主流用正胶</li>
+<li>✓ 化学放大型光刻胶（CAR）：一个光子 → 产酸 → 酸催化切除几十个保护基团</li>
+<li>✓ 显影用碱性 TMAH 溶液，形成物理上的光刻胶模板</li>
+<li>✓ 刻蚀用 RIE（等离子体垂直轰击），保证纳米级侧壁垂直度</li>
+<li>✓ 离子注入把硼/磷射入硅中，改变导电性（P 型/N 型）</li>
+<li>✓ 铜互连用大马士革工艺（挖槽→阻挡层→电镀铜→CMP 磨平）</li>
+<li>✓ CMP 每层必做，保证表面原子级平整</li>
+<li>✓ 整个循环重复 ~80 次，耗时 ~4 个月，任一步出错都可能报废</li>
+</ul>
+
+    <nav class="pager">  <a href="04-projection-wafer.html">
+    <span class="label">← 上一章</span>
+    <span class="title">投影光学与晶圆台：纳米精度的运动控制</span>
+  </a>  <a href="06-limits-future.html" class="next">
+    <span class="label">下一章 →</span>
+    <span class="title">极限与未来：光刻的天花板在哪里</span>
+  </a></nav>
+  </article>
+</div>
+
+<footer>
+  <div class="set">
+    <span>EUV 光刻机：一束光如何造出芯片</span>
+    <span>2026 · ZH-CN</span>
+  </div>
+  <div class="set">
+    <span>Mav</span>
+  </div>
+</footer>
+<div class="search-backdrop" id="search-overlay" role="dialog" aria-modal="true" aria-label="搜索" hidden>
+  <div class="search-modal">
+    <div class="search-input-wrap">
+      <input type="search" class="search-input" placeholder="搜索内容..." aria-label="搜索内容" autocomplete="off">
+      <kbd>ESC</kbd>
+    </div>
+    <div class="search-results" role="listbox" aria-label="搜索结果"></div>
+  </div>
+</div>
+
+<!-- Side Panel -->
+<div class="side-panel" id="side-panel">
+  <div class="side-panel-resize" id="side-panel-resize"></div>
+  <div class="side-panel-header">
+    <div class="side-panel-tabs">
+      <button class="side-panel-tab active" data-mode="sidenote">补充</button>
+      <button class="side-panel-tab" data-mode="notepad">笔记</button>
+    </div>
+    <button class="side-panel-close" aria-label="关闭">×</button>
+  </div>
+  <div class="side-panel-body"></div>
+</div>
+<button class="notepad-fab" id="notepad-fab" aria-label="便利贴">✎</button>
+
+<!-- Mobile TOC -->
+<button class="mtoc-fab" id="mtoc-fab" aria-label="目录">TOC</button>
+<div class="mtoc-drawer" id="mtoc-drawer">
+  <div class="mtoc-content"></div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/bash.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/typescript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/yaml.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/javascript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/json.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/python.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/css.min.js"></script>
+<script src="../assets/script.js"></script>
+</body>
+</html>

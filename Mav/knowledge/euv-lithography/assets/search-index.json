@@ -46,7 +46,7 @@
       "chapter": "02",
       "chapterTitle": "芯片制造全景：光刻机在干什么",
       "url": "chapters/01-overview.html",
-      "body": "\r\n   一颗芯片的诞生\r\n\r\n你手里的 iPhone、笔记本电脑、Switch 游戏机，甚至你宿舍里的智能台灯——所有这些设备的核心都是一颗或多颗微芯片。CPU、GPU、SoC、DRAM、SSD 控制器……它们形态各异，但制造方式惊人地相似。\r\n\r\n让我们从最宏观的视角开始。\r\n\r\n一颗芯片的生命始于一片  硅晶圆（Silicon Wafer）  。这是一个直径 300 毫米（约 12 英寸）、厚度不到 1 毫米的圆形薄片，由高纯度单晶硅切割而成。它看起来像一面黑色的镜子，表面光滑到原子级别。\r\n\r\n   图片：300mm 硅晶圆实物照片，展示其镜面般的表面和边缘的 notch 标记 \r\n\r\n一片晶圆的价格本身并不贵——大约几百美元。但经过芯片工厂里长达 4 个月、超过 1000 道工序的加工之后，这片晶圆上会布满几十到几百颗芯片，总价值可以达到数十万甚至上百万美元。\r\n\r\n\r\n   晶圆厂：世界上最贵的工厂\r\n\r\n芯片制造发生在一种特殊的工厂里，行业术语叫   Fab  （Fabrication Plant，晶圆制造厂）。\r\n\r\n一座先进的晶圆厂造价通常在 100–200 亿美元之间。台积电在美国亚利桑那州建设的工厂投资超过 400 亿美元。这是人类建造过的最昂贵的单体工业设施之一。\r\n\r\n为什么这么贵？因为芯片制造对环境的要求极其苛刻：\r\n\r\n    洁净度  ：芯片制造车间（Clean Room）的空气洁净度是 Class 1 级别——每立方英尺空气中直径 ≥0.5 微米的颗粒不超过 1 个。作为对比，你现在呼吸的空气中，同样体积内有数十万个这样的颗粒。一粒灰尘落在晶圆上，就可能毁掉几颗芯片。\r\n    温度和湿度  ：恒温恒湿，波动范围极小。\r\n    振动控制  ：地基经过特殊设计，隔离外部振动。光刻机对振动极度敏感——纳米级别的晃动就会导致图案错位。\r\n\r\n   图片：晶圆厂内部全景照片——穿着无尘服的工程师、黄光环境、天花板上的 FOUP 运输轨道 \r\n\r\n在这样一座工厂里，通常有上百台不同种类的设备。其中大约几十台是 EUV 光刻机——它们是整座工厂里最昂贵、最关键的设备。\r\n\r\n\r\n   晶圆的旅程：从设备到设备\r\n\r\n芯片制造的过程，可以想象成一条极其复杂的流水线。但和你印象中的工厂流水线不同——晶圆不是沿着一条直线走到底，而是在不同设备之间来回穿梭，反复经历相似的步骤循环。\r\n\r\n晶圆被装在一种叫做   FOUP（Front Opening Unified Pod，前开式统一晶圆盒）   的密封容器里。FOUP 是一个黑色的塑料盒子，内部是洁净的氮气环境，可以装 25 片晶圆。\r\n\r\n   图片：FOUP 盒子的实物照片或示意图，展示内部晶圆的排列方式 \r\n\r\nFOUP 通过工厂天花板上的  自动轨道运输系统（OHT, Overhead Hoist Transfer）  在各台设备之间穿梭。你可以把它想象成一个悬挂在天花板上的微型地铁系统——FOUP 就是\"乘客\"，轨道把它送到下一站（下一台设备）。\r\n\r\n每到一台设备前，机械臂会从 FOUP 中取出晶圆，完成该设备的工序，再把晶圆放回 FOUP。然后 FOUP 被送往下一台设备，如此循环，直到所有工序完成。\r\n\r\n   图片：OHT 天轨系统照片，展示 FOUP 在工厂天花板轨道上移动的场景 \r\n\r\n\r\n   光刻的本质：纳米级复印\r\n\r\n现在我们来回答核心问题：  光刻机到底在做什么？  \r\n\r\n一句话总结：光刻机是一台  纳米级别的复印机  。它把设计好的电路图案\"复印\"到晶圆表面上。\r\n\r\n但这个\"复印\"过程比你想象的要复杂得多。让我用一个类比来解释。\r\n\r\n    模板喷涂的类比\r\n\r\n想象你在做一件 T 恤定制。你需要在白色 T 恤上印一个图案：\r\n\r\n1.   制作模板  ：用硬纸板剪出你想要的图案形状（比如一个 logo）\r\n2.   固定模板  ：把模板贴在 T 恤上\r\n3.   喷涂颜料  ：拿喷枪对着模板喷\r\n4.   撕掉模板  ：图案就留在 T 恤上了\r\n\r\n芯片制造的逻辑几乎完全一样，只不过：\r\n\r\n  \"T 恤\"是硅晶圆\r\n  \"模板\"是通过光刻机创建的（用光照射光刻胶，形成图案）\r\n  \"喷涂颜料\"是各种物理/化学处理（刻蚀、离子注入、金属沉积）\r\n  精度从\"毫米级\"变成了\"纳米级\"——缩小了 100 万倍\r\n\r\n    光刻流程：四步循环\r\n\r\n完整的光刻流程是一个四步循环：\r\n\r\n  第一步：涂胶（Coat）  \r\n\r\n晶圆被送进一台叫做   Track（涂胶显影设备）   的机器。这台设备在晶圆表面均匀涂上一层极薄的  光刻胶（Photoresist）  ——一种对特定波长光线敏感的聚合物。\r\n\r\n光刻胶的厚度只有"
+      "body": "\r\n   一颗芯片的诞生\r\n\r\n你手里的 iPhone、笔记本电脑、Switch 游戏机，甚至你宿舍里的智能台灯——所有这些设备的核心都是一颗或多颗微芯片。CPU、GPU、SoC、DRAM、SSD 控制器……它们形态各异，但制造方式惊人地相似。\r\n\r\n让我们从最宏观的视角开始。\r\n\r\n一颗芯片的生命始于一片  硅晶圆（Silicon Wafer）  。这是一个直径 300 毫米（约 12 英寸）、厚度不到 1 毫米的圆形薄片，由高纯度单晶硅切割而成。它看起来像一面黑色的镜子，表面光滑到原子级别。\r\n\r\n    TIP — 为什么晶圆是圆形的？   硅晶圆的制造工艺决定了它只能是圆的：单晶硅是从熔融硅液中\"拉\"出来的一根圆柱形晶棒（Czochralski 法），切片后自然是圆形。此外，光刻涂胶时晶圆高速旋转，圆形才能让光刻胶通过离心力均匀铺展。如果是方形，四个角的涂覆厚度几乎不可能做到一致。\r\n\r\n   图片：300mm 硅晶圆实物照片，展示其镜面般的表面和边缘的 notch 标记 \r\n\r\n一片晶圆的价格本身并不贵——大约几百美元。但经过芯片工厂里长达 4 个月、超过 1000 道工序的加工之后，这片晶圆上会布满几十到几百颗芯片，总价值可以达到数十万甚至上百万美元。\r\n\r\n\r\n   晶圆厂：世界上最贵的工厂\r\n\r\n芯片制造发生在一种特殊的工厂里，行业术语叫   Fab  （Fabrication Plant，晶圆制造厂）。\r\n\r\n一座先进的晶圆厂造价通常在 100–200 亿美元之间。台积电在美国亚利桑那州建设的工厂投资超过 400 亿美元。这是人类建造过的最昂贵的单体工业设施之一。\r\n\r\n为什么这么贵？因为芯片制造对环境的要求极其苛刻：\r\n\r\n    洁净度  ：芯片制造车间（Clean Room）的空气洁净度是 Class 1 级别——每立方英尺空气中直径 ≥0.5 微米的颗粒不超过 1 个。作为对比，你现在呼吸的空气中，同样体积内有数十万个这样的颗粒。一粒灰尘落在晶圆上，就可能毁掉几颗芯片。\r\n    温度和湿度  ：恒温恒湿，波动范围极小。\r\n    振动控制  ：地基经过特殊设计，隔离外部振动。光刻机对振动极度敏感——纳米级别的晃动就会导致图案错位。\r\n\r\n   图片：晶圆厂内部全景照片——穿着无尘服的工程师、黄光环境、天花板上的 FOUP 运输轨道 \r\n\r\n在这样一座工厂里，通常有上百台不同种类的设备。其中大约几十台是 EUV 光刻机——它们是整座工厂里最昂贵、最关键的设备。\r\n\r\n\r\n   晶圆的旅程：从设备到设备\r\n\r\n芯片制造的过程，可以想象成一条极其复杂的流水线。但和你印象中的工厂流水线不同——晶圆不是沿着一条直线走到底，而是在不同设备之间来回穿梭，反复经历相似的步骤循环。\r\n\r\n晶圆被装在一种叫做   FOUP（Front Opening Unified Pod，前开式统一晶圆盒）   的密封容器里。FOUP 是一个黑色的塑料盒子，内部是洁净的氮气环境，可以装 25 片晶圆。\r\n\r\n   图片：FOUP 盒子的实物照片或示意图，展示内部晶圆的排列方式 \r\n\r\nFOUP 通过工厂天花板上的  自动轨道运输系统（OHT, Overhead Hoist Transfer）  在各台设备之间穿梭。你可以把它想象成一个悬挂在天花板上的微型地铁系统——FOUP 就是\"乘客\"，轨道把它送到下一站（下一台设备）。\r\n\r\n每到一台设备前，机械臂会从 FOUP 中取出晶圆，完成该设备的工序，再把晶圆放回 FOUP。然后 FOUP 被送往下一台设备，如此循环，直到所有工序完成。\r\n\r\n   图片：OHT 天轨系统照片，展示 FOUP 在工厂天花板轨道上移动的场景 \r\n\r\n\r\n   光刻的本质：纳米级复印\r\n\r\n现在我们来回答核心问题：  光刻机到底在做什么？  \r\n\r\n简单而言：光刻机是一台  纳米级别的复印机  。它把设计好的电路图案\"复印\"到晶圆表面上。\r\n\r\n但这个\"复印\"过程比你想象的要复杂得多。让我用一个类比来解释。\r\n\r\n    模板喷涂的类比\r\n\r\n想象你在做一件 T 恤定制。你需要在白色 T 恤上印一个图案：\r\n\r\n1.   制作模板  ：用硬纸板剪出你想要的图案形状（比如一个 logo）\r\n2.   固定模板  ：把模板贴在 T 恤上\r\n3.   喷涂颜料  ：拿喷枪对着模板喷\r\n4.   撕掉模板  ：图案就留在 T 恤上了\r\n\r\n芯片制造的逻辑几乎完全一样，只不过：\r\n\r\n  \"T 恤\"是硅晶圆\r\n  \"模板\"是通过光刻机创建的（用光照射光刻胶，形成图案）\r\n  \"喷涂颜料\"是各种物理/化学处理（刻蚀、离子注入、金属沉积）\r\n  精度从\"毫米级\"变成了\"纳米级\"——缩小了 100 万倍\r\n\r\n    光刻流"
     },
     {
       "id": "01-overview-一颗芯片的诞生",
@@ -721,195 +721,315 @@
       "body": ""
     },
     {
-      "id": "05-limits-future",
-      "title": "极限与未来：光刻的天花板在哪里",
+      "id": "05-after-exposure",
+      "title": "从曝光到芯片：图案怎么变成真实结构",
       "chapter": "06",
+      "chapterTitle": "从曝光到芯片：图案怎么变成真实结构",
+      "url": "chapters/05-after-exposure.html",
+      "body": "\r\n   总览：曝光之后发生了什么\r\n\r\n上一章结尾，EUV 光完成了它的使命——把光罩上的纳米级图案\"印\"在了晶圆表面的光刻胶上。但到这一步为止，晶圆上并没有真正的电路结构。光刻胶上只是有了一个\"潜像\"——被光照过的区域化学性质改变了，但物理上还什么都没动。\r\n\r\n从曝光完成到真正形成一层电路结构，晶圆还要经历一系列步骤。我们先看全貌，再逐一展开：\r\n\r\n1.   光刻胶化学反应  ——EUV 光子在胶内触发化学变化\r\n2.   显影  ——用显影液把\"该去掉的\"光刻胶溶解掉，形成物理上的模板\r\n3.   图案转移  ——通过刻蚀、离子注入或金属沉积，把模板图案变成真实的硅结构/金属导线\r\n4.   清除光刻胶 + CMP 抛光  ——收尾，准备做下一层\r\n\r\n这四步完成后，芯片的一层就做好了。然后从头再来——涂新光刻胶、换一块光罩、再曝光——做下一层。一颗芯片重复这个循环约 80 次。\r\n\r\n\r\n   光刻胶：把光变成化学信号\r\n\r\n    正胶与负胶\r\n\r\n光刻胶根据对光的响应方式分为两类：\r\n\r\n  正胶（Positive Tone Resist）  ：被光照过的区域变得  可溶  ，显影后被洗掉。最终留下来的图案和光罩上\"挡光\"的部分一致。EUV 光刻目前主要用正胶。\r\n\r\n  负胶（Negative Tone Resist）  ：被光照过的区域变得  不可溶  （交联固化），显影后反而留下来。最终留下来的图案和光罩上\"透光\"的部分一致。\r\n\r\n两者各有适用场景——正胶分辨率通常更高，负胶在某些特殊结构（如通孔）上有优势。现代工艺会根据每一层的特点选择用哪种。\r\n\r\n    EUV 光刻胶的化学放大机制\r\n\r\n目前 EUV 光刻主流使用的是  化学放大型光刻胶（Chemically Amplified Resist, CAR）  。它的名字暗示了核心设计思路：一个光子的能量，被\"放大\"成大范围的化学变化。\r\n\r\nCAR 的成分：\r\n    聚合物基体  ：构成薄膜的骨架，上面挂着酸敏感的\"保护基团\"\r\n    光酸发生剂（PAG）  ：受到 EUV 光子激发后，释放出强酸分子\r\n    猝灭剂（Quencher）  ：碱性分子，限制酸的扩散范围，保证图案边缘锐利\r\n\r\n反应链条：\r\n\r\n1.   EUV 光子（92eV）击中光刻胶   → 电离产生高能光电子\r\n2.   光电子在胶内飞行几纳米   → 沿途撞击分子产生 2–4 个次级电子（级联效应）\r\n3.   次级电子撞击 PAG 分子   → PAG 分解释放强酸\r\n4.   后烘加热（Post Exposure Bake）   → 酸获得动能开始扩散，一个酸分子催化切除聚合物上的几十个保护基团——这就是\"化学放大\"\r\n5.   去保护的区域暴露出亲水基团   → 变为可溶于碱性显影液\r\n\r\n关键点：一个光子最终导致几十个化学键被切断。这种\"放大\"机制让光刻胶对 EUV 光非常灵敏——不需要太高的曝光剂量就能完成化学翻转，有利于提高产能。\r\n\r\n    对比度：非黑即白\r\n\r\nCAR 的一个重要特性是  高对比度  ：\r\n\r\n  曝光剂量超过阈值 → 完全溶解\r\n  曝光剂量低于阈值 → 完全不溶\r\n\r\n没有模糊的中间态。这保证了显影后的图案边缘极其锐利——在几纳米的宽度内从\"完全保留\"跳变到\"完全去除\"。\r\n\r\n猝灭剂在这里起到关键作用：它限制了酸的扩散半径。如果没有猝灭剂，酸会不受控地扩散到相邻区域，把不该去保护的地方也破坏了——图案就模糊了。\r\n\r\n    下一代：金属氧化物光刻胶（MOx）\r\n\r\nCAR 虽然是主流，但有一个根本矛盾：  分辨率（Resolution）、线宽粗糙度（LWR）、灵敏度（Sensitivity）三者不可兼得  ——这叫做\"RLS 三角困境\"。\r\n\r\n新一代 EUV 光刻胶正在转向  金属氧化物型（Metal Oxide Resist, MOx）  ——比如含锡、含铪的无机 有机杂化材料。它们不依赖化学放大机制，而是通过 EUV 光直接改变金属 氧键的结构来实现溶解性翻转。优势是更高的 EUV 吸收效率和更低的线宽粗糙度。\r\n\r\n2024–2026 年，多家半导体厂商（包括英特尔和三星）已在先进节点的部分层级上导入 MOx 光刻胶。\r\n\r\n\r\n   显影：把潜像变成物理模板\r\n\r\n曝光和后烘完成后，晶圆被送回 Track 设备（涂胶显影一体机）。\r\n\r\n显影的过程很直观：把碱性显影液（通常是 TMAH，四甲基氢氧化铵溶液，浓度约 2.38%）均匀喷洒在晶圆表面。被去保护的区域（正胶中被曝光的区域）溶解在显影液中被冲走，未被曝光的区域完好保留。\r\n\r\n显影完成后，晶圆表面形成了精确的  光刻胶模板  ——该露出来的地方露出来了，该"
+    },
+    {
+      "id": "05-after-exposure-总览曝光之后发生了什么",
+      "title": "总览：曝光之后发生了什么",
+      "chapter": "06",
+      "chapterTitle": "从曝光到芯片：图案怎么变成真实结构",
+      "url": "chapters/05-after-exposure.html#总览曝光之后发生了什么",
+      "body": ""
+    },
+    {
+      "id": "05-after-exposure-光刻胶把光变成化学信号",
+      "title": "光刻胶：把光变成化学信号",
+      "chapter": "06",
+      "chapterTitle": "从曝光到芯片：图案怎么变成真实结构",
+      "url": "chapters/05-after-exposure.html#光刻胶把光变成化学信号",
+      "body": ""
+    },
+    {
+      "id": "05-after-exposure-正胶与负胶",
+      "title": "正胶与负胶",
+      "chapter": "06",
+      "chapterTitle": "从曝光到芯片：图案怎么变成真实结构",
+      "url": "chapters/05-after-exposure.html#正胶与负胶",
+      "body": ""
+    },
+    {
+      "id": "05-after-exposure-euv-光刻胶的化学放大机制",
+      "title": "EUV 光刻胶的化学放大机制",
+      "chapter": "06",
+      "chapterTitle": "从曝光到芯片：图案怎么变成真实结构",
+      "url": "chapters/05-after-exposure.html#euv-光刻胶的化学放大机制",
+      "body": ""
+    },
+    {
+      "id": "05-after-exposure-对比度非黑即白",
+      "title": "对比度：非黑即白",
+      "chapter": "06",
+      "chapterTitle": "从曝光到芯片：图案怎么变成真实结构",
+      "url": "chapters/05-after-exposure.html#对比度非黑即白",
+      "body": ""
+    },
+    {
+      "id": "05-after-exposure-下一代金属氧化物光刻胶mox",
+      "title": "下一代：金属氧化物光刻胶（MOx）",
+      "chapter": "06",
+      "chapterTitle": "从曝光到芯片：图案怎么变成真实结构",
+      "url": "chapters/05-after-exposure.html#下一代金属氧化物光刻胶mox",
+      "body": ""
+    },
+    {
+      "id": "05-after-exposure-显影把潜像变成物理模板",
+      "title": "显影：把潜像变成物理模板",
+      "chapter": "06",
+      "chapterTitle": "从曝光到芯片：图案怎么变成真实结构",
+      "url": "chapters/05-after-exposure.html#显影把潜像变成物理模板",
+      "body": ""
+    },
+    {
+      "id": "05-after-exposure-图案转移三种方式把模板变成实物",
+      "title": "图案转移：三种方式把模板变成实物",
+      "chapter": "06",
+      "chapterTitle": "从曝光到芯片：图案怎么变成真实结构",
+      "url": "chapters/05-after-exposure.html#图案转移三种方式把模板变成实物",
+      "body": ""
+    },
+    {
+      "id": "05-after-exposure-刻蚀etchingquot挖坑quot",
+      "title": "刻蚀（Etching）——&quot;挖坑&quot;",
+      "chapter": "06",
+      "chapterTitle": "从曝光到芯片：图案怎么变成真实结构",
+      "url": "chapters/05-after-exposure.html#刻蚀etchingquot挖坑quot",
+      "body": ""
+    },
+    {
+      "id": "05-after-exposure-离子注入ion-implantationquot掺杂quot",
+      "title": "离子注入（Ion Implantation）——&quot;掺杂&quot;",
+      "chapter": "06",
+      "chapterTitle": "从曝光到芯片：图案怎么变成真实结构",
+      "url": "chapters/05-after-exposure.html#离子注入ion-implantationquot掺杂quot",
+      "body": ""
+    },
+    {
+      "id": "05-after-exposure-金属沉积depositionquot填线quot",
+      "title": "金属沉积（Deposition）——&quot;填线&quot;",
+      "chapter": "06",
+      "chapterTitle": "从曝光到芯片：图案怎么变成真实结构",
+      "url": "chapters/05-after-exposure.html#金属沉积depositionquot填线quot",
+      "body": ""
+    },
+    {
+      "id": "05-after-exposure-cmp磨平一切准备下一层",
+      "title": "CMP：磨平一切，准备下一层",
+      "chapter": "06",
+      "chapterTitle": "从曝光到芯片：图案怎么变成真实结构",
+      "url": "chapters/05-after-exposure.html#cmp磨平一切准备下一层",
+      "body": ""
+    },
+    {
+      "id": "05-after-exposure-一层完成循环再来",
+      "title": "一层完成，循环再来",
+      "chapter": "06",
+      "chapterTitle": "从曝光到芯片：图案怎么变成真实结构",
+      "url": "chapters/05-after-exposure.html#一层完成循环再来",
+      "body": ""
+    },
+    {
+      "id": "05-after-exposure-本章要点",
+      "title": "本章要点",
+      "chapter": "06",
+      "chapterTitle": "从曝光到芯片：图案怎么变成真实结构",
+      "url": "chapters/05-after-exposure.html#本章要点",
+      "body": ""
+    },
+    {
+      "id": "06-limits-future",
+      "title": "极限与未来：光刻的天花板在哪里",
+      "chapter": "07",
       "chapterTitle": "极限与未来：光刻的天花板在哪里",
-      "url": "chapters/05-limits-future.html",
+      "url": "chapters/06-limits-future.html",
       "body": "\r\n   当前 EUV 的瓶颈\r\n\r\n经过前四章的拆解，你已经跟着那束 13.5 纳米的光走完了整台 EUV 光刻机。但这台机器不是完美的——它有几个关键瓶颈正在被逼近。\r\n\r\n    瓶颈一：光源功率\r\n\r\n我们在第二章说过，从等离子体产生的 EUV 光到最终到达晶圆表面，中间损耗掉了 97% 以上。这意味着光源必须极其明亮才能保证足够的曝光强度。\r\n\r\n当前最先进的 NXE:3800E 光源功率为  600W，产能约 220 片/时。但芯片工厂永远渴望更高的产能——更多晶圆/小时 = 更低的单颗芯片成本。\r\n\r\nASML 的解决方案：\r\n  短期：优化锡液滴的形态和激光瞄准效率\r\n  中期：三束激光同时工作，液滴频率从 50,000 提升到 100,000 次/秒\r\n  目标：  1000W 光源  ，产能提升到  330 片/时（预计  2030 年实现）\r\n\r\n    瓶颈二：随机效应\r\n\r\n当分辨率推向极限时，一个新的物理问题浮现：  光子散粒噪声（Photon Shot Noise）  。\r\n\r\n光是由一个个光子组成的。在极微小的区域内（比如 10×10 纳米），到达的光子数量很少——可能只有几十个。由于光子到达是随机的（泊松分布），实际接收到的光子数会有统计涨落。\r\n\r\n这就像你往一个极小的杯子里倒水——如果只有几滴水落进去，每次落的数量都不一样。有的杯子多了几滴，有的少了几滴。\r\n\r\n结果是：相邻的同尺寸图案，有的曝光稍强（线条窄一点），有的曝光稍弱（线条宽一点）。这种  线宽随机涨落（Line Edge Roughness, LER）  在微观下表现为线条边缘的\"锯齿\"。\r\n\r\n   图片：光子散粒噪声效果对比——左边是理想情况（线条边缘平整），右边是实际情况（线条边缘有纳米级随机锯齿/粗糙）。放大展示 LER \r\n\r\n解决方案：更多光子 → 更高光源功率和/或更灵敏的光刻胶。\r\n\r\n    瓶颈三：光罩缺陷\r\n\r\n随着图案尺寸缩小到 10 纳米以下，光罩上任何微小的缺陷（哪怕一个额外的原子团）都可能影响成像。光罩检测和修复的难度急剧上升，成本也随之攀升。\r\n\r\n    瓶颈四：成本\r\n\r\n一台 EUV 光刻机  $2 亿，一块光罩  $30 万，一套光罩（一颗芯片的全部 80+ 层）可能花费数千万美元。当分辨率要求更高时（需要更复杂的光罩和更多的曝光步骤），这些成本只会继续上涨。\r\n\r\n\r\n   High NA EUV：下一代已经来了\r\n\r\n面对当前系统 NA=0.33 的分辨率极限（ 13nm），ASML 的答案是：  把数值孔径从 0.33 提升到 0.55。  \r\n\r\n回忆 Rayleigh 判据：\r\n\r\n$$\r\n\\text CD  = k 1 \\times \\frac \\lambda  \\text NA  \r\n$$\r\n\r\nNA 从 0.33 提升到 0.55，分辨率从  13nm 提升到  8nm——  提升了约 40%  。\r\n\r\n但这不是简单地\"把镜子做大一点\"就能实现的。NA 的提升对整个光学系统有连锁性的影响。\r\n\r\n    High NA 的关键变化\r\n\r\n  参数   当前 EUV  Low NA    High NA EUV  \r\n                                          \r\n  数值孔径   0.33   0.55  \r\n  分辨率    13 nm    8 nm  \r\n  投影镜组零件数    15,000    40,000+  \r\n  投影镜组重量    1.5 吨      12 吨    \r\n  整机重量    180 吨   更大  \r\n  单台售价    $2 亿      $3.8–4 亿    \r\n  缩小比   4×（等比）     4×8（非等比 / Anamorphic）    \r\n  型号   NXE 系列   EXE 系列  \r\n\r\n   图片：Low NA vs High NA 投影镜组尺寸对比——两个系统并排，High NA 的镜组明显更大更重，标注重量差异（1.5 吨 vs 12 吨） \r\n\r\n    Anamorphic 光学：不对称缩小\r\n\r\nHigh NA 有一个独特的设计：它使用  非等比缩小（Anamorphic Optics）  ——水平方向缩小 4 倍，垂直方向缩小   8 倍  。\r\n\r\n为什么？因为 NA=0.55 时，如果仍然使用 4×4 等比缩小，光罩上的图案面积需要非常大，超出了现有光罩尺寸的限制。改成 4×8 之后，垂直方向多缩一倍，光罩面积需求就控制住了。\r\n\r\n但代价是：单次曝光场的面积变小了（垂直方向减半）。如果芯片尺寸没变，就需要  两次曝光拼接（Stitching）  才"
     },
     {
-      "id": "05-limits-future-当前-euv-的瓶颈",
+      "id": "06-limits-future-当前-euv-的瓶颈",
       "title": "当前 EUV 的瓶颈",
-      "chapter": "06",
+      "chapter": "07",
       "chapterTitle": "极限与未来：光刻的天花板在哪里",
-      "url": "chapters/05-limits-future.html#当前-euv-的瓶颈",
+      "url": "chapters/06-limits-future.html#当前-euv-的瓶颈",
       "body": ""
     },
     {
-      "id": "05-limits-future-瓶颈一光源功率",
+      "id": "06-limits-future-瓶颈一光源功率",
       "title": "瓶颈一：光源功率",
-      "chapter": "06",
+      "chapter": "07",
       "chapterTitle": "极限与未来：光刻的天花板在哪里",
-      "url": "chapters/05-limits-future.html#瓶颈一光源功率",
+      "url": "chapters/06-limits-future.html#瓶颈一光源功率",
       "body": ""
     },
     {
-      "id": "05-limits-future-瓶颈二随机效应",
+      "id": "06-limits-future-瓶颈二随机效应",
       "title": "瓶颈二：随机效应",
-      "chapter": "06",
+      "chapter": "07",
       "chapterTitle": "极限与未来：光刻的天花板在哪里",
-      "url": "chapters/05-limits-future.html#瓶颈二随机效应",
+      "url": "chapters/06-limits-future.html#瓶颈二随机效应",
       "body": ""
     },
     {
-      "id": "05-limits-future-瓶颈三光罩缺陷",
+      "id": "06-limits-future-瓶颈三光罩缺陷",
       "title": "瓶颈三：光罩缺陷",
-      "chapter": "06",
+      "chapter": "07",
       "chapterTitle": "极限与未来：光刻的天花板在哪里",
-      "url": "chapters/05-limits-future.html#瓶颈三光罩缺陷",
+      "url": "chapters/06-limits-future.html#瓶颈三光罩缺陷",
       "body": ""
     },
     {
-      "id": "05-limits-future-瓶颈四成本",
+      "id": "06-limits-future-瓶颈四成本",
       "title": "瓶颈四：成本",
-      "chapter": "06",
+      "chapter": "07",
       "chapterTitle": "极限与未来：光刻的天花板在哪里",
-      "url": "chapters/05-limits-future.html#瓶颈四成本",
+      "url": "chapters/06-limits-future.html#瓶颈四成本",
       "body": ""
     },
     {
-      "id": "05-limits-future-high-na-euv下一代已经来了",
+      "id": "06-limits-future-high-na-euv下一代已经来了",
       "title": "High-NA EUV：下一代已经来了",
-      "chapter": "06",
+      "chapter": "07",
       "chapterTitle": "极限与未来：光刻的天花板在哪里",
-      "url": "chapters/05-limits-future.html#high-na-euv下一代已经来了",
+      "url": "chapters/06-limits-future.html#high-na-euv下一代已经来了",
       "body": ""
     },
     {
-      "id": "05-limits-future-high-na-的关键变化",
+      "id": "06-limits-future-high-na-的关键变化",
       "title": "High-NA 的关键变化",
-      "chapter": "06",
+      "chapter": "07",
       "chapterTitle": "极限与未来：光刻的天花板在哪里",
-      "url": "chapters/05-limits-future.html#high-na-的关键变化",
+      "url": "chapters/06-limits-future.html#high-na-的关键变化",
       "body": ""
     },
     {
-      "id": "05-limits-future-anamorphic-光学不对称缩小",
+      "id": "06-limits-future-anamorphic-光学不对称缩小",
       "title": "Anamorphic 光学：不对称缩小",
-      "chapter": "06",
+      "chapter": "07",
       "chapterTitle": "极限与未来：光刻的天花板在哪里",
-      "url": "chapters/05-limits-future.html#anamorphic-光学不对称缩小",
+      "url": "chapters/06-limits-future.html#anamorphic-光学不对称缩小",
       "body": ""
     },
     {
-      "id": "05-limits-future-当前进展截至-2026-年-5-月",
+      "id": "06-limits-future-当前进展截至-2026-年-5-月",
       "title": "当前进展（截至 2026 年 5 月）",
-      "chapter": "06",
+      "chapter": "07",
       "chapterTitle": "极限与未来：光刻的天花板在哪里",
-      "url": "chapters/05-limits-future.html#当前进展截至-2026-年-5-月",
+      "url": "chapters/06-limits-future.html#当前进展截至-2026-年-5-月",
       "body": ""
     },
     {
-      "id": "05-limits-future-多重图案化当一次曝光不够时",
+      "id": "06-limits-future-多重图案化当一次曝光不够时",
       "title": "多重图案化：当一次曝光不够时",
-      "chapter": "06",
+      "chapter": "07",
       "chapterTitle": "极限与未来：光刻的天花板在哪里",
-      "url": "chapters/05-limits-future.html#多重图案化当一次曝光不够时",
+      "url": "chapters/06-limits-future.html#多重图案化当一次曝光不够时",
       "body": ""
     },
     {
-      "id": "05-limits-future-双重图案化double-patterning",
+      "id": "06-limits-future-双重图案化double-patterning",
       "title": "双重图案化（Double Patterning）",
-      "chapter": "06",
+      "chapter": "07",
       "chapterTitle": "极限与未来：光刻的天花板在哪里",
-      "url": "chapters/05-limits-future.html#双重图案化double-patterning",
+      "url": "chapters/06-limits-future.html#双重图案化double-patterning",
       "body": ""
     },
     {
-      "id": "05-limits-future-多重图案化的代价",
+      "id": "06-limits-future-多重图案化的代价",
       "title": "多重图案化的代价",
-      "chapter": "06",
+      "chapter": "07",
       "chapterTitle": "极限与未来：光刻的天花板在哪里",
-      "url": "chapters/05-limits-future.html#多重图案化的代价",
+      "url": "chapters/06-limits-future.html#多重图案化的代价",
       "body": ""
     },
     {
-      "id": "05-limits-future-更远的未来hyper-na-与替代路线",
+      "id": "06-limits-future-更远的未来hyper-na-与替代路线",
       "title": "更远的未来：Hyper-NA 与替代路线",
-      "chapter": "06",
+      "chapter": "07",
       "chapterTitle": "极限与未来：光刻的天花板在哪里",
-      "url": "chapters/05-limits-future.html#更远的未来hyper-na-与替代路线",
+      "url": "chapters/06-limits-future.html#更远的未来hyper-na-与替代路线",
       "body": ""
     },
     {
-      "id": "05-limits-future-hyper-na-euv",
+      "id": "06-limits-future-hyper-na-euv",
       "title": "Hyper-NA EUV",
-      "chapter": "06",
+      "chapter": "07",
       "chapterTitle": "极限与未来：光刻的天花板在哪里",
-      "url": "chapters/05-limits-future.html#hyper-na-euv",
+      "url": "chapters/06-limits-future.html#hyper-na-euv",
       "body": ""
     },
     {
-      "id": "05-limits-future-替代路线",
+      "id": "06-limits-future-替代路线",
       "title": "替代路线",
-      "chapter": "06",
+      "chapter": "07",
       "chapterTitle": "极限与未来：光刻的天花板在哪里",
-      "url": "chapters/05-limits-future.html#替代路线",
+      "url": "chapters/06-limits-future.html#替代路线",
       "body": ""
     },
     {
-      "id": "05-limits-future-数据总结euv-光刻机的代际对比",
+      "id": "06-limits-future-数据总结euv-光刻机的代际对比",
       "title": "数据总结：EUV 光刻机的代际对比",
-      "chapter": "06",
+      "chapter": "07",
       "chapterTitle": "极限与未来：光刻的天花板在哪里",
-      "url": "chapters/05-limits-future.html#数据总结euv-光刻机的代际对比",
+      "url": "chapters/06-limits-future.html#数据总结euv-光刻机的代际对比",
       "body": ""
     },
     {
-      "id": "05-limits-future-光刻之后的芯片制造",
+      "id": "06-limits-future-光刻之后的芯片制造",
       "title": "光刻之后的芯片制造",
-      "chapter": "06",
+      "chapter": "07",
       "chapterTitle": "极限与未来：光刻的天花板在哪里",
-      "url": "chapters/05-limits-future.html#光刻之后的芯片制造",
+      "url": "chapters/06-limits-future.html#光刻之后的芯片制造",
       "body": ""
     },
     {
-      "id": "05-limits-future-结语为什么这台机器值得了解",
+      "id": "06-limits-future-结语为什么这台机器值得了解",
       "title": "结语：为什么这台机器值得了解",
-      "chapter": "06",
+      "chapter": "07",
       "chapterTitle": "极限与未来：光刻的天花板在哪里",
-      "url": "chapters/05-limits-future.html#结语为什么这台机器值得了解",
+      "url": "chapters/06-limits-future.html#结语为什么这台机器值得了解",
       "body": ""
     },
     {
-      "id": "05-limits-future-本章要点",
+      "id": "06-limits-future-本章要点",
       "title": "本章要点",
-      "chapter": "06",
+      "chapter": "07",
       "chapterTitle": "极限与未来：光刻的天花板在哪里",
-      "url": "chapters/05-limits-future.html#本章要点",
+      "url": "chapters/06-limits-future.html#本章要点",
       "body": ""
     },
     {
-      "id": "05-limits-future-扩展资源",
+      "id": "06-limits-future-扩展资源",
       "title": "扩展资源",
-      "chapter": "06",
+      "chapter": "07",
       "chapterTitle": "极限与未来：光刻的天花板在哪里",
-      "url": "chapters/05-limits-future.html#扩展资源",
+      "url": "chapters/06-limits-future.html#扩展资源",
       "body": ""
     },
     {
-      "id": "05-limits-future-本书核心素材来源",
+      "id": "06-limits-future-本书核心素材来源",
       "title": "本书核心素材来源",
-      "chapter": "06",
+      "chapter": "07",
       "chapterTitle": "极限与未来：光刻的天花板在哪里",
-      "url": "chapters/05-limits-future.html#本书核心素材来源",
+      "url": "chapters/06-limits-future.html#本书核心素材来源",
       "body": ""
     },
     {
-      "id": "05-limits-future-视频推荐",
+      "id": "06-limits-future-视频推荐",
       "title": "视频推荐",
-      "chapter": "06",
+      "chapter": "07",
       "chapterTitle": "极限与未来：光刻的天花板在哪里",
-      "url": "chapters/05-limits-future.html#视频推荐",
+      "url": "chapters/06-limits-future.html#视频推荐",
       "body": ""
     },
     {
-      "id": "05-limits-future-文章推荐",
+      "id": "06-limits-future-文章推荐",
       "title": "文章推荐",
-      "chapter": "06",
+      "chapter": "07",
       "chapterTitle": "极限与未来：光刻的天花板在哪里",
-      "url": "chapters/05-limits-future.html#文章推荐",
+      "url": "chapters/06-limits-future.html#文章推荐",
       "body": ""
     }
   ]

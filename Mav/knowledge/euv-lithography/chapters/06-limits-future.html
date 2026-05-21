@@ -24,7 +24,8 @@
       <a href="02-light-source.html">03</a>
       <a href="03-illumination-mask.html">04</a>
       <a href="04-projection-wafer.html">05</a>
-      <a href="05-limits-future.html" class="active">06</a>
+      <a href="05-after-exposure.html">06</a>
+      <a href="06-limits-future.html" class="active">07</a>
     </div>
     <div class="nav-controls">
       <button class="nav-btn" id="search-btn" aria-label="搜索 (Ctrl+K)">⌘K</button>
@@ -50,7 +51,7 @@
 
 <div class="with-sidebar">
   <aside class="sidebar">
-  <div class="chapter-num">CHAPTER 06</div>
+  <div class="chapter-num">CHAPTER 07</div>
   <div class="chapter-name">极限与未来：光刻的天花板在哪里</div>
   <h4>目录</h4>
   <ul>
@@ -68,7 +69,7 @@
   <article class="chapter-body">
     <header class="chapter-head">
   <div class="chapter-head-meta">
-    <span class="num">CHAPTER 06</span>
+    <span class="num">CHAPTER 07</span>
     <span>≈ 18 MIN READ</span>
   </div>
   <h1>极限与未来：光刻的天花板在哪里</h1>
@@ -90,6 +91,8 @@
 <p>光是由一个个光子组成的。在极微小的区域内（比如 10×10 纳米），到达的光子数量很少——可能只有几十个。由于光子到达是随机的（泊松分布），实际接收到的光子数会有统计涨落。</p>
 <p>这就像你往一个极小的杯子里倒水——如果只有几滴水落进去，每次落的数量都不一样。有的杯子多了几滴，有的少了几滴。</p>
 <p>结果是：相邻的同尺寸图案，有的曝光稍强（线条窄一点），有的曝光稍弱（线条宽一点）。这种**线宽随机涨落（Line Edge Roughness, LER）**在微观下表现为线条边缘的&quot;锯齿&quot;。</p>
+<blockquote><p>[图片：光子散粒噪声效果对比——左边是理想情况（线条边缘平整），右边是实际情况（线条边缘有纳米级随机锯齿/粗糙）。放大展示 LER]</p>
+</blockquote>
 <p>解决方案：更多光子 → 更高光源功率和/或更灵敏的光刻胶。</p>
 <h3 id="瓶颈三光罩缺陷">瓶颈三：光罩缺陷</h3>
 <p>随着图案尺寸缩小到 10 纳米以下，光罩上任何微小的缺陷（哪怕一个额外的原子团）都可能影响成像。光罩检测和修复的难度急剧上升，成本也随之攀升。</p>
@@ -150,6 +153,8 @@ $</p>
 <td>EXE 系列</td>
 </tr>
 </tbody></table></div>
+<blockquote><p>[图片：Low-NA vs High-NA 投影镜组尺寸对比——两个系统并排，High-NA 的镜组明显更大更重，标注重量差异（1.5 吨 vs 12 吨）]</p>
+</blockquote>
 <h3 id="anamorphic-光学不对称缩小">Anamorphic 光学：不对称缩小</h3>
 <p>High-NA 有一个独特的设计：它使用<strong>非等比缩小（Anamorphic Optics）</strong>——水平方向缩小 4 倍，垂直方向缩小 <strong>8 倍</strong>。</p>
 <p>为什么？因为 NA=0.55 时，如果仍然使用 4×4 等比缩小，光罩上的图案面积需要非常大，超出了现有光罩尺寸的限制。改成 4×8 之后，垂直方向多缩一倍，光罩面积需求就控制住了。</p>
@@ -161,6 +166,8 @@ $</p>
 <li>2025 年 9 月：SK hynix 全球首家安装 High-NA EUV 用于 DRAM 量产</li>
 <li><strong>2026 年 5 月</strong>：ASML CEO 宣布，首批使用 High-NA 制造的芯片预计数月内出货</li>
 </ul>
+<blockquote><p>[图片：ASML EXE:5000 High-NA EUV 光刻机外观——展示其更大的体积，与旁边的人或前代机器对比]</p>
+</blockquote>
 <h2 id="多重图案化当一次曝光不够时">多重图案化：当一次曝光不够时</h2>
 <p>在 High-NA 出现之前，行业已经在用另一种方法突破分辨率限制：<strong>多重图案化（Multi-Patterning）</strong>。</p>
 <p>核心思想很简单：如果一次曝光只能画 13nm 的线，那就曝光两次（或三次），两次的图案错开，拼接出更细密的结构。</p>
@@ -171,7 +178,7 @@ $</p>
 <li><strong>第二次曝光</strong>：在空位处再画一组线条</li>
 </ol>
 <p>最终结果：线条间距变成了 7nm——是单次曝光极限的一半。</p>
-<blockquote><p>[图片 05-01：双重图案化原理图——第一次曝光画出 A 组线条（间距 14nm），第二次曝光画出 B 组线条（填入空隙），最终合成间距 7nm 的致密线条。三步叠加展示]</p>
+<blockquote><p>[图片：双重图案化原理图——第一次曝光画出 A 组线条（间距 14nm），第二次曝光画出 B 组线条（填入空隙），最终合成间距 7nm 的致密线条。三步叠加展示]</p>
 </blockquote>
 <h3 id="多重图案化的代价">多重图案化的代价</h3>
 <ul>
@@ -201,6 +208,8 @@ $</p>
 <p>把图案做在一个&quot;模具&quot;上，直接压到光刻胶表面——像盖章一样。佳能（Canon）在推进这条路线。优点是成本低、不需要复杂光学；缺点是模具容易磨损和污染，良率控制困难。</p>
 <p><strong>定向自组装（Directed Self-Assembly, DSA）</strong></p>
 <p>利用特殊聚合物分子的自组装特性，它们会自发地形成规则的纳米级图案。光刻只需要提供粗略的&quot;引导&quot;，精细图案由分子自己完成。听起来很美好，但目前还在研究阶段，缺陷控制是最大挑战。</p>
+<blockquote><p>[图片：未来技术路线时间轴——横轴是年份（2024–2035），纵轴标注各技术节点。标注 Low-NA EUV（当前）、High-NA EUV（2025-2027 量产）、Hyper-NA（~2033+）、以及替代路线（NIL、DSA）的预计时间窗口]</p>
+</blockquote>
 <h2 id="数据总结euv-光刻机的代际对比">数据总结：EUV 光刻机的代际对比</h2>
 <div class="table-wrap"><table><thead><tr>
 <th>参数</th>
@@ -347,9 +356,9 @@ $</p>
 <li>学术综述论文，全面覆盖 EUV 光刻的物理和工程细节</li>
 </ul>
 
-    <nav class="pager">  <a href="04-projection-wafer.html">
+    <nav class="pager">  <a href="05-after-exposure.html">
     <span class="label">← 上一章</span>
-    <span class="title">投影光学与晶圆台：纳米精度的运动控制</span>
+    <span class="title">从曝光到芯片：图案怎么变成真实结构</span>
   </a>  <a class="disabled next"><span class="label">下一章 →</span><span class="title"></span></a></nav>
   </article>
 </div>
