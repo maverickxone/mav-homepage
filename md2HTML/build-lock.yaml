@@ -1,6 +1,5 @@
 # build-lock.yaml
-# Source files (md) listed here will be skipped during build.
-# Their corresponding HTML output won't be regenerated.
+# Files listed here will be skipped during build (manually optimized).
 # Use --force to override, or --unlock to remove entries.
 
 locked:
@@ -14,3 +13,6 @@ locked:
   - server-frontend-backend/04-server-software.md
   - server-frontend-backend/05-summary.md
   - server-frontend-backend/book.yaml
+  - euv-lithography/assets/style.css
+  - euv-lithography/assets/script.js
+  - EUV-Lithography/01-overview.md

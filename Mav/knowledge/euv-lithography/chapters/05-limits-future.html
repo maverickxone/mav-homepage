@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>极限与未来：光刻的天花板在哪里 — EUV 光刻机：一束光如何造出芯片</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" id="hljs-light" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+<link rel="stylesheet" id="hljs-dark" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" media="not all">
+</head>
+<body>
+
+<div class="progress-bar" id="progress-bar"></div>
+
+<nav class="topnav" id="topnav">
+  <div class="topnav-inner">
+    <a class="brand" href="../index.html">EUV 光刻机：一束光如何造出芯片</a>
+    <div class="nav-links">
+      <a href="00-preface.html">01</a>
+      <a href="01-overview.html">02</a>
+      <a href="02-light-source.html">03</a>
+      <a href="03-illumination-mask.html">04</a>
+      <a href="04-projection-wafer.html">05</a>
+      <a href="05-limits-future.html" class="active">06</a>
+    </div>
+    <div class="nav-controls">
+      <button class="nav-btn" id="search-btn" aria-label="搜索 (Ctrl+K)">⌘K</button>
+      <button class="nav-btn" id="settings-btn" aria-label="阅读设置">Aa</button>
+      <a class="nav-btn" href="../../index.html" aria-label="返回知识库">← 知识库</a>
+      <a class="nav-btn" href="https://github.com/maverickxone/mav-homepage" target="_blank" rel="noopener" aria-label="GitHub" style="padding: 6px 8px;"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg></a>
+    </div>
+  </div>
+</nav>
+<div class="settings-pop" id="settings-pop">
+  <h5>主题</h5>
+  <div class="row">
+    <button class="seg" data-theme-set="light">明亮</button>
+    <button class="seg" data-theme-set="dark">暗色</button>
+  </div>
+  <h5>字号</h5>
+  <div class="row">
+    <button class="seg" data-size-set="s">小</button>
+    <button class="seg" data-size-set="m">中</button>
+    <button class="seg" data-size-set="l">大</button>
+  </div>
+</div>
+
+<div class="with-sidebar">
+  <aside class="sidebar">
+  <div class="chapter-num">CHAPTER 06</div>
+  <div class="chapter-name">极限与未来：光刻的天花板在哪里</div>
+  <h4>目录</h4>
+  <ul>
+    <li><a href="#当前-euv-的瓶颈">当前 EUV 的瓶颈</a></li>
+    <li><a href="#high-na-euv下一代已经来了">High-NA EUV：下一代已经来了</a></li>
+    <li><a href="#多重图案化当一次曝光不够时">多重图案化：当一次曝光不够时</a></li>
+    <li><a href="#更远的未来hyper-na-与替代路线">更远的未来：Hyper-NA 与替代路线</a></li>
+    <li><a href="#数据总结euv-光刻机的代际对比">数据总结：EUV 光刻机的代际对比</a></li>
+    <li><a href="#光刻之后的芯片制造">光刻之后的芯片制造</a></li>
+    <li><a href="#结语为什么这台机器值得了解">结语：为什么这台机器值得了解</a></li>
+    <li><a href="#本章要点">本章要点</a></li>
+    <li><a href="#扩展资源">扩展资源</a></li>
+  </ul>
+</aside>
+  <article class="chapter-body">
+    <header class="chapter-head">
+  <div class="chapter-head-meta">
+    <span class="num">CHAPTER 06</span>
+    <span>≈ 18 MIN READ</span>
+  </div>
+  <h1>极限与未来：光刻的天花板在哪里</h1>
+
+</header>
+    <h2 id="当前-euv-的瓶颈">当前 EUV 的瓶颈</h2>
+<p>经过前四章的拆解，你已经跟着那束 13.5 纳米的光走完了整台 EUV 光刻机。但这台机器不是完美的——它有几个关键瓶颈正在被逼近。</p>
+<h3 id="瓶颈一光源功率">瓶颈一：光源功率</h3>
+<p>我们在第二章说过，从等离子体产生的 EUV 光到最终到达晶圆表面，中间损耗掉了 97% 以上。这意味着光源必须极其明亮才能保证足够的曝光强度。</p>
+<p>当前最先进的 NXE:3800E 光源功率为 ~600W，产能约 220 片/时。但芯片工厂永远渴望更高的产能——更多晶圆/小时 = 更低的单颗芯片成本。</p>
+<p>ASML 的解决方案：</p>
+<ul>
+<li>短期：优化锡液滴的形态和激光瞄准效率</li>
+<li>中期：三束激光同时工作，液滴频率从 50,000 提升到 100,000 次/秒</li>
+<li>目标：<strong>1000W 光源</strong>，产能提升到 ~330 片/时（预计 ~2030 年实现）</li>
+</ul>
+<h3 id="瓶颈二随机效应">瓶颈二：随机效应</h3>
+<p>当分辨率推向极限时，一个新的物理问题浮现：<strong>光子散粒噪声（Photon Shot Noise）</strong>。</p>
+<p>光是由一个个光子组成的。在极微小的区域内（比如 10×10 纳米），到达的光子数量很少——可能只有几十个。由于光子到达是随机的（泊松分布），实际接收到的光子数会有统计涨落。</p>
+<p>这就像你往一个极小的杯子里倒水——如果只有几滴水落进去，每次落的数量都不一样。有的杯子多了几滴，有的少了几滴。</p>
+<p>结果是：相邻的同尺寸图案，有的曝光稍强（线条窄一点），有的曝光稍弱（线条宽一点）。这种**线宽随机涨落（Line Edge Roughness, LER）**在微观下表现为线条边缘的&quot;锯齿&quot;。</p>
+<blockquote><p>[图片：光子散粒噪声效果对比——左边是理想情况（线条边缘平整），右边是实际情况（线条边缘有纳米级随机锯齿/粗糙）。放大展示 LER]</p>
+</blockquote>
+<p>解决方案：更多光子 → 更高光源功率和/或更灵敏的光刻胶。</p>
+<h3 id="瓶颈三光罩缺陷">瓶颈三：光罩缺陷</h3>
+<p>随着图案尺寸缩小到 10 纳米以下，光罩上任何微小的缺陷（哪怕一个额外的原子团）都可能影响成像。光罩检测和修复的难度急剧上升，成本也随之攀升。</p>
+<h3 id="瓶颈四成本">瓶颈四：成本</h3>
+<p>一台 EUV 光刻机 ~$2 亿，一块光罩 ~$30 万，一套光罩（一颗芯片的全部 80+ 层）可能花费数千万美元。当分辨率要求更高时（需要更复杂的光罩和更多的曝光步骤），这些成本只会继续上涨。</p>
+<h2 id="high-na-euv下一代已经来了">High-NA EUV：下一代已经来了</h2>
+<p>面对当前系统 NA=0.33 的分辨率极限（~13nm），ASML 的答案是：<strong>把数值孔径从 0.33 提升到 0.55。</strong></p>
+<p>回忆 Rayleigh 判据：</p>
+<p>$
+\text{CD} = k_1 \times \frac{\lambda}{\text{NA}}
+$</p>
+<p>NA 从 0.33 提升到 0.55，分辨率从 ~13nm 提升到 ~8nm——<strong>提升了约 40%</strong>。</p>
+<p>但这不是简单地&quot;把镜子做大一点&quot;就能实现的。NA 的提升对整个光学系统有连锁性的影响。</p>
+<h3 id="high-na-的关键变化">High-NA 的关键变化</h3>
+<div class="table-wrap"><table><thead><tr>
+<th>参数</th>
+<th>当前 EUV (Low-NA)</th>
+<th>High-NA EUV</th>
+</tr>
+</thead><tbody><tr>
+<td>数值孔径</td>
+<td>0.33</td>
+<td>0.55</td>
+</tr>
+<tr>
+<td>分辨率</td>
+<td>~13 nm</td>
+<td>~8 nm</td>
+</tr>
+<tr>
+<td>投影镜组零件数</td>
+<td>~15,000</td>
+<td>~40,000+</td>
+</tr>
+<tr>
+<td>投影镜组重量</td>
+<td>~1.5 吨</td>
+<td><strong>~12 吨</strong></td>
+</tr>
+<tr>
+<td>整机重量</td>
+<td>~180 吨</td>
+<td>更大</td>
+</tr>
+<tr>
+<td>单台售价</td>
+<td>~$2 亿</td>
+<td><strong>~$3.8–4 亿</strong></td>
+</tr>
+<tr>
+<td>缩小比</td>
+<td>4×（等比）</td>
+<td><strong>4×8（非等比 / Anamorphic）</strong></td>
+</tr>
+<tr>
+<td>型号</td>
+<td>NXE 系列</td>
+<td>EXE 系列</td>
+</tr>
+</tbody></table></div>
+<blockquote><p>[图片：Low-NA vs High-NA 投影镜组尺寸对比——两个系统并排，High-NA 的镜组明显更大更重，标注重量差异（1.5 吨 vs 12 吨）]</p>
+</blockquote>
+<h3 id="anamorphic-光学不对称缩小">Anamorphic 光学：不对称缩小</h3>
+<p>High-NA 有一个独特的设计：它使用<strong>非等比缩小（Anamorphic Optics）</strong>——水平方向缩小 4 倍，垂直方向缩小 <strong>8 倍</strong>。</p>
+<p>为什么？因为 NA=0.55 时，如果仍然使用 4×4 等比缩小，光罩上的图案面积需要非常大，超出了现有光罩尺寸的限制。改成 4×8 之后，垂直方向多缩一倍，光罩面积需求就控制住了。</p>
+<p>但代价是：单次曝光场的面积变小了（垂直方向减半）。如果芯片尺寸没变，就需要**两次曝光拼接（Stitching）**才能覆盖完整芯片。这增加了制造复杂度。</p>
+<h3 id="当前进展截至-2026-年-5-月">当前进展（截至 2026 年 5 月）</h3>
+<ul>
+<li>2024 年：ASML 交付了前 5 台 NXE:5000（第一代 High-NA 系统）给 Intel 和三星等客户</li>
+<li>2025 年 Q2：开始交付改进型 NXE:5200</li>
+<li>2025 年 9 月：SK hynix 全球首家安装 High-NA EUV 用于 DRAM 量产</li>
+<li><strong>2026 年 5 月</strong>：ASML CEO 宣布，首批使用 High-NA 制造的芯片预计数月内出货</li>
+</ul>
+<blockquote><p>[图片：ASML EXE:5000 High-NA EUV 光刻机外观——展示其更大的体积，与旁边的人或前代机器对比]</p>
+</blockquote>
+<h2 id="多重图案化当一次曝光不够时">多重图案化：当一次曝光不够时</h2>
+<p>在 High-NA 出现之前，行业已经在用另一种方法突破分辨率限制：<strong>多重图案化（Multi-Patterning）</strong>。</p>
+<p>核心思想很简单：如果一次曝光只能画 13nm 的线，那就曝光两次（或三次），两次的图案错开，拼接出更细密的结构。</p>
+<h3 id="双重图案化double-patterning">双重图案化（Double Patterning）</h3>
+<p>例如，要画间距为 7nm 的线条：</p>
+<ol>
+<li><strong>第一次曝光</strong>：画出间距 14nm 的线条（每两条线之间留一条空位）</li>
+<li><strong>第二次曝光</strong>：在空位处再画一组线条</li>
+</ol>
+<p>最终结果：线条间距变成了 7nm——是单次曝光极限的一半。</p>
+<blockquote><p>[图片：双重图案化原理图——第一次曝光画出 A 组线条（间距 14nm），第二次曝光画出 B 组线条（填入空隙），最终合成间距 7nm 的致密线条。三步叠加展示]</p>
+</blockquote>
+<h3 id="多重图案化的代价">多重图案化的代价</h3>
+<ul>
+<li><strong>成本翻倍</strong>：每多曝光一次，就多用一次光刻机时间、一块光罩、一次显影/刻蚀流程</li>
+<li><strong>对准难度极高</strong>：两次曝光的图案必须完美对齐，否则线条会粗细不均</li>
+<li><strong>良率风险</strong>：步骤越多，每步出错的概率累积越大</li>
+</ul>
+<p>这就是为什么 High-NA 如此重要——如果能用一次 High-NA 曝光替代两次 Low-NA 曝光，总成本反而可能更低（尽管 High-NA 机器本身更贵）。</p>
+<h2 id="更远的未来hyper-na-与替代路线">更远的未来：Hyper-NA 与替代路线</h2>
+<h3 id="hyper-na-euv">Hyper-NA EUV</h3>
+<p>ASML 已经公布了下下一代的概念：<strong>Hyper-NA EUV</strong>，目标 NA 达到 <strong>0.7 或更高</strong>。</p>
+<p>$
+\text{CD}_\text{Hyper-NA} = 0.3 \times \frac{13.5}{0.7} \approx 5.8 \text{ nm}
+$</p>
+<p>这将把分辨率推向 ~6nm 或更低。但挑战也更极端：</p>
+<ul>
+<li>镜组尺寸和重量进一步膨胀</li>
+<li>单台成本可能超过 $7–8 亿</li>
+<li>焦深（DOF）进一步缩小，对晶圆平整度要求更极端</li>
+</ul>
+<p>这条路线预计在 <strong>2030 年代中期</strong>才可能实现量产。</p>
+<h3 id="替代路线">替代路线</h3>
+<p>除了继续推高 NA，行业也在探索其他方向：</p>
+<p><strong>电子束直写（E-beam Direct Write）</strong></p>
+<p>不用光，改用极细的电子束直接在晶圆上逐点扫描。理论上分辨率几乎无限——电子的德布罗意波长极短。但问题是：<strong>太慢了</strong>。逐点扫描一片晶圆可能需要几小时甚至几天，完全不适合量产。目前只用于制造光罩本身。</p>
+<p><strong>纳米压印光刻（Nanoimprint Lithography, NIL）</strong></p>
+<p>把图案做在一个&quot;模具&quot;上，直接压到光刻胶表面——像盖章一样。佳能（Canon）在推进这条路线。优点是成本低、不需要复杂光学；缺点是模具容易磨损和污染，良率控制困难。</p>
+<p><strong>定向自组装（Directed Self-Assembly, DSA）</strong></p>
+<p>利用特殊聚合物分子的自组装特性，它们会自发地形成规则的纳米级图案。光刻只需要提供粗略的&quot;引导&quot;，精细图案由分子自己完成。听起来很美好，但目前还在研究阶段，缺陷控制是最大挑战。</p>
+<blockquote><p>[图片：未来技术路线时间轴——横轴是年份（2024–2035），纵轴标注各技术节点。标注 Low-NA EUV（当前）、High-NA EUV（2025-2027 量产）、Hyper-NA（~2033+）、以及替代路线（NIL、DSA）的预计时间窗口]</p>
+</blockquote>
+<h2 id="数据总结euv-光刻机的代际对比">数据总结：EUV 光刻机的代际对比</h2>
+<div class="table-wrap"><table><thead><tr>
+<th>参数</th>
+<th>NXE:3600D</th>
+<th>NXE:3800E</th>
+<th>EXE:5000 (High-NA)</th>
+<th>未来 1000W 系统</th>
+<th>Hyper-NA (概念)</th>
+</tr>
+</thead><tbody><tr>
+<td>NA</td>
+<td>0.33</td>
+<td>0.33</td>
+<td>0.55</td>
+<td>0.33</td>
+<td>0.70+</td>
+</tr>
+<tr>
+<td>光源功率</td>
+<td>~400W</td>
+<td>~600W</td>
+<td>—</td>
+<td>1000W</td>
+<td>—</td>
+</tr>
+<tr>
+<td>产能</td>
+<td>~185 wph</td>
+<td>~220 wph</td>
+<td>—</td>
+<td>~330 wph</td>
+<td>—</td>
+</tr>
+<tr>
+<td>分辨率</td>
+<td>~13 nm</td>
+<td>~13 nm</td>
+<td>~8 nm</td>
+<td>~13 nm</td>
+<td>~6 nm</td>
+</tr>
+<tr>
+<td>单台售价</td>
+<td>~$1.8 亿</td>
+<td>~$2 亿</td>
+<td>~$3.8 亿</td>
+<td>—</td>
+<td>&gt;$7 亿？</td>
+</tr>
+<tr>
+<td>投影镜组重量</td>
+<td>~1.5 吨</td>
+<td>~1.5 吨</td>
+<td>~12 吨</td>
+<td>~1.5 吨</td>
+<td>—</td>
+</tr>
+<tr>
+<td>状态</td>
+<td>量产中</td>
+<td>量产中 (2024)</td>
+<td>首批出货中 (2025–26)</td>
+<td>目标 ~2030</td>
+<td>研发中</td>
+</tr>
+</tbody></table></div>
+<h2 id="光刻之后的芯片制造">光刻之后的芯片制造</h2>
+<p>值得一提的是：光刻只是芯片制造中的一环（虽然是最关键的一环）。一颗芯片从设计到交付还涉及：</p>
+<ul>
+<li><strong>EDA 设计</strong>：用软件（Synopsys、Cadence 等）设计电路并生成光罩图案</li>
+<li><strong>光罩制造</strong>：电子束直写 + 检测修复</li>
+<li><strong>前道工序（FEOL）</strong>：制造晶体管（光刻 + 刻蚀 + 离子注入）</li>
+<li><strong>后道工序（BEOL）</strong>：制造金属互连线（光刻 + 沉积 + CMP 抛光）</li>
+<li><strong>测试（Wafer Test）</strong>：在晶圆上逐个测试芯片</li>
+<li><strong>切割（Dicing）</strong>：把晶圆切成单颗芯片</li>
+<li><strong>封装（Packaging）</strong>：把裸芯片安装到基板上，连接引脚</li>
+<li><strong>终测</strong>：最终功能和性能测试</li>
+</ul>
+<p>其中每个环节都有自己的一整套设备和技术挑战。但光刻决定了一切的起点——你能画多细，决定了芯片能做多强。</p>
+<h2 id="结语为什么这台机器值得了解">结语：为什么这台机器值得了解</h2>
+<p>EUV 光刻机可能是人类有史以来制造的最复杂的单一设备。它汇集了：</p>
+<ul>
+<li><strong>原子物理</strong>：锡等离子体的电子跃迁</li>
+<li><strong>光学工程</strong>：布拉格反射镜、非球面镜组、相长干涉</li>
+<li><strong>精密机械</strong>：磁悬浮平台、纳米级运动控制</li>
+<li><strong>材料科学</strong>：零膨胀玻璃、光刻胶化学</li>
+<li><strong>控制论</strong>：实时闭环反馈、亚纳米对准</li>
+<li><strong>真空技术</strong>：全光路超高真空环境</li>
+<li><strong>激光技术</strong>：25kW 脉冲激光、50,000Hz 频率</li>
+</ul>
+<p>没有任何单一国家或公司能独立完成这台机器。ASML 是荷兰公司，但它依赖：</p>
+<ul>
+<li>德国蔡司的光学镜组</li>
+<li>德国通快（TRUMPF）的激光系统</li>
+<li>来自全球 1200+ 家供应商的零件和子系统</li>
+</ul>
+<p>这台机器本身就是全球化协作的极致产物。</p>
+<p>而理解它，不需要你成为物理学家或工程师。你只需要跟着一束光——从锡液滴中诞生，在反射镜间曲折前进，穿过光罩读取设计，被镜组缩小聚焦，最终击中一片硅晶圆上薄薄的光刻胶。</p>
+<p>18 秒后，另一片承载着百亿晶体管蓝图的晶圆，就此完成。</p>
+<h2 id="本章要点">本章要点</h2>
+<ul>
+<li>✓ 当前 EUV 的四大瓶颈：光源功率、光子散粒噪声、光罩缺陷、成本</li>
+<li>✓ High-NA EUV（NA=0.55）将分辨率从 ~13nm 推进到 ~8nm，但代价是机器更大更贵</li>
+<li>✓ High-NA 使用非等比 4×8 缩小（Anamorphic），曝光场面积减半</li>
+<li>✓ 多重图案化可以用多次曝光突破单次极限，但成本翻倍</li>
+<li>✓ 未来路线：Hyper-NA（<del>6nm）、1000W 光源（</del>330 wph），预计 2030 年代</li>
+<li>✓ 替代路线（电子束、纳米压印、自组装）各有局限，短期内无法取代 EUV</li>
+<li>✓ EUV 光刻机是全球化协作的极致产物，汇集多个国家的顶尖技术</li>
+</ul>
+<h2 id="扩展资源">扩展资源</h2>
+<h3 id="本书核心素材来源">本书核心素材来源</h3>
+<p>⭐⭐⭐ | <strong>《EUV光刻机工作原理，世界上最先进的机器是如何工作的？》</strong></p>
+<ul>
+<li>B 站：<a href="https://www.bilibili.com/video/BV1y6awz1EpV/">bilibili.com/video/BV1y6awz1EpV</a></li>
+<li>本书的核心素材来源。在此基础上补充了来自 ASML 官网、蔡司半导体官网、Tom&#39;s Hardware、TrendForce 等来源的技术参数和产业数据，并重新组织了叙事结构</li>
+<li>强烈建议读完本书后再看一遍视频——有了文字建立的框架之后，动画会清晰很多</li>
+</ul>
+<h3 id="视频推荐">视频推荐</h3>
+<p>⭐ <strong>入门</strong> | <strong>&quot;How ASML, TSMC And Intel Dominate The Chip Market&quot;</strong> — CNBC</p>
+<ul>
+<li>YouTube 纪录片，讲解 ASML 在半导体供应链中的垄断地位</li>
+</ul>
+<p>⭐⭐ <strong>进阶</strong> | <strong>&quot;How Carl Zeiss Crafted a House of Mirrors for EUV Light&quot;</strong> — Asianometry</p>
+<ul>
+<li>YouTube，深入讲解蔡司 EUV 镜组的制造过程</li>
+</ul>
+<p>⭐⭐⭐ <strong>深入</strong> | <strong>&quot;EUV Lithography&quot;</strong> — ASML 官方技术页面</p>
+<ul>
+<li><a href="https://www.asml.com/products/euv-lithography-systems">asml.com/products/euv-lithography-systems</a></li>
+<li>各型号的官方规格和技术白皮书</li>
+</ul>
+<h3 id="文章推荐">文章推荐</h3>
+<p>⭐ <strong>入门</strong> | <strong>&quot;30 years of EUV lithography optics at ZEISS SMT&quot;</strong> — ZEISS 官网</p>
+<ul>
+<li><a href="https://www.zeiss.com/semiconductor-manufacturing-technology/news-and-events/smt-press-releases/2025/euv-30-years.html">zeiss.com/semiconductor-manufacturing-technology</a></li>
+<li>蔡司 30 年 EUV 光学发展回顾</li>
+</ul>
+<p>⭐⭐ <strong>进阶</strong> | <strong>&quot;Estimating EUV Production Wafer Throughput&quot;</strong> — Frederick Chen (Substack)</p>
+<ul>
+<li>用真实产业数据估算 EUV 实际量产效率</li>
+</ul>
+<p>⭐⭐⭐ <strong>深入</strong> | <strong>&quot;EUV Lithography: State-of-the-Art Review&quot;</strong> — ResearchGate</p>
+<ul>
+<li>学术综述论文，全面覆盖 EUV 光刻的物理和工程细节</li>
+</ul>
+
+    <nav class="pager">  <a href="04-projection-wafer.html">
+    <span class="label">← 上一章</span>
+    <span class="title">投影光学与晶圆台：纳米精度的运动控制</span>
+  </a>  <a class="disabled next"><span class="label">下一章 →</span><span class="title"></span></a></nav>
+  </article>
+</div>
+
+<footer>
+  <div class="set">
+    <span>EUV 光刻机：一束光如何造出芯片</span>
+    <span>2026 · ZH-CN</span>
+  </div>
+  <div class="set">
+    <span>Mav</span>
+  </div>
+</footer>
+<div class="search-backdrop" id="search-overlay" role="dialog" aria-modal="true" aria-label="搜索" hidden>
+  <div class="search-modal">
+    <div class="search-input-wrap">
+      <input type="search" class="search-input" placeholder="搜索内容..." aria-label="搜索内容" autocomplete="off">
+      <kbd>ESC</kbd>
+    </div>
+    <div class="search-results" role="listbox" aria-label="搜索结果"></div>
+  </div>
+</div>
+
+<!-- Side Panel -->
+<div class="side-panel" id="side-panel">
+  <div class="side-panel-resize" id="side-panel-resize"></div>
+  <div class="side-panel-header">
+    <div class="side-panel-tabs">
+      <button class="side-panel-tab active" data-mode="sidenote">补充</button>
+      <button class="side-panel-tab" data-mode="notepad">笔记</button>
+    </div>
+    <button class="side-panel-close" aria-label="关闭">×</button>
+  </div>
+  <div class="side-panel-body"></div>
+</div>
+<button class="notepad-fab" id="notepad-fab" aria-label="便利贴">✎</button>
+
+<!-- Mobile TOC -->
+<button class="mtoc-fab" id="mtoc-fab" aria-label="目录">TOC</button>
+<div class="mtoc-drawer" id="mtoc-drawer">
+  <div class="mtoc-content"></div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/bash.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/typescript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/yaml.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/javascript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/json.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/python.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/css.min.js"></script>
+<script src="../assets/script.js"></script>
+</body>
+</html>

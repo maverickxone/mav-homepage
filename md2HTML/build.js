@@ -186,7 +186,7 @@ function buildBook(bookDir, bookName, force) {
   builtCount++;
 
   // Copy assets
-  templates.copyAssets(outputDir);
+  templates.copyAssets(outputDir, slug);
   console.log(`    ✓ assets copied`);
 
   // Build search index

@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EUV 光源：用激光轰击锡液滴 — EUV 光刻机：一束光如何造出芯片</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" id="hljs-light" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+<link rel="stylesheet" id="hljs-dark" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" media="not all">
+</head>
+<body>
+
+<div class="progress-bar" id="progress-bar"></div>
+
+<nav class="topnav" id="topnav">
+  <div class="topnav-inner">
+    <a class="brand" href="../index.html">EUV 光刻机：一束光如何造出芯片</a>
+    <div class="nav-links">
+      <a href="00-preface.html">01</a>
+      <a href="01-overview.html">02</a>
+      <a href="02-light-source.html" class="active">03</a>
+      <a href="03-illumination-mask.html">04</a>
+      <a href="04-projection-wafer.html">05</a>
+      <a href="05-limits-future.html">06</a>
+    </div>
+    <div class="nav-controls">
+      <button class="nav-btn" id="search-btn" aria-label="搜索 (Ctrl+K)">⌘K</button>
+      <button class="nav-btn" id="settings-btn" aria-label="阅读设置">Aa</button>
+      <a class="nav-btn" href="../../index.html" aria-label="返回知识库">← 知识库</a>
+      <a class="nav-btn" href="https://github.com/maverickxone/mav-homepage" target="_blank" rel="noopener" aria-label="GitHub" style="padding: 6px 8px;"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg></a>
+    </div>
+  </div>
+</nav>
+<div class="settings-pop" id="settings-pop">
+  <h5>主题</h5>
+  <div class="row">
+    <button class="seg" data-theme-set="light">明亮</button>
+    <button class="seg" data-theme-set="dark">暗色</button>
+  </div>
+  <h5>字号</h5>
+  <div class="row">
+    <button class="seg" data-size-set="s">小</button>
+    <button class="seg" data-size-set="m">中</button>
+    <button class="seg" data-size-set="l">大</button>
+  </div>
+</div>
+
+<div class="with-sidebar">
+  <aside class="sidebar">
+  <div class="chapter-num">CHAPTER 03</div>
+  <div class="chapter-name">EUV 光源：用激光轰击锡液滴</div>
+  <h4>目录</h4>
+  <ul>
+    <li><a href="#为什么必须是-13-纳米的光">为什么必须是 13 纳米的光？</a></li>
+    <li><a href="#一个尴尬的问题135nm-的光从哪里来">一个尴尬的问题：13.5nm 的光从哪里来？</a></li>
+    <li><a href="#锡液滴的诞生">锡液滴的诞生</a></li>
+    <li><a href="#双脉冲激光毫秒内的两次精确打击">双脉冲激光：毫秒内的两次精确打击</a></li>
+    <li><a href="#第一面镜子集光镜">第一面镜子：集光镜</a></li>
+    <li><a href="#euv-光的脆弱为什么必须用镜子">EUV 光的脆弱：为什么必须用镜子</a></li>
+    <li><a href="#布拉格反射镜纳米级千层蛋糕">布拉格反射镜：纳米级千层蛋糕</a></li>
+    <li><a href="#光的损耗为什么光源必须极其明亮">光的损耗：为什么光源必须极其明亮</a></li>
+    <li><a href="#激光系统本身">激光系统本身</a></li>
+    <li><a href="#光源腔体内的quot战场quot">光源腔体内的&quot;战场&quot;</a></li>
+    <li><a href="#从中间焦点出发">从中间焦点出发</a></li>
+    <li><a href="#本章要点">本章要点</a></li>
+  </ul>
+</aside>
+  <article class="chapter-body">
+    <header class="chapter-head">
+  <div class="chapter-head-meta">
+    <span class="num">CHAPTER 03</span>
+    <span>≈ 22 MIN READ</span>
+  </div>
+  <h1>EUV 光源：用激光轰击锡液滴</h1>
+
+</header>
+    <h2 id="为什么必须是-13-纳米的光">为什么必须是 13 纳米的光？</h2>
+<p>在上一章中，我们说过光刻的本质是&quot;用光把图案复印到晶圆上&quot;。但为什么偏偏要用 13.5 纳米这种极端短波长的光？用普通的紫外线、甚至可见光不行吗？</p>
+<p>答案和一个物理事实有关：<strong>光的波长决定了你能画多细的线。</strong></p>
+<h3 id="马克笔类比">马克笔类比</h3>
+<p>想象你在白纸上画线。如果你用一支粗头马克笔（笔尖宽 5 毫米），你画出来的最细的线也就是 5 毫米宽。想画更细的线？换一支笔尖更细的笔。</p>
+<p>光刻里的&quot;笔尖&quot;就是光的波长。波长越短，&quot;笔尖&quot;越细，能刻画的结构就越小。</p>
+<ul>
+<li>可见光（蓝光）：波长 ~450 纳米 → 只能画 ~100 纳米以上的结构</li>
+<li>DUV（深紫外光）：波长 193 纳米 → 通过各种技巧可以画到 ~30 纳米</li>
+<li><strong>EUV（极紫外光）：波长 13.5 纳米 → 可以直接画 ~10 纳米的结构</strong></li>
+</ul>
+<p>要在芯片上画 10 纳米宽的线条（相当于 45 个硅原子），你就需要一支&quot;笔尖宽度&quot;同量级的&quot;笔&quot;——13.5 纳米的极紫外光。</p>
+<blockquote><p>[图片：马克笔类比示意——三支笔尖粗细不同的笔，分别画出粗线、中线、极细线，对应标注可见光/DUV/EUV 的波长和分辨率]</p>
+</blockquote>
+<h3 id="从衍射的角度理解">从衍射的角度理解</h3>
+<p>如果你学过光学（没学过也没关系），可能听说过&quot;衍射极限&quot;。当光通过一个比自己波长还小的缝隙时，它不会规矩地直线通过，而是会&quot;散开&quot;——就像水波通过窄缝后会扩散一样。</p>
+<p>光罩上的电路图案本质上就是一堆纳米级的&quot;缝隙&quot;。如果光的波长远大于这些缝隙的宽度，光通过之后图案信息就丢失了——你得到的只是一团模糊的光斑，不再是精确的图案。</p>
+<p>具体来说，想象光照射到光罩上一组宽 10 纳米的图案：</p>
+<ul>
+<li>如果用 450 纳米的蓝光：波长是图案宽度的 45 倍。光完全&quot;看不到&quot;这些图案，信息丢失。就像你用一根粗麻绳试图感知桌面上的一根头发丝——分辨率完全不够。</li>
+<li>如果用 13.5 纳米的 EUV 光：波长和图案宽度同量级。光可以携带图案信息通过，虽然会发生衍射，但投影光学系统能够收集足够的衍射信息来重建图案。</li>
+</ul>
+<blockquote><p>[图片：双缝实验类比——上方用 450nm 光照射纳米图案，结果完全模糊；下方用 13.5nm 光照射同样图案，结果清晰可辨。展示衍射效果的差异]</p>
+</blockquote>
+<p>这就是为什么 EUV 光刻是跨越性的：从 193 纳米直接跳到 13.5 纳米，波长缩小了 14 倍。这不是一个渐进式的改进——这是一次物理层面的代际跨越。</p>
+<h2 id="一个尴尬的问题135nm-的光从哪里来">一个尴尬的问题：13.5nm 的光从哪里来？</h2>
+<p>好，我们现在知道为什么需要 13.5 纳米的光了。但接下来有一个非常实际的问题：</p>
+<p><strong>这种波长的光在自然界中基本不存在。</strong></p>
+<p>太阳辐射中有微量的 EUV，但大气层把它全部吸收了。没有任何常规光源（灯泡、LED、激光器）能直接发出 13.5 纳米的光。</p>
+<p>那怎么办？</p>
+<p>答案是：<strong>用激光轰击锡液滴，产生等离子体，让等离子体发出 EUV 光。</strong></p>
+<p>这听起来像科幻小说里的情节，但这确实是目前人类唯一能够高效产生足够功率 EUV 光的方法。</p>
+<p>让我们一步一步来看这个疯狂的过程。</p>
+<h2 id="锡液滴的诞生">锡液滴的诞生</h2>
+<p>一切从一块超高纯度的固态锡（Sn，元素周期表第 50 号元素）开始。</p>
+<p>为什么是锡？因为锡的等离子体在电磁波谱上有一个很好的特性：它发射出的光覆盖了很宽的波长范围，但在 <strong>13.5 纳米处有一个明显的峰值</strong>。这意味着锡等离子体是一个天然的&quot;EUV 光源&quot;——只需要把它加热到足够高的温度，它就会大量辐射 13.5 纳米的光。</p>
+<h3 id="从固态锡到微米液滴">从固态锡到微米液滴</h3>
+<p>制造 EUV 光的第一步：把锡变成极其微小的液滴。</p>
+<ol>
+<li>固态锡被加热融化（锡的熔点只有 232°C）</li>
+<li>液态锡被输送到一个储存罐中</li>
+<li>储存罐通过管道连接到一个<strong>微米级喷嘴</strong></li>
+<li>喷嘴尖端有一个<strong>压电换能器（Piezoelectric Transducer）</strong>——当给它施加电脉冲时，它会微微挤压喷嘴</li>
+<li>在罐内高压氮气的推动下，液态锡从喷嘴中被喷出，形成一串直径约 <strong>25–30 微米</strong>的均匀液滴</li>
+<li>液滴的飞行速度约为 <strong>70–100 米/秒</strong></li>
+</ol>
+<blockquote><p>[图片：锡液滴发生器剖面示意图——从固态锡熔化开始，经过储存罐、高压氮气管路、管道输送到微米喷嘴，压电换能器的位置，以及喷出后的液滴串]</p>
+</blockquote>
+<p>每秒钟，喷嘴产生 <strong>50,000 个锡液滴</strong>（在未来的系统中将提升到 100,000 个/秒）。这些液滴像一串极其均匀的珍珠项链一样，在真空中飞行。</p>
+<h2 id="双脉冲激光毫秒内的两次精确打击">双脉冲激光：毫秒内的两次精确打击</h2>
+<p>液滴在飞行过程中，会被两束激光依次击中。这个过程叫做 <strong>LPP（Laser-Produced Plasma，激光产生等离子体）</strong>。</p>
+<h3 id="第一击预脉冲pre-pulse">第一击：预脉冲（Pre-pulse）</h3>
+<p>第一束激光叫做<strong>预脉冲</strong>，功率约 <strong>5,000 瓦</strong>，脉冲持续时间极短（纳秒级别）。</p>
+<p>它的作用不是直接产生 EUV 光，而是<strong>把球形的锡液滴压扁成一个薄饼状</strong>（pancake shape）。预脉冲的能量被液滴表面的锡吸收，表面瞬间汽化产生等离子体，产生的反冲力把液滴压扁并向外展开。</p>
+<p>经过大约 <strong>1–3 微秒</strong>的展开时间，原本直径 25–30 微米的球形液滴会变成直径约 <strong>100–300 微米</strong>的薄饼——厚度只有几微米。</p>
+<p>为什么要压扁？因为球形液滴太厚了。如果直接用主激光击中一个球形液滴，激光能量大部分只会加热表面层，内部的锡来不及被充分电离，造成严重的能量浪费。压扁成大面积薄饼之后，主激光可以均匀地照射整个锡靶表面，让更多的锡参与等离子体形成，大大提高从激光能量到 EUV 光的<strong>转换效率（Conversion Efficiency, CE）</strong>。</p>
+<blockquote><p>[图片：预脉冲击中液滴的序列图——(1) 球形锡液滴 Ø25μm 在飞行 (2) 预脉冲激光击中，表面等离子体产生反冲力 (3) 经过 1–3μs 展开后，液滴变成 Ø100–300μm 的薄饼，厚度仅几μm]</p>
+</blockquote>
+<h3 id="第二击主脉冲main-pulse">第二击：主脉冲（Main pulse）</h3>
+<p>在预脉冲击中液滴的 <strong>1–3 微秒</strong>之后（这个延迟经过精确优化，让薄饼展开到最佳直径），第二束激光——<strong>主脉冲</strong>——到达。</p>
+<p>主脉冲的功率约 <strong>25,000 瓦</strong>（峰值功率更高，脉冲持续时间约为数十纳秒）。这是什么概念？工业切割钢铁的激光功率通常在 1,000–2,000 瓦左右。主脉冲的能量是切钢激光的 <strong>10 倍以上</strong>。</p>
+<p>当这束强大的激光照射到已经展开的锡薄饼时，薄饼几乎被完全<strong>电离</strong>，形成一个温度达到数十万开尔文（数十 eV）的<strong>等离子体（Plasma）</strong>——物质的第四态。在这样的温度下，锡原子失去 8–14 个电子，变成高度带电的离子。</p>
+<blockquote><p>[图片：主脉冲击中锡薄饼的序列图——(1) 压扁的锡薄饼 (2) 主脉冲击中 (3) 等离子体爆发形成并发出明亮的 EUV 光辐射（用特殊颜色/光晕表示 13.5nm 辐射）]</p>
+</blockquote>
+<h3 id="等离子体中发生了什么">等离子体中发生了什么？</h3>
+<p>在这团高温等离子体中，锡原子被高度电离——失去 8 到 14 个电子，变成 Sn⁸⁺ 到 Sn¹⁴⁺ 离子。</p>
+<p>这些高电离态的锡离子内部，剩余的束缚电子处于激发态。当它们跃迁回较低能级时，释放出光子。关键在于：Sn⁸⁺ 到 Sn¹⁴⁺ 各自有大量可能的跃迁路径（涉及 4d 和 4p 亚壳层的复杂电子重排），而这些跃迁释放的光子能量恰好<strong>密集地聚集在 13.5nm 波长附近</strong>。</p>
+<p>这种现象叫做<strong>未分辨跃迁阵列（Unresolved Transition Array, UTA）</strong>——不是单一跃迁，而是成千上万种跃迁的发射波长挤在一个很窄的波长范围内，叠加形成一个强烈的发射峰。</p>
+<p>这就是锡被选为 EUV 光源材料的核心原因：在所有元素中，锡在 13.5nm 处的 UTA 发射效率最高。其他元素（如氙气 Xe）虽然也能产生 EUV 光，但转换效率远不如锡。</p>
+<blockquote><p>[图片：锡离子能级跃迁示意图——展示 Sn⁸⁺ 到 Sn¹⁴⁺ 多种电离态的电子跃迁，大量跃迁路径汇聚在 13.5nm 附近形成发射峰（UTA）]</p>
+</blockquote>
+<h3 id="整个过程的节奏">整个过程的节奏</h3>
+<p>把上面的步骤串起来：</p>
+<ol>
+<li>喷嘴喷出一个 30 微米的锡液滴</li>
+<li>高速摄像机测量液滴的精确位置和轨迹</li>
+<li>可调节反射镜根据测量数据，精确瞄准液滴</li>
+<li>预脉冲激光击中液滴，压扁成薄饼</li>
+<li>主脉冲激光击中薄饼，产生等离子体</li>
+<li>等离子体辐射出 13.5nm EUV 光</li>
+</ol>
+<p><strong>这个完整循环以每秒 50,000 次的频率进行。</strong></p>
+<p>每秒 5 万次。每次间隔仅 20 微秒。在这 20 微秒里，系统必须完成液滴定位、激光瞄准、双脉冲发射和光收集。</p>
+<blockquote><p>[图片：完整的光源系统示意图——从底部的激光发生器（楼板下方），经过多级放大，通过反射镜系统进入光源腔体，双脉冲依次击中液滴，等离子体发光，集光镜收集 EUV 光汇聚到中间焦点]</p>
+</blockquote>
+<h3 id="功率控制">功率控制</h3>
+<p>有时候，系统需要降低 EUV 光的输出功率（比如调整曝光剂量）。方法很简单：<strong>让激光故意跳过一些液滴</strong>。被跳过的液滴不会被击中，它们飞过之后会被专门的收集器接住回收。</p>
+<h2 id="第一面镜子集光镜">第一面镜子：集光镜</h2>
+<p>等离子体发出的 EUV 光是向各个方向辐射的。为了尽可能多地收集这些光，等离子体周围有一面巨大的凹面反射镜，叫做<strong>集光镜（Collector Mirror）</strong>。</p>
+<p>集光镜的形状是一个精密的椭球面，它把所有收集到的 EUV 光汇聚到一个小孔——<strong>中间焦点（Intermediate Focus, IF）</strong>。</p>
+<p>中间焦点是光源模块和照明系统的分界线。只有 13.5 纳米波长附近的 EUV 光能从这个小孔通过，其他波长的杂散光和碎片被挡在外面。</p>
+<blockquote><p>[图片：集光镜收集 EUV 光的示意——椭球面镜子包围等离子体发光点，反射的 EUV 光汇聚到中间焦点的小孔处]</p>
+</blockquote>
+<h2 id="euv-光的脆弱为什么必须用镜子">EUV 光的脆弱：为什么必须用镜子</h2>
+<p>到目前为止，你可能注意到了一件事：为什么一直在说&quot;反射镜&quot;，而不是像普通光学设备那样用透镜？</p>
+<p>原因很简单：<strong>13.5 纳米的 EUV 光会被几乎所有材料吸收。</strong></p>
+<ul>
+<li>它无法穿过玻璃（普通透镜的材料）</li>
+<li>它无法穿过空气（会被氧分子和氮分子吸收）</li>
+<li>它甚至无法穿过几厘米的气体</li>
+</ul>
+<p>这意味着：</p>
+<ol>
+<li><strong>整个光路必须在真空中运行。</strong> 从光源腔体到晶圆台，全部抽真空。</li>
+<li><strong>不能使用任何透镜。</strong> 所有光学元件只能是反射镜——光照到表面被弹回，不需要穿过材料。</li>
+</ol>
+<p>这是 EUV 光刻和传统 DUV 光刻最根本的架构差异。DUV 光可以穿过石英玻璃，所以 DUV 光刻机用的是透镜系统。EUV 光什么都穿不过，只能用反射镜系统。</p>
+<p>但反射镜也有自己的问题：普通镜子（比如你浴室里的镜子）对 EUV 光的反射率几乎为零。你需要一种特殊的镜子。</p>
+<h2 id="布拉格反射镜纳米级千层蛋糕">布拉格反射镜：纳米级千层蛋糕</h2>
+<p>EUV 光刻系统中使用的反射镜叫做<strong>布拉格反射镜（Bragg Reflector）</strong>，也叫多层膜反射镜（Multilayer Mirror）。它的结构完全不同于普通镜子。</p>
+<h3 id="结构">结构</h3>
+<p>布拉格反射镜由几十层交替堆叠的**硅（Si）<strong>和</strong>钼（Mo）**薄膜组成：</p>
+<ul>
+<li>每一层的厚度只有几纳米</li>
+<li>硅层和钼层交替排列，形成一个&quot;纳米三明治&quot;</li>
+<li>总共大约 40–50 对（80–100 层）</li>
+</ul>
+<blockquote><p>[图片：布拉格反射镜的多层结构剖面图——交替的硅层（浅色）和钼层（深色），每层标注厚度（约 2.8nm Mo + 约 4.1nm Si = 约 6.9nm 一个周期），EUV 光从上方入射，在每个界面发生部分反射]</p>
+</blockquote>
+<h3 id="工作原理">工作原理</h3>
+<p>当 EUV 光照射到这种多层结构时，每一个硅-钼界面都会反射大约 <strong>3%</strong> 的光——剩下的 97% 继续穿透到下一层。</p>
+<p>听起来 3% 很可怜？但这里有一个关键：<strong>相长干涉（Constructive Interference）</strong>。</p>
+<p>因为每一对薄膜的厚度被精确设计为 EUV 光波长的约一半（一个周期 ≈ 6.9nm，接近 13.5nm / 2），使得从每一层界面反射回来的光波之间的光程差恰好等于一个完整波长。这意味着它们的波峰和波峰恰好对齐——发生<strong>相长干涉</strong>。这些微弱的反射光通过干涉叠加在一起，最终一面镜子的总反射率可以达到约 <strong>70%</strong>。</p>
+<p>这是一个了不起的工程成就——从每层 3% 的微弱反射，通过精密的纳米结构设计，堆叠出 70% 的有效反射率。</p>
+<blockquote><p>[图片：相长干涉原理示意——多层反射的光波波峰对齐叠加，最终形成强反射。可以用波形叠加的方式可视化]</p>
+</blockquote>
+<h3 id="表面精度">表面精度</h3>
+<p>这些镜子的表面精度令人震惊。蔡司（ZEISS）——ASML 的长期光学合作伙伴——制造的 EUV 反射镜，表面粗糙度小于 <strong>0.1 纳米</strong>，约等于单个原子的直径。</p>
+<p>如果把这面镜子放大到整个德国的面积（约 36 万平方公里），最大的&quot;凸起&quot;不会超过 0.1 毫米——比一张纸的厚度还薄。</p>
+<h2 id="光的损耗为什么光源必须极其明亮">光的损耗：为什么光源必须极其明亮</h2>
+<p>70% 的反射率听起来不错，但这里有一个残酷的算术问题。</p>
+<p>EUV 光刻系统中，从光源到晶圆，光总共要经过 <strong>超过 10 面反射镜</strong>（照明系统中有数面，投影光学中有 6 面，加上集光镜和光罩本身也是反射式的）。</p>
+<p>每经过一面镜子，光强衰减到原来的 70%。那么经过 10 面镜子之后：</p>
+<p>$
+0.7^{10} \approx 0.028 = 2.8%
+$</p>
+<p>也就是说，等离子体产生的 EUV 光，<strong>最终只有不到 3% 能到达晶圆表面</strong>。其他 97% 都在反射过程中损耗掉了。</p>
+<p>再考虑到激光能量转化为 EUV 光的效率只有约 <strong>5–6%</strong>（这是指从 CO₂ 激光能量到 13.5nm 带内 EUV 辐射的转换效率，仅计算 ±1% 带宽内的有用光），整体来看：</p>
+<p>$
+\text{从墙上电源到晶圆} = \text{激光效率} \times \text{EUV转换效率} \times \text{光学传输效率}
+$</p>
+<p>整个系统的能量利用率极低。这就是为什么：</p>
+<ol>
+<li><strong>光源必须尽可能明亮</strong>——产生的 EUV 光越多，到达晶圆的光就越多，曝光时间就越短，产能就越高。</li>
+<li><strong>光刻机功耗巨大</strong>——超过 1 兆瓦的电力，大部分都被用来驱动激光系统。</li>
+<li><strong>光源功率是 EUV 光刻机产能的关键瓶颈</strong>。</li>
+</ol>
+<h3 id="功率演进">功率演进</h3>
+<div class="table-wrap"><table><thead><tr>
+<th>年份/型号</th>
+<th>光源功率（EUV）</th>
+<th>晶圆产能</th>
+</tr>
+</thead><tbody><tr>
+<td>NXE:3400B（2019）</td>
+<td>~250W</td>
+<td>~125 片/时</td>
+</tr>
+<tr>
+<td>NXE:3600D（2021）</td>
+<td>~400W</td>
+<td>~185 片/时</td>
+</tr>
+<tr>
+<td>NXE:3800E（2024）</td>
+<td>~600W</td>
+<td>~220 片/时</td>
+</tr>
+<tr>
+<td>下一代（~2030 目标）</td>
+<td><strong>1000W</strong></td>
+<td>~330 片/时</td>
+</tr>
+</tbody></table></div>
+<p>ASML 在 2025 年已经在实验室中实现了 1000 瓦 EUV 光源的里程碑——通过使用<strong>三束激光</strong>同时工作、将锡液滴频率提升到 <strong>100,000 次/秒</strong>来实现。这将使产能提升约 50%。</p>
+<blockquote><p>[图片：EUV 光源功率演进时间线图——横轴是年份（2019–2030），纵轴是光源功率（W），标注各型号对应的产能]</p>
+</blockquote>
+<h2 id="激光系统本身">激光系统本身</h2>
+<p>前面我们一直在说&quot;激光击中液滴&quot;，但这些激光本身也不简单。</p>
+<p>EUV 光刻机使用的驱动激光是 <strong>CO₂ 激光器</strong>（波长 10.6 微米，红外光），放置在洁净室地板下方的独立空间里。激光从地板下方产生后，经过<strong>多级放大器</strong>增强功率，然后通过一系列反射镜送入光源腔体。</p>
+<p>整个激光系统是 ASML 的合作伙伴 <strong>TRUMPF</strong>（德国通快集团）制造的——这是世界上最强大的量产工业激光系统。</p>
+<blockquote><p>[图片：激光系统布局示意——地板下方的激光发生器和放大器，通过管道/反射镜路径送到楼上的光源腔体]</p>
+</blockquote>
+<p>激光到达光源腔体后，通过<strong>可调节反射镜</strong>进行最终的精确瞄准。这些镜子的角度可以在微秒级别内调整，确保每一个激光脉冲都能精确命中在空中飞行的锡液滴。</p>
+<p>想象一下这个精度要求：一个直径 30 微米的液滴，以 100 米/秒的速度飞行，你需要在 20 微秒的窗口内，用一束激光精确击中它——而且每秒重复 50,000 次，不能有一次打偏。</p>
+<p>这就是光源系统必须搭配高速摄像机和实时反馈控制系统的原因——摄像机追踪液滴轨迹，计算预测位置，反馈给反射镜系统，实现闭环控制。</p>
+<h2 id="光源腔体内的quot战场quot">光源腔体内的&quot;战场&quot;</h2>
+<p>光源腔体的内部环境相当恶劣。每秒 50,000 次的等离子体爆炸会产生大量锡碎片和锡蒸气。这些碎片如果沉积到集光镜表面，会降低其反射率。</p>
+<p>为了保护集光镜，系统使用<strong>低压氢气（H₂）缓冲气体</strong>来清洁。约 100 帕斯卡（约 1/1000 大气压）的氢气被充入腔体，它起到两个作用：</p>
+<ol>
+<li><strong>减速锡碎片</strong>：氢分子像缓冲垫一样减慢飞向集光镜的锡离子和碎片</li>
+<li><strong>化学清洁</strong>：氢和沉积在镜面上的锡反应，生成挥发性的氢化锡（SnH₄），然后被真空泵抽走</li>
+</ol>
+<p>这个氢气环境的压力经过精心优化——太低了保护不够，太高了会吸收 EUV 光（即使氢气对 EUV 的吸收很弱，在高压下也不能忽略）。</p>
+<p>即便如此，集光镜也不是永久的——它有使用寿命，需要定期更换。这也是 EUV 光刻机运维成本高昂的原因之一。</p>
+<h2 id="从中间焦点出发">从中间焦点出发</h2>
+<p>经过集光镜的汇聚，EUV 光穿过中间焦点——一个直径仅几毫米的小孔——进入照明系统。</p>
+<p>从这一刻起，光离开了&quot;暴力产生&quot;的阶段，进入&quot;精密操控&quot;的阶段。在照明系统中，它将被整形、均匀化、调制成特定的照明模式，为照射光罩做好准备。</p>
+<p>这就是下一章的故事。</p>
+<h2 id="本章要点">本章要点</h2>
+<ul>
+<li>✓ 光的波长决定可刻画的最小线宽；13.5nm EUV 光是画 10nm 结构的物理必需</li>
+<li>✓ EUV 光在自然界不存在，通过激光轰击锡液滴产生等离子体来获得</li>
+<li>✓ 整个流程：锡熔化 → 微米喷嘴喷出液滴 → 预脉冲压扁 → 主脉冲气化 → 等离子体辐射 13.5nm 光</li>
+<li>✓ 这个过程以每秒 50,000 次的频率进行</li>
+<li>✓ EUV 光无法穿过任何材料，系统只能用反射镜且全程真空</li>
+<li>✓ 布拉格反射镜利用相长干涉实现 ~70% 反射率，但 10+ 面镜子后只剩 &lt;3% 的光到达晶圆</li>
+<li>✓ 光源功率是产能瓶颈：当前 600W，下一代目标 1000W</li>
+</ul>
+
+    <nav class="pager">  <a href="01-overview.html">
+    <span class="label">← 上一章</span>
+    <span class="title">芯片制造全景：光刻机在干什么</span>
+  </a>  <a href="03-illumination-mask.html" class="next">
+    <span class="label">下一章 →</span>
+    <span class="title">照明系统与光罩：芯片设计图怎么读取</span>
+  </a></nav>
+  </article>
+</div>
+
+<footer>
+  <div class="set">
+    <span>EUV 光刻机：一束光如何造出芯片</span>
+    <span>2026 · ZH-CN</span>
+  </div>
+  <div class="set">
+    <span>Mav</span>
+  </div>
+</footer>
+<div class="search-backdrop" id="search-overlay" role="dialog" aria-modal="true" aria-label="搜索" hidden>
+  <div class="search-modal">
+    <div class="search-input-wrap">
+      <input type="search" class="search-input" placeholder="搜索内容..." aria-label="搜索内容" autocomplete="off">
+      <kbd>ESC</kbd>
+    </div>
+    <div class="search-results" role="listbox" aria-label="搜索结果"></div>
+  </div>
+</div>
+
+<!-- Side Panel -->
+<div class="side-panel" id="side-panel">
+  <div class="side-panel-resize" id="side-panel-resize"></div>
+  <div class="side-panel-header">
+    <div class="side-panel-tabs">
+      <button class="side-panel-tab active" data-mode="sidenote">补充</button>
+      <button class="side-panel-tab" data-mode="notepad">笔记</button>
+    </div>
+    <button class="side-panel-close" aria-label="关闭">×</button>
+  </div>
+  <div class="side-panel-body"></div>
+</div>
+<button class="notepad-fab" id="notepad-fab" aria-label="便利贴">✎</button>
+
+<!-- Mobile TOC -->
+<button class="mtoc-fab" id="mtoc-fab" aria-label="目录">TOC</button>
+<div class="mtoc-drawer" id="mtoc-drawer">
+  <div class="mtoc-content"></div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/bash.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/typescript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/yaml.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/javascript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/json.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/python.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/css.min.js"></script>
+<script src="../assets/script.js"></script>
+</body>
+</html>

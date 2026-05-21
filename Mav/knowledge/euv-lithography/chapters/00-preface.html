@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>前言：你口袋里的奇迹 — EUV 光刻机：一束光如何造出芯片</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" id="hljs-light" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+<link rel="stylesheet" id="hljs-dark" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" media="not all">
+</head>
+<body>
+
+<div class="progress-bar" id="progress-bar"></div>
+
+<nav class="topnav" id="topnav">
+  <div class="topnav-inner">
+    <a class="brand" href="../index.html">EUV 光刻机：一束光如何造出芯片</a>
+    <div class="nav-links">
+      <a href="00-preface.html" class="active">01</a>
+      <a href="01-overview.html">02</a>
+      <a href="02-light-source.html">03</a>
+      <a href="03-illumination-mask.html">04</a>
+      <a href="04-projection-wafer.html">05</a>
+      <a href="05-limits-future.html">06</a>
+    </div>
+    <div class="nav-controls">
+      <button class="nav-btn" id="search-btn" aria-label="搜索 (Ctrl+K)">⌘K</button>
+      <button class="nav-btn" id="settings-btn" aria-label="阅读设置">Aa</button>
+      <a class="nav-btn" href="../../index.html" aria-label="返回知识库">← 知识库</a>
+      <a class="nav-btn" href="https://github.com/maverickxone/mav-homepage" target="_blank" rel="noopener" aria-label="GitHub" style="padding: 6px 8px;"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg></a>
+    </div>
+  </div>
+</nav>
+<div class="settings-pop" id="settings-pop">
+  <h5>主题</h5>
+  <div class="row">
+    <button class="seg" data-theme-set="light">明亮</button>
+    <button class="seg" data-theme-set="dark">暗色</button>
+  </div>
+  <h5>字号</h5>
+  <div class="row">
+    <button class="seg" data-size-set="s">小</button>
+    <button class="seg" data-size-set="m">中</button>
+    <button class="seg" data-size-set="l">大</button>
+  </div>
+</div>
+
+<div class="with-sidebar">
+  <aside class="sidebar">
+  <div class="chapter-num">CHAPTER 01</div>
+  <div class="chapter-name">前言：你口袋里的奇迹</div>
+  <h4>目录</h4>
+  <ul>
+    <li><a href="#一个数字">一个数字</a></li>
+    <li><a href="#为什么写这本书">为什么写这本书</a></li>
+    <li><a href="#结构">结构</a></li>
+    <li><a href="#关于配图">关于配图</a></li>
+  </ul>
+</aside>
+  <article class="chapter-body">
+    <header class="chapter-head">
+  <div class="chapter-head-meta">
+    <span class="num">CHAPTER 01</span>
+    <span>≈ 8 MIN READ</span>
+  </div>
+  <h1>前言：你口袋里的奇迹</h1>
+
+</header>
+    <h2 id="一个数字">一个数字</h2>
+<p>300 亿。</p>
+<p>这是一颗现代 GPU 芯片里包含的晶体管数量。每一个晶体管的最小结构只有大约 10 纳米——相当于 45 个硅原子并排的宽度。</p>
+<p>把这个规模翻译成人类能感知的比喻：如果每个晶体管是一个汉字，那么一颗芯片上写的字，比整个中文维基百科加上一座公共图书馆里所有的书加起来还要多。而这些&quot;文字&quot;不是印在纸上的——它们被刻在一片指甲盖大小的硅片上，全部工序在不到一秒内完成。</p>
+<p>完成这件事的机器，叫做 <strong>EUV 光刻机</strong>。</p>
+<h2 id="为什么写这本书">为什么写这本书</h2>
+<p>起因是 B 站上的一个视频：<a href="https://www.bilibili.com/video/BV1y6awz1EpV/">《EUV光刻机工作原理，世界上最先进的机器是如何工作的？》</a>。视频用动画拆解了整台机器的工作流程，从光源到晶圆台，从锡液滴到布拉格反射镜。</p>
+<p>看完之后我觉得这东西值得整理成文字。一方面是因为视频信息密度高，看一遍很难完全消化；另一方面是这台机器本身确实够离谱——</p>
+<p>它重 180 吨，包含超过 10 万个组件，单台售价约 2 亿美元。全世界只有一家公司——荷兰的 ASML——能够制造它。它消耗超过 1 兆瓦的电力（相当于一个小型社区的用电量），内部维持着比外太空还干净的真空环境。</p>
+<p>它的工作方式更离谱：用两束激光以每秒 5 万次的频率轰击直径仅 30 微米的锡液滴，产生等离子体，释放出 13.5 纳米波长的极紫外光，然后通过一系列精度达到原子级别的反射镜，把光聚焦到硅片上，在 18 秒内将同一个设计复制上百次。</p>
+<p>每一步都在物理学的极限边缘操作。每一步都有无数种方式可以失败。但它就是工作了——而且每天 24 小时不停歇地工作在全世界的芯片工厂里。</p>
+<p>所以这本书的内容就是：<strong>跟着一束 13.5 纳米的光，从诞生到击中硅片，把整台 EUV 光刻机过一遍。</strong></p>
+<h2 id="结构">结构</h2>
+<p>全书分为 5 章，每章对应光在机器中经过的一个阶段：</p>
+<div class="table-wrap"><table><thead><tr>
+<th>章节</th>
+<th>标题</th>
+<th>核心问题</th>
+</tr>
+</thead><tbody><tr>
+<td>第一章</td>
+<td>芯片制造全景</td>
+<td>光刻机在整个芯片制造流程中扮演什么角色？</td>
+</tr>
+<tr>
+<td>第二章</td>
+<td>EUV 光源</td>
+<td>13.5nm 的光在自然界不存在，怎么造出来？</td>
+</tr>
+<tr>
+<td>第三章</td>
+<td>照明系统与光罩</td>
+<td>有了光之后，怎么把芯片设计&quot;编码&quot;到光束里？</td>
+</tr>
+<tr>
+<td>第四章</td>
+<td>投影光学与晶圆台</td>
+<td>图案怎么精确缩小并&quot;印&quot;到硅片上？</td>
+</tr>
+<tr>
+<td>第五章</td>
+<td>极限与未来</td>
+<td>EUV 还能走多远？之后怎么办？</td>
+</tr>
+</tbody></table></div>
+<p>不需要任何半导体物理的前置知识。如果你读过知识库里的《电脑怎么工作的》，你已经知道 CPU 和 GPU 是什么了。这本书回答的是下一个问题：<strong>这些芯片本身是怎么被制造出来的？</strong></p>
+<h2 id="关于配图">关于配图</h2>
+<p>这本书和之前写的那些知识库有一个本质区别：光刻机是一台物理机器，很多东西用文字无法完整传达。投影镜组里 6 面镜子的曲折光路，布拉格反射镜的多层结构，不同照明模式在光瞳面上的图案——这些都需要图片才能建立正确的空间想象。</p>
+<p>书中标注了 <code>[图片]</code> 的地方，是我认为必须配图才能真正理解的位置。务必看图。</p>
+
+    <nav class="pager">  <a class="disabled"><span class="label">← 上一章</span><span class="title"></span></a>  <a href="01-overview.html" class="next">
+    <span class="label">下一章 →</span>
+    <span class="title">芯片制造全景：光刻机在干什么</span>
+  </a></nav>
+  </article>
+</div>
+
+<footer>
+  <div class="set">
+    <span>EUV 光刻机：一束光如何造出芯片</span>
+    <span>2026 · ZH-CN</span>
+  </div>
+  <div class="set">
+    <span>Mav</span>
+  </div>
+</footer>
+<div class="search-backdrop" id="search-overlay" role="dialog" aria-modal="true" aria-label="搜索" hidden>
+  <div class="search-modal">
+    <div class="search-input-wrap">
+      <input type="search" class="search-input" placeholder="搜索内容..." aria-label="搜索内容" autocomplete="off">
+      <kbd>ESC</kbd>
+    </div>
+    <div class="search-results" role="listbox" aria-label="搜索结果"></div>
+  </div>
+</div>
+
+<!-- Side Panel -->
+<div class="side-panel" id="side-panel">
+  <div class="side-panel-resize" id="side-panel-resize"></div>
+  <div class="side-panel-header">
+    <div class="side-panel-tabs">
+      <button class="side-panel-tab active" data-mode="sidenote">补充</button>
+      <button class="side-panel-tab" data-mode="notepad">笔记</button>
+    </div>
+    <button class="side-panel-close" aria-label="关闭">×</button>
+  </div>
+  <div class="side-panel-body"></div>
+</div>
+<button class="notepad-fab" id="notepad-fab" aria-label="便利贴">✎</button>
+
+<!-- Mobile TOC -->
+<button class="mtoc-fab" id="mtoc-fab" aria-label="目录">TOC</button>
+<div class="mtoc-drawer" id="mtoc-drawer">
+  <div class="mtoc-content"></div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/bash.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/typescript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/yaml.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/javascript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/json.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/python.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/css.min.js"></script>
+<script src="../assets/script.js"></script>
+</body>
+</html>

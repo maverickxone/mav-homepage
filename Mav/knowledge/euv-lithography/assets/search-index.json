@@ -1,0 +1,916 @@
+{
+  "documents": [
+    {
+      "id": "00-preface",
+      "title": "前言：你口袋里的奇迹",
+      "chapter": "01",
+      "chapterTitle": "前言：你口袋里的奇迹",
+      "url": "chapters/00-preface.html",
+      "body": "\r\n   一个数字\r\n\r\n300 亿。\r\n\r\n这是一颗现代 GPU 芯片里包含的晶体管数量。每一个晶体管的最小结构只有大约 10 纳米——相当于 45 个硅原子并排的宽度。\r\n\r\n把这个规模翻译成人类能感知的比喻：如果每个晶体管是一个汉字，那么一颗芯片上写的字，比整个中文维基百科加上一座公共图书馆里所有的书加起来还要多。而这些\"文字\"不是印在纸上的——它们被刻在一片指甲盖大小的硅片上，全部工序在不到一秒内完成。\r\n\r\n完成这件事的机器，叫做   EUV 光刻机  。\r\n\r\n\r\n   为什么写这本书\r\n\r\n起因是 B 站上的一个视频： 《EUV光刻机工作原理，世界上最先进的机器是如何工作的？》  https://www.bilibili.com/video/BV1y6awz1EpV/ 。视频用动画拆解了整台机器的工作流程，从光源到晶圆台，从锡液滴到布拉格反射镜。\r\n\r\n看完之后我觉得这东西值得整理成文字。一方面是因为视频信息密度高，看一遍很难完全消化；另一方面是这台机器本身确实够离谱——\r\n\r\n它重 180 吨，包含超过 10 万个组件，单台售价约 2 亿美元。全世界只有一家公司——荷兰的 ASML——能够制造它。它消耗超过 1 兆瓦的电力（相当于一个小型社区的用电量），内部维持着比外太空还干净的真空环境。\r\n\r\n它的工作方式更离谱：用两束激光以每秒 5 万次的频率轰击直径仅 30 微米的锡液滴，产生等离子体，释放出 13.5 纳米波长的极紫外光，然后通过一系列精度达到原子级别的反射镜，把光聚焦到硅片上，在 18 秒内将同一个设计复制上百次。\r\n\r\n每一步都在物理学的极限边缘操作。每一步都有无数种方式可以失败。但它就是工作了——而且每天 24 小时不停歇地工作在全世界的芯片工厂里。\r\n\r\n所以这本书的内容就是：  跟着一束 13.5 纳米的光，从诞生到击中硅片，把整台 EUV 光刻机过一遍。  \r\n\r\n\r\n   结构\r\n\r\n全书分为 5 章，每章对应光在机器中经过的一个阶段：\r\n\r\n  章节   标题   核心问题  \r\n                          \r\n  第一章   芯片制造全景   光刻机在整个芯片制造流程中扮演什么角色？  \r\n  第二章   EUV 光源   13.5nm 的光在自然界不存在，怎么造出来？  \r\n  第三章   照明系统与光罩   有了光之后，怎么把芯片设计\"编码\"到光束里？  \r\n  第四章   投影光学与晶圆台   图案怎么精确缩小并\"印\"到硅片上？  \r\n  第五章   极限与未来   EUV 还能走多远？之后怎么办？  \r\n\r\n不需要任何半导体物理的前置知识。如果你读过知识库里的《电脑怎么工作的》，你已经知道 CPU 和 GPU 是什么了。这本书回答的是下一个问题：  这些芯片本身是怎么被制造出来的？  \r\n\r\n\r\n   关于配图\r\n\r\n这本书和之前写的那些知识库有一个本质区别：光刻机是一台物理机器，很多东西用文字无法完整传达。投影镜组里 6 面镜子的曲折光路，布拉格反射镜的多层结构，不同照明模式在光瞳面上的图案——这些都需要图片才能建立正确的空间想象。\r\n\r\n书中标注了   图片   的地方，是我认为必须配图才能真正理解的位置。务必看图。\r\n"
+    },
+    {
+      "id": "00-preface-一个数字",
+      "title": "一个数字",
+      "chapter": "01",
+      "chapterTitle": "前言：你口袋里的奇迹",
+      "url": "chapters/00-preface.html#一个数字",
+      "body": ""
+    },
+    {
+      "id": "00-preface-为什么写这本书",
+      "title": "为什么写这本书",
+      "chapter": "01",
+      "chapterTitle": "前言：你口袋里的奇迹",
+      "url": "chapters/00-preface.html#为什么写这本书",
+      "body": ""
+    },
+    {
+      "id": "00-preface-结构",
+      "title": "结构",
+      "chapter": "01",
+      "chapterTitle": "前言：你口袋里的奇迹",
+      "url": "chapters/00-preface.html#结构",
+      "body": ""
+    },
+    {
+      "id": "00-preface-关于配图",
+      "title": "关于配图",
+      "chapter": "01",
+      "chapterTitle": "前言：你口袋里的奇迹",
+      "url": "chapters/00-preface.html#关于配图",
+      "body": ""
+    },
+    {
+      "id": "01-overview",
+      "title": "芯片制造全景：光刻机在干什么",
+      "chapter": "02",
+      "chapterTitle": "芯片制造全景：光刻机在干什么",
+      "url": "chapters/01-overview.html",
+      "body": "\r\n   一颗芯片的诞生\r\n\r\n你手里的 iPhone、笔记本电脑、Switch 游戏机，甚至你宿舍里的智能台灯——所有这些设备的核心都是一颗或多颗微芯片。CPU、GPU、SoC、DRAM、SSD 控制器……它们形态各异，但制造方式惊人地相似。\r\n\r\n让我们从最宏观的视角开始。\r\n\r\n一颗芯片的生命始于一片  硅晶圆（Silicon Wafer）  。这是一个直径 300 毫米（约 12 英寸）、厚度不到 1 毫米的圆形薄片，由高纯度单晶硅切割而成。它看起来像一面黑色的镜子，表面光滑到原子级别。\r\n\r\n   图片：300mm 硅晶圆实物照片，展示其镜面般的表面和边缘的 notch 标记 \r\n\r\n一片晶圆的价格本身并不贵——大约几百美元。但经过芯片工厂里长达 4 个月、超过 1000 道工序的加工之后，这片晶圆上会布满几十到几百颗芯片，总价值可以达到数十万甚至上百万美元。\r\n\r\n\r\n   晶圆厂：世界上最贵的工厂\r\n\r\n芯片制造发生在一种特殊的工厂里，行业术语叫   Fab  （Fabrication Plant，晶圆制造厂）。\r\n\r\n一座先进的晶圆厂造价通常在 100–200 亿美元之间。台积电在美国亚利桑那州建设的工厂投资超过 400 亿美元。这是人类建造过的最昂贵的单体工业设施之一。\r\n\r\n为什么这么贵？因为芯片制造对环境的要求极其苛刻：\r\n\r\n    洁净度  ：芯片制造车间（Clean Room）的空气洁净度是 Class 1 级别——每立方英尺空气中直径 ≥0.5 微米的颗粒不超过 1 个。作为对比，你现在呼吸的空气中，同样体积内有数十万个这样的颗粒。一粒灰尘落在晶圆上，就可能毁掉几颗芯片。\r\n    温度和湿度  ：恒温恒湿，波动范围极小。\r\n    振动控制  ：地基经过特殊设计，隔离外部振动。光刻机对振动极度敏感——纳米级别的晃动就会导致图案错位。\r\n\r\n   图片：晶圆厂内部全景照片——穿着无尘服的工程师、黄光环境、天花板上的 FOUP 运输轨道 \r\n\r\n在这样一座工厂里，通常有上百台不同种类的设备。其中大约几十台是 EUV 光刻机——它们是整座工厂里最昂贵、最关键的设备。\r\n\r\n\r\n   晶圆的旅程：从设备到设备\r\n\r\n芯片制造的过程，可以想象成一条极其复杂的流水线。但和你印象中的工厂流水线不同——晶圆不是沿着一条直线走到底，而是在不同设备之间来回穿梭，反复经历相似的步骤循环。\r\n\r\n晶圆被装在一种叫做   FOUP（Front Opening Unified Pod，前开式统一晶圆盒）   的密封容器里。FOUP 是一个黑色的塑料盒子，内部是洁净的氮气环境，可以装 25 片晶圆。\r\n\r\n   图片：FOUP 盒子的实物照片或示意图，展示内部晶圆的排列方式 \r\n\r\nFOUP 通过工厂天花板上的  自动轨道运输系统（OHT, Overhead Hoist Transfer）  在各台设备之间穿梭。你可以把它想象成一个悬挂在天花板上的微型地铁系统——FOUP 就是\"乘客\"，轨道把它送到下一站（下一台设备）。\r\n\r\n每到一台设备前，机械臂会从 FOUP 中取出晶圆，完成该设备的工序，再把晶圆放回 FOUP。然后 FOUP 被送往下一台设备，如此循环，直到所有工序完成。\r\n\r\n   图片：OHT 天轨系统照片，展示 FOUP 在工厂天花板轨道上移动的场景 \r\n\r\n\r\n   光刻的本质：纳米级复印\r\n\r\n现在我们来回答核心问题：  光刻机到底在做什么？  \r\n\r\n一句话总结：光刻机是一台  纳米级别的复印机  。它把设计好的电路图案\"复印\"到晶圆表面上。\r\n\r\n但这个\"复印\"过程比你想象的要复杂得多。让我用一个类比来解释。\r\n\r\n    模板喷涂的类比\r\n\r\n想象你在做一件 T 恤定制。你需要在白色 T 恤上印一个图案：\r\n\r\n1.   制作模板  ：用硬纸板剪出你想要的图案形状（比如一个 logo）\r\n2.   固定模板  ：把模板贴在 T 恤上\r\n3.   喷涂颜料  ：拿喷枪对着模板喷\r\n4.   撕掉模板  ：图案就留在 T 恤上了\r\n\r\n芯片制造的逻辑几乎完全一样，只不过：\r\n\r\n  \"T 恤\"是硅晶圆\r\n  \"模板\"是通过光刻机创建的（用光照射光刻胶，形成图案）\r\n  \"喷涂颜料\"是各种物理/化学处理（刻蚀、离子注入、金属沉积）\r\n  精度从\"毫米级\"变成了\"纳米级\"——缩小了 100 万倍\r\n\r\n    光刻流程：四步循环\r\n\r\n完整的光刻流程是一个四步循环：\r\n\r\n  第一步：涂胶（Coat）  \r\n\r\n晶圆被送进一台叫做   Track（涂胶显影设备）   的机器。这台设备在晶圆表面均匀涂上一层极薄的  光刻胶（Photoresist）  ——一种对特定波长光线敏感的聚合物。\r\n\r\n光刻胶的厚度只有"
+    },
+    {
+      "id": "01-overview-一颗芯片的诞生",
+      "title": "一颗芯片的诞生",
+      "chapter": "02",
+      "chapterTitle": "芯片制造全景：光刻机在干什么",
+      "url": "chapters/01-overview.html#一颗芯片的诞生",
+      "body": ""
+    },
+    {
+      "id": "01-overview-晶圆厂世界上最贵的工厂",
+      "title": "晶圆厂：世界上最贵的工厂",
+      "chapter": "02",
+      "chapterTitle": "芯片制造全景：光刻机在干什么",
+      "url": "chapters/01-overview.html#晶圆厂世界上最贵的工厂",
+      "body": ""
+    },
+    {
+      "id": "01-overview-晶圆的旅程从设备到设备",
+      "title": "晶圆的旅程：从设备到设备",
+      "chapter": "02",
+      "chapterTitle": "芯片制造全景：光刻机在干什么",
+      "url": "chapters/01-overview.html#晶圆的旅程从设备到设备",
+      "body": ""
+    },
+    {
+      "id": "01-overview-光刻的本质纳米级复印",
+      "title": "光刻的本质：纳米级复印",
+      "chapter": "02",
+      "chapterTitle": "芯片制造全景：光刻机在干什么",
+      "url": "chapters/01-overview.html#光刻的本质纳米级复印",
+      "body": ""
+    },
+    {
+      "id": "01-overview-模板喷涂的类比",
+      "title": "模板喷涂的类比",
+      "chapter": "02",
+      "chapterTitle": "芯片制造全景：光刻机在干什么",
+      "url": "chapters/01-overview.html#模板喷涂的类比",
+      "body": ""
+    },
+    {
+      "id": "01-overview-光刻流程四步循环",
+      "title": "光刻流程：四步循环",
+      "chapter": "02",
+      "chapterTitle": "芯片制造全景：光刻机在干什么",
+      "url": "chapters/01-overview.html#光刻流程四步循环",
+      "body": ""
+    },
+    {
+      "id": "01-overview-层层堆叠从-2d-到-3d",
+      "title": "层层堆叠：从 2D 到 3D",
+      "chapter": "02",
+      "chapterTitle": "芯片制造全景：光刻机在干什么",
+      "url": "chapters/01-overview.html#层层堆叠从-2d-到-3d",
+      "body": ""
+    },
+    {
+      "id": "01-overview-duv-与-euv两代光刻技术",
+      "title": "DUV 与 EUV：两代光刻技术",
+      "chapter": "02",
+      "chapterTitle": "芯片制造全景：光刻机在干什么",
+      "url": "chapters/01-overview.html#duv-与-euv两代光刻技术",
+      "body": ""
+    },
+    {
+      "id": "01-overview-在一座工厂里的分工",
+      "title": "在一座工厂里的分工",
+      "chapter": "02",
+      "chapterTitle": "芯片制造全景：光刻机在干什么",
+      "url": "chapters/01-overview.html#在一座工厂里的分工",
+      "body": ""
+    },
+    {
+      "id": "01-overview-一片晶圆上能装多少颗芯片",
+      "title": "一片晶圆上能装多少颗芯片？",
+      "chapter": "02",
+      "chapterTitle": "芯片制造全景：光刻机在干什么",
+      "url": "chapters/01-overview.html#一片晶圆上能装多少颗芯片",
+      "body": ""
+    },
+    {
+      "id": "01-overview-euv-光刻机数据速览",
+      "title": "EUV 光刻机：数据速览",
+      "chapter": "02",
+      "chapterTitle": "芯片制造全景：光刻机在干什么",
+      "url": "chapters/01-overview.html#euv-光刻机数据速览",
+      "body": ""
+    },
+    {
+      "id": "01-overview-18-秒的奇迹",
+      "title": "18 秒的奇迹",
+      "chapter": "02",
+      "chapterTitle": "芯片制造全景：光刻机在干什么",
+      "url": "chapters/01-overview.html#18-秒的奇迹",
+      "body": ""
+    },
+    {
+      "id": "01-overview-本章要点",
+      "title": "本章要点",
+      "chapter": "02",
+      "chapterTitle": "芯片制造全景：光刻机在干什么",
+      "url": "chapters/01-overview.html#本章要点",
+      "body": ""
+    },
+    {
+      "id": "02-light-source",
+      "title": "EUV 光源：用激光轰击锡液滴",
+      "chapter": "03",
+      "chapterTitle": "EUV 光源：用激光轰击锡液滴",
+      "url": "chapters/02-light-source.html",
+      "body": "\r\n   为什么必须是 13 纳米的光？\r\n\r\n在上一章中，我们说过光刻的本质是\"用光把图案复印到晶圆上\"。但为什么偏偏要用 13.5 纳米这种极端短波长的光？用普通的紫外线、甚至可见光不行吗？\r\n\r\n答案和一个物理事实有关：  光的波长决定了你能画多细的线。  \r\n\r\n    马克笔类比\r\n\r\n想象你在白纸上画线。如果你用一支粗头马克笔（笔尖宽 5 毫米），你画出来的最细的线也就是 5 毫米宽。想画更细的线？换一支笔尖更细的笔。\r\n\r\n光刻里的\"笔尖\"就是光的波长。波长越短，\"笔尖\"越细，能刻画的结构就越小。\r\n\r\n  可见光（蓝光）：波长  450 纳米 → 只能画  100 纳米以上的结构\r\n  DUV（深紫外光）：波长 193 纳米 → 通过各种技巧可以画到  30 纳米\r\n    EUV（极紫外光）：波长 13.5 纳米 → 可以直接画  10 纳米的结构  \r\n\r\n要在芯片上画 10 纳米宽的线条（相当于 45 个硅原子），你就需要一支\"笔尖宽度\"同量级的\"笔\"——13.5 纳米的极紫外光。\r\n\r\n   图片：马克笔类比示意——三支笔尖粗细不同的笔，分别画出粗线、中线、极细线，对应标注可见光/DUV/EUV 的波长和分辨率 \r\n\r\n    从衍射的角度理解\r\n\r\n如果你学过光学（没学过也没关系），可能听说过\"衍射极限\"。当光通过一个比自己波长还小的缝隙时，它不会规矩地直线通过，而是会\"散开\"——就像水波通过窄缝后会扩散一样。\r\n\r\n光罩上的电路图案本质上就是一堆纳米级的\"缝隙\"。如果光的波长远大于这些缝隙的宽度，光通过之后图案信息就丢失了——你得到的只是一团模糊的光斑，不再是精确的图案。\r\n\r\n具体来说，想象光照射到光罩上一组宽 10 纳米的图案：\r\n\r\n  如果用 450 纳米的蓝光：波长是图案宽度的 45 倍。光完全\"看不到\"这些图案，信息丢失。就像你用一根粗麻绳试图感知桌面上的一根头发丝——分辨率完全不够。\r\n  如果用 13.5 纳米的 EUV 光：波长和图案宽度同量级。光可以携带图案信息通过，虽然会发生衍射，但投影光学系统能够收集足够的衍射信息来重建图案。\r\n\r\n   图片：双缝实验类比——上方用 450nm 光照射纳米图案，结果完全模糊；下方用 13.5nm 光照射同样图案，结果清晰可辨。展示衍射效果的差异 \r\n\r\n这就是为什么 EUV 光刻是跨越性的：从 193 纳米直接跳到 13.5 纳米，波长缩小了 14 倍。这不是一个渐进式的改进——这是一次物理层面的代际跨越。\r\n\r\n\r\n   一个尴尬的问题：13.5nm 的光从哪里来？\r\n\r\n好，我们现在知道为什么需要 13.5 纳米的光了。但接下来有一个非常实际的问题：\r\n\r\n  这种波长的光在自然界中基本不存在。  \r\n\r\n太阳辐射中有微量的 EUV，但大气层把它全部吸收了。没有任何常规光源（灯泡、LED、激光器）能直接发出 13.5 纳米的光。\r\n\r\n那怎么办？\r\n\r\n答案是：  用激光轰击锡液滴，产生等离子体，让等离子体发出 EUV 光。  \r\n\r\n这听起来像科幻小说里的情节，但这确实是目前人类唯一能够高效产生足够功率 EUV 光的方法。\r\n\r\n让我们一步一步来看这个疯狂的过程。\r\n\r\n\r\n   锡液滴的诞生\r\n\r\n一切从一块超高纯度的固态锡（Sn，元素周期表第 50 号元素）开始。\r\n\r\n为什么是锡？因为锡的等离子体在电磁波谱上有一个很好的特性：它发射出的光覆盖了很宽的波长范围，但在   13.5 纳米处有一个明显的峰值  。这意味着锡等离子体是一个天然的\"EUV 光源\"——只需要把它加热到足够高的温度，它就会大量辐射 13.5 纳米的光。\r\n\r\n    从固态锡到微米液滴\r\n\r\n制造 EUV 光的第一步：把锡变成极其微小的液滴。\r\n\r\n1. 固态锡被加热融化（锡的熔点只有 232°C）\r\n2. 液态锡被输送到一个储存罐中\r\n3. 储存罐通过管道连接到一个  微米级喷嘴  \r\n4. 喷嘴尖端有一个  压电换能器（Piezoelectric Transducer）  ——当给它施加电脉冲时，它会微微挤压喷嘴\r\n5. 在罐内高压氮气的推动下，液态锡从喷嘴中被喷出，形成一串直径约   25–30 微米  的均匀液滴\r\n6. 液滴的飞行速度约为   70–100 米/秒  \r\n\r\n   图片：锡液滴发生器剖面示意图——从固态锡熔化开始，经过储存罐、高压氮气管路、管道输送到微米喷嘴，压电换能器的位置，以及喷出后的液滴串 \r\n\r\n每秒钟，喷嘴产生   50,000 个锡液滴  （在未来的系统中将提升到 100,000 个/秒）。这些液滴像一串极其均匀的珍珠项链一样，在真空中飞行。\r\n\r\n\r\n   双脉冲激光：毫秒内的两次精确打击\r\n\r\n液滴在飞行过程中，会被两"
+    },
+    {
+      "id": "02-light-source-为什么必须是-13-纳米的光",
+      "title": "为什么必须是 13 纳米的光？",
+      "chapter": "03",
+      "chapterTitle": "EUV 光源：用激光轰击锡液滴",
+      "url": "chapters/02-light-source.html#为什么必须是-13-纳米的光",
+      "body": ""
+    },
+    {
+      "id": "02-light-source-马克笔类比",
+      "title": "马克笔类比",
+      "chapter": "03",
+      "chapterTitle": "EUV 光源：用激光轰击锡液滴",
+      "url": "chapters/02-light-source.html#马克笔类比",
+      "body": ""
+    },
+    {
+      "id": "02-light-source-从衍射的角度理解",
+      "title": "从衍射的角度理解",
+      "chapter": "03",
+      "chapterTitle": "EUV 光源：用激光轰击锡液滴",
+      "url": "chapters/02-light-source.html#从衍射的角度理解",
+      "body": ""
+    },
+    {
+      "id": "02-light-source-一个尴尬的问题135nm-的光从哪里来",
+      "title": "一个尴尬的问题：13.5nm 的光从哪里来？",
+      "chapter": "03",
+      "chapterTitle": "EUV 光源：用激光轰击锡液滴",
+      "url": "chapters/02-light-source.html#一个尴尬的问题135nm-的光从哪里来",
+      "body": ""
+    },
+    {
+      "id": "02-light-source-锡液滴的诞生",
+      "title": "锡液滴的诞生",
+      "chapter": "03",
+      "chapterTitle": "EUV 光源：用激光轰击锡液滴",
+      "url": "chapters/02-light-source.html#锡液滴的诞生",
+      "body": ""
+    },
+    {
+      "id": "02-light-source-从固态锡到微米液滴",
+      "title": "从固态锡到微米液滴",
+      "chapter": "03",
+      "chapterTitle": "EUV 光源：用激光轰击锡液滴",
+      "url": "chapters/02-light-source.html#从固态锡到微米液滴",
+      "body": ""
+    },
+    {
+      "id": "02-light-source-双脉冲激光毫秒内的两次精确打击",
+      "title": "双脉冲激光：毫秒内的两次精确打击",
+      "chapter": "03",
+      "chapterTitle": "EUV 光源：用激光轰击锡液滴",
+      "url": "chapters/02-light-source.html#双脉冲激光毫秒内的两次精确打击",
+      "body": ""
+    },
+    {
+      "id": "02-light-source-第一击预脉冲pre-pulse",
+      "title": "第一击：预脉冲（Pre-pulse）",
+      "chapter": "03",
+      "chapterTitle": "EUV 光源：用激光轰击锡液滴",
+      "url": "chapters/02-light-source.html#第一击预脉冲pre-pulse",
+      "body": ""
+    },
+    {
+      "id": "02-light-source-第二击主脉冲main-pulse",
+      "title": "第二击：主脉冲（Main pulse）",
+      "chapter": "03",
+      "chapterTitle": "EUV 光源：用激光轰击锡液滴",
+      "url": "chapters/02-light-source.html#第二击主脉冲main-pulse",
+      "body": ""
+    },
+    {
+      "id": "02-light-source-等离子体中发生了什么",
+      "title": "等离子体中发生了什么？",
+      "chapter": "03",
+      "chapterTitle": "EUV 光源：用激光轰击锡液滴",
+      "url": "chapters/02-light-source.html#等离子体中发生了什么",
+      "body": ""
+    },
+    {
+      "id": "02-light-source-整个过程的节奏",
+      "title": "整个过程的节奏",
+      "chapter": "03",
+      "chapterTitle": "EUV 光源：用激光轰击锡液滴",
+      "url": "chapters/02-light-source.html#整个过程的节奏",
+      "body": ""
+    },
+    {
+      "id": "02-light-source-功率控制",
+      "title": "功率控制",
+      "chapter": "03",
+      "chapterTitle": "EUV 光源：用激光轰击锡液滴",
+      "url": "chapters/02-light-source.html#功率控制",
+      "body": ""
+    },
+    {
+      "id": "02-light-source-第一面镜子集光镜",
+      "title": "第一面镜子：集光镜",
+      "chapter": "03",
+      "chapterTitle": "EUV 光源：用激光轰击锡液滴",
+      "url": "chapters/02-light-source.html#第一面镜子集光镜",
+      "body": ""
+    },
+    {
+      "id": "02-light-source-euv-光的脆弱为什么必须用镜子",
+      "title": "EUV 光的脆弱：为什么必须用镜子",
+      "chapter": "03",
+      "chapterTitle": "EUV 光源：用激光轰击锡液滴",
+      "url": "chapters/02-light-source.html#euv-光的脆弱为什么必须用镜子",
+      "body": ""
+    },
+    {
+      "id": "02-light-source-布拉格反射镜纳米级千层蛋糕",
+      "title": "布拉格反射镜：纳米级千层蛋糕",
+      "chapter": "03",
+      "chapterTitle": "EUV 光源：用激光轰击锡液滴",
+      "url": "chapters/02-light-source.html#布拉格反射镜纳米级千层蛋糕",
+      "body": ""
+    },
+    {
+      "id": "02-light-source-结构",
+      "title": "结构",
+      "chapter": "03",
+      "chapterTitle": "EUV 光源：用激光轰击锡液滴",
+      "url": "chapters/02-light-source.html#结构",
+      "body": ""
+    },
+    {
+      "id": "02-light-source-工作原理",
+      "title": "工作原理",
+      "chapter": "03",
+      "chapterTitle": "EUV 光源：用激光轰击锡液滴",
+      "url": "chapters/02-light-source.html#工作原理",
+      "body": ""
+    },
+    {
+      "id": "02-light-source-表面精度",
+      "title": "表面精度",
+      "chapter": "03",
+      "chapterTitle": "EUV 光源：用激光轰击锡液滴",
+      "url": "chapters/02-light-source.html#表面精度",
+      "body": ""
+    },
+    {
+      "id": "02-light-source-光的损耗为什么光源必须极其明亮",
+      "title": "光的损耗：为什么光源必须极其明亮",
+      "chapter": "03",
+      "chapterTitle": "EUV 光源：用激光轰击锡液滴",
+      "url": "chapters/02-light-source.html#光的损耗为什么光源必须极其明亮",
+      "body": ""
+    },
+    {
+      "id": "02-light-source-功率演进",
+      "title": "功率演进",
+      "chapter": "03",
+      "chapterTitle": "EUV 光源：用激光轰击锡液滴",
+      "url": "chapters/02-light-source.html#功率演进",
+      "body": ""
+    },
+    {
+      "id": "02-light-source-激光系统本身",
+      "title": "激光系统本身",
+      "chapter": "03",
+      "chapterTitle": "EUV 光源：用激光轰击锡液滴",
+      "url": "chapters/02-light-source.html#激光系统本身",
+      "body": ""
+    },
+    {
+      "id": "02-light-source-光源腔体内的quot战场quot",
+      "title": "光源腔体内的&quot;战场&quot;",
+      "chapter": "03",
+      "chapterTitle": "EUV 光源：用激光轰击锡液滴",
+      "url": "chapters/02-light-source.html#光源腔体内的quot战场quot",
+      "body": ""
+    },
+    {
+      "id": "02-light-source-从中间焦点出发",
+      "title": "从中间焦点出发",
+      "chapter": "03",
+      "chapterTitle": "EUV 光源：用激光轰击锡液滴",
+      "url": "chapters/02-light-source.html#从中间焦点出发",
+      "body": ""
+    },
+    {
+      "id": "02-light-source-本章要点",
+      "title": "本章要点",
+      "chapter": "03",
+      "chapterTitle": "EUV 光源：用激光轰击锡液滴",
+      "url": "chapters/02-light-source.html#本章要点",
+      "body": ""
+    },
+    {
+      "id": "03-illumination-mask",
+      "title": "照明系统与光罩：芯片设计图怎么读取",
+      "chapter": "04",
+      "chapterTitle": "照明系统与光罩：芯片设计图怎么读取",
+      "url": "chapters/03-illumination-mask.html",
+      "body": "\r\n   从中间焦点到光罩\r\n\r\n上一章结尾，EUV 光穿过中间焦点，离开了光源模块。现在它进入了  照明系统（Illuminator）  ——一组精密反射镜的组合，负责把\"原始的\"EUV 光束整形为适合照射光罩的形态。\r\n\r\n如果说光源是\"暴力产生光\"，那照明系统就是\"优雅地塑造光\"。\r\n\r\n\r\n   照明系统：把光变成你需要的形状\r\n\r\n从中间焦点出来的 EUV 光是一束汇聚的锥形光。但直接拿它去照光罩是不行的——你需要解决两个问题：\r\n\r\n1.   光强必须均匀  ：光罩表面每一处接收到的光量必须相同。如果中心亮、边缘暗，刻出来的线条粗细就会不一致。\r\n2.   照明角度必须可控  ：不同的电路图案需要从不同角度照明才能获得最佳成像效果。\r\n\r\n照明系统通过几面关键的反射镜来解决这些问题。\r\n\r\n    场光阑镜（Field Facet Mirror）\r\n\r\n这是 EUV 光从中间焦点出来后遇到的第一面特殊镜子。它由  数百个微小的独立反射面  组成，每个小反射面可以独立调节角度。\r\n\r\n你可以把它想象成一面\"马赛克镜\"——不是一整面平滑的镜子，而是几百块小镜子拼在一起，每块都能微微转动。\r\n\r\n场光阑镜的作用是：把中间焦点出来的一束光\"打散\"成多个子光束，让每个子光束照射到光罩的不同区域，从而保证整个照明区域的光强均匀。\r\n\r\n   图片：场光阑镜的近距离示意——展示其表面由数百个小型反射面组成的阵列结构，每个反射面可独立调节角度 \r\n\r\n    孔径光阑镜（Pupil Facet Mirror）\r\n\r\n第二面关键镜子。同样由多个分区的反射面组成。它和场光阑镜配合工作，共同决定光以什么角度打到光罩上。\r\n\r\n两面镜子协同调节，就可以把 EUV 光束从一个简单的锥形光，变成各种复杂的  照明模式（Illumination Mode）  。\r\n\r\n\r\n   照明模式：为什么不同图案需要不同角度的光\r\n\r\n这是照明系统最精巧的部分。让我们用一个直觉来理解。\r\n\r\n回到马克笔类比：你手里有一支极细的笔，但你握笔的角度会影响画出来的效果。\r\n\r\n  笔锤直垂直向下画 → 适合画圆点\r\n  笔从左右两侧倾斜画 → 适合画横线\r\n  笔从上下两侧倾斜画 → 适合画竖线\r\n\r\nEUV 光也是一样。光照射到光罩上的角度不同，对不同方向和形状的图案有不同的\"分辨力\"。\r\n\r\n    三种典型照明模式\r\n\r\n芯片的不同层有不同的图案特征，需要不同的照明模式：\r\n\r\n  环形照明（Annular）  \r\n\r\n光从所有方向以一个特定的角度范围照射——形成一个环形的光瞳图案。\r\n\r\n适合：  通孔（Via）  层——那些圆柱形的层间连接结构。因为通孔是圆形的，需要从各个方向均匀照明。\r\n\r\n  双极照明（Dipole）  \r\n\r\n光只从两个相对的方向照射——光瞳上只有两个亮点。\r\n\r\n适合：  单方向线条  层——比如一层全是水平走向的金属线。两个光点的方向与线条垂直时，对线条的分辨率最高。\r\n\r\n  四极照明（Quadrupole）  \r\n\r\n光从四个方向照射——光瞳上有四个亮点（通常在 45° 位置）。\r\n\r\n适合：  两个方向的线条都有  的层——既有水平线又有垂直线。四个光点同时兼顾两个方向。\r\n\r\n   图片：三种照明模式的光瞳图——并排展示三个圆形光瞳面： 1  环形（一个亮环） 2  双极（两个对称亮点） 3  四极（四个亮点）。每种模式下方标注适用的图案类型 \r\n\r\n    照明模式与芯片层的对应\r\n\r\n  芯片层级   典型图案   最佳照明模式  \r\n                                     \r\n  Via 通孔层   圆形孔洞   环形照明  \r\n  水平金属线   横向平行线   水平双极照明  \r\n  垂直金属线   纵向平行线   垂直双极照明（双极旋转 90°）  \r\n  复杂逻辑层   多方向混合   四极或自由形态  \r\n\r\n   图片：芯片不同层的 SEM 照片与对应照明模式——左边是芯片层的俯视显微照片（通孔、横线、竖线），右边是对应的照明模式光瞳图，用箭头连接 \r\n\r\n照明系统的场光阑镜和孔径光阑镜可以  实时切换照明模式  ——换一层光罩时，照明模式也跟着切换。这就是为什么这两面镜子需要由数百个可独立控制的微镜组成。\r\n\r\n\r\n   照明系统的精度要求\r\n\r\n照明系统中的每一面反射镜，表面精度都达到了  亚原子级别  ——粗糙度不到一个原子的厚度。\r\n\r\n这不是夸张。EUV 光的波长只有 13.5 纳米，而一个硅原子的直径约 0.2 纳米。如果镜面上有超过原子级别的缺陷，就会导致 EUV 光散射，在晶圆上产生杂散光（Flare），降低图案对比度。\r\n\r\n蔡司（ZEISS）制"
+    },
+    {
+      "id": "03-illumination-mask-从中间焦点到光罩",
+      "title": "从中间焦点到光罩",
+      "chapter": "04",
+      "chapterTitle": "照明系统与光罩：芯片设计图怎么读取",
+      "url": "chapters/03-illumination-mask.html#从中间焦点到光罩",
+      "body": ""
+    },
+    {
+      "id": "03-illumination-mask-照明系统把光变成你需要的形状",
+      "title": "照明系统：把光变成你需要的形状",
+      "chapter": "04",
+      "chapterTitle": "照明系统与光罩：芯片设计图怎么读取",
+      "url": "chapters/03-illumination-mask.html#照明系统把光变成你需要的形状",
+      "body": ""
+    },
+    {
+      "id": "03-illumination-mask-场光阑镜field-facet-mirror",
+      "title": "场光阑镜（Field Facet Mirror）",
+      "chapter": "04",
+      "chapterTitle": "照明系统与光罩：芯片设计图怎么读取",
+      "url": "chapters/03-illumination-mask.html#场光阑镜field-facet-mirror",
+      "body": ""
+    },
+    {
+      "id": "03-illumination-mask-孔径光阑镜pupil-facet-mirror",
+      "title": "孔径光阑镜（Pupil Facet Mirror）",
+      "chapter": "04",
+      "chapterTitle": "照明系统与光罩：芯片设计图怎么读取",
+      "url": "chapters/03-illumination-mask.html#孔径光阑镜pupil-facet-mirror",
+      "body": ""
+    },
+    {
+      "id": "03-illumination-mask-照明模式为什么不同图案需要不同角度的光",
+      "title": "照明模式：为什么不同图案需要不同角度的光",
+      "chapter": "04",
+      "chapterTitle": "照明系统与光罩：芯片设计图怎么读取",
+      "url": "chapters/03-illumination-mask.html#照明模式为什么不同图案需要不同角度的光",
+      "body": ""
+    },
+    {
+      "id": "03-illumination-mask-三种典型照明模式",
+      "title": "三种典型照明模式",
+      "chapter": "04",
+      "chapterTitle": "照明系统与光罩：芯片设计图怎么读取",
+      "url": "chapters/03-illumination-mask.html#三种典型照明模式",
+      "body": ""
+    },
+    {
+      "id": "03-illumination-mask-照明模式与芯片层的对应",
+      "title": "照明模式与芯片层的对应",
+      "chapter": "04",
+      "chapterTitle": "照明系统与光罩：芯片设计图怎么读取",
+      "url": "chapters/03-illumination-mask.html#照明模式与芯片层的对应",
+      "body": ""
+    },
+    {
+      "id": "03-illumination-mask-照明系统的精度要求",
+      "title": "照明系统的精度要求",
+      "chapter": "04",
+      "chapterTitle": "照明系统与光罩：芯片设计图怎么读取",
+      "url": "chapters/03-illumination-mask.html#照明系统的精度要求",
+      "body": ""
+    },
+    {
+      "id": "03-illumination-mask-光罩芯片的蓝图",
+      "title": "光罩：芯片的蓝图",
+      "chapter": "04",
+      "chapterTitle": "照明系统与光罩：芯片设计图怎么读取",
+      "url": "chapters/03-illumination-mask.html#光罩芯片的蓝图",
+      "body": ""
+    },
+    {
+      "id": "03-illumination-mask-光罩的物理结构",
+      "title": "光罩的物理结构",
+      "chapter": "04",
+      "chapterTitle": "照明系统与光罩：芯片设计图怎么读取",
+      "url": "chapters/03-illumination-mask.html#光罩的物理结构",
+      "body": ""
+    },
+    {
+      "id": "03-illumination-mask-光罩上的图案区域",
+      "title": "光罩上的图案区域",
+      "chapter": "04",
+      "chapterTitle": "照明系统与光罩：芯片设计图怎么读取",
+      "url": "chapters/03-illumination-mask.html#光罩上的图案区域",
+      "body": ""
+    },
+    {
+      "id": "03-illumination-mask-4-缩小光罩上的设计比芯片大-4-倍",
+      "title": "4× 缩小：光罩上的设计比芯片大 4 倍",
+      "chapter": "04",
+      "chapterTitle": "照明系统与光罩：芯片设计图怎么读取",
+      "url": "chapters/03-illumination-mask.html#4-缩小光罩上的设计比芯片大-4-倍",
+      "body": ""
+    },
+    {
+      "id": "03-illumination-mask-一个曝光场能放多少芯片",
+      "title": "一个曝光场能放多少芯片？",
+      "chapter": "04",
+      "chapterTitle": "照明系统与光罩：芯片设计图怎么读取",
+      "url": "chapters/03-illumination-mask.html#一个曝光场能放多少芯片",
+      "body": ""
+    },
+    {
+      "id": "03-illumination-mask-光罩的信息量与成本",
+      "title": "光罩的信息量与成本",
+      "chapter": "04",
+      "chapterTitle": "照明系统与光罩：芯片设计图怎么读取",
+      "url": "chapters/03-illumination-mask.html#光罩的信息量与成本",
+      "body": ""
+    },
+    {
+      "id": "03-illumination-mask-光罩的装载与运输",
+      "title": "光罩的装载与运输",
+      "chapter": "04",
+      "chapterTitle": "照明系统与光罩：芯片设计图怎么读取",
+      "url": "chapters/03-illumination-mask.html#光罩的装载与运输",
+      "body": ""
+    },
+    {
+      "id": "03-illumination-mask-双层密封舱",
+      "title": "双层密封舱",
+      "chapter": "04",
+      "chapterTitle": "照明系统与光罩：芯片设计图怎么读取",
+      "url": "chapters/03-illumination-mask.html#双层密封舱",
+      "body": ""
+    },
+    {
+      "id": "03-illumination-mask-装载流程",
+      "title": "装载流程",
+      "chapter": "04",
+      "chapterTitle": "照明系统与光罩：芯片设计图怎么读取",
+      "url": "chapters/03-illumination-mask.html#装载流程",
+      "body": ""
+    },
+    {
+      "id": "03-illumination-mask-光罩台高速精密运动",
+      "title": "光罩台：高速精密运动",
+      "chapter": "04",
+      "chapterTitle": "照明系统与光罩：芯片设计图怎么读取",
+      "url": "chapters/03-illumination-mask.html#光罩台高速精密运动",
+      "body": ""
+    },
+    {
+      "id": "03-illumination-mask-从光罩反射出来的光",
+      "title": "从光罩反射出来的光",
+      "chapter": "04",
+      "chapterTitle": "照明系统与光罩：芯片设计图怎么读取",
+      "url": "chapters/03-illumination-mask.html#从光罩反射出来的光",
+      "body": ""
+    },
+    {
+      "id": "03-illumination-mask-本章要点",
+      "title": "本章要点",
+      "chapter": "04",
+      "chapterTitle": "照明系统与光罩：芯片设计图怎么读取",
+      "url": "chapters/03-illumination-mask.html#本章要点",
+      "body": ""
+    },
+    {
+      "id": "04-projection-wafer",
+      "title": "投影光学与晶圆台：纳米精度的运动控制",
+      "chapter": "05",
+      "chapterTitle": "投影光学与晶圆台：纳米精度的运动控制",
+      "url": "chapters/04-projection-wafer.html",
+      "body": "\r\n   投影光学系统：最精密的镜组\r\n\r\n光从光罩反射出来后，携带着芯片电路图案的全部信息。但这些光是发散的——它以各种角度衍射散开。现在需要一组镜子把这些光  重新收集  、  缩小 4 倍  、并  精确聚焦  到晶圆表面上。\r\n\r\n这就是  投影光学系统（Projection Optics Box, POB）  的任务——EUV 光刻机中最精密、最昂贵的单一组件。\r\n\r\n它由德国的  蔡司半导体（ZEISS SMT）  制造。蔡司是 ASML 超过 30 年的战略合作伙伴，也是全球唯一能制造 EUV 投影光学的公司。\r\n\r\n\r\n   六面镜子的曲折光路\r\n\r\n当前一代 EUV 光刻机（NXE 系列，NA=0.33）的投影光学系统由   6 面反射镜  组成，编号 M1 到 M6。\r\n\r\n这不是 6 面平面镜——每一面都是精密计算的  非球面镜（Aspheric Mirror）  ，曲率各不相同，有凹面也有凸面。光在这 6 面镜子之间来回折射（反射），走出一条极其曲折的路径。\r\n\r\n   图片：⭐ 投影光学系统 6 面镜光路图（这是全书最关键的一张图）——展示 EUV 光从光罩出发，依次反射经过 M1→M2→M3→M4→M5→M6，最终汇聚到晶圆表面的完整路径。每面镜子形状各异（有的凹、有的凸），光路折来折去，体现出\"曲折感\"。标注 4× 缩小关系 \r\n\r\n为什么需要 6 面镜子，而不是 1 面或 2 面？\r\n\r\n因为一两面镜子产生的  像差（Aberration）  太大了——图案会变形、模糊、扭曲。6 面形状各异的镜子互相配合，每一面都在修正前一面引入的像差，最终把图案以极低的畸变投射到晶圆上。这和你配眼镜时需要多组镜片配合矫正视力是类似的道理。\r\n\r\n    投影镜组的规格\r\n\r\n  参数   数值  \r\n               \r\n  镜片数量   6 面（M1–M6）  \r\n  缩小比   4:1  \r\n  数值孔径  NA    0.33  \r\n  零件总数    15,000 个  \r\n  组件重量    1.5 吨  \r\n  镜面材料   超低热膨胀玻璃（Zerodur®）+ Mo/Si 多层膜涂层  \r\n  表面粗糙度   < 0.1 nm（约 1 个原子直径）  \r\n  面形精度   < 0.1 nm RMS  \r\n\r\n这些镜子的基底材料是蔡司自研的   Zerodur®  （零膨胀玻璃陶瓷）——一种热膨胀系数接近零的特殊材料。当 EUV 光照射到镜面时，即使镜面吸收了少量能量变热，镜子也几乎不会膨胀变形。\r\n\r\n在 Zerodur® 基底上，覆盖着我们在第二章介绍过的  布拉格反射多层膜  ——40–50 对硅/钼交替薄膜，让镜面能有效反射 13.5nm 的光。\r\n\r\n   图片：单面 EUV 反射镜的剖面结构——底部是 Zerodur® 基底（标注为零膨胀材料），表面是 Mo/Si 多层膜，箭头标注表面粗糙度 <0.1nm \r\n\r\n\r\n   精度有多极端？\r\n\r\n\"表面粗糙度小于 0.1 纳米\"这句话值得展开感受一下。\r\n\r\n如果把 M1 镜子（直径约 30 厘米）放大到整个地球的尺寸（直径 12,742 公里），那么镜面上最大的\"凸起\"不会超过   2 毫米  ——比一粒芝麻还矮。\r\n\r\n整个地球表面，平整到 2 毫米以内的波动。这就是蔡司制造 EUV 镜片的精度水平。\r\n\r\n为什么需要如此极端的精度？因为 EUV 光的波长只有 13.5 纳米。光学有一个经验法则：镜面误差不能超过光波长的 $\\frac 1  50 $ 到 $\\frac 1  100 $，否则会产生不可接受的像差。\r\n\r\n$$\r\n\\frac 13.5 \\text  nm   100  \\approx 0.1 \\text  nm \r\n$$\r\n\r\n所以 0.1 纳米的精度不是\"好到奢侈\"——它是\"刚好够用\"的物理底线。\r\n\r\n\r\n   Rayleigh 判据：分辨率的物理极限\r\n\r\n投影光学系统能画多细的线，由一个简洁的公式决定：\r\n\r\n$$\r\n\\text CD  = k 1 \\times \\frac \\lambda  \\text NA  \r\n$$\r\n\r\n    CD（Critical Dimension）  ：最小可分辨线宽\r\n    λ（Lambda）  ：光波长 = 13.5 nm\r\n    NA（Numerical Aperture，数值孔径）  ：衡量镜组能收集多大角度范围内衍射光的能力。NA 越大，收集的光越多，分辨率越高\r\n    k₁  ：工艺因子，和照明条件、光刻胶性能等有关，当前约 0.3\r\n\r\n代入当前 EUV 系统的参数：\r\n\r\n$$\r\n\\text CD  = 0.3 \\times \\frac 13.5"
+    },
+    {
+      "id": "04-projection-wafer-投影光学系统最精密的镜组",
+      "title": "投影光学系统：最精密的镜组",
+      "chapter": "05",
+      "chapterTitle": "投影光学与晶圆台：纳米精度的运动控制",
+      "url": "chapters/04-projection-wafer.html#投影光学系统最精密的镜组",
+      "body": ""
+    },
+    {
+      "id": "04-projection-wafer-六面镜子的曲折光路",
+      "title": "六面镜子的曲折光路",
+      "chapter": "05",
+      "chapterTitle": "投影光学与晶圆台：纳米精度的运动控制",
+      "url": "chapters/04-projection-wafer.html#六面镜子的曲折光路",
+      "body": ""
+    },
+    {
+      "id": "04-projection-wafer-投影镜组的规格",
+      "title": "投影镜组的规格",
+      "chapter": "05",
+      "chapterTitle": "投影光学与晶圆台：纳米精度的运动控制",
+      "url": "chapters/04-projection-wafer.html#投影镜组的规格",
+      "body": ""
+    },
+    {
+      "id": "04-projection-wafer-精度有多极端",
+      "title": "精度有多极端？",
+      "chapter": "05",
+      "chapterTitle": "投影光学与晶圆台：纳米精度的运动控制",
+      "url": "chapters/04-projection-wafer.html#精度有多极端",
+      "body": ""
+    },
+    {
+      "id": "04-projection-wafer-rayleigh-判据分辨率的物理极限",
+      "title": "Rayleigh 判据：分辨率的物理极限",
+      "chapter": "05",
+      "chapterTitle": "投影光学与晶圆台：纳米精度的运动控制",
+      "url": "chapters/04-projection-wafer.html#rayleigh-判据分辨率的物理极限",
+      "body": ""
+    },
+    {
+      "id": "04-projection-wafer-数值孔径-na-是什么",
+      "title": "数值孔径 (NA) 是什么？",
+      "chapter": "05",
+      "chapterTitle": "投影光学与晶圆台：纳米精度的运动控制",
+      "url": "chapters/04-projection-wafer.html#数值孔径-na-是什么",
+      "body": ""
+    },
+    {
+      "id": "04-projection-wafer-双工台系统一台曝光另一台测量",
+      "title": "双工台系统：一台曝光，另一台测量",
+      "chapter": "05",
+      "chapterTitle": "投影光学与晶圆台：纳米精度的运动控制",
+      "url": "chapters/04-projection-wafer.html#双工台系统一台曝光另一台测量",
+      "body": ""
+    },
+    {
+      "id": "04-projection-wafer-对准为什么纳米精度如此关键",
+      "title": "对准：为什么纳米精度如此关键",
+      "chapter": "05",
+      "chapterTitle": "投影光学与晶圆台：纳米精度的运动控制",
+      "url": "chapters/04-projection-wafer.html#对准为什么纳米精度如此关键",
+      "body": ""
+    },
+    {
+      "id": "04-projection-wafer-对准传感器与对准标记",
+      "title": "对准传感器与对准标记",
+      "chapter": "05",
+      "chapterTitle": "投影光学与晶圆台：纳米精度的运动控制",
+      "url": "chapters/04-projection-wafer.html#对准传感器与对准标记",
+      "body": ""
+    },
+    {
+      "id": "04-projection-wafer-水平传感器聚焦也要纳米级",
+      "title": "水平传感器：聚焦也要纳米级",
+      "chapter": "05",
+      "chapterTitle": "投影光学与晶圆台：纳米精度的运动控制",
+      "url": "chapters/04-projection-wafer.html#水平传感器聚焦也要纳米级",
+      "body": ""
+    },
+    {
+      "id": "04-projection-wafer-磁悬浮长行程平台",
+      "title": "磁悬浮长行程平台",
+      "chapter": "05",
+      "chapterTitle": "投影光学与晶圆台：纳米精度的运动控制",
+      "url": "chapters/04-projection-wafer.html#磁悬浮长行程平台",
+      "body": ""
+    },
+    {
+      "id": "04-projection-wafer-长行程平台long-stroke-stage",
+      "title": "长行程平台（Long Stroke Stage）",
+      "chapter": "05",
+      "chapterTitle": "投影光学与晶圆台：纳米精度的运动控制",
+      "url": "chapters/04-projection-wafer.html#长行程平台long-stroke-stage",
+      "body": ""
+    },
+    {
+      "id": "04-projection-wafer-短行程平台short-stroke-stage",
+      "title": "短行程平台（Short Stroke Stage）",
+      "chapter": "05",
+      "chapterTitle": "投影光学与晶圆台：纳米精度的运动控制",
+      "url": "chapters/04-projection-wafer.html#短行程平台short-stroke-stage",
+      "body": ""
+    },
+    {
+      "id": "04-projection-wafer-干涉仪实时位置测量",
+      "title": "干涉仪：实时位置测量",
+      "chapter": "05",
+      "chapterTitle": "投影光学与晶圆台：纳米精度的运动控制",
+      "url": "chapters/04-projection-wafer.html#干涉仪实时位置测量",
+      "body": ""
+    },
+    {
+      "id": "04-projection-wafer-最终精度",
+      "title": "最终精度",
+      "chapter": "05",
+      "chapterTitle": "投影光学与晶圆台：纳米精度的运动控制",
+      "url": "chapters/04-projection-wafer.html#最终精度",
+      "body": ""
+    },
+    {
+      "id": "04-projection-wafer-静电卡盘怎么固定晶圆",
+      "title": "静电卡盘：怎么固定晶圆",
+      "chapter": "05",
+      "chapterTitle": "投影光学与晶圆台：纳米精度的运动控制",
+      "url": "chapters/04-projection-wafer.html#静电卡盘怎么固定晶圆",
+      "body": ""
+    },
+    {
+      "id": "04-projection-wafer-曝光同步光罩台与晶圆台的精确舞蹈",
+      "title": "曝光同步：光罩台与晶圆台的精确舞蹈",
+      "chapter": "05",
+      "chapterTitle": "投影光学与晶圆台：纳米精度的运动控制",
+      "url": "chapters/04-projection-wafer.html#曝光同步光罩台与晶圆台的精确舞蹈",
+      "body": ""
+    },
+    {
+      "id": "04-projection-wafer-一次完整的曝光循环",
+      "title": "一次完整的曝光循环",
+      "chapter": "05",
+      "chapterTitle": "投影光学与晶圆台：纳米精度的运动控制",
+      "url": "chapters/04-projection-wafer.html#一次完整的曝光循环",
+      "body": ""
+    },
+    {
+      "id": "04-projection-wafer-光刻胶的化学反应",
+      "title": "光刻胶的化学反应",
+      "chapter": "05",
+      "chapterTitle": "投影光学与晶圆台：纳米精度的运动控制",
+      "url": "chapters/04-projection-wafer.html#光刻胶的化学反应",
+      "body": ""
+    },
+    {
+      "id": "04-projection-wafer-光刻胶的组成",
+      "title": "光刻胶的组成",
+      "chapter": "05",
+      "chapterTitle": "投影光学与晶圆台：纳米精度的运动控制",
+      "url": "chapters/04-projection-wafer.html#光刻胶的组成",
+      "body": ""
+    },
+    {
+      "id": "04-projection-wafer-反应过程",
+      "title": "反应过程",
+      "chapter": "05",
+      "chapterTitle": "投影光学与晶圆台：纳米精度的运动控制",
+      "url": "chapters/04-projection-wafer.html#反应过程",
+      "body": ""
+    },
+    {
+      "id": "04-projection-wafer-对比度与剂量阈值",
+      "title": "对比度与剂量阈值",
+      "chapter": "05",
+      "chapterTitle": "投影光学与晶圆台：纳米精度的运动控制",
+      "url": "chapters/04-projection-wafer.html#对比度与剂量阈值",
+      "body": ""
+    },
+    {
+      "id": "04-projection-wafer-曝光后显影与后续工序",
+      "title": "曝光后：显影与后续工序",
+      "chapter": "05",
+      "chapterTitle": "投影光学与晶圆台：纳米精度的运动控制",
+      "url": "chapters/04-projection-wafer.html#曝光后显影与后续工序",
+      "body": ""
+    },
+    {
+      "id": "04-projection-wafer-本章要点",
+      "title": "本章要点",
+      "chapter": "05",
+      "chapterTitle": "投影光学与晶圆台：纳米精度的运动控制",
+      "url": "chapters/04-projection-wafer.html#本章要点",
+      "body": ""
+    },
+    {
+      "id": "05-limits-future",
+      "title": "极限与未来：光刻的天花板在哪里",
+      "chapter": "06",
+      "chapterTitle": "极限与未来：光刻的天花板在哪里",
+      "url": "chapters/05-limits-future.html",
+      "body": "\r\n   当前 EUV 的瓶颈\r\n\r\n经过前四章的拆解，你已经跟着那束 13.5 纳米的光走完了整台 EUV 光刻机。但这台机器不是完美的——它有几个关键瓶颈正在被逼近。\r\n\r\n    瓶颈一：光源功率\r\n\r\n我们在第二章说过，从等离子体产生的 EUV 光到最终到达晶圆表面，中间损耗掉了 97% 以上。这意味着光源必须极其明亮才能保证足够的曝光强度。\r\n\r\n当前最先进的 NXE:3800E 光源功率为  600W，产能约 220 片/时。但芯片工厂永远渴望更高的产能——更多晶圆/小时 = 更低的单颗芯片成本。\r\n\r\nASML 的解决方案：\r\n  短期：优化锡液滴的形态和激光瞄准效率\r\n  中期：三束激光同时工作，液滴频率从 50,000 提升到 100,000 次/秒\r\n  目标：  1000W 光源  ，产能提升到  330 片/时（预计  2030 年实现）\r\n\r\n    瓶颈二：随机效应\r\n\r\n当分辨率推向极限时，一个新的物理问题浮现：  光子散粒噪声（Photon Shot Noise）  。\r\n\r\n光是由一个个光子组成的。在极微小的区域内（比如 10×10 纳米），到达的光子数量很少——可能只有几十个。由于光子到达是随机的（泊松分布），实际接收到的光子数会有统计涨落。\r\n\r\n这就像你往一个极小的杯子里倒水——如果只有几滴水落进去，每次落的数量都不一样。有的杯子多了几滴，有的少了几滴。\r\n\r\n结果是：相邻的同尺寸图案，有的曝光稍强（线条窄一点），有的曝光稍弱（线条宽一点）。这种  线宽随机涨落（Line Edge Roughness, LER）  在微观下表现为线条边缘的\"锯齿\"。\r\n\r\n   图片：光子散粒噪声效果对比——左边是理想情况（线条边缘平整），右边是实际情况（线条边缘有纳米级随机锯齿/粗糙）。放大展示 LER \r\n\r\n解决方案：更多光子 → 更高光源功率和/或更灵敏的光刻胶。\r\n\r\n    瓶颈三：光罩缺陷\r\n\r\n随着图案尺寸缩小到 10 纳米以下，光罩上任何微小的缺陷（哪怕一个额外的原子团）都可能影响成像。光罩检测和修复的难度急剧上升，成本也随之攀升。\r\n\r\n    瓶颈四：成本\r\n\r\n一台 EUV 光刻机  $2 亿，一块光罩  $30 万，一套光罩（一颗芯片的全部 80+ 层）可能花费数千万美元。当分辨率要求更高时（需要更复杂的光罩和更多的曝光步骤），这些成本只会继续上涨。\r\n\r\n\r\n   High NA EUV：下一代已经来了\r\n\r\n面对当前系统 NA=0.33 的分辨率极限（ 13nm），ASML 的答案是：  把数值孔径从 0.33 提升到 0.55。  \r\n\r\n回忆 Rayleigh 判据：\r\n\r\n$$\r\n\\text CD  = k 1 \\times \\frac \\lambda  \\text NA  \r\n$$\r\n\r\nNA 从 0.33 提升到 0.55，分辨率从  13nm 提升到  8nm——  提升了约 40%  。\r\n\r\n但这不是简单地\"把镜子做大一点\"就能实现的。NA 的提升对整个光学系统有连锁性的影响。\r\n\r\n    High NA 的关键变化\r\n\r\n  参数   当前 EUV  Low NA    High NA EUV  \r\n                                          \r\n  数值孔径   0.33   0.55  \r\n  分辨率    13 nm    8 nm  \r\n  投影镜组零件数    15,000    40,000+  \r\n  投影镜组重量    1.5 吨      12 吨    \r\n  整机重量    180 吨   更大  \r\n  单台售价    $2 亿      $3.8–4 亿    \r\n  缩小比   4×（等比）     4×8（非等比 / Anamorphic）    \r\n  型号   NXE 系列   EXE 系列  \r\n\r\n   图片：Low NA vs High NA 投影镜组尺寸对比——两个系统并排，High NA 的镜组明显更大更重，标注重量差异（1.5 吨 vs 12 吨） \r\n\r\n    Anamorphic 光学：不对称缩小\r\n\r\nHigh NA 有一个独特的设计：它使用  非等比缩小（Anamorphic Optics）  ——水平方向缩小 4 倍，垂直方向缩小   8 倍  。\r\n\r\n为什么？因为 NA=0.55 时，如果仍然使用 4×4 等比缩小，光罩上的图案面积需要非常大，超出了现有光罩尺寸的限制。改成 4×8 之后，垂直方向多缩一倍，光罩面积需求就控制住了。\r\n\r\n但代价是：单次曝光场的面积变小了（垂直方向减半）。如果芯片尺寸没变，就需要  两次曝光拼接（Stitching）  才"
+    },
+    {
+      "id": "05-limits-future-当前-euv-的瓶颈",
+      "title": "当前 EUV 的瓶颈",
+      "chapter": "06",
+      "chapterTitle": "极限与未来：光刻的天花板在哪里",
+      "url": "chapters/05-limits-future.html#当前-euv-的瓶颈",
+      "body": ""
+    },
+    {
+      "id": "05-limits-future-瓶颈一光源功率",
+      "title": "瓶颈一：光源功率",
+      "chapter": "06",
+      "chapterTitle": "极限与未来：光刻的天花板在哪里",
+      "url": "chapters/05-limits-future.html#瓶颈一光源功率",
+      "body": ""
+    },
+    {
+      "id": "05-limits-future-瓶颈二随机效应",
+      "title": "瓶颈二：随机效应",
+      "chapter": "06",
+      "chapterTitle": "极限与未来：光刻的天花板在哪里",
+      "url": "chapters/05-limits-future.html#瓶颈二随机效应",
+      "body": ""
+    },
+    {
+      "id": "05-limits-future-瓶颈三光罩缺陷",
+      "title": "瓶颈三：光罩缺陷",
+      "chapter": "06",
+      "chapterTitle": "极限与未来：光刻的天花板在哪里",
+      "url": "chapters/05-limits-future.html#瓶颈三光罩缺陷",
+      "body": ""
+    },
+    {
+      "id": "05-limits-future-瓶颈四成本",
+      "title": "瓶颈四：成本",
+      "chapter": "06",
+      "chapterTitle": "极限与未来：光刻的天花板在哪里",
+      "url": "chapters/05-limits-future.html#瓶颈四成本",
+      "body": ""
+    },
+    {
+      "id": "05-limits-future-high-na-euv下一代已经来了",
+      "title": "High-NA EUV：下一代已经来了",
+      "chapter": "06",
+      "chapterTitle": "极限与未来：光刻的天花板在哪里",
+      "url": "chapters/05-limits-future.html#high-na-euv下一代已经来了",
+      "body": ""
+    },
+    {
+      "id": "05-limits-future-high-na-的关键变化",
+      "title": "High-NA 的关键变化",
+      "chapter": "06",
+      "chapterTitle": "极限与未来：光刻的天花板在哪里",
+      "url": "chapters/05-limits-future.html#high-na-的关键变化",
+      "body": ""
+    },
+    {
+      "id": "05-limits-future-anamorphic-光学不对称缩小",
+      "title": "Anamorphic 光学：不对称缩小",
+      "chapter": "06",
+      "chapterTitle": "极限与未来：光刻的天花板在哪里",
+      "url": "chapters/05-limits-future.html#anamorphic-光学不对称缩小",
+      "body": ""
+    },
+    {
+      "id": "05-limits-future-当前进展截至-2026-年-5-月",
+      "title": "当前进展（截至 2026 年 5 月）",
+      "chapter": "06",
+      "chapterTitle": "极限与未来：光刻的天花板在哪里",
+      "url": "chapters/05-limits-future.html#当前进展截至-2026-年-5-月",
+      "body": ""
+    },
+    {
+      "id": "05-limits-future-多重图案化当一次曝光不够时",
+      "title": "多重图案化：当一次曝光不够时",
+      "chapter": "06",
+      "chapterTitle": "极限与未来：光刻的天花板在哪里",
+      "url": "chapters/05-limits-future.html#多重图案化当一次曝光不够时",
+      "body": ""
+    },
+    {
+      "id": "05-limits-future-双重图案化double-patterning",
+      "title": "双重图案化（Double Patterning）",
+      "chapter": "06",
+      "chapterTitle": "极限与未来：光刻的天花板在哪里",
+      "url": "chapters/05-limits-future.html#双重图案化double-patterning",
+      "body": ""
+    },
+    {
+      "id": "05-limits-future-多重图案化的代价",
+      "title": "多重图案化的代价",
+      "chapter": "06",
+      "chapterTitle": "极限与未来：光刻的天花板在哪里",
+      "url": "chapters/05-limits-future.html#多重图案化的代价",
+      "body": ""
+    },
+    {
+      "id": "05-limits-future-更远的未来hyper-na-与替代路线",
+      "title": "更远的未来：Hyper-NA 与替代路线",
+      "chapter": "06",
+      "chapterTitle": "极限与未来：光刻的天花板在哪里",
+      "url": "chapters/05-limits-future.html#更远的未来hyper-na-与替代路线",
+      "body": ""
+    },
+    {
+      "id": "05-limits-future-hyper-na-euv",
+      "title": "Hyper-NA EUV",
+      "chapter": "06",
+      "chapterTitle": "极限与未来：光刻的天花板在哪里",
+      "url": "chapters/05-limits-future.html#hyper-na-euv",
+      "body": ""
+    },
+    {
+      "id": "05-limits-future-替代路线",
+      "title": "替代路线",
+      "chapter": "06",
+      "chapterTitle": "极限与未来：光刻的天花板在哪里",
+      "url": "chapters/05-limits-future.html#替代路线",
+      "body": ""
+    },
+    {
+      "id": "05-limits-future-数据总结euv-光刻机的代际对比",
+      "title": "数据总结：EUV 光刻机的代际对比",
+      "chapter": "06",
+      "chapterTitle": "极限与未来：光刻的天花板在哪里",
+      "url": "chapters/05-limits-future.html#数据总结euv-光刻机的代际对比",
+      "body": ""
+    },
+    {
+      "id": "05-limits-future-光刻之后的芯片制造",
+      "title": "光刻之后的芯片制造",
+      "chapter": "06",
+      "chapterTitle": "极限与未来：光刻的天花板在哪里",
+      "url": "chapters/05-limits-future.html#光刻之后的芯片制造",
+      "body": ""
+    },
+    {
+      "id": "05-limits-future-结语为什么这台机器值得了解",
+      "title": "结语：为什么这台机器值得了解",
+      "chapter": "06",
+      "chapterTitle": "极限与未来：光刻的天花板在哪里",
+      "url": "chapters/05-limits-future.html#结语为什么这台机器值得了解",
+      "body": ""
+    },
+    {
+      "id": "05-limits-future-本章要点",
+      "title": "本章要点",
+      "chapter": "06",
+      "chapterTitle": "极限与未来：光刻的天花板在哪里",
+      "url": "chapters/05-limits-future.html#本章要点",
+      "body": ""
+    },
+    {
+      "id": "05-limits-future-扩展资源",
+      "title": "扩展资源",
+      "chapter": "06",
+      "chapterTitle": "极限与未来：光刻的天花板在哪里",
+      "url": "chapters/05-limits-future.html#扩展资源",
+      "body": ""
+    },
+    {
+      "id": "05-limits-future-本书核心素材来源",
+      "title": "本书核心素材来源",
+      "chapter": "06",
+      "chapterTitle": "极限与未来：光刻的天花板在哪里",
+      "url": "chapters/05-limits-future.html#本书核心素材来源",
+      "body": ""
+    },
+    {
+      "id": "05-limits-future-视频推荐",
+      "title": "视频推荐",
+      "chapter": "06",
+      "chapterTitle": "极限与未来：光刻的天花板在哪里",
+      "url": "chapters/05-limits-future.html#视频推荐",
+      "body": ""
+    },
+    {
+      "id": "05-limits-future-文章推荐",
+      "title": "文章推荐",
+      "chapter": "06",
+      "chapterTitle": "极限与未来：光刻的天花板在哪里",
+      "url": "chapters/05-limits-future.html#文章推荐",
+      "body": ""
+    }
+  ]
+}

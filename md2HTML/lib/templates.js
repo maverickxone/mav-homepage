@@ -263,14 +263,19 @@ function buildIndexPage(book, chaptersMeta) {
 /**
  * Copy assets to output directory.
  */
-function copyAssets(outputDir) {
+function copyAssets(outputDir, slug) {
   const assetsOut = path.join(outputDir, 'assets');
   fs.mkdirSync(assetsOut, { recursive: true });
 
+  const lock = require('./lock');
   const files = fs.readdirSync(ASSETS_DIR);
   files.forEach(file => {
     const src = path.join(ASSETS_DIR, file);
     if (fs.statSync(src).isFile()) {
+      const lockPath = slug ? `${slug}/assets/${file}` : file;
+      if (lock.isLocked(lockPath)) {
+        return; // skip locked assets
+      }
       fs.copyFileSync(src, path.join(assetsOut, file));
     }
   });
