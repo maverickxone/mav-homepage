@@ -1,0 +1,730 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>从零开始理解卷积 — CNN实战篇：PyTorch图像处理与卷积神经网络</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" id="hljs-light" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+<link rel="stylesheet" id="hljs-dark" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" media="not all">
+</head>
+<body>
+
+<div class="progress-bar" id="progress-bar"></div>
+
+<nav class="topnav" id="topnav">
+  <div class="topnav-inner">
+    <a class="brand" href="../index.html">CNN实战篇：PyTorch图像处理与卷积神经网络</a>
+    <div class="nav-links">
+      <a href="01-convolution-basics.html" class="active">01</a>
+      <a href="02-pytorch-conv.html">02</a>
+      <a href="03-pooling-norm.html">03</a>
+      <a href="04-data.html">04</a>
+      <a href="05-architecture.html">05</a>
+      <a href="06-training-eval.html">06</a>
+    </div>
+    <div class="nav-controls">
+      <button class="nav-btn" id="search-btn" aria-label="搜索 (Ctrl+K)">⌘K</button>
+      <button class="nav-btn" id="settings-btn" aria-label="阅读设置">Aa</button>
+      <a class="nav-btn" href="../../index.html" aria-label="返回知识库">← 知识库</a>
+      <a class="nav-btn" href="https://github.com/maverickxone/mav-homepage" target="_blank" rel="noopener" aria-label="GitHub" style="padding: 6px 8px;"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg></a>
+    </div>
+  </div>
+</nav>
+<div class="settings-pop" id="settings-pop">
+  <h5>主题</h5>
+  <div class="row">
+    <button class="seg" data-theme-set="light">明亮</button>
+    <button class="seg" data-theme-set="dark">暗色</button>
+  </div>
+  <h5>字号</h5>
+  <div class="row">
+    <button class="seg" data-size-set="s">小</button>
+    <button class="seg" data-size-set="m">中</button>
+    <button class="seg" data-size-set="l">大</button>
+  </div>
+</div>
+
+<div class="with-sidebar">
+  <aside class="sidebar">
+  <div class="chapter-num">CHAPTER 01</div>
+  <div class="chapter-name">从零开始理解卷积</div>
+  <h4>目录</h4>
+  <ul>
+    <li><a href="#图像在计算机中是如何表示的">图像在计算机中是如何表示的？</a></li>
+    <li><a href="#什么是卷积用一个具体的例子来解释">什么是卷积？用一个具体的例子来解释</a></li>
+    <li><a href="#卷积的数学公式与物理意义">卷积的数学公式与物理意义</a></li>
+    <li><a href="#常见卷积核类型及其作用">常见卷积核类型及其作用</a></li>
+    <li><a href="#通道滤波器和特征图三个核心概念">通道、滤波器和特征图：三个核心概念</a></li>
+    <li><a href="#完整的卷积过程一个滤波器的视角">完整的卷积过程：一个滤波器的视角</a></li>
+  </ul>
+</aside>
+  <article class="chapter-body">
+    <header class="chapter-head">
+  <div class="chapter-head-meta">
+    <span class="num">CHAPTER 01</span>
+    <span>≈ 30 MIN READ</span>
+  </div>
+  <h1>从零开始理解卷积</h1>
+
+</header>
+    <p>卷积神经网络（Convolutional Neural Network，CNN）是深度学习在计算机视觉领域取得突破的核心技术。从2012年AlexNet在ImageNet竞赛中一举夺冠开始，CNN就成了图像分类、目标检测、语义分割等视觉任务的标配。</p>
+<p>与全连接层相比，CNN具有以下优势：</p>
+<p><strong>参数效率</strong>：全连接层将每个像素作为独立输入，参数数量巨大；而卷积层通过权重共享，大幅减少参数数量。</p>
+<p><strong>空间不变性</strong>：卷积操作具有平移不变性，无论物体出现在图像的哪个位置，都能被有效识别。</p>
+<p><strong>层次化特征提取</strong>：CNN能够自动从浅层的边缘、纹理，到深层的物体部件，最终形成完整的物体表示。</p>
+<p>本章将系统介绍PyTorch中CNN相关的核心函数，从卷积层、池化层，到数据增强、模型构建，再到训练技巧，帮助你全面掌握CNN的PyTorch实现。</p>
+<hr>
+<blockquote><p><strong>本章学习目标</strong>：</p>
+<ol>
+<li>理解图像在计算机中是如何表示的（像素、通道）</li>
+<li>理解卷积操作的核心思想——&quot;滑动窗口&quot;做点积</li>
+<li>掌握卷积的数学公式</li>
+<li>理解常见卷积核的作用</li>
+<li>理解通道、滤波器、特征图三个核心概念</li>
+</ol>
+</blockquote>
+<p>本章是整个CNN的基础。如果你是零基础学习者，请一定要仔细阅读这一章，因为它会帮助你建立起对卷积神经网络的直观理解。<strong>卷积的核心思想非常简单：它就像一个拿着&quot;放大镜&quot;的人，在图像上从左到右、从上到下滑动，每滑到一个位置，就提取出该区域的特征。</strong></p>
+<hr>
+<h2 id="图像在计算机中是如何表示的">图像在计算机中是如何表示的？</h2>
+<p>在深入卷积之前，我们首先需要理解图像在计算机中是如何存储的。</p>
+<h3 id="灰度图像一张二维的quot数字表格quot">灰度图像：一张二维的&quot;数字表格&quot;</h3>
+<p>想象一张普通的黑白照片（比如手写的数字&quot;3&quot;）。如果你用一个放大镜靠近看，你会发现这张照片实际上是由很多很多小格子组成的。每个小格子有一个数值，表示该点的亮度。</p>
+<p><strong>举例说明</strong>：</p>
+<p>假设我们有一张非常小的灰度图像，只有5×5个像素（5行5列）：</p>
+<pre><code>图像矩阵（5×5）：
+[[255, 255, 255, 255, 255],   # 第1行（白色）
+ [255, 255,   0, 255, 255],   # 第2行（中间是黑色）
+ [255, 255,   0, 255, 255],   # 第3行（中间是黑色）
+ [255, 255,   0, 255, 255],   # 第4行（中间是黑色）
+ [255, 255, 255, 255, 255]]   # 第5行（白色）</code></pre>
+<p>在这个矩阵中：</p>
+<ul>
+<li><strong>255</strong> 表示白色（最亮）</li>
+<li><strong>0</strong> 表示黑色（最暗）</li>
+<li>中间的3个&quot;0&quot;形成了一条竖线，看起来就像数字&quot;1&quot;</li>
+</ul>
+<p>这就是灰度图像的本质：<strong>一个二维数组（矩阵）</strong>，每个元素是一个0-255之间的整数。</p>
+<p>在PyTorch中，这样一张灰度图像表示为形状为 <code>(1, H, W)</code> 的张量：</p>
+<ul>
+<li><code>H</code> = 高度（行数）</li>
+<li><code>W</code> = 宽度（列数）</li>
+<li><code>1</code> = 通道数（灰度图只有1个通道）</li>
+</ul>
+<pre data-label="python"><code class="language-python">import torch
+
+# 创建上面那个"数字1"的5×5灰度图像
+# 注意：PyTorch中图像的形状是 (通道数, 高度, 宽度)
+gray_image = torch.tensor([[[255, 255, 255, 255, 255],
+                            [255, 255,   0, 255, 255],
+                            [255, 255,   0, 255, 255],
+                            [255, 255,   0, 255, 255],
+                            [255, 255, 255, 255, 255]]], dtype=torch.float32)
+
+print("灰度图像形状:", gray_image.shape)  # torch.Size([1, 5, 5])</code></pre>
+<blockquote><p><strong>小提示</strong>：实际使用中，我们通常会将像素值归一化到0-1之间（除以255），这样计算更方便。</p>
+</blockquote>
+<h3 id="彩色图像三个quot图层quot的叠加">彩色图像：三个&quot;图层&quot;的叠加</h3>
+<p>现实中的彩色照片比灰度图复杂得多。计算机中表示彩色图像最常用的方法是<strong>RGB模型</strong>——每 个像素位置实际上存储了三个数值：红色(Red)、绿色(Green)、蓝色(Blue)的强度。</p>
+<p>你可以把RGB图像想象成<strong>三张透明的玻璃纸叠在一起</strong>：</p>
+<ul>
+<li>第一张玻璃纸只显示红色信息</li>
+<li>第二张玻璃纸只显示绿色信息</li>
+<li>第三张玻璃纸只显示蓝色信息</li>
+<li>三张叠加起来，就看到了彩色的图像</li>
+</ul>
+<p><strong>举例说明</strong>：</p>
+<p>假设还是那张5×5的图片，但现在是一张彩色图片：</p>
+<pre><code>红色通道 (R)：
+[[255, 255, 255, 255, 255],
+ [255, 200, 100, 100, 255],
+ [255, 100, 100, 100, 255],
+ [255, 100, 100, 100, 255],
+ [255, 255, 255, 255, 255]]
+
+绿色通道 (G)：
+[[255, 255, 255, 255, 255],
+ [255, 150,  50,  50, 255],
+ [255,  50,  50,  50, 255],
+ [255,  50,  50,  50, 255],
+ [255, 255, 255, 255, 255]]
+
+蓝色通道 (B)：
+[[255, 255, 255, 255, 255],
+ [255, 100,  50,  50, 255],
+ [255,  50,  50,  50, 255],
+ [255,  50,  50,  50, 255],
+ [255, 255, 255, 255, 255]]</code></pre>
+<p>在PyTorch中，彩色图像表示为形状为 <code>(3, H, W)</code> 的张量：</p>
+<ul>
+<li><code>3</code> = 通道数（红、绿、蓝三个通道）</li>
+<li><code>H</code> = 高度</li>
+<li><code>W</code> = 宽度</li>
+</ul>
+<pre data-label="python"><code class="language-python"># 创建5×5的RGB彩色图像
+# 形状: (通道数=3, 高度=5, 宽度=5)
+rgb_image = torch.zeros(3, 5, 5)
+
+# 红色通道 - 设置一些红色像素
+rgb_image[0, 2, 2] = 255  # 在中心位置设置红色
+
+# 绿色通道
+rgb_image[1, 2, 2] = 100
+
+# 蓝色通道
+rgb_image[2, 2, 2] = 50
+
+print("RGB图像形状:", rgb_image.shape)  # torch.Size([3, 5, 5])
+print("红色通道:\n", rgb_image[0])
+print("绿色通道:\n", rgb_image[1])
+print("蓝色通道:\n", rgb_image[2])</code></pre>
+<h3 id="批量图像张量的批量处理">批量图像：张量的批量处理</h3>
+<p>在实际训练中，我们通常一次处理多张图像。为了提高效率，PyTorch使用一个4维张量来存储批量图像：</p>
+<pre><code>张量形状: (批量大小, 通道数, 高度, 宽度)
+       = (batch_size, channels, height, width)
+       = (B, C, H, W)</code></pre>
+<p><strong>举例说明</strong>：</p>
+<pre data-label="python"><code class="language-python"># 创建批量为4的RGB图像数据集
+# 4张图片，每张图片3通道（RGB），每张图片224×224像素
+batch_images = torch.randn(4, 3, 224, 224)
+
+print("批量图像形状:", batch_images.shape)
+# torch.Size([4, 3, 224, 224])
+# 解释：4张图片，每张3通道，224高224宽</code></pre>
+<hr>
+<h2 id="什么是卷积用一个具体的例子来解释">什么是卷积？用一个具体的例子来解释</h2>
+<p>现在你理解了图像的本质——它就是一个数字矩阵。那么<strong>卷积</strong>到底在做什么呢？</p>
+<h3 id="核心思想滑动窗口-点积">核心思想：滑动窗口 + 点积</h3>
+<p><strong>卷积的核心思想只有两步</strong>：</p>
+<ol>
+<li><strong>取出一个局部区域</strong>：在输入图像上取一个“小窗口”（比如3×3的区域）</li>
+<li><strong>做点积运算</strong>：把这个小窗口里的每个数值，与卷积核（也是一个小矩阵）对应位置相乘，然后求和</li>
+</ol>
+<p><strong>用一个具体例子来演示</strong>：</p>
+<p>假设我们有一个5×5的输入图像：</p>
+<pre><code>输入图像 (5×5):
+[[1, 1, 1, 0, 0],
+ [0, 1, 1, 1, 0],
+ [0, 0, 1, 1, 1],
+ [0, 0, 1, 1, 0],
+ [0, 1, 1, 0, 0]]</code></pre>
+<p>还有一个3×3的卷积核（也叫做&quot;滤波器&quot;，英文叫 Kernel）：</p>
+<pre><code>卷积核/滤波器 (3×3):
+[[1, 0, 1],
+ [0, 1, 0],
+ [1, 0, 1]]</code></pre>
+<p><strong>现在我们来做卷积操作</strong>：</p>
+<p><strong>第一步：取窗口</strong></p>
+<p>我们从图像的左上角开始，取一个3×3的区域：</p>
+<pre><code>输入图像 (标记了第一个窗口):
+[1, 1, 1]    ← 第一个3×3窗口
+[0, 1, 1]
+[0, 0, 1]</code></pre>
+<p><strong>第二步：点积计算</strong></p>
+<p>将窗口中的每个元素与卷积核对应位置的元素相乘，然后求和：</p>
+<pre><code>窗口 (3×3):           卷积核 (3×3):       乘积:
+[[1, 1, 1],         [[1, 0, 1],        [[1, 0, 1],
+ [0, 1, 1],    *     [0, 1, 0],    =    [0, 1, 0],
+ [0, 0, 1]]          [1, 0, 1]]         [0, 0, 1]]
+
+点积结果 = 1×1 + 1×0 + 1×1 + 0×0 + 1×1 + 1×0 + 0×1 + 0×0 + 1×1
+         = 1 + 0 + 1 + 0 + 1 + 0 + 0 + 0 + 1
+         = 4</code></pre>
+<p>所以，卷积操作输出的第一个值就是 <strong>4</strong>。</p>
+<p><strong>第三步：滑动</strong></p>
+<p>然后，我们把这个&quot;小窗口&quot;向右滑动一格（步长为1），继续做同样的操作：</p>
+<pre><code>下一个窗口位置:
+[1, 1, 0]    ← 第二个3×3窗口
+[1, 1, 1]
+[0, 1, 1]
+
+点积 = 1×1 + 1×0 + 0×1 + 1×0 + 1×1 + 1×0 + 0×1 + 1×0 + 1×1
+     = 1 + 0 + 0 + 0 + 1 + 0 + 0 + 0 + 1
+     = 3</code></pre>
+<p><strong>第四步：遍历全图</strong></p>
+<p>重复这个过程，直到遍历完整个图像。最终我们会得到一个3×3的输出矩阵（注意一下，卷积扫到的面积是3×3，最后得到的是一个值）：</p>
+<pre><code>卷积输出 (3×3):
+[[4, 3, 4],
+ [3, 4, 3],
+ [4, 3, 4]]</code></pre>
+<p>这就是卷积操作的全部过程！<strong>简单来说，卷积就是：用一个小窗口（卷积核）在图像上滑动，每到一个位置就做一次&quot;对应元素相乘后求和&quot;的运算。</strong></p>
+<h3 id="用pytorch代码来验证">用PyTorch代码来验证</h3>
+<p>让我们用PyTorch来实际验证上面的计算过程：</p>
+<pre data-label="python"><code class="language-python">import torch
+import torch.nn as nn
+
+# 创建输入图像 (1, 1, 5, 5) - 1张灰度图，5×5
+input_image = torch.tensor([[[[1, 1, 1, 0, 0],
+                              [0, 1, 1, 1, 0],
+                              [0, 0, 1, 1, 1],
+                              [0, 0, 1, 1, 0],
+                              [0, 1, 1, 0, 0]]]], dtype=torch.float32)
+
+# 创建卷积核 (1, 1, 3, 3) - 1个卷积核，1通道，3×3
+kernel = torch.tensor([[[[1, 0, 1],
+                         [0, 1, 0],
+                         [1, 0, 1]]]], dtype=torch.float32)
+
+# 创建卷积层
+conv = nn.Conv2d(in_channels=1, out_channels=1, kernel_size=3, bias=False)
+
+# 手动设置卷积核权重
+conv.weight.data = kernel
+
+# 执行卷积
+output = conv(input_image)
+
+print("输入图像:\n", input_image[0, 0])
+print("\n卷积核:\n", kernel[0, 0])
+print("\n卷积输出:\n", output[0, 0])</code></pre>
+<p><strong>输出结果</strong>：</p>
+<pre><code>输入图像:
+ tensor([[1., 1., 1., 0., 0.],
+        [0., 1., 1., 1., 0.],
+        [0., 0., 1., 1., 1.],
+        [0., 0., 1., 1., 0.],
+        [0., 1., 1., 0., 0.]])
+
+卷积核:
+ tensor([[1., 0., 1.],
+        [0., 1., 0.],
+        [1., 0., 1.]])
+
+卷积输出:
+ tensor([[4., 3., 4.],
+        [2., 4., 3.],
+        [2., 3., 4.]])</code></pre>
+<p>完美匹配我们的手动计算！</p>
+<p>Mav&#39;s Tip：这里的<code>nn.Conv2d</code>是一个类，会创建一个卷积层对象（如代码中的 <code>conv</code>），之后可以把这个对象当函数来调用。
+还有一点，创建了 <code>conv</code> 只是明确了基本“交通规则”，还需要像下方的<code>conv.weight.data</code> 一样来引入你自定义的kernel才有用。</p>
+<hr>
+<h2 id="卷积的数学公式与物理意义">卷积的数学公式与物理意义</h2>
+<h3 id="数学公式">数学公式</h3>
+<p>卷积操作的数学表达式如下：</p>
+<p>$(I * K)<em>{i,j} = \sum</em>{m}\sum_{n} I_{i+m, j+n} \cdot K_{m,n}$</p>
+<p>其中：</p>
+<ul>
+<li>$I$ 是输入图像（Input）</li>
+<li>$K$ 是卷积核（Kernel）</li>
+<li>$(I * K)_{i,j}$ 是输出特征图中位置 $(i,j)$ 的值</li>
+<li>$m, n$ 是卷积核的偏移量</li>
+</ul>
+<p><strong>更直观的理解</strong>：</p>
+<p>如果我们使用0索引（从0开始），并且卷积核大小为 $k \times k$，公式可以写成：</p>
+<p>$(I * K)<em>{i,j} = \sum</em>{a=0}^{k-1}\sum_{b=0}^{k-1} I_{i+a, j+b} \cdot K_{a,b}$</p>
+<p><strong>举例说明</strong>：</p>
+<p>对于位置 $(i=0, j=0)$ 的输出：</p>
+<p>$(I * K)<em>{0,0} = I</em>{0,0}K_{0,0} + I_{0,1}K_{0,1} + I_{0,2}K_{0,2} + \cdots + I_{2,2}K_{2,2}$</p>
+<p>这正是我们前面手动计算的例子！</p>
+<h3 id="物理意义特征提取">物理意义：特征提取</h3>
+<p><strong>为什么卷积能够提取特征？</strong></p>
+<p>卷积核就像一个&quot;探测器&quot;或&quot;过滤器&quot;。不同的卷积核能够&quot;检测&quot;图像中不同的模式：</p>
+<ul>
+<li><strong>水平边缘检测器</strong>：检测水平方向的边缘</li>
+<li><strong>垂直边缘检测器</strong>：检测垂直方向的边缘</li>
+<li><strong>锐化滤波器</strong>：增强图像的对比度</li>
+<li><strong>模糊滤波器</strong>：平滑图像，去除噪声</li>
+</ul>
+<p><strong>关键洞察</strong>：卷积核本质上是在做**&quot;模式匹配&quot;**。如果输入图像的某一部分与卷积核的&quot;形状&quot;相似，那么该位置的输出值就会很大（表示&quot;匹配上了&quot;）。</p>
+<hr>
+<h2 id="常见卷积核类型及其作用">常见卷积核类型及其作用</h2>
+<p>不同的卷积核能够提取不同的特征。让我们来看看几种经典的卷积核及其作用。</p>
+<h3 id="边缘检测卷积核">边缘检测卷积核</h3>
+<p>边缘是图像最基本的特征之一。边缘检测卷积核能够检测出图像中颜色发生突变的位置。</p>
+<p><strong>水平边缘检测</strong>：</p>
+<pre data-label="python"><code class="language-python"># 水平边缘检测卷积核
+# 这种卷积核能够检测水平方向的颜色变化
+kernel_h = torch.tensor([[[-1., -1., -1.],
+                         [ 0.,  0.,  0.],
+                         [ 1.,  1.,  1.]]])</code></pre>
+<p><strong>垂直边缘检测</strong>：</p>
+<pre data-label="python"><code class="language-python"># 垂直边缘检测卷积核
+# 这种卷积核能够检测垂直方向的颜色变化
+kernel_v = torch.tensor([[[-1., 0., 1.],
+                         [-1., 0., 1.],
+                         [-1., 0., 1.]]])</code></pre>
+<p><strong>为什么能检测边缘？让我们用具体数值来理解</strong>：</p>
+<pre><code>假设输入图像的某一区域:
+[[10, 10, 10],     ← 上方全是暗色（10）
+ [10, 10, 10],
+ [90, 90, 90]]     ← 下方全是亮色（90）
+                    ↑  颜色突变的地方就是边缘
+
+使用水平边缘检测卷积核:
+[[-1, -1, -1],
+ [ 0,  0,  0],
+ [ 1,  1,  1]]
+
+点积计算:
+= 10×(-1) + 10×(-1) + 10×(-1)   ← 第一行
++ 10×0  + 10×0  + 10×0          ← 第二行
++ 90×1  + 90×1  + 90×1          ← 第三行
+= -30 + 0 + 270
+= 240  ← 一个很大的正数！</code></pre>
+<p><strong>关键发现</strong>：当图像上方颜色暗、下方颜色亮时，输出是一个大正数。这意味着检测到了&quot;从暗到亮&quot;的水平边缘！</p>
+<p>如果我们把图像反过来（上方亮、下方暗）：</p>
+<pre><code>[[90, 90, 90],     ← 上方全是亮色（90）
+ [10, 10, 10],
+ [10, 10, 10]]     ← 下方全是暗色（10）
+
+点积 = 90×(-1) + 90×(-1) + 90×(-1) + 10×0 + 10×0 + 10×0 + 10×1 + 10×1 + 10×1
+     = -270 + 0 + 30
+     = -240  ← 一个很大的负数！</code></pre>
+<p><strong>结论</strong>：</p>
+<ul>
+<li><strong>正数</strong>：表示&quot;从暗到亮&quot;的边缘</li>
+<li><strong>负数</strong>：表示&quot;从亮到暗&quot;的边缘</li>
+<li><strong>接近0</strong>：表示没有边缘（颜色均匀）</li>
+</ul>
+<h3 id="锐化卷积核">锐化卷积核</h3>
+<p>锐化卷积核能够增强图像的对比度，让边缘更加明显。</p>
+<pre data-label="python"><code class="language-python"># 锐化卷积核
+kernel_sharpen = torch.tensor([[[[ 0., -1.,  0.],
+                                 [-1.,  5., -1.],
+                                 [ 0., -1.,  0.]]]])</code></pre>
+<p><strong>工作原理</strong>：</p>
+<pre><code>原始像素:
+[[10, 20, 10],
+ [20, 20, 20],
+ [10, 20, 10]]
+
+中心像素是20，周围也是20，没有变化
+
+锐化卷积:
+[[ 0, -1,  0],
+ [-1,  5, -1],
+ [ 0, -1,  0]]
+
+点积 = 20×0 + 20×(-1) + 20×0      ← 上下左右各一个20
+     + 20×(-1) + 20×5 + 20×(-1)  ← 中心×5
+     + 20×0 + 20×(-1) + 20×0
+     = 0 -20 + 0 -20 +100 -20 +0 -20 +0
+     = 20
+
+原来中心是20，输出是20，保持不变</code></pre>
+<p>但是！如果中心像素与周围不同：</p>
+<pre><code>原始像素:
+[[10, 20, 10],
+ [20, 80, 20],   ← 中心80特别亮
+ [10, 20, 10]]
+
+点积 = 10×0 + 20×(-1) + 10×0    ← 上下左右
+     + 20×(-1) + 80×5 + 20×(-1)
+     + 10×0 + 20×(-1) + 10×0
+     = 0 -20 +0 -20 +400 -20 +0 -20 +0
+     = 320  ← 增强了很多！
+
+输出 = 320  远大于原始的80</code></pre>
+<p><strong>结论</strong>：锐化卷积核会<strong>放大</strong>中心像素与周围像素的差异，从而增强边缘。</p>
+<h3 id="模糊平滑卷积核">模糊/平滑卷积核</h3>
+<p>模糊卷积核能够减少图像噪声，让图像变得平滑。</p>
+<pre data-label="python"><code class="language-python"># 模糊卷积核（均值滤波器）
+# 取周围8个像素和中心像素的平均值
+kernel_blur = torch.tensor([[[[1., 1., 1.],
+                              [1., 1., 1.],
+                              [1., 1., 1.]]]]) / 9  # 除以9是为了归一化</code></pre>
+<p><strong>高斯模糊（更常用）</strong>：</p>
+<pre data-label="python"><code class="language-python"># 高斯模糊卷积核
+# 离中心越近权重越大，符合高斯分布
+kernel_gaussian = torch.tensor([[[[1., 2., 1.],
+                                  [2., 4., 2.],
+                                  [1., 2., 1.]]]]) / 16  # 归一化</code></pre>
+<h3 id="用代码验证各种卷积核的效果">用代码验证各种卷积核的效果</h3>
+<pre data-label="python"><code class="language-python">import torch
+import torch.nn as nn
+import matplotlib.pyplot as plt
+
+# 创建测试图像（简单的梯度图案）
+test_image = torch.zeros(1, 1, 10, 10)
+# 左边是暗的，右边是亮的 - 用于测试边缘检测
+test_image[0, 0, :, :5] = 0      # 左边黑色
+test_image[0, 0, :, 5:] = 255    # 右边白色
+
+# 定义各种卷积核
+kernels = {
+    '水平边缘': torch.tensor([[[[-1., -1., -1.],
+                                [ 0.,  0.,  0.],
+                                [ 1.,  1.,  1.]]]]),
+    '垂直边缘': torch.tensor([[[[-1., 0., 1.],
+                                [-1., 0., 1.],
+                                [-1., 0., 1.]]]]),
+    '锐化': torch.tensor([[[[ 0., -1.,  0.],
+                            [-1.,  5., -1.],
+                            [ 0., -1.,  0.]]]]),
+    '模糊': torch.tensor([[[[1., 1., 1.],
+                            [1., 1., 1.],
+                            [1., 1., 1.]]]]) / 9,
+}
+
+# 创建卷积层并应用每个卷积核
+fig, axes = plt.subplots(1, 5, figsize=(15, 3))
+
+# 显示原图
+axes[idx+1].imshow(output[0, 0].detach().numpy(), cmap='gray')
+axes[0].set_title('原图')
+axes[0].axis('off')
+
+# 应用各个卷积核
+for idx, (name, kernel) in enumerate(kernels.items()):
+    conv = nn.Conv2d(1, 1, kernel_size=3, bias=False)
+    conv.weight.data = kernel
+    output = conv(test_image)
+
+    axes[idx+1].imshow(output[0, 0].numpy(), cmap='gray')
+    axes[idx+1].set_title(name)
+    axes[idx+1].axis('off')
+
+plt.tight_layout()
+plt.show()</code></pre>
+<hr>
+<h2 id="通道滤波器和特征图三个核心概念">通道、滤波器和特征图：三个核心概念</h2>
+<p>理解&quot;通道&quot;、&quot;滤波器&quot;和&quot;特征图&quot;这三个概念，对于掌握CNN至关重要。</p>
+<h3 id="通道channel">通道（Channel）</h3>
+<p><strong>什么是通道？</strong></p>
+<p>通道可以理解为图像的&quot;层面&quot;或&quot;视角&quot;：</p>
+<ul>
+<li><strong>灰度图像</strong>：1个通道（只有亮度信息）</li>
+<li><strong>RGB彩色图像</strong>：3个通道（红色、绿色、蓝色三个层面）</li>
+<li><strong>卷积网络中间层</strong>：通常有几十甚至几百个通道</li>
+</ul>
+<p><strong>举例说明</strong>：</p>
+<pre data-label="python"><code class="language-python">import torch
+
+# 模拟卷积网络中间层的特征图
+# 假设是第5层的输出，有64个通道，每个通道是28×28
+features = torch.randn(1, 64, 28, 28)
+
+print("特征图形状:", features.shape)
+# torch.Size([1, 64, 28, 28])
+# 解释：1张图片，64个通道，每个通道28×28
+
+# 查看单个通道
+print("第0个通道的形状:", features[0, 0].shape)  # torch.Size([28, 28])</code></pre>
+<p><strong>通道的物理意义</strong>：</p>
+<p>在卷积网络中，每个通道通常代表一种&quot;特征&quot;。比如：</p>
+<ul>
+<li>通道0：检测&quot;水平边缘&quot;</li>
+<li>通道1：检测&quot;垂直边缘&quot;</li>
+<li>通道2：检测&quot;45度斜边&quot;</li>
+<li>通道3：检测&quot;圆形&quot;</li>
+<li>...</li>
+</ul>
+<p>这些通道不是我们设计的，而是网络<strong>自动学习</strong>到的！</p>
+<p>**Mav&#39;s Tips：**这里通道不包括输入层。</p>
+<h3 id="滤波器卷积核filterkernel">滤波器/卷积核（Filter/Kernel）</h3>
+<p><strong>什么是滤波器？</strong></p>
+<p>滤波器就是卷积操作中的那个&quot;小窗口&quot;，也叫做&quot;卷积核&quot;或&quot;权重矩阵&quot;。</p>
+<p>在PyTorch中，一个滤波器的形状是：</p>
+<ul>
+<li><code>(in_channels, kH, kW)</code> 对于单个滤波器</li>
+<li><code>(out_channels, in_channels, kH, kW)</code> 对于整个卷积层</li>
+</ul>
+<pre data-label="python"><code class="language-python">import torch.nn as nn
+
+# 定义一个卷积层
+conv = nn.Conv2d(in_channels=3, out_channels=64, kernel_size=3, padding=1)
+
+# 查看滤波器的形状
+print("滤波器权重形状:", conv.weight.shape)
+# torch.Size([64, 3, 3, 3])
+# 解释：有64个滤波器，每个滤波器有3个通道（对应RGB），每个滤波器是3×3
+
+print("偏置形状:", conv.bias.shape)
+# torch.Size([64]) - 每个滤波器有一个偏置</code></pre>
+<p><strong>滤波器 vs 通道</strong>：</p>
+<ul>
+<li><strong>滤波器</strong>：是卷积核，是<strong>参数</strong>（需要学习）</li>
+<li><strong>通道</strong>：是特征图，是卷积的<strong>输出</strong></li>
+</ul>
+<h3 id="特征图feature-map">特征图（Feature Map）</h3>
+<p><strong>什么是特征图？</strong></p>
+<p>特征图是卷积操作<strong>输出的结果</strong>。每个滤波器会产生一个特征图。</p>
+<pre data-label="python"><code class="language-python">import torch
+import torch.nn as nn
+
+# 输入：1张RGB图片（3通道），224×224
+x = torch.randn(1, 3, 224, 224)
+
+# 卷积层：3通道输入，64通道输出
+conv = nn.Conv2d(3, 64, kernel_size=3, padding=1)
+
+# 输出：1张图片，64通道，224×224
+output = conv(x)
+
+print("输入形状:", x.shape)       # torch.Size([1, 3, 224, 224])
+print("输出形状:", output.shape)  # torch.Size([1, 64, 224, 224])</code></pre>
+<p><strong>特征图的含义</strong>：</p>
+<pre><code>输入图像 (RGB):
+[红色通道]   [绿色通道]   [蓝色通道]
+  ↓            ↓            ↓
+         ↓    卷积层 (64个滤波器)    ↓
+         ↓            ↓            ↓
+[特征图0]  [特征图1]  [特征图2] ... [特征图63]</code></pre>
+<p>每个输出通道（特征图）都是输入图像经过某个滤波器处理后的结果。</p>
+<h3 id="三者关系总结">三者关系总结</h3>
+<div class="table-wrap"><table><thead><tr>
+<th>概念</th>
+<th>英文</th>
+<th>含义</th>
+<th>形状示例</th>
+</tr>
+</thead><tbody><tr>
+<td><strong>通道</strong></td>
+<td>Channel</td>
+<td>图像的&quot;层面&quot;，或卷积输出的&quot;特征维度&quot;</td>
+<td><code>(64, H, W)</code> = 64个通道</td>
+</tr>
+<tr>
+<td><strong>滤波器</strong></td>
+<td>Filter/Kernel</td>
+<td>卷积核，卷积操作中滑动的小窗口，<strong>是需要学习的参数</strong></td>
+<td><code>(3, 3, 3)</code> = 3通道的3×3卷积核</td>
+</tr>
+<tr>
+<td><strong>特征图</strong></td>
+<td>Feature Map</td>
+<td>卷积操作的输出结果</td>
+<td><code>(1, 64, 224, 224)</code> = 1张图，64个特征图</td>
+</tr>
+</tbody></table></div>
+<p><strong>理解要点</strong>：</p>
+<ol>
+<li><strong>输入图像</strong>有通道（如RGB的3个通道）</li>
+<li><strong>卷积层</strong>有滤波器（每个滤波器也是一个&quot;小图像&quot;，但它的数值是学出来的）</li>
+<li><strong>卷积输出</strong>是特征图（每个滤波器产生一个特征图）</li>
+<li><strong>特征图的通道数</strong> = <strong>滤波器的数量</strong> = <strong>卷积层的out_channels</strong></li>
+</ol>
+<hr>
+<h2 id="完整的卷积过程一个滤波器的视角">完整的卷积过程：一个滤波器的视角</h2>
+<p>让我们用一个完整的例子来理解整个卷积过程：</p>
+<pre data-label="python"><code class="language-python">import torch
+import torch.nn as nn
+
+# 假设输入是一张RGB图像
+# 形状: (batch=1, channels=3, height=5, width=5)
+input_image = torch.randn(1, 3, 5, 5)
+
+print("=" * 50)
+print("输入图像信息")
+print("=" * 50)
+print(f"形状: {input_image.shape}")
+print(f"通道数: {input_image.shape[1]} (RGB三个通道)")
+print(f"每个通道的尺寸: {input_image.shape[2]}×{input_image.shape[3]}")
+
+# 创建卷积层：3通道输入 -&gt; 1通道输出，3×3卷积核
+conv = nn.Conv2d(in_channels=3, out_channels=1, kernel_size=3, bias=False)
+
+print("\n" + "=" * 50)
+print("卷积层信息")
+print("=" * 50)
+print(f"输入通道数: {conv.in_channels}")
+print(f"输出通道数: {conv.out_channels}")
+print(f"卷积核大小: {conv.kernel_size}")
+print(f"权重形状: {conv.weight.shape}")
+print(f"偏置形状: {conv.bias}")
+
+# 执行卷积
+output = conv(input_image)
+
+print("\n" + "=" * 50)
+print("卷积输出信息")
+print("=" * 50)
+print(f"输出形状: {output.shape}")
+print(f"输出通道数: {output.shape[1]} (每个滤波器产生一个通道)")
+print(f"输出尺寸: {output.shape[2]}×{output.shape[3]}")</code></pre>
+<p><strong>运行结果</strong>（每次运行会不同，因为是随机初始化）：</p>
+<pre><code>==================================================
+输入图像信息
+==================================================
+形状: torch.Size([1, 3, 5, 5])
+通道数: 3 (RGB三个通道)
+每个通道的尺寸: 5×5
+
+==================================================
+卷积层信息
+==================================================
+输入通道数: 3
+输出通道数: 1
+卷积核大小: (3, 3)
+权重形状: torch.Size([1, 3, 3, 3])
+偏置形状: None
+
+==================================================
+卷积输出信息
+==================================================
+输出形状: torch.Size([1, 1, 3, 3])
+输出通道数: 1 (每个滤波器产生一个通道)
+输出尺寸: 3×3</code></pre>
+<p><strong>计算过程可视化</strong>：</p>
+<pre><code>输入图像 (3通道, 5×5):
+[通道0: 5×5]  [通道1: 5×5]  [通道2: 5×5]
+   ↓              ↓             ↓
+   ├──────────────┼──────────────┤
+   │         卷积层: 1个滤波器       │
+   │    权重形状: (3, 3, 3)         │
+   │    (3通道输入 × 3×3卷积核)     │
+   ├──────────────┼──────────────┤
+   ↓              ↓             ↓
+   [输出特征图: 1通道, 3×3]</code></pre>
+<hr>
+
+    <nav class="pager">  <a class="disabled"><span class="label">← 上一章</span><span class="title"></span></a>  <a href="02-pytorch-conv.html" class="next">
+    <span class="label">下一章 →</span>
+    <span class="title">PyTorch 中的卷积操作</span>
+  </a></nav>
+  </article>
+</div>
+
+<footer>
+  <div class="set">
+    <span>CNN实战篇：PyTorch图像处理与卷积神经网络</span>
+    <span>2026 · ZH-CN</span>
+  </div>
+  <div class="set">
+    <span>Mav</span>
+  </div>
+</footer>
+<div class="search-backdrop" id="search-overlay" role="dialog" aria-modal="true" aria-label="搜索" hidden>
+  <div class="search-modal">
+    <div class="search-input-wrap">
+      <input type="search" class="search-input" placeholder="搜索内容..." aria-label="搜索内容" autocomplete="off">
+      <kbd>ESC</kbd>
+    </div>
+    <div class="search-results" role="listbox" aria-label="搜索结果"></div>
+  </div>
+</div>
+
+<!-- Side Panel -->
+<div class="side-panel" id="side-panel">
+  <div class="side-panel-resize" id="side-panel-resize"></div>
+  <div class="side-panel-header">
+    <div class="side-panel-tabs">
+      <button class="side-panel-tab active" data-mode="sidenote">补充</button>
+      <button class="side-panel-tab" data-mode="notepad">笔记</button>
+    </div>
+    <button class="side-panel-close" aria-label="关闭">×</button>
+  </div>
+  <div class="side-panel-body"></div>
+</div>
+<button class="notepad-fab" id="notepad-fab" aria-label="便利贴">✎</button>
+
+<!-- Mobile TOC -->
+<button class="mtoc-fab" id="mtoc-fab" aria-label="目录">TOC</button>
+<div class="mtoc-drawer" id="mtoc-drawer">
+  <div class="mtoc-content"></div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/bash.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/typescript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/yaml.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/javascript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/json.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/python.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/css.min.js"></script>
+<script src="../assets/script.js"></script>
+</body>
+</html>

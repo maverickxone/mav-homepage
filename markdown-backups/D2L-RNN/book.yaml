@@ -1,0 +1,5 @@
+title: "RNN实战篇：循环神经网络与序列数据处理"
+author: "Mav"
+description: "从序列数据出发，讲解 RNN、LSTM、GRU、字符级语言模型、文本处理、情感分析、Seq2Seq、注意力、时间序列与 Transformer 过渡。"
+language: "ZH-CN"
+version: "1.0.0"

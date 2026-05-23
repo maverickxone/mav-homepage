@@ -1,0 +1,5 @@
+title: "深度学习前置工具箱"
+author: "Mav"
+description: "动手做深度学习之前需要掌握的基础工具：PyTorch 张量与自动求导、神经网络模块、概率论基础等。"
+language: "ZH-CN"
+version: "1.0.0"
