@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>纸的数字替身：PDF 的诞生 — PDF：最熟悉的陌生人</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" id="hljs-light" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+<link rel="stylesheet" id="hljs-dark" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" media="not all">
+</head>
+<body>
+
+<div class="progress-bar" id="progress-bar"></div>
+
+<nav class="topnav" id="topnav">
+  <div class="topnav-inner">
+    <a class="brand" href="../index.html">PDF：最熟悉的陌生人</a>
+    <div class="nav-links">
+      <a href="01-history.html" class="active">01</a>
+      <a href="02-internal-structure.html">02</a>
+      <a href="03-rendering-model.html">03</a>
+      <a href="04-fonts.html">04</a>
+      <a href="05-readers.html">05</a>
+      <a href="06-creation.html">06</a>
+      <a href="07-interactive.html">07</a>
+      <a href="08-ocr.html">08</a>
+      <a href="09-ai-and-pdf.html">09</a>
+    </div>
+    <div class="nav-controls">
+      <button class="nav-btn" id="search-btn" aria-label="搜索 (Ctrl+K)">⌘K</button>
+      <button class="nav-btn" id="settings-btn" aria-label="阅读设置">Aa</button>
+      <a class="nav-btn" href="../../index.html" aria-label="返回知识库">← 知识库</a>
+      <a class="nav-btn" href="https://github.com/maverickxone/mav-homepage" target="_blank" rel="noopener" aria-label="GitHub" style="padding: 6px 8px;"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg></a>
+    </div>
+  </div>
+</nav>
+<div class="settings-pop" id="settings-pop">
+  <h5>主题</h5>
+  <div class="row">
+    <button class="seg" data-theme-set="light">明亮</button>
+    <button class="seg" data-theme-set="dark">暗色</button>
+  </div>
+  <h5>字号</h5>
+  <div class="row">
+    <button class="seg" data-size-set="s">小</button>
+    <button class="seg" data-size-set="m">中</button>
+    <button class="seg" data-size-set="l">大</button>
+  </div>
+</div>
+
+<div class="with-sidebar">
+  <aside class="sidebar">
+  <div class="chapter-num">CHAPTER 01</div>
+  <div class="chapter-name">纸的数字替身：PDF 的诞生</div>
+  <h4>目录</h4>
+  <ul>
+    <li><a href="#11-一切要从打印说起">1.1 一切要从打印说起</a></li>
+    <li><a href="#12-pdf-的诞生camelot-项目">1.2 PDF 的诞生：Camelot 项目</a></li>
+    <li><a href="#13-adobe-帝国">1.3 Adobe 帝国</a></li>
+    <li><a href="#14-pdf-的竞争者们以及他们为什么输了">1.4 PDF 的竞争者们（以及他们为什么输了）</a></li>
+    <li><a href="#15-pdf-版本演进一览">1.5 PDF 版本演进一览</a></li>
+  </ul>
+</aside>
+  <article class="chapter-body">
+    <header class="chapter-head">
+  <div class="chapter-head-meta">
+    <span class="num">CHAPTER 01</span>
+    <span>≈ 22 MIN READ</span>
+  </div>
+  <h1>纸的数字替身：PDF 的诞生</h1>
+
+</header>
+    <h2 id="11-一切要从打印说起">1.1 一切要从打印说起</h2>
+<h3 id="111-1970sxerox-parc-和quot所见即所得quot的梦想">1.1.1 1970s：Xerox PARC 和&quot;所见即所得&quot;的梦想</h3>
+<p>1970 年代，施乐公司在加州帕洛阿尔托的 PARC（Palo Alto Research Center）实验室里聚集了一批天才。这里后来产出了以太网、图形用户界面、激光打印机……几乎现代计算的所有基础都在这栋楼里被发明出来。</p>
+<p>其中有一个看似朴素的问题困扰着所有人：<strong>屏幕上看到的东西和打印出来的东西对不上</strong>。</p>
+<p>今天你在 Word 里写一份文档，点&quot;打印&quot;，出来的纸张和屏幕上基本一致。但在 1970 年代，这是不可能的。屏幕是像素网格（72 DPI），打印机用的是完全不同的指令集，中间没有统一的描述语言。你在屏幕上排好版，打印出来可能字体变了、位置移了、图表裂了。</p>
+<p>这个问题有一个正式名称：<strong>WYSIWYG（What You See Is What You Get）</strong>——所见即所得。在当时，这还是一个未实现的理想。</p>
+<h3 id="112-john-warnock-和-charles-geschke">1.1.2 John Warnock 和 Charles Geschke</h3>
+<p>故事的两位主角出场了。</p>
+<p>John Warnock 和 Charles Geschke 都是 Xerox PARC 的研究员。Warnock 的博士论文研究的是图形的隐藏面消除算法（计算机图形学的基础问题），Geschke 领导着 PARC 的编程语言实验室。两人在 PARC 合作开发了一个叫 <strong>Interpress</strong> 的页面描述语言——它可以用统一的方式描述&quot;一页纸上应该画什么&quot;。</p>
+<p>问题是：Xerox 的管理层完全不理解这东西的商业价值。Interpress 被束之高阁。</p>
+<p>1982 年 12 月，两人一起离开 Xerox，创办了 Adobe Systems。创始资金来自风投，公司名字来自 Warnock 家后面的一条小溪——Adobe Creek。</p>
+<p>他们带走的不是代码（那是 Xerox 的），而是一个核心思想：<strong>用一种设备无关的语言来描述页面内容</strong>。不管你的屏幕是什么分辨率、打印机是什么型号，同一份描述文件应该产生完全相同的视觉结果。</p>
+<h3 id="113-postscript打印的quot编程语言quot">1.1.3 PostScript：打印的&quot;编程语言&quot;</h3>
+<p>1984 年，Adobe 发布了 <strong>PostScript</strong>。</p>
+<p>PostScript 不是一个文件格式，它是一门<strong>图灵完备的编程语言</strong>。是的，你没看错——你可以用 PostScript 写循环、做条件判断、定义函数。它只是恰好专精于&quot;描述页面上的图形和文字&quot;。</p>
+<p>一段 PostScript 代码长这样：</p>
+<pre data-label="postscript"><code class="language-postscript">%!PS-Adobe-3.0
+/Helvetica findfont 24 scalefont setfont
+100 700 moveto
+(Hello, World!) show
+0 0 0 setrgbcolor
+newpath
+100 600 moveto
+400 600 lineto
+400 650 lineto
+100 650 lineto
+closepath
+fill
+showpage</code></pre>
+<p>翻译成人话：找到 Helvetica 字体，放大到 24 磅，移动到坐标 (100, 700)，画出 &quot;Hello, World!&quot; 这几个字。然后用黑色画一个矩形。完成，输出这一页。</p>
+<p><strong>为什么要设计成编程语言？</strong></p>
+<p>因为打印输出的复杂度远超你的想象。一页学术论文上可能有：正文（多种字体和字号）、数学公式（几百个特殊符号的精确定位）、图表（贝塞尔曲线、填充色、透明度）、页眉页脚、脚注……用固定格式描述这些东西会导致文件巨大且不灵活。用编程语言来描述，可以用循环画表格线、用函数定义常用元素、用变量控制全局参数。</p>
+<p>PostScript 的真正商业突破来自 Apple。1985 年，Apple 的 LaserWriter 打印机内置了 PostScript 解释器——当时这台打印机售价 6,995 美元，其中一大块成本就是那个 PostScript 处理器。Steve Jobs 把它和 Macintosh 电脑配合，第一次让普通用户实现了桌面出版（Desktop Publishing）。</p>
+<p>从此，设计师在 Mac 上用 Aldus PageMaker 排版，按下打印键，LaserWriter 的 PostScript 引擎把页面精确地输出在纸上——所见即所得，第一次真正实现了。</p>
+<h3 id="114-postscript-的局限">1.1.4 PostScript 的局限</h3>
+<p>但 PostScript 有一个严重问题：<strong>它太强大了</strong>。</p>
+<p>因为它是图灵完备的，一份 PostScript 文件理论上可能包含无限循环，解释器需要&quot;执行&quot;整个程序才能知道最终画面是什么。这意味着：</p>
+<ol>
+<li><strong>不能随机访问</strong>：你想看第 50 页，必须从第 1 页开始&quot;执行&quot;整个程序直到第 50 页——因为前面的代码可能定义了后面要用的变量和函数。</li>
+<li><strong>渲染速度不可预测</strong>：简单的页面秒出，复杂的页面可能跑几分钟。</li>
+<li><strong>文件不可检索</strong>：你没办法在一份 PostScript 文件里&quot;搜索&quot;某个词——因为文字可能是通过运算动态生成的。</li>
+<li><strong>安全隐患</strong>：一门编程语言意味着可以做很多你不希望它做的事情。</li>
+</ol>
+<p>这些问题在&quot;发给打印机&quot;的场景下可以容忍——反正打印机就是从头到尾执行一遍。但到了 1990 年代初，人们开始想在<strong>屏幕上阅读</strong>文档，而不只是打印。这时 PostScript 的弱点就暴露无遗了：想快速翻到第 50 页？等着吧。</p>
+<hr>
+<h2 id="12-pdf-的诞生camelot-项目">1.2 PDF 的诞生：Camelot 项目</h2>
+<h3 id="121-1991john-warnock-的备忘录">1.2.1 1991：John Warnock 的备忘录</h3>
+<p>1991 年，John Warnock 写了一份内部备忘录，标题是《The Camelot Paper》。开头就说：</p>
+<blockquote><p>&quot;设想这样一种能力：把任何来源的文档发送到任何地方，在接收端显示和打印时都能保持完全忠实的再现——不受任何显示设备或打印引擎特性的影响。&quot;</p>
+</blockquote>
+<p>这段话定义了 PDF 的全部使命：<strong>跨平台、跨设备、视觉完全一致</strong>。</p>
+<p>Warnock 把这个内部项目命名为&quot;Camelot&quot;。目标是创造一种新的文件格式——保留 PostScript 的精确页面描述能力，但去掉编程语言的部分，变成一个<strong>静态的、可随机访问的</strong>数据格式。<span class="sidenote-mark" data-note="<strong>「内部备忘录」是什么？</strong><br><br>今天我们说「备忘录」可能就是随手记的笔记，但在企业语境中，<strong>memo（memorandum）</strong>是一种正式的内部沟通文件。它比邮件正式、比报告轻量，通常用来：<br><br>• 向管理层提出新想法或项目提案<br>• 记录技术决策和设计方向<br>• 在团队间同步重要信息<br><br>科技公司特别喜欢用 memo 文化。Amazon 的「六页备忘录」（Six-Page Memo）是出了名的——开会前所有人先花 20 分钟默读一份 6 页的叙述性文档，而不是看 PPT。Jeff Bezos 认为写完整的散文比做幻灯片更能迫使思考者理清逻辑。<br><br>Warnock 的 Camelot Paper 就属于这种性质——一份写给公司内部决策层的正式技术愿景文档。很多改变世界的项目都是从一份 memo 开始的。">tips</span></p>
+<h3 id="122-从编程语言到数据格式">1.2.2 从编程语言到数据格式</h3>
+<p>PDF 和 PostScript 的关系，用一个比喻来说：</p>
+<ul>
+<li>PostScript 是<strong>菜谱</strong>（一套指令，按步骤执行才能得到菜）</li>
+<li>PDF 是<strong>打包好的外卖</strong>（最终结果已经固定了，你只需要打开吃）</li>
+</ul>
+<p>技术上，PDF 做了几个关键的设计决策：</p>
+<ol>
+<li><strong>去图灵完备化</strong>：PDF 不是编程语言。没有循环，没有条件分支，没有变量赋值。每一页都是独立的、确定性的描述。</li>
+<li><strong>页面独立性</strong>：每一页的渲染不依赖前面的页面。你可以直接跳到第 50 页，不需要处理前 49 页。</li>
+<li><strong>交叉引用表（xref）</strong>：文件末尾有一张&quot;目录&quot;，记录了每个对象在文件中的字节偏移。想找第 50 页？查表，直接跳到那个位置。</li>
+<li><strong>对象模型</strong>：所有内容（页面、字体、图片、元数据）都用编号的&quot;对象&quot;表示，通过引用互相关联。</li>
+</ol>
+<p>这些设计让 PDF 获得了 PostScript 不具备的关键能力：<strong>快速随机访问</strong>。这对屏幕阅读来说是绝对必要的。</p>
+<h3 id="123-1993-年-6-月-15-日pdf-10-发布">1.2.3 1993 年 6 月 15 日：PDF 1.0 发布</h3>
+<p>Adobe 在 1993 年正式发布了 PDF 1.0 和配套软件：</p>
+<ul>
+<li><strong>Acrobat Exchange</strong>：PDF 阅读和编辑器（收费）</li>
+<li><strong>Acrobat Reader</strong>：只能阅读（免费）</li>
+<li><strong>Acrobat Distiller</strong>：把 PostScript 文件转换为 PDF（收费）</li>
+</ul>
+<p>注意 Adobe 的商业模式设计：<strong>阅读免费，创建收费</strong>。这个策略后来被证明是天才级的决策——它让 PDF 格式以零摩擦在全世界扩散，同时 Adobe 通过卖&quot;生产工具&quot;赚钱。</p>
+<p>但 PDF 1.0 的初始反应其实很冷淡。原因很多：</p>
+<ul>
+<li>当时网速慢，PDF 文件太大（相比纯文本的 HTML）</li>
+<li>Acrobat Reader 本身就有好几兆，下载都得等半天<span class="sidenote-mark" data-note="<strong>1993 年「好几兆」意味着什么？</strong><br><br>今天我们觉得几 MB 不算什么——微信发张照片就好几兆。但 1993 年的计算机环境完全不同：<br><br>• <strong>内存</strong>：主流 PC 只有 4-8 MB RAM（Windows 3.1 要求最低 2 MB）<br>• <strong>硬盘</strong>：普通用户 80-200 MB，装完操作系统和几个软件就快满了<br>• <strong>网速</strong>：拨号上网 14.4 kbps，下载 5 MB 需要约 45 分钟（还不能断线重连）<br>• <strong>软盘</strong>：一张 3.5 英寸软盘容量 1.44 MB<br><br>Acrobat Reader 1.0 大约 4-5 MB。这意味着它装不进一张软盘，需要占用你硬盘 2-3% 的空间，通过网络下载要等将近一小时。对比之下，当时一个纯文本的 HTML 页面通常只有几 KB。<br><br>所以「好几兆」在 1993 年不是小数目——它是一个实实在在的安装门槛。">tips</span></li>
+<li>大多数人还在用针式打印机，PostScript 已经够用了</li>
+<li>HTML 刚刚兴起，人们更兴奋于网页而不是&quot;电子纸&quot;</li>
+</ul>
+<h3 id="124-pdf-如何赢得世界">1.2.4 PDF 如何赢得世界</h3>
+<p>PDF 的真正普及是一个渐进过程，几个关键转折点：</p>
+<p><strong>1994 — 免费阅读器的分发策略</strong></p>
+<p>Adobe 把 Acrobat Reader 做成完全免费下载，甚至鼓励其他公司在光盘里附带。当时互联网还不普及，很多人是通过杂志附赠光盘第一次接触到 PDF 阅读器的。</p>
+<p><strong>1996 — 美国国税局（IRS）</strong></p>
+<p>IRS 开始用 PDF 发布税务表格。几亿美国人突然有了&quot;必须能打开 PDF&quot;的刚需。这是 PDF 进入主流的标志性事件——政府背书的力量是巨大的。</p>
+<p><strong>1999 — PDF 1.3，支持嵌入字体和透明度</strong></p>
+<p>这个版本让 PDF 真正满足了印刷行业的需求。设计师终于可以放心把 PDF 发给印刷厂，确信输出和自己看到的完全一致。</p>
+<p><strong>2001 — PDF 取代 PostScript 成为印刷行业标准</strong></p>
+<p>印刷业开始用 PDF/X（PDF 的印刷子集）替代 PostScript 作为交付格式。一个时代结束了。</p>
+<p><strong>2005 — Adobe Reader 7，免费且无处不在</strong></p>
+<p>此时 Adobe Reader 已经预装在几乎所有新电脑上。PDF 从&quot;你可能需要安装阅读器&quot;变成了&quot;每台电脑都能打开&quot;。</p>
+<p><strong>2008 — ISO 32000-1：PDF 成为国际标准</strong></p>
+<p>Adobe 把 PDF 1.7 规范交给了 ISO。从此 PDF 不再是 Adobe 的私有格式，而是一个开放的国际标准。任何人都可以免费获取规范、实现自己的 PDF 阅读器或生成器。</p>
+<hr>
+<h2 id="13-adobe-帝国">1.3 Adobe 帝国</h2>
+<h3 id="131-不只是一个格式">1.3.1 不只是一个格式</h3>
+<p>理解 PDF 的历史，必须理解 Adobe 这家公司的商业逻辑。</p>
+<p>Adobe 从来不只是&quot;做 PDF 的那家公司&quot;。他们的产品线覆盖了整个<strong>数字内容创作到输出</strong>的链条：</p>
+<div class="table-wrap"><table><thead><tr>
+<th>环节</th>
+<th>产品</th>
+<th>角色</th>
+</tr>
+</thead><tbody><tr>
+<td>图像创作</td>
+<td>Photoshop、Illustrator</td>
+<td>生产视觉素材</td>
+</tr>
+<tr>
+<td>排版</td>
+<td>InDesign</td>
+<td>把素材组合成页面</td>
+</tr>
+<tr>
+<td>文档管理</td>
+<td>Acrobat</td>
+<td>审阅、签名、表单</td>
+</tr>
+<tr>
+<td>输出协议</td>
+<td>PostScript → PDF</td>
+<td>精确再现最终结果</td>
+</tr>
+</tbody></table></div>
+<p>Adobe 的生意本质是：<strong>控制从创意到最终呈现的每一个环节</strong>。PostScript 控制了打印输出，PDF 控制了电子文档分发。他们的护城河不是某一个产品，而是整个工作流的锁定——你在 Photoshop 里修图、在 InDesign 里排版、用 Acrobat 交付，全程不离开 Adobe 生态。</p>
+<h3 id="132-格式标准背后的商业博弈">1.3.2 格式标准背后的商业博弈</h3>
+<p>Adobe 在 2008 年把 PDF 标准化给 ISO，看似&quot;大公无私&quot;，实际是精心计算过的：</p>
+<ol>
+<li><strong>消除竞争的借口</strong>：如果 PDF 是 Adobe 私有格式，竞争对手（Microsoft 的 XPS、开源社区的 ODF）就有理由推广替代格式。标准化后，这些替代品失去了&quot;开放性&quot;的攻击角度。</li>
+<li><strong>护城河不在格式本身</strong>：Adobe 的利润来自 Acrobat Pro（售价 449 美元的专业版）和 Creative Cloud 订阅，不是来自格式的私有性。格式开放了，但生产高质量 PDF 的最好工具依然是 Adobe 的。</li>
+<li><strong>规范复杂度就是壁垒</strong>：PDF 1.7 的 ISO 规范有 756 页。完整实现一个符合标准的 PDF 渲染引擎需要数年工程投入。&quot;开放&quot;不等于&quot;容易做&quot;。</li>
+</ol>
+<h3 id="133-从买断到订阅">1.3.3 从买断到订阅</h3>
+<p>2013 年，Adobe 全面转向 Creative Cloud 订阅制。Acrobat 从一次性购买变成月费制。这个商业模式转变引发了巨大争议，但从商业角度是极其成功的——Adobe 的年收入从 2012 年的 43 亿美元增长到 2024 年的 215 亿美元。</p>
+<p>对用户来说，这意味着&quot;编辑 PDF&quot;这件事变成了每月 22.99 美元的持续支出。这也是为什么市场上出现了大量替代品（Foxit、Smallpdf、各种在线工具）——但没有一个能完全匹配 Acrobat 的功能完整度。</p>
+<hr>
+<h2 id="14-pdf-的竞争者们以及他们为什么输了">1.4 PDF 的竞争者们（以及他们为什么输了）</h2>
+<h3 id="141-djvu比-pdf-更早优化扫描文档">1.4.1 DjVu：比 PDF 更早优化扫描文档</h3>
+<p>DjVu（发音 &quot;déjà vu&quot;）是 AT&amp;T 实验室在 1996 年发明的格式，专门针对扫描文档优化。它的压缩算法极其出色——同样的扫描页面，DjVu 文件通常只有 PDF 的 1/5 到 1/10 大小。</p>
+<p>DjVu 的核心思想是把每一页拆成三层：</p>
+<ul>
+<li><strong>前景层</strong>（文字和线条，高分辨率，1-bit 黑白）</li>
+<li><strong>背景层</strong>（图片和底色，低分辨率，彩色）</li>
+<li><strong>蒙版层</strong>（决定哪些区域属于前景、哪些属于背景）</li>
+</ul>
+<p>这种分层压缩方式让扫描文档既清晰又小巧。在学术文献下载网站（如某些影子图书馆）上，DjVu 至今仍被广泛使用。</p>
+<p>但 DjVu 输给 PDF 的原因很简单：<strong>生态</strong>。Adobe 几乎在每台电脑上预装了免费的 PDF 阅读器，而打开 DjVu 需要额外安装软件。技术上更优不代表生态上能赢。</p>
+<h3 id="142-xps微软的尝试">1.4.2 XPS：微软的尝试</h3>
+<p>2006 年，微软随 Windows Vista 推出了 XPS（XML Paper Specification）。它基于 XML 和 ZIP，结构比 PDF 更现代、更容易解析。</p>
+<p>XPS 的技术设计其实相当不错——XML 描述的页面结构比 PDF 的二进制对象清晰得多，字体嵌入和颜色管理也考虑得很周全。但它犯了一个致命错误：<strong>来得太晚了</strong>。</p>
+<p>到 2006 年，PDF 已经是事实标准。全世界的政府、企业、学术机构都在用 PDF 交换文件。没有人愿意为一个功能相似的新格式重新建设工具链。XPS 在 Windows 10 中已经被边缘化，到 Windows 11 基本名存实亡。</p>
+<h3 id="143-htmlweb-时代的quot反-pdfquot">1.4.3 HTML：Web 时代的&quot;反 PDF&quot;</h3>
+<p>有一种论调认为&quot;HTML 才是文档的未来&quot;——响应式、可搜索、天然跨平台。</p>
+<p>但 HTML 和 PDF 解决的是根本不同的问题：</p>
+<div class="table-wrap"><table><thead><tr>
+<th>维度</th>
+<th>PDF</th>
+<th>HTML</th>
+</tr>
+</thead><tbody><tr>
+<td>核心承诺</td>
+<td>所有人看到的<strong>完全一样</strong></td>
+<td>内容<strong>适配</strong>不同设备</td>
+</tr>
+<tr>
+<td>布局模型</td>
+<td>固定尺寸页面（A4/Letter）</td>
+<td>流式布局（宽度自适应）</td>
+</tr>
+<tr>
+<td>离线使用</td>
+<td>单文件，完全独立</td>
+<td>依赖外部资源（CSS/JS/图片）</td>
+</tr>
+<tr>
+<td>打印输出</td>
+<td>精确到 0.01mm</td>
+<td>需要额外的打印样式表</td>
+</tr>
+<tr>
+<td>法律/存档</td>
+<td>数字签名、不可篡改</td>
+<td>动态内容，不保证不变</td>
+</tr>
+</tbody></table></div>
+<p><strong>PDF 的核心价值是&quot;视觉保真&quot;</strong>——你发给对方一份 PDF，不管他在什么设备上打开，看到的排版和你完全一样。HTML 做不到这一点，也不打算做到这一点。</p>
+<p>这就是为什么合同、论文、发票、官方文件依然是 PDF——在这些场景中，&quot;每个人看到完全相同的内容&quot;不是可选的，是强制要求。</p>
+<hr>
+<h2 id="15-pdf-版本演进一览">1.5 PDF 版本演进一览</h2>
+<div class="table-wrap"><table><thead><tr>
+<th>版本</th>
+<th>年份</th>
+<th>关键特性</th>
+</tr>
+</thead><tbody><tr>
+<td>1.0</td>
+<td>1993</td>
+<td>基础功能：文字、图形、图片</td>
+</tr>
+<tr>
+<td>1.1</td>
+<td>1994</td>
+<td>密码保护、外部链接</td>
+</tr>
+<tr>
+<td>1.2</td>
+<td>1996</td>
+<td>交互式表单（AcroForm）</td>
+</tr>
+<tr>
+<td>1.3</td>
+<td>1999</td>
+<td>嵌入字体子集、透明度、JavaScript</td>
+</tr>
+<tr>
+<td>1.4</td>
+<td>2001</td>
+<td>JBIG2 压缩、标记内容（Tagged PDF）</td>
+</tr>
+<tr>
+<td>1.5</td>
+<td>2003</td>
+<td>对象流、交叉引用流（文件更小）</td>
+</tr>
+<tr>
+<td>1.6</td>
+<td>2004</td>
+<td>嵌入 3D 内容（U3D）、AES 加密</td>
+</tr>
+<tr>
+<td>1.7</td>
+<td>2006</td>
+<td>XFA 表单、增强的注释 → 2008 成为 ISO 32000</td>
+</tr>
+<tr>
+<td>2.0</td>
+<td>2017</td>
+<td>移除过时特性、改进加密、更严格的规范</td>
+</tr>
+</tbody></table></div>
+<p>三十年，从一个简单的&quot;电子纸&quot;进化成一个功能庞大、向后兼容三十年历史包袱的复杂系统。后面的章节会让你看到这些复杂性到底意味着什么。</p>
+
+    <nav class="pager">  <a class="disabled"><span class="label">← 上一章</span><span class="title"></span></a>  <a href="02-internal-structure.html" class="next">
+    <span class="label">下一章 →</span>
+    <span class="title">打开文件的那一瞬间：PDF 的内部结构</span>
+  </a></nav>
+  </article>
+</div>
+
+<footer>
+  <div class="set">
+    <span>PDF：最熟悉的陌生人</span>
+    <span>2026 · ZH-CN</span>
+  </div>
+  <div class="set">
+    <span>Mav</span>
+  </div>
+</footer>
+<div class="search-backdrop" id="search-overlay" role="dialog" aria-modal="true" aria-label="搜索" hidden>
+  <div class="search-modal">
+    <div class="search-input-wrap">
+      <input type="search" class="search-input" placeholder="搜索内容..." aria-label="搜索内容" autocomplete="off">
+      <kbd>ESC</kbd>
+    </div>
+    <div class="search-results" role="listbox" aria-label="搜索结果"></div>
+  </div>
+</div>
+
+<!-- Side Panel -->
+<div class="side-panel" id="side-panel">
+  <div class="side-panel-resize" id="side-panel-resize"></div>
+  <div class="side-panel-header">
+    <div class="side-panel-tabs">
+      <button class="side-panel-tab active" data-mode="sidenote">补充</button>
+      <button class="side-panel-tab" data-mode="notepad">笔记</button>
+    </div>
+    <button class="side-panel-close" aria-label="关闭">×</button>
+  </div>
+  <div class="side-panel-body"></div>
+</div>
+<button class="notepad-fab" id="notepad-fab" aria-label="便利贴">✎</button>
+
+<!-- Mobile TOC -->
+<button class="mtoc-fab" id="mtoc-fab" aria-label="目录">TOC</button>
+<div class="mtoc-drawer" id="mtoc-drawer">
+  <div class="mtoc-content"></div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/bash.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/typescript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/yaml.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/javascript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/json.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/python.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/css.min.js"></script>
+<script src="../assets/script.js"></script>
+</body>
+</html>

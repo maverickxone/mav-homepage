@@ -1,0 +1,634 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>打开文件的那一瞬间：PDF 的内部结构 — PDF：最熟悉的陌生人</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" id="hljs-light" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+<link rel="stylesheet" id="hljs-dark" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" media="not all">
+</head>
+<body>
+
+<div class="progress-bar" id="progress-bar"></div>
+
+<nav class="topnav" id="topnav">
+  <div class="topnav-inner">
+    <a class="brand" href="../index.html">PDF：最熟悉的陌生人</a>
+    <div class="nav-links">
+      <a href="01-history.html">01</a>
+      <a href="02-internal-structure.html" class="active">02</a>
+      <a href="03-rendering-model.html">03</a>
+      <a href="04-fonts.html">04</a>
+      <a href="05-readers.html">05</a>
+      <a href="06-creation.html">06</a>
+      <a href="07-interactive.html">07</a>
+      <a href="08-ocr.html">08</a>
+      <a href="09-ai-and-pdf.html">09</a>
+    </div>
+    <div class="nav-controls">
+      <button class="nav-btn" id="search-btn" aria-label="搜索 (Ctrl+K)">⌘K</button>
+      <button class="nav-btn" id="settings-btn" aria-label="阅读设置">Aa</button>
+      <a class="nav-btn" href="../../index.html" aria-label="返回知识库">← 知识库</a>
+      <a class="nav-btn" href="https://github.com/maverickxone/mav-homepage" target="_blank" rel="noopener" aria-label="GitHub" style="padding: 6px 8px;"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg></a>
+    </div>
+  </div>
+</nav>
+<div class="settings-pop" id="settings-pop">
+  <h5>主题</h5>
+  <div class="row">
+    <button class="seg" data-theme-set="light">明亮</button>
+    <button class="seg" data-theme-set="dark">暗色</button>
+  </div>
+  <h5>字号</h5>
+  <div class="row">
+    <button class="seg" data-size-set="s">小</button>
+    <button class="seg" data-size-set="m">中</button>
+    <button class="seg" data-size-set="l">大</button>
+  </div>
+</div>
+
+<div class="with-sidebar">
+  <aside class="sidebar">
+  <div class="chapter-num">CHAPTER 02</div>
+  <div class="chapter-name">打开文件的那一瞬间：PDF 的内部结构</div>
+  <h4>目录</h4>
+  <ul>
+    <li><a href="#21-pdf-不是二进制黑盒">2.1 PDF 不是二进制黑盒</a></li>
+    <li><a href="#22-四段式结构先看全貌">2.2 四段式结构：先看全貌</a></li>
+    <li><a href="#23-从零开始读一份-pdf">2.3 从零开始读一份 PDF</a></li>
+    <li><a href="#24-交叉引用表进阶">2.4 交叉引用表进阶</a></li>
+    <li><a href="#25-增量保存pdf-的quot追加写入quot模型">2.5 增量保存：PDF 的&quot;追加写入&quot;模型</a></li>
+    <li><a href="#26-线性化让-web-上的-pdf-能quot边下边看quot">2.6 线性化：让 Web 上的 PDF 能&quot;边下边看&quot;</a></li>
+    <li><a href="#27-流streampdf-里的大块数据">2.7 流（Stream）：PDF 里的大块数据</a></li>
+    <li><a href="#28-动手实验用-python-解析-pdf-结构">2.8 动手实验：用 Python 解析 PDF 结构</a></li>
+    <li><a href="#29-本章小结">2.9 本章小结</a></li>
+  </ul>
+</aside>
+  <article class="chapter-body">
+    <header class="chapter-head">
+  <div class="chapter-head-meta">
+    <span class="num">CHAPTER 02</span>
+    <span>≈ 25 MIN READ</span>
+  </div>
+  <h1>打开文件的那一瞬间：PDF 的内部结构</h1>
+
+</header>
+    <h2 id="21-pdf-不是二进制黑盒">2.1 PDF 不是二进制黑盒</h2>
+<p>很多人以为 PDF 是像 <code>.docx</code> 或 <code>.exe</code> 那样的纯二进制格式，用文本编辑器打开只能看到乱码。实际上不完全是——PDF 是一种<strong>混合格式</strong>，其结构骨架是纯 ASCII 文本，只有图片和压缩流等数据才是二进制的。</p>
+<p>为了证明这一点，下面是一份<strong>全世界最小的合法 PDF</strong>——总共 29 行：</p>
+<pre><code>%PDF-1.4
+
+1 0 obj
+&lt;&lt; /Type /Catalog /Pages 2 0 R &gt;&gt;
+endobj
+
+2 0 obj
+&lt;&lt; /Type /Pages /Kids [3 0 R] /Count 1 &gt;&gt;
+endobj
+
+3 0 obj
+&lt;&lt; /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792]
+   /Contents 4 0 R /Resources &lt;&lt; /Font &lt;&lt; /F1 5 0 R &gt;&gt; &gt;&gt; &gt;&gt;
+endobj
+
+4 0 obj
+&lt;&lt; /Length 44 &gt;&gt;
+stream
+BT /F1 24 Tf 100 700 Td (Hello PDF!) Tj ET
+endstream
+endobj
+
+5 0 obj
+&lt;&lt; /Type /Font /Subtype /Type1 /BaseFont /Helvetica &gt;&gt;
+endobj
+
+xref
+0 6
+0000000000 65535 f
+0000000009 00000 n
+0000000058 00000 n
+0000000115 00000 n
+0000000266 00000 n
+0000000360 00000 n
+
+trailer
+&lt;&lt; /Size 6 /Root 1 0 R &gt;&gt;
+startxref
+430
+%%EOF</code></pre>
+<p>你现在就可以试：新建一个文本文件，把上面的内容一字不差地粘进去，保存后把后缀名改成 <code>.pdf</code>，然后用 Sumatra PDF、Chrome 或任何阅读器打开——你会看到一个白色的 Letter 大小页面，左上角写着 &quot;Hello PDF!&quot;。</p>
+<p>看不懂没关系。接下来几节会<strong>逐段拆解</strong>，每遇到新语法就停下来讲清楚。</p>
+<hr>
+<h2 id="22-四段式结构先看全貌">2.2 四段式结构：先看全貌</h2>
+<p>在逐行细读之前，先有一个全局认知。每份 PDF 文件都由四个部分组成：</p>
+<pre><code>┌──────────────────────────┐
+│  Header（文件头）         │  ← 1 行：%PDF-1.x 版本声明
+├──────────────────────────┤
+│  Body（主体）             │  ← N 个对象：页面、字体、图片...
+├──────────────────────────┤
+│  Xref Table（交叉引用表） │  ← 每个对象在文件中的字节位置
+├──────────────────────────┤
+│  Trailer（尾部）          │  ← 指向根对象 + Xref 的位置 + %%EOF
+└──────────────────────────┘</code></pre>
+<p>对应到上面那 29 行代码：</p>
+<ul>
+<li><strong>Header</strong> = 第 1 行（<code>%PDF-1.4</code>）</li>
+<li><strong>Body</strong> = 对象 1~5（中间那一大段）</li>
+<li><strong>Xref</strong> = <code>xref</code> 到 6 行数字</li>
+<li><strong>Trailer</strong> = <code>trailer</code> 到 <code>%%EOF</code></li>
+</ul>
+<p>有了这个全貌，接下来的逐行拆解就不会迷路了——你始终知道&quot;我现在在四段中的哪一段&quot;。</p>
+<hr>
+<h2 id="23-从零开始读一份-pdf">2.3 从零开始读一份 PDF</h2>
+<h3 id="231-第一行版本声明">2.3.1 第一行：版本声明</h3>
+<pre><code>%PDF-1.4</code></pre>
+<p>每份 PDF 文件的第一行都是版本声明。<code>%</code> 在 PDF 中是注释符号（和 Python 的 <code>#</code> 类似），但文件开头这行有特殊含义：告诉阅读器&quot;这是一份 PDF，版本 1.4&quot;。</p>
+<p>仅此而已。一行搞定。</p>
+<h3 id="232-对象pdf-的积木块">2.3.2 对象：PDF 的积木块</h3>
+<p>接下来的内容是 PDF 的&quot;主体&quot;——由若干个**对象（object）**组成。让我们看第一个：</p>
+<pre><code>1 0 obj
+&lt;&lt; /Type /Catalog /Pages 2 0 R &gt;&gt;
+endobj</code></pre>
+<p>三行代码，四个新概念。逐个来：</p>
+<p><strong><code>1 0 obj</code> ... <code>endobj</code>——对象的&quot;包装纸&quot;</strong></p>
+<p><code>obj</code> 和 <code>endobj</code> 就像括号，把一个对象的内容包起来。前面的 <code>1 0</code> 是这个对象的<strong>身份证</strong>：</p>
+<ul>
+<li><code>1</code> = 对象编号（你可以理解为 ID）</li>
+<li><code>0</code> = 版本号（第一次创建是 0，以后被修改过会变成 1、2...）</li>
+</ul>
+<p>所以 <code>1 0 obj</code> 的意思就是：&quot;以下内容是对象 #1（初始版本）。&quot;</p>
+<p><strong><code>&lt;&lt; ... &gt;&gt;</code>——字典（Dictionary）</strong></p>
+<p>双尖括号 <code>&lt;&lt; &gt;&gt;</code> 在 PDF 中表示一个<strong>字典</strong>——一组键值对。如果你熟悉 JSON，它等价于 <code>{}</code>；如果你熟悉 Python，它等价于 <code>dict</code>。</p>
+<p>字典里面的东西是一对一对的：键在前，值紧跟其后。</p>
+<p><strong><code>/Type</code>、<code>/Catalog</code>、<code>/Pages</code>——名称（Name）</strong></p>
+<p>以斜杠 <code>/</code> 开头的词叫<strong>名称（Name）</strong>，是 PDF 的关键字/标签。它们是固定的、规范定义好的。你可以把 <code>/</code> 理解为&quot;这个词有特殊含义&quot;的标记。</p>
+<ul>
+<li><code>/Type</code> 是键名，表示&quot;这个对象是什么类型&quot;</li>
+<li><code>/Catalog</code> 是值，表示&quot;文档目录&quot;（整个 PDF 的根入口）</li>
+<li><code>/Pages</code> 是另一个键名，表示&quot;页面树在哪里&quot;</li>
+</ul>
+<p><strong><code>2 0 R</code>——引用（Reference）</strong></p>
+<p><code>2 0 R</code> 表示&quot;指向对象 #2（版本 0）&quot;。<code>R</code> 就是 Reference 的意思。</p>
+<p>为什么不把对象 2 的内容直接写在这里？因为一个对象可能被多个地方引用——比如一个字体可能被 10 个页面共用。用引用（<code>R</code>）就像超链接，避免了重复。</p>
+<p><strong>把这三行翻译成人话：</strong></p>
+<blockquote><p>对象 #1 是文档目录（Catalog），它说：所有页面的信息去找对象 #2。</p>
+</blockquote>
+<h3 id="233-页面树组织多页文档">2.3.3 页面树：组织多页文档</h3>
+<pre><code>2 0 obj
+&lt;&lt; /Type /Pages /Kids [3 0 R] /Count 1 &gt;&gt;
+endobj</code></pre>
+<p>现在你应该能读懂大部分了：</p>
+<ul>
+<li>对象 #2，类型是 <code>/Pages</code>（页面树节点）</li>
+<li><code>/Kids [3 0 R]</code>——&quot;子节点&quot;是一个数组 <code>[]</code>，里面只有一项：对象 #3</li>
+<li><code>/Count 1</code>——总共 1 页</li>
+</ul>
+<p>方括号 <code>[]</code> 在 PDF 中表示<strong>数组</strong>（有序列表）。这里只有一个子节点，但如果是 200 页的文档，数组里就会有 200 个引用。</p>
+<p><strong>人话：</strong> 对象 #2 说&quot;我管着所有页面，目前就 1 页，具体内容去问对象 #3。&quot;</p>
+<h3 id="234-页面本身尺寸内容资源">2.3.4 页面本身：尺寸、内容、资源</h3>
+<pre><code>3 0 obj
+&lt;&lt; /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792]
+   /Contents 4 0 R /Resources &lt;&lt; /Font &lt;&lt; /F1 5 0 R &gt;&gt; &gt;&gt; &gt;&gt;
+endobj</code></pre>
+<p>这个对象复杂一点，拆开看：</p>
+<div class="table-wrap"><table><thead><tr>
+<th>键</th>
+<th>值</th>
+<th>含义</th>
+</tr>
+</thead><tbody><tr>
+<td><code>/Type</code></td>
+<td><code>/Page</code></td>
+<td>这是一个页面</td>
+</tr>
+<tr>
+<td><code>/Parent</code></td>
+<td><code>2 0 R</code></td>
+<td>父节点是对象 #2（页面树）</td>
+</tr>
+<tr>
+<td><code>/MediaBox</code></td>
+<td><code>[0 0 612 792]</code></td>
+<td>页面尺寸（左下角 x,y 到右上角 x,y）</td>
+</tr>
+<tr>
+<td><code>/Contents</code></td>
+<td><code>4 0 R</code></td>
+<td>绘图指令在对象 #4 里</td>
+</tr>
+<tr>
+<td><code>/Resources</code></td>
+<td><code>&lt;&lt; /Font &lt;&lt; /F1 5 0 R &gt;&gt; &gt;&gt;</code></td>
+<td>这页用到的资源（字体 F1 → 对象 #5）</td>
+</tr>
+</tbody></table></div>
+<p>关于 <code>/MediaBox [0 0 612 792]</code>：</p>
+<p>PDF 的尺寸单位是<strong>点（point）</strong>，1 点 = 1/72 英寸。所以 612 × 792 点 = 8.5 × 11 英寸 = 美国 Letter 纸的标准尺寸。如果是 A4 纸，会是 <code>[0 0 595.276 841.89]</code>（210mm × 297mm）。</p>
+<p>注意 <code>/Resources</code> 的值本身又是一个字典（字典里套字典）——PDF 中嵌套是很常见的。这里的意思是：&quot;这一页用到了一种字体，代号叫 F1，它的定义在对象 #5 里。&quot;</p>
+<h3 id="235-内容流真正的quot画面quot">2.3.5 内容流：真正的&quot;画面&quot;</h3>
+<pre><code>4 0 obj
+&lt;&lt; /Length 44 &gt;&gt;
+stream
+BT /F1 24 Tf 100 700 Td (Hello PDF!) Tj ET
+endstream
+endobj</code></pre>
+<p>这里出现了新东西：<strong>流（stream）</strong>。</p>
+<p><code>stream</code> 和 <code>endstream</code> 之间的内容是这个对象携带的<strong>大块数据</strong>。<code>&lt;&lt; /Length 44 &gt;&gt;</code> 这个字典告诉阅读器：流里面有 44 个字节。</p>
+<p>流里面那行 <code>BT /F1 24 Tf 100 700 Td (Hello PDF!) Tj ET</code> 是 PDF 的<strong>绘图指令</strong>——告诉阅读器在这一页上画什么。现在你只需要知道一个大概：</p>
+<div class="table-wrap"><table><thead><tr>
+<th>指令</th>
+<th>含义</th>
+</tr>
+</thead><tbody><tr>
+<td><code>BT</code></td>
+<td>Begin Text——&quot;我要开始画文字了&quot;</td>
+</tr>
+<tr>
+<td><code>/F1 24 Tf</code></td>
+<td>用字体 F1，大小 24 磅</td>
+</tr>
+<tr>
+<td><code>100 700 Td</code></td>
+<td>把画笔移到坐标 (100, 700)</td>
+</tr>
+<tr>
+<td><code>(Hello PDF!) Tj</code></td>
+<td>在当前位置画出括号里的文字</td>
+</tr>
+<tr>
+<td><code>ET</code></td>
+<td>End Text——&quot;文字画完了&quot;</td>
+</tr>
+</tbody></table></div>
+<p>这些绘图指令的详细语法是第三章的内容，这里只要理解&quot;对象 #4 存放了画面的具体指令&quot;就够了。</p>
+<h3 id="236-字体声明">2.3.6 字体声明</h3>
+<pre><code>5 0 obj
+&lt;&lt; /Type /Font /Subtype /Type1 /BaseFont /Helvetica &gt;&gt;
+endobj</code></pre>
+<p>对象 #5 告诉阅读器：代号 F1 的字体是什么。</p>
+<ul>
+<li><code>/Type /Font</code>——我是一个字体</li>
+<li><code>/Subtype /Type1</code>——具体格式是 Type 1（Adobe 经典字体格式，第四章会细讲）</li>
+<li><code>/BaseFont /Helvetica</code>——字体名叫 Helvetica（一种系统自带的无衬线字体）</li>
+</ul>
+<p>这里的 Helvetica 没有嵌入字体数据，只是引用了系统字体名。如果接收端没有 Helvetica，阅读器会尝试找类似的替代品。（第四章会详细讨论字体嵌入问题。）</p>
+<h3 id="237-交叉引用表文件的quot目录页quot">2.3.7 交叉引用表：文件的&quot;目录页&quot;</h3>
+<pre><code>xref
+0 6
+0000000000 65535 f
+0000000009 00000 n
+0000000058 00000 n
+0000000115 00000 n
+0000000266 00000 n
+0000000360 00000 n</code></pre>
+<p>前面我们定义了 5 个对象（编号 1-5）。但阅读器怎么知道对象 #3 在文件的哪个位置？难道要从头扫描整个文件找 <code>3 0 obj</code> 这几个字？</p>
+<p><strong>交叉引用表（Cross-Reference Table，简称 Xref）<strong>就是解决这个问题的——它记录了每个对象在文件中的</strong>精确字节位置</strong>。</p>
+<ul>
+<li><code>0 6</code> = 从对象 #0 开始，共 6 个条目</li>
+<li>每行格式：<code>字节偏移 版本号 状态</code></li>
+<li><code>n</code> = 正在使用（in-use），<code>f</code> = 已释放（free）</li>
+<li>对象 #0 永远是 free 的（这是规范要求的占位符）</li>
+</ul>
+<p>所以阅读器想找对象 #3，直接查表：第 115 字节处。一次 <code>seek</code> 操作就到了，不需要扫描前面的内容。</p>
+<p><strong>这就是 PDF 能秒开第 50 页的关键——有了 Xref，阅读器可以跳到任意对象，不需要从头读到尾。</strong></p>
+<h3 id="238-trailer整个文件的入口">2.3.8 Trailer：整个文件的入口</h3>
+<pre><code>trailer
+&lt;&lt; /Size 6 /Root 1 0 R &gt;&gt;
+startxref
+430
+%%EOF</code></pre>
+<p>最后几行：</p>
+<ul>
+<li><code>trailer</code> 后面的字典 <code>&lt;&lt; /Size 6 /Root 1 0 R &gt;&gt;</code> 说：文件里共 6 个对象，根目录是对象 #1</li>
+<li><code>startxref 430</code> 说：交叉引用表在文件的第 430 字节处</li>
+<li><code>%%EOF</code> 表示文件结束</li>
+</ul>
+<p><strong>阅读器打开 PDF 的流程是倒着来的：</strong></p>
+<ol>
+<li>跳到文件末尾，找到 <code>%%EOF</code></li>
+<li>往前找 <code>startxref</code> → 知道 Xref 在第 430 字节</li>
+<li>跳到第 430 字节，读取 Xref 表 → 知道了所有对象的位置</li>
+<li>读取 Trailer → 知道根目录是对象 #1</li>
+<li>沿着 对象 #1 → 对象 #2 → 对象 #3 找到第一页</li>
+<li>加载对象 #4（绘图指令）和对象 #5（字体）→ 渲染页面</li>
+</ol>
+<p>整个过程不需要从头到尾扫描文件。即使是一份 500 页、50MB 的 PDF，打开第一页也只需读取几 KB 的数据。</p>
+<h3 id="239-回顾">2.3.9 回顾</h3>
+<p>现在回头看 2.1 中那份完整的 29 行代码，你应该能自己读懂每一行了：</p>
+<ul>
+<li>第 1 行：版本声明</li>
+<li>对象 1：文档目录，指向页面树</li>
+<li>对象 2：页面树，管理所有页面</li>
+<li>对象 3：页面定义（尺寸、内容、资源）</li>
+<li>对象 4：内容流（绘图指令）</li>
+<li>对象 5：字体声明</li>
+<li>Xref：所有对象的字节位置索引</li>
+<li>Trailer：文件入口（根对象 + Xref 位置）</li>
+</ul>
+<p>5 个对象通过引用（<code>R</code>）互相连接，形成一棵树：</p>
+<pre><code>Catalog (1)
+└── Pages (2)
+    └── Page (3)
+        ├── Contents (4) → 绘图指令
+        └── Resources
+            └── Font F1 (5) → Helvetica</code></pre>
+<p>所有真实的 PDF——不管是 3 页的简历还是 800 页的教材——都是这个结构的扩展。但骨架永远是这个形状。</p>
+<p>最后，PDF 语法的全部基础你已经掌握了：</p>
+<div class="table-wrap"><table><thead><tr>
+<th>语法</th>
+<th>含义</th>
+<th>类比</th>
+</tr>
+</thead><tbody><tr>
+<td><code>N M obj ... endobj</code></td>
+<td>定义一个编号对象</td>
+<td>给积木贴标签</td>
+</tr>
+<tr>
+<td><code>&lt;&lt; /Key Value &gt;&gt;</code></td>
+<td>字典（键值对）</td>
+<td>JSON 的 <code>{}</code></td>
+</tr>
+<tr>
+<td><code>/Name</code></td>
+<td>名称（关键字）</td>
+<td>JSON 的 key</td>
+</tr>
+<tr>
+<td><code>N M R</code></td>
+<td>引用另一个对象</td>
+<td>超链接</td>
+</tr>
+<tr>
+<td><code>[item1 item2]</code></td>
+<td>数组</td>
+<td>JSON 的 <code>[]</code></td>
+</tr>
+<tr>
+<td><code>stream ... endstream</code></td>
+<td>大块数据</td>
+<td>文件附件</td>
+</tr>
+<tr>
+<td><code>(text)</code></td>
+<td>字符串</td>
+<td>引号括起来的文字</td>
+</tr>
+</tbody></table></div>
+<p>带着这些知识，后面几节的进阶内容就不会觉得突兀了。</p>
+<hr>
+<h2 id="24-交叉引用表进阶">2.4 交叉引用表进阶</h2>
+<h3 id="241-xref-的完整格式">2.4.1 Xref 的完整格式</h3>
+<p>前面我们已经知道了 Xref 的基本含义：记录每个对象的字节位置。这里补充一些进阶细节。</p>
+<pre><code>xref
+0 6                          ← 从对象 0 开始，共 6 个条目
+0000000000 65535 f           ← 对象 0：free（永远是空闲占位符）
+0000000009 00000 n           ← 对象 1：在文件第 9 字节处，版本 0，正在使用
+0000000058 00000 n           ← 对象 2：在第 58 字节处
+0000000115 00000 n           ← 对象 3：在第 115 字节处
+0000000266 00000 n           ← 对象 4：在第 266 字节处
+0000000360 00000 n           ← 对象 5：在第 360 字节处</code></pre>
+<p>每行的格式是固定的 20 字节：<code>10位偏移 5位版本 状态</code>（含空格和换行，精确到字节）。这个固定宽度设计让阅读器可以直接用算术计算出第 N 个条目的位置，不需要逐行解析。</p>
+<p>状态标记：</p>
+<ul>
+<li><code>n</code>（in-use）：对象正在使用，偏移指向它在文件中的位置</li>
+<li><code>f</code>（free）：对象已被删除，偏移指向下一个 free 对象（形成空闲链表）<span class="sidenote-mark" data-note="<strong>为什么'删除'不是真的删掉？</strong><br><br>这个问题很自然：对象不用了，直接从文件里删掉不就行了吗？为什么还要保留一个'free'标记？<br><br>原因是 PDF 的<strong>增量保存</strong>设计（本章后面会详细讲）。PDF 文件被编辑时不会重写整个文件，而是在末尾追加新内容。'删除'一个对象只是在新的 Xref 表中把它标记为 free——原始数据还留在文件里，只是不再被引用了。<br><br>这和操作系统删除文件是一个道理：你在回收站清空一个文件，磁盘上的数据并没有被擦除，只是文件系统的索引里把那块空间标记为'可用'。PDF 的 free 链表也是同样的思想——它记录了哪些对象编号可以被将来的新对象复用。<br><br><strong>free 链表怎么工作的？</strong><br><br>对象 0 永远是 free 链表的头节点。它的'偏移'字段指向下一个 free 对象的编号（不是字节偏移！），形成一个单向链表：<br><br><code>对象 0 → 对象 7 → 对象 12 → 对象 0（循环回头）</code><br><br>当需要创建新对象时，可以从链表中取一个 free 编号复用，版本号 +1。<br><br>这个设计的好处：文件编辑极快（不需要移动数据），支持撤销（去掉最后一次追加就恢复了）。坏处：文件只增不减，'删除'的内容其实还在。">tips</span></li>
+</ul>
+<p><strong>为什么 Xref 如此重要？</strong></p>
+<p>想象一份 500 页的教科书 PDF，文件大小 50MB。如果没有 Xref，阅读器想显示第 300 页就必须从头扫描整个文件找到那一页的数据。有了 Xref，阅读器可以：</p>
+<ol>
+<li>读文件末尾的 Trailer → 得到 Page Tree 的根</li>
+<li>查 Xref 找到根对象的偏移 → 跳过去读它</li>
+<li>沿着 Page Tree 找到第 300 页的对象引用</li>
+<li>查 Xref 找到该页对象的偏移 → 跳过去读它</li>
+<li>渲染该页</li>
+</ol>
+<p>整个过程只需要读取极少量的数据，大部分文件内容根本不会被加载到内存。</p>
+<h3 id="242-交叉引用流pdf-15">2.4.2 交叉引用流（PDF 1.5+）</h3>
+<p>从 PDF 1.5 开始，Xref 表也可以用<strong>压缩流</strong>存储，称为 Cross-Reference Stream。这让大文件的 Xref 占用更少空间，也让整个文件可以用统一的流式方式处理。</p>
+<p>现代 PDF 生成器通常使用这种压缩格式。如果你用文本编辑器打开一个现代 PDF，可能看不到传统的 <code>xref</code> 文本表——因为它已经被压缩成二进制流了。</p>
+<hr>
+<h2 id="25-增量保存pdf-的quot追加写入quot模型">2.5 增量保存：PDF 的&quot;追加写入&quot;模型</h2>
+<h3 id="251-为什么-pdf-只增不减">2.5.1 为什么 PDF 只增不减</h3>
+<p>当你用 Adobe Acrobat 给一份 PDF 加一个批注，保存时发生了什么？</p>
+<p>答案不是&quot;修改原文件中的对象&quot;——而是<strong>在文件末尾追加新内容</strong>：</p>
+<pre><code>┌──────────────────┐
+│  原始 Header      │
+│  原始 Body        │
+│  原始 Xref       │
+│  原始 Trailer    │
+├──────────────────┤  ← 原文件到此为止
+│  新增/修改的对象  │
+│  新的 Xref       │  ← 只包含变化了的条目
+│  新的 Trailer    │  ← Prev 指向上一个 Xref
+└──────────────────┘</code></pre>
+<p>这种设计叫<strong>增量保存（Incremental Save）</strong>。好处是：</p>
+<ul>
+<li><strong>保存极快</strong>：不需要重写整个文件，只追加变化部分</li>
+<li><strong>支持撤销</strong>：删掉最后一段追加，文件就回到之前的状态</li>
+<li><strong>数字签名不失效</strong>：签名覆盖原始文件的字节范围，追加新内容不会修改已签名区域</li>
+</ul>
+<p>坏处也很明显：</p>
+<ul>
+<li><strong>文件只增不减</strong>：每次编辑都让文件变大，即使你删除了一页。一份 PDF 被反复编辑后，文件大小可能是原来的好几倍</li>
+<li><strong>安全隐患</strong>：被&quot;删除&quot;的内容其实还在文件里（只是 Xref 标记为 free），用文本编辑器可以直接看到</li>
+</ul>
+<h3 id="252-quot另存为quot的真正含义">2.5.2 &quot;另存为&quot;的真正含义</h3>
+<p>当你用&quot;另存为&quot;（Save As）而不是&quot;保存&quot;（Save）时，阅读器通常会做一次<strong>完整重写</strong>——把所有有效对象收集起来，重新生成一份干净的 PDF，去掉历史增量。这就是为什么&quot;另存为&quot;后文件通常会变小。</p>
+<p>在终端下，很多工具可以执行这个操作：</p>
+<pre data-label="bash"><code class="language-bash"># 用 Ghostscript 重写/压缩 PDF
+gs -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 \
+   -dNOPAUSE -dBATCH -sOutputFile=output.pdf input.pdf
+
+# 用 qpdf 线性化和去增量
+qpdf --linearize input.pdf output.pdf</code></pre>
+<hr>
+<h2 id="26-线性化让-web-上的-pdf-能quot边下边看quot">2.6 线性化：让 Web 上的 PDF 能&quot;边下边看&quot;</h2>
+<h3 id="261-问题http-下的-pdf">2.6.1 问题：HTTP 下的 PDF</h3>
+<p>普通 PDF 的 Xref 在文件<strong>末尾</strong>。这意味着通过 HTTP 下载一份 PDF 时，浏览器必须下载完整个文件才能开始渲染第一页——因为它需要先拿到末尾的 Xref。</p>
+<p>对于一份 100MB 的扫描版教材，这意味着用户要等到全部下载完才能看到任何内容。</p>
+<h3 id="262-解决方案线性化-pdf">2.6.2 解决方案：线性化 PDF</h3>
+<p>线性化（Linearized PDF，也叫 &quot;Fast Web View&quot;）重新组织文件结构：</p>
+<pre><code>┌──────────────────────────────────────┐
+│  Header + 线性化字典                   │
+│  第 1 页的所有对象（字体、图片等）       │
+│  Xref（或 hint table）               │
+│  第 2~N 页的对象                      │
+│  完整 Xref                           │
+│  Trailer                             │
+└──────────────────────────────────────┘</code></pre>
+<p>关键变化：</p>
+<ol>
+<li><strong>第一页的数据放在文件开头</strong>，不需要等到下载完就能渲染</li>
+<li><strong>Hint Table</strong> 放在前面，告诉阅读器每一页大概在什么位置</li>
+</ol>
+<p>配合 HTTP Range Request（部分下载），阅读器可以：</p>
+<ol>
+<li>下载文件开头 → 渲染第一页</li>
+<li>用户翻到第 50 页 → 只请求那一页的字节范围</li>
+</ol>
+<p>这就是为什么有些网页上的 PDF 打开后能秒看第一页，有些却要等很久——取决于 PDF 是否做过线性化。</p>
+<h3 id="263-如何检测">2.6.3 如何检测</h3>
+<p>用 <code>qpdf</code> 工具可以检查：</p>
+<pre data-label="bash"><code class="language-bash">qpdf --check-linearization document.pdf</code></pre>
+<p>或者直接用文本编辑器看文件开头几行——线性化 PDF 的第一个对象里会有 <code>/Linearized 1</code> 字样。</p>
+<hr>
+<h2 id="27-流streampdf-里的大块数据">2.7 流（Stream）：PDF 里的大块数据</h2>
+<h3 id="271-什么会存成流">2.7.1 什么会存成流</h3>
+<p>PDF 中的大块数据——图片像素、字体数据、压缩的页面内容——都存在 <strong>stream</strong> 对象中：</p>
+<pre><code>4 0 obj                      ← 对象编号 4，版本 0
+&lt;&lt; /Length 44 &gt;&gt;             ← 字典：声明流的字节长度为 44
+stream
+BT /F1 24 Tf 100 700 Td (Hello PDF!) Tj ET   ← 绘图指令（下一章详解）
+endstream
+endobj</code></pre>
+<p>字典部分描述流的元数据（长度、压缩方式），<code>stream</code> 和 <code>endstream</code> 之间是实际数据。</p>
+<h3 id="272-压缩过滤器">2.7.2 压缩过滤器</h3>
+<p>流可以使用各种压缩/编码方式，通过 <code>/Filter</code> 指定：</p>
+<div class="table-wrap"><table><thead><tr>
+<th>过滤器</th>
+<th>用途</th>
+</tr>
+</thead><tbody><tr>
+<td><code>/FlateDecode</code></td>
+<td>zlib/deflate 压缩（最常用）</td>
+</tr>
+<tr>
+<td><code>/DCTDecode</code></td>
+<td>JPEG 压缩（图片）</td>
+</tr>
+<tr>
+<td><code>/JPXDecode</code></td>
+<td>JPEG 2000 压缩</td>
+</tr>
+<tr>
+<td><code>/JBIG2Decode</code></td>
+<td>JBIG2 压缩（黑白扫描件）</td>
+</tr>
+<tr>
+<td><code>/LZWDecode</code></td>
+<td>LZW 压缩（旧格式）</td>
+</tr>
+<tr>
+<td><code>/ASCII85Decode</code></td>
+<td>Base85 编码（让二进制变可读）</td>
+</tr>
+<tr>
+<td><code>/RunLengthDecode</code></td>
+<td>游程编码</td>
+</tr>
+</tbody></table></div>
+<p>过滤器可以<strong>串联</strong>——比如先 JPEG 压缩图片，再 ASCII85 编码让它变成纯文本。解码时反向依次处理。</p>
+<h3 id="273-为什么普通-pdf-里的文字quot看不懂quot">2.7.3 为什么普通 PDF 里的文字&quot;看不懂&quot;</h3>
+<p>现代 PDF 生成器几乎都会对页面内容流使用 FlateDecode 压缩。所以你用文本编辑器打开一份正常的 PDF，看到的 stream 内容是一堆乱码——那是 deflate 压缩后的字节。</p>
+<p>用 <code>qpdf</code> 可以解压所有流，得到可读的文本：</p>
+<pre data-label="bash"><code class="language-bash">qpdf --qdf --object-streams=disable input.pdf readable.pdf</code></pre>
+<p>解压后你就能看到页面内容流里的绘图指令了——下一章会详细讲这些指令是什么。</p>
+<hr>
+<h2 id="28-动手实验用-python-解析-pdf-结构">2.8 动手实验：用 Python 解析 PDF 结构</h2>
+<p>这里用一小段 Python 代码来探索一份真实 PDF 的内部结构：</p>
+<pre data-label="python"><code class="language-python">import fitz  # PyMuPDF
+
+doc = fitz.open("example.pdf")
+
+# 基本信息
+print(f"页数: {doc.page_count}")
+print(f"PDF 版本: {doc.metadata['format']}")
+print(f"加密: {doc.is_encrypted}")
+
+# 查看页面对象
+page = doc[0]  # 第一页
+print(f"\n第一页尺寸: {page.rect}")  # 坐标矩形
+print(f"第一页旋转: {page.rotation}°")
+
+# 提取页面内容流（原始绘图指令）
+xref = page.xref  # 页面对象的 xref 编号
+print(f"页面对象 xref: {xref}")
+
+# 查看对象的原始 PDF 源码
+print(doc.xref_object(xref))</code></pre>
+<p>输出类似：</p>
+<pre><code>页数: 42
+PDF 版本: PDF 1.7
+加密: False
+
+第一页尺寸: Rect(0.0, 0.0, 595.276, 841.89)
+第一页旋转: 0°
+页面对象 xref: 3
+&lt;&lt; /Type /Page /Parent 2 0 R /MediaBox [0 0 595.276 841.89] ... &gt;&gt;</code></pre>
+<p>其中 <code>595.276 × 841.89</code> 就是 A4 纸的标准点数尺寸（1 点 = 1/72 英寸，所以 595.276 ÷ 72 ≈ 8.27 英寸 = 210mm）。</p>
+<hr>
+<h2 id="29-本章小结">2.9 本章小结</h2>
+<p>PDF 的文件结构设计体现了几个核心权衡：</p>
+<ol>
+<li><strong>随机访问 vs 顺序读取</strong>：Xref 让跳转快，但增加了文件复杂度</li>
+<li><strong>追加写入 vs 就地修改</strong>：增量保存让编辑快，但文件膨胀</li>
+<li><strong>压缩 vs 可读性</strong>：FlateDecode 让文件小，但不能直接用文本编辑器阅读</li>
+<li><strong>兼容性 vs 简洁性</strong>：三十年的向后兼容让规范越来越厚</li>
+</ol>
+<p>下一章我们进入最核心的部分：页面内容流里的绘图指令——PDF 为什么说&quot;不是文字，是画&quot;。</p>
+
+    <nav class="pager">  <a href="01-history.html">
+    <span class="label">← 上一章</span>
+    <span class="title">纸的数字替身：PDF 的诞生</span>
+  </a>  <a href="03-rendering-model.html" class="next">
+    <span class="label">下一章 →</span>
+    <span class="title">不是文字，是画：PDF 的渲染模型</span>
+  </a></nav>
+  </article>
+</div>
+
+<footer>
+  <div class="set">
+    <span>PDF：最熟悉的陌生人</span>
+    <span>2026 · ZH-CN</span>
+  </div>
+  <div class="set">
+    <span>Mav</span>
+  </div>
+</footer>
+<div class="search-backdrop" id="search-overlay" role="dialog" aria-modal="true" aria-label="搜索" hidden>
+  <div class="search-modal">
+    <div class="search-input-wrap">
+      <input type="search" class="search-input" placeholder="搜索内容..." aria-label="搜索内容" autocomplete="off">
+      <kbd>ESC</kbd>
+    </div>
+    <div class="search-results" role="listbox" aria-label="搜索结果"></div>
+  </div>
+</div>
+
+<!-- Side Panel -->
+<div class="side-panel" id="side-panel">
+  <div class="side-panel-resize" id="side-panel-resize"></div>
+  <div class="side-panel-header">
+    <div class="side-panel-tabs">
+      <button class="side-panel-tab active" data-mode="sidenote">补充</button>
+      <button class="side-panel-tab" data-mode="notepad">笔记</button>
+    </div>
+    <button class="side-panel-close" aria-label="关闭">×</button>
+  </div>
+  <div class="side-panel-body"></div>
+</div>
+<button class="notepad-fab" id="notepad-fab" aria-label="便利贴">✎</button>
+
+<!-- Mobile TOC -->
+<button class="mtoc-fab" id="mtoc-fab" aria-label="目录">TOC</button>
+<div class="mtoc-drawer" id="mtoc-drawer">
+  <div class="mtoc-content"></div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/bash.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/typescript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/yaml.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/javascript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/json.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/python.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/css.min.js"></script>
+<script src="../assets/script.js"></script>
+</body>
+</html>

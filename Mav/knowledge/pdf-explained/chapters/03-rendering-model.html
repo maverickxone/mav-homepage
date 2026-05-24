@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>不是文字，是画：PDF 的渲染模型 — PDF：最熟悉的陌生人</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" id="hljs-light" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+<link rel="stylesheet" id="hljs-dark" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" media="not all">
+</head>
+<body>
+
+<div class="progress-bar" id="progress-bar"></div>
+
+<nav class="topnav" id="topnav">
+  <div class="topnav-inner">
+    <a class="brand" href="../index.html">PDF：最熟悉的陌生人</a>
+    <div class="nav-links">
+      <a href="01-history.html">01</a>
+      <a href="02-internal-structure.html">02</a>
+      <a href="03-rendering-model.html" class="active">03</a>
+      <a href="04-fonts.html">04</a>
+      <a href="05-readers.html">05</a>
+      <a href="06-creation.html">06</a>
+      <a href="07-interactive.html">07</a>
+      <a href="08-ocr.html">08</a>
+      <a href="09-ai-and-pdf.html">09</a>
+    </div>
+    <div class="nav-controls">
+      <button class="nav-btn" id="search-btn" aria-label="搜索 (Ctrl+K)">⌘K</button>
+      <button class="nav-btn" id="settings-btn" aria-label="阅读设置">Aa</button>
+      <a class="nav-btn" href="../../index.html" aria-label="返回知识库">← 知识库</a>
+      <a class="nav-btn" href="https://github.com/maverickxone/mav-homepage" target="_blank" rel="noopener" aria-label="GitHub" style="padding: 6px 8px;"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg></a>
+    </div>
+  </div>
+</nav>
+<div class="settings-pop" id="settings-pop">
+  <h5>主题</h5>
+  <div class="row">
+    <button class="seg" data-theme-set="light">明亮</button>
+    <button class="seg" data-theme-set="dark">暗色</button>
+  </div>
+  <h5>字号</h5>
+  <div class="row">
+    <button class="seg" data-size-set="s">小</button>
+    <button class="seg" data-size-set="m">中</button>
+    <button class="seg" data-size-set="l">大</button>
+  </div>
+</div>
+
+<div class="with-sidebar">
+  <aside class="sidebar">
+  <div class="chapter-num">CHAPTER 03</div>
+  <div class="chapter-name">不是文字，是画：PDF 的渲染模型</div>
+  <h4>目录</h4>
+  <ul>
+    <li><a href="#31-页面描述语言的本质">3.1 页面描述语言的本质</a></li>
+    <li><a href="#32-文字渲染核心陷阱">3.2 文字渲染：核心陷阱</a></li>
+    <li><a href="#33-图形绘制">3.3 图形绘制</a></li>
+    <li><a href="#34-颜色空间">3.4 颜色空间</a></li>
+    <li><a href="#35-一个真实页面的内容流">3.5 一个真实页面的内容流</a></li>
+    <li><a href="#36-核心洞察为什么-pdf-quot不适合被机器理解quot">3.6 核心洞察：为什么 PDF &quot;不适合被机器理解&quot;</a></li>
+  </ul>
+</aside>
+  <article class="chapter-body">
+    <header class="chapter-head">
+  <div class="chapter-head-meta">
+    <span class="num">CHAPTER 03</span>
+    <span>≈ 24 MIN READ</span>
+  </div>
+  <h1>不是文字，是画：PDF 的渲染模型</h1>
+
+</header>
+    <h2 id="31-页面描述语言的本质">3.1 页面描述语言的本质</h2>
+<h3 id="311-pdf-页面-一张画布-一串绘图指令">3.1.1 PDF 页面 = 一张画布 + 一串绘图指令</h3>
+<p>上一章我们看到了页面内容流里的这行代码：</p>
+<pre><code>BT /F1 24 Tf 100 700 Td (Hello PDF!) Tj ET</code></pre>
+<p>让我们逐个操作符拆解：</p>
+<div class="table-wrap"><table><thead><tr>
+<th>指令</th>
+<th>含义</th>
+</tr>
+</thead><tbody><tr>
+<td><code>BT</code></td>
+<td>Begin Text——开始文字绘制块</td>
+</tr>
+<tr>
+<td><code>/F1 24 Tf</code></td>
+<td>使用字体 F1，大小 24 点</td>
+</tr>
+<tr>
+<td><code>100 700 Td</code></td>
+<td>移动到坐标 (100, 700)</td>
+</tr>
+<tr>
+<td><code>(Hello PDF!) Tj</code></td>
+<td>在当前位置画出 &quot;Hello PDF!&quot;</td>
+</tr>
+<tr>
+<td><code>ET</code></td>
+<td>End Text——结束文字绘制块</td>
+</tr>
+</tbody></table></div>
+<p>注意用词：是&quot;画出&quot;，不是&quot;写入&quot;。对 PDF 渲染引擎来说，画一个字母 &#39;H&#39; 和画一条线段在本质上没有区别——都是在画布的某个坐标上放置一个图形。</p>
+<h3 id="312-坐标系">3.1.2 坐标系</h3>
+<p>PDF 使用笛卡尔坐标系，<strong>原点在页面左下角</strong>：</p>
+<pre><code>         (0, 842)                    (595, 842)
+            ┌─────────────────────────────┐
+            │                             │
+            │         ↑ y                 │
+            │         │                   │
+            │         │                   │
+            │         └───→ x             │
+            │                             │
+            │                             │
+            └─────────────────────────────┘
+         (0, 0)                      (595, 0)</code></pre>
+<p>单位是<strong>点（point）</strong>，1 点 = 1/72 英寸 ≈ 0.353mm。A4 纸是 595 × 842 点。</p>
+<p>这与屏幕坐标系不同——屏幕通常原点在左上角，y 轴向下。阅读器内部需要做坐标翻转。</p>
+<h3 id="313-图形状态机">3.1.3 图形状态机</h3>
+<p>PDF 的渲染模型是一个<strong>状态机</strong>。在任意时刻，都有一组&quot;当前状态&quot;参数在生效：</p>
+<ul>
+<li>当前字体和字号</li>
+<li>当前颜色（填充色和线条色）</li>
+<li>当前变换矩阵（CTM）——控制平移、旋转、缩放</li>
+<li>当前裁剪路径</li>
+<li>线条宽度、连接方式、虚线模式</li>
+<li>透明度</li>
+</ul>
+<p>状态可以通过 <code>q</code>（保存）和 <code>Q</code>（恢复）操作符压栈/弹栈：</p>
+<pre><code>q                    % 保存当前状态
+  1 0 0 1 50 50 cm  % 平移 (50, 50)
+  0.5 0 0 rg        % 设置填充色为绿色
+  0 0 100 100 re f  % 画一个 100x100 的绿色矩形
+Q                    % 恢复之前的状态（位移和颜色都回去了）</code></pre>
+<hr>
+<h2 id="32-文字渲染核心陷阱">3.2 文字渲染：核心陷阱</h2>
+<h3 id="321-quot画字quot而不是quot存字quot">3.2.1 &quot;画字&quot;而不是&quot;存字&quot;</h3>
+<p>这是理解 PDF 最关键的认知转变。看这段真实的内容流：</p>
+<pre><code>BT
+/F1 12 Tf
+1 0 0 1 72 720 Tm
+&lt;0048&gt; Tj
+&lt;0065&gt; Tj
+&lt;006C&gt; Tj
+&lt;006C&gt; Tj
+&lt;006F&gt; Tj
+ET</code></pre>
+<p>每个 <code>&lt;00XX&gt; Tj</code> 是在<strong>画一个 glyph（字形）</strong>。<code>0048</code> 不是 Unicode 码点，它是<strong>字体内部的 glyph ID</strong>。阅读器要通过字体的 CMap（字符映射表）才能知道这个 glyph 对应什么 Unicode 字符。</p>
+<p>更常见的写法会把多个 glyph 一次性画出来：</p>
+<pre><code>BT
+/F1 12 Tf
+72 720 Td
+[(H) -10 (ello) 20 ( W) -15 (orld)] TJ
+ET</code></pre>
+<p>这里的 <code>TJ</code> 操作符接受一个数组，数组中：</p>
+<ul>
+<li>字符串部分 <code>(H)</code> 表示要画的文字</li>
+<li>数字部分 <code>-10</code> 表示<strong>水平位移微调</strong>（单位是千分之一字号）</li>
+</ul>
+<p>这些位移是干嘛的？<strong>字距调整（kerning）</strong>。比如 &quot;AV&quot; 两个字母紧贴，&quot;LT&quot; 之间要留点空隙。生成器会预先计算好每对字母之间的精确间距，直接写进内容流。</p>
+<h3 id="322-为什么复制粘贴会乱码">3.2.2 为什么复制粘贴会乱码</h3>
+<p>当你从 PDF 里 Ctrl+C 复制一段文字时，阅读器需要做<strong>逆向映射</strong>：</p>
+<pre><code>内容流中的 glyph ID → 查 CMap 表 → 得到 Unicode 字符 → 放进剪贴板</code></pre>
+<p>问题出在哪里？</p>
+<ol>
+<li><p><strong>有些 PDF 没有 CMap 表</strong>。如果生成器没有嵌入 Unicode 映射，阅读器就无法将 glyph ID 还原为字符。你复制出来的就是乱码或空白。</p>
+</li>
+<li><p><strong>自定义编码</strong>。有些字体（尤其是 Type 3 字体）使用完全自定义的编码方案，比如把 glyph ID 1 映射到一个数学符号，而不是 ASCII 中的 &#39;A&#39;。</p>
+</li>
+<li><p><strong>字体子集化后的重编码</strong>。为了减小文件体积，生成器通常只嵌入文档中用到的字符（子集化）。子集化后，glyph ID 可能被重新编号。如果没有同时嵌入 <code>/ToUnicode</code> 映射表，逆向映射就断了。</p>
+</li>
+</ol>
+<h3 id="323-一个具体的灾难场景">3.2.3 一个具体的灾难场景</h3>
+<p>假设一份用 LaTeX 生成的数学论文，里面有这个公式：</p>
+<p>$\int_0^{\infty} e^{-x^2} dx = \frac{\sqrt{\pi}}{2}$</p>
+<p>在 PDF 内部，积分号 ∫ 可能来自 CMR 字体，e 来自另一个数学字体，上标和下标通过坐标偏移实现。内容流大概长这样：</p>
+<pre><code>BT
+/F3 12 Tf 200 400 Td &lt;02&gt; Tj          % 画积分号
+/F1 8 Tf 0 -4 Td &lt;03&gt; Tj              % 下标 0（向下偏移 4 点）
+/F1 8 Tf 0 16 Td &lt;04&gt; Tj              % 上标 ∞（向上偏移）
+/F2 12 Tf 15 -6 Td &lt;05&gt; Tj            % 画 e
+/F2 8 Tf 0 6 Td &lt;06&gt; Tj               % 上标里的内容
+...
+ET</code></pre>
+<p>如果你试图从这份 PDF 里复制这段公式，得到的极大可能是一堆无意义的字符碎片。因为：</p>
+<ul>
+<li>每个符号来自不同字体，各有各的编码</li>
+<li>上下标是通过坐标偏移实现的，不是语义上的&quot;上标&quot;</li>
+<li>没有任何信息表明&quot;这些符号合起来是一个积分表达式&quot;</li>
+</ul>
+<h3 id="324-文字顺序-视觉顺序">3.2.4 文字顺序 ≠ 视觉顺序</h3>
+<p>更隐蔽的问题：PDF 内容流中文字的<strong>绘制顺序</strong>不一定等于<strong>阅读顺序</strong>。</p>
+<p>考虑一个两栏排版的页面。生成器可能先画左栏的全部内容，再画右栏；也可能逐行交替绘制。甚至有些生成器为了优化字体切换次数，会把同一字体的所有文字集中画完，再换字体画其他文字。</p>
+<p>这对人眼没有影响——最终画出来的页面看起来是对的。但如果你试图提取文字（搜索、复制、或者给 AI 读），就需要一个复杂的<strong>文字重排算法</strong>来猜测正确的阅读顺序。</p>
+<hr>
+<h2 id="33-图形绘制">3.3 图形绘制</h2>
+<h3 id="331-路径与形状">3.3.1 路径与形状</h3>
+<p>PDF 使用类似 PostScript 的路径绘制模型：</p>
+<pre><code>% 画一个三角形
+200 200 m          % moveto: 移动到 (200, 200)
+300 400 l          % lineto: 画线到 (300, 400)
+400 200 l          % lineto: 画线到 (400, 200)
+h                  % closepath: 闭合路径
+S                  % stroke: 描边</code></pre>
+<p>操作符表：</p>
+<div class="table-wrap"><table><thead><tr>
+<th>操作</th>
+<th>说明</th>
+</tr>
+</thead><tbody><tr>
+<td><code>m</code></td>
+<td>moveto——移动画笔</td>
+</tr>
+<tr>
+<td><code>l</code></td>
+<td>lineto——画直线</td>
+</tr>
+<tr>
+<td><code>c</code></td>
+<td>curveto——三次贝塞尔曲线</td>
+</tr>
+<tr>
+<td><code>v</code>, <code>y</code></td>
+<td>简化的贝塞尔曲线</td>
+</tr>
+<tr>
+<td><code>h</code></td>
+<td>closepath——闭合路径</td>
+</tr>
+<tr>
+<td><code>re</code></td>
+<td>rectangle——画矩形</td>
+</tr>
+<tr>
+<td><code>S</code></td>
+<td>stroke——描边</td>
+</tr>
+<tr>
+<td><code>f</code></td>
+<td>fill——填充</td>
+</tr>
+<tr>
+<td><code>B</code></td>
+<td>既描边又填充</td>
+</tr>
+<tr>
+<td><code>n</code></td>
+<td>不画（用于裁剪路径）</td>
+</tr>
+</tbody></table></div>
+<h3 id="332-贝塞尔曲线">3.3.2 贝塞尔曲线</h3>
+<p>PDF 中所有的曲线都用**三次贝塞尔曲线（cubic Bézier curve）**表示。四个控制点 P0、P1、P2、P3 定义一条曲线：</p>
+<p>$B(t) = (1-t)^3 P_0 + 3(1-t)^2 t \cdot P_1 + 3(1-t) t^2 \cdot P_2 + t^3 P_3, \quad t \in [0, 1]$</p>
+<p>圆形、椭圆、曲线文字——所有这些都用贝塞尔曲线近似。一个圆需要 4 段贝塞尔曲线拼接。</p>
+<p>字体中的每个字母轮廓也是贝塞尔曲线的集合。当 PDF 渲染引擎&quot;画&quot;一个 &#39;S&#39; 字母时，它实际上是在渲染一组贝塞尔曲线围成的封闭区域。</p>
+<h3 id="333-变换矩阵">3.3.3 变换矩阵</h3>
+<p>PDF 使用 3×3 仿射变换矩阵的简化形式（6 个参数）来实现平移、旋转、缩放和倾斜：</p>
+<pre><code>a b 0
+c d 0
+e f 1</code></pre>
+<p>写在内容流中是 <code>a b c d e f cm</code>。常见变换：</p>
+<pre><code>% 平移到 (100, 200)
+1 0 0 1 100 200 cm
+
+% 缩放 50%
+0.5 0 0 0.5 0 0 cm
+
+% 旋转 45°
+0.707 0.707 -0.707 0.707 0 0 cm</code></pre>
+<p>图片在 PDF 中也是通过变换矩阵来定位的——先把图片映射到 1×1 的单位正方形，再通过 CTM 变换到页面上的目标区域。</p>
+<hr>
+<h2 id="34-颜色空间">3.4 颜色空间</h2>
+<h3 id="341-pdf-支持的颜色模型">3.4.1 PDF 支持的颜色模型</h3>
+<p>PDF 支持多种颜色空间，满足从屏幕显示到印刷输出的不同需求：</p>
+<div class="table-wrap"><table><thead><tr>
+<th>颜色空间</th>
+<th>用途</th>
+<th>示例指令</th>
+</tr>
+</thead><tbody><tr>
+<td>DeviceGray</td>
+<td>灰度</td>
+<td><code>0.5 g</code>（50% 灰）</td>
+</tr>
+<tr>
+<td>DeviceRGB</td>
+<td>屏幕显示</td>
+<td><code>1 0 0 rg</code>（红色填充）</td>
+</tr>
+<tr>
+<td>DeviceCMYK</td>
+<td>印刷输出</td>
+<td><code>0 1 1 0 k</code>（品红+黄=红）</td>
+</tr>
+<tr>
+<td>CalRGB / CalGray</td>
+<td>校准色彩</td>
+<td>带白点和 gamma 参数</td>
+</tr>
+<tr>
+<td>ICCBased</td>
+<td>ICC 配置文件</td>
+<td>精确的设备无关色彩</td>
+</tr>
+<tr>
+<td>Indexed</td>
+<td>调色板</td>
+<td>最多 256 种预定义颜色</td>
+</tr>
+<tr>
+<td>Separation</td>
+<td>专色</td>
+<td>印刷中的 Pantone 色</td>
+</tr>
+<tr>
+<td>Pattern</td>
+<td>图案填充</td>
+<td>平铺或着色图案</td>
+</tr>
+</tbody></table></div>
+<p>为什么需要这么多颜色空间？因为 PDF 要同时满足屏幕浏览和印刷输出。在屏幕上你用 RGB，在印刷厂你用 CMYK，而且同一个 RGB 值在不同显示器上看起来不一样——ICC 配置文件就是为了解决这个色彩一致性问题。</p>
+<h3 id="342-透明度与混合">3.4.2 透明度与混合</h3>
+<p>PDF 1.4 引入了透明度模型——这是一个比想象中复杂得多的特性。</p>
+<pre><code>/GS1 gs              % 设置图形状态（包含透明度参数）
+0 0 1 rg             % 蓝色
+0.5 0 0 0.5 100 100 cm
+0 0 200 200 re f     % 画一个半透明蓝色矩形</code></pre>
+<p>图形状态中的 <code>/CA</code>（描边透明度）和 <code>/ca</code>（填充透明度）参数控制不透明度（0 = 完全透明，1 = 完全不透明）。</p>
+<p>复杂之处在于<strong>混合模式（Blend Mode）</strong>——PDF 支持和 Photoshop 一样的混合模式（Normal、Multiply、Screen、Overlay 等），以及**隔离组（Isolated Group）<strong>和</strong>淘汰组（Knockout Group）**的概念。</p>
+<p>渲染带透明度的 PDF 页面需要从后往前合成所有图层——这是 PDF 渲染器性能开销最大的操作之一。很多&quot;PDF 打开慢&quot;的情况，是因为页面中有大量半透明元素需要逐层合成。</p>
+<hr>
+<h2 id="35-一个真实页面的内容流">3.5 一个真实页面的内容流</h2>
+<p>让我们看一个稍微复杂但真实的例子——一段包含标题、正文、色块的页面内容：</p>
+<pre><code>q                                    % 保存状态
+  % 背景色块
+  0.95 0.95 0.98 rg                  % 浅灰蓝色
+  0 792 612 -80 re f                 % 页面顶部 80 点高的色条
+
+  % 标题
+  BT
+    /F2 28 Tf                        % 粗体字体，28 点
+    0.1 0.1 0.15 rg                  % 深色
+    72 740 Td                        % 定位
+    (Chapter 3: Rendering) Tj        % 画标题
+  ET
+
+  % 正文段落
+  BT
+    /F1 11 Tf                        % 正文字体，11 点
+    0.2 0.2 0.25 rg                  % 正文色
+    72 680 Td                        % 起始位置
+    12 TL                            % 行距 12 点
+    (PDF uses a painting model.) Tj T*
+    (Each page is a blank canvas.) Tj T*
+    (Content is drawn in order.) Tj
+  ET
+
+  % 一条分隔线
+  0.8 0.8 0.85 RG                    % 线条颜色
+  0.5 w                              % 线宽 0.5 点
+  72 660 m 540 660 l S               % 画线
+Q                                    % 恢复状态</code></pre>
+<p><code>T*</code> 表示&quot;换行&quot;（按 TL 设定的行距向下移动）。注意文字仍然是逐字符定位的——&quot;换行&quot;只是坐标偏移，不存在语义上的&quot;段落&quot;概念。</p>
+<hr>
+<h2 id="36-核心洞察为什么-pdf-quot不适合被机器理解quot">3.6 核心洞察：为什么 PDF &quot;不适合被机器理解&quot;</h2>
+<p>从本章的内容中，我们可以总结出 PDF 渲染模型的三个根本特征——也正是这三个特征让 PDF 成为文字提取和 AI 处理的噩梦：</p>
+<ol>
+<li><p><strong>视觉驱动，非语义驱动</strong>：PDF 关心的是&quot;在哪里画什么&quot;，不关心&quot;这段文字的含义是什么&quot;。没有段落、没有标题层级、没有列表——只有坐标和字形。</p>
+</li>
+<li><p><strong>绘制顺序 ≠ 阅读顺序</strong>：内容流中对象的出现顺序是为了优化渲染效率，不是为了反映人类的阅读路径。</p>
+</li>
+<li><p><strong>字符身份模糊</strong>：一个 glyph 不一定能唯一映射回一个 Unicode 字符。连字（ligature）、自定义编码、缺失的 ToUnicode 表都会导致映射失败。</p>
+</li>
+</ol>
+<p><strong>PDF 被设计用来给人看，不是用来给机器读的。</strong> 这个设计哲学贯穿整个格式的三十年历史，也是为什么到了 2026 年，从 PDF 中准确提取结构化信息仍然是一个未解决的难题。</p>
+<p>我们会在第 9 章详细讨论 AI 时代如何应对这个挑战。</p>
+
+    <nav class="pager">  <a href="02-internal-structure.html">
+    <span class="label">← 上一章</span>
+    <span class="title">打开文件的那一瞬间：PDF 的内部结构</span>
+  </a>  <a href="04-fonts.html" class="next">
+    <span class="label">下一章 →</span>
+    <span class="title">字体的战争与嵌入</span>
+  </a></nav>
+  </article>
+</div>
+
+<footer>
+  <div class="set">
+    <span>PDF：最熟悉的陌生人</span>
+    <span>2026 · ZH-CN</span>
+  </div>
+  <div class="set">
+    <span>Mav</span>
+  </div>
+</footer>
+<div class="search-backdrop" id="search-overlay" role="dialog" aria-modal="true" aria-label="搜索" hidden>
+  <div class="search-modal">
+    <div class="search-input-wrap">
+      <input type="search" class="search-input" placeholder="搜索内容..." aria-label="搜索内容" autocomplete="off">
+      <kbd>ESC</kbd>
+    </div>
+    <div class="search-results" role="listbox" aria-label="搜索结果"></div>
+  </div>
+</div>
+
+<!-- Side Panel -->
+<div class="side-panel" id="side-panel">
+  <div class="side-panel-resize" id="side-panel-resize"></div>
+  <div class="side-panel-header">
+    <div class="side-panel-tabs">
+      <button class="side-panel-tab active" data-mode="sidenote">补充</button>
+      <button class="side-panel-tab" data-mode="notepad">笔记</button>
+    </div>
+    <button class="side-panel-close" aria-label="关闭">×</button>
+  </div>
+  <div class="side-panel-body"></div>
+</div>
+<button class="notepad-fab" id="notepad-fab" aria-label="便利贴">✎</button>
+
+<!-- Mobile TOC -->
+<button class="mtoc-fab" id="mtoc-fab" aria-label="目录">TOC</button>
+<div class="mtoc-drawer" id="mtoc-drawer">
+  <div class="mtoc-content"></div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/bash.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/typescript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/yaml.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/javascript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/json.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/python.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/css.min.js"></script>
+<script src="../assets/script.js"></script>
+</body>
+</html>

@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>字体的战争与嵌入 — PDF：最熟悉的陌生人</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" id="hljs-light" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+<link rel="stylesheet" id="hljs-dark" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" media="not all">
+</head>
+<body>
+
+<div class="progress-bar" id="progress-bar"></div>
+
+<nav class="topnav" id="topnav">
+  <div class="topnav-inner">
+    <a class="brand" href="../index.html">PDF：最熟悉的陌生人</a>
+    <div class="nav-links">
+      <a href="01-history.html">01</a>
+      <a href="02-internal-structure.html">02</a>
+      <a href="03-rendering-model.html">03</a>
+      <a href="04-fonts.html" class="active">04</a>
+      <a href="05-readers.html">05</a>
+      <a href="06-creation.html">06</a>
+      <a href="07-interactive.html">07</a>
+      <a href="08-ocr.html">08</a>
+      <a href="09-ai-and-pdf.html">09</a>
+    </div>
+    <div class="nav-controls">
+      <button class="nav-btn" id="search-btn" aria-label="搜索 (Ctrl+K)">⌘K</button>
+      <button class="nav-btn" id="settings-btn" aria-label="阅读设置">Aa</button>
+      <a class="nav-btn" href="../../index.html" aria-label="返回知识库">← 知识库</a>
+      <a class="nav-btn" href="https://github.com/maverickxone/mav-homepage" target="_blank" rel="noopener" aria-label="GitHub" style="padding: 6px 8px;"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg></a>
+    </div>
+  </div>
+</nav>
+<div class="settings-pop" id="settings-pop">
+  <h5>主题</h5>
+  <div class="row">
+    <button class="seg" data-theme-set="light">明亮</button>
+    <button class="seg" data-theme-set="dark">暗色</button>
+  </div>
+  <h5>字号</h5>
+  <div class="row">
+    <button class="seg" data-size-set="s">小</button>
+    <button class="seg" data-size-set="m">中</button>
+    <button class="seg" data-size-set="l">大</button>
+  </div>
+</div>
+
+<div class="with-sidebar">
+  <aside class="sidebar">
+  <div class="chapter-num">CHAPTER 04</div>
+  <div class="chapter-name">字体的战争与嵌入</div>
+  <h4>目录</h4>
+  <ul>
+    <li><a href="#41-为什么字体是-pdf-的核心难题">4.1 为什么字体是 PDF 的核心难题</a></li>
+    <li><a href="#42-字体格式的三十年战争">4.2 字体格式的三十年战争</a></li>
+    <li><a href="#43-pdf-中的字体嵌入">4.3 PDF 中的字体嵌入</a></li>
+    <li><a href="#44-cmap-与-tounicode从字形到字符">4.4 CMap 与 ToUnicode：从字形到字符</a></li>
+    <li><a href="#45-乱码的根本原因">4.5 乱码的根本原因</a></li>
+    <li><a href="#46-字体渲染的差异为什么同一份-pdf-在不同设备上quot看起来quot不一样">4.6 字体渲染的差异：为什么同一份 PDF 在不同设备上&quot;看起来&quot;不一样</a></li>
+    <li><a href="#47-现代趋势可变字体与-pdf">4.7 现代趋势：可变字体与 PDF</a></li>
+  </ul>
+</aside>
+  <article class="chapter-body">
+    <header class="chapter-head">
+  <div class="chapter-head-meta">
+    <span class="num">CHAPTER 04</span>
+    <span>≈ 22 MIN READ</span>
+  </div>
+  <h1>字体的战争与嵌入</h1>
+
+</header>
+    <h2 id="41-为什么字体是-pdf-的核心难题">4.1 为什么字体是 PDF 的核心难题</h2>
+<h3 id="411-一个简单的思想实验">4.1.1 一个简单的思想实验</h3>
+<p>你在自己电脑上用&quot;霞鹜文楷&quot;字体写了一份文档，导出为 PDF，发给朋友。朋友的电脑上没装这个字体。</p>
+<p>问题来了：朋友打开这份 PDF 时，看到的是什么？</p>
+<p>答案取决于 PDF 生成器做了什么：</p>
+<ul>
+<li><strong>嵌入了字体</strong>：朋友看到的和你完全一样。PDF 里自带了字体数据。</li>
+<li><strong>只嵌入了字体子集</strong>：用到的字都正常显示，但如果阅读器想用这个字体渲染其他字符（比如表单输入）就没有了。</li>
+<li><strong>没嵌入字体</strong>：阅读器尝试用系统字体替代。运气好的话字形差不多，运气不好就面目全非。</li>
+</ul>
+<p><strong>字体嵌入</strong>是 PDF 实现&quot;跨平台视觉一致&quot;承诺的关键机制。没有它，PDF 和 HTML 一样——显示效果取决于接收端有什么字体。</p>
+<h3 id="412-字体文件有多大">4.1.2 字体文件有多大？</h3>
+<p>这也是字体嵌入不能&quot;无脑全嵌&quot;的原因：</p>
+<div class="table-wrap"><table><thead><tr>
+<th>字体</th>
+<th>完整文件大小</th>
+</tr>
+</thead><tbody><tr>
+<td>英文字体（Inter Regular）</td>
+<td>~300 KB</td>
+</tr>
+<tr>
+<td>中文字体（思源黑体 Regular）</td>
+<td>~8 MB</td>
+</tr>
+<tr>
+<td>日文字体（Noto Sans JP）</td>
+<td>~5 MB</td>
+</tr>
+<tr>
+<td>数学字体（STIX Two Math）</td>
+<td>~1 MB</td>
+</tr>
+</tbody></table></div>
+<p>一份中文文档如果嵌入完整的中文字体，文件大小瞬间增加 8MB+。这就是为什么**子集化（subsetting）**是中日韩 PDF 的标配——只嵌入文档中实际用到的字形。</p>
+<hr>
+<h2 id="42-字体格式的三十年战争">4.2 字体格式的三十年战争</h2>
+<h3 id="421-type-1adobe-的先手">4.2.1 Type 1：Adobe 的先手</h3>
+<p>1984 年，Adobe 随 PostScript 一起推出了 <strong>Type 1</strong> 字体格式。它用三次贝塞尔曲线描述字形轮廓，配合 &quot;hint&quot; 机制在低分辨率设备上优化显示。</p>
+<p>Type 1 是 PostScript（因此也是早期 PDF）的原生字体格式。Adobe 最初把 Type 1 的规范保密，只有付费授权的字体厂商才能制作 Type 1 字体。这引发了整个行业的愤怒。</p>
+<h3 id="422-truetypeapple-和-microsoft-的反击">4.2.2 TrueType：Apple 和 Microsoft 的反击</h3>
+<p>1991 年，Apple 设计、Microsoft 参与推广的 <strong>TrueType</strong> 字体格式问世。这是对 Adobe Type 1 垄断的直接反击。</p>
+<p>TrueType 的技术特点：</p>
+<ul>
+<li>使用<strong>二次贝塞尔曲线</strong>（而非 Type 1 的三次贝塞尔）描述轮廓</li>
+<li>内置一个<strong>字节码解释器</strong>（hinting 虚拟机）来精确控制像素级渲染</li>
+<li>完全开放的规范</li>
+</ul>
+<p>二次 vs 三次贝塞尔曲线的区别：</p>
+<pre><code>三次贝塞尔（Type 1 / CFF）：
+  4 个控制点 → 更少的点就能描述复杂曲线
+  B(t) = (1-t)³P₀ + 3(1-t)²tP₁ + 3(1-t)t²P₂ + t³P₃
+
+二次贝塞尔（TrueType）：
+  3 个控制点 → 需要更多点，但计算更快
+  B(t) = (1-t)²P₀ + 2(1-t)tP₁ + t²P₂</code></pre>
+<p>二次曲线计算更快（少一次乘法），但表达能力略弱——一条三次曲线可能需要两条二次曲线才能近似。这是当年硬件性能有限时的工程权衡。</p>
+<h3 id="423-hinting让字在小字号下依然清晰">4.2.3 Hinting：让字在小字号下依然清晰</h3>
+<p>在 300 DPI 打印机上，12 号字的一个字母大概有 50 像素高，轮廓曲线可以精确渲染。但在 96 DPI 的屏幕上，同样的字只有 16 像素高——曲线必须&quot;卡&quot;到像素网格上，否则会模糊或变形。</p>
+<p><strong>Hinting</strong> 就是一组指令，告诉渲染器在低分辨率下如何调整字形：</p>
+<ul>
+<li>确保笔画对齐到像素边界</li>
+<li>保证字母 &#39;H&#39; 的两根竖线一样粗（即使原始坐标有微小差异）</li>
+<li>防止字母 &#39;e&#39; 的中间空隙在小字号下消失</li>
+</ul>
+<p>TrueType 的 hinting 是一门完整的字节码语言（图灵完备的！），可以编写极其精细的调整规则。这也是为什么 Windows 上的字体在小字号下通常比 macOS 更锐利——Windows 严格执行 TrueType hinting，而 macOS 选择忽略大部分 hint 以保持&quot;曲线真实性&quot;。</p>
+<h3 id="424-opentype大一统">4.2.4 OpenType：大一统</h3>
+<p>1996 年，Microsoft 和 Adobe 联手推出 <strong>OpenType</strong> 格式。它本质上是一个容器：</p>
+<ul>
+<li>可以包含 TrueType 轮廓（<code>.ttf</code> 后缀）</li>
+<li>也可以包含 CFF/Type 1 轮廓（<code>.otf</code> 后缀）</li>
+<li>统一的元数据格式（命名、分类、支持的语言等）</li>
+<li>高级排版特性（连字、小型大写字母、上下文替换等）</li>
+</ul>
+<p>OpenType 结束了 Type 1 vs TrueType 的战争，成为今天的通用标准。你电脑上安装的字体，绝大多数都是 OpenType 格式。</p>
+<hr>
+<h2 id="43-pdf-中的字体嵌入">4.3 PDF 中的字体嵌入</h2>
+<h3 id="431-嵌入的三种级别">4.3.1 嵌入的三种级别</h3>
+<div class="table-wrap"><table><thead><tr>
+<th>级别</th>
+<th>文件体积</th>
+<th>适用场景</th>
+</tr>
+</thead><tbody><tr>
+<td>完整嵌入</td>
+<td>大（中文 8MB+）</td>
+<td>需要编辑 PDF 中的文字</td>
+</tr>
+<tr>
+<td>子集嵌入</td>
+<td>小（通常 50-200KB）</td>
+<td>只需要显示，不需要编辑</td>
+</tr>
+<tr>
+<td>不嵌入</td>
+<td>无额外开销</td>
+<td>仅引用系统字体名</td>
+</tr>
+</tbody></table></div>
+<p>子集化的原理：扫描文档中用到了哪些字符，只把这些字符的字形数据打包进 PDF。比如一份中文文档用了 800 个不同的汉字，子集化后只嵌入 800 个字形而不是全部 6700+ 个。</p>
+<p>子集化字体在 PDF 中的名字通常有前缀标记：<code>ABCDEF+SimSun</code>——加号前面的 6 个随机大写字母表明这是一个子集。</p>
+<h3 id="432-pdf-中的字体对象">4.3.2 PDF 中的字体对象</h3>
+<pre><code>5 0 obj
+&lt;&lt; /Type /Font
+   /Subtype /Type1
+   /BaseFont /BCDEAA+Times-Roman
+   /FirstChar 32
+   /LastChar 122
+   /Widths [250 333 408 500 ...]
+   /FontDescriptor 6 0 R
+   /Encoding /WinAnsiEncoding
+   /ToUnicode 7 0 R
+&gt;&gt;
+endobj</code></pre>
+<p>关键字段：</p>
+<ul>
+<li><code>/BaseFont</code>：字体名（带子集前缀）</li>
+<li><code>/Widths</code>：每个字符的宽度数组（用于文字定位）</li>
+<li><code>/FontDescriptor</code>：指向字体描述（含嵌入的字体数据流）</li>
+<li><code>/Encoding</code>：字符编码方案</li>
+<li><code>/ToUnicode</code>：CMap 映射表（glyph → Unicode）</li>
+</ul>
+<h3 id="433-字体描述符和嵌入数据">4.3.3 字体描述符和嵌入数据</h3>
+<pre><code>6 0 obj
+&lt;&lt; /Type /FontDescriptor
+   /FontName /BCDEAA+Times-Roman
+   /Flags 34
+   /FontBBox [-168 -281 1000 924]
+   /ItalicAngle 0
+   /Ascent 683
+   /Descent -217
+   /CapHeight 662
+   /StemV 87
+   /FontFile 8 0 R          % Type 1 嵌入数据
+   % 或 /FontFile2 8 0 R    % TrueType
+   % 或 /FontFile3 8 0 R    % CFF/OpenType
+&gt;&gt;
+endobj</code></pre>
+<p><code>/FontFile</code>（或 FontFile2、FontFile3）指向一个 stream 对象，里面就是字体的二进制数据。</p>
+<hr>
+<h2 id="44-cmap-与-tounicode从字形到字符">4.4 CMap 与 ToUnicode：从字形到字符</h2>
+<h3 id="441-编码的多层映射">4.4.1 编码的多层映射</h3>
+<p>PDF 中从&quot;内容流里的字节&quot;到&quot;屏幕上的字形&quot;再到&quot;可提取的 Unicode 字符&quot;，要经过多层映射：</p>
+<pre><code>内容流字节 → Encoding → Character Code → CMap → Glyph ID → 字形渲染
+                                             ↓
+                              ToUnicode → Unicode 码点 → 文字提取</code></pre>
+<p>这个链条中任何一环断裂，都会导致文字提取失败。</p>
+<h3 id="442-一个-tounicode-cmap-的示例">4.4.2 一个 ToUnicode CMap 的示例</h3>
+<pre><code>/CIDInit /ProcSet findresource begin
+12 dict begin
+begincmap
+/CMapType 2 def
+1 begincodespacerange
+&lt;0000&gt; &lt;FFFF&gt;
+endcodespacerange
+5 beginbfchar
+&lt;0003&gt; &lt;0020&gt;    % glyph 3 → U+0020 (空格)
+&lt;0010&gt; &lt;0048&gt;    % glyph 16 → U+0048 (H)
+&lt;0011&gt; &lt;0065&gt;    % glyph 17 → U+0065 (e)
+&lt;0012&gt; &lt;006C&gt;    % glyph 18 → U+006C (l)
+&lt;0013&gt; &lt;006F&gt;    % glyph 19 → U+006F (o)
+endbfchar
+endcmap</code></pre>
+<p>这张表明确声明了：字体中的 glyph 16 对应 Unicode 字符 &#39;H&#39;。有了这张表，阅读器才能在你复制文字时正确还原。</p>
+<h3 id="443-cjk-字体的特殊挑战">4.4.3 CJK 字体的特殊挑战</h3>
+<p>中日韩字体（CJK fonts）带来了额外复杂性：</p>
+<ol>
+<li><strong>字符集巨大</strong>：一个中文字体可能包含 27,000+ 字形，编码空间从单字节变为双字节（CIDFont）</li>
+<li><strong>预定义 CMap</strong>：PDF 规范预定义了多个 CJK CMap（如 <code>UniGB-UCS2-H</code> 对应 GB 编码的中文），阅读器必须内置这些映射</li>
+<li><strong>竖排文字</strong>：中文和日文有竖排模式，需要不同的 CMap（<code>-V</code> 后缀表示竖排）和不同的字形宽度/偏移</li>
+</ol>
+<pre><code>% CIDFont 字体对象（中文）
+&lt;&lt; /Type /Font
+   /Subtype /CIDFontType2
+   /BaseFont /ABCDEF+SimSun
+   /CIDSystemInfo &lt;&lt; /Registry (Adobe) /Ordering (GB1) /Supplement 5 &gt;&gt;
+   /W [1 [277] 17 [556 556 556]]    % 字宽数组（CID → 宽度）
+   /DW 1000                          % 默认宽度（全角）
+&gt;&gt;</code></pre>
+<hr>
+<h2 id="45-乱码的根本原因">4.5 乱码的根本原因</h2>
+<h3 id="451-乱码分类">4.5.1 乱码分类</h3>
+<div class="table-wrap"><table><thead><tr>
+<th>症状</th>
+<th>原因</th>
+<th>常见来源</th>
+</tr>
+</thead><tbody><tr>
+<td>方块（□□□）</td>
+<td>字体未嵌入且系统无对应字体</td>
+<td>旧版生成器、非标准字体</td>
+</tr>
+<tr>
+<td>乱字符（Ã©Â±）</td>
+<td>编码解释错误</td>
+<td>UTF-8/GBK 混淆</td>
+</tr>
+<tr>
+<td>空白/不可选</td>
+<td>无 ToUnicode 且使用自定义编码</td>
+<td>数学公式字体</td>
+</tr>
+<tr>
+<td>字形错位</td>
+<td>CMap 映射错误</td>
+<td>子集化 bug</td>
+</tr>
+<tr>
+<td>所有字体都变成同一种</td>
+<td>字体名冲突（多个嵌入字体同名）</td>
+<td>合并 PDF 时</td>
+</tr>
+</tbody></table></div>
+<h3 id="452-最常见的场景没有嵌入字体的中文-pdf">4.5.2 最常见的场景：没有嵌入字体的中文 PDF</h3>
+<p>2000 年代初的中文 PDF 经常不嵌入字体——因为完整的中文字体太大了（8-16MB），而当时的带宽和存储都很有限。PDF 里只记录字体名 &quot;SimSun&quot;，指望接收端有这个字体。</p>
+<p>在 Windows 上打开通常没问题（系统自带宋体）。但到了 macOS 或 Linux，没有 SimSun，阅读器用替代字体渲染——笔画粗细不对、间距不对、甚至有些字显示不出来。</p>
+<p>现代 PDF 生成器几乎都会做子集嵌入，这个问题已经少多了。但历史遗留的旧 PDF 依然大量存在。</p>
+<h3 id="453-用工具诊断字体问题">4.5.3 用工具诊断字体问题</h3>
+<pre data-label="bash"><code class="language-bash"># 用 pdffonts（poppler-utils）列出 PDF 中的字体信息
+pdffonts document.pdf
+
+# 输出示例：
+# name                  type       encoding     emb  sub  uni  object ID
+# -------------------- ---------- ------------ ---- ---- ---- ---------
+# BCDEAA+SimSun        CID Type 2 Identity-H   yes  yes  yes  15 0
+# ArialMT              TrueType   WinAnsi      no   no   yes  23 0</code></pre>
+<p>关键列：</p>
+<ul>
+<li><code>emb</code>：是否嵌入</li>
+<li><code>sub</code>：是否子集化</li>
+<li><code>uni</code>：是否有 Unicode 映射</li>
+</ul>
+<p>如果你看到 <code>emb = no</code>，这个字体在没有安装对应系统字体的电脑上就可能出问题。</p>
+<hr>
+<h2 id="46-字体渲染的差异为什么同一份-pdf-在不同设备上quot看起来quot不一样">4.6 字体渲染的差异：为什么同一份 PDF 在不同设备上&quot;看起来&quot;不一样</h2>
+<h3 id="461-即使字体嵌入了渲染结果也可能不同">4.6.1 即使字体嵌入了，渲染结果也可能不同</h3>
+<p>等等，PDF 的核心承诺不是&quot;所有人看到的完全一样&quot;吗？</p>
+<p>严格来说，PDF 保证的是<strong>几何形状完全一样</strong>——字形的轮廓坐标、位置、大小不会变。但最终在屏幕上呈现为像素时，还有几个因素影响视觉效果：</p>
+<ol>
+<li><strong>抗锯齿算法</strong>：不同渲染器对曲线边缘的平滑处理不同</li>
+<li><strong>子像素渲染</strong>：Windows 的 ClearType、macOS 的子像素抗锯齿（已在 Retina 屏上禁用）</li>
+<li><strong>Hinting 执行策略</strong>：是否尊重字体内的 hinting 指令</li>
+<li><strong>gamma 校正</strong>：文字灰度与背景的混合方式</li>
+</ol>
+<p>这就是为什么同一份 PDF 在 Windows、macOS 和 Linux 上&quot;感觉&quot;不一样——不是字体不对，而是渲染管线的最后一步（栅格化）策略不同。</p>
+<h3 id="462-打印-vs-屏幕">4.6.2 打印 vs 屏幕</h3>
+<p>在 600 DPI 的打印输出上，一个 12 号字母有约 100 像素高，hinting 几乎不重要——曲线本身就足够精确。但在 96 DPI 的屏幕上，同样的字母只有 16 像素高，每一个像素的决策都影响可读性。</p>
+<p>这也是为什么设计师审稿时要求&quot;打印后确认&quot;——屏幕上看到的（受渲染器影响）和打印出来的（接近&quot;真实&quot;的字形轮廓）是两码事。</p>
+<hr>
+<h2 id="47-现代趋势可变字体与-pdf">4.7 现代趋势：可变字体与 PDF</h2>
+<h3 id="471-variable-fonts">4.7.1 Variable Fonts</h3>
+<p>OpenType 1.8（2016）引入了<strong>可变字体（Variable Fonts）</strong>——一个字体文件包含连续的字重/字宽/倾斜度变化轴。</p>
+<p>传统方式：一个字体家族需要多个文件（Regular、Bold、Italic、Light...各一个）。
+可变字体：一个文件，通过参数连续调节。</p>
+<pre><code>font-weight: 100~900 的任意值
+font-stretch: 75%~125% 的任意值</code></pre>
+<p>但 PDF 对可变字体的支持仍然有限——PDF 2.0 规范中提到了，但大多数生成器在嵌入时会把可变字体&quot;固化&quot;为特定的实例。这意味着你在 PDF 里看到的字体，已经丢失了&quot;可变&quot;的能力。</p>
+<h3 id="472-emoji-和彩色字体">4.7.2 Emoji 和彩色字体</h3>
+<p>现代字体还可以包含彩色信息（COLR/CPAL 表或 SVG 表），用于渲染 Emoji 和彩色图标。</p>
+<p>PDF 对彩色字体的支持同样滞后——大多数 PDF 生成器会把 Emoji 渲染为图片而不是使用彩色字体特性。这是 PDF 规范&quot;年龄&quot;的一个体现：它的字体模型设计于 1990 年代，彩色字体是 2010 年代的概念。</p>
+
+    <nav class="pager">  <a href="03-rendering-model.html">
+    <span class="label">← 上一章</span>
+    <span class="title">不是文字，是画：PDF 的渲染模型</span>
+  </a>  <a href="05-readers.html" class="next">
+    <span class="label">下一章 →</span>
+    <span class="title">快与慢：PDF 阅读器的架构</span>
+  </a></nav>
+  </article>
+</div>
+
+<footer>
+  <div class="set">
+    <span>PDF：最熟悉的陌生人</span>
+    <span>2026 · ZH-CN</span>
+  </div>
+  <div class="set">
+    <span>Mav</span>
+  </div>
+</footer>
+<div class="search-backdrop" id="search-overlay" role="dialog" aria-modal="true" aria-label="搜索" hidden>
+  <div class="search-modal">
+    <div class="search-input-wrap">
+      <input type="search" class="search-input" placeholder="搜索内容..." aria-label="搜索内容" autocomplete="off">
+      <kbd>ESC</kbd>
+    </div>
+    <div class="search-results" role="listbox" aria-label="搜索结果"></div>
+  </div>
+</div>
+
+<!-- Side Panel -->
+<div class="side-panel" id="side-panel">
+  <div class="side-panel-resize" id="side-panel-resize"></div>
+  <div class="side-panel-header">
+    <div class="side-panel-tabs">
+      <button class="side-panel-tab active" data-mode="sidenote">补充</button>
+      <button class="side-panel-tab" data-mode="notepad">笔记</button>
+    </div>
+    <button class="side-panel-close" aria-label="关闭">×</button>
+  </div>
+  <div class="side-panel-body"></div>
+</div>
+<button class="notepad-fab" id="notepad-fab" aria-label="便利贴">✎</button>
+
+<!-- Mobile TOC -->
+<button class="mtoc-fab" id="mtoc-fab" aria-label="目录">TOC</button>
+<div class="mtoc-drawer" id="mtoc-drawer">
+  <div class="mtoc-content"></div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/bash.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/typescript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/yaml.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/javascript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/json.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/python.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/css.min.js"></script>
+<script src="../assets/script.js"></script>
+</body>
+</html>

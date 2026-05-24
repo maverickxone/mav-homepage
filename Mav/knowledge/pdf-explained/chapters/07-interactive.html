@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PDF 不只能看：交互、表单与安全 — PDF：最熟悉的陌生人</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" id="hljs-light" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+<link rel="stylesheet" id="hljs-dark" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" media="not all">
+</head>
+<body>
+
+<div class="progress-bar" id="progress-bar"></div>
+
+<nav class="topnav" id="topnav">
+  <div class="topnav-inner">
+    <a class="brand" href="../index.html">PDF：最熟悉的陌生人</a>
+    <div class="nav-links">
+      <a href="01-history.html">01</a>
+      <a href="02-internal-structure.html">02</a>
+      <a href="03-rendering-model.html">03</a>
+      <a href="04-fonts.html">04</a>
+      <a href="05-readers.html">05</a>
+      <a href="06-creation.html">06</a>
+      <a href="07-interactive.html" class="active">07</a>
+      <a href="08-ocr.html">08</a>
+      <a href="09-ai-and-pdf.html">09</a>
+    </div>
+    <div class="nav-controls">
+      <button class="nav-btn" id="search-btn" aria-label="搜索 (Ctrl+K)">⌘K</button>
+      <button class="nav-btn" id="settings-btn" aria-label="阅读设置">Aa</button>
+      <a class="nav-btn" href="../../index.html" aria-label="返回知识库">← 知识库</a>
+      <a class="nav-btn" href="https://github.com/maverickxone/mav-homepage" target="_blank" rel="noopener" aria-label="GitHub" style="padding: 6px 8px;"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg></a>
+    </div>
+  </div>
+</nav>
+<div class="settings-pop" id="settings-pop">
+  <h5>主题</h5>
+  <div class="row">
+    <button class="seg" data-theme-set="light">明亮</button>
+    <button class="seg" data-theme-set="dark">暗色</button>
+  </div>
+  <h5>字号</h5>
+  <div class="row">
+    <button class="seg" data-size-set="s">小</button>
+    <button class="seg" data-size-set="m">中</button>
+    <button class="seg" data-size-set="l">大</button>
+  </div>
+</div>
+
+<div class="with-sidebar">
+  <aside class="sidebar">
+  <div class="chapter-num">CHAPTER 07</div>
+  <div class="chapter-name">PDF 不只能看：交互、表单与安全</div>
+  <h4>目录</h4>
+  <ul>
+    <li><a href="#71-pdf-中的-javascript">7.1 PDF 中的 JavaScript</a></li>
+    <li><a href="#72-表单系统">7.2 表单系统</a></li>
+    <li><a href="#73-数字签名">7.3 数字签名</a></li>
+    <li><a href="#74-加密与权限控制">7.4 加密与权限控制</a></li>
+    <li><a href="#75-pdf-安全攻击简史">7.5 PDF 安全攻击简史</a></li>
+    <li><a href="#76-pdfa为永久保存而设计">7.6 PDF/A：为永久保存而设计</a></li>
+  </ul>
+</aside>
+  <article class="chapter-body">
+    <header class="chapter-head">
+  <div class="chapter-head-meta">
+    <span class="num">CHAPTER 07</span>
+    <span>≈ 20 MIN READ</span>
+  </div>
+  <h1>PDF 不只能看：交互、表单与安全</h1>
+
+</header>
+    <h2 id="71-pdf-中的-javascript">7.1 PDF 中的 JavaScript</h2>
+<h3 id="711-是的pdf-能跑代码">7.1.1 是的，PDF 能跑代码</h3>
+<p>很多人不知道这一点：PDF 从 1.3 版本（1999 年）开始支持嵌入 <strong>JavaScript</strong>。</p>
+<p>这不是&quot;类 JavaScript 的脚本&quot;——它是标准的 ECMAScript，加上 Adobe 定义的一套 PDF 专用 API。你可以在 PDF 中：</p>
+<ul>
+<li>验证表单输入（比如检查邮箱格式）</li>
+<li>执行数学计算（自动算总价）</li>
+<li>动态显示/隐藏表单字段</li>
+<li>弹出对话框</li>
+<li>与外部数据库通信（通过 SOAP/HTTP）</li>
+<li>操控 PDF 的页面和注释</li>
+</ul>
+<p>一段 PDF 内嵌 JavaScript 的示例：</p>
+<pre data-label="javascript"><code class="language-javascript">// 当"数量"字段改变时，自动计算总价
+var quantity = this.getField("quantity").value;
+var price = this.getField("unitPrice").value;
+var total = quantity * price;
+this.getField("totalPrice").value = total.toFixed(2);</code></pre>
+<h3 id="712-javascript-在-pdf-中的位置">7.1.2 JavaScript 在 PDF 中的位置</h3>
+<p>JavaScript 通过以下方式嵌入 PDF：</p>
+<pre><code>% 文档级 JavaScript（打开 PDF 时执行）
+&lt;&lt; /Type /Catalog
+   /Names &lt;&lt; /JavaScript &lt;&lt; /Names [(init) 10 0 R] &gt;&gt; &gt;&gt;
+&gt;&gt;
+
+10 0 obj
+&lt;&lt; /S /JavaScript /JS (app.alert\("Hello from PDF!"\)) &gt;&gt;
+endobj</code></pre>
+<p>触发时机：</p>
+<ul>
+<li><strong>文档打开时</strong>（Document Open Action）</li>
+<li><strong>页面打开/关闭时</strong></li>
+<li><strong>表单字段值改变时</strong></li>
+<li><strong>按钮点击时</strong></li>
+<li><strong>打印/保存前后</strong></li>
+</ul>
+<h3 id="713-安全隐患">7.1.3 安全隐患</h3>
+<p>一份看似无害的 PDF 文档可以在你打开它的瞬间执行任意 JavaScript 代码。虽然 PDF 的 JS 引擎有沙箱限制（不能直接读写本地文件系统），但历史上出现过大量沙箱逃逸漏洞：</p>
+<div class="table-wrap"><table><thead><tr>
+<th>年份</th>
+<th>CVE</th>
+<th>影响</th>
+</tr>
+</thead><tbody><tr>
+<td>2009</td>
+<td>CVE-2009-0927</td>
+<td>Acrobat JS heap overflow，远程代码执行</td>
+</tr>
+<tr>
+<td>2010</td>
+<td>CVE-2010-0188</td>
+<td>TIFF 解析 + JS 组合攻击</td>
+</tr>
+<tr>
+<td>2013</td>
+<td>CVE-2013-0640</td>
+<td>Acrobat 沙箱逃逸</td>
+</tr>
+<tr>
+<td>2018</td>
+<td>CVE-2018-4990</td>
+<td>Acrobat JS UAF 漏洞</td>
+</tr>
+<tr>
+<td>2023</td>
+<td>CVE-2023-26369</td>
+<td>Acrobat out-of-bounds write</td>
+</tr>
+</tbody></table></div>
+<p>这就是为什么安全专家建议：<strong>不要用 Adobe Acrobat 打开来源不明的 PDF</strong>。用浏览器（有额外沙箱层）或 Sumatra（根本不执行 JS）更安全。</p>
+<hr>
+<h2 id="72-表单系统">7.2 表单系统</h2>
+<h3 id="721-acroformpdf-原生表单">7.2.1 AcroForm：PDF 原生表单</h3>
+<p>PDF 1.2 引入了 <strong>AcroForm</strong>——一套内置的交互式表单系统。表单字段直接嵌入在 PDF 对象结构中：</p>
+<pre><code>&lt;&lt; /Type /Annot
+   /Subtype /Widget
+   /FT /Tx                    % 文本输入框
+   /T (username)              % 字段名
+   /V (John Doe)              % 当前值
+   /Rect [100 700 300 720]    % 位置和大小
+   /DA (/Helvetica 12 Tf 0 g)  % 默认外观
+&gt;&gt;</code></pre>
+<p>支持的字段类型：</p>
+<ul>
+<li><code>/Tx</code> — 文本框（单行/多行）</li>
+<li><code>/Btn</code> — 按钮（普通按钮/复选框/单选框）</li>
+<li><code>/Ch</code> — 选择框（下拉/列表）</li>
+<li><code>/Sig</code> — 数字签名框</li>
+</ul>
+<p>AcroForm 的优势是简单且所有 PDF 阅读器都支持。缺点是布局能力有限——字段的位置和大小是固定的坐标值，不能响应式适配。</p>
+<h3 id="722-xfaadobe-的quot重型quot表单">7.2.2 XFA：Adobe 的&quot;重型&quot;表单</h3>
+<p>**XFA（XML Forms Architecture）**是 Adobe 在 2003 年推出的另一套表单系统——比 AcroForm 强大得多，但也复杂得多。</p>
+<p>XFA 用 XML 描述表单结构，支持：</p>
+<ul>
+<li>动态布局（字段可以根据内容自动扩展）</li>
+<li>复杂的数据绑定（从 XML 数据源填充表单）</li>
+<li>子表单和重复区域（比如发票中的行项目可以动态添加）</li>
+<li>条件逻辑（根据一个字段的值显示/隐藏其他字段）</li>
+</ul>
+<p>但 XFA 的问题：</p>
+<ol>
+<li><strong>只有 Acrobat 完整支持</strong>：其他阅读器（包括 Chrome、Firefox、Sumatra）不支持或仅部分支持</li>
+<li><strong>PDF 2.0 已弃用 XFA</strong>：ISO 在 PDF 2.0 规范中移除了 XFA，宣告其终结</li>
+<li><strong>安全性差</strong>：XFA 的复杂性带来了大量攻击面</li>
+</ol>
+<p>尽管被弃用，大量政府和企业表单仍然使用 XFA 格式——因为它们是十年前创建的，没有人愿意花钱重做。</p>
+<h3 id="723-为什么政府至今离不开-pdf-表单">7.2.3 为什么政府至今离不开 PDF 表单</h3>
+<p>税务申报、签证申请、法院文件、医疗记录……全世界的官僚机构都依赖 PDF 表单。原因是：</p>
+<ol>
+<li><strong>格式固定</strong>：一份表单的布局不会因为接收端的软件版本而改变。政府需要标准化的纸面格式。</li>
+<li><strong>可打印</strong>：填完表单后可以直接打印，格式和空白表单完全对齐。</li>
+<li><strong>数字签名</strong>：PDF 支持符合法律效力的数字签名，很多国家的电子签名法认可 PDF 签名。</li>
+<li><strong>离线使用</strong>：不依赖网络连接，这在很多场景下仍然必要。</li>
+<li><strong>存档可靠</strong>：PDF/A 标准保证文件在几十年后仍能正确打开。</li>
+</ol>
+<p>Web 表单（HTML form）虽然更现代、更友好，但在法律、存档和离线等维度上仍然无法完全替代 PDF 表单。</p>
+<hr>
+<h2 id="73-数字签名">7.3 数字签名</h2>
+<h3 id="731-pdf-签名的原理">7.3.1 PDF 签名的原理</h3>
+<p>PDF 数字签名的核心是 **PKCS#7（CMS）**格式的加密签名，嵌入在一个签名字段中：</p>
+<pre><code>签名流程：
+1. 计算 PDF 文件特定字节范围的哈希（SHA-256）
+2. 用签名者的私钥加密该哈希 → 得到签名值
+3. 把签名值 + 签名者证书 + 时间戳嵌入 PDF</code></pre>
+<p>验证流程：</p>
+<pre><code>1. 用签名者的公钥（从证书中提取）解密签名值 → 得到原始哈希
+2. 重新计算同一字节范围的哈希
+3. 比较两个哈希——一致则签名有效
+4. 验证证书链：签名者证书 → 中间 CA → 根 CA
+5. 检查证书是否已被吊销（CRL/OCSP）</code></pre>
+<h3 id="732-增量保存与签名的配合">7.3.2 增量保存与签名的配合</h3>
+<p>还记得上一章讲的增量保存吗？它和数字签名配合得很好：</p>
+<p>签名覆盖的字节范围是原文件内容（不包括签名值本身的占位空间）。之后的增量保存追加在文件末尾，不改变已签名的区域。这意味着：</p>
+<ul>
+<li><strong>签名后可以追加注释/填表</strong>：新内容在增量更新中，不影响签名有效性</li>
+<li><strong>修改已签名区域会使签名失效</strong>：阅读器会警告&quot;文档在签名后被修改&quot;</li>
+</ul>
+<p>但这也带来了&quot;Shadow Attack&quot;风险——攻击者可以在签名前就埋入隐藏内容（通过增量保存覆盖显示），签名后再通过删除增量来&quot;揭露&quot;隐藏内容，而签名仍然显示有效。2020 年的研究表明主流 PDF 阅读器中有多个存在此类漏洞。</p>
+<h3 id="733-法律效力">7.3.3 法律效力</h3>
+<p>不同国家/地区对 PDF 数字签名的法律认可程度不同：</p>
+<ul>
+<li><strong>欧盟 eIDAS 法规</strong>：认可&quot;高级电子签名（AdES）&quot;和&quot;合格电子签名（QES）&quot;，PDF 签名可以满足</li>
+<li><strong>美国 ESIGN Act</strong>：广泛认可电子签名，但不要求特定技术格式</li>
+<li><strong>中国《电子签名法》</strong>：认可可靠的电子签名，PDF 签名在实践中被广泛使用</li>
+</ul>
+<hr>
+<h2 id="74-加密与权限控制">7.4 加密与权限控制</h2>
+<h3 id="741-pdf-加密的两种密码">7.4.1 PDF 加密的两种密码</h3>
+<p>PDF 文件可以设置两种密码：</p>
+<ul>
+<li><strong>User Password（用户密码）</strong>：打开文件必须输入的密码。不知道密码就无法查看内容。</li>
+<li><strong>Owner Password（所有者密码）</strong>：控制权限的密码。没有它就不能打印、复制文字、编辑等。</li>
+</ul>
+<p>权限控制的种类：</p>
+<pre><code>/P -3904    % 权限标志（位掩码）</code></pre>
+<div class="table-wrap"><table><thead><tr>
+<th>权限位</th>
+<th>控制内容</th>
+</tr>
+</thead><tbody><tr>
+<td>bit 3</td>
+<td>打印</td>
+</tr>
+<tr>
+<td>bit 4</td>
+<td>修改内容</td>
+</tr>
+<tr>
+<td>bit 5</td>
+<td>提取文字/图片</td>
+</tr>
+<tr>
+<td>bit 6</td>
+<td>添加/修改注释和表单</td>
+</tr>
+<tr>
+<td>bit 9</td>
+<td>填写表单</td>
+</tr>
+<tr>
+<td>bit 10</td>
+<td>无障碍提取（屏幕阅读器）</td>
+</tr>
+<tr>
+<td>bit 11</td>
+<td>组装文档（插入/删除页面）</td>
+</tr>
+<tr>
+<td>bit 12</td>
+<td>高质量打印</td>
+</tr>
+</tbody></table></div>
+<h3 id="742-加密算法的演进">7.4.2 加密算法的演进</h3>
+<div class="table-wrap"><table><thead><tr>
+<th>PDF 版本</th>
+<th>算法</th>
+<th>密钥长度</th>
+<th>安全性（2026 年）</th>
+</tr>
+</thead><tbody><tr>
+<td>1.1-1.3</td>
+<td>RC4</td>
+<td>40 bit</td>
+<td>❌ 秒破</td>
+</tr>
+<tr>
+<td>1.4</td>
+<td>RC4</td>
+<td>128 bit</td>
+<td>⚠️ 已不推荐</td>
+</tr>
+<tr>
+<td>1.5</td>
+<td>RC4</td>
+<td>128 bit</td>
+<td>⚠️ 已不推荐</td>
+</tr>
+<tr>
+<td>1.6</td>
+<td>AES</td>
+<td>128 bit</td>
+<td>✓ 尚可</td>
+</tr>
+<tr>
+<td>1.7+</td>
+<td>AES</td>
+<td>256 bit</td>
+<td>✓ 安全</td>
+</tr>
+<tr>
+<td>2.0</td>
+<td>AES-256 (ISO 32000-2)</td>
+<td>256 bit</td>
+<td>✓ 安全</td>
+</tr>
+</tbody></table></div>
+<p>重要的现实：<strong>Owner Password 只是一个&quot;君子协定&quot;</strong>。技术上，PDF 内容必须能被解密才能渲染——所以加密密钥实际上嵌入在文件中（用一定方式混淆）。有 Owner Password 保护但没有 User Password 的 PDF，其内容对任何有技术能力的人来说是完全可读的。很多开源工具（如 <code>qpdf</code>）可以直接去除 Owner Password 限制。</p>
+<pre data-label="bash"><code class="language-bash"># 去除 PDF 的限制（如果没有 User Password）
+qpdf --decrypt protected.pdf unlocked.pdf</code></pre>
+<p>User Password 则不同——它直接参与加密密钥的推导。不知道密码就真的无法解密内容（假设使用了 AES-256）。</p>
+<hr>
+<h2 id="75-pdf-安全攻击简史">7.5 PDF 安全攻击简史</h2>
+<h3 id="751-pdf-作为攻击载体">7.5.1 PDF 作为攻击载体</h3>
+<p>PDF 是恶意软件最常用的载体之一。原因：</p>
+<ol>
+<li><strong>格式复杂</strong>：规范 1000+ 页，实现中必然有 bug</li>
+<li><strong>功能丰富</strong>：JS 引擎、字体解析、图片解码——每个都是独立的攻击面</li>
+<li><strong>用户信任</strong>：人们不像对 .exe 那样警惕 .pdf 文件</li>
+<li><strong>商业目标</strong>：企业和政府大量使用 PDF，攻击者的投入回报率高</li>
+</ol>
+<h3 id="752-经典攻击类型">7.5.2 经典攻击类型</h3>
+<p><strong>1. JavaScript 攻击</strong></p>
+<pre data-label="javascript"><code class="language-javascript">// 恶意 PDF 中的 JS（简化示例）
+var shellcode = unescape("%u9090%u9090...");
+var spray = "";
+while (spray.length &lt; 0x40000) spray += shellcode;
+// 触发堆溢出漏洞，跳转到 shellcode</code></pre>
+<p>通过 JS 精确控制内存布局（堆喷射），再触发渲染引擎的某个漏洞来获得代码执行。</p>
+<p><strong>2. 字体解析漏洞</strong></p>
+<p>字体文件（尤其是 Type 1 和 CFF）的解析器代码复杂且古老。畸形的字体数据可以触发缓冲区溢出。</p>
+<p><strong>3. 图片解码漏洞</strong></p>
+<p>JBIG2、JPEG 2000 等图片格式的解码器中的漏洞。2021 年 Apple 的 FORCEDENTRY 零点击漏洞就利用了 CoreGraphics 中的 JBIG2 解析器——恶意 PDF 通过 iMessage 发送，无需用户交互即可入侵 iPhone。</p>
+<p><strong>4. 行为攻击（无需漏洞）</strong></p>
+<ul>
+<li>自动打开嵌入的附件（如 .exe）</li>
+<li>通过 <code>/URI</code> 动作自动访问恶意 URL</li>
+<li>利用表单提交（<code>/SubmitForm</code>）把数据外传</li>
+<li>利用 <code>/Launch</code> 动作尝试执行本地程序</li>
+</ul>
+<h3 id="753-防护措施">7.5.3 防护措施</h3>
+<p>现代 PDF 阅读器的安全策略：</p>
+<div class="table-wrap"><table><thead><tr>
+<th>阅读器</th>
+<th>策略</th>
+</tr>
+</thead><tbody><tr>
+<td>Chrome PDFium</td>
+<td>运行在独立沙箱进程中，几乎无法逃逸</td>
+</tr>
+<tr>
+<td>Firefox PDF.js</td>
+<td>JS 实现 → 无原生代码漏洞，天然安全</td>
+</tr>
+<tr>
+<td>Adobe Acrobat</td>
+<td>Protected Mode 沙箱 + 禁止自动执行高危操作</td>
+</tr>
+<tr>
+<td>Sumatra</td>
+<td>不执行 JS、不支持表单提交、不加载外部资源</td>
+</tr>
+</tbody></table></div>
+<p>最安全的做法：<strong>用浏览器打开不信任的 PDF</strong>。浏览器的沙箱是经过十几年安全对抗锤炼出来的，比 PDF 阅读器的沙箱成熟得多。</p>
+<hr>
+<h2 id="76-pdfa为永久保存而设计">7.6 PDF/A：为永久保存而设计</h2>
+<h3 id="761-什么是-pdfa">7.6.1 什么是 PDF/A</h3>
+<p>PDF/A 是 PDF 的<strong>存档子集</strong>（A = Archive）。它限制了 PDF 的功能，确保文件在几十年后仍然能被正确打开和渲染：</p>
+<p><strong>PDF/A 禁止的特性：</strong></p>
+<ul>
+<li>❌ JavaScript</li>
+<li>❌ 外部引用（所有资源必须嵌入）</li>
+<li>❌ 加密</li>
+<li>❌ 音频/视频</li>
+<li>❌ 透明度（PDF/A-1）或受限使用（PDF/A-2+）</li>
+<li>❌ 非嵌入字体</li>
+</ul>
+<p><strong>PDF/A 要求的特性：</strong></p>
+<ul>
+<li>✓ 所有字体必须嵌入</li>
+<li>✓ 必须包含 ICC 色彩配置文件</li>
+<li>✓ 必须包含 XMP 元数据</li>
+<li>✓ 必须声明 PDF/A 合规性标识</li>
+</ul>
+<h3 id="762-pdfa-的级别">7.6.2 PDF/A 的级别</h3>
+<div class="table-wrap"><table><thead><tr>
+<th>级别</th>
+<th>基于</th>
+<th>关键限制/改进</th>
+</tr>
+</thead><tbody><tr>
+<td>PDF/A-1a</td>
+<td>PDF 1.4</td>
+<td>完整 Tagged + Unicode 映射</td>
+</tr>
+<tr>
+<td>PDF/A-1b</td>
+<td>PDF 1.4</td>
+<td>仅视觉保真（无结构要求）</td>
+</tr>
+<tr>
+<td>PDF/A-2a/b/u</td>
+<td>PDF 1.7</td>
+<td>允许 JPEG 2000、透明度、层</td>
+</tr>
+<tr>
+<td>PDF/A-3a/b/u</td>
+<td>PDF 1.7</td>
+<td>允许嵌入任意文件附件</td>
+</tr>
+<tr>
+<td>PDF/A-4</td>
+<td>PDF 2.0</td>
+<td>最新版本，简化合规级别</td>
+</tr>
+</tbody></table></div>
+<p>图书馆、档案馆、法院、医院——所有需要长期保存文档的机构都使用 PDF/A。德国法律要求电子发票以 PDF/A-3 格式存档（ZUGFeRD 标准）。</p>
+
+    <nav class="pager">  <a href="06-creation.html">
+    <span class="label">← 上一章</span>
+    <span class="title">生成一份 PDF 有多少种路径</span>
+  </a>  <a href="08-ocr.html" class="next">
+    <span class="label">下一章 →</span>
+    <span class="title">OCR、扫描件与文字层</span>
+  </a></nav>
+  </article>
+</div>
+
+<footer>
+  <div class="set">
+    <span>PDF：最熟悉的陌生人</span>
+    <span>2026 · ZH-CN</span>
+  </div>
+  <div class="set">
+    <span>Mav</span>
+  </div>
+</footer>
+<div class="search-backdrop" id="search-overlay" role="dialog" aria-modal="true" aria-label="搜索" hidden>
+  <div class="search-modal">
+    <div class="search-input-wrap">
+      <input type="search" class="search-input" placeholder="搜索内容..." aria-label="搜索内容" autocomplete="off">
+      <kbd>ESC</kbd>
+    </div>
+    <div class="search-results" role="listbox" aria-label="搜索结果"></div>
+  </div>
+</div>
+
+<!-- Side Panel -->
+<div class="side-panel" id="side-panel">
+  <div class="side-panel-resize" id="side-panel-resize"></div>
+  <div class="side-panel-header">
+    <div class="side-panel-tabs">
+      <button class="side-panel-tab active" data-mode="sidenote">补充</button>
+      <button class="side-panel-tab" data-mode="notepad">笔记</button>
+    </div>
+    <button class="side-panel-close" aria-label="关闭">×</button>
+  </div>
+  <div class="side-panel-body"></div>
+</div>
+<button class="notepad-fab" id="notepad-fab" aria-label="便利贴">✎</button>
+
+<!-- Mobile TOC -->
+<button class="mtoc-fab" id="mtoc-fab" aria-label="目录">TOC</button>
+<div class="mtoc-drawer" id="mtoc-drawer">
+  <div class="mtoc-content"></div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/bash.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/typescript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/yaml.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/javascript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/json.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/python.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/css.min.js"></script>
+<script src="../assets/script.js"></script>
+</body>
+</html>

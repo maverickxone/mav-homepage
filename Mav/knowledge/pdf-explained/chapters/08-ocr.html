@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OCR、扫描件与文字层 — PDF：最熟悉的陌生人</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" id="hljs-light" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+<link rel="stylesheet" id="hljs-dark" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" media="not all">
+</head>
+<body>
+
+<div class="progress-bar" id="progress-bar"></div>
+
+<nav class="topnav" id="topnav">
+  <div class="topnav-inner">
+    <a class="brand" href="../index.html">PDF：最熟悉的陌生人</a>
+    <div class="nav-links">
+      <a href="01-history.html">01</a>
+      <a href="02-internal-structure.html">02</a>
+      <a href="03-rendering-model.html">03</a>
+      <a href="04-fonts.html">04</a>
+      <a href="05-readers.html">05</a>
+      <a href="06-creation.html">06</a>
+      <a href="07-interactive.html">07</a>
+      <a href="08-ocr.html" class="active">08</a>
+      <a href="09-ai-and-pdf.html">09</a>
+    </div>
+    <div class="nav-controls">
+      <button class="nav-btn" id="search-btn" aria-label="搜索 (Ctrl+K)">⌘K</button>
+      <button class="nav-btn" id="settings-btn" aria-label="阅读设置">Aa</button>
+      <a class="nav-btn" href="../../index.html" aria-label="返回知识库">← 知识库</a>
+      <a class="nav-btn" href="https://github.com/maverickxone/mav-homepage" target="_blank" rel="noopener" aria-label="GitHub" style="padding: 6px 8px;"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg></a>
+    </div>
+  </div>
+</nav>
+<div class="settings-pop" id="settings-pop">
+  <h5>主题</h5>
+  <div class="row">
+    <button class="seg" data-theme-set="light">明亮</button>
+    <button class="seg" data-theme-set="dark">暗色</button>
+  </div>
+  <h5>字号</h5>
+  <div class="row">
+    <button class="seg" data-size-set="s">小</button>
+    <button class="seg" data-size-set="m">中</button>
+    <button class="seg" data-size-set="l">大</button>
+  </div>
+</div>
+
+<div class="with-sidebar">
+  <aside class="sidebar">
+  <div class="chapter-num">CHAPTER 08</div>
+  <div class="chapter-name">OCR、扫描件与文字层</div>
+  <h4>目录</h4>
+  <ul>
+    <li><a href="#81-三种quotpdfquot你以为的-vs-实际的">8.1 三种&quot;PDF&quot;：你以为的 vs 实际的</a></li>
+    <li><a href="#82-ocr-的原理">8.2 OCR 的原理</a></li>
+    <li><a href="#83-ocr-增强-pdf给图片加上quot隐形文字quot">8.3 OCR 增强 PDF：给图片加上&quot;隐形文字&quot;</a></li>
+    <li><a href="#84-图片-pdf-的压缩策略">8.4 图片 PDF 的压缩策略</a></li>
+    <li><a href="#85-扫描质量对-ocr-的影响">8.5 扫描质量对 OCR 的影响</a></li>
+    <li><a href="#86-判断一份-pdf-是否有文字层">8.6 判断一份 PDF 是否有文字层</a></li>
+  </ul>
+</aside>
+  <article class="chapter-body">
+    <header class="chapter-head">
+  <div class="chapter-head-meta">
+    <span class="num">CHAPTER 08</span>
+    <span>≈ 18 MIN READ</span>
+  </div>
+  <h1>OCR、扫描件与文字层</h1>
+
+</header>
+    <h2 id="81-三种quotpdfquot你以为的-vs-实际的">8.1 三种&quot;PDF&quot;：你以为的 vs 实际的</h2>
+<h3 id="811-从外观看不出区别">8.1.1 从外观看不出区别</h3>
+<p>打开两份 PDF，肉眼看去完全一样——都是一页白纸上的黑字。但如果你尝试 Ctrl+A 全选文字：</p>
+<ul>
+<li><strong>A 号文件</strong>：所有文字被选中，可以复制粘贴</li>
+<li><strong>B 号文件</strong>：什么都选不中，或者光标根本不跟随文字</li>
+</ul>
+<p>这两份 PDF 的内部结构完全不同：</p>
+<div class="table-wrap"><table><thead><tr>
+<th>类型</th>
+<th>内部结构</th>
+<th>可搜索</th>
+<th>可复制</th>
+<th>典型来源</th>
+</tr>
+</thead><tbody><tr>
+<td>原生文字 PDF</td>
+<td>内容流有文字绘图指令</td>
+<td>✓</td>
+<td>✓</td>
+<td>Word/LaTeX/Typst 导出</td>
+</tr>
+<tr>
+<td>图片 PDF</td>
+<td>每页就是一张大图片</td>
+<td>✗</td>
+<td>✗</td>
+<td>扫描仪直出</td>
+</tr>
+<tr>
+<td>OCR 增强 PDF</td>
+<td>图片底层 + 透明文字层</td>
+<td>✓</td>
+<td>✓</td>
+<td>OCR 处理后</td>
+</tr>
+</tbody></table></div>
+<h3 id="812-图片-pdf-的内部长什么样">8.1.2 图片 PDF 的内部长什么样</h3>
+<p>一份扫描件 PDF 的页面对象通常极其简单：</p>
+<pre><code>% 页面内容流
+q
+595.276 0 0 841.89 0 0 cm    % 变换矩阵：把图片拉伸到整个页面
+/Im1 Do                       % 画图片对象 Im1
+Q</code></pre>
+<p>就这么三行。整页内容就是&quot;画一张图&quot;。没有文字操作符（<code>BT</code>/<code>ET</code>/<code>Tj</code>），没有字体对象，没有 CMap。</p>
+<p>图片对象本身是一个巨大的 stream：</p>
+<pre><code>&lt;&lt; /Type /XObject
+   /Subtype /Image
+   /Width 2480
+   /Height 3508
+   /ColorSpace /DeviceGray
+   /BitsPerComponent 8
+   /Filter /DCTDecode      % JPEG 压缩
+   /Length 185432
+&gt;&gt;
+stream
+[185432 字节的 JPEG 数据]
+endstream</code></pre>
+<p>2480×3508 像素，正好是 300 DPI 下 A4 纸的扫描分辨率。</p>
+<hr>
+<h2 id="82-ocr-的原理">8.2 OCR 的原理</h2>
+<h3 id="821-什么是-ocr">8.2.1 什么是 OCR</h3>
+<p><strong>OCR（Optical Character Recognition，光学字符识别）</strong>——让计算机&quot;看&quot;图片中的文字，识别出对应的字符。</p>
+<p>OCR 的基本流程：</p>
+<pre><code>图像输入 → 预处理 → 文字检测 → 字符分割 → 字符识别 → 后处理</code></pre>
+<ol>
+<li><strong>预处理</strong>：去噪、二值化、倾斜校正、去除边框/水印</li>
+<li><strong>文字检测</strong>：找到图片中哪些区域有文字（区分文字/图表/空白）</li>
+<li><strong>字符分割</strong>：把文字区域切分成单个字符（或词）</li>
+<li><strong>字符识别</strong>：对每个字符分类（这是&quot;A&quot;还是&quot;B&quot;还是&quot;人&quot;还是&quot;大&quot;？）</li>
+<li><strong>后处理</strong>：利用语言模型纠正识别错误（&quot;teh&quot; → &quot;the&quot;）</li>
+</ol>
+<h3 id="822-现代-ocr-引擎">8.2.2 现代 OCR 引擎</h3>
+<div class="table-wrap"><table><thead><tr>
+<th>引擎</th>
+<th>类型</th>
+<th>精度</th>
+<th>速度</th>
+<th>中文支持</th>
+</tr>
+</thead><tbody><tr>
+<td>Tesseract 5</td>
+<td>开源（Google 维护）</td>
+<td>★★★★☆</td>
+<td>★★★☆☆</td>
+<td>✓</td>
+</tr>
+<tr>
+<td>PaddleOCR</td>
+<td>开源（百度）</td>
+<td>★★★★★</td>
+<td>★★★★☆</td>
+<td>★★★★★</td>
+</tr>
+<tr>
+<td>Google Cloud Vision</td>
+<td>云服务</td>
+<td>★★★★★</td>
+<td>★★★★★</td>
+<td>★★★★★</td>
+</tr>
+<tr>
+<td>Azure AI Vision</td>
+<td>云服务</td>
+<td>★★★★★</td>
+<td>★★★★☆</td>
+<td>★★★★☆</td>
+</tr>
+<tr>
+<td>ABBYY FineReader</td>
+<td>商业软件</td>
+<td>★★★★★</td>
+<td>★★★☆☆</td>
+<td>★★★★☆</td>
+</tr>
+</tbody></table></div>
+<p>现代 OCR 的核心模型是基于深度学习的——Tesseract 5 使用 LSTM 网络，PaddleOCR 使用 CRNN + Attention 架构。在清晰印刷体上，识别率可以达到 99%+。</p>
+<p>但对于手写体、低质量扫描、复杂版面（多栏、表格、公式混排），精度仍然是一个挑战。</p>
+<h3 id="823-一段-ocr-的实际代码">8.2.3 一段 OCR 的实际代码</h3>
+<p>用 Tesseract 处理一张图片：</p>
+<pre data-label="python"><code class="language-python">import pytesseract
+from PIL import Image
+
+# 加载图片
+img = Image.open("scanned_page.png")
+
+# 识别文字
+text = pytesseract.image_to_string(img, lang='chi_sim+eng')
+print(text)
+
+# 获取详细信息（每个字的位置和置信度）
+data = pytesseract.image_to_data(img, lang='chi_sim+eng', 
+                                  output_type=pytesseract.Output.DICT)
+
+for i in range(len(data['text'])):
+    if data['conf'][i] &gt; 60:  # 置信度 &gt; 60%
+        print(f"'{data['text'][i]}' at ({data['left'][i]}, {data['top'][i]}) "
+              f"conf={data['conf'][i]}%")</code></pre>
+<p>输出的关键信息：<strong>文字内容 + 位置坐标 + 置信度</strong>。这三样东西正好是生成 OCR PDF 文字层所需的。</p>
+<hr>
+<h2 id="83-ocr-增强-pdf给图片加上quot隐形文字quot">8.3 OCR 增强 PDF：给图片加上&quot;隐形文字&quot;</h2>
+<h3 id="831-文字层的原理">8.3.1 文字层的原理</h3>
+<p>OCR 增强 PDF 的核心思想：<strong>在扫描图片上方叠加一层透明的文字</strong>。</p>
+<pre><code>页面结构：
+┌─────────────────────────┐
+│  透明文字层（可搜索）    │  ← 用户 Ctrl+F 搜索的目标
+│  ┌───────────────────┐  │
+│  │  扫描图片（可见）  │  │  ← 用户实际"看到"的内容
+│  └───────────────────┘  │
+└─────────────────────────┘</code></pre>
+<p>内容流的结构：</p>
+<pre><code>% 先画图片（底层）
+q
+595.276 0 0 841.89 0 0 cm
+/Im1 Do
+Q
+
+% 再画透明文字（上层）
+BT
+3 Tr                          % Text Rendering Mode 3 = 不可见
+/F1 12 Tf
+72.5 750.3 Td
+(This is the recognized text) Tj
+ET</code></pre>
+<p>关键是 <code>3 Tr</code>——<strong>Text Rendering Mode 3</strong> 表示&quot;既不填充也不描边&quot;，即文字完全不可见。但它在逻辑上存在于那个坐标位置，所以搜索和选择都能命中。</p>
+<h3 id="832-为什么-ocr-层的位置必须精确">8.3.2 为什么 OCR 层的位置必须精确</h3>
+<p>如果 OCR 识别出 &quot;Hello&quot; 在图片中的位置是 (150, 200) 到 (250, 220)，那么文字层中的 &quot;Hello&quot; 也必须精确放在同样的坐标范围。否则：</p>
+<ul>
+<li>用户拖动选择文字时，高亮区域和实际文字不对齐</li>
+<li>复制出来的文字顺序可能混乱</li>
+<li>搜索定位后跳转到错误的位置</li>
+</ul>
+<p>好的 OCR 工具会为每个词精确计算字号和字间距，让透明文字的边界和图片中的文字完全重合。</p>
+<h3 id="833-用-ocrmypdf-给扫描件添加文字层">8.3.3 用 ocrmypdf 给扫描件添加文字层</h3>
+<pre data-label="bash"><code class="language-bash"># 安装
+pip install ocrmypdf
+
+# 基本用法：给扫描 PDF 加 OCR 文字层
+ocrmypdf input_scan.pdf output_searchable.pdf
+
+# 指定语言（中文简体 + 英文）
+ocrmypdf -l chi_sim+eng input.pdf output.pdf
+
+# 跳过已有文字的页面（混合文档）
+ocrmypdf --skip-text input.pdf output.pdf
+
+# 生成 PDF/A 存档格式
+ocrmypdf --output-type pdfa input.pdf output.pdf
+
+# 自动校正倾斜扫描
+ocrmypdf --deskew --clean input.pdf output.pdf</code></pre>
+<p><code>ocrmypdf</code> 内部调用 Tesseract 做 OCR，然后用 <code>pikepdf</code>/<code>reportlab</code> 在 PDF 中精确放置透明文字层。它是目前开源 OCR PDF 方案中最成熟的。</p>
+<hr>
+<h2 id="84-图片-pdf-的压缩策略">8.4 图片 PDF 的压缩策略</h2>
+<h3 id="841-扫描件为什么那么大">8.4.1 扫描件为什么那么大</h3>
+<p>一张 300 DPI 的 A4 灰度扫描件：</p>
+<ul>
+<li>原始尺寸：2480 × 3508 × 8 bit = <strong>8.3 MB</strong></li>
+<li>一本 200 页的书：<strong>1.66 GB</strong></li>
+</ul>
+<p>显然不能这样存储。不同的压缩方案：</p>
+<div class="table-wrap"><table><thead><tr>
+<th>压缩方式</th>
+<th>压缩率（灰度文字页）</th>
+<th>适用场景</th>
+</tr>
+</thead><tbody><tr>
+<td>JPEG (DCTDecode)</td>
+<td>~10:1 → 800KB/页</td>
+<td>照片、彩色文档</td>
+</tr>
+<tr>
+<td>JPEG 2000 (JPXDecode)</td>
+<td>~15:1 → 550KB/页</td>
+<td>高质量要求</td>
+</tr>
+<tr>
+<td>JBIG2</td>
+<td>~50:1 → 160KB/页</td>
+<td>黑白文字扫描件</td>
+</tr>
+<tr>
+<td>CCITT Group 4</td>
+<td>~20:1 → 400KB/页</td>
+<td>传真、简单黑白</td>
+</tr>
+<tr>
+<td>Deflate + PNG pred.</td>
+<td>~5:1 → 1.6MB/页</td>
+<td>无损要求</td>
+</tr>
+</tbody></table></div>
+<h3 id="842-jbig2极致压缩的代价">8.4.2 JBIG2：极致压缩的代价</h3>
+<p>JBIG2 是专为黑白文档设计的压缩算法，其原理极其聪明：</p>
+<ol>
+<li><strong>符号字典</strong>：扫描页面中所有字符形状，把相似的归为一类。比如页面中出现了 50 个 &quot;e&quot;，形状略有不同（扫描噪声），但 JBIG2 只存储一个&quot;代表 e&quot;的模板。</li>
+<li><strong>替换编码</strong>：把页面中每个字符替换为&quot;字典中的第 N 个模板，放在坐标 (x,y)&quot;。</li>
+<li><strong>残差编码</strong>：如果某个字符和模板差异较大，可以存储差异（有损 JBIG2 会跳过这步）。</li>
+</ol>
+<p>有损 JBIG2 的压缩率惊人（50:1 甚至更高），但有一个著名的问题：<strong>它可能改变文字内容</strong>。</p>
+<p>2013 年发现的案例：某 Xerox 复印机使用有损 JBIG2 压缩扫描件，把文档中的 &quot;6&quot; 替换成了 &quot;8&quot;（因为这两个字符的扫描图像被判定为&quot;足够相似&quot;而归入同一类）。在建筑蓝图的尺寸标注中，这种错误可能导致严重后果。</p>
+<h3 id="843-混合分层压缩mrc">8.4.3 混合分层压缩（MRC）</h3>
+<p>高级扫描仪和 OCR 软件使用 **MRC（Mixed Raster Content）**分层压缩——和 DjVu 的思想相同：</p>
+<pre><code>前景层（文字/线条）：JBIG2 或 CCITT，1-bit，高分辨率
+背景层（图片/底色）：JPEG，低分辨率
+蒙版层：决定哪些像素来自前景、哪些来自背景</code></pre>
+<p>一页彩色杂志用 MRC 压缩后：文字锐利（来自高分辨率前景层），照片平滑（来自低分辨率背景层），总文件大小只有 JPEG 的 1/3。</p>
+<hr>
+<h2 id="85-扫描质量对-ocr-的影响">8.5 扫描质量对 OCR 的影响</h2>
+<h3 id="851-dpi-与识别率">8.5.1 DPI 与识别率</h3>
+<div class="table-wrap"><table><thead><tr>
+<th>扫描 DPI</th>
+<th>英文识别率</th>
+<th>中文识别率</th>
+<th>文件大小（灰度 A4）</th>
+</tr>
+</thead><tbody><tr>
+<td>100</td>
+<td>~85%</td>
+<td>~70%</td>
+<td>~120 KB (JPEG)</td>
+</tr>
+<tr>
+<td>150</td>
+<td>~92%</td>
+<td>~82%</td>
+<td>~200 KB</td>
+</tr>
+<tr>
+<td>200</td>
+<td>~96%</td>
+<td>~90%</td>
+<td>~350 KB</td>
+</tr>
+<tr>
+<td>300</td>
+<td>~99%</td>
+<td>~96%</td>
+<td>~800 KB</td>
+</tr>
+<tr>
+<td>600</td>
+<td>~99.5%</td>
+<td>~98%</td>
+<td>~3 MB</td>
+</tr>
+</tbody></table></div>
+<p>300 DPI 是 OCR 的甜蜜点——再高收益递减，但文件急剧膨胀。</p>
+<h3 id="852-常见的扫描问题及影响">8.5.2 常见的扫描问题及影响</h3>
+<div class="table-wrap"><table><thead><tr>
+<th>问题</th>
+<th>对 OCR 的影响</th>
+<th>解决方案</th>
+</tr>
+</thead><tbody><tr>
+<td>倾斜</td>
+<td>行检测失败</td>
+<td>自动 deskew（倾斜校正）</td>
+</tr>
+<tr>
+<td>噪点（椒盐噪声）</td>
+<td>误识别小点为标点</td>
+<td>去噪滤波</td>
+</tr>
+<tr>
+<td>透页（背面文字透过来）</td>
+<td>干扰前景文字识别</td>
+<td>二值化阈值调整</td>
+</tr>
+<tr>
+<td>曲面失真（书脊处弯曲）</td>
+<td>字符变形</td>
+<td>dewarping（去翘曲）</td>
+</tr>
+<tr>
+<td>低对比度（复印件的复印件）</td>
+<td>整体识别率下降</td>
+<td>对比度增强</td>
+</tr>
+<tr>
+<td>手写标注覆盖印刷文字</td>
+<td>无法区分两层</td>
+<td>较难处理</td>
+</tr>
+</tbody></table></div>
+<h3 id="853-一个有趣的数据">8.5.3 一个有趣的数据</h3>
+<p>Google Books 项目扫描了超过 4000 万本书。他们使用的扫描设备分辨率为 400-600 DPI，配合自研的 OCR 引擎。据估计，对于质量好的印刷书籍，他们的字符级准确率超过 99.9%——这意味着每 1000 个字还是可能有 1 个错误。</p>
+<p>一本 10 万字的书，可能有 100 个 OCR 错误散布其中。对于人类读者来说几乎不影响理解（大脑会自动纠错），但对于精确性要求高的场景（法律文献、学术引用），这些错误可能是不可接受的。</p>
+<hr>
+<h2 id="86-判断一份-pdf-是否有文字层">8.6 判断一份 PDF 是否有文字层</h2>
+<h3 id="861-快速判断方法">8.6.1 快速判断方法</h3>
+<pre data-label="python"><code class="language-python">import fitz  # PyMuPDF
+
+doc = fitz.open("unknown.pdf")
+page = doc[0]
+
+# 提取文字
+text = page.get_text()
+
+if len(text.strip()) &lt; 10:
+    print("这一页可能是纯图片（无文字层）")
+else:
+    print(f"有文字层，提取到 {len(text)} 个字符")
+    
+# 检查页面中的图片
+images = page.get_images()
+print(f"页面包含 {len(images)} 张图片")
+
+# 如果有 1 张占满页面的大图 + 几乎无文字 → 纯扫描件
+# 如果有 1 张大图 + 有文字 → OCR 增强 PDF
+# 如果无大图 + 有文字 → 原生文字 PDF</code></pre>
+<h3 id="862-命令行工具">8.6.2 命令行工具</h3>
+<pre data-label="bash"><code class="language-bash"># 用 pdftotext 提取文字，看输出是否为空
+pdftotext document.pdf - | head -20
+
+# 用 pdfimages 列出所有嵌入图片
+pdfimages -list document.pdf
+
+# 输出示例（纯扫描件）：
+# page  num  type  width  height  color  comp  bpc  ...
+#    1    0  image  2480   3508   gray     1    8  ...</code></pre>
+<p>如果每一页都只有一张和页面等大的图片，且 <code>pdftotext</code> 输出为空或只有垃圾字符——那就是纯扫描件。</p>
+
+    <nav class="pager">  <a href="07-interactive.html">
+    <span class="label">← 上一章</span>
+    <span class="title">PDF 不只能看：交互、表单与安全</span>
+  </a>  <a href="09-ai-and-pdf.html" class="next">
+    <span class="label">下一章 →</span>
+    <span class="title">AI 时代：为什么 PDF 成了绊脚石</span>
+  </a></nav>
+  </article>
+</div>
+
+<footer>
+  <div class="set">
+    <span>PDF：最熟悉的陌生人</span>
+    <span>2026 · ZH-CN</span>
+  </div>
+  <div class="set">
+    <span>Mav</span>
+  </div>
+</footer>
+<div class="search-backdrop" id="search-overlay" role="dialog" aria-modal="true" aria-label="搜索" hidden>
+  <div class="search-modal">
+    <div class="search-input-wrap">
+      <input type="search" class="search-input" placeholder="搜索内容..." aria-label="搜索内容" autocomplete="off">
+      <kbd>ESC</kbd>
+    </div>
+    <div class="search-results" role="listbox" aria-label="搜索结果"></div>
+  </div>
+</div>
+
+<!-- Side Panel -->
+<div class="side-panel" id="side-panel">
+  <div class="side-panel-resize" id="side-panel-resize"></div>
+  <div class="side-panel-header">
+    <div class="side-panel-tabs">
+      <button class="side-panel-tab active" data-mode="sidenote">补充</button>
+      <button class="side-panel-tab" data-mode="notepad">笔记</button>
+    </div>
+    <button class="side-panel-close" aria-label="关闭">×</button>
+  </div>
+  <div class="side-panel-body"></div>
+</div>
+<button class="notepad-fab" id="notepad-fab" aria-label="便利贴">✎</button>
+
+<!-- Mobile TOC -->
+<button class="mtoc-fab" id="mtoc-fab" aria-label="目录">TOC</button>
+<div class="mtoc-drawer" id="mtoc-drawer">
+  <div class="mtoc-content"></div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/bash.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/typescript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/yaml.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/javascript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/json.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/python.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/css.min.js"></script>
+<script src="../assets/script.js"></script>
+</body>
+</html>
