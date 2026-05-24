@@ -58,19 +58,20 @@
   <h4>目录</h4>
   <ul>
     <li><a href="#41-为什么字体是-pdf-的核心难题">4.1 为什么字体是 PDF 的核心难题</a></li>
-    <li><a href="#42-字体格式的三十年战争">4.2 字体格式的三十年战争</a></li>
-    <li><a href="#43-pdf-中的字体嵌入">4.3 PDF 中的字体嵌入</a></li>
-    <li><a href="#44-cmap-与-tounicode从字形到字符">4.4 CMap 与 ToUnicode：从字形到字符</a></li>
-    <li><a href="#45-乱码的根本原因">4.5 乱码的根本原因</a></li>
-    <li><a href="#46-字体渲染的差异为什么同一份-pdf-在不同设备上quot看起来quot不一样">4.6 字体渲染的差异：为什么同一份 PDF 在不同设备上&quot;看起来&quot;不一样</a></li>
-    <li><a href="#47-现代趋势可变字体与-pdf">4.7 现代趋势：可变字体与 PDF</a></li>
+    <li><a href="#42-字体到底是什么">4.2 字体到底是什么</a></li>
+    <li><a href="#43-字体格式的三十年战争">4.3 字体格式的三十年战争</a></li>
+    <li><a href="#44-字体嵌入pdf-怎么打包字体">4.4 字体嵌入：PDF 怎么打包字体</a></li>
+    <li><a href="#45-从-glyph-到-unicode那张救命的映射表">4.5 从 glyph 到 Unicode：那张救命的映射表</a></li>
+    <li><a href="#46-乱码的根本原因">4.6 乱码的根本原因</a></li>
+    <li><a href="#47-为什么同一份-pdf-quot看起来quot有细微差异">4.7 为什么同一份 PDF &quot;看起来&quot;有细微差异</a></li>
+    <li><a href="#48-现代趋势">4.8 现代趋势</a></li>
   </ul>
 </aside>
   <article class="chapter-body">
     <header class="chapter-head">
   <div class="chapter-head-meta">
     <span class="num">CHAPTER 04</span>
-    <span>≈ 22 MIN READ</span>
+    <span>≈ 20 MIN READ</span>
   </div>
   <h1>字体的战争与嵌入</h1>
 
@@ -82,8 +83,8 @@
 <p>答案取决于 PDF 生成器做了什么：</p>
 <ul>
 <li><strong>嵌入了字体</strong>：朋友看到的和你完全一样。PDF 里自带了字体数据。</li>
-<li><strong>只嵌入了字体子集</strong>：用到的字都正常显示，但如果阅读器想用这个字体渲染其他字符（比如表单输入）就没有了。</li>
-<li><strong>没嵌入字体</strong>：阅读器尝试用系统字体替代。运气好的话字形差不多，运气不好就面目全非。</li>
+<li><strong>只嵌入了字体子集</strong>：用到的字都正常显示，但只有文档中出现过的字符可用。</li>
+<li><strong>没嵌入字体</strong>：阅读器尝试用系统字体替代。运气好字形差不多，运气不好就面目全非。</li>
 </ul>
 <p><strong>字体嵌入</strong>是 PDF 实现&quot;跨平台视觉一致&quot;承诺的关键机制。没有它，PDF 和 HTML 一样——显示效果取决于接收端有什么字体。</p>
 <h3 id="412-字体文件有多大">4.1.2 字体文件有多大？</h3>
@@ -109,232 +110,189 @@
 <td>~1 MB</td>
 </tr>
 </tbody></table></div>
-<p>一份中文文档如果嵌入完整的中文字体，文件大小瞬间增加 8MB+。这就是为什么**子集化（subsetting）**是中日韩 PDF 的标配——只嵌入文档中实际用到的字形。</p>
+<p>一份中文文档如果嵌入完整字体，文件瞬间多 8MB。这就是为什么**子集化（subsetting）**是中日韩 PDF 的标配——只嵌入文档中实际用到的那些字形。比如一份文档用了 800 个不同汉字，子集化后只打包这 800 个，而不是全部 27000+。</p>
 <hr>
-<h2 id="42-字体格式的三十年战争">4.2 字体格式的三十年战争</h2>
-<h3 id="421-type-1adobe-的先手">4.2.1 Type 1：Adobe 的先手</h3>
-<p>1984 年，Adobe 随 PostScript 一起推出了 <strong>Type 1</strong> 字体格式。它用三次贝塞尔曲线描述字形轮廓，配合 &quot;hint&quot; 机制在低分辨率设备上优化显示。</p>
-<p>Type 1 是 PostScript（因此也是早期 PDF）的原生字体格式。Adobe 最初把 Type 1 的规范保密，只有付费授权的字体厂商才能制作 Type 1 字体。这引发了整个行业的愤怒。</p>
-<h3 id="422-truetypeapple-和-microsoft-的反击">4.2.2 TrueType：Apple 和 Microsoft 的反击</h3>
-<p>1991 年，Apple 设计、Microsoft 参与推广的 <strong>TrueType</strong> 字体格式问世。这是对 Adobe Type 1 垄断的直接反击。</p>
-<p>TrueType 的技术特点：</p>
+<h2 id="42-字体到底是什么">4.2 字体到底是什么</h2>
+<h3 id="421-一个字体文件里装着什么">4.2.1 一个字体文件里装着什么</h3>
+<p>你在电脑上安装一个 <code>.ttf</code> 或 <code>.otf</code> 文件，它就变成了一种&quot;字体&quot;。但这个文件里到底有什么？</p>
+<p>本质上，一个字体文件是一个<strong>小型数据库</strong>，包含三类核心信息：</p>
+<ol>
+<li><p><strong>字形轮廓（glyph outlines）</strong>：每个字符长什么样——用贝塞尔曲线描述的矢量图形。比如字母 &#39;A&#39; 的轮廓就是两条斜线、一条横线围成的封闭区域，用若干个控制点精确定义。</p>
+</li>
+<li><p><strong>度量信息（metrics）</strong>：每个字符占多宽、基线在哪里、字符之间的默认间距是多少。这是排版引擎用来决定&quot;下一个字放在哪&quot;的数据。</p>
+</li>
+<li><p><strong>映射表（cmap）</strong>：Unicode 码点和字形编号的对应关系——&quot;Unicode U+0041 对应本字体中编号 36 的字形&quot;（也就是 &#39;A&#39;）。</p>
+</li>
+</ol>
+<p>除此之外还有元数据（字体名称、设计者、许可协议）、hinting 指令、kerning 对表、OpenType 高级特性（连字规则、上下文替换）等。</p>
+<h3 id="422-字形是怎么quot设计quot出来的">4.2.2 字形是怎么&quot;设计&quot;出来的</h3>
+<p>字体设计师的工作本质上就是<strong>用贝塞尔曲线画每一个字符的轮廓</strong>。</p>
+<p>打开一个字体编辑器（如 Glyphs、FontForge、Robofont），界面和 Illustrator 很像——一个画布，上面是控制点和曲线。设计师逐点调整，控制每一笔的弧度、粗细、起落。</p>
+<p>一个英文字体通常包含 200-500 个字形（26 个大写 + 26 个小写 + 数字 + 标点 + 各种变体和连字）。每个字形少则十几个控制点，多则上百个。</p>
+<p>一个中文字体通常包含 6763（GB2312）到 27000+（GB18030）个字形。每个汉字的笔画比拉丁字母复杂得多——一个&quot;龍&quot;字可能需要几百个控制点。这就是为什么：</p>
 <ul>
-<li>使用<strong>二次贝塞尔曲线</strong>（而非 Type 1 的三次贝塞尔）描述轮廓</li>
-<li>内置一个<strong>字节码解释器</strong>（hinting 虚拟机）来精确控制像素级渲染</li>
-<li>完全开放的规范</li>
+<li><strong>英文字体 300KB，中文字体 8MB</strong>——不是因为存储格式不同，而是因为字形数量差了 50 倍、每个字形的复杂度也高出好几倍</li>
+<li><strong>中文字体的设计周期是英文的 10-50 倍</strong>——一个人做一套英文字体可能几个月，做一套完整中文字体需要好几年（所以高质量中文字体很贵也很少）</li>
 </ul>
-<p>二次 vs 三次贝塞尔曲线的区别：</p>
-<pre><code>三次贝塞尔（Type 1 / CFF）：
-  4 个控制点 → 更少的点就能描述复杂曲线
-  B(t) = (1-t)³P₀ + 3(1-t)²tP₁ + 3(1-t)t²P₂ + t³P₃
-
-二次贝塞尔（TrueType）：
-  3 个控制点 → 需要更多点，但计算更快
-  B(t) = (1-t)²P₀ + 2(1-t)tP₁ + t²P₂</code></pre>
-<p>二次曲线计算更快（少一次乘法），但表达能力略弱——一条三次曲线可能需要两条二次曲线才能近似。这是当年硬件性能有限时的工程权衡。</p>
-<h3 id="423-hinting让字在小字号下依然清晰">4.2.3 Hinting：让字在小字号下依然清晰</h3>
-<p>在 300 DPI 打印机上，12 号字的一个字母大概有 50 像素高，轮廓曲线可以精确渲染。但在 96 DPI 的屏幕上，同样的字只有 16 像素高——曲线必须&quot;卡&quot;到像素网格上，否则会模糊或变形。</p>
-<p><strong>Hinting</strong> 就是一组指令，告诉渲染器在低分辨率下如何调整字形：</p>
-<ul>
-<li>确保笔画对齐到像素边界</li>
-<li>保证字母 &#39;H&#39; 的两根竖线一样粗（即使原始坐标有微小差异）</li>
-<li>防止字母 &#39;e&#39; 的中间空隙在小字号下消失</li>
-</ul>
-<p>TrueType 的 hinting 是一门完整的字节码语言（图灵完备的！），可以编写极其精细的调整规则。这也是为什么 Windows 上的字体在小字号下通常比 macOS 更锐利——Windows 严格执行 TrueType hinting，而 macOS 选择忽略大部分 hint 以保持&quot;曲线真实性&quot;。</p>
-<h3 id="424-opentype大一统">4.2.4 OpenType：大一统</h3>
-<p>1996 年，Microsoft 和 Adobe 联手推出 <strong>OpenType</strong> 格式。它本质上是一个容器：</p>
-<ul>
-<li>可以包含 TrueType 轮廓（<code>.ttf</code> 后缀）</li>
-<li>也可以包含 CFF/Type 1 轮廓（<code>.otf</code> 后缀）</li>
-<li>统一的元数据格式（命名、分类、支持的语言等）</li>
-<li>高级排版特性（连字、小型大写字母、上下文替换等）</li>
-</ul>
-<p>OpenType 结束了 Type 1 vs TrueType 的战争，成为今天的通用标准。你电脑上安装的字体，绝大多数都是 OpenType 格式。</p>
+<h3 id="423-矢量而非像素">4.2.3 矢量而非像素</h3>
+<p>字体存的是<strong>轮廓</strong>（矢量），不是<strong>像素图</strong>。这意味着同一个字形可以被渲染成任何大小而不会模糊——12px 的 &#39;A&#39; 和 120px 的 &#39;A&#39; 用的是同一份轮廓数据，只是缩放比例不同。</p>
+<p>这和图片格式完全不同。如果字体用像素存储，每个字号都需要一套位图（12px 一套、14px 一套、16px 一套……），文件会大得离谱且无法自由缩放。</p>
+<p>矢量轮廓 → 渲染为像素的过程叫<strong>栅格化（rasterization）</strong>。渲染器把贝塞尔曲线按目标分辨率转换为像素网格上的亮度值——这一步就是第三章讲的&quot;画字&quot;的物理实现。</p>
+<h3 id="424-回退fallback缺字时怎么办">4.2.4 回退（Fallback）：缺字时怎么办</h3>
+<p>没有哪个字体包含世界上所有字符。Inter 只有拉丁字母和少量符号；思源黑体有中日韩字符但没有 Emoji；数学字体只有数学符号。</p>
+<p>当系统或 PDF 阅读器遇到一个当前字体中<strong>不存在</strong>的字符时，会启动**字体回退（fallback）**机制：从一组预设的候选字体中找一个包含该字符的字体来渲染。</p>
+<pre><code>渲染 "Hello 你好 🎉"
+  → "Hello"    用 Inter（当前字体有）
+  → "你好"     Inter 没有 → 回退到思源黑体
+  → "🎉"       思源也没有 → 回退到 Emoji 字体</code></pre>
+<p>这就是为什么你偶尔会看到文档中某些字突然&quot;变了一种风格&quot;——那不是排版 bug，是回退到了另一种字体。</p>
+<p>在 PDF 中，如果字体被嵌入了，就不存在回退问题——嵌入的字形数据直接包含在文件里。回退只在&quot;字体没嵌入，系统也找不到对应字体&quot;时才会触发，通常结果就是方块（□）或问号。</p>
 <hr>
-<h2 id="43-pdf-中的字体嵌入">4.3 PDF 中的字体嵌入</h2>
-<h3 id="431-嵌入的三种级别">4.3.1 嵌入的三种级别</h3>
+<h2 id="43-字体格式的三十年战争">4.3 字体格式的三十年战争</h2>
+<h3 id="431-type-1adobe-的先手">4.3.1 Type 1：Adobe 的先手</h3>
+<p>1984 年，Adobe 随 PostScript 一起推出了 <strong>Type 1</strong> 字体格式。它用三次贝塞尔曲线描述字形轮廓，是 PostScript 和早期 PDF 的原生字体格式。</p>
+<p>关键决策：Adobe 最初把 Type 1 的规范<strong>保密</strong>，只有付费授权的厂商才能制作 Type 1 字体。这引发了整个行业的愤怒——你的打印机只认 Adobe 的字体格式，字体厂商必须交保护费。</p>
+<h3 id="432-truetypeapple-和-microsoft-的反击">4.3.2 TrueType：Apple 和 Microsoft 的反击</h3>
+<p>1991 年，Apple 设计、Microsoft 参与推广的 <strong>TrueType</strong> 问世。这是对 Adobe 垄断的直接反击——完全开放的规范，任何人都可以免费制作 TrueType 字体。</p>
+<p>技术上，TrueType 用二次贝塞尔曲线（3 个控制点）描述轮廓，而 Type 1 用三次（4 个控制点）。二次曲线计算更快但表达力弱一些——一条三次曲线可能需要两条二次的来近似。这是 1991 年硬件性能有限时的工程权衡。</p>
+<h3 id="433-hinting让字在小字号下依然清晰">4.3.3 Hinting：让字在小字号下依然清晰</h3>
+<p>一个有趣的技术细节：在 300 DPI 打印机上，12 号字母大约 50 像素高，轮廓曲线可以精确渲染。但在 96 DPI 屏幕上，同样的字只有 16 像素高——曲线必须&quot;卡&quot;到像素网格上，否则会模糊。</p>
+<p><strong>Hinting</strong> 就是告诉渲染器&quot;在低分辨率下怎么调整&quot;的一组指令：确保笔画对齐像素边界、保证竖线一样粗、防止小字号下细节消失。</p>
+<p>TrueType 的 hinting 是一门完整的字节码语言（图灵完备的！）。这也是为什么同一份 PDF 在 Windows 和 macOS 上&quot;感觉&quot;不一样——Windows 严格执行 hinting 让小字更锐利，macOS 选择忽略大部分 hint 以保持曲线本身的&quot;真实感&quot;。</p>
+<h3 id="434-opentype大一统">4.3.4 OpenType：大一统</h3>
+<p>1996 年，Microsoft 和 Adobe 握手言和，联合推出 <strong>OpenType</strong>。它本质上是一个容器格式——既能装 TrueType 轮廓（<code>.ttf</code>），也能装 Type 1/CFF 轮廓（<code>.otf</code>），统一了元数据和高级排版特性（连字、小型大写字母等）。</p>
+<p>OpenType 结束了字体格式战争。你电脑上装的字体，绝大多数都是 OpenType 格式。</p>
+<hr>
+<h2 id="44-字体嵌入pdf-怎么打包字体">4.4 字体嵌入：PDF 怎么打包字体</h2>
+<h3 id="441-三种嵌入级别">4.4.1 三种嵌入级别</h3>
 <div class="table-wrap"><table><thead><tr>
 <th>级别</th>
-<th>文件体积</th>
+<th>文件体积影响</th>
 <th>适用场景</th>
 </tr>
 </thead><tbody><tr>
 <td>完整嵌入</td>
 <td>大（中文 8MB+）</td>
-<td>需要编辑 PDF 中的文字</td>
+<td>需要在 PDF 中编辑文字</td>
 </tr>
 <tr>
 <td>子集嵌入</td>
 <td>小（通常 50-200KB）</td>
-<td>只需要显示，不需要编辑</td>
+<td>只需显示，不需要编辑</td>
 </tr>
 <tr>
 <td>不嵌入</td>
 <td>无额外开销</td>
-<td>仅引用系统字体名</td>
+<td>仅引用系统字体名（有乱码风险）</td>
 </tr>
 </tbody></table></div>
-<p>子集化的原理：扫描文档中用到了哪些字符，只把这些字符的字形数据打包进 PDF。比如一份中文文档用了 800 个不同的汉字，子集化后只嵌入 800 个字形而不是全部 6700+ 个。</p>
-<p>子集化字体在 PDF 中的名字通常有前缀标记：<code>ABCDEF+SimSun</code>——加号前面的 6 个随机大写字母表明这是一个子集。</p>
-<h3 id="432-pdf-中的字体对象">4.3.2 PDF 中的字体对象</h3>
-<pre><code>5 0 obj
-&lt;&lt; /Type /Font
-   /Subtype /Type1
-   /BaseFont /BCDEAA+Times-Roman
-   /FirstChar 32
-   /LastChar 122
-   /Widths [250 333 408 500 ...]
-   /FontDescriptor 6 0 R
-   /Encoding /WinAnsiEncoding
-   /ToUnicode 7 0 R
-&gt;&gt;
-endobj</code></pre>
-<p>关键字段：</p>
-<ul>
-<li><code>/BaseFont</code>：字体名（带子集前缀）</li>
-<li><code>/Widths</code>：每个字符的宽度数组（用于文字定位）</li>
-<li><code>/FontDescriptor</code>：指向字体描述（含嵌入的字体数据流）</li>
-<li><code>/Encoding</code>：字符编码方案</li>
-<li><code>/ToUnicode</code>：CMap 映射表（glyph → Unicode）</li>
-</ul>
-<h3 id="433-字体描述符和嵌入数据">4.3.3 字体描述符和嵌入数据</h3>
-<pre><code>6 0 obj
-&lt;&lt; /Type /FontDescriptor
-   /FontName /BCDEAA+Times-Roman
-   /Flags 34
-   /FontBBox [-168 -281 1000 924]
-   /ItalicAngle 0
-   /Ascent 683
-   /Descent -217
-   /CapHeight 662
-   /StemV 87
-   /FontFile 8 0 R          % Type 1 嵌入数据
-   % 或 /FontFile2 8 0 R    % TrueType
-   % 或 /FontFile3 8 0 R    % CFF/OpenType
-&gt;&gt;
-endobj</code></pre>
-<p><code>/FontFile</code>（或 FontFile2、FontFile3）指向一个 stream 对象，里面就是字体的二进制数据。</p>
-<hr>
-<h2 id="44-cmap-与-tounicode从字形到字符">4.4 CMap 与 ToUnicode：从字形到字符</h2>
-<h3 id="441-编码的多层映射">4.4.1 编码的多层映射</h3>
-<p>PDF 中从&quot;内容流里的字节&quot;到&quot;屏幕上的字形&quot;再到&quot;可提取的 Unicode 字符&quot;，要经过多层映射：</p>
-<pre><code>内容流字节 → Encoding → Character Code → CMap → Glyph ID → 字形渲染
-                                             ↓
-                              ToUnicode → Unicode 码点 → 文字提取</code></pre>
-<p>这个链条中任何一环断裂，都会导致文字提取失败。</p>
-<h3 id="442-一个-tounicode-cmap-的示例">4.4.2 一个 ToUnicode CMap 的示例</h3>
-<pre><code>/CIDInit /ProcSet findresource begin
-12 dict begin
-begincmap
-/CMapType 2 def
-1 begincodespacerange
-&lt;0000&gt; &lt;FFFF&gt;
-endcodespacerange
-5 beginbfchar
-&lt;0003&gt; &lt;0020&gt;    % glyph 3 → U+0020 (空格)
-&lt;0010&gt; &lt;0048&gt;    % glyph 16 → U+0048 (H)
-&lt;0011&gt; &lt;0065&gt;    % glyph 17 → U+0065 (e)
-&lt;0012&gt; &lt;006C&gt;    % glyph 18 → U+006C (l)
-&lt;0013&gt; &lt;006F&gt;    % glyph 19 → U+006F (o)
-endbfchar
-endcmap</code></pre>
-<p>这张表明确声明了：字体中的 glyph 16 对应 Unicode 字符 &#39;H&#39;。有了这张表，阅读器才能在你复制文字时正确还原。</p>
+<p>子集化后，字体在 PDF 中的名字会带一个前缀标记：<code>ABCDEF+SimSun</code>——加号前的 6 个随机大写字母表明这是一个子集，而非完整字体。</p>
+<h3 id="442-字体在-pdf-对象树中的位置">4.4.2 字体在 PDF 对象树中的位置</h3>
+<p>回忆第二章的知识：PDF 是一棵对象树。字体在树中的结构大致是：</p>
+<pre><code>Page 对象
+└── Resources
+    └── Font
+        └── F1 → 字体对象
+                  ├── /BaseFont: BCDEAA+Times-Roman（字体名）
+                  ├── /Widths: [每个字符的宽度...]
+                  ├── /ToUnicode → CMap 映射表
+                  └── /FontDescriptor → 字体描述
+                                        └── /FontFile → 嵌入的字体二进制数据</code></pre>
+<p>阅读器渲染文字时，顺着这棵树找到字体数据，解码出字形轮廓，再画到页面上。</p>
 <h3 id="443-cjk-字体的特殊挑战">4.4.3 CJK 字体的特殊挑战</h3>
-<p>中日韩字体（CJK fonts）带来了额外复杂性：</p>
-<ol>
-<li><strong>字符集巨大</strong>：一个中文字体可能包含 27,000+ 字形，编码空间从单字节变为双字节（CIDFont）</li>
-<li><strong>预定义 CMap</strong>：PDF 规范预定义了多个 CJK CMap（如 <code>UniGB-UCS2-H</code> 对应 GB 编码的中文），阅读器必须内置这些映射</li>
-<li><strong>竖排文字</strong>：中文和日文有竖排模式，需要不同的 CMap（<code>-V</code> 后缀表示竖排）和不同的字形宽度/偏移</li>
-</ol>
-<pre><code>% CIDFont 字体对象（中文）
-&lt;&lt; /Type /Font
-   /Subtype /CIDFontType2
-   /BaseFont /ABCDEF+SimSun
-   /CIDSystemInfo &lt;&lt; /Registry (Adobe) /Ordering (GB1) /Supplement 5 &gt;&gt;
-   /W [1 [277] 17 [556 556 556]]    % 字宽数组（CID → 宽度）
-   /DW 1000                          % 默认宽度（全角）
-&gt;&gt;</code></pre>
+<p>中日韩字体比西文字体复杂得多：</p>
+<ul>
+<li><strong>字符集巨大</strong>：一个中文字体可能包含 27,000+ 字形，编码从单字节变为双字节</li>
+<li><strong>竖排文字</strong>：中文和日文有竖排模式，同一个字竖排时的位置偏移和横排不同</li>
+<li><strong>预定义映射</strong>：PDF 规范预定义了多组 CJK 字符映射（如 <code>UniGB-UCS2-H</code> 对应简体中文），阅读器必须内置这些映射表</li>
+</ul>
 <hr>
-<h2 id="45-乱码的根本原因">4.5 乱码的根本原因</h2>
-<h3 id="451-乱码分类">4.5.1 乱码分类</h3>
+<h2 id="45-从-glyph-到-unicode那张救命的映射表">4.5 从 glyph 到 Unicode：那张救命的映射表</h2>
+<h3 id="451-为什么需要映射">4.5.1 为什么需要映射</h3>
+<p>上一章讲过：PDF 内容流里画文字用的是 <strong>glyph ID</strong>（字体内部编号），不是 Unicode 字符。想让用户能复制文字、让搜索能找到内容，阅读器必须把 glyph ID 翻译回 Unicode。</p>
+<p>这个翻译靠的是 PDF 中的 <strong>ToUnicode</strong> 映射表。它的本质很简单——一张对照表：</p>
+<pre><code>glyph 16 → U+0048 (H)
+glyph 17 → U+0065 (e)
+glyph 18 → U+006C (l)
+glyph 19 → U+006F (o)</code></pre>
+<p>有了这张表，阅读器看到内容流里的 <code>&lt;0010&gt;</code> 就知道&quot;这是字母 H&quot;。没有这张表？那就只知道&quot;画了一个形状&quot;，但不知道那个形状代表什么字——复制出来就是乱码。</p>
+<h3 id="452-映射链条">4.5.2 映射链条</h3>
+<p>完整的链条是这样的：</p>
+<ol>
+<li><strong>PDF 内容流</strong>里写着原始字节，比如 <code>&lt;0041&gt;</code></li>
+<li><strong>Encoding / CMap</strong> 把这个字节翻译成字体内部的 glyph 编号——&quot;0041 → 第 36 号字形&quot;</li>
+<li><strong>字体数据</strong>（嵌入的或系统的）里存着第 36 号字形的贝塞尔曲线轮廓——渲染器加载它，画到页面上。<strong>到这一步，阅读就没问题了</strong>。</li>
+<li><strong>ToUnicode 表</strong>把 glyph 编号翻译回 Unicode 字符——&quot;第 36 号 → U+0041 → 字母 A&quot;。<strong>这一步是复制和搜索的基础</strong>。</li>
+</ol>
+<pre><code>&lt;0041&gt;  ──Encoding/CMap──→  glyph #36  ──字体数据──→  画出字形 ✓ 可阅读
+                                           │
+                                    ToUnicode 表
+                                           │
+                                           ↓
+                                    Unicode 'A'  ✓ 可复制/搜索</code></pre>
+<p>关键点：渲染和文字提取走的是<strong>两条独立的路径</strong>。一份 PDF 可以渲染得完美无缺（字体数据在，字形画得出来），但复制出来全是乱码（ToUnicode 缺失，不知道那个字形&quot;是什么字&quot;）。它们是分开的两件事。</p>
+<hr>
+<h2 id="46-乱码的根本原因">4.6 乱码的根本原因</h2>
+<h3 id="461-乱码分类表">4.6.1 乱码分类表</h3>
 <div class="table-wrap"><table><thead><tr>
-<th>症状</th>
-<th>原因</th>
+<th>你看到的症状</th>
+<th>背后的原因</th>
 <th>常见来源</th>
 </tr>
 </thead><tbody><tr>
 <td>方块（□□□）</td>
-<td>字体未嵌入且系统无对应字体</td>
+<td>字体未嵌入，系统也没有</td>
 <td>旧版生成器、非标准字体</td>
 </tr>
 <tr>
 <td>乱字符（Ã©Â±）</td>
-<td>编码解释错误</td>
-<td>UTF-8/GBK 混淆</td>
+<td>编码解释错误（UTF-8 当 GBK 读）</td>
+<td>跨平台转换</td>
 </tr>
 <tr>
 <td>空白/不可选</td>
-<td>无 ToUnicode 且使用自定义编码</td>
-<td>数学公式字体</td>
+<td>无 ToUnicode 且自定义编码</td>
+<td>数学公式字体、老旧排版软件</td>
 </tr>
 <tr>
-<td>字形错位</td>
-<td>CMap 映射错误</td>
+<td>所有字都变成一种字体</td>
+<td>字体名冲突</td>
+<td>合并多份 PDF 时</td>
+</tr>
+<tr>
+<td>显示正常但复制乱码</td>
+<td>渲染没问题但映射表缺失/错误</td>
 <td>子集化 bug</td>
 </tr>
-<tr>
-<td>所有字体都变成同一种</td>
-<td>字体名冲突（多个嵌入字体同名）</td>
-<td>合并 PDF 时</td>
-</tr>
 </tbody></table></div>
-<h3 id="452-最常见的场景没有嵌入字体的中文-pdf">4.5.2 最常见的场景：没有嵌入字体的中文 PDF</h3>
-<p>2000 年代初的中文 PDF 经常不嵌入字体——因为完整的中文字体太大了（8-16MB），而当时的带宽和存储都很有限。PDF 里只记录字体名 &quot;SimSun&quot;，指望接收端有这个字体。</p>
-<p>在 Windows 上打开通常没问题（系统自带宋体）。但到了 macOS 或 Linux，没有 SimSun，阅读器用替代字体渲染——笔画粗细不对、间距不对、甚至有些字显示不出来。</p>
-<p>现代 PDF 生成器几乎都会做子集嵌入，这个问题已经少多了。但历史遗留的旧 PDF 依然大量存在。</p>
-<h3 id="453-用工具诊断字体问题">4.5.3 用工具诊断字体问题</h3>
-<pre data-label="bash"><code class="language-bash"># 用 pdffonts（poppler-utils）列出 PDF 中的字体信息
-pdffonts document.pdf
-
-# 输出示例：
-# name                  type       encoding     emb  sub  uni  object ID
-# -------------------- ---------- ------------ ---- ---- ---- ---------
-# BCDEAA+SimSun        CID Type 2 Identity-H   yes  yes  yes  15 0
-# ArialMT              TrueType   WinAnsi      no   no   yes  23 0</code></pre>
-<p>关键列：</p>
+<h3 id="462-最常见场景2000-年代的中文-pdf">4.6.2 最常见场景：2000 年代的中文 PDF</h3>
+<p>2000 年代初的中文 PDF 几乎都不嵌入字体——8MB 的宋体在拨号时代是不可接受的。PDF 里只写了字体名 &quot;SimSun&quot;，指望对方电脑有宋体。</p>
+<p>Windows 用户打开没问题（系统自带宋体）。macOS 或 Linux 用户打开就崩了——没有 SimSun，阅读器只能用替代字体凑合，笔画粗细不对、间距不对、有些字显示不出。</p>
+<p>现代生成器基本都做子集嵌入了，这个问题少多了。但互联网上几十亿份历史 PDF 还在。</p>
+<h3 id="463-用工具诊断">4.6.3 用工具诊断</h3>
+<p>一行命令检查任何 PDF 的字体状况：</p>
+<pre data-label="bash"><code class="language-bash">pdffonts document.pdf</code></pre>
+<p>输出中看三列：<code>emb</code>（是否嵌入）、<code>sub</code>（是否子集化）、<code>uni</code>（是否有 Unicode 映射）。任何一列是 <code>no</code>，就可能有问题。</p>
+<hr>
+<h2 id="47-为什么同一份-pdf-quot看起来quot有细微差异">4.7 为什么同一份 PDF &quot;看起来&quot;有细微差异</h2>
+<h3 id="471-嵌入字体了还能不一样">4.7.1 嵌入字体了还能不一样？</h3>
+<p>PDF 保证的是<strong>字形轮廓完全一致</strong>——坐标、大小、位置不会变。但最终把矢量轮廓变成屏幕像素时，还有几个因素影响观感：</p>
 <ul>
-<li><code>emb</code>：是否嵌入</li>
-<li><code>sub</code>：是否子集化</li>
-<li><code>uni</code>：是否有 Unicode 映射</li>
+<li><strong>抗锯齿算法</strong>：不同渲染器对曲线边缘的平滑策略不同</li>
+<li><strong>子像素渲染</strong>：Windows 的 ClearType 会利用 RGB 子像素增加水平分辨率，macOS 在 Retina 屏上已经不做这个了</li>
+<li><strong>Hinting 执行策略</strong>：严格执行 = 锐利但不够&quot;真&quot;，忽略 hint = 柔和但更忠于原始曲线</li>
 </ul>
-<p>如果你看到 <code>emb = no</code>，这个字体在没有安装对应系统字体的电脑上就可能出问题。</p>
+<p>所以同一份 PDF 在 Windows 上看起来&quot;锐利、瘦&quot;，在 macOS 上看起来&quot;圆润、胖&quot;——不是字体不对，是最后一步栅格化策略不同。</p>
+<h3 id="472-屏幕-vs-打印">4.7.2 屏幕 vs 打印</h3>
+<p>在 600 DPI 打印输出上，hinting 几乎不重要——分辨率足够高，曲线本身就足够精确。但在 96 DPI 屏幕上，每个像素的决策都影响可读性。</p>
+<p>这也是为什么设计师审稿要&quot;打印后确认&quot;——屏幕上看到的和打印出来的是两码事，尤其在小字号时差异明显。</p>
 <hr>
-<h2 id="46-字体渲染的差异为什么同一份-pdf-在不同设备上quot看起来quot不一样">4.6 字体渲染的差异：为什么同一份 PDF 在不同设备上&quot;看起来&quot;不一样</h2>
-<h3 id="461-即使字体嵌入了渲染结果也可能不同">4.6.1 即使字体嵌入了，渲染结果也可能不同</h3>
-<p>等等，PDF 的核心承诺不是&quot;所有人看到的完全一样&quot;吗？</p>
-<p>严格来说，PDF 保证的是<strong>几何形状完全一样</strong>——字形的轮廓坐标、位置、大小不会变。但最终在屏幕上呈现为像素时，还有几个因素影响视觉效果：</p>
-<ol>
-<li><strong>抗锯齿算法</strong>：不同渲染器对曲线边缘的平滑处理不同</li>
-<li><strong>子像素渲染</strong>：Windows 的 ClearType、macOS 的子像素抗锯齿（已在 Retina 屏上禁用）</li>
-<li><strong>Hinting 执行策略</strong>：是否尊重字体内的 hinting 指令</li>
-<li><strong>gamma 校正</strong>：文字灰度与背景的混合方式</li>
-</ol>
-<p>这就是为什么同一份 PDF 在 Windows、macOS 和 Linux 上&quot;感觉&quot;不一样——不是字体不对，而是渲染管线的最后一步（栅格化）策略不同。</p>
-<h3 id="462-打印-vs-屏幕">4.6.2 打印 vs 屏幕</h3>
-<p>在 600 DPI 的打印输出上，一个 12 号字母有约 100 像素高，hinting 几乎不重要——曲线本身就足够精确。但在 96 DPI 的屏幕上，同样的字母只有 16 像素高，每一个像素的决策都影响可读性。</p>
-<p>这也是为什么设计师审稿时要求&quot;打印后确认&quot;——屏幕上看到的（受渲染器影响）和打印出来的（接近&quot;真实&quot;的字形轮廓）是两码事。</p>
-<hr>
-<h2 id="47-现代趋势可变字体与-pdf">4.7 现代趋势：可变字体与 PDF</h2>
-<h3 id="471-variable-fonts">4.7.1 Variable Fonts</h3>
-<p>OpenType 1.8（2016）引入了<strong>可变字体（Variable Fonts）</strong>——一个字体文件包含连续的字重/字宽/倾斜度变化轴。</p>
-<p>传统方式：一个字体家族需要多个文件（Regular、Bold、Italic、Light...各一个）。
-可变字体：一个文件，通过参数连续调节。</p>
-<pre><code>font-weight: 100~900 的任意值
-font-stretch: 75%~125% 的任意值</code></pre>
-<p>但 PDF 对可变字体的支持仍然有限——PDF 2.0 规范中提到了，但大多数生成器在嵌入时会把可变字体&quot;固化&quot;为特定的实例。这意味着你在 PDF 里看到的字体，已经丢失了&quot;可变&quot;的能力。</p>
-<h3 id="472-emoji-和彩色字体">4.7.2 Emoji 和彩色字体</h3>
-<p>现代字体还可以包含彩色信息（COLR/CPAL 表或 SVG 表），用于渲染 Emoji 和彩色图标。</p>
-<p>PDF 对彩色字体的支持同样滞后——大多数 PDF 生成器会把 Emoji 渲染为图片而不是使用彩色字体特性。这是 PDF 规范&quot;年龄&quot;的一个体现：它的字体模型设计于 1990 年代，彩色字体是 2010 年代的概念。</p>
+<h2 id="48-现代趋势">4.8 现代趋势</h2>
+<h3 id="481-可变字体">4.8.1 可变字体</h3>
+<p>OpenType 1.8（2016）引入了<strong>可变字体（Variable Fonts）</strong>——一个文件包含连续的字重/字宽变化轴。传统方式需要 Regular、Bold、Light 各一个文件；可变字体一个文件搞定，字重 100-900 随意调。</p>
+<p>但 PDF 对可变字体支持有限——大多数生成器嵌入时会把可变字体&quot;固化&quot;为某个特定实例（比如只取 weight=400 的版本）。可变的能力在 PDF 中丢失了。</p>
+<h3 id="482-emoji-和彩色字体">4.8.2 Emoji 和彩色字体</h3>
+<p>现代字体可以包含彩色信息（用于 Emoji 和彩色图标）。但 PDF 的字体模型设计于 1990 年代——它假设字体是单色的。大多数 PDF 生成器碰到 Emoji 会直接渲染成图片嵌入，而不是使用彩色字体特性。这是 PDF 格式&quot;年龄&quot;的又一个体现。</p>
 
     <nav class="pager">  <a href="03-rendering-model.html">
     <span class="label">← 上一章</span>
