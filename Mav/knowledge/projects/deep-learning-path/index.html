@@ -23,22 +23,24 @@
   </div>
 </nav>
 
-<main class="page-wrap project-detail">
+<main class="project-detail-wrap">
 
   <a href="../../index.html" class="back-link">← 返回知识库</a>
 
-  <header class="project-header">
-    <span class="eyebrow">PROJECT</span>
-    <h1>深度学习从零到能读论文</h1>
-    <p class="project-desc">从 PyTorch 张量运算到 Transformer，一步步建立动手能力</p>
-    <div class="project-stats">
-      <span>3 本书</span>
-      <span>·</span>
-      <span>预计 7 小时</span>
-    </div>
-  </header>
+  <div class="project-layout">
+    <div class="project-main">
+      <header class="project-header">
+        <span class="eyebrow">PROJECT</span>
+        <h1>深度学习从零到能读论文</h1>
+        <p class="project-desc">从 PyTorch 张量运算到 Transformer，一步步建立动手能力</p>
+        <div class="project-stats">
+          <span>3 本书</span>
+          <span>·</span>
+          <span>预计 7 小时</span>
+        </div>
+      </header>
 
-  <section class="path-timeline">
+      <section class="path-timeline">
       <div class="path-step">
         <div class="path-node">
           <div class="path-dot"></div>
@@ -99,7 +101,47 @@
           </a>
         </div>
       </div>
-  </section>
+      </section>
+    </div>
+
+    <aside class="project-sidebar">
+
+      <div class="sidebar-section">
+        <h4>前置知识</h4>
+        <ul>
+          <li>Python 基础语法</li>
+          <li>线性代数直觉（矩阵乘法、向量）</li>
+          <li>微积分基础（导数、链式法则）</li>
+        </ul>
+      </div>
+      <div class="sidebar-section">
+        <h4>涉及概念</h4>
+        <ul>
+          <li>张量与自动求导</li>
+          <li>损失函数与优化器</li>
+          <li>卷积与特征提取</li>
+          <li>池化与下采样</li>
+          <li>Batch Normalization</li>
+          <li>数据增强</li>
+          <li>迁移学习</li>
+          <li>循环神经网络</li>
+          <li>LSTM / GRU</li>
+          <li>注意力机制</li>
+          <li>Seq2Seq</li>
+          <li>Transformer 基础</li>
+        </ul>
+      </div>
+      <div class="sidebar-section">
+        <h4>读完之后你能</h4>
+        <ul>
+          <li>能用 PyTorch 从零搭建 CNN 和 RNN</li>
+          <li>理解 ResNet、VGG 等经典架构为什么这样设计</li>
+          <li>能读懂 Attention Is All You Need 的核心思想</li>
+          <li>有能力自己跑实验、调超参、看 loss 曲线</li>
+        </ul>
+      </div>
+    </aside>
+  </div>
 
 </main>
 

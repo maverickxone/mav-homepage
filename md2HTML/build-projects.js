@@ -179,6 +179,43 @@ function buildProjectDetailPage(project, booksMeta) {
       </div>`;
   }).join('\n');
 
+  // Build sidebar HTML
+  const sidebar = project.sidebar || {};
+  let sidebarHtml = '';
+
+  if (sidebar.prerequisites && sidebar.prerequisites.length) {
+    const items = sidebar.prerequisites.map(p => `          <li>${p}</li>`).join('\n');
+    sidebarHtml += `
+      <div class="sidebar-section">
+        <h4>前置知识</h4>
+        <ul>
+${items}
+        </ul>
+      </div>`;
+  }
+
+  if (sidebar.concepts && sidebar.concepts.length) {
+    const items = sidebar.concepts.map(c => `          <li>${c}</li>`).join('\n');
+    sidebarHtml += `
+      <div class="sidebar-section">
+        <h4>涉及概念</h4>
+        <ul>
+${items}
+        </ul>
+      </div>`;
+  }
+
+  if (sidebar.outcomes && sidebar.outcomes.length) {
+    const items = sidebar.outcomes.map(o => `          <li>${o}</li>`).join('\n');
+    sidebarHtml += `
+      <div class="sidebar-section">
+        <h4>读完之后你能</h4>
+        <ul>
+${items}
+        </ul>
+      </div>`;
+  }
+
   return `<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
@@ -204,24 +241,32 @@ function buildProjectDetailPage(project, booksMeta) {
   </div>
 </nav>
 
-<main class="page-wrap project-detail">
+<main class="project-detail-wrap">
 
   <a href="../../index.html" class="back-link">← 返回知识库</a>
 
-  <header class="project-header">
-    <span class="eyebrow">PROJECT</span>
-    <h1>${project.title}</h1>
-    <p class="project-desc">${project.description}</p>
-    <div class="project-stats">
-      <span>${project.books.length} 本书</span>
-      <span>·</span>
-      <span>预计 ${timeDisplay}</span>
-    </div>
-  </header>
+  <div class="project-layout">
+    <div class="project-main">
+      <header class="project-header">
+        <span class="eyebrow">PROJECT</span>
+        <h1>${project.title}</h1>
+        <p class="project-desc">${project.description}</p>
+        <div class="project-stats">
+          <span>${project.books.length} 本书</span>
+          <span>·</span>
+          <span>预计 ${timeDisplay}</span>
+        </div>
+      </header>
 
-  <section class="path-timeline">
+      <section class="path-timeline">
 ${stepsHtml}
-  </section>
+      </section>
+    </div>
+
+    <aside class="project-sidebar">
+${sidebarHtml}
+    </aside>
+  </div>
 
 </main>
 

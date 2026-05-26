@@ -1,6 +1,6 @@
 # note4ai.md
 
-> 最后更新：2026.05.21 22:50
+> 最后更新：2026.05.26 23:30
 
 本文件面向接手本项目的 AI agent，不是给人类线性阅读的文档。目标是让你读完之后对项目结构、构建系统、约束规则了如指掌。
 
@@ -27,20 +27,32 @@ mav-homepage/
 │   │   ├── blog-build.js        ← 博客构建脚本
 │   │   └── index.html           ← 博客列表页
 │   ├── knowledge/               ← 知识库输出（每本书一个子目录）
-│   │   ├── index.html           ← 知识库入口页（手动维护卡片列表）
+│   │   ├── index.html           ← 知识库入口页（双模式：Projects / 全部书籍）
+│   │   ├── projects/            ← Project 详情页输出
+│   │   │   ├── manifest.json    ← 所有 project 的元数据
+│   │   │   ├── how-computer-works/index.html
+│   │   │   ├── deep-learning-path/index.html
+│   │   │   └── digital-formats/index.html
 │   │   ├── browser-war/         ← 示例书
 │   │   ├── euv-lithography/     ← 示例书（有前端定制）
 │   │   ├── claude-code/         ← ⚠️ 纯手写 HTML，无 Markdown 源码
 │   │   └── ...
 │   └── assets/                  ← 全站共享 CSS/JS
+│       ├── style.css            ← 主样式
+│       └── projects.css         ← Project 功能专用样式
 ├── markdown-backups/            ← 知识库 Markdown 源文件
 │   ├── Browser-War/             ← 每本书一个文件夹
 │   │   ├── book.yaml            ← 元数据（title/author/description/language）
 │   │   ├── 01-chapter.md        ← 章节文件（带 front-matter）
 │   │   └── ...
+│   ├── projects/                ← Project 数据源（YAML）
+│   │   ├── how-computer-works.yaml
+│   │   ├── deep-learning-path.yaml
+│   │   └── digital-formats.yaml
 │   └── EUV-Lithography/
 ├── md2HTML/                     ← 静态站点生成器
-│   ├── build.js                 ← 主构建入口
+│   ├── build.js                 ← 主构建入口（书籍）
+│   ├── build-projects.js        ← Project 构建脚本
 │   ├── build-all.sh             ← shell 包装
 │   ├── build-lock.yaml          ← 白名单/锁定列表
 │   ├── assets/                  ← 模板 CSS/JS（新书的默认样式）
@@ -203,6 +215,9 @@ node blog-build.js
 |------|------|----------|
 | claude-code | Claude Code 入门指南 | ⚠️ 纯手写 HTML，白名单 |
 | claude-d2l-to-rnn | 深度学习讲义 | — |
+| d2l-toolbox | 深度学习前置工具箱 | — |
+| d2l-cnn | CNN实战篇 | — |
+| d2l-rnn | RNN实战篇 | — |
 | money-bank | 银行体系与货币系统 | — |
 | bite-to-byte-硬件篇 | 电脑怎么工作的 | — |
 | blockchain-crypto | 区块链与加密货币 | — |
@@ -212,6 +227,106 @@ node blog-build.js
 | video-screen | 视频与屏幕技术 | — |
 | browser-war | 浏览器：从战争到垄断 | 多章锁定，有前端定制 |
 | euv-lithography | EUV 光刻机 | 全章锁定，assets 锁定，有图片系统和 KaTeX |
+| pdf-explained | PDF：最熟悉的陌生人 | — |
+| thermodynamics | 热力学 | — |
+
+---
+
+## Project 系统
+
+### 概念
+
+Project 是知识库中**书之上的聚合层**——把相关的书按阅读顺序串成一条学习路径。一本书可以属于多个 project（多对多），也可以不属于任何 project（作为"独立阅读"展示）。
+
+### 数据源
+
+位置：`markdown-backups/projects/*.yaml`
+
+```yaml
+title: "计算机是怎么工作的"
+slug: how-computer-works
+description: "从晶体管到浏览器，一路向上"
+books:
+  - slug: bite-to-byte-硬件篇
+    role: "起点：硬件和操作系统是怎么协作的"
+  - slug: server-frontend-backend
+    role: "网络：请求怎么跑通的"
+  - slug: browser-war
+    role: "终点：浏览器的 30 年战争"
+transitions:
+  - "理解了硬件之后，下一步是看数据怎么通过网络流动..."
+  - "知道了请求怎么跑通之后，来看浏览器本身..."
+sidebar:
+  prerequisites:
+    - "会用电脑上网"
+  concepts:
+    - "CPU 与指令周期"
+    - "HTTP 请求/响应"
+    - "渲染引擎"
+  outcomes:
+    - "能解释从按下回车到页面显示经历了什么"
+```
+
+### 字段说明
+
+| 字段 | 必需 | 说明 |
+|------|------|------|
+| `title` | ✓ | Project 标题 |
+| `slug` | ✓ | URL slug，用于输出路径 |
+| `description` | ✓ | 一句话描述 |
+| `books` | ✓ | 书的数组，按顺序排列 |
+| `books[].slug` | ✓ | 对应 `markdown-backups/<Dir>` 的 lowercase slug |
+| `books[].role` | ✓ | 该书在路径中的角色/定位 |
+| `transitions` | 可选 | 书与书之间的过渡文案（数组，长度 = books.length - 1） |
+| `sidebar.prerequisites` | 可选 | 前置知识列表 |
+| `sidebar.concepts` | 可选 | 涉及的核心概念 |
+| `sidebar.outcomes` | 可选 | 读完之后你能做到什么 |
+
+### 构建命令
+
+```bash
+cd md2HTML
+node build-projects.js              # 构建全部 project
+node build-projects.js <slug>       # 构建单个 project
+```
+
+### 输出
+
+```
+Mav/knowledge/projects/
+├── manifest.json                   ← 所有 project 的元数据（首页消费）
+├── how-computer-works/index.html   ← 详情页
+├── deep-learning-path/index.html
+└── digital-formats/index.html
+```
+
+### 当前 Project 列表
+
+| slug | 标题 | 包含书籍 |
+|------|------|----------|
+| how-computer-works | 计算机是怎么工作的 | 硬件篇 → 服务器 → 浏览器 |
+| deep-learning-path | 深度学习从零到能读论文 | 工具箱 → CNN → RNN |
+| digital-formats | 数字世界的底层格式 | PDF → 视频 → 浏览器 |
+
+### 知识库首页 (index.html)
+
+手动维护，路径 `Mav/knowledge/index.html`。现在有两个 tab：
+
+1. **Projects** — 展示 project 卡片（带路径圆点动画）+ 独立阅读区
+2. **全部书籍** — 原始的平铺三列卡片视图
+
+新增 project 后需要：
+1. 在 `markdown-backups/projects/` 创建 YAML
+2. 运行 `node build-projects.js`
+3. 手动在 `Mav/knowledge/index.html` 的 Projects 区域加卡片 HTML
+
+### Project 详情页布局
+
+双栏布局（桌面端）：
+- **左侧**：header（PROJECT标签 + 标题 + 描述 + 统计）+ 时间线（书卡片 + 过渡文案）
+- **右侧 sticky sidebar**：前置知识 / 涉及概念 / 读完之后你能
+
+移动端（< 900px）自动堆叠为单栏。
 
 ---
 
@@ -222,6 +337,8 @@ node blog-build.js
 | 新建知识库书 | `markdown-backups/` 下建文件夹 + `book.yaml` + `.md` |
 | 构建单本书 | `cd md2HTML && node build.js <Book-Name>` |
 | 增加知识库入口卡片 | 编辑 `Mav/knowledge/index.html`（手动） |
+| 新建 Project | `markdown-backups/projects/` 下建 `.yaml`，然后 `node build-projects.js` |
+| 构建 Project | `cd md2HTML && node build-projects.js` |
 | 发博客 | `Mav/blog/posts/` 下写 `.md`，然后 `cd Mav/blog && node blog-build.js` |
 | 锁定文件 | `node build.js --lock <path>` |
 | 查看所有锁 | `node build.js --list-lock` |
