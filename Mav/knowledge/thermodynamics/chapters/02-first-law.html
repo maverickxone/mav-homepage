@@ -1,0 +1,633 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>热力学第一定律 — 热学速通</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" id="hljs-light" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+<link rel="stylesheet" id="hljs-dark" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" media="not all">
+</head>
+<body>
+
+<div class="progress-bar" id="progress-bar"></div>
+
+<nav class="topnav" id="topnav">
+  <div class="topnav-inner">
+    <a class="brand" href="../index.html">热学速通</a>
+    <div class="nav-links">
+      <a href="01-basics-temperature.html">01</a>
+      <a href="02-first-law.html" class="active">02</a>
+      <a href="03-second-law-entropy.html">03</a>
+      <a href="04-maxwell-distribution.html">04</a>
+      <a href="05-transport.html">05</a>
+      <a href="06-phase-transition.html">06</a>
+    </div>
+    <div class="nav-controls">
+      <button class="nav-btn" id="search-btn" aria-label="搜索 (Ctrl+K)">⌘K</button>
+      <button class="nav-btn" id="settings-btn" aria-label="阅读设置">Aa</button>
+      <a class="nav-btn" href="../../index.html" aria-label="返回知识库">← 知识库</a>
+      <a class="nav-btn" href="https://github.com/maverickxone/mav-homepage" target="_blank" rel="noopener" aria-label="GitHub" style="padding: 6px 8px;"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg></a>
+    </div>
+  </div>
+</nav>
+<div class="settings-pop" id="settings-pop">
+  <h5>主题</h5>
+  <div class="row">
+    <button class="seg" data-theme-set="light">明亮</button>
+    <button class="seg" data-theme-set="dark">暗色</button>
+  </div>
+  <h5>字号</h5>
+  <div class="row">
+    <button class="seg" data-size-set="s">小</button>
+    <button class="seg" data-size-set="m">中</button>
+    <button class="seg" data-size-set="l">大</button>
+  </div>
+</div>
+
+<div class="with-sidebar">
+  <aside class="sidebar">
+  <div class="chapter-num">CHAPTER 02</div>
+  <div class="chapter-name">热力学第一定律</div>
+  <h4>目录</h4>
+  <ul>
+    <li><a href="#21-能量守恒的热力学版本">2.1 能量守恒的热力学版本</a></li>
+    <li><a href="#22-内能">2.2 内能</a></li>
+    <li><a href="#23-功">2.3 功</a></li>
+    <li><a href="#24-热量">2.4 热量</a></li>
+    <li><a href="#25-热力学第一定律">2.5 热力学第一定律</a></li>
+    <li><a href="#26-热容">2.6 热容</a></li>
+    <li><a href="#27-等容过程">2.7 等容过程</a></li>
+    <li><a href="#28-等压过程">2.8 等压过程</a></li>
+    <li><a href="#29-等温过程">2.9 等温过程</a></li>
+    <li><a href="#210-绝热过程">2.10 绝热过程</a></li>
+    <li><a href="#211-多方过程">2.11 多方过程</a></li>
+    <li><a href="#212-焦耳实验与理想气体内能">2.12 焦耳实验与理想气体内能</a></li>
+    <li><a href="#213-四种过程的对比总结">2.13 四种过程的对比总结</a></li>
+    <li><a href="#214-循环过程简介">2.14 循环过程简介</a></li>
+    <li><a href="#215-概念辨析">2.15 概念辨析</a></li>
+    <li><a href="#216-本章公式总结">2.16 本章公式总结</a></li>
+    <li><a href="#217-本章小结">2.17 本章小结</a></li>
+  </ul>
+</aside>
+  <article class="chapter-body">
+    <header class="chapter-head">
+  <div class="chapter-head-meta">
+    <span class="num">CHAPTER 02</span>
+    <span>≈ 55 MIN READ</span>
+  </div>
+  <h1>热力学第一定律</h1>
+
+</header>
+    <h2 id="21-能量守恒的热力学版本">2.1 能量守恒的热力学版本</h2>
+<p>力学里你已经见过能量守恒——动能和势能的转化。热力学第一定律本质上也是能量守恒，但它把&quot;热&quot;纳入了能量的范畴。</p>
+<p>历史上，人们曾经认为&quot;热&quot;是一种物质（热质说）。直到焦耳用实验证明：做功可以产生等量的热，热和功可以互相转化——它们是同一种东西（能量）的不同传递方式。</p>
+<p>第一定律的地位：它告诉你能量从哪来、到哪去，是所有热力学计算的基础。</p>
+<hr>
+<h2 id="22-内能">2.2 内能</h2>
+<h3 id="定义">定义</h3>
+<p>系统的<strong>内能</strong> $U$ 是系统内部所有微观形式能量的总和，包括：</p>
+<ul>
+<li>分子的平动动能</li>
+<li>分子的转动动能</li>
+<li>分子的振动动能</li>
+<li>分子间相互作用的势能</li>
+</ul>
+<p>内能<strong>不包括</strong>：</p>
+<ul>
+<li>系统整体的动能（比如装在火车上的气瓶，火车运动的动能不算）</li>
+<li>系统整体的势能（比如气瓶放在高处，重力势能不算）</li>
+</ul>
+<h3 id="内能是状态量">内能是状态量</h3>
+<p>内能只取决于系统当前的状态，和系统怎么到达这个状态无关。</p>
+<p>对理想气体，由于分子间没有相互作用力（无势能），内能只由分子动能决定，而动能由温度决定，因此：</p>
+<p>$U = U(T) \quad \text{（理想气体）}$</p>
+<p>这是焦耳实验的结论——理想气体自由膨胀后温度不变，说明内能和体积无关。</p>
+<p>对于实际气体，$U = U(T, V)$，因为分子间距（和体积有关）会影响势能。</p>
+<h3 id="理想气体内能的具体表达">理想气体内能的具体表达</h3>
+<p>第 4 章会详细推导，这里先给结论。对 $n$ mol 理想气体：</p>
+<p>$U = nC_VT$</p>
+<p>其中 $C_V$ 是定容摩尔热容（下面 2.6 节详细讨论）。对于单原子理想气体 $C_V = \frac{3}{2}R$，所以 $U = \frac{3}{2}nRT$。</p>
+<p>内能的变化量：</p>
+<p>$\Delta U = nC_V \Delta T = nC_V(T_2 - T_1)$</p>
+<p><strong>这个公式对理想气体的任何过程都成立</strong>（不仅是等容过程），因为理想气体内能只是 $T$ 的函数。</p>
+<hr>
+<h2 id="23-功">2.3 功</h2>
+<h3 id="功是过程量">功是过程量</h3>
+<p>在力学中，功 = 力 × 位移。在热力学中，系统做的功取决于<strong>过程怎么走</strong>，不仅仅取决于初态和末态。</p>
+<p>打个比方：从合肥到北京，坐火车和坐飞机，起点终点一样，但消耗的燃油量不同。功就像&quot;路上消耗的燃油&quot;——是过程量，不是状态量。</p>
+<h3 id="体积功的推导">体积功的推导</h3>
+<p>考虑一个气缸-活塞系统。活塞面积 $A$，气体压强 $p$。</p>
+<p>气体膨胀时推动活塞移动 $dx$：</p>
+<ul>
+<li>气体对活塞的力：$F = pA$</li>
+<li>活塞移动 $dx$</li>
+<li>气体做的微小功：$\text{đ}W = F \cdot dx = pA \cdot dx = p , dV$</li>
+</ul>
+<p>其中 $dV = A \cdot dx$ 是体积的微小增量。</p>
+<p>整个过程的总功：</p>
+<p>$\boxed{W = \int_{V_1}^{V_2} p , dV}$</p>
+<p><strong>符号约定</strong>：本课程中 $W$ 表示<strong>系统对外界做的功</strong>。气体膨胀（$dV &gt; 0$）→ $W &gt; 0$（系统对外做功）；气体被压缩（$dV &lt; 0$）→ $W &lt; 0$（外界对系统做功）。</p>
+<p>注意：有些教材用相反的符号约定（$W$ 定义为外界对系统做的功）。做题时务必确认教材/试卷的约定。</p>
+<h3 id="功的几何意义">功的几何意义</h3>
+<p>在 p-V 图上，$W = \int p , dV$ 就是<strong>过程曲线下方的面积</strong>。</p>
+<p>这直接说明了为什么功是过程量——从同一个初态到同一个末态，走不同的路径（不同的 p-V 曲线），曲线下方的面积不同，功就不同。</p>
+<h3 id="功的计算前提">功的计算前提</h3>
+<p>$W = \int p , dV$ 有一个重要前提：<strong>过程必须是准静态的</strong>。</p>
+<p>为什么？因为只有准静态过程中，系统的压强 $p$ 在每一瞬间都有确定值（平衡态），积分才有意义。</p>
+<p>对于非准静态过程（比如自由膨胀），气体内部压强不均匀，你没法用一个 $p$ 来做积分。这时候需要用其他方法（比如直接从第一定律和状态量变化来推算）。</p>
+<hr>
+<h2 id="24-热量">2.4 热量</h2>
+<h3 id="定义">定义</h3>
+<p><strong>热量</strong> $Q$ 是由于温度差而在系统和外界之间传递的能量。</p>
+<p>关键：</p>
+<ul>
+<li>热量是能量传递的<strong>方式</strong>，不是系统&quot;拥有&quot;的东西</li>
+<li>热量是<strong>过程量</strong>，不是状态量——不能说&quot;系统含有多少热量&quot;</li>
+<li>符号约定：$Q &gt; 0$ 表示系统吸热，$Q &lt; 0$ 表示系统放热</li>
+</ul>
+<h3 id="传热的三种机制">传热的三种机制</h3>
+<ol>
+<li><strong>热传导</strong>：通过物质内部分子的碰撞接力传递能量（需要介质，需要温度梯度）</li>
+<li><strong>对流</strong>：流体宏观流动携带能量（需要流体）</li>
+<li><strong>辐射</strong>：通过电磁波传递能量（不需要介质，可在真空中传播）</li>
+</ol>
+<p>在热力学的计算中，我们通常不关心传热的具体机制，只关心系统总共吸收或释放了多少热量 $Q$。</p>
+<h3 id="热量与功的本质区别">热量与功的本质区别</h3>
+<p>功和热量都是能量传递的方式，但机制不同：</p>
+<div class="table-wrap"><table><thead><tr>
+<th></th>
+<th>功 $W$</th>
+<th>热量 $Q$</th>
+</tr>
+</thead><tbody><tr>
+<td>传递机制</td>
+<td>宏观有序运动（活塞推动）</td>
+<td>微观无序碰撞（分子间传递）</td>
+</tr>
+<tr>
+<td>是否需要温度差</td>
+<td>不需要</td>
+<td>需要</td>
+</tr>
+<tr>
+<td>能否完全转化为内能</td>
+<td>能（摩擦生热）</td>
+<td>本身就是内能变化的来源之一</td>
+</tr>
+</tbody></table></div>
+<p>一个直觉：功是&quot;有组织的&quot;能量传递（所有分子朝同一方向推活塞），热是&quot;无组织的&quot;能量传递（分子随机碰撞传递动能）。</p>
+<hr>
+<h2 id="25-热力学第一定律">2.5 热力学第一定律</h2>
+<h3 id="表述">表述</h3>
+<p>系统吸收的热量等于系统内能的增加加上系统对外做的功：</p>
+<p>$\boxed{Q = \Delta U + W}$</p>
+<p>或写成微分形式：</p>
+<p>$\text{đ}Q = dU + \text{đ}W = dU + p,dV$</p>
+<p>注意符号：$dU$ 用普通微分（因为 $U$ 是状态量，有全微分）；$\text{đ}Q$ 和 $\text{đ}W$ 用特殊符号（因为它们是过程量，不是某个函数的全微分）。</p>
+<h3 id="物理含义">物理含义</h3>
+<p>第一定律就是<strong>能量守恒</strong>：系统从外界获得的能量（以热的形式 $Q$），一部分用来增加自身的内能（$\Delta U$），另一部分用来对外做功（$W$）。</p>
+<p>$\text{系统得到的} = \text{自己留下的} + \text{给出去的}$</p>
+<h3 id="各种情况">各种情况</h3>
+<div class="table-wrap"><table><thead><tr>
+<th>情况</th>
+<th>条件</th>
+<th>第一定律简化为</th>
+</tr>
+</thead><tbody><tr>
+<td>绝热过程</td>
+<td>$Q = 0$</td>
+<td>$\Delta U = -W$（做功靠消耗内能）</td>
+</tr>
+<tr>
+<td>等容过程</td>
+<td>$W = 0$</td>
+<td>$Q = \Delta U$（吸热全部变成内能）</td>
+</tr>
+<tr>
+<td>等温过程（理想气体）</td>
+<td>$\Delta U = 0$</td>
+<td>$Q = W$（吸热全部变成功）</td>
+</tr>
+<tr>
+<td>循环过程</td>
+<td>$\Delta U = 0$（回到初态）</td>
+<td>$Q_{net} = W_{net}$</td>
+</tr>
+</tbody></table></div>
+<h3 id="第一定律对孤立系统">第一定律对孤立系统</h3>
+<p>孤立系统：$Q = 0$，$W = 0$，因此 $\Delta U = 0$。</p>
+<p><strong>孤立系统的内能守恒。</strong> 这是能量守恒的最朴素形式。</p>
+<hr>
+<h2 id="26-热容">2.6 热容</h2>
+<h3 id="为什么需要热容">为什么需要热容</h3>
+<p>不同物质升高同样的温度，需要的热量不同——铁块和水的&quot;难热程度&quot;不一样。热容就是量化这个差异的物理量。</p>
+<h3 id="定义">定义</h3>
+<p><strong>热容</strong> $C$：使系统温度升高 $dT$ 所需的热量。</p>
+<p>$C = \frac{\text{đ}Q}{dT}$</p>
+<p>热容的单位是 J/K。</p>
+<p>但这个定义有一个问题：$\text{đ}Q$ 取决于过程！同样升高 $dT$，等容过程和等压过程需要的热量不一样。所以热容必须指定过程。</p>
+<h3 id="定容热容-c_v">定容热容 $C_V$</h3>
+<p>在体积不变的条件下：</p>
+<p>$W = \int p,dV = 0$</p>
+<p>第一定律变为 $Q = \Delta U$，因此：</p>
+<p>$C_V = \left(\frac{\text{đ}Q}{dT}\right)_V = \left(\frac{\partial U}{\partial T}\right)_V$</p>
+<p>对理想气体，$U = U(T)$，偏导数变成普通导数：</p>
+<p>$C_V = \frac{dU}{dT}$</p>
+<p>进而：</p>
+<p>$\boxed{dU = nC_{V,m},dT \quad \text{（理想气体，任何过程）}}$</p>
+<p>其中 $C_{V,m}$ 是定容摩尔热容。这个公式不限于等容过程——因为理想气体内能只取决于 $T$。</p>
+<h3 id="定压热容-c_p">定压热容 $C_p$</h3>
+<p>在压强不变的条件下，气体膨胀会做功。第一定律：</p>
+<p>$Q = \Delta U + p\Delta V$</p>
+<p>对理想气体，$\Delta U = nC_{V,m}\Delta T$，而 $p\Delta V = nR\Delta T$（由 $pV = nRT$ 在 $p$ 恒定时微分得到），代入：</p>
+<p>$Q = nC_{V,m}\Delta T + nR\Delta T = n(C_{V,m} + R)\Delta T$</p>
+<p>所以定压摩尔热容：</p>
+<p>$\boxed{C_{p,m} = C_{V,m} + R}$</p>
+<p>这就是 <strong>Mayer 关系</strong>。</p>
+<h3 id="mayer-关系的物理含义">Mayer 关系的物理含义</h3>
+<p>等压加热比等容加热多消耗 $nR\Delta T$ 的热量——这多出来的部分去哪了？答案：变成了膨胀功 $p\Delta V = nR\Delta T$。</p>
+<p>等容加热：吸的热全部用来升温（增加内能）。
+等压加热：吸的热一部分升温，一部分用来做膨胀功（推开外界）。</p>
+<p>所以 $C_p &gt; C_V$，差值恰好等于 $R$（对 1 mol 理想气体）。</p>
+<h3 id="热容比绝热指数">热容比（绝热指数）</h3>
+<p>定义：</p>
+<p>$\gamma = \frac{C_{p,m}}{C_{V,m}} = 1 + \frac{R}{C_{V,m}}$</p>
+<p>$\gamma$ 在绝热过程的公式中反复出现。不同气体的 $\gamma$ 值：</p>
+<div class="table-wrap"><table><thead><tr>
+<th>气体类型</th>
+<th align="center">自由度 $i$</th>
+<th align="center">$C_{V,m}$</th>
+<th align="center">$C_{p,m}$</th>
+<th align="center">$\gamma$</th>
+</tr>
+</thead><tbody><tr>
+<td>单原子（He, Ar）</td>
+<td align="center">3</td>
+<td align="center">$\frac{3}{2}R$</td>
+<td align="center">$\frac{5}{2}R$</td>
+<td align="center">$5/3 \approx 1.67$</td>
+</tr>
+<tr>
+<td>双原子（N₂, O₂）</td>
+<td align="center">5</td>
+<td align="center">$\frac{5}{2}R$</td>
+<td align="center">$\frac{7}{2}R$</td>
+<td align="center">$7/5 = 1.40$</td>
+</tr>
+<tr>
+<td>多原子（CO₂, H₂O）</td>
+<td align="center">6</td>
+<td align="center">$3R$</td>
+<td align="center">$4R$</td>
+<td align="center">$4/3 \approx 1.33$</td>
+</tr>
+</tbody></table></div>
+<p>这里的自由度 $i$ 和能量均分定理有关：$C_{V,m} = \frac{i}{2}R$。第 4 章会详细解释&quot;自由度&quot;的含义。</p>
+<hr>
+<h2 id="27-等容过程">2.7 等容过程</h2>
+<h3 id="特征">特征</h3>
+<ul>
+<li>体积不变：$\Delta V = 0$</li>
+<li>系统不做功：$W = 0$</li>
+<li>p-V 图上是竖直线</li>
+</ul>
+<h3 id="第一定律">第一定律</h3>
+<p>$Q_V = \Delta U = nC_{V,m}(T_2 - T_1)$</p>
+<p>等容过程中，吸收的热量<strong>全部</strong>转化为内能。</p>
+<h3 id="压强变化">压强变化</h3>
+<p>由 $pV = nRT$ 在 $V$ 不变时：</p>
+<p>$\frac{p_1}{T_1} = \frac{p_2}{T_2} \quad \Rightarrow \quad p_2 = p_1 \frac{T_2}{T_1}$</p>
+<hr>
+<h2 id="28-等压过程">2.8 等压过程</h2>
+<h3 id="特征">特征</h3>
+<ul>
+<li>压强不变：$\Delta p = 0$</li>
+<li>典型场景：敞口容器中的加热（大气压恒定）</li>
+<li>p-V 图上是水平线</li>
+</ul>
+<h3 id="第一定律">第一定律</h3>
+<p>功：$W = p(V_2 - V_1) = p\Delta V = nR\Delta T$</p>
+<p>热量：$Q_p = nC_{p,m}(T_2 - T_1)$</p>
+<p>内能变化：$\Delta U = nC_{V,m}(T_2 - T_1)$</p>
+<p>验证：$Q_p = \Delta U + W$，即 $nC_{p,m}\Delta T = nC_{V,m}\Delta T + nR\Delta T$，确实满足 $C_{p,m} = C_{V,m} + R$。</p>
+<h3 id="体积变化">体积变化</h3>
+<p>由 $pV = nRT$ 在 $p$ 不变时：</p>
+<p>$\frac{V_1}{T_1} = \frac{V_2}{T_2} \quad \Rightarrow \quad V_2 = V_1 \frac{T_2}{T_1}$</p>
+<hr>
+<h2 id="29-等温过程">2.9 等温过程</h2>
+<h3 id="特征">特征</h3>
+<ul>
+<li>温度不变：$\Delta T = 0$</li>
+<li>对理想气体：内能不变 $\Delta U = 0$</li>
+<li>p-V 图上是双曲线 $p = nRT/V$</li>
+</ul>
+<h3 id="第一定律">第一定律</h3>
+<p>$Q = W \quad \text{（理想气体等温过程）}$</p>
+<p>吸收的热量全部转化为对外功（内能不变，所以吸的热不用来升温，全做了功）。</p>
+<h3 id="功的计算">功的计算</h3>
+<p>$W = \int_{V_1}^{V_2} p,dV = \int_{V_1}^{V_2} \frac{nRT}{V},dV = nRT\ln\frac{V_2}{V_1}$</p>
+<p>等价地（利用 $p_1V_1 = p_2V_2 = nRT$）：</p>
+<p>$\boxed{W = nRT\ln\frac{V_2}{V_1} = nRT\ln\frac{p_1}{p_2}}$</p>
+<p>膨胀（$V_2 &gt; V_1$）→ $W &gt; 0$，系统对外做正功，同时吸热 $Q = W &gt; 0$。
+压缩（$V_2 &lt; V_1$）→ $W &lt; 0$，外界对系统做功，系统放热。</p>
+<h3 id="物理图像">物理图像</h3>
+<p>等温膨胀：气体推活塞做功，如果不吸热，温度会下降（动能转化为功）。为了维持温度不变，必须从外界持续吸热。吸的热恰好等于做的功。</p>
+<hr>
+<h2 id="210-绝热过程">2.10 绝热过程</h2>
+<h3 id="特征">特征</h3>
+<ul>
+<li>没有热量交换：$Q = 0$</li>
+<li>典型场景：过程快到来不及传热（如声波中的气体压缩），或容器绝热良好</li>
+<li>第一定律变为：$\Delta U = -W$</li>
+</ul>
+<h3 id="绝热过程方程泊松公式的推导">绝热过程方程（泊松公式）的推导</h3>
+<p>从第一定律出发：</p>
+<p>$\text{đ}Q = 0 \quad \Rightarrow \quad dU + p,dV = 0$</p>
+<p>对理想气体，$dU = nC_{V,m},dT$：</p>
+<p>$nC_{V,m},dT + p,dV = 0 \tag{*}$</p>
+<p>再对 $pV = nRT$ 两边求微分：</p>
+<p>$p,dV + V,dp = nR,dT \quad \Rightarrow \quad dT = \frac{p,dV + V,dp}{nR}$</p>
+<p>代入 (*)：</p>
+<p>$nC_{V,m} \cdot \frac{p,dV + V,dp}{nR} + p,dV = 0$</p>
+<p>$\frac{C_{V,m}}{R}(p,dV + V,dp) + p,dV = 0$</p>
+<p>$p,dV\left(\frac{C_{V,m}}{R} + 1\right) + V,dp \cdot \frac{C_{V,m}}{R} = 0$</p>
+<p>注意 $\frac{C_{V,m}}{R} + 1 = \frac{C_{V,m} + R}{R} = \frac{C_{p,m}}{R}$，所以：</p>
+<p>$p,dV \cdot \frac{C_{p,m}}{R} + V,dp \cdot \frac{C_{V,m}}{R} = 0$</p>
+<p>两边乘以 $R$，除以 $pV$：</p>
+<p>$\frac{C_{p,m}}{V},dV + \frac{C_{V,m}}{p},dp = 0$</p>
+<p>$\gamma \frac{dV}{V} + \frac{dp}{p} = 0$</p>
+<p>积分（$\gamma$ 视为常数）：</p>
+<p>$\gamma \ln V + \ln p = \text{const}$</p>
+<p>$\ln(pV^\gamma) = \text{const}$</p>
+<p>$\boxed{pV^\gamma = \text{const} \quad \text{（绝热过程方程）}}$</p>
+<h3 id="等价形式">等价形式</h3>
+<p>利用 $pV = nRT$ 消去一个变量，可以写成其他形式：</p>
+<p>$TV^{\gamma-1} = \text{const}$</p>
+<p>$T^\gamma p^{1-\gamma} = \text{const}$</p>
+<p>三种形式等价，用哪个取决于题目给了什么量。</p>
+<h3 id="绝热过程的功">绝热过程的功</h3>
+<p>由 $\Delta U = -W$（因为 $Q = 0$）：</p>
+<p>$W = -\Delta U = -nC_{V,m}(T_2 - T_1) = nC_{V,m}(T_1 - T_2)$</p>
+<p>也可以用 $pV^\gamma = \text{const}$ 做积分直接算：</p>
+<p>$W = \int_{V_1}^{V_2} p,dV = \int_{V_1}^{V_2} \frac{p_1V_1^\gamma}{V^\gamma},dV = \frac{p_1V_1^\gamma}{1-\gamma}\left(V_2^{1-\gamma} - V_1^{1-\gamma}\right)$</p>
+<p>化简后：</p>
+<p>$\boxed{W = \frac{p_1V_1 - p_2V_2}{\gamma - 1} = \frac{nR(T_1 - T_2)}{\gamma - 1}}$</p>
+<h3 id="绝热线-vs-等温线">绝热线 vs 等温线</h3>
+<p>在 p-V 图上，绝热线比等温线<strong>更陡</strong>。为什么？</p>
+<p>等温膨胀：$p \propto 1/V$（下降速率 $\propto V^{-1}$）
+绝热膨胀：$p \propto 1/V^\gamma$（下降速率 $\propto V^{-\gamma}$，$\gamma &gt; 1$）</p>
+<p>物理原因：等温膨胀时，气体从外界吸热来补充做功损失的能量，所以压强降得慢。绝热膨胀没有热补充，做功全靠消耗内能，温度下降导致压强降得更快。</p>
+<hr>
+<h2 id="211-多方过程">2.11 多方过程</h2>
+<h3 id="定义">定义</h3>
+<p>实际过程中，很多过程既不是完全绝热也不是完全等温，而是介于两者之间。<strong>多方过程</strong>是一种统一描述：</p>
+<p>$pV^n = \text{const}$</p>
+<p>其中 $n$ 叫<strong>多方指数</strong>，取不同值对应不同特殊过程：</p>
+<div class="table-wrap"><table><thead><tr>
+<th align="center">$n$ 值</th>
+<th>过程</th>
+<th>说明</th>
+</tr>
+</thead><tbody><tr>
+<td align="center">$0$</td>
+<td>等压过程</td>
+<td>$p = \text{const}$</td>
+</tr>
+<tr>
+<td align="center">$1$</td>
+<td>等温过程</td>
+<td>$pV = \text{const}$</td>
+</tr>
+<tr>
+<td align="center">$\gamma$</td>
+<td>绝热过程</td>
+<td>$pV^\gamma = \text{const}$</td>
+</tr>
+<tr>
+<td align="center">$\infty$</td>
+<td>等容过程</td>
+<td>$V = \text{const}$（因为 $V^n$ 支配一切，要求 $V$ 不变）</td>
+</tr>
+</tbody></table></div>
+<p>多方过程的功和热容都可以用 $n$ 统一表达：</p>
+<p>$W = \frac{nR(T_1 - T_2)}{n - 1}$</p>
+<p>$C_n = C_{V,m}\frac{\gamma - n}{1 - n}$</p>
+<p>不过这些公式记不住也没关系——重点理解四种特殊过程就够应付考试了。</p>
+<hr>
+<h2 id="212-焦耳实验与理想气体内能">2.12 焦耳实验与理想气体内能</h2>
+<h3 id="实验设计">实验设计</h3>
+<p>焦耳（1845）做了一个经典实验：两个容器用阀门连通，一个装满气体，一个抽成真空。把整套装置浸在水中。打开阀门，气体向真空容器自由膨胀。</p>
+<p>实验结果：水温不变。</p>
+<h3 id="推论">推论</h3>
+<p>自由膨胀中：</p>
+<ul>
+<li>$W = 0$（气体向真空膨胀不对抗任何外力，$p_{ext} = 0$）</li>
+<li>$Q = 0$（水温不变，说明系统没有吸热或放热）</li>
+<li>由第一定律：$\Delta U = Q - W = 0$</li>
+</ul>
+<p>气体体积变了（$V$ 增大），但内能没变。结论：</p>
+<p>$\left(\frac{\partial U}{\partial V}\right)_T = 0 \quad \text{（理想气体）}$</p>
+<p>即理想气体的内能和体积无关，只取决于温度。</p>
+<h3 id="更精确的实验">更精确的实验</h3>
+<p>焦耳的实验精度有限（水的热容太大，温度变化太小测不出）。后来焦耳-汤姆孙用多孔塞实验（节流过程）做了更精确的测量，发现真实气体自由膨胀后温度确实会有微小变化——这是分子间作用力的效果。但对理想气体模型来说，$U = U(T)$ 是精确成立的。</p>
+<hr>
+<h2 id="213-四种过程的对比总结">2.13 四种过程的对比总结</h2>
+<p>对 $n$ mol 理想气体，从 $(p_1, V_1, T_1)$ 到 $(p_2, V_2, T_2)$：</p>
+<div class="table-wrap"><table><thead><tr>
+<th>过程</th>
+<th>约束</th>
+<th>$W$</th>
+<th>$Q$</th>
+<th>$\Delta U$</th>
+</tr>
+</thead><tbody><tr>
+<td>等容</td>
+<td>$V_1 = V_2$</td>
+<td>$0$</td>
+<td>$nC_{V,m}\Delta T$</td>
+<td>$nC_{V,m}\Delta T$</td>
+</tr>
+<tr>
+<td>等压</td>
+<td>$p_1 = p_2$</td>
+<td>$p\Delta V = nR\Delta T$</td>
+<td>$nC_{p,m}\Delta T$</td>
+<td>$nC_{V,m}\Delta T$</td>
+</tr>
+<tr>
+<td>等温</td>
+<td>$T_1 = T_2$</td>
+<td>$nRT\ln(V_2/V_1)$</td>
+<td>$W$</td>
+<td>$0$</td>
+</tr>
+<tr>
+<td>绝热</td>
+<td>$Q = 0$</td>
+<td>$nC_{V,m}(T_1-T_2)$</td>
+<td>$0$</td>
+<td>$nC_{V,m}\Delta T$</td>
+</tr>
+</tbody></table></div>
+<p><strong>注意</strong>：$\Delta U = nC_{V,m}\Delta T$ 对所有过程都成立（理想气体），不仅是等容过程。这一行在四种过程中完全相同。</p>
+<hr>
+<h2 id="214-循环过程简介">2.14 循环过程简介</h2>
+<h3 id="什么是循环过程">什么是循环过程</h3>
+<p>系统经历一系列变化后<strong>回到初态</strong>，在 p-V 图上形成一个闭合曲线。</p>
+<p>由于回到初态：$\Delta U = 0$（状态量回到原值）。</p>
+<p>第一定律：$Q_{net} = W_{net}$</p>
+<p>循环过程中系统净吸收的热量等于对外做的净功。</p>
+<h3 id="循环功的几何意义">循环功的几何意义</h3>
+<p>在 p-V 图上，循环过程做的净功等于<strong>闭合曲线围成的面积</strong>。</p>
+<ul>
+<li>顺时针循环（正循环）：$W_{net} &gt; 0$，系统对外做净功→<strong>热机</strong></li>
+<li>逆时针循环（逆循环）：$W_{net} &lt; 0$，外界对系统做净功→<strong>制冷机/热泵</strong></li>
+</ul>
+<h3 id="热机效率">热机效率</h3>
+<p>热机从高温热源吸热 $Q_1$，向低温热源放热 $Q_2$（$Q_2 &gt; 0$ 表示放出的量），对外做功 $W = Q_1 - Q_2$。</p>
+<p>热机效率：</p>
+<p>$\eta = \frac{W}{Q_1} = \frac{Q_1 - Q_2}{Q_1} = 1 - \frac{Q_2}{Q_1}$</p>
+<p>效率永远小于 1——你不可能把吸收的热量全部变成功（第二定律的内容，第 3 章详细讨论）。</p>
+<hr>
+<h2 id="215-概念辨析">2.15 概念辨析</h2>
+<h3 id="q绝热自由膨胀中气体做了功吗">Q：绝热自由膨胀中气体做了功吗？</h3>
+<p><strong>没有。</strong> 自由膨胀是向真空膨胀，外界压强为零，$W = \int p_{ext},dV = 0$。</p>
+<p>注意：这里要用<strong>外界压强</strong> $p_{ext}$，不是气体内部压强。气体内部压强不为零，但它没有对抗任何外力。</p>
+<p>而且自由膨胀不是准静态过程——气体突然涌入真空，中间状态没有确定的压强。</p>
+<h3 id="qdelta-u-nc_vmdelta-t-只在等容过程中成立吗">Q：$\Delta U = nC_{V,m}\Delta T$ 只在等容过程中成立吗？</h3>
+<p><strong>不是。</strong> 对理想气体，这个公式对<strong>任何过程</strong>都成立。</p>
+<p>原因：理想气体 $U = U(T)$，所以 $dU = nC_{V,m},dT$ 是一个状态量的全微分，和过程无关。无论等压、等温、绝热还是任意过程，只要知道初末温度之差，就能算出 $\Delta U$。</p>
+<h3 id="q等温过程中气体温度不变为什么还能吸热">Q：等温过程中气体温度不变，为什么还能吸热？</h3>
+<p>因为热量不一定用来升温——它可以用来做功。等温膨胀中，气体吸的热<strong>全部</strong>转化为对外功（$Q = W$），内能不变，温度不变。</p>
+<p>类比：你挣了钱但全部花掉了，存款（内能）没变。</p>
+<h3 id="q为什么绝热膨胀温度会下降">Q：为什么绝热膨胀温度会下降？</h3>
+<p>绝热膨胀中 $Q = 0$，但气体对外做了功（$W &gt; 0$）。由第一定律 $\Delta U = -W &lt; 0$，内能减少。而理想气体内能只取决于温度，内能减少→温度下降。</p>
+<p>直觉：气体推活塞做功，消耗了分子的动能。分子动得慢了，温度就低了。</p>
+<hr>
+<h2 id="216-本章公式总结">2.16 本章公式总结</h2>
+<h3 id="第一定律">第一定律</h3>
+<p>$Q = \Delta U + W \tag{2.1}$</p>
+<p>$dU = nC_{V,m},dT \quad \text{（理想气体，任何过程）} \tag{2.2}$</p>
+<h3 id="功">功</h3>
+<p>$W = \int_{V_1}^{V_2} p,dV \quad \text{（准静态过程）} \tag{2.3}$</p>
+<h3 id="mayer-关系">Mayer 关系</h3>
+<p>$C_{p,m} = C_{V,m} + R, \quad \gamma = C_{p,m}/C_{V,m} \tag{2.4}$</p>
+<h3 id="等温过程">等温过程</h3>
+<p>$W = Q = nRT\ln\frac{V_2}{V_1} = nRT\ln\frac{p_1}{p_2} \tag{2.5}$</p>
+<h3 id="绝热过程">绝热过程</h3>
+<p>$pV^\gamma = \text{const}, \quad TV^{\gamma-1} = \text{const} \tag{2.6}$</p>
+<p>$W = \frac{p_1V_1 - p_2V_2}{\gamma-1} = \frac{nR(T_1-T_2)}{\gamma-1} \tag{2.7}$</p>
+<h3 id="热机效率">热机效率</h3>
+<p>$\eta = \frac{W}{Q_1} = 1 - \frac{Q_2}{Q_1} \tag{2.8}$</p>
+<hr>
+<h2 id="217-本章小结">2.17 本章小结</h2>
+<div class="table-wrap"><table><thead><tr>
+<th>核心概念</th>
+<th>要点</th>
+</tr>
+</thead><tbody><tr>
+<td>内能 $U$</td>
+<td>状态量；理想气体只取决于 $T$；$\Delta U = nC_{V,m}\Delta T$</td>
+</tr>
+<tr>
+<td>功 $W$</td>
+<td>过程量；$W = \int p,dV$；p-V 图下面积</td>
+</tr>
+<tr>
+<td>热量 $Q$</td>
+<td>过程量；因温差传递的能量</td>
+</tr>
+<tr>
+<td>第一定律</td>
+<td>$Q = \Delta U + W$（能量守恒）</td>
+</tr>
+<tr>
+<td>热容</td>
+<td>$C_V$（等容）、$C_p$（等压）；Mayer 关系 $C_p - C_V = R$</td>
+</tr>
+<tr>
+<td>等容过程</td>
+<td>$W=0$，$Q = \Delta U$</td>
+</tr>
+<tr>
+<td>等压过程</td>
+<td>$W = nR\Delta T$，$Q = nC_p\Delta T$</td>
+</tr>
+<tr>
+<td>等温过程</td>
+<td>$\Delta U=0$，$Q=W=nRT\ln(V_2/V_1)$</td>
+</tr>
+<tr>
+<td>绝热过程</td>
+<td>$Q=0$，$pV^\gamma = \text{const}$</td>
+</tr>
+<tr>
+<td>循环过程</td>
+<td>$\Delta U = 0$，净功 = 闭合曲线面积</td>
+</tr>
+</tbody></table></div>
+
+    <nav class="pager">  <a href="01-basics-temperature.html">
+    <span class="label">← 上一章</span>
+    <span class="title">热学基础与温度</span>
+  </a>  <a href="03-second-law-entropy.html" class="next">
+    <span class="label">下一章 →</span>
+    <span class="title">热力学第二定律与熵</span>
+  </a></nav>
+  </article>
+</div>
+
+<footer>
+  <div class="set">
+    <span>热学速通</span>
+    <span>2026 · ZH-CN</span>
+  </div>
+  <div class="set">
+    <span>Mav</span>
+  </div>
+</footer>
+<div class="search-backdrop" id="search-overlay" role="dialog" aria-modal="true" aria-label="搜索" hidden>
+  <div class="search-modal">
+    <div class="search-input-wrap">
+      <input type="search" class="search-input" placeholder="搜索内容..." aria-label="搜索内容" autocomplete="off">
+      <kbd>ESC</kbd>
+    </div>
+    <div class="search-results" role="listbox" aria-label="搜索结果"></div>
+  </div>
+</div>
+
+<!-- Side Panel -->
+<div class="side-panel" id="side-panel">
+  <div class="side-panel-resize" id="side-panel-resize"></div>
+  <div class="side-panel-header">
+    <div class="side-panel-tabs">
+      <button class="side-panel-tab active" data-mode="sidenote">补充</button>
+      <button class="side-panel-tab" data-mode="notepad">笔记</button>
+    </div>
+    <button class="side-panel-close" aria-label="关闭">×</button>
+  </div>
+  <div class="side-panel-body"></div>
+</div>
+<button class="notepad-fab" id="notepad-fab" aria-label="便利贴">✎</button>
+
+<!-- Mobile TOC -->
+<button class="mtoc-fab" id="mtoc-fab" aria-label="目录">TOC</button>
+<div class="mtoc-drawer" id="mtoc-drawer">
+  <div class="mtoc-content"></div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/bash.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/typescript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/yaml.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/javascript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/json.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/python.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/css.min.js"></script>
+<script src="../assets/script.js"></script>
+</body>
+</html>

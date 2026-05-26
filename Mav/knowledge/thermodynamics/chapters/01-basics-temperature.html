@@ -1,0 +1,751 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>热学基础与温度 — 热学速通</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" id="hljs-light" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+<link rel="stylesheet" id="hljs-dark" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" media="not all">
+</head>
+<body>
+
+<div class="progress-bar" id="progress-bar"></div>
+
+<nav class="topnav" id="topnav">
+  <div class="topnav-inner">
+    <a class="brand" href="../index.html">热学速通</a>
+    <div class="nav-links">
+      <a href="01-basics-temperature.html" class="active">01</a>
+    </div>
+    <div class="nav-controls">
+      <button class="nav-btn" id="search-btn" aria-label="搜索 (Ctrl+K)">⌘K</button>
+      <button class="nav-btn" id="settings-btn" aria-label="阅读设置">Aa</button>
+      <a class="nav-btn" href="../../index.html" aria-label="返回知识库">← 知识库</a>
+      <a class="nav-btn" href="https://github.com/maverickxone/mav-homepage" target="_blank" rel="noopener" aria-label="GitHub" style="padding: 6px 8px;"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg></a>
+    </div>
+  </div>
+</nav>
+<div class="settings-pop" id="settings-pop">
+  <h5>主题</h5>
+  <div class="row">
+    <button class="seg" data-theme-set="light">明亮</button>
+    <button class="seg" data-theme-set="dark">暗色</button>
+  </div>
+  <h5>字号</h5>
+  <div class="row">
+    <button class="seg" data-size-set="s">小</button>
+    <button class="seg" data-size-set="m">中</button>
+    <button class="seg" data-size-set="l">大</button>
+  </div>
+</div>
+
+<div class="with-sidebar">
+  <aside class="sidebar">
+  <div class="chapter-num">CHAPTER 01</div>
+  <div class="chapter-name">热学基础与温度</div>
+  <h4>目录</h4>
+  <ul>
+    <li><a href="#11-热学研究什么">1.1 热学研究什么</a></li>
+    <li><a href="#12-热力学系统与外界">1.2 热力学系统与外界</a></li>
+    <li><a href="#13-状态参量">1.3 状态参量</a></li>
+    <li><a href="#14-平衡态与准静态过程">1.4 平衡态与准静态过程</a></li>
+    <li><a href="#15-温度与热平衡">1.5 温度与热平衡</a></li>
+    <li><a href="#16-温标">1.6 温标</a></li>
+    <li><a href="#17-理想气体状态方程">1.7 理想气体状态方程</a></li>
+    <li><a href="#18-压强的微观解释">1.8 压强的微观解释</a></li>
+    <li><a href="#19-温度的微观意义">1.9 温度的微观意义</a></li>
+    <li><a href="#110-p-v-图与等温线">1.10 p-V 图与等温线</a></li>
+    <li><a href="#111-实际气体与范德瓦尔斯方程预览">1.11 实际气体与范德瓦尔斯方程（预览）</a></li>
+    <li><a href="#112-本章公式总结">1.12 本章公式总结</a></li>
+    <li><a href="#113-概念辨析">1.13 概念辨析</a></li>
+    <li><a href="#114-本章小结">1.14 本章小结</a></li>
+  </ul>
+</aside>
+  <article class="chapter-body">
+    <header class="chapter-head">
+  <div class="chapter-head-meta">
+    <span class="num">CHAPTER 01</span>
+    <span>≈ 50 MIN READ</span>
+  </div>
+  <h1>热学基础与温度</h1>
+
+</header>
+    <h2 id="11-热学研究什么">1.1 热学研究什么</h2>
+<p>你已经学过力学——研究物体在力的作用下如何运动。但力学处理的对象通常是&quot;一个质点&quot;或&quot;一个刚体&quot;。热学完全不同：它面对的是<strong>由天文数字量级的微观粒子组成的宏观物体</strong>。</p>
+<p>一摩尔气体包含 $6.022 \times 10^{23}$ 个分子。你不可能写出每个分子的运动方程（那是 $10^{23}$ 个耦合微分方程）。热学的核心问题就是：<strong>不追踪每一个粒子，能不能找到描述整体行为的规律？</strong></p>
+<p>答案是肯定的——正因为粒子数巨大，统计规律变得异常精确。</p>
+<h3 id="什么是热现象">什么是热现象</h3>
+<p>热现象是一切和物体冷热状态相关的宏观现象，包括但不限于：</p>
+<ul>
+<li>热胀冷缩（几何性质随温度变化）</li>
+<li>相变（冰→水→气）</li>
+<li>导热（热量从高温处流向低温处）</li>
+<li>电阻随温度变化</li>
+<li>磁性随温度变化（居里温度以上铁磁体失去磁性）</li>
+</ul>
+<p>这些现象的<strong>微观本质</strong>都是同一件事：大量粒子的无规则热运动。温度高→粒子动得猛→宏观上体现出各种热效应。</p>
+<h3 id="两条研究路线">两条研究路线</h3>
+<p>热学有两条互补的路线：</p>
+<div class="table-wrap"><table><thead><tr>
+<th>路线</th>
+<th>视角</th>
+<th>方法论</th>
+<th>代表内容</th>
+</tr>
+</thead><tbody><tr>
+<td>热力学（Thermodynamics）</td>
+<td>宏观</td>
+<td>从实验事实出发，建立普适定律，不问微观细节</td>
+<td>第一定律、第二定律、熵、自由能</td>
+</tr>
+<tr>
+<td>统计物理（Statistical Physics）</td>
+<td>微观</td>
+<td>从大量粒子的力学规律出发，用概率统计推导宏观量</td>
+<td>Maxwell 分布、能量均分、玻尔兹曼关系</td>
+</tr>
+</tbody></table></div>
+<p>两条路线是互补的：</p>
+<ul>
+<li>热力学告诉你&quot;是什么&quot;（规律是什么），不告诉你&quot;为什么&quot;</li>
+<li>统计物理告诉你&quot;为什么&quot;（微观机制），但推导依赖模型假设</li>
+</ul>
+<p>这门课前三章走宏观路线（热力学），第 4-5 章走微观路线（分子动理论），第 6 章两者结合。</p>
+<h3 id="学习方法提示">学习方法提示</h3>
+<p>课件里强调了几点，值得重复：</p>
+<ol>
+<li><strong>基本概念要精确</strong>：温度、内能、熵、功——每一个词都有严格定义，不能靠日常直觉</li>
+<li><strong>定律要理解透</strong>：不只是记公式，要知道适用条件和物理含义</li>
+<li><strong>宏观与微观双视角</strong>：同一个量（如压强、温度），既有宏观定义也有微观解释</li>
+<li><strong>抓主要矛盾</strong>：热力学建立模型时会做理想化（理想气体、准静态过程），先搞清理想情况，再考虑修正</li>
+</ol>
+<hr>
+<h2 id="12-热力学系统与外界">1.2 热力学系统与外界</h2>
+<h3 id="为什么需要quot系统quot的概念">为什么需要&quot;系统&quot;的概念</h3>
+<p>在力学里你画受力分析图，第一步就是选取研究对象。热学也一样——你必须先明确<strong>你在研究什么</strong>。</p>
+<p><strong>系统</strong>（system）：被你选定的研究对象。
+<strong>外界</strong>（surroundings）：系统以外的一切。
+<strong>边界</strong>（boundary）：系统和外界的分界面。</p>
+<p>边界可以是实际的物理壁（比如气缸壁），也可以是你假想画出的一个面。关键是一旦选定了系统，你就要追踪：跨越边界的能量交换（功和热）、跨越边界的物质交换。</p>
+<h3 id="系统的分类">系统的分类</h3>
+<p>按照边界允许什么穿过来分：</p>
+<div class="table-wrap"><table><thead><tr>
+<th>类型</th>
+<th align="center">物质能否穿越</th>
+<th align="center">能量能否穿越</th>
+<th>典型例子</th>
+</tr>
+</thead><tbody><tr>
+<td>开放系统（open）</td>
+<td align="center">✓</td>
+<td align="center">✓</td>
+<td>敞口烧杯、正在呼吸的人</td>
+</tr>
+<tr>
+<td>封闭系统（closed）</td>
+<td align="center">✗</td>
+<td align="center">✓</td>
+<td>密封气缸（可做功、可传热）</td>
+</tr>
+<tr>
+<td>孤立系统（isolated）</td>
+<td align="center">✗</td>
+<td align="center">✗</td>
+<td>理想保温瓶、整个宇宙</td>
+</tr>
+</tbody></table></div>
+<p><strong>这门课 90% 的时间在讨论封闭系统</strong>——一定量的气体被封在容器里，可以和外界交换能量（做功或传热），但分子进不来也出不去。<span class="sidenote-mark" data-note="<strong>封闭系统里，能量是怎么穿过边界的？</strong><br><br>物质没有进出，能量却能传递——靠的不是粒子穿越边界，而是<strong>力的作用</strong>跨越接触面。<br><br><strong>做功</strong>：气体分子撞击活塞 → 活塞受力移动 → 力 × 位移 = 功。没有分子穿过活塞，但动能通过接触力传给了外界。就像你推墙——手没穿过墙，能量却传过去了。<br><br><strong>传热</strong>：气体分子撞击导热壁 → 壁内原子振动加剧 → 振动沿壁传递到外侧 → 外侧分子获得能量。全程像多米诺骨牌接力，每个原子都没离开原位。<br><br>一句话：封闭系统的边界挡住的是「有质量的粒子」，挡不住「力的作用」和「场的传播」——而这正是能量传递的两种方式。">tips</span></p>
+<h3 id="边界的性质">边界的性质</h3>
+<p>边界本身也有分类，常见的：</p>
+<ul>
+<li><strong>刚性壁</strong> vs <strong>可动壁</strong>：刚性壁不允许体积变化（不做功）；可动壁（如活塞）允许系统做膨胀功</li>
+<li><strong>绝热壁</strong> vs <strong>导热壁</strong>：绝热壁不允许热量传递；导热壁允许热交换</li>
+<li><strong>半透膜</strong>：只允许特定分子通过（化学中的渗透平衡用到，本课程不涉及）</li>
+</ul>
+<p>一个实用的判断：看到&quot;绝热&quot;两个字→系统不吸热不放热（$Q = 0$）；看到&quot;刚性容器&quot;→系统不做膨胀功（$W = 0$）。</p>
+<hr>
+<h2 id="13-状态参量">1.3 状态参量</h2>
+<h3 id="什么是状态参量">什么是状态参量</h3>
+<p>描述系统宏观状态的物理量叫<strong>状态参量</strong>（state variables 或 state functions）。</p>
+<p>常见的状态参量：</p>
+<div class="table-wrap"><table><thead><tr>
+<th>参量</th>
+<th>符号</th>
+<th>含义</th>
+<th>单位</th>
+</tr>
+</thead><tbody><tr>
+<td>压强</td>
+<td>$p$</td>
+<td>单位面积上的力</td>
+<td>Pa (N/m²)</td>
+</tr>
+<tr>
+<td>体积</td>
+<td>$V$</td>
+<td>系统占据的空间</td>
+<td>m³</td>
+</tr>
+<tr>
+<td>温度</td>
+<td>$T$</td>
+<td>冷热程度（严格定义见 1.5）</td>
+<td>K</td>
+</tr>
+<tr>
+<td>内能</td>
+<td>$U$</td>
+<td>系统内所有分子动能和势能的总和</td>
+<td>J</td>
+</tr>
+<tr>
+<td>物质的量</td>
+<td>$n$</td>
+<td>含多少摩尔粒子</td>
+<td>mol</td>
+</tr>
+</tbody></table></div>
+<p><strong>状态参量的核心性质：只取决于系统当前所处的状态，与到达该状态的路径无关。</strong></p>
+<p>打个比方：你在合肥的海拔是确定的，不管你是从北京坐火车来的还是从上海飞过来的。海拔就是一个&quot;状态量&quot;。而你走了多少路，那是&quot;过程量&quot;——它取决于路径。</p>
+<p>后面会看到，功 $W$ 和热 $Q$ 都是<strong>过程量</strong>（依赖路径），而 $U$、$T$、$p$、$V$ 都是状态量。</p>
+<h3 id="广延量与强度量">广延量与强度量</h3>
+<p>状态参量还可以按另一个维度分类：</p>
+<div class="table-wrap"><table><thead><tr>
+<th>类型</th>
+<th>定义</th>
+<th>例子</th>
+</tr>
+</thead><tbody><tr>
+<td>广延量（extensive）</td>
+<td>和系统物质的量成正比，有加和性</td>
+<td>$V$, $U$, $n$, $S$（熵）</td>
+</tr>
+<tr>
+<td>强度量（intensive）</td>
+<td>和系统大小无关</td>
+<td>$p$, $T$, $\rho$（密度）</td>
+</tr>
+</tbody></table></div>
+<p><strong>快速判断法</strong>：想象把系统等分为两半——</p>
+<ul>
+<li>如果该量也变为一半 → 广延量</li>
+<li>如果该量不变 → 强度量</li>
+</ul>
+<p>两个广延量的比值是强度量。例如 $\rho = m/V$：质量和体积都是广延量，它们的比值密度是强度量。</p>
+<h3 id="自由度与状态方程">自由度与状态方程</h3>
+<p>一个简单的封闭系统（比如一定量的理想气体），有多少个独立的状态参量？</p>
+<p>答案是：对于一种组分的简单系统，<strong>只有两个独立的强度量</strong>。也就是说，如果你确定了 $(T, V)$，那么 $p$ 就被唯一确定了。这个把它们联系起来的关系就是<strong>状态方程</strong>：</p>
+<p>$f(p, V, T) = 0$</p>
+<p>对理想气体来说，这个关系就是 $pV = nRT$（1.7 节详细讲）。</p>
+<p>为什么是两个独立变量？这是实验事实：对于简单（单组分、无外场）的平衡态系统，两个强度量的组合就足以完全确定热力学状态。</p>
+<hr>
+<h2 id="14-平衡态与准静态过程">1.4 平衡态与准静态过程</h2>
+<h3 id="平衡态的定义">平衡态的定义</h3>
+<p><strong>平衡态</strong>（equilibrium state）：在不受外界影响的条件下，系统的宏观性质不随时间变化的状态。</p>
+<p>两个关键条件：</p>
+<ol>
+<li>宏观量不随时间改变</li>
+<li>不依赖外界维持</li>
+</ol>
+<h3 id="平衡态-稳态">平衡态 ≠ 稳态</h3>
+<p>一根长铁棒，左端插在火里（恒温 1000 K），右端暴露在空气中（300 K）。等足够长时间后，铁棒每一点的温度不再变化——这是<strong>稳态</strong>（steady state），但不是平衡态。</p>
+<p>为什么？因为铁棒内部存在温度梯度，有持续的热量流动（从左向右），而且这种状态依赖外界持续加热来维持。</p>
+<p><strong>平衡态要求系统内部处处均匀</strong>——没有温度差、没有压强差、没有浓度差。</p>
+<h3 id="平衡态的种类">平衡态的种类</h3>
+<p>一个系统可能同时满足多种平衡：</p>
+<div class="table-wrap"><table><thead><tr>
+<th>平衡类型</th>
+<th>条件</th>
+<th>对应的均匀量</th>
+</tr>
+</thead><tbody><tr>
+<td>热平衡</td>
+<td>各处温度相同</td>
+<td>$T$</td>
+</tr>
+<tr>
+<td>力学平衡</td>
+<td>各处压强相同（无宏观流动）</td>
+<td>$p$</td>
+</tr>
+<tr>
+<td>化学平衡</td>
+<td>各组分浓度不再变化</td>
+<td>化学势 $\mu$</td>
+</tr>
+</tbody></table></div>
+<p>只有三种平衡同时满足时，系统才处于完全的热力学平衡态。本课程主要关注热平衡和力学平衡。</p>
+<h3 id="为什么状态参量只在平衡态有意义">为什么状态参量只在平衡态有意义</h3>
+<p>想象一个正在剧烈膨胀的气体——活塞被突然释放，气体向外冲。此时气体各处的压强不同：靠近活塞处压强低，远离活塞处压强高。你没法用一个数字 $p$ 来描述整个系统的&quot;压强&quot;。</p>
+<p>只有当系统达到平衡态时，$p$ 在系统内处处相同，才能用一个确定的值来描述。</p>
+<p><strong>这就是为什么热力学的大多数讨论都限于平衡态。</strong></p>
+<h3 id="准静态过程">准静态过程</h3>
+<p>但如果热力学只能讨论平衡态，那就没法研究&quot;变化&quot;了——怎么办？</p>
+<p>方法是引入<strong>准静态过程</strong>（quasi-static process）：一个进行得无限缓慢的过程，使得系统在每一瞬间都无限接近平衡态。</p>
+<p>具体什么意思？比如你要压缩气缸里的气体。如果你猛地一推活塞，气体内部会产生激波，各处压强不同——这不是准静态的。但如果你极其缓慢地、一点一点地推活塞，每推一小步都等气体重新达到平衡，那么在任意时刻系统都近似处于平衡态。</p>
+<p><strong>准静态过程的意义</strong>：在 $p$-$V$ 图上可以画出一条确定的曲线。因为每一点 $(p, V)$ 都是一个平衡态，所以过程是一系列平衡态的连续。</p>
+<p>非准静态过程在 $p$-$V$ 图上画不出来——因为中间状态没有确定的 $p$ 值。通常用虚线表示。</p>
+<h3 id="准静态的判据">准静态的判据</h3>
+<p>实际上不可能无限缓慢。实用判据是：<strong>过程的时间尺度远大于系统内部恢复平衡的时间尺度（弛豫时间）。</strong></p>
+<p>对气体来说，弛豫时间大约是声波穿越容器的时间。如果容器 10 cm，声速约 340 m/s，弛豫时间约 $0.3$ ms。只要你的活塞运动比这慢得多，就近似是准静态的。</p>
+<hr>
+<h2 id="15-温度与热平衡">1.5 温度与热平衡</h2>
+<h3 id="温度为什么需要严格定义">温度为什么需要严格定义</h3>
+<p>日常生活中&quot;温度&quot;是一个直觉概念——摸上去热的东西温度高，冷的东西温度低。但这个直觉有问题：</p>
+<ul>
+<li>冬天摸金属栏杆觉得比木头冷，但它们温度其实一样（都等于室外气温）。区别在于导热率。</li>
+<li>&quot;温度&quot;如果不能独立于人的感觉来定义，就没法做定量科学。</li>
+</ul>
+<p>所以需要一个<strong>不依赖人的感觉、不依赖特定物质</strong>的温度定义。这就是第零定律的任务。</p>
+<h3 id="热力学第零定律">热力学第零定律</h3>
+<p>实验事实：</p>
+<blockquote><p>如果物体 A 和物体 C 处于热平衡（放在一起足够长时间后，不再有净热量流动），物体 B 和物体 C 也处于热平衡，那么 A 和 B 之间也必然处于热平衡。</p>
+</blockquote>
+<p>这看起来像是&quot;等量代换&quot;的废话，但它保证了一个深刻的结论：</p>
+<p><strong>存在一个态函数（我们叫它&quot;温度&quot;），使得两个系统处于热平衡当且仅当它们的温度相同。</strong></p>
+<p>如果没有第零定律，你没法保证温度计的读数是一致的。A 和 C 平衡（温度计读数一样），B 和 C 平衡（温度计读数一样），但你怎么知道 A 和 B 直接接触后不会有热量流动？第零定律告诉你：不会。热平衡是一种<strong>等价关系</strong>（自反、对称、传递），所以可以用一个数（温度）来标记每个等价类。</p>
+<h3 id="为什么叫quot第零定律quot">为什么叫&quot;第零定律&quot;</h3>
+<p>热力学第一和第二定律先被发现（19 世纪中期）。后来人们意识到温度的定义在逻辑上比它们更基本，但已经没有更小的编号了，于是给了它&quot;第零&quot;的名字（1930 年代 Fowler 提出）。</p>
+<h3 id="热平衡的操作意义">热平衡的操作意义</h3>
+<p>两个系统&quot;处于热平衡&quot;意味着：用导热壁连接它们后，<strong>没有净热量流动</strong>。</p>
+<p>注意&quot;净&quot;字——微观上分子仍然在碰撞、交换能量，但从 A 流向 B 的热量和从 B 流向 A 的热量统计上相等，宏观上看不到变化。</p>
+<hr>
+<h2 id="16-温标">1.6 温标</h2>
+<p>温度需要数值化——这就是温标的任务。不同的温标本质上是给&quot;温度&quot;这个抽象概念选择不同的数字标签。</p>
+<h3 id="经验温标的构造">经验温标的构造</h3>
+<p>经验温标的做法：</p>
+<ol>
+<li>选一种<strong>测温物质</strong>（水银、酒精、铂电阻...）</li>
+<li>选一个随温度变化的<strong>测温属性</strong> $X$（长度、电阻、压强...）</li>
+<li>选<strong>两个固定点</strong>（冰点、沸点），赋予数值（0 和 100）</li>
+<li>假设 $T$ 和 $X$ 之间是线性关系：$T = a + bX$</li>
+</ol>
+<p>摄氏温标就是这样定的：</p>
+<ul>
+<li>冰水混合物 → 0°C</li>
+<li>标准大气压下沸水 → 100°C</li>
+<li>中间假设线性</li>
+</ul>
+<h3 id="经验温标的问题">经验温标的问题</h3>
+<p>不同测温物质给出的温度不一样。为什么？</p>
+<p>因为各种物质的测温属性 $X$ 和&quot;真正的温度&quot;之间的关系<strong>不是严格线性</strong>的。水银的体积随温度膨胀，但膨胀率本身也随温度变化。所以水银温度计和酒精温度计在冰点和沸点之间的刻度是一致的（人为规定的），但在这两点之外，或者在两点之间的精确读数上，会有差异。</p>
+<p>经验温标<strong>依赖测温物质</strong>——这不够&quot;根本&quot;。</p>
+<h3 id="理想气体温标">理想气体温标</h3>
+<p>实验发现了一件有意思的事：用不同气体作为测温物质（在定容气体温度计中），当气体越来越稀薄时，不同气体给出的温度读数趋向同一个值。</p>
+<p>这说明：在气体足够稀薄（接近理想气体）的极限下，温标不再依赖气体种类。这就是理想气体温标的基础。</p>
+<p><strong>定义</strong>：以水的三相点为基准，定义三相点温度为 $T_{tr} = 273.16$ K，则任意温度为：</p>
+<p>$T = 273.16 \text{ K} \times \lim_{p_{tr} \to 0} \frac{p}{p_{tr}}$</p>
+<p>其中 $p$ 是待测温度下气体的压强，$p_{tr}$ 是三相点时的压强，极限取气体量趋于零（确保足够稀薄）。</p>
+<h3 id="为什么用三相点而不是冰点沸点">为什么用三相点而不是冰点/沸点</h3>
+<p>旧标准用冰点（0°C）和沸点（100°C），但沸点对气压非常敏感（高原上水不到 100°C 就沸腾），不够稳定。</p>
+<p>水的三相点（固、液、气三相共存的状态）是一个<strong>唯一确定的温度和压强</strong>（$T = 273.16$ K, $p = 611.73$ Pa），不依赖外界条件。所以 1954 年起国际上改用三相点作为唯一基准点。</p>
+<h3 id="热力学温标开尔文温标">热力学温标（开尔文温标）</h3>
+<p>理想气体温标虽然不依赖气体种类，但仍然依赖&quot;气体&quot;这个物质。有没有完全不依赖任何物质的温标？</p>
+<p>有——热力学温标。它基于卡诺热机的效率（第 3 章详细讨论），这里先给结论：</p>
+<p>可逆热机在高温热源 $T_1$ 和低温热源 $T_2$ 之间工作，效率为：</p>
+<p>$\eta = 1 - \frac{T_2}{T_1}$</p>
+<p>等价地：</p>
+<p>$\frac{T_1}{T_2} = \frac{|Q_1|}{|Q_2|}$</p>
+<p>其中 $|Q_1|$ 是从高温源吸收的热量，$|Q_2|$ 是向低温源释放的热量。</p>
+<p>这给出了<strong>温度比值的定义</strong>——只需要再规定一个基准点（三相点 = 273.16 K），温标就完全确定了。</p>
+<p>关键点：<strong>热力学温标不依赖任何测温物质</strong>，只依赖可逆热机的性质（而可逆热机的效率被证明只取决于两热源的温度）。</p>
+<p>好消息：可以证明，理想气体温标和热力学温标在数值上完全一致。所以本课程中你可以混用。</p>
+<h3 id="摄氏度与开尔文">摄氏度与开尔文</h3>
+<p>$T \text{ (K)} = t \text{ (°C)} + 273.15$</p>
+<p>注意：温度差不受影响——升高 1 K = 升高 1°C。</p>
+<h3 id="绝对零度">绝对零度</h3>
+<p>热力学温标给出 $T \geq 0$（不可能从热机效率的定义得到负温度）。$T = 0$ K 是<strong>绝对零度</strong>——根据热力学第三定律（本课程不深入），绝对零度不可达到，只能无限接近。</p>
+<hr>
+<h2 id="17-理想气体状态方程">1.7 理想气体状态方程</h2>
+<p>这是整门课最基础的方程。后面几乎所有计算都会用到它。</p>
+<h3 id="历史三个实验定律">历史：三个实验定律</h3>
+<p>理想气体状态方程是历史上多个实验定律的统一。了解来源有助于理解它的含义：</p>
+<p><strong>玻意耳定律（Boyle&#39;s Law, 1662）</strong>：在温度恒定时，一定量气体的压强和体积成反比。</p>
+<p>$pV = \text{const} \quad (T \text{ 固定}, n \text{ 固定})$</p>
+<p>物理图像：温度不变意味着分子平均速率不变。体积缩小→单位体积分子数增多→单位时间撞击器壁的分子数增多→压强增大。</p>
+<p><strong>查理定律（Charles&#39;s Law / Gay-Lussac, 1802）</strong>：体积恒定时，压强与温度成正比。</p>
+<p>$\frac{p}{T} = \text{const} \quad (V \text{ 固定}, n \text{ 固定})$</p>
+<p>物理图像：体积不变，分子数密度不变。温度升高→分子动得更快→每次碰撞给器壁的冲量更大→压强增大。</p>
+<p><strong>盖-吕萨克定律</strong>：压强恒定时，体积与温度成正比。</p>
+<p>$\frac{V}{T} = \text{const} \quad (p \text{ 固定}, n \text{ 固定})$</p>
+<p>物理图像：压强不变意味着单位面积受力不变。温度升高→分子动得快→如果体积不变压强会升高→为了维持压强不变，体积必须膨胀，使分子数密度下降。</p>
+<h3 id="统一理想气体状态方程">统一：理想气体状态方程</h3>
+<p>三个定律合在一起，再考虑阿伏伽德罗定律（同温同压同体积的气体含分子数相同），就得到：</p>
+<p>$\boxed{pV = nRT}$</p>
+<p>各量的含义和单位：</p>
+<div class="table-wrap"><table><thead><tr>
+<th>符号</th>
+<th>含义</th>
+<th>SI 单位</th>
+</tr>
+</thead><tbody><tr>
+<td>$p$</td>
+<td>压强</td>
+<td>Pa（帕斯卡）= N/m²</td>
+</tr>
+<tr>
+<td>$V$</td>
+<td>体积</td>
+<td>m³</td>
+</tr>
+<tr>
+<td>$n$</td>
+<td>物质的量</td>
+<td>mol</td>
+</tr>
+<tr>
+<td>$R$</td>
+<td>普适气体常数</td>
+<td>$8.314$ J/(mol·K)</td>
+</tr>
+<tr>
+<td>$T$</td>
+<td>热力学温度</td>
+<td>K（开尔文）</td>
+</tr>
+</tbody></table></div>
+<h3 id="等价形式">等价形式</h3>
+<p>同一个方程有多种写法，适用于不同场景：</p>
+<p><strong>形式一（分子数表示）</strong>：</p>
+<p>$pV = NkT$</p>
+<p>其中 $N$ 是分子总数，$k = R/N_A = 1.381 \times 10^{-23}$ J/K 是<strong>玻尔兹曼常数</strong>。</p>
+<p>什么时候用：微观分析、统计物理中更自然。</p>
+<p><strong>形式二（数密度表示）</strong>：</p>
+<p>$p = nkT$</p>
+<p>注意这里的 $n$ 是<strong>分子数密度</strong>（单位体积的分子数，$n = N/V$），不是物质的量。语境会区分。</p>
+<p>什么时候用：讨论压强的微观来源时直接用。</p>
+<p><strong>形式三（密度表示）</strong>：</p>
+<p>$p = \frac{\rho RT}{M}$</p>
+<p>其中 $\rho$ 是气体密度（kg/m³），$M$ 是摩尔质量（kg/mol）。</p>
+<p>什么时候用：已知气体密度而不知道体积/物质的量时（比如大气物理）。</p>
+<p><strong>推导</strong>：$pV = nRT$，其中 $n = m/M$，所以 $pV = (m/M)RT$，两边除以 $V$ 得 $p = (\rho/M)RT$。</p>
+<h3 id="quot理想quot意味着什么模型假设">&quot;理想&quot;意味着什么——模型假设</h3>
+<p>理想气体是一个<strong>模型</strong>，不是真实气体。它做了两个假设：</p>
+<ol>
+<li><strong>分子是质点</strong>：分子自身的体积远小于分子间的平均距离，可以忽略</li>
+<li><strong>分子间无相互作用</strong>：除了碰撞的瞬间，分子之间没有吸引力或排斥力</li>
+</ol>
+<p>什么时候真实气体近似为理想气体？</p>
+<ul>
+<li>温度足够高（分子动能远大于分子间势能）</li>
+<li>压强足够低（分子间距远大于分子尺寸）</li>
+</ul>
+<p>定量判据：当 $pV/(nRT)$（称为压缩因子 $Z$）接近 1 时，气体行为接近理想。室温常压下，空气的 $Z \approx 0.9997$，非常理想。但高压或低温时偏差显著。</p>
+<h3 id="理想气体的内能性质">理想气体的内能性质</h3>
+<p>理想气体有一个重要性质（焦耳实验的结论，第 2 章会详细讨论）：</p>
+<p>$U = U(T) \text{ only}$</p>
+<p>理想气体的内能只是温度的函数，和体积、压强无关。这是因为分子间没有相互作用力，所以没有势能——内能全部来自分子动能，而动能只由温度决定。</p>
+<p>这个结论极其重要，后面计算功和热量时会反复用到。</p>
+<h3 id="道尔顿分压定律">道尔顿分压定律</h3>
+<p>容器中有多种理想气体混合（比如空气 = 氮气 + 氧气 + ...），总压强怎么算？</p>
+<p><strong>分压</strong>：第 $i$ 种气体的分压 $p_i$ 定义为——如果只有这种气体单独占据整个容器，它产生的压强。</p>
+<p>$p_i = \frac{n_i RT}{V} = \frac{N_i kT}{V}$</p>
+<p><strong>道尔顿分压定律</strong>：混合理想气体的总压等于各组分分压之和。</p>
+<p>$p = \sum_i p_i = \frac{RT}{V}\sum_i n_i = \frac{(\sum_i N_i) kT}{V}$</p>
+<p><strong>为什么成立</strong>：理想气体分子间无相互作用——氮分子撞器壁产生的压强不受氧分子存在与否的影响。每种气体&quot;各做各的&quot;。</p>
+<p><strong>摩尔分数与分压的关系</strong>：</p>
+<p>$\frac{p_i}{p} = \frac{n_i}{\sum_i n_i} = x_i$</p>
+<p>其中 $x_i$ 是第 $i$ 种气体的摩尔分数。</p>
+<h3 id="应用举例大气压与海拔">应用举例：大气压与海拔</h3>
+<p>在等温大气模型中（假设大气温度恒定），取高度 $z$ 处的薄层气体做力平衡：</p>
+<p>$dp = -\rho g , dz = -\frac{pMg}{RT} dz$</p>
+<p>分离变量积分：</p>
+<p>$p(z) = p_0 \exp\left(-\frac{Mgz}{RT}\right)$</p>
+<p>这就是<strong>等温气压公式</strong>（barometric formula）。它说明气压随海拔指数衰减，特征高度为 $H = RT/(Mg)$。对空气在 $T = 300$ K 时，$H \approx 8.8$ km，和实际大气标高吻合。</p>
+<hr>
+<h2 id="18-压强的微观解释">1.8 压强的微观解释</h2>
+<p>宏观上，压强是&quot;单位面积上的力&quot;。但这个力是怎么来的？</p>
+<p>答案：大量气体分子不断撞击容器壁，每次碰撞都给壁一个微小冲量。宏观上这些冲量的平均效果就是恒定的压力——即压强。</p>
+<h3 id="模型假设">模型假设</h3>
+<p>为了推导压强的微观表达式，我们对理想气体做以下假设：</p>
+<ol>
+<li>容器中有 $N$ 个相同的分子，每个质量为 $m$</li>
+<li>分子做无规则运动，方向完全随机（各向同性）</li>
+<li>分子间碰撞和分子与器壁的碰撞都是弹性碰撞</li>
+<li>分子的速度分布不随时间变化（平衡态）</li>
+<li>分子自身体积忽略（不遮挡其他分子到达器壁）</li>
+</ol>
+<h3 id="推导">推导</h3>
+<p>取容器的一面壁，面积为 $A$，选垂直于壁面的方向为 $x$ 轴正方向（向外为正）。</p>
+<p><strong>单个分子的贡献</strong>：</p>
+<p>一个以速度分量 $v_x &gt; 0$ 飞向壁面的分子：</p>
+<ul>
+<li>碰前 $x$ 方向动量：$mv_x$</li>
+<li>弹性碰撞后动量：$-mv_x$（速度反向，大小不变）</li>
+<li>该分子给壁面的冲量：$\Delta I = mv_x - (-mv_x) = 2mv_x$</li>
+</ul>
+<p><strong>时间 $\Delta t$ 内有多少分子撞到面积 $A$ 上</strong>：</p>
+<p>要在 $\Delta t$ 时间内撞到壁面，分子必须满足：</p>
+<ul>
+<li>$v_x &gt; 0$（向壁面运动）</li>
+<li>距壁面的距离 $\leq v_x \Delta t$</li>
+</ul>
+<p>所以有效范围是一个底面积 $A$、高度 $v_x \Delta t$ 的&quot;柱体&quot;。如果分子数密度为 $n = N/V$，则该柱体中的分子数为：</p>
+<p>$\Delta N = n \cdot A \cdot v_x \Delta t$</p>
+<p>但并不是所有这 $\Delta N$ 个分子都有速度分量 $v_x$——不同分子有不同的速度。</p>
+<p><strong>正确的处理</strong>：考虑速度在 $v_x$ 到 $v_x + dv_x$ 范围内的分子对压强的贡献，然后对所有 $v_x &gt; 0$ 积分。</p>
+<p>速度在 $(v_x, v_x + dv_x)$ 范围内、且在 $\Delta t$ 时间内能撞到壁面的分子数为：</p>
+<p>$dN = n \cdot f(v_x) dv_x \cdot A \cdot v_x \Delta t$</p>
+<p>其中 $f(v_x)$ 是 $v_x$ 的分布函数（归一化：$\int_{-\infty}^{+\infty} f(v_x) dv_x = 1$）。</p>
+<p>这些分子给壁面的总冲量：</p>
+<p>$dI = dN \cdot 2mv_x = 2mnAv_x^2 f(v_x) dv_x \cdot \Delta t$</p>
+<p>对所有 $v_x &gt; 0$ 的分子积分，得到 $\Delta t$ 时间内壁面受到的总冲量：</p>
+<p>$I = \int_0^{\infty} 2mnA v_x^2 f(v_x) dv_x \cdot \Delta t$</p>
+<p>压强 = 总力 / 面积 = 总冲量 / (面积 × 时间)：</p>
+<p>$p = \frac{I}{A \cdot \Delta t} = 2mn \int_0^{\infty} v_x^2 f(v_x) dv_x$</p>
+<p>利用分布函数的对称性：$f(v_x)$ 关于 $v_x = 0$ 对称（向左和向右运动的分子同样多），所以：</p>
+<p>$\int_0^{\infty} v_x^2 f(v_x) dv_x = \frac{1}{2}\int_{-\infty}^{+\infty} v_x^2 f(v_x) dv_x = \frac{1}{2}\overline{v_x^2}$</p>
+<p>代入：</p>
+<p>$p = 2mn \cdot \frac{1}{2}\overline{v_x^2} = mn\overline{v_x^2}$</p>
+<h3 id="各向同性条件">各向同性条件</h3>
+<p>由于分子运动是各向同性的（没有哪个方向特殊），三个方向的速度平方平均值相等：</p>
+<p>$\overline{v_x^2} = \overline{v_y^2} = \overline{v_z^2}$</p>
+<p>而 $\overline{v^2} = \overline{v_x^2} + \overline{v_y^2} + \overline{v_z^2} = 3\overline{v_x^2}$</p>
+<p>所以 $\overline{v_x^2} = \frac{1}{3}\overline{v^2}$，代入得：</p>
+<p>$\boxed{p = \frac{1}{3}nm\overline{v^2}}$</p>
+<h3 id="用平均动能表示">用平均动能表示</h3>
+<p>定义单个分子的<strong>平均平动动能</strong>：</p>
+<p>$\overline{\varepsilon_k} = \frac{1}{2}m\overline{v^2}$</p>
+<p>则：</p>
+<p>$p = \frac{1}{3}nm\overline{v^2} = \frac{2}{3}n \cdot \frac{1}{2}m\overline{v^2} = \frac{2}{3}n\overline{\varepsilon_k}$</p>
+<p>$\boxed{p = \frac{2}{3}n\overline{\varepsilon_k}}$</p>
+<h3 id="公式解读">公式解读</h3>
+<p>这个结果极其重要，它把<strong>宏观量</strong>（压强 $p$）和<strong>微观量</strong>（分子平均动能 $\overline{\varepsilon_k}$）直接联系起来了。</p>
+<p>物理图像：</p>
+<ul>
+<li>$n$ 大（分子密集）→ 单位时间撞击器壁的分子数多 → 压强大</li>
+<li>$\overline{\varepsilon_k}$ 大（分子动得快）→ 每次碰撞的冲量大 → 压强大</li>
+</ul>
+<p>压强是这两个因素的乘积。</p>
+<hr>
+<h2 id="19-温度的微观意义">1.9 温度的微观意义</h2>
+<h3 id="从压强公式到温度">从压强公式到温度</h3>
+<p>现在我们有两个压强表达式：</p>
+<ul>
+<li>宏观：$p = nkT$（理想气体状态方程的数密度形式）</li>
+<li>微观：$p = \frac{2}{3}n\overline{\varepsilon_k}$</li>
+</ul>
+<p>令二者相等：</p>
+<p>$nkT = \frac{2}{3}n\overline{\varepsilon_k}$</p>
+<p>$n$ 消去，得到：</p>
+<p>$\boxed{\overline{\varepsilon_k} = \frac{3}{2}kT}$</p>
+<h3 id="这个公式在说什么">这个公式在说什么</h3>
+<p>$\overline{\varepsilon_k} = \frac{1}{2}m\overline{v^2} = \frac{3}{2}kT$</p>
+<p><strong>温度的微观本质</strong>：温度是分子平均平动动能的度量。</p>
+<ul>
+<li>$T$ 越高 → 分子平均动得越快</li>
+<li>$T = 0$ K → 分子平均平动动能为零（经典图像下分子静止——但量子力学告诉我们有零点能，不过本课程不讨论）</li>
+<li>温度和单个分子无关——它是<strong>大量分子的统计平均</strong>的体现</li>
+</ul>
+<h3 id="方均根速率">方均根速率</h3>
+<p>从 $\frac{1}{2}m\overline{v^2} = \frac{3}{2}kT$ 可以解出分子的<strong>方均根速率</strong>（root-mean-square speed）：</p>
+<p>$v_{rms} = \sqrt{\overline{v^2}} = \sqrt{\frac{3kT}{m}} = \sqrt{\frac{3RT}{M}}$</p>
+<p>其中最后一步用了 $k = R/N_A$，$m = M/N_A$。</p>
+<p><strong>数值感受</strong>：常温（$T = 300$ K）下氮分子（$M = 0.028$ kg/mol）的方均根速率：</p>
+<p>$v_{rms} = \sqrt{\frac{3 \times 8.314 \times 300}{0.028}} \approx 517 \text{ m/s}$</p>
+<p>这比声速还快。气体分子在微观层面是高速运动的——你感觉不到，是因为它们方向随机，宏观上互相抵消。</p>
+<h3 id="温度与分子种类无关">温度与分子种类无关</h3>
+<p>注意 $\overline{\varepsilon_k} = \frac{3}{2}kT$ 中没有出现分子质量 $m$。这意味着：</p>
+<p><strong>在同一温度下，所有种类的理想气体分子具有相同的平均平动动能。</strong></p>
+<p>重的分子动得慢（$v_{rms}$ 小），轻的分子动得快，但它们的 $\frac{1}{2}m\overline{v^2}$ 完全一样。</p>
+<p>这就是为什么&quot;温度&quot;能作为一个普适的标度——它不依赖你用什么气体来测量。</p>
+<h3 id="温度的适用范围">温度的适用范围</h3>
+<p>$\overline{\varepsilon_k} = \frac{3}{2}kT$ 这个关系有前提：</p>
+<ul>
+<li>气体是理想的（无相互作用）</li>
+<li>只考虑平动动能（3 个平动自由度）</li>
+</ul>
+<p>对于有转动和振动的分子，总能量不是 $\frac{3}{2}kT$，但<strong>平动部分仍然是</strong> $\frac{3}{2}kT$。能量均分定理（第 4 章）会给出完整的图景。</p>
+<hr>
+<h2 id="110-p-v-图与等温线">1.10 p-V 图与等温线</h2>
+<h3 id="p-v-图">$p$-$V$ 图</h3>
+<p>在热力学中，最常用的图像是 $p$-$V$ 图：横轴体积 $V$，纵轴压强 $p$。</p>
+<p>一个平衡态对应 $p$-$V$ 图上的<strong>一个点</strong>。一个准静态过程对应图上的<strong>一条曲线</strong>（因为过程中每一瞬间都是平衡态，都有确定的 $p$ 和 $V$）。</p>
+<h3 id="等温线">等温线</h3>
+<p>在 $p$-$V$ 图上，温度恒定的曲线叫<strong>等温线</strong>。对理想气体：</p>
+<p>$pV = nRT = \text{const} \quad \Rightarrow \quad p = \frac{nRT}{V}$</p>
+<p>这是一条双曲线（反比例函数）。</p>
+<p>不同温度对应不同的等温线：温度越高，等温线离原点越远（同样的 $V$，$p$ 更大）。</p>
+<p>等温线族在 $p$-$V$ 图上互不相交（因为一个 $(p, V)$ 点对应唯一的 $T = pV/(nR)$）。</p>
+<h3 id="等压线和等容线">等压线和等容线</h3>
+<ul>
+<li><strong>等压过程</strong>（$p$ = const）：$p$-$V$ 图上的水平线</li>
+<li><strong>等容过程</strong>（$V$ = const）：$p$-$V$ 图上的竖直线</li>
+</ul>
+<p>这些在第 2 章讨论热力学第一定律时会大量使用。</p>
+<hr>
+<h2 id="111-实际气体与范德瓦尔斯方程预览">1.11 实际气体与范德瓦尔斯方程（预览）</h2>
+<p>理想气体是简化模型。当温度低或压强高时，真实气体偏离理想行为。第 6 章会详细讨论，这里先给一个概念性的预览。</p>
+<h3 id="偏差的来源">偏差的来源</h3>
+<ol>
+<li><strong>分子有体积</strong>：在高压下，分子自身占据的体积不可忽略。有效可运动空间比容器体积小。</li>
+<li><strong>分子间有吸引力</strong>：在中等距离处分子间有 van der Waals 吸引力。靠近器壁的分子会被内部分子&quot;拉回&quot;，减少对器壁的撞击力→实际压强比理想值低。</li>
+</ol>
+<h3 id="范德瓦尔斯方程">范德瓦尔斯方程</h3>
+<p>对理想气体方程做两处修正：</p>
+<p>$\left(p + \frac{a}{V_m^2}\right)(V_m - b) = RT$</p>
+<p>其中 $V_m = V/n$ 是摩尔体积，$a$ 和 $b$ 是与气体种类有关的常数：</p>
+<ul>
+<li>$a/V_m^2$：修正分子间吸引力对压强的减小</li>
+<li>$b$：修正分子自身体积的排斥效应</li>
+</ul>
+<p>这是第 6 章的内容，这里知道有这么回事就行。</p>
+<hr>
+<h2 id="112-本章公式总结">1.12 本章公式总结</h2>
+<h3 id="理想气体状态方程族">理想气体状态方程族</h3>
+<p>$pV = nRT \tag{1.1}$</p>
+<p>$pV = NkT \tag{1.2}$</p>
+<p>$p = nkT \quad (n = N/V \text{ 为分子数密度}) \tag{1.3}$</p>
+<p>$p = \frac{\rho RT}{M} \tag{1.4}$</p>
+<h3 id="道尔顿分压定律">道尔顿分压定律</h3>
+<p>$p = \sum_i p_i, \quad p_i = x_i p \tag{1.5}$</p>
+<h3 id="等温气压公式">等温气压公式</h3>
+<p>$p(z) = p_0 \exp\left(-\frac{Mgz}{RT}\right) \tag{1.6}$</p>
+<h3 id="压强的微观表达">压强的微观表达</h3>
+<p>$p = \frac{1}{3}nm\overline{v^2} = \frac{2}{3}n\overline{\varepsilon_k} \tag{1.7}$</p>
+<h3 id="温度的微观意义">温度的微观意义</h3>
+<p>$\overline{\varepsilon_k} = \frac{1}{2}m\overline{v^2} = \frac{3}{2}kT \tag{1.8}$</p>
+<h3 id="方均根速率">方均根速率</h3>
+<p>$v_{rms} = \sqrt{\overline{v^2}} = \sqrt{\frac{3kT}{m}} = \sqrt{\frac{3RT}{M}} \tag{1.9}$</p>
+<h3 id="重要常数">重要常数</h3>
+<div class="table-wrap"><table><thead><tr>
+<th>常数</th>
+<th>符号</th>
+<th>数值</th>
+</tr>
+</thead><tbody><tr>
+<td>普适气体常数</td>
+<td>$R$</td>
+<td>$8.314$ J/(mol·K)</td>
+</tr>
+<tr>
+<td>玻尔兹曼常数</td>
+<td>$k$</td>
+<td>$1.381 \times 10^{-23}$ J/K</td>
+</tr>
+<tr>
+<td>阿伏伽德罗常数</td>
+<td>$N_A$</td>
+<td>$6.022 \times 10^{23}$ mol$^{-1}$</td>
+</tr>
+</tbody></table></div>
+<hr>
+<h2 id="113-概念辨析">1.13 概念辨析</h2>
+<h3 id="q温度高的物体一定比温度低的物体quot含有更多热量quot吗">Q：温度高的物体一定比温度低的物体&quot;含有更多热量&quot;吗？</h3>
+<p><strong>不对。</strong> &quot;热量&quot;不是物体&quot;拥有&quot;的东西——热量 $Q$ 是能量传递的方式，是过程量，不是状态量。物体拥有的是内能 $U$。</p>
+<p>况且内能和温度不是简单的正比关系——1 kg 100°C 的水的内能比 1 g 200°C 的水蒸气大得多。</p>
+<h3 id="q分子速度都等于-v_rms-吗">Q：分子速度都等于 $v_{rms}$ 吗？</h3>
+<p><strong>不是。</strong> $v_{rms}$ 是方均根速率——所有分子速率平方的平均值再开方。实际上分子速率有一个分布（Maxwell 分布，第 4 章详细讨论）：有的分子很快，有的很慢。$v_{rms}$ 只是一个统计特征值。</p>
+<h3 id="q温度为-0c-时分子是否停止运动">Q：温度为 0°C 时分子是否停止运动？</h3>
+<p><strong>不是。</strong> 0°C = 273.15 K，分子平均动能为 $\frac{3}{2}k \times 273.15 \approx 5.7 \times 10^{-21}$ J，仍然在剧烈运动。氮分子在 0°C 时的方均根速率约 493 m/s。</p>
+<p>只有绝对零度（0 K = −273.15°C）在经典理论中对应运动停止——但根据量子力学，即使在绝对零度也有零点能。</p>
+<h3 id="q理想气体状态方程适用于液体和固体吗">Q：理想气体状态方程适用于液体和固体吗？</h3>
+<p><strong>不适用。</strong> 液体和固体中分子紧密排列，分子间作用力强，两个理想气体假设都不满足。</p>
+<h3 id="qquot准静态quot是quot可逆quot吗">Q：&quot;准静态&quot;是&quot;可逆&quot;吗？</h3>
+<p><strong>不完全等价。</strong> 准静态强调过程慢（每一步都接近平衡）；可逆要求更强——不仅准静态，还不能有耗散（如摩擦）。可逆过程一定是准静态的，但准静态过程不一定可逆（如有摩擦的准静态压缩）。第 3 章会严格讨论。</p>
+<hr>
+<h2 id="114-本章小结">1.14 本章小结</h2>
+<div class="table-wrap"><table><thead><tr>
+<th>核心概念</th>
+<th>要点</th>
+</tr>
+</thead><tbody><tr>
+<td>系统分类</td>
+<td>开放/封闭/孤立；本课程主要处理封闭系统</td>
+</tr>
+<tr>
+<td>状态参量</td>
+<td>只在平衡态有确定值；广延量 vs 强度量</td>
+</tr>
+<tr>
+<td>平衡态</td>
+<td>系统内部处处均匀，宏观量不变，不依赖外界维持</td>
+</tr>
+<tr>
+<td>准静态过程</td>
+<td>无限缓慢，系统时刻保持平衡态；可在 $p$-$V$ 图上画出</td>
+</tr>
+<tr>
+<td>第零定律</td>
+<td>热平衡的传递性 → 温度的存在性</td>
+</tr>
+<tr>
+<td>温标</td>
+<td>经验温标（依赖物质）→ 理想气体温标 → 热力学温标（最根本）</td>
+</tr>
+<tr>
+<td>状态方程</td>
+<td>$pV = nRT = NkT$；理想气体有两个独立状态参量</td>
+</tr>
+<tr>
+<td>压强微观本质</td>
+<td>分子撞壁的平均效果；$p = \frac{2}{3}n\overline{\varepsilon_k}$</td>
+</tr>
+<tr>
+<td>温度微观本质</td>
+<td>分子平均平动动能的度量；$\overline{\varepsilon_k} = \frac{3}{2}kT$</td>
+</tr>
+<tr>
+<td>方均根速率</td>
+<td>$v_{rms} = \sqrt{3RT/M}$；室温氮分子 ~500 m/s</td>
+</tr>
+</tbody></table></div>
+
+    <nav class="pager">  <a class="disabled"><span class="label">← 上一章</span><span class="title"></span></a>  <a class="disabled next"><span class="label">下一章 →</span><span class="title"></span></a></nav>
+  </article>
+</div>
+
+<footer>
+  <div class="set">
+    <span>热学速通</span>
+    <span>2026 · ZH-CN</span>
+  </div>
+  <div class="set">
+    <span>Mav</span>
+  </div>
+</footer>
+<div class="search-backdrop" id="search-overlay" role="dialog" aria-modal="true" aria-label="搜索" hidden>
+  <div class="search-modal">
+    <div class="search-input-wrap">
+      <input type="search" class="search-input" placeholder="搜索内容..." aria-label="搜索内容" autocomplete="off">
+      <kbd>ESC</kbd>
+    </div>
+    <div class="search-results" role="listbox" aria-label="搜索结果"></div>
+  </div>
+</div>
+
+<!-- Side Panel -->
+<div class="side-panel" id="side-panel">
+  <div class="side-panel-resize" id="side-panel-resize"></div>
+  <div class="side-panel-header">
+    <div class="side-panel-tabs">
+      <button class="side-panel-tab active" data-mode="sidenote">补充</button>
+      <button class="side-panel-tab" data-mode="notepad">笔记</button>
+    </div>
+    <button class="side-panel-close" aria-label="关闭">×</button>
+  </div>
+  <div class="side-panel-body"></div>
+</div>
+<button class="notepad-fab" id="notepad-fab" aria-label="便利贴">✎</button>
+
+<!-- Mobile TOC -->
+<button class="mtoc-fab" id="mtoc-fab" aria-label="目录">TOC</button>
+<div class="mtoc-drawer" id="mtoc-drawer">
+  <div class="mtoc-content"></div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/bash.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/typescript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/yaml.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/javascript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/json.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/python.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/css.min.js"></script>
+<script src="../assets/script.js"></script>
+</body>
+</html>

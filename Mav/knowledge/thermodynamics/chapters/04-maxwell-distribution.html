@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Maxwell-Boltzmann 分布 — 热学速通</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" id="hljs-light" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+<link rel="stylesheet" id="hljs-dark" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" media="not all">
+</head>
+<body>
+
+<div class="progress-bar" id="progress-bar"></div>
+
+<nav class="topnav" id="topnav">
+  <div class="topnav-inner">
+    <a class="brand" href="../index.html">热学速通</a>
+    <div class="nav-links">
+      <a href="01-basics-temperature.html">01</a>
+      <a href="02-first-law.html">02</a>
+      <a href="03-second-law-entropy.html">03</a>
+      <a href="04-maxwell-distribution.html" class="active">04</a>
+      <a href="05-transport.html">05</a>
+      <a href="06-phase-transition.html">06</a>
+    </div>
+    <div class="nav-controls">
+      <button class="nav-btn" id="search-btn" aria-label="搜索 (Ctrl+K)">⌘K</button>
+      <button class="nav-btn" id="settings-btn" aria-label="阅读设置">Aa</button>
+      <a class="nav-btn" href="../../index.html" aria-label="返回知识库">← 知识库</a>
+      <a class="nav-btn" href="https://github.com/maverickxone/mav-homepage" target="_blank" rel="noopener" aria-label="GitHub" style="padding: 6px 8px;"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg></a>
+    </div>
+  </div>
+</nav>
+<div class="settings-pop" id="settings-pop">
+  <h5>主题</h5>
+  <div class="row">
+    <button class="seg" data-theme-set="light">明亮</button>
+    <button class="seg" data-theme-set="dark">暗色</button>
+  </div>
+  <h5>字号</h5>
+  <div class="row">
+    <button class="seg" data-size-set="s">小</button>
+    <button class="seg" data-size-set="m">中</button>
+    <button class="seg" data-size-set="l">大</button>
+  </div>
+</div>
+
+<div class="with-sidebar">
+  <aside class="sidebar">
+  <div class="chapter-num">CHAPTER 04</div>
+  <div class="chapter-name">Maxwell-Boltzmann 分布</div>
+  <h4>目录</h4>
+  <ul>
+    <li><a href="#41-为什么需要统计分布">4.1 为什么需要统计分布</a></li>
+    <li><a href="#42-速率分布函数">4.2 速率分布函数</a></li>
+    <li><a href="#43-maxwell-速率分布律">4.3 Maxwell 速率分布律</a></li>
+    <li><a href="#44-三个特征速率">4.4 三个特征速率</a></li>
+    <li><a href="#45-高斯积分与特征速率的计算">4.5 高斯积分与特征速率的计算</a></li>
+    <li><a href="#46-温度对分布的影响">4.6 温度对分布的影响</a></li>
+    <li><a href="#47-能量均分定理">4.7 能量均分定理</a></li>
+    <li><a href="#48-能量均分定理的证明思路">4.8 能量均分定理的证明思路</a></li>
+    <li><a href="#49-能量均分定理的局限">4.9 能量均分定理的局限</a></li>
+    <li><a href="#410-boltzmann-分布能量分布">4.10 Boltzmann 分布（能量分布）</a></li>
+    <li><a href="#411-maxwell-分布的实验验证">4.11 Maxwell 分布的实验验证</a></li>
+    <li><a href="#412-概念辨析">4.12 概念辨析</a></li>
+    <li><a href="#413-本章公式总结">4.13 本章公式总结</a></li>
+    <li><a href="#414-本章小结">4.14 本章小结</a></li>
+  </ul>
+</aside>
+  <article class="chapter-body">
+    <header class="chapter-head">
+  <div class="chapter-head-meta">
+    <span class="num">CHAPTER 04</span>
+    <span>≈ 50 MIN READ</span>
+  </div>
+  <h1>Maxwell-Boltzmann 分布</h1>
+
+</header>
+    <h2 id="41-为什么需要统计分布">4.1 为什么需要统计分布</h2>
+<p>第 1 章推导压强时我们用到了 $\overline{v^2}$——分子速率的平方平均值。但分子速率并不是全部相同的——在平衡态下，有的分子快有的慢。</p>
+<p>一个自然的问题：<strong>速率的分布是什么样的？有多少比例的分子速率在某个范围内？</strong></p>
+<p>这就是 Maxwell 速率分布律要回答的问题。</p>
+<h3 id="统计方法的必要性">统计方法的必要性</h3>
+<p>$10^{23}$ 个分子，每个有不同的速度。你不可能追踪每一个。但统计规律告诉我们：虽然单个分子的行为不确定，但<strong>大量分子的集体行为是确定的</strong>。</p>
+<p>类比：你不知道教室里某个同学的身高，但如果有 1000 个同学，身高的分布一定接近正态分布——你可以精确预测&quot;身高在 170-175 cm 之间的人占多少百分比&quot;。</p>
+<hr>
+<h2 id="42-速率分布函数">4.2 速率分布函数</h2>
+<h3 id="定义">定义</h3>
+<p>设系统中有 $N$ 个分子。定义<strong>速率分布函数</strong> $f(v)$：</p>
+<p>$f(v),dv = \text{速率在 } v \sim v+dv \text{ 范围内的分子占总分子数的比例}$</p>
+<p>即：</p>
+<p>$dN = Nf(v),dv$</p>
+<p>$f(v)$ 的物理意义：<strong>单位速率间隔内分子出现的概率密度</strong>。</p>
+<h3 id="归一化条件">归一化条件</h3>
+<p>所有分子的速率必须在 $0$ 到 $\infty$ 之间：</p>
+<p>$\int_0^{\infty} f(v),dv = 1$</p>
+<h3 id="用分布函数计算平均值">用分布函数计算平均值</h3>
+<p>一旦知道 $f(v)$，任何速率相关的平均值都可以算：</p>
+<p>$\overline{v} = \int_0^{\infty} v \cdot f(v),dv$</p>
+<p>$\overline{v^2} = \int_0^{\infty} v^2 \cdot f(v),dv$</p>
+<p>$\overline{g(v)} = \int_0^{\infty} g(v) \cdot f(v),dv$</p>
+<hr>
+<h2 id="43-maxwell-速率分布律">4.3 Maxwell 速率分布律</h2>
+<h3 id="公式">公式</h3>
+<p>Maxwell（1860）从统计力学的基本原理出发，推导出平衡态理想气体的速率分布函数：</p>
+<p>$\boxed{f(v) = 4\pi \left(\frac{m}{2\pi kT}\right)^{3/2} v^2 \exp\left(-\frac{mv^2}{2kT}\right)}$</p>
+<p>其中 $m$ 是单个分子的质量，$T$ 是温度，$k$ 是玻尔兹曼常数。</p>
+<h3 id="公式拆解">公式拆解</h3>
+<p>这个公式看起来吓人，但每一部分都有物理含义：</p>
+<div class="table-wrap"><table><thead><tr>
+<th>部分</th>
+<th>来源</th>
+<th>含义</th>
+</tr>
+</thead><tbody><tr>
+<td>$4\pi v^2$</td>
+<td>速度空间中半径为 $v$ 的球壳面积</td>
+<td>从三维速度分布到一维速率分布的&quot;体积因子&quot;</td>
+</tr>
+<tr>
+<td>$\left(\frac{m}{2\pi kT}\right)^{3/2}$</td>
+<td>归一化常数</td>
+<td>保证 $\int_0^\infty f(v),dv = 1$</td>
+</tr>
+<tr>
+<td>$\exp\left(-\frac{mv^2}{2kT}\right)$</td>
+<td>玻尔兹曼因子</td>
+<td>能量越高（$v$ 越大），概率越低</td>
+</tr>
+</tbody></table></div>
+<p>$f(v)$ 的形状是两个因素的竞争：</p>
+<ul>
+<li>$v^2$ 使得低速端 $f(v) \to 0$（因为低速的&quot;状态空间&quot;小）</li>
+<li>$e^{-mv^2/(2kT)}$ 使得高速端 $f(v) \to 0$（因为高能量不容易获得）</li>
+<li>中间某处取极大值——这就是<strong>最概然速率</strong></li>
+</ul>
+<h3 id="推导思路速度分布速率分布">推导思路（速度分布→速率分布）</h3>
+<p>完整推导需要统计力学，这里给出关键思路：</p>
+<p><strong>第一步</strong>：假设三个方向独立。$v_x$、$v_y$、$v_z$ 的分布互相独立：</p>
+<p>$g(v_x, v_y, v_z) = g_x(v_x) \cdot g_y(v_y) \cdot g_z(v_z)$</p>
+<p><strong>第二步</strong>：各向同性。分布只能取决于速率 $v = \sqrt{v_x^2 + v_y^2 + v_z^2}$，而不能偏好某个方向。</p>
+<p>结合这两个条件（独立性 + 各向同性），可以证明唯一满足的形式是高斯分布：</p>
+<p>$g_x(v_x) = \left(\frac{m}{2\pi kT}\right)^{1/2} \exp\left(-\frac{mv_x^2}{2kT}\right)$</p>
+<p>这是 $v_x$ 的分布——正态分布，均值为零，方差为 $kT/m$。</p>
+<p><strong>第三步</strong>：三维速度分布：</p>
+<p>$g(v_x, v_y, v_z) = \left(\frac{m}{2\pi kT}\right)^{3/2} \exp\left(-\frac{m(v_x^2+v_y^2+v_z^2)}{2kT}\right)$</p>
+<p><strong>第四步</strong>：从速度分布转换为速率分布。速率 $v$ 到 $v+dv$ 对应速度空间中半径为 $v$、厚度为 $dv$ 的球壳，体积为 $4\pi v^2,dv$：</p>
+<p>$f(v),dv = g(v_x,v_y,v_z) \cdot 4\pi v^2,dv$</p>
+<p>代入得到 Maxwell 速率分布。</p>
+<hr>
+<h2 id="44-三个特征速率">4.4 三个特征速率</h2>
+<p>从 $f(v)$ 可以算出三个有名的速率：</p>
+<h3 id="最概然速率-v_pmost-probable-speed">最概然速率 $v_p$（most probable speed）</h3>
+<p>$f(v)$ 取极大值时的速率。令 $f&#39;(v_p) = 0$：</p>
+<p>$\boxed{v_p = \sqrt{\frac{2kT}{m}} = \sqrt{\frac{2RT}{M}}}$</p>
+<h3 id="平均速率-overlinevmean-speed">平均速率 $\overline{v}$（mean speed）</h3>
+<p>$\overline{v} = \int_0^\infty v \cdot f(v),dv = \boxed{\sqrt{\frac{8kT}{\pi m}} = \sqrt{\frac{8RT}{\pi M}}}$</p>
+<h3 id="方均根速率-v_rmsroot-mean-square-speed">方均根速率 $v_{rms}$（root-mean-square speed）</h3>
+<p>$v_{rms} = \sqrt{\overline{v^2}} = \sqrt{\int_0^\infty v^2 f(v),dv} = \boxed{\sqrt{\frac{3kT}{m}} = \sqrt{\frac{3RT}{M}}}$</p>
+<h3 id="三者的比较">三者的比较</h3>
+<p>$v_p : \overline{v} : v_{rms} = \sqrt{2} : \sqrt{8/\pi} : \sqrt{3} \approx 1.00 : 1.13 : 1.22$</p>
+<p>三者的大小关系恒为 $v_p &lt; \overline{v} &lt; v_{rms}$。</p>
+<p><strong>物理含义</strong>：</p>
+<ul>
+<li>$v_p$：最多分子处于这个速率附近</li>
+<li>$\overline{v}$：所有分子速率的算术平均</li>
+<li>$v_{rms}$：和能量直接相关（$\frac{1}{2}m v_{rms}^2 = \frac{3}{2}kT$）</li>
+</ul>
+<h3 id="数值举例">数值举例</h3>
+<p>氮分子（$M = 0.028$ kg/mol）在 $T = 300$ K 时：</p>
+<div class="table-wrap"><table><thead><tr>
+<th>速率</th>
+<th>公式</th>
+<th>数值</th>
+</tr>
+</thead><tbody><tr>
+<td>$v_p$</td>
+<td>$\sqrt{2RT/M}$</td>
+<td>422 m/s</td>
+</tr>
+<tr>
+<td>$\overline{v}$</td>
+<td>$\sqrt{8RT/(\pi M)}$</td>
+<td>476 m/s</td>
+</tr>
+<tr>
+<td>$v_{rms}$</td>
+<td>$\sqrt{3RT/M}$</td>
+<td>517 m/s</td>
+</tr>
+</tbody></table></div>
+<p>注意这些速率都比声速快（空气中声速约 340 m/s）。声速和分子热运动速度有内在联系——声波本质上是分子集体运动的传播。</p>
+<hr>
+<h2 id="45-高斯积分与特征速率的计算">4.5 高斯积分与特征速率的计算</h2>
+<p>计算三个特征速率需要用到一系列高斯积分。这些积分在热学和统计物理中反复出现，值得掌握。</p>
+<h3 id="基本高斯积分">基本高斯积分</h3>
+<p>$I_0 = \int_0^\infty e^{-ax^2},dx = \frac{1}{2}\sqrt{\frac{\pi}{a}}$</p>
+<h3 id="含-xn-的高斯积分">含 $x^n$ 的高斯积分</h3>
+<p>$I_n = \int_0^\infty x^n e^{-ax^2},dx$</p>
+<p>规律：</p>
+<ul>
+<li>$I_1 = \frac{1}{2a}$</li>
+<li>$I_2 = \frac{1}{4}\sqrt{\frac{\pi}{a^3}}$</li>
+<li>$I_3 = \frac{1}{2a^2}$</li>
+<li>$I_4 = \frac{3}{8}\sqrt{\frac{\pi}{a^5}}$</li>
+</ul>
+<p>一般规律：$I_{n+2} = -\frac{d}{da}I_n$（对参数 $a$ 求导即可递推）。</p>
+<h3 id="计算-overlinev-的过程">计算 $\overline{v}$ 的过程</h3>
+<p>$\overline{v} = \int_0^\infty v \cdot f(v),dv = 4\pi\left(\frac{m}{2\pi kT}\right)^{3/2} \int_0^\infty v^3 e^{-mv^2/(2kT)},dv$</p>
+<p>令 $a = m/(2kT)$，需要 $I_3 = \int_0^\infty v^3 e^{-av^2},dv = \frac{1}{2a^2}$：</p>
+<p>$\overline{v} = 4\pi\left(\frac{a}{\pi}\right)^{3/2} \cdot \frac{1}{2a^2} = 4\pi \cdot \frac{a^{3/2}}{\pi^{3/2}} \cdot \frac{1}{2a^2} = \frac{4\pi}{2\pi^{3/2}} \cdot a^{-1/2} = \frac{2}{\sqrt{\pi}} \cdot \sqrt{\frac{2kT}{m}}$</p>
+<p>$= \sqrt{\frac{8kT}{\pi m}}$</p>
+<h3 id="计算-v_p-的过程">计算 $v_p$ 的过程</h3>
+<p>令 $\frac{df}{dv} = 0$。$f(v) = Cv^2 e^{-av^2}$（$C$ 是常数），求导：</p>
+<p>$\frac{df}{dv} = C(2v e^{-av^2} + v^2 \cdot (-2av) e^{-av^2}) = Cv e^{-av^2}(2 - 2av^2) = 0$</p>
+<p>$v \neq 0$ 且 $e^{-av^2} \neq 0$，所以 $2 - 2av_p^2 = 0$：</p>
+<p>$v_p = \frac{1}{\sqrt{a}} = \sqrt{\frac{2kT}{m}}$</p>
+<hr>
+<h2 id="46-温度对分布的影响">4.6 温度对分布的影响</h2>
+<p>当温度升高时，Maxwell 分布曲线如何变化？</p>
+<ol>
+<li><strong>峰值左移</strong>：$v_p \propto \sqrt{T}$，所以温度升高，峰值右移</li>
+<li><strong>曲线变宽</strong>：分子速率的范围展宽</li>
+<li><strong>峰值降低</strong>：由于归一化（面积恒等于 1），曲线变宽必然导致峰值降低</li>
+</ol>
+<p>直觉：温度高→分子动得更快→速率分布向高速端展开→快分子和慢分子的比例都增加（分布更&quot;散&quot;）。</p>
+<h3 id="分子质量的影响">分子质量的影响</h3>
+<p>同一温度下，轻分子的分布比重分子更宽、更偏向高速端：</p>
+<p>$v_p \propto \frac{1}{\sqrt{m}}$</p>
+<p>氢分子（$M = 0.002$）的 $v_p$ 是氮分子（$M = 0.028$）的 $\sqrt{28/2} = \sqrt{14} \approx 3.7$ 倍。</p>
+<p>这就是为什么地球大气中几乎没有氢气——氢分子太轻、速率太快，容易达到逃逸速度（11.2 km/s）而飞离地球。</p>
+<hr>
+<h2 id="47-能量均分定理">4.7 能量均分定理</h2>
+<h3 id="自由度的概念">自由度的概念</h3>
+<p>一个分子的运动方式可以分解为独立的&quot;模式&quot;，每个独立模式对应一个<strong>自由度</strong>：</p>
+<div class="table-wrap"><table><thead><tr>
+<th>运动类型</th>
+<th align="center">自由度数</th>
+<th>说明</th>
+</tr>
+</thead><tbody><tr>
+<td>平动</td>
+<td align="center">3</td>
+<td>沿 $x$、$y$、$z$ 三个方向</td>
+</tr>
+<tr>
+<td>转动</td>
+<td align="center">取决于分子结构</td>
+<td>单原子 0；双原子 2；非线性多原子 3</td>
+</tr>
+<tr>
+<td>振动</td>
+<td align="center">取决于分子结构</td>
+<td>每个振动模式贡献 2 个自由度（动能+势能）</td>
+</tr>
+</tbody></table></div>
+<p><strong>各类分子的自由度</strong>：</p>
+<div class="table-wrap"><table><thead><tr>
+<th>分子类型</th>
+<th>例子</th>
+<th align="center">平动</th>
+<th align="center">转动</th>
+<th align="center">振动</th>
+<th align="center">总自由度 $i$</th>
+</tr>
+</thead><tbody><tr>
+<td>单原子</td>
+<td>He, Ar</td>
+<td align="center">3</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">3</td>
+</tr>
+<tr>
+<td>双原子（刚性）</td>
+<td>N₂, O₂</td>
+<td align="center">3</td>
+<td align="center">2</td>
+<td align="center">0</td>
+<td align="center">5</td>
+</tr>
+<tr>
+<td>双原子（考虑振动）</td>
+<td>N₂ 高温</td>
+<td align="center">3</td>
+<td align="center">2</td>
+<td align="center">2</td>
+<td align="center">7</td>
+</tr>
+<tr>
+<td>非线性多原子</td>
+<td>H₂O, CO₂</td>
+<td align="center">3</td>
+<td align="center">3</td>
+<td align="center">—</td>
+<td align="center">6+</td>
+</tr>
+</tbody></table></div>
+<p>注意：振动自由度在室温下通常被&quot;冻结&quot;（量子效应），只有在高温时才激活。所以室温下双原子气体一般取 $i = 5$。</p>
+<h3 id="能量均分定理的表述">能量均分定理的表述</h3>
+<p><strong>在温度 $T$ 的平衡态下，分子每一个平方项（二次型）的能量平均值为 $\frac{1}{2}kT$。</strong></p>
+<p>所谓&quot;平方项&quot;：能量表达式中每一个 $\frac{1}{2}(\text{something})^2$ 的项。</p>
+<p>例如：</p>
+<ul>
+<li>平动动能 $\frac{1}{2}mv_x^2$ → 对应 $\frac{1}{2}kT$</li>
+<li>转动动能 $\frac{1}{2}I\omega_x^2$ → 对应 $\frac{1}{2}kT$</li>
+<li>振动势能 $\frac{1}{2}\kappa x^2$ → 对应 $\frac{1}{2}kT$</li>
+<li>振动动能 $\frac{1}{2}\mu\dot{x}^2$ → 对应 $\frac{1}{2}kT$</li>
+</ul>
+<h3 id="单个分子的平均能量">单个分子的平均能量</h3>
+<p>如果分子有 $i$ 个自由度（每个对应一个平方项），则平均能量为：</p>
+<p>$\overline{\varepsilon} = \frac{i}{2}kT$</p>
+<h3 id="理想气体的内能">理想气体的内能</h3>
+<p>$N$ 个分子（$n$ mol）的总内能：</p>
+<p>$\boxed{U = N \cdot \frac{i}{2}kT = \frac{i}{2}nRT}$</p>
+<h3 id="定容摩尔热容">定容摩尔热容</h3>
+<p>$C_{V,m} = \frac{1}{n}\frac{dU}{dT} = \frac{i}{2}R$</p>
+<p>定压摩尔热容（Mayer 关系）：</p>
+<p>$C_{p,m} = C_{V,m} + R = \frac{i+2}{2}R$</p>
+<p>热容比：</p>
+<p>$\gamma = \frac{C_{p,m}}{C_{V,m}} = \frac{i+2}{i}$</p>
+<h3 id="数值验证">数值验证</h3>
+<div class="table-wrap"><table><thead><tr>
+<th>气体</th>
+<th align="center">$i$</th>
+<th>$C_{V,m}$</th>
+<th>$C_{p,m}$</th>
+<th align="center">$\gamma$</th>
+<th align="center">实验值 $\gamma$</th>
+</tr>
+</thead><tbody><tr>
+<td>He</td>
+<td align="center">3</td>
+<td>$\frac{3}{2}R = 12.5$</td>
+<td>$\frac{5}{2}R = 20.8$</td>
+<td align="center">1.67</td>
+<td align="center">1.66</td>
+</tr>
+<tr>
+<td>N₂</td>
+<td align="center">5</td>
+<td>$\frac{5}{2}R = 20.8$</td>
+<td>$\frac{7}{2}R = 29.1$</td>
+<td align="center">1.40</td>
+<td align="center">1.40</td>
+</tr>
+<tr>
+<td>CO₂</td>
+<td align="center">6</td>
+<td>$3R = 24.9$</td>
+<td>$4R = 33.3$</td>
+<td align="center">1.33</td>
+<td align="center">1.30</td>
+</tr>
+</tbody></table></div>
+<p>单位：J/(mol·K)</p>
+<p>实验值和理论预测吻合良好（CO₂ 有些偏差是因为振动自由度在室温下部分激活）。</p>
+<hr>
+<h2 id="48-能量均分定理的证明思路">4.8 能量均分定理的证明思路</h2>
+<p>为什么每个平方项恰好分到 $\frac{1}{2}kT$？这里给出关键步骤。</p>
+<p>考虑一个自由度对应的能量为 $\varepsilon = \frac{1}{2}\alpha q^2$（$q$ 是广义坐标或动量）。在温度 $T$ 下，$q$ 的分布由玻尔兹曼因子给出：</p>
+<p>$P(q) \propto \exp\left(-\frac{\varepsilon}{kT}\right) = \exp\left(-\frac{\alpha q^2}{2kT}\right)$</p>
+<p>平均能量：</p>
+<p>$\overline{\varepsilon} = \frac{\int_{-\infty}^{\infty} \frac{1}{2}\alpha q^2 \cdot e^{-\alpha q^2/(2kT)},dq}{\int_{-\infty}^{\infty} e^{-\alpha q^2/(2kT)},dq}$</p>
+<p>利用高斯积分：</p>
+<p>$\int_{-\infty}^{\infty} q^2 e^{-aq^2},dq = \frac{1}{2}\sqrt{\frac{\pi}{a^3}}, \quad \int_{-\infty}^{\infty} e^{-aq^2},dq = \sqrt{\frac{\pi}{a}}$</p>
+<p>令 $a = \alpha/(2kT)$：</p>
+<p>$\overline{\varepsilon} = \frac{\frac{1}{2}\alpha \cdot \frac{1}{2}\sqrt{\pi/a^3}}{\sqrt{\pi/a}} = \frac{\frac{1}{4}\alpha/a}{1} = \frac{\alpha}{4} \cdot \frac{2kT}{\alpha} = \frac{1}{2}kT$</p>
+<p>无论 $\alpha$ 是什么，结果都是 $\frac{1}{2}kT$。这就是&quot;均分&quot;的含义——和具体的物理量无关，只要是平方形式就分到 $\frac{1}{2}kT$。</p>
+<hr>
+<h2 id="49-能量均分定理的局限">4.9 能量均分定理的局限</h2>
+<h3 id="经典理论的困难">经典理论的困难</h3>
+<p>能量均分定理是经典统计力学的结果。它预言热容是常数（不随温度变化）。但实验发现：</p>
+<ul>
+<li>氢气（H₂）在低温时 $C_V \approx \frac{3}{2}R$（只有平动），中温时 $C_V \approx \frac{5}{2}R$（平动+转动），高温时接近 $\frac{7}{2}R$（加上振动）</li>
+<li>固体的热容在高温时趋于 $3R$（Dulong-Petit 定律），但低温时趋于零</li>
+</ul>
+<p>经典理论无法解释这种&quot;自由度逐步冻结/激活&quot;的行为。</p>
+<h3 id="量子效应的解释">量子效应的解释</h3>
+<p>量子力学给出了解释：每个自由度有一个特征能量间距 $\Delta\varepsilon$。当 $kT \gg \Delta\varepsilon$ 时，该自由度被充分激活（经典结果成立）；当 $kT \ll \Delta\varepsilon$ 时，该自由度被&quot;冻结&quot;（对热容无贡献）。</p>
+<p>振动的能量间距最大（$\Delta\varepsilon_{vib} \sim 0.1-0.5$ eV），所以在室温（$kT \approx 0.025$ eV）下通常冻结。转动的间距小得多（$\Delta\varepsilon_{rot} \sim 10^{-3}$ eV），室温下充分激活。平动的间距极小（准连续），永远激活。</p>
+<p><strong>本课程中</strong>：除非特别说明，默认使用经典的能量均分结果。</p>
+<hr>
+<h2 id="410-boltzmann-分布能量分布">4.10 Boltzmann 分布（能量分布）</h2>
+<h3 id="速率分布-能量分布">速率分布 → 能量分布</h3>
+<p>Maxwell 速率分布给出的是速率 $v$ 的分布。如果换一个视角，问&quot;动能为 $\varepsilon = \frac{1}{2}mv^2$ 的分子有多少&quot;呢？</p>
+<p>做变量替换 $\varepsilon = \frac{1}{2}mv^2$，$d\varepsilon = mv,dv$，$v = \sqrt{2\varepsilon/m}$：</p>
+<p>$f(\varepsilon),d\varepsilon = f(v),dv$</p>
+<p>代入得到能量分布函数：</p>
+<p>$\boxed{f(\varepsilon) = \frac{2\pi}{(\pi kT)^{3/2}} \sqrt{\varepsilon} \cdot e^{-\varepsilon/(kT)}}$</p>
+<h3 id="boltzmann-因子">Boltzmann 因子</h3>
+<p>注意分布中的指数因子 $e^{-\varepsilon/(kT)}$——这就是<strong>Boltzmann 因子</strong>。</p>
+<p>它的含义非常普遍：在温度 $T$ 的平衡态下，一个系统处于能量为 $\varepsilon$ 的状态的概率正比于 $e^{-\varepsilon/(kT)}$。</p>
+<ul>
+<li>能量越高，概率越低</li>
+<li>温度越高，高能量状态的概率相对增加（指数衰减变慢）</li>
+<li>$kT$ 是一个&quot;能量尺度&quot;——和 $kT$ 相比很大的能量几乎不可能出现</li>
+</ul>
+<p>Boltzmann 因子在统计物理中无处不在，是最核心的结论之一。</p>
+<hr>
+<h2 id="411-maxwell-分布的实验验证">4.11 Maxwell 分布的实验验证</h2>
+<h3 id="stern-实验1920">Stern 实验（1920）</h3>
+<p>Otto Stern 设计了一个直接测量分子速率分布的实验：</p>
+<ol>
+<li>加热一个金属炉，使金属原子蒸发</li>
+<li>原子从炉的小孔射出，经过狭缝准直</li>
+<li>原子束沉积在旋转圆柱体的内壁上</li>
+</ol>
+<p>由于圆柱体在旋转，不同速度的原子到达内壁时，圆柱体已经转过不同角度——快原子飞行时间短，偏移小；慢原子飞行时间长，偏移大。</p>
+<p>通过测量沉积物的分布（不同位置的厚度），可以反推速率分布。实验结果和 Maxwell 分布预言一致。</p>
+<h3 id="zartman-ko-实验1930s">Zartman-Ko 实验（1930s）</h3>
+<p>改进版：用旋转的开槽圆柱体代替准直狭缝，能更精确地区分不同速率。实验结果定量验证了 Maxwell 分布。</p>
+<hr>
+<h2 id="412-概念辨析">4.12 概念辨析</h2>
+<h3 id="q温度相同时轻分子和重分子的速率分布相同吗">Q：温度相同时，轻分子和重分子的速率分布相同吗？</h3>
+<p><strong>不同。</strong> 速率分布取决于 $m/T$（通过 $f(v)$ 公式）。轻分子的分布更宽、峰值更靠右（速率更大）。但它们的<strong>平均动能相同</strong>（都是 $\frac{3}{2}kT$）。</p>
+<h3 id="q某个分子的速率能超过-v_rms-吗">Q：某个分子的速率能超过 $v_{rms}$ 吗？</h3>
+<p><strong>当然能。</strong> $v_{rms}$ 只是统计平均值。Maxwell 分布的尾巴延伸到无穷大——总有极少数分子有非常高的速率。只是概率随 $v$ 增大而指数衰减。</p>
+<h3 id="q气体达到平衡后每个分子的速率不变吗">Q：气体达到平衡后，每个分子的速率不变吗？</h3>
+<p><strong>不是。</strong> 分子不断碰撞，每次碰撞后个别分子的速率都会改变。但整体的分布不变——任何时刻&quot;速率在 $v \sim v+dv$ 范围内的分子比例&quot;保持恒定。这就是&quot;统计平衡&quot;的含义。</p>
+<h3 id="q能量均分定理中quot平方项quot的要求有多严格">Q：能量均分定理中&quot;平方项&quot;的要求有多严格？</h3>
+<p>非常严格——能量必须是某个变量的二次函数（$\varepsilon \propto q^2$）。如果能量是 $|q|$ 或 $q^4$ 的函数，均分定理不适用。幸运的是，大部分基本物理（动能 $\frac{1}{2}mv^2$，转动 $\frac{1}{2}I\omega^2$，谐振子势能 $\frac{1}{2}\kappa x^2$）都是二次型。</p>
+<hr>
+<h2 id="413-本章公式总结">4.13 本章公式总结</h2>
+<h3 id="maxwell-速率分布">Maxwell 速率分布</h3>
+<p>$f(v) = 4\pi\left(\frac{m}{2\pi kT}\right)^{3/2} v^2 e^{-mv^2/(2kT)} \tag{4.1}$</p>
+<h3 id="三个特征速率">三个特征速率</h3>
+<p>$v_p = \sqrt{\frac{2kT}{m}} = \sqrt{\frac{2RT}{M}} \tag{4.2}$</p>
+<p>$\overline{v} = \sqrt{\frac{8kT}{\pi m}} = \sqrt{\frac{8RT}{\pi M}} \tag{4.3}$</p>
+<p>$v_{rms} = \sqrt{\frac{3kT}{m}} = \sqrt{\frac{3RT}{M}} \tag{4.4}$</p>
+<h3 id="能量均分定理">能量均分定理</h3>
+<p>$\overline{\varepsilon}_{per,DOF} = \frac{1}{2}kT \tag{4.5}$</p>
+<p>$U = \frac{i}{2}nRT, \quad C_{V,m} = \frac{i}{2}R, \quad \gamma = \frac{i+2}{i} \tag{4.6}$</p>
+<h3 id="boltzmann-因子">Boltzmann 因子</h3>
+<p>$P(\varepsilon) \propto e^{-\varepsilon/(kT)} \tag{4.7}$</p>
+<hr>
+<h2 id="414-本章小结">4.14 本章小结</h2>
+<div class="table-wrap"><table><thead><tr>
+<th>核心概念</th>
+<th>要点</th>
+</tr>
+</thead><tbody><tr>
+<td>速率分布函数</td>
+<td>$f(v)dv$ = 速率在 $(v, v+dv)$ 内的分子比例</td>
+</tr>
+<tr>
+<td>Maxwell 分布</td>
+<td>$v^2$ 因子 × Boltzmann 指数衰减</td>
+</tr>
+<tr>
+<td>三个特征速率</td>
+<td>$v_p &lt; \overline{v} &lt; v_{rms}$；比值 $1:1.13:1.22$</td>
+</tr>
+<tr>
+<td>温度影响</td>
+<td>$T$ 升高 → 分布变宽变矮、峰值右移</td>
+</tr>
+<tr>
+<td>自由度</td>
+<td>平动 3，双原子转动 2，振动 2（常温冻结）</td>
+</tr>
+<tr>
+<td>能量均分定理</td>
+<td>每个平方项分 $\frac{1}{2}kT$；$U = \frac{i}{2}nRT$</td>
+</tr>
+<tr>
+<td>Boltzmann 因子</td>
+<td>$e^{-\varepsilon/(kT)}$：高能态概率指数衰减</td>
+</tr>
+<tr>
+<td>经典局限</td>
+<td>无法解释低温热容下降（需量子力学）</td>
+</tr>
+</tbody></table></div>
+
+    <nav class="pager">  <a href="03-second-law-entropy.html">
+    <span class="label">← 上一章</span>
+    <span class="title">热力学第二定律与熵</span>
+  </a>  <a href="05-transport.html" class="next">
+    <span class="label">下一章 →</span>
+    <span class="title">气体输运过程</span>
+  </a></nav>
+  </article>
+</div>
+
+<footer>
+  <div class="set">
+    <span>热学速通</span>
+    <span>2026 · ZH-CN</span>
+  </div>
+  <div class="set">
+    <span>Mav</span>
+  </div>
+</footer>
+<div class="search-backdrop" id="search-overlay" role="dialog" aria-modal="true" aria-label="搜索" hidden>
+  <div class="search-modal">
+    <div class="search-input-wrap">
+      <input type="search" class="search-input" placeholder="搜索内容..." aria-label="搜索内容" autocomplete="off">
+      <kbd>ESC</kbd>
+    </div>
+    <div class="search-results" role="listbox" aria-label="搜索结果"></div>
+  </div>
+</div>
+
+<!-- Side Panel -->
+<div class="side-panel" id="side-panel">
+  <div class="side-panel-resize" id="side-panel-resize"></div>
+  <div class="side-panel-header">
+    <div class="side-panel-tabs">
+      <button class="side-panel-tab active" data-mode="sidenote">补充</button>
+      <button class="side-panel-tab" data-mode="notepad">笔记</button>
+    </div>
+    <button class="side-panel-close" aria-label="关闭">×</button>
+  </div>
+  <div class="side-panel-body"></div>
+</div>
+<button class="notepad-fab" id="notepad-fab" aria-label="便利贴">✎</button>
+
+<!-- Mobile TOC -->
+<button class="mtoc-fab" id="mtoc-fab" aria-label="目录">TOC</button>
+<div class="mtoc-drawer" id="mtoc-drawer">
+  <div class="mtoc-content"></div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/bash.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/typescript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/yaml.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/javascript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/json.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/python.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/css.min.js"></script>
+<script src="../assets/script.js"></script>
+</body>
+</html>

@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>气体输运过程 — 热学速通</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" id="hljs-light" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+<link rel="stylesheet" id="hljs-dark" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" media="not all">
+</head>
+<body>
+
+<div class="progress-bar" id="progress-bar"></div>
+
+<nav class="topnav" id="topnav">
+  <div class="topnav-inner">
+    <a class="brand" href="../index.html">热学速通</a>
+    <div class="nav-links">
+      <a href="01-basics-temperature.html">01</a>
+      <a href="02-first-law.html">02</a>
+      <a href="03-second-law-entropy.html">03</a>
+      <a href="04-maxwell-distribution.html">04</a>
+      <a href="05-transport.html" class="active">05</a>
+      <a href="06-phase-transition.html">06</a>
+    </div>
+    <div class="nav-controls">
+      <button class="nav-btn" id="search-btn" aria-label="搜索 (Ctrl+K)">⌘K</button>
+      <button class="nav-btn" id="settings-btn" aria-label="阅读设置">Aa</button>
+      <a class="nav-btn" href="../../index.html" aria-label="返回知识库">← 知识库</a>
+      <a class="nav-btn" href="https://github.com/maverickxone/mav-homepage" target="_blank" rel="noopener" aria-label="GitHub" style="padding: 6px 8px;"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg></a>
+    </div>
+  </div>
+</nav>
+<div class="settings-pop" id="settings-pop">
+  <h5>主题</h5>
+  <div class="row">
+    <button class="seg" data-theme-set="light">明亮</button>
+    <button class="seg" data-theme-set="dark">暗色</button>
+  </div>
+  <h5>字号</h5>
+  <div class="row">
+    <button class="seg" data-size-set="s">小</button>
+    <button class="seg" data-size-set="m">中</button>
+    <button class="seg" data-size-set="l">大</button>
+  </div>
+</div>
+
+<div class="with-sidebar">
+  <aside class="sidebar">
+  <div class="chapter-num">CHAPTER 05</div>
+  <div class="chapter-name">气体输运过程</div>
+  <h4>目录</h4>
+  <ul>
+    <li><a href="#51-从平衡态到非平衡态">5.1 从平衡态到非平衡态</a></li>
+    <li><a href="#52-平均自由程">5.2 平均自由程</a></li>
+    <li><a href="#53-输运过程的统一图像">5.3 输运过程的统一图像</a></li>
+    <li><a href="#54-黏性内摩擦">5.4 黏性（内摩擦）</a></li>
+    <li><a href="#55-热传导">5.5 热传导</a></li>
+    <li><a href="#56-扩散">5.6 扩散</a></li>
+    <li><a href="#57-三种输运系数的比较">5.7 三种输运系数的比较</a></li>
+    <li><a href="#58-布朗运动">5.8 布朗运动</a></li>
+    <li><a href="#59-概念辨析">5.9 概念辨析</a></li>
+    <li><a href="#510-本章公式总结">5.10 本章公式总结</a></li>
+    <li><a href="#511-本章小结">5.11 本章小结</a></li>
+  </ul>
+</aside>
+  <article class="chapter-body">
+    <header class="chapter-head">
+  <div class="chapter-head-meta">
+    <span class="num">CHAPTER 05</span>
+    <span>≈ 40 MIN READ</span>
+  </div>
+  <h1>气体输运过程</h1>
+
+</header>
+    <h2 id="51-从平衡态到非平衡态">5.1 从平衡态到非平衡态</h2>
+<p>前面四章讨论的都是平衡态（或准静态过程）。但现实中，很多重要现象恰恰发生在<strong>非平衡</strong>条件下：</p>
+<ul>
+<li>一杯热咖啡慢慢变凉（温度不均匀→热传导）</li>
+<li>一滴墨水在水中扩散（浓度不均匀→扩散）</li>
+<li>流动的气体有黏性（速度不均匀→内摩擦）</li>
+</ul>
+<p>这些都是<strong>输运过程</strong>——某种物理量（能量、动量、质量）从一处被&quot;运输&quot;到另一处。</p>
+<p>输运过程的共同特征：<strong>存在某种不均匀性（梯度），驱动物理量的定向传输。</strong></p>
+<div class="table-wrap"><table><thead><tr>
+<th>输运过程</th>
+<th>被输运的量</th>
+<th>驱动力（梯度）</th>
+<th>宏观定律</th>
+</tr>
+</thead><tbody><tr>
+<td>热传导</td>
+<td>能量（热量）</td>
+<td>温度梯度 $dT/dz$</td>
+<td>傅里叶定律</td>
+</tr>
+<tr>
+<td>黏性（内摩擦）</td>
+<td>动量</td>
+<td>速度梯度 $du/dz$</td>
+<td>牛顿黏性定律</td>
+</tr>
+<tr>
+<td>扩散</td>
+<td>质量（粒子数）</td>
+<td>浓度梯度 $dn/dz$</td>
+<td>菲克定律</td>
+</tr>
+</tbody></table></div>
+<p>这三种现象看起来很不同，但在分子动理论中，它们有<strong>统一的微观机制</strong>：分子的热运动在不均匀环境中的&quot;搬运&quot;效应。</p>
+<hr>
+<h2 id="52-平均自由程">5.2 平均自由程</h2>
+<h3 id="为什么需要平均自由程">为什么需要平均自由程</h3>
+<p>如果分子永远不碰撞，一杯热水里的&quot;热分子&quot;会直接飞到杯壁——热传导应该瞬间完成。但实际上热传导很慢。为什么？</p>
+<p>因为分子不断和其他分子碰撞，每次碰撞后方向随机改变。分子走的是&quot;醉汉的路&quot;（随机游走），而不是直线。每两次碰撞之间分子飞行的平均距离，就是<strong>平均自由程</strong>。</p>
+<h3 id="定义">定义</h3>
+<p><strong>平均自由程</strong> $\bar{\lambda}$：一个分子在相邻两次碰撞之间飞行的平均距离。</p>
+<p><strong>平均碰撞频率</strong> $\bar{Z}$：一个分子单位时间内与其他分子碰撞的平均次数。</p>
+<p>两者的关系：</p>
+<p>$\bar{\lambda} = \frac{\overline{v}}{\bar{Z}}$</p>
+<p>（平均速率 ÷ 单位时间碰撞次数 = 两次碰撞之间的平均路程）</p>
+<h3 id="平均自由程的推导">平均自由程的推导</h3>
+<p>把分子看作直径为 $d$ 的硬球。一个分子在运动过程中，会和以它为中心、半径为 $d$ 的圆柱体（横截面积 $\sigma = \pi d^2$，称为碰撞截面）内的所有分子碰撞。</p>
+<p>在时间 $\Delta t$ 内，分子走过路程 $\overline{v}\Delta t$，&quot;扫过&quot;的体积为 $\sigma \cdot \overline{v}\Delta t$。这个体积内的分子数即为碰撞次数：</p>
+<p>$\bar{Z} \cdot \Delta t = n \cdot \sigma \cdot \overline{v} \cdot \Delta t$</p>
+<p>但这里有一个问题：其他分子也在运动。更精确的计算需要用<strong>相对速率</strong> $\overline{v_{rel}} = \sqrt{2},\overline{v}$：</p>
+<p>$\bar{Z} = \sqrt{2}, n\sigma\overline{v} = \sqrt{2},\pi d^2 n \overline{v}$</p>
+<p>平均自由程：</p>
+<p>$\boxed{\bar{\lambda} = \frac{\overline{v}}{\bar{Z}} = \frac{1}{\sqrt{2},\pi d^2 n}}$</p>
+<h3 id="公式解读">公式解读</h3>
+<p>$\bar{\lambda} = \frac{1}{\sqrt{2},\pi d^2 n}$</p>
+<ul>
+<li>分子越大（$d$ 大）→ 碰撞截面大 → 自由程短</li>
+<li>分子数密度越大（$n$ 大，即气压高）→ 周围分子多 → 自由程短</li>
+<li>和温度无关（在 $n$ 固定时）；但如果压强固定（$n = p/(kT)$），则 $\bar{\lambda} \propto T$</li>
+</ul>
+<h3 id="用压强表示">用压强表示</h3>
+<p>利用 $n = p/(kT)$：</p>
+<p>$\bar{\lambda} = \frac{kT}{\sqrt{2},\pi d^2 p}$</p>
+<h3 id="数值感受">数值感受</h3>
+<p>常温常压下空气（$d \approx 3.7 \times 10^{-10}$ m，$n \approx 2.5 \times 10^{25}$ m$^{-3}$）：</p>
+<p>$\bar{\lambda} \approx \frac{1}{1.414 \times 3.14 \times (3.7\times10^{-10})^2 \times 2.5\times10^{25}} \approx 6.6 \times 10^{-8} \text{ m} \approx 66 \text{ nm}$</p>
+<p>碰撞频率：</p>
+<p>$\bar{Z} = \frac{\overline{v}}{\bar{\lambda}} \approx \frac{470}{6.6\times10^{-8}} \approx 7 \times 10^9 \text{ 次/s}$</p>
+<p>每秒 70 亿次碰撞！这就是为什么气体宏观上看起来是连续的——分子间的碰撞如此频繁，以至于任何不平衡都会在极短时间内被&quot;抹平&quot;。</p>
+<h3 id="knudsen-数">Knudsen 数</h3>
+<p>平均自由程和容器特征尺寸 $L$ 的比值定义为 <strong>Knudsen 数</strong>：</p>
+<p>$Kn = \frac{\bar{\lambda}}{L}$</p>
+<ul>
+<li>$Kn \ll 1$（常压）：分子碰撞频繁，气体可以看作连续流体→适用流体力学</li>
+<li>$Kn \gg 1$（高真空）：分子几乎不碰撞，自由飞行到器壁→分子流，适用分子动力学</li>
+<li>$Kn \sim 1$：过渡区域，两种方法都不太好用</li>
+</ul>
+<hr>
+<h2 id="53-输运过程的统一图像">5.3 输运过程的统一图像</h2>
+<p>三种输运过程有一个统一的微观机制：</p>
+<ol>
+<li>系统中存在某个物理量的<strong>空间不均匀性</strong>（梯度）</li>
+<li>分子做热运动时从一层飞到另一层</li>
+<li>分子在出发点&quot;带走&quot;了当地的物理量值，到达目的层后通过碰撞&quot;交出去&quot;</li>
+<li>净效果：物理量从&quot;多&quot;的地方输运到&quot;少&quot;的地方</li>
+</ol>
+<p>关键参数：分子从一层飞到另一层的典型距离就是平均自由程 $\bar{\lambda}$——它决定了分子能&quot;记住&quot;多远处的信息。</p>
+<hr>
+<h2 id="54-黏性内摩擦">5.4 黏性（内摩擦）</h2>
+<h3 id="现象">现象</h3>
+<p>两层气体以不同速度平行流动。快层对慢层有一个&quot;拖曳&quot;力（试图加速慢层），慢层对快层有一个&quot;阻碍&quot;力（试图减速快层）。这就是黏性力。</p>
+<h3 id="牛顿黏性定律">牛顿黏性定律</h3>
+<p>设气体沿 $x$ 方向流动，速度 $u$ 沿 $z$ 方向变化（$u = u(z)$）。相邻两层之间的黏性应力：</p>
+<p>$\tau = \eta \frac{du}{dz}$</p>
+<p>其中 $\eta$ 是<strong>黏性系数</strong>（动力黏度），单位 Pa·s。</p>
+<h3 id="微观推导">微观推导</h3>
+<p>取 $z$ 方向上某个面（面积 $A$）。单位时间内从上方飞过来的分子在上一次碰撞处（距面 $\bar{\lambda}$）获得了流速 $u(z + \bar{\lambda})$。它们带来了 $x$ 方向的动量 $mu(z+\bar{\lambda})$。</p>
+<p>从下方飞来的分子带来动量 $mu(z - \bar{\lambda})$。</p>
+<p>单位面积单位时间内从上到下通过的分子数约为 $\frac{1}{6}n\overline{v}$（$n\overline{v}$ 是分子通量，$1/6$ 是因为六个方向平均）。</p>
+<p>净动量传输率（即应力）：</p>
+<p>$\tau = \frac{1}{6}n\overline{v} \cdot m[u(z+\bar{\lambda}) - u(z-\bar{\lambda})]$</p>
+<p>$\approx \frac{1}{6}n\overline{v} \cdot m \cdot 2\bar{\lambda}\frac{du}{dz}$</p>
+<p>$= \frac{1}{3}nm\overline{v}\bar{\lambda}\frac{du}{dz}$</p>
+<p>和牛顿黏性定律对比，得到黏性系数：</p>
+<p>$\boxed{\eta = \frac{1}{3}nm\overline{v}\bar{\lambda} = \frac{1}{3}\rho\overline{v}\bar{\lambda}}$</p>
+<p>其中 $\rho = nm$ 是气体密度。</p>
+<h3 id="黏性系数的性质">黏性系数的性质</h3>
+<p>代入 $\bar{\lambda} = 1/(\sqrt{2}\pi d^2 n)$ 和 $\overline{v} = \sqrt{8kT/(\pi m)}$：</p>
+<p>$\eta = \frac{1}{3}nm \cdot \sqrt{\frac{8kT}{\pi m}} \cdot \frac{1}{\sqrt{2}\pi d^2 n}$</p>
+<p>化简后：</p>
+<p>$\eta = \frac{1}{3\sqrt{2}\pi d^2}\sqrt{\frac{8mkT}{\pi}}$</p>
+<p>注意 $n$ 消掉了！黏性系数和气体密度（压强）无关。</p>
+<p><strong>这是一个反直觉的结论</strong>：在常温常压范围内，气体的黏性不随压强变化。Maxwell 本人当年推导出这个结论时也感到惊讶，后来被实验证实。</p>
+<p>物理解释：压强增大→分子数密度增大→搬运动量的分子增多→但同时平均自由程缩短（搬运能力下降）→两个效应恰好抵消。</p>
+<p><strong>温度依赖</strong>：$\eta \propto \sqrt{T}$——温度升高，黏性增大。这和液体相反（液体黏度随温度升高而降低）。</p>
+<hr>
+<h2 id="55-热传导">5.5 热传导</h2>
+<h3 id="现象">现象</h3>
+<p>气体中存在温度梯度时，热量从高温区向低温区传输——这就是热传导。</p>
+<h3 id="傅里叶定律">傅里叶定律</h3>
+<p>热流密度（单位面积单位时间传输的热量）：</p>
+<p>$j_q = -\kappa \frac{dT}{dz}$</p>
+<p>$\kappa$ 是<strong>热导率</strong>（thermal conductivity），单位 W/(m·K)。负号表示热量沿温度降低的方向流动。</p>
+<h3 id="微观推导">微观推导</h3>
+<p>和黏性类似的思路。从 $z + \bar{\lambda}$ 处飞来的分子携带能量 $\frac{i}{2}kT(z+\bar{\lambda})$，从 $z - \bar{\lambda}$ 处飞来的分子携带能量 $\frac{i}{2}kT(z-\bar{\lambda})$。</p>
+<p>净能量传输率：</p>
+<p>$j_q = \frac{1}{6}n\overline{v} \cdot \frac{i}{2}k[T(z-\bar{\lambda}) - T(z+\bar{\lambda})]$</p>
+<p>$= -\frac{1}{6}n\overline{v} \cdot \frac{i}{2}k \cdot 2\bar{\lambda}\frac{dT}{dz}$</p>
+<p>$= -\frac{1}{3}n\overline{v}\bar{\lambda} \cdot \frac{i}{2}k \cdot \frac{dT}{dz}$</p>
+<p>和傅里叶定律对比：</p>
+<p>$\boxed{\kappa = \frac{1}{3}n\overline{v}\bar{\lambda} \cdot \frac{i}{2}k = \frac{1}{3}\rho\overline{v}\bar{\lambda} \cdot c_V}$</p>
+<p>其中 $c_V = \frac{i}{2}k/m = C_{V,m}/M$ 是单位质量的定容比热。</p>
+<h3 id="热导率与黏性系数的关系">热导率与黏性系数的关系</h3>
+<p>注意 $\kappa = \eta \cdot c_V$。因此：</p>
+<p>$\frac{\kappa}{\eta c_V} = 1$</p>
+<p>实验上这个比值约为 1.3-2.5（和分子类型有关），数量级吻合。偏差来自推导中的简化（$1/6$ 因子的粗糙近似等）。</p>
+<h3 id="热导率的性质">热导率的性质</h3>
+<p>和黏性系数一样：</p>
+<ul>
+<li>不依赖压强（$n$ 消去）</li>
+<li>$\kappa \propto \sqrt{T}$</li>
+</ul>
+<hr>
+<h2 id="56-扩散">5.6 扩散</h2>
+<h3 id="现象">现象</h3>
+<p>如果气体中某种成分的浓度不均匀（比如打开一瓶香水），分子会从高浓度区向低浓度区净迁移——这就是扩散。</p>
+<h3 id="菲克定律fick39s-law">菲克定律（Fick&#39;s Law）</h3>
+<p>粒子流密度（单位面积单位时间通过的粒子数）：</p>
+<p>$j_n = -D\frac{dn}{dz}$</p>
+<p>$D$ 是<strong>扩散系数</strong>，单位 m²/s。负号表示粒子从高浓度向低浓度流动。</p>
+<h3 id="微观推导">微观推导</h3>
+<p>从 $z + \bar{\lambda}$ 飞来的分子密度为 $n(z + \bar{\lambda})$，从 $z - \bar{\lambda}$ 飞来的为 $n(z - \bar{\lambda})$。</p>
+<p>$j_n = \frac{1}{6}\overline{v}[n(z-\bar{\lambda}) - n(z+\bar{\lambda})] = -\frac{1}{3}\overline{v}\bar{\lambda}\frac{dn}{dz}$</p>
+<p>扩散系数：</p>
+<p>$\boxed{D = \frac{1}{3}\overline{v}\bar{\lambda}}$</p>
+<h3 id="扩散系数的性质">扩散系数的性质</h3>
+<p>$D = \frac{1}{3}\overline{v}\bar{\lambda} = \frac{1}{3}\overline{v} \cdot \frac{kT}{\sqrt{2}\pi d^2 p}$</p>
+<ul>
+<li>$D \propto 1/p$：压强越大，扩散越慢（自由程短）</li>
+<li>$D \propto T^{3/2}$：温度越高，扩散越快（$\overline{v} \propto T^{1/2}$，$\bar{\lambda} \propto T$）</li>
+</ul>
+<hr>
+<h2 id="57-三种输运系数的比较">5.7 三种输运系数的比较</h2>
+<div class="table-wrap"><table><thead><tr>
+<th></th>
+<th align="center">黏性 $\eta$</th>
+<th align="center">热导率 $\kappa$</th>
+<th align="center">扩散系数 $D$</th>
+</tr>
+</thead><tbody><tr>
+<td>输运的量</td>
+<td align="center">动量</td>
+<td align="center">能量</td>
+<td align="center">粒子数</td>
+</tr>
+<tr>
+<td>宏观定律</td>
+<td align="center">$\tau = \eta,du/dz$</td>
+<td align="center">$j_q = -\kappa,dT/dz$</td>
+<td align="center">$j_n = -D,dn/dz$</td>
+</tr>
+<tr>
+<td>微观表达</td>
+<td align="center">$\frac{1}{3}\rho\overline{v}\bar{\lambda}$</td>
+<td align="center">$\frac{1}{3}\rho\overline{v}\bar{\lambda}c_V$</td>
+<td align="center">$\frac{1}{3}\overline{v}\bar{\lambda}$</td>
+</tr>
+<tr>
+<td>和压强的关系</td>
+<td align="center">无关</td>
+<td align="center">无关</td>
+<td align="center">$\propto 1/p$</td>
+</tr>
+<tr>
+<td>和温度的关系</td>
+<td align="center">$\propto T^{1/2}$</td>
+<td align="center">$\propto T^{1/2}$</td>
+<td align="center">$\propto T^{3/2}$</td>
+</tr>
+</tbody></table></div>
+<p>三者的关系：</p>
+<p>$D = \frac{\eta}{\rho}, \quad \kappa = \eta c_V$</p>
+<p>（更精确的理论修正系数约为 1-2.5 倍，但数量级关系成立。）</p>
+<hr>
+<h2 id="58-布朗运动">5.8 布朗运动</h2>
+<h3 id="现象">现象</h3>
+<p>1827 年，植物学家布朗用显微镜观察花粉颗粒悬浮在水中——发现它们在不停地做无规则运动。这就是<strong>布朗运动</strong>。</p>
+<h3 id="机制">机制</h3>
+<p>布朗运动是<strong>分子热运动的直接宏观证据</strong>。花粉颗粒虽然比分子大得多（微米量级），但它时刻受到周围大量水分子的碰撞。由于碰撞来自各个方向、各有不同的动量，它们的合力不为零且不断随机变化——推动花粉颗粒做随机游走。</p>
+<h3 id="爱因斯坦关系1905">爱因斯坦关系（1905）</h3>
+<p>爱因斯坦给出了布朗运动的定量理论。对于半径为 $r$ 的球形粒子在黏度为 $\eta$ 的流体中：</p>
+<p>粒子的扩散系数：</p>
+<p>$D = \frac{kT}{6\pi\eta r}$</p>
+<p>这就是<strong>爱因斯坦-斯托克斯关系</strong>（Einstein-Stokes relation）。</p>
+<p>均方位移（时间 $t$ 后粒子离原点的均方距离）：</p>
+<p>$\overline{x^2} = 2Dt \quad \text{（一维）}$</p>
+<p>$\overline{r^2} = 6Dt \quad \text{（三维）}$</p>
+<h3 id="历史意义">历史意义</h3>
+<ul>
+<li>佩兰（Perrin, 1908）通过精确测量布朗运动验证了爱因斯坦公式，并从中精确测定了阿伏伽德罗常数</li>
+<li>这是分子存在的<strong>决定性实验证据</strong>之一（当时很多科学家还不相信原子和分子是真实存在的）</li>
+</ul>
+<hr>
+<h2 id="59-概念辨析">5.9 概念辨析</h2>
+<h3 id="q为什么黏性系数不随压强变化">Q：为什么黏性系数不随压强变化？</h3>
+<p>这是微观推导的直接结论：$n$ 和 $\bar{\lambda}$ 的乘积为常数（$n\bar{\lambda} = 1/(\sqrt{2}\pi d^2)$）。物理上：压强增大→搬运动量的分子更多→但每个分子只搬运了更短距离（因为自由程缩短）→两者恰好抵消。</p>
+<p>但这个结论有适用范围：</p>
+<ul>
+<li>极低压（$Kn &gt; 1$）：分子不再频繁碰撞，连续性假设失效</li>
+<li>极高压：分子自身体积不可忽略，理想气体假设失效</li>
+</ul>
+<h3 id="q为什么高温下气体黏度增大而液体黏度减小">Q：为什么高温下气体黏度增大而液体黏度减小？</h3>
+<p>这是两种完全不同的机制：</p>
+<ul>
+<li><strong>气体黏性</strong>来源于分子热运动搬运动量。温度高→分子动得快→搬运能力强→黏度大</li>
+<li><strong>液体黏性</strong>来源于分子间的吸引力阻碍相对滑动。温度高→分子动能克服吸引力→更容易滑动→黏度小</li>
+</ul>
+<h3 id="q扩散为什么比声速慢那么多">Q：扩散为什么比声速慢那么多？</h3>
+<p>分子热运动速率确实很快（~500 m/s），但扩散是<strong>随机游走</strong>——分子每飞约 66 nm 就被碰偏方向。在 1 秒内分子虽然飞行了约 500 m 的总路程，但净位移只有 $\sqrt{2Dt} \approx$ 几毫米。</p>
+<p>扩散的速度 $\propto \sqrt{t}$，远慢于 $t$（直线飞行的速度）。这就是随机游走的特征——&quot;一步一碰&quot;，进展很慢。</p>
+<hr>
+<h2 id="510-本章公式总结">5.10 本章公式总结</h2>
+<h3 id="平均自由程">平均自由程</h3>
+<p>$\bar{\lambda} = \frac{1}{\sqrt{2},\pi d^2 n} = \frac{kT}{\sqrt{2},\pi d^2 p} \tag{5.1}$</p>
+<h3 id="碰撞频率">碰撞频率</h3>
+<p>$\bar{Z} = \sqrt{2},\pi d^2 n \overline{v} \tag{5.2}$</p>
+<h3 id="黏性系数">黏性系数</h3>
+<p>$\eta = \frac{1}{3}\rho\overline{v}\bar{\lambda} \tag{5.3}$</p>
+<h3 id="热导率">热导率</h3>
+<p>$\kappa = \frac{1}{3}\rho\overline{v}\bar{\lambda} c_V = \eta c_V \tag{5.4}$</p>
+<h3 id="扩散系数">扩散系数</h3>
+<p>$D = \frac{1}{3}\overline{v}\bar{\lambda} = \frac{\eta}{\rho} \tag{5.5}$</p>
+<h3 id="爱因斯坦关系">爱因斯坦关系</h3>
+<p>$D = \frac{kT}{6\pi\eta r}, \quad \overline{r^2} = 6Dt \tag{5.6}$</p>
+<hr>
+<h2 id="511-本章小结">5.11 本章小结</h2>
+<div class="table-wrap"><table><thead><tr>
+<th>核心概念</th>
+<th>要点</th>
+</tr>
+</thead><tbody><tr>
+<td>平均自由程</td>
+<td>$\bar{\lambda} \approx 66$ nm（常温常压空气）；$\propto 1/n$</td>
+</tr>
+<tr>
+<td>碰撞频率</td>
+<td>~$10^{9-10}$ 次/s；保证气体宏观连续性</td>
+</tr>
+<tr>
+<td>输运统一机制</td>
+<td>分子热运动在不均匀场中的净搬运效应</td>
+</tr>
+<tr>
+<td>黏性</td>
+<td>搬运动量；$\eta$ 与压强无关，$\propto\sqrt{T}$</td>
+</tr>
+<tr>
+<td>热传导</td>
+<td>搬运能量；$\kappa$ 与压强无关，$\propto\sqrt{T}$</td>
+</tr>
+<tr>
+<td>扩散</td>
+<td>搬运粒子数；$D \propto T^{3/2}/p$</td>
+</tr>
+<tr>
+<td>布朗运动</td>
+<td>分子热运动的宏观证据；$\overline{r^2} = 6Dt$</td>
+</tr>
+</tbody></table></div>
+
+    <nav class="pager">  <a href="04-maxwell-distribution.html">
+    <span class="label">← 上一章</span>
+    <span class="title">Maxwell-Boltzmann 分布</span>
+  </a>  <a href="06-phase-transition.html" class="next">
+    <span class="label">下一章 →</span>
+    <span class="title">固体、液体与相变</span>
+  </a></nav>
+  </article>
+</div>
+
+<footer>
+  <div class="set">
+    <span>热学速通</span>
+    <span>2026 · ZH-CN</span>
+  </div>
+  <div class="set">
+    <span>Mav</span>
+  </div>
+</footer>
+<div class="search-backdrop" id="search-overlay" role="dialog" aria-modal="true" aria-label="搜索" hidden>
+  <div class="search-modal">
+    <div class="search-input-wrap">
+      <input type="search" class="search-input" placeholder="搜索内容..." aria-label="搜索内容" autocomplete="off">
+      <kbd>ESC</kbd>
+    </div>
+    <div class="search-results" role="listbox" aria-label="搜索结果"></div>
+  </div>
+</div>
+
+<!-- Side Panel -->
+<div class="side-panel" id="side-panel">
+  <div class="side-panel-resize" id="side-panel-resize"></div>
+  <div class="side-panel-header">
+    <div class="side-panel-tabs">
+      <button class="side-panel-tab active" data-mode="sidenote">补充</button>
+      <button class="side-panel-tab" data-mode="notepad">笔记</button>
+    </div>
+    <button class="side-panel-close" aria-label="关闭">×</button>
+  </div>
+  <div class="side-panel-body"></div>
+</div>
+<button class="notepad-fab" id="notepad-fab" aria-label="便利贴">✎</button>
+
+<!-- Mobile TOC -->
+<button class="mtoc-fab" id="mtoc-fab" aria-label="目录">TOC</button>
+<div class="mtoc-drawer" id="mtoc-drawer">
+  <div class="mtoc-content"></div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/bash.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/typescript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/yaml.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/javascript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/json.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/python.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/css.min.js"></script>
+<script src="../assets/script.js"></script>
+</body>
+</html>
