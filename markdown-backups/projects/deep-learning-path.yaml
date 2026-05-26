@@ -1,0 +1,13 @@
+title: "深度学习从零到能读论文"
+slug: deep-learning-path
+description: "从 PyTorch 张量运算到 Transformer，一步步建立动手能力"
+books:
+  - slug: d2l-toolbox
+    role: "前置：PyTorch 基础和自动求导"
+  - slug: d2l-cnn
+    role: "图像：卷积神经网络的完整链路"
+  - slug: d2l-rnn
+    role: "序列：从 RNN 到注意力机制"
+transitions:
+  - "张量运算和自动求导是所有神经网络的底座。有了这些工具之后，从最直觉的任务开始——让机器「看懂」图片。"
+  - "CNN 处理的是空间信息，但现实世界还有时间维度：文本、语音、股价。RNN 系列就是为序列数据而生的。"

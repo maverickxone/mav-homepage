@@ -8,6 +8,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" href="../assets/projects.css">
 </head>
 <body>
 
@@ -30,110 +31,212 @@
     课内课外学过的东西，整理成可读的形式。每个主题是一个独立的小站，点进去就能读。
   </p>
 
-  <div class="knowledge-grid">
+  <!-- View Toggle -->
+  <div class="view-toggle">
+    <button class="active" data-view="projects">Projects</button>
+    <button data-view="all">全部书籍</button>
+  </div>
 
-    <a class="knowledge-card" href="claude-code/index.html">
-      <span class="tag">课外 · 工具</span>
-      <h3>Claude Code 入门指南</h3>
-      <p>6 章 + 速查表，从零开始理解这个终端里的 AI agent。</p>
-    </a>
+  <!-- ═══════════ Projects View ═══════════ -->
+  <div class="view-projects" id="view-projects">
 
-    <!-- 旧的合并版本，保留源码，前端隐藏。已拆分为三本独立书 -->
-    <!--
-    <a class="knowledge-card" href="claude-d2l-to-rnn/index.html">
-      <span class="tag">课内 · AI</span>
-      <h3>Claude_D2L 深度学习讲义</h3>
-      <p>从 PyTorch 基础到 CNN、RNN，面向深度学习初学者的中文讲义。</p>
-    </a>
-    -->
+    <div class="projects-list">
 
-    <a class="knowledge-card" href="d2l-toolbox/index.html">
-      <span class="tag">课内 · AI</span>
-      <h3>深度学习前置工具箱</h3>
-      <p>PyTorch 张量、自动求导、神经网络模块——动手做深度学习之前需要掌握的基础。</p>
-    </a>
+      <!-- Project: 计算机是怎么工作的 -->
+      <a class="project-card" href="projects/how-computer-works/index.html">
+        <h3>计算机是怎么工作的</h3>
+        <p class="project-card-desc">从晶体管到浏览器，一路向上——理解你每天用的这台机器</p>
+        <div class="path-dots">
+          <div class="path-dot-item"></div>
+          <div class="path-dot-line"></div>
+          <div class="path-dot-item"></div>
+          <div class="path-dot-line"></div>
+          <div class="path-dot-item"></div>
+        </div>
+        <div class="path-dots-labels">
+          <span class="path-dot-label">硬件篇</span>
+          <span class="path-dot-label">服务器</span>
+          <span class="path-dot-label">浏览器</span>
+        </div>
+        <div class="project-card-meta">3 本书 · 预计 3 小时</div>
+      </a>
 
-    <a class="knowledge-card" href="d2l-cnn/index.html">
-      <span class="tag">课内 · AI</span>
-      <h3>CNN实战篇：图像处理与卷积神经网络</h3>
-      <p>系统讲解图像表示、卷积、池化、归一化、数据增强、CNN 模型构建、迁移学习与可视化。</p>
-    </a>
+      <!-- Project: 深度学习从零到能读论文 -->
+      <a class="project-card" href="projects/deep-learning-path/index.html">
+        <h3>深度学习从零到能读论文</h3>
+        <p class="project-card-desc">从 PyTorch 张量运算到 Transformer，一步步建立动手能力</p>
+        <div class="path-dots">
+          <div class="path-dot-item"></div>
+          <div class="path-dot-line"></div>
+          <div class="path-dot-item"></div>
+          <div class="path-dot-line"></div>
+          <div class="path-dot-item"></div>
+        </div>
+        <div class="path-dots-labels">
+          <span class="path-dot-label">工具箱</span>
+          <span class="path-dot-label">CNN</span>
+          <span class="path-dot-label">RNN</span>
+        </div>
+        <div class="project-card-meta">3 本书 · 预计 4 小时</div>
+      </a>
 
-    <a class="knowledge-card" href="d2l-rnn/index.html">
-      <span class="tag">课内 · AI</span>
-      <h3>RNN实战篇：循环神经网络与序列处理</h3>
-      <p>从序列数据出发，讲解 RNN、LSTM、GRU、Seq2Seq、注意力机制与 Transformer 过渡。</p>
-    </a>
+      <!-- Project: 数字世界的底层格式 -->
+      <a class="project-card" href="projects/digital-formats/index.html">
+        <h3>数字世界的底层格式</h3>
+        <p class="project-card-desc">文件、视频、网页——你每天接触的数字内容，底层到底长什么样</p>
+        <div class="path-dots">
+          <div class="path-dot-item"></div>
+          <div class="path-dot-line"></div>
+          <div class="path-dot-item"></div>
+          <div class="path-dot-line"></div>
+          <div class="path-dot-item"></div>
+        </div>
+        <div class="path-dots-labels">
+          <span class="path-dot-label">PDF</span>
+          <span class="path-dot-label">视频</span>
+          <span class="path-dot-label">浏览器</span>
+        </div>
+        <div class="project-card-meta">3 本书 · 预计 3 小时</div>
+      </a>
 
-    <a class="knowledge-card" href="money-bank/index.html">
-      <span class="tag">课外 · 金融</span>
-      <h3>银行体系与货币系统</h3>
-      <p>从中国银行体系到美元、欧洲与全球金融博弈，建立理解现实经济的框架。</p>
-    </a>
+    </div>
 
-    <a class="knowledge-card" href="bite-to-byte-硬件篇/index.html">
-      <span class="tag">课外 · 计算机</span>
-      <h3>电脑怎么工作的</h3>
-      <p>给大一新生的计算机原理课，从存储、CPU、GPU 到操作系统和硬件选购。</p>
-    </a>
+    <!-- Standalone books (not in any project) -->
+    <div class="standalone-section">
+      <div class="section-label">独立阅读</div>
+      <div class="knowledge-grid">
 
-    <a class="knowledge-card" href="blockchain-crypto/index.html">
-      <span class="tag">课外 · 金融科技</span>
-      <h3>区块链与加密货币</h3>
-      <p>从货币与信任讲到比特币、以太坊、DeFi、NFT 与 Web3 的边界。</p>
-    </a>
+        <a class="knowledge-card" href="claude-code/index.html">
+          <span class="tag">课外 · 工具</span>
+          <h3>Claude Code 入门指南</h3>
+          <p>6 章 + 速查表，从零开始理解这个终端里的 AI agent。</p>
+        </a>
 
-    <a class="knowledge-card" href="rust-book/index.html">
-      <span class="tag">课外 · 编程语言</span>
-      <h3>Rust</h3>
-      <p>写给使用 Zed 后开始好奇 Rust 的读者，理解它解决的问题和适用边界。</p>
-    </a>
+        <a class="knowledge-card" href="money-bank/index.html">
+          <span class="tag">课外 · 金融</span>
+          <h3>银行体系与货币系统</h3>
+          <p>从中国银行体系到美元、欧洲与全球金融博弈，建立理解现实经济的框架。</p>
+        </a>
 
-    <a class="knowledge-card" href="git-guide/index.html">
-      <span class="tag">工具 · 工程实践</span>
-      <h3>Git：概念讲解与实操</h3>
-      <p>面向新生的 Git 与 GitHub 入门指南，从概念、命令到协作和排错。</p>
-    </a>
+        <a class="knowledge-card" href="blockchain-crypto/index.html">
+          <span class="tag">课外 · 金融科技</span>
+          <h3>区块链与加密货币</h3>
+          <p>从货币与信任讲到比特币、以太坊、DeFi、NFT 与 Web3 的边界。</p>
+        </a>
 
-    <a class="knowledge-card" href="server-frontend-backend/index.html">
-      <span class="tag">课外 · Web</span>
-      <h3>服务器，前端与后端</h3>
-      <p>面向大一学生的科普指南：从浏览器里的三件套，到服务器上跑起来的完整链路。</p>
-    </a>
+        <a class="knowledge-card" href="rust-book/index.html">
+          <span class="tag">课外 · 编程语言</span>
+          <h3>Rust</h3>
+          <p>写给使用 Zed 后开始好奇 Rust 的读者，理解它解决的问题和适用边界。</p>
+        </a>
 
-    <a class="knowledge-card" href="video-screen/index.html">
-      <span class="tag">课外 · 数字媒体</span>
-      <h3>视频与屏幕技术</h3>
-      <p>从像素、分辨率、编解码器到 HDR、高刷和设备选择的完整指南。</p>
-    </a>
+        <a class="knowledge-card" href="git-guide/index.html">
+          <span class="tag">工具 · 工程实践</span>
+          <h3>Git：概念讲解与实操</h3>
+          <p>面向新生的 Git 与 GitHub 入门指南，从概念、命令到协作和排错。</p>
+        </a>
 
-    <a class="knowledge-card" href="browser-war/index.html">
-      <span class="tag">课外 · Web</span>
-      <h3>浏览器：从战争到垄断</h3>
-      <p>从 1990 年第一个浏览器到 Chromium 一统天下，讲清浏览器的历史、原理与隐私博弈。</p>
-    </a>
+        <a class="knowledge-card" href="euv-lithography/index.html">
+          <span class="tag">课外 · 半导体</span>
+          <h3>EUV 光刻机：一束光如何造出芯片</h3>
+          <p>跟着一束 13.5nm 的极紫外光，走进人类有史以来最精密的机器。</p>
+        </a>
 
+      </div>
+    </div>
 
-    <a class="knowledge-card" href="euv-lithography/index.html">
-      <span class="tag">课外 · 半导体</span>
-      <h3>EUV 光刻机：一束光如何造出芯片</h3>
-      <p>跟着一束 13.5nm 的极紫外光，走进人类有史以来最精密的机器——从锡液滴到纳米晶圆台。</p>
-    </a>
+  </div>
 
-    <a class="knowledge-card" href="pdf-explained/index.html">
-      <span class="tag">课外 · 文档技术</span>
-      <h3>PDF：最熟悉的陌生人</h3>
-      <p>从 PostScript 到 AI 时代，拆解你每天都在用却从未真正理解的文件格式——历史、结构、渲染与未来困境。</p>
-    </a>
+  <!-- ═══════════ All Books View ═══════════ -->
+  <div class="view-all hidden" id="view-all">
 
-    <!-- 未来新增的知识库条目放这里 -->
-    <!--
-    <a class="knowledge-card" href="os-notes/index.html">
-      <span class="tag">课内 · CS</span>
-      <h3>操作系统笔记</h3>
-      <p>进程、内存、文件系统、同步——期末复习用。</p>
-    </a>
-    -->
+    <div class="knowledge-grid">
+
+      <a class="knowledge-card" href="claude-code/index.html">
+        <span class="tag">课外 · 工具</span>
+        <h3>Claude Code 入门指南</h3>
+        <p>6 章 + 速查表，从零开始理解这个终端里的 AI agent。</p>
+      </a>
+
+      <a class="knowledge-card" href="d2l-toolbox/index.html">
+        <span class="tag">课内 · AI</span>
+        <h3>深度学习前置工具箱</h3>
+        <p>PyTorch 张量、自动求导、神经网络模块——动手做深度学习之前需要掌握的基础。</p>
+      </a>
+
+      <a class="knowledge-card" href="d2l-cnn/index.html">
+        <span class="tag">课内 · AI</span>
+        <h3>CNN实战篇：图像处理与卷积神经网络</h3>
+        <p>系统讲解图像表示、卷积、池化、归一化、数据增强、CNN 模型构建、迁移学习与可视化。</p>
+      </a>
+
+      <a class="knowledge-card" href="d2l-rnn/index.html">
+        <span class="tag">课内 · AI</span>
+        <h3>RNN实战篇：循环神经网络与序列处理</h3>
+        <p>从序列数据出发，讲解 RNN、LSTM、GRU、Seq2Seq、注意力机制与 Transformer 过渡。</p>
+      </a>
+
+      <a class="knowledge-card" href="money-bank/index.html">
+        <span class="tag">课外 · 金融</span>
+        <h3>银行体系与货币系统</h3>
+        <p>从中国银行体系到美元、欧洲与全球金融博弈，建立理解现实经济的框架。</p>
+      </a>
+
+      <a class="knowledge-card" href="bite-to-byte-硬件篇/index.html">
+        <span class="tag">课外 · 计算机</span>
+        <h3>电脑怎么工作的</h3>
+        <p>给大一新生的计算机原理课，从存储、CPU、GPU 到操作系统和硬件选购。</p>
+      </a>
+
+      <a class="knowledge-card" href="blockchain-crypto/index.html">
+        <span class="tag">课外 · 金融科技</span>
+        <h3>区块链与加密货币</h3>
+        <p>从货币与信任讲到比特币、以太坊、DeFi、NFT 与 Web3 的边界。</p>
+      </a>
+
+      <a class="knowledge-card" href="rust-book/index.html">
+        <span class="tag">课外 · 编程语言</span>
+        <h3>Rust</h3>
+        <p>写给使用 Zed 后开始好奇 Rust 的读者，理解它解决的问题和适用边界。</p>
+      </a>
+
+      <a class="knowledge-card" href="git-guide/index.html">
+        <span class="tag">工具 · 工程实践</span>
+        <h3>Git：概念讲解与实操</h3>
+        <p>面向新生的 Git 与 GitHub 入门指南，从概念、命令到协作和排错。</p>
+      </a>
+
+      <a class="knowledge-card" href="server-frontend-backend/index.html">
+        <span class="tag">课外 · Web</span>
+        <h3>服务器，前端与后端</h3>
+        <p>面向大一学生的科普指南：从浏览器里的三件套，到服务器上跑起来的完整链路。</p>
+      </a>
+
+      <a class="knowledge-card" href="video-screen/index.html">
+        <span class="tag">课外 · 数字媒体</span>
+        <h3>视频与屏幕技术</h3>
+        <p>从像素、分辨率、编解码器到 HDR、高刷和设备选择的完整指南。</p>
+      </a>
+
+      <a class="knowledge-card" href="browser-war/index.html">
+        <span class="tag">课外 · Web</span>
+        <h3>浏览器：从战争到垄断</h3>
+        <p>从 1990 年第一个浏览器到 Chromium 一统天下，讲清浏览器的历史、原理与隐私博弈。</p>
+      </a>
+
+      <a class="knowledge-card" href="euv-lithography/index.html">
+        <span class="tag">课外 · 半导体</span>
+        <h3>EUV 光刻机：一束光如何造出芯片</h3>
+        <p>跟着一束 13.5nm 的极紫外光，走进人类有史以来最精密的机器——从锡液滴到纳米晶圆台。</p>
+      </a>
+
+      <a class="knowledge-card" href="pdf-explained/index.html">
+        <span class="tag">课外 · 文档技术</span>
+        <h3>PDF：最熟悉的陌生人</h3>
+        <p>从 PostScript 到 AI 时代，拆解你每天都在用却从未真正理解的文件格式——历史、结构、渲染与未来困境。</p>
+      </a>
+
+    </div>
 
   </div>
 
@@ -149,6 +252,29 @@
     <span>Built with Claude and curiosity.</span>
   </div>
 </footer>
+
+<script>
+// Tab switching
+const buttons = document.querySelectorAll('.view-toggle button');
+const viewProjects = document.getElementById('view-projects');
+const viewAll = document.getElementById('view-all');
+
+buttons.forEach(btn => {
+  btn.addEventListener('click', () => {
+    buttons.forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+
+    const view = btn.dataset.view;
+    if (view === 'projects') {
+      viewProjects.classList.remove('hidden');
+      viewAll.classList.add('hidden');
+    } else {
+      viewAll.classList.remove('hidden');
+      viewProjects.classList.add('hidden');
+    }
+  });
+});
+</script>
 
 <script src="../assets/script.js"></script>
 </body>

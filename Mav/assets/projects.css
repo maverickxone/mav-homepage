@@ -1,0 +1,376 @@
+/* ============================================================
+   Projects — Knowledge Library Extension
+   ============================================================ */
+
+/* ── View Toggle (Projects / 全部书籍 tab) ─────────────────── */
+.view-toggle {
+  display: flex;
+  gap: var(--space-5);
+  margin-bottom: var(--space-7);
+  border-bottom: 1px solid var(--line);
+  padding-bottom: var(--space-4);
+}
+.view-toggle button {
+  font-family: var(--sans);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-medium);
+  color: var(--muted);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: var(--space-2) 0;
+  position: relative;
+  transition: color 0.2s ease;
+}
+.view-toggle button:hover {
+  color: var(--ink);
+}
+.view-toggle button.active {
+  color: var(--ink);
+}
+.view-toggle button.active::before {
+  content: '';
+  position: absolute;
+  left: -12px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--ink);
+}
+
+/* ── View containers ──────────────────────────────────────── */
+.view-projects,
+.view-all {
+  animation: fadeIn 0.25s ease;
+}
+.view-projects.hidden,
+.view-all.hidden {
+  display: none;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Project Cards (on index page) ────────────────────────── */
+.projects-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+}
+
+.project-card {
+  position: relative;
+  display: block;
+  padding: var(--space-6) var(--space-6) var(--space-6) var(--space-7);
+  border: 1px solid var(--line);
+  text-decoration: none;
+  color: var(--ink);
+  transition: border-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+}
+.project-card::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: var(--space-5);
+  bottom: var(--space-5);
+  width: 2px;
+  background: var(--line-2);
+  transition: background 0.25s ease;
+}
+.project-card:hover {
+  border-color: var(--line-2);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.04);
+}
+.project-card:hover::before {
+  background: var(--ink);
+}
+
+.project-card h3 {
+  font-size: var(--text-xl);
+  font-weight: var(--weight-medium);
+  letter-spacing: -0.02em;
+  margin-bottom: var(--space-2);
+}
+.project-card .project-card-desc {
+  font-size: var(--text-sm);
+  color: var(--ink-soft);
+  line-height: 1.5;
+  margin-bottom: var(--space-4);
+}
+
+/* Path dots on project card */
+.path-dots {
+  display: flex;
+  align-items: center;
+  margin-bottom: var(--space-4);
+}
+.path-dot-item {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  border: 1.5px solid var(--muted);
+  background: transparent;
+  flex-shrink: 0;
+  transition: border-color 0.25s ease, background 0.25s ease;
+}
+.path-dot-line {
+  flex: 1;
+  height: 1.5px;
+  background: var(--line);
+  margin: 0 6px;
+  transition: background 0.3s ease;
+}
+.project-card:hover .path-dot-item {
+  border-color: var(--ink);
+}
+.project-card:hover .path-dot-item:first-child {
+  background: var(--ink);
+}
+.project-card:hover .path-dot-line {
+  background: var(--line-2);
+}
+
+/* Dot labels */
+.path-dots-labels {
+  display: flex;
+  align-items: flex-start;
+  margin-bottom: var(--space-3);
+}
+.path-dot-label {
+  flex: 1;
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.02em;
+  color: var(--muted);
+  text-align: center;
+  line-height: 1.3;
+  padding: 0 2px;
+}
+.path-dot-label:first-child { text-align: left; }
+.path-dot-label:last-child { text-align: right; }
+
+/* Card meta */
+.project-card-meta {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  color: var(--muted);
+}
+
+/* ── Standalone books section ─────────────────────────────── */
+.standalone-section {
+  margin-top: var(--space-8);
+}
+.standalone-section .section-label {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: var(--space-5);
+  padding-bottom: var(--space-3);
+  border-bottom: 1px solid var(--line);
+}
+
+/* ── Project Detail Page ──────────────────────────────────── */
+.project-detail {
+  max-width: 720px;
+}
+.project-detail .back-link {
+  display: inline-block;
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  color: var(--muted);
+  margin-bottom: var(--space-6);
+  transition: color 0.15s;
+}
+.project-detail .back-link:hover {
+  color: var(--ink);
+}
+
+.project-header {
+  margin-bottom: var(--space-8);
+}
+.project-header .eyebrow {
+  display: block;
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: var(--space-3);
+}
+.project-header h1 {
+  font-size: var(--text-3xl);
+  font-weight: var(--weight-semibold);
+  letter-spacing: -0.025em;
+  margin-bottom: var(--space-4);
+}
+.project-header .project-desc {
+  font-size: var(--text-base);
+  color: var(--ink-soft);
+  line-height: 1.6;
+  margin-bottom: var(--space-4);
+}
+.project-header .project-stats {
+  font-family: var(--mono);
+  font-size: 12px;
+  letter-spacing: 0.04em;
+  color: var(--muted);
+  display: flex;
+  gap: var(--space-3);
+}
+
+/* ── Path Timeline ────────────────────────────────────────── */
+.path-timeline {
+  padding-left: var(--space-4);
+}
+.path-step {
+  display: flex;
+  gap: var(--space-5);
+  position: relative;
+}
+.path-node {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex-shrink: 0;
+  width: 20px;
+}
+.path-step .path-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  border: 2px solid var(--ink);
+  background: var(--bg);
+  flex-shrink: 0;
+  margin-top: 6px;
+  transition: background 0.2s;
+}
+.path-step:first-child .path-dot {
+  background: var(--ink);
+}
+.path-connector {
+  width: 1.5px;
+  flex: 1;
+  background: var(--line-2);
+  margin: 6px 0;
+}
+.path-content {
+  flex: 1;
+  padding-bottom: var(--space-7);
+}
+.path-step.last .path-content {
+  padding-bottom: 0;
+}
+.path-step-num {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+  margin-bottom: var(--space-3);
+}
+
+/* ── Book Card (inside timeline) ──────────────────────────── */
+.book-card {
+  display: block;
+  padding: var(--space-5) var(--space-6);
+  border: 1px solid var(--line);
+  text-decoration: none;
+  color: var(--ink);
+  transition: border-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+}
+.book-card:hover {
+  border-color: var(--line-2);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
+}
+.book-card h3 {
+  font-size: var(--text-lg);
+  font-weight: var(--weight-medium);
+  letter-spacing: -0.01em;
+  margin-bottom: var(--space-2);
+  color: var(--ink);
+}
+.book-card-role {
+  font-size: var(--text-sm);
+  color: var(--ink-soft);
+  line-height: 1.5;
+  margin-bottom: var(--space-2);
+}
+.book-card-desc {
+  font-size: var(--text-sm);
+  color: var(--muted);
+  line-height: 1.5;
+  margin-bottom: var(--space-5);
+}
+
+/* Chapter thumbnails - removed, not needed */
+
+/* Transition text between books */
+.path-transition {
+  margin-top: var(--space-5);
+  padding: var(--space-4) 0;
+  position: relative;
+}
+.path-transition::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: repeating-linear-gradient(
+    90deg,
+    var(--line) 0px,
+    var(--line) 4px,
+    transparent 4px,
+    transparent 10px
+  );
+}
+.path-transition p {
+  font-size: var(--text-sm);
+  color: var(--muted);
+  line-height: 1.6;
+  font-style: italic;
+  margin: 0;
+}
+
+/* Card footer */
+.book-card-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--line);
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  color: var(--muted);
+}
+.book-card-cta {
+  color: var(--muted);
+  transition: color 0.15s;
+}
+.book-card:hover .book-card-cta {
+  color: var(--ink);
+}
+
+/* ── Responsive ───────────────────────────────────────────── */
+@media (max-width: 768px) {
+  .project-card {
+    padding: var(--space-5) var(--space-5) var(--space-5) var(--space-6);
+  }
+  .path-dots-labels {
+    display: none;
+  }
+  .view-toggle button.active::before {
+    left: -10px;
+  }
+}
