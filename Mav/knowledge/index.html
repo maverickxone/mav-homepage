@@ -35,6 +35,7 @@
   <div class="view-toggle">
     <button class="active" data-view="projects">Projects</button>
     <button data-view="all">全部书籍</button>
+    <a href="graph/index.html" class="view-toggle-btn">图谱</a>
   </div>
 
   <!-- ═══════════ Projects View ═══════════ -->
@@ -256,8 +257,10 @@
 <script>
 // Tab switching
 const buttons = document.querySelectorAll('.view-toggle button');
-const viewProjects = document.getElementById('view-projects');
-const viewAll = document.getElementById('view-all');
+const views = {
+  projects: document.getElementById('view-projects'),
+  all: document.getElementById('view-all')
+};
 
 buttons.forEach(btn => {
   btn.addEventListener('click', () => {
@@ -265,13 +268,13 @@ buttons.forEach(btn => {
     btn.classList.add('active');
 
     const view = btn.dataset.view;
-    if (view === 'projects') {
-      viewProjects.classList.remove('hidden');
-      viewAll.classList.add('hidden');
-    } else {
-      viewAll.classList.remove('hidden');
-      viewProjects.classList.add('hidden');
-    }
+    Object.entries(views).forEach(([key, el]) => {
+      if (key === view) {
+        el.classList.remove('hidden');
+      } else {
+        el.classList.add('hidden');
+      }
+    });
   });
 });
 </script>

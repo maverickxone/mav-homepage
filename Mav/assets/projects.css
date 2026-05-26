@@ -5,7 +5,7 @@
 /* ── View Toggle (Projects / 全部书籍 tab) ─────────────────── */
 .view-toggle {
   display: flex;
-  gap: var(--space-5);
+  gap: var(--space-7);
   margin-bottom: var(--space-7);
   border-bottom: 1px solid var(--line);
   padding-bottom: var(--space-4);
@@ -19,25 +19,75 @@
   border: none;
   cursor: pointer;
   padding: var(--space-2) 0;
+  padding-left: 14px;
   position: relative;
   transition: color 0.2s ease;
 }
 .view-toggle button:hover {
   color: var(--ink);
 }
-.view-toggle button.active {
-  color: var(--ink);
-}
-.view-toggle button.active::before {
+.view-toggle button::before {
   content: '';
   position: absolute;
-  left: -12px;
+  left: 0;
   top: 50%;
   transform: translateY(-50%);
   width: 5px;
   height: 5px;
   border-radius: 50%;
+  background: var(--line-2);
+  transition: background 0.2s ease;
+}
+.view-toggle button.active {
+  color: var(--ink);
+}
+.view-toggle button.active::before {
   background: var(--ink);
+}
+
+/* Graph link styled as tab */
+.view-toggle-btn {
+  font-family: var(--sans);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-medium);
+  color: var(--muted);
+  text-decoration: none;
+  padding: var(--space-2) 0;
+  padding-left: 14px;
+  position: relative;
+  transition: color 0.2s ease;
+}
+.view-toggle-btn::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--line-2);
+  transition: background 0.2s ease;
+}
+.view-toggle-btn:hover {
+  color: var(--ink);
+}
+.view-toggle-btn:hover::before {
+  background: var(--ink);
+}
+
+.view-toggle-link {
+  font-family: var(--sans);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-medium);
+  color: var(--muted);
+  text-decoration: none;
+  padding: var(--space-2) 0;
+  margin-left: auto;
+  transition: color 0.2s ease;
+}
+.view-toggle-link:hover {
+  color: var(--ink);
 }
 
 /* ── View containers ──────────────────────────────────────── */
@@ -441,8 +491,5 @@
   }
   .path-dots-labels {
     display: none;
-  }
-  .view-toggle button.active::before {
-    left: -10px;
   }
 }

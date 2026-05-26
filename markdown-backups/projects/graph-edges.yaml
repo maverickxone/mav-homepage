@@ -1,0 +1,144 @@
+# 知识图谱边数据
+# 格式：from 和 to 都是 "book-slug/chapter-slug"
+# label 是一两个词解释为什么这两章有关系
+
+edges:
+  # === 硬件篇 ↔ 服务器 ===
+  - from: "bite-to-byte-硬件篇/03-cpu-gpu"
+    to: "server-frontend-backend/03-server-hardware"
+    label: "CPU/内存选型"
+  - from: "bite-to-byte-硬件篇/04-operating-system"
+    to: "server-frontend-backend/04-server-software"
+    label: "进程管理"
+  - from: "bite-to-byte-硬件篇/07-system-cloud"
+    to: "server-frontend-backend/03-server-hardware"
+    label: "云计算"
+
+  # === 硬件篇 ↔ 浏览器 ===
+  - from: "bite-to-byte-硬件篇/04-operating-system"
+    to: "browser-war/03-how-browser-works"
+    label: "进程与线程"
+  - from: "bite-to-byte-硬件篇/03-cpu-gpu"
+    to: "browser-war/02-engine-war"
+    label: "GPU 加速渲染"
+
+  # === 服务器 ↔ 浏览器 ===
+  - from: "server-frontend-backend/01-frontend"
+    to: "browser-war/03-how-browser-works"
+    label: "HTML/CSS/JS 渲染"
+  - from: "server-frontend-backend/02-backend"
+    to: "browser-war/04-cookies-storage"
+    label: "登录态/Session"
+  - from: "server-frontend-backend/04-server-software"
+    to: "browser-war/03-how-browser-works"
+    label: "HTTP/HTTPS"
+
+  # === 浏览器 ↔ PDF ===
+  - from: "browser-war/03-how-browser-works"
+    to: "pdf-explained/05-readers"
+    label: "渲染引擎"
+  - from: "browser-war/02-engine-war"
+    to: "pdf-explained/03-rendering-model"
+    label: "页面描述→像素"
+
+  # === 浏览器 ↔ 视频 ===
+  - from: "browser-war/03-how-browser-works"
+    to: "video-screen/02-film-codec"
+    label: "视频解码"
+  - from: "browser-war/05-fingerprint-privacy"
+    to: "video-screen/01-pixel-resolution"
+    label: "屏幕指纹"
+
+  # === PDF ↔ 视频 ===
+  - from: "pdf-explained/03-rendering-model"
+    to: "video-screen/01-pixel-resolution"
+    label: "像素与渲染"
+  - from: "pdf-explained/08-ocr"
+    to: "video-screen/01-pixel-resolution"
+    label: "图像分辨率"
+
+  # === 深度学习三部曲内部 ===
+  - from: "d2l-toolbox/05-autograd"
+    to: "d2l-cnn/01-convolution-basics"
+    label: "梯度→卷积"
+  - from: "d2l-toolbox/06-nn-modules"
+    to: "d2l-cnn/02-pytorch-conv"
+    label: "nn.Module"
+  - from: "d2l-cnn/05-architecture"
+    to: "d2l-rnn/01-rnn-math"
+    label: "深层网络→序列"
+  - from: "d2l-cnn/03-pooling-norm"
+    to: "d2l-rnn/04-lstm-gru"
+    label: "归一化技术"
+  - from: "d2l-rnn/07-seq2seq"
+    to: "d2l-rnn/08-advanced"
+    label: "注意力→Transformer"
+
+  # === 深度学习 ↔ PDF ===
+  - from: "d2l-cnn/01-convolution-basics"
+    to: "pdf-explained/08-ocr"
+    label: "图像识别"
+  - from: "d2l-rnn/06-text-nlp"
+    to: "pdf-explained/09-ai-and-pdf"
+    label: "文本提取/NLP"
+
+  # === 区块链 ↔ 银行 ===
+  - from: "blockchain-crypto/01-why-blockchain"
+    to: "money-bank/03-money-creation"
+    label: "货币本质"
+  - from: "blockchain-crypto/02-bitcoin"
+    to: "money-bank/04-international-monetary"
+    label: "去中心化 vs 央行"
+  - from: "blockchain-crypto/04-crypto-ecosystem"
+    to: "money-bank/06-us-finance"
+    label: "DeFi vs 华尔街"
+  - from: "blockchain-crypto/05-critique-future"
+    to: "money-bank/08-comparison-future"
+    label: "数字货币未来"
+
+  # === Rust ↔ 硬件/系统 ===
+  - from: "rust-book/01-why-rust"
+    to: "bite-to-byte-硬件篇/04-operating-system"
+    label: "内存安全"
+  - from: "rust-book/04-where-rust"
+    to: "bite-to-byte-硬件篇/03-cpu-gpu"
+    label: "系统编程"
+  - from: "rust-book/02-core-philosophy"
+    to: "browser-war/02-engine-war"
+    label: "Servo 引擎"
+
+  # === Git ↔ 服务器 ===
+  - from: "git-guide/03-branch-remote"
+    to: "server-frontend-backend/04-server-software"
+    label: "部署流程"
+
+  # === EUV ↔ 硬件 ===
+  - from: "euv-lithography/01-overview"
+    to: "bite-to-byte-硬件篇/03-cpu-gpu"
+    label: "芯片制造"
+  - from: "euv-lithography/05-after-exposure"
+    to: "bite-to-byte-硬件篇/03-cpu-gpu"
+    label: "晶体管→CPU"
+
+  # === 视频 ↔ EUV（光学交叉） ===
+  - from: "video-screen/04-color-devices"
+    to: "euv-lithography/02-light-source"
+    label: "光的波长"
+
+  # === 热力学 ↔ 硬件 ===
+  - from: "thermodynamics/01-basics-temperature"
+    to: "bite-to-byte-硬件篇/05-motherboard-soc"
+    label: "散热"
+  - from: "thermodynamics/05-transport"
+    to: "bite-to-byte-硬件篇/03-cpu-gpu"
+    label: "热传导"
+
+  # === 服务器 ↔ Git ===
+  - from: "server-frontend-backend/01-frontend"
+    to: "git-guide/01-concepts"
+    label: "版本管理"
+
+  # === 浏览器 ↔ Rust ===
+  - from: "browser-war/07-ai-browser"
+    to: "d2l-rnn/08-advanced"
+    label: "AI 与浏览器"
