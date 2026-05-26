@@ -26,3 +26,18 @@ locked:
   - PDF-Explained/03-rendering-model.md
   - thermodynamics/assets/script.js
   - Thermodynamics/01-basics-temperature.md
+  - ai-math-foundations/assets/quiz.css
+  - ai-math-foundations/assets/quiz.js
+  - ai-deep-learning-core/assets/quiz.css
+  - ai-deep-learning-core/assets/quiz.js
+  - ai-computer-vision/assets/quiz.css
+  - ai-computer-vision/assets/quiz.js
+  - ai-nlp-foundations/assets/quiz.css
+  - ai-nlp-foundations/assets/quiz.js
+  - ai-transformers/assets/quiz.css
+  - ai-transformers/assets/quiz.js
+  - ai-math-foundations/assets/mermaid-init.js
+  - ai-deep-learning-core/assets/mermaid-init.js
+  - ai-computer-vision/assets/mermaid-init.js
+  - ai-nlp-foundations/assets/mermaid-init.js
+  - ai-transformers/assets/mermaid-init.js

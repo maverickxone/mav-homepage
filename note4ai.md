@@ -1,6 +1,6 @@
 # note4ai.md
 
-> 最后更新：2026.05.26 23:30
+> 最后更新：2026.05.27 01:00
 
 本文件面向接手本项目的 AI agent，不是给人类线性阅读的文档。目标是让你读完之后对项目结构、构建系统、约束规则了如指掌。
 
@@ -33,6 +33,9 @@ mav-homepage/
 │   │   │   ├── how-computer-works/index.html
 │   │   │   ├── deep-learning-path/index.html
 │   │   │   └── digital-formats/index.html
+│   │   ├── graph/               ← 知识图谱页面
+│   │   │   ├── index.html       ← 力导向图谱前端
+│   │   │   └── graph-data.json  ← 节点+边数据（构建生成）
 │   │   ├── browser-war/         ← 示例书
 │   │   ├── euv-lithography/     ← 示例书（有前端定制）
 │   │   ├── claude-code/         ← ⚠️ 纯手写 HTML，无 Markdown 源码
@@ -48,11 +51,13 @@ mav-homepage/
 │   ├── projects/                ← Project 数据源（YAML）
 │   │   ├── how-computer-works.yaml
 │   │   ├── deep-learning-path.yaml
-│   │   └── digital-formats.yaml
+│   │   ├── digital-formats.yaml
+│   │   └── graph-edges.yaml     ← 知识图谱跨章关联数据
 │   └── EUV-Lithography/
 ├── md2HTML/                     ← 静态站点生成器
 │   ├── build.js                 ← 主构建入口（书籍）
 │   ├── build-projects.js        ← Project 构建脚本
+│   ├── build-graph.js           ← 知识图谱数据构建脚本
 │   ├── build-all.sh             ← shell 包装
 │   ├── build-lock.yaml          ← 白名单/锁定列表
 │   ├── assets/                  ← 模板 CSS/JS（新书的默认样式）
@@ -330,6 +335,92 @@ Mav/knowledge/projects/
 
 ---
 
+## 知识图谱系统
+
+### 概念
+
+把所有书和章节作为节点，跨章关联作为边，可视化整个知识库的网络结构。基于 force-graph 库（Canvas + d3-force），力导向布局持续运行，所以拖拽节点时整个图会"活"地响应。
+
+### 数据源
+
+位置：`markdown-backups/projects/graph-edges.yaml`
+
+```yaml
+edges:
+  - from: "bite-to-byte-硬件篇/03-cpu-gpu"
+    to: "server-frontend-backend/03-server-hardware"
+    label: "CPU/内存选型"
+  - from: "browser-war/03-how-browser-works"
+    to: "pdf-explained/05-readers"
+    label: "渲染引擎"
+```
+
+格式：
+- `from` / `to`：`book-slug/chapter-slug`（不带 `.md` 后缀）
+- `label`：一两个词描述这条关联是什么
+- 节点信息（书 / 章节）由构建脚本自动从 `markdown-backups/<Book>/book.yaml` 和章节 front-matter 中提取，**不需要在每个 md 里手动加字段**
+
+### 构建命令
+
+```bash
+cd md2HTML
+node build-graph.js
+```
+
+输出：`Mav/knowledge/graph/graph-data.json`（构建脚本自动收集所有书 + 章节 + 边数据）
+
+### 输出页面
+
+`Mav/knowledge/graph/index.html` — 全屏图谱页面（独立页，从知识库首页"图谱"tab 跳入）
+
+### 前端架构（重点）
+
+- **库**：force-graph（CDN：`cdn.jsdelivr.net/npm/force-graph`）
+- **渲染**：Canvas（不是 SVG，性能关键）
+- **物理引擎**：内置 d3-force，配置：
+  - `cooldownTicks(Infinity)` — 永不停止
+  - `d3AlphaMin(0)` + `d3AlphaDecay(0.01)` — 模拟持续活跃
+  - `d3VelocityDecay(0.2)` — 低阻尼，节点惯性强
+- **Obsidian 式行为**：拖拽节点松手后清除 `fx/fy`，节点弹回自然位置（不固定）
+- **节点**：书节点 (3px) + 章节点 (2px)，统一小圆点 + 文字标签
+- **连线**：
+  - 内部连线（章↔书）默认可见（淡）
+  - 跨书连线默认淡灰，hover 时加深加粗
+- **缩放/平移**：滚轮缩放、拖拽空白平移，全部由 force-graph 内置交互处理
+
+### Hover 高亮逻辑
+
+| 操作 | 效果 |
+|------|------|
+| Hover 书节点 | 该书 + 子章节高亮，其余淡出 |
+| Hover 章节点 | 父书集群 + 该章的跨书连接节点高亮 |
+| Hover 任何节点 | 相关连线加深，跨书连线显示 |
+| 点击节点 | 弹窗显示标题/描述/开始阅读按钮 |
+
+### 添加新关联
+
+1. 编辑 `markdown-backups/projects/graph-edges.yaml`，在 `edges:` 下加一条
+2. `cd md2HTML && node build-graph.js` 重新生成数据
+3. 刷新图谱页面即可看到
+
+无效边（节点 ID 不存在）会被构建脚本自动过滤并提示。
+
+### 当前状态
+
+- 15 本书（节点）
+- 98 章（节点）
+- 36 条手动标注的跨章关联（边）
+
+### 已尝试但放弃的方案
+
+- 手写物理引擎（卡顿）
+- Sigma.js + Graphology（API 复杂、布局静态、没拖拽响应）
+- Spectrum 彩色模式（颜色装饰性大于信息量，砍掉）
+
+最终选定 force-graph + Mono 黑白设计，是最匹配整体设计语言又保持丝滑交互的方案。
+
+---
+
 ## 常见操作速查
 
 | 需求 | 命令/位置 |
@@ -339,6 +430,8 @@ Mav/knowledge/projects/
 | 增加知识库入口卡片 | 编辑 `Mav/knowledge/index.html`（手动） |
 | 新建 Project | `markdown-backups/projects/` 下建 `.yaml`，然后 `node build-projects.js` |
 | 构建 Project | `cd md2HTML && node build-projects.js` |
+| 添加图谱关联 | 编辑 `markdown-backups/projects/graph-edges.yaml`，然后 `node build-graph.js` |
+| 重建图谱数据 | `cd md2HTML && node build-graph.js` |
 | 发博客 | `Mav/blog/posts/` 下写 `.md`，然后 `cd Mav/blog && node blog-build.js` |
 | 锁定文件 | `node build.js --lock <path>` |
 | 查看所有锁 | `node build.js --list-lock` |

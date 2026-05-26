@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>优化器 — AI Deep Learning Core</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" id="hljs-light" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+<link rel="stylesheet" id="hljs-dark" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" media="not all">
+<link rel="stylesheet" href="../assets/quiz.css">
+</head>
+<body>
+
+<div class="progress-bar" id="progress-bar"></div>
+
+<nav class="topnav" id="topnav">
+  <div class="topnav-inner">
+    <a class="brand" href="../index.html">AI Deep Learning Core</a>
+    <div class="nav-links">
+      <a href="01-the-perceptron.html">01</a>
+      <a href="02-multi-layer-networks.html">02</a>
+      <a href="03-backpropagation.html">03</a>
+      <a href="04-activation-functions.html">04</a>
+      <a href="05-loss-functions.html">05</a>
+      <a href="06-optimizers.html" class="active">06</a>
+      <a href="07-regularization.html">07</a>
+      <a href="08-weight-initialization.html">08</a>
+      <a href="09-learning-rate-schedules.html">09</a>
+      <a href="10-mini-framework.html">10</a>
+      <a href="11-intro-to-pytorch.html">11</a>
+      <a href="12-intro-to-jax.html">12</a>
+      <a href="13-debugging-neural-networks.html">13</a>
+    </div>
+    <div class="nav-controls">
+      <button class="nav-btn" id="search-btn" aria-label="搜索 (Ctrl+K)">⌘K</button>
+      <button class="nav-btn" id="settings-btn" aria-label="阅读设置">Aa</button>
+      <a class="nav-btn" href="../../index.html" aria-label="返回知识库">← 知识库</a>
+      <a class="nav-btn" href="https://github.com/maverickxone/mav-homepage" target="_blank" rel="noopener" aria-label="GitHub" style="padding: 6px 8px;"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg></a>
+    </div>
+  </div>
+</nav>
+<div class="settings-pop" id="settings-pop">
+  <h5>主题</h5>
+  <div class="row">
+    <button class="seg" data-theme-set="light">明亮</button>
+    <button class="seg" data-theme-set="dark">暗色</button>
+  </div>
+  <h5>字号</h5>
+  <div class="row">
+    <button class="seg" data-size-set="s">小</button>
+    <button class="seg" data-size-set="m">中</button>
+    <button class="seg" data-size-set="l">大</button>
+  </div>
+</div>
+
+<div class="with-sidebar">
+  <aside class="sidebar">
+  <div class="chapter-num">CHAPTER 06</div>
+  <div class="chapter-name">优化器</div>
+  <h4>目录</h4>
+  <ul>
+    <li><a href="#学习目标">学习目标</a></li>
+    <li><a href="#为什么要学这个">为什么要学这个</a></li>
+    <li><a href="#核心概念">核心概念</a></li>
+    <li><a href="#从零实现">从零实现</a></li>
+    <li><a href="#用库做同样的事">用库做同样的事</a></li>
+    <li><a href="#练习">练习</a></li>
+    <li><a href="#术语表">术语表</a></li>
+    <li><a href="#自测题">自测题</a></li>
+  </ul>
+</aside>
+  <article class="chapter-body">
+    <header class="chapter-head">
+  <div class="chapter-head-meta">
+    <span class="num">CHAPTER 06</span>
+    <span>≈ 75 MIN READ</span>
+  </div>
+  <h1>优化器</h1>
+
+</header>
+    <blockquote><p>梯度下降告诉你往哪走。但走多远、走多快，它什么都没说。SGD 是指南针，Adam 是带实时路况的导航。</p>
+</blockquote>
+<h2 id="学习目标">学习目标</h2>
+<ul>
+<li>从零实现 SGD、SGD with momentum、Adam、AdamW</li>
+<li>解释 Adam 的偏差修正如何补偿早期步骤中零初始化的矩估计</li>
+<li>演示为什么 AdamW 比 Adam + L2 正则化在同一任务上泛化更好</li>
+<li>为 Transformer、CNN、GAN 和微调选择合适的优化器和默认超参数</li>
+</ul>
+<h2 id="为什么要学这个">为什么要学这个</h2>
+<p>你算出了梯度。你知道权重 #4721 应该减少 0.003 来降低 loss。但 0.003 是什么单位？乘以什么？第 1 步和第 1000 步该走一样远吗？</p>
+<p>Vanilla 梯度下降对每个参数每一步用同样的学习率。这带来三个问题：</p>
+<p><strong>振荡</strong>。Loss 面通常是窄长的山谷。梯度指向谷壁（陡方向）而不是沿着谷底（浅方向）。梯度下降在窄方向来回弹跳，在有用的方向上只有微小进展。</p>
+<p><strong>一刀切学习率</strong>。有些权重需要大更新（还在欠拟合），有些需要小更新（已经接近最优值）。一个学习率满足不了所有。</p>
+<p><strong>鞍点</strong>。高维空间中大片的平坦区域梯度接近零。SGD 在这里爬行速度就是梯度大小——几乎为零。</p>
+<p>Adam 三个都解决了。它给每个参数维护两个移动平均——梯度均值（momentum，处理振荡）和梯度平方均值（自适应学习率，处理不同尺度）。加上前几步的偏差修正，你得到一个默认超参数就能覆盖 80% 问题的优化器。</p>
+<h2 id="核心概念">核心概念</h2>
+<h3 id="sgd随机梯度下降">SGD（随机梯度下降）</h3>
+<p>最简单的优化器。在 mini-batch 上算梯度，往反方向走一步。</p>
+<pre><code>w = w - lr × gradient</code></pre>
+<p>&quot;随机&quot;指你用数据的随机子集估计梯度，不是全部数据。这个噪声其实有用——帮助逃离尖锐的局部最小值。但也导致振荡。</p>
+<h3 id="momentum动量">Momentum（动量）</h3>
+<p>不只看当前梯度，而是维护一个积累过去梯度的速度项。</p>
+<pre><code>m_t = β × m_{t-1} + gradient
+w = w - lr × m_t</code></pre>
+<p>β（通常 0.9）控制保留多少历史。β = 0.9 时，动量大约是最近 10 步梯度的平均。</p>
+<p><strong>为什么修复振荡</strong>：同方向的梯度积累放大，翻转方向的梯度互相抵消。在窄谷里，&quot;横穿&quot;的分量每步翻号被抑制，&quot;沿着&quot;的分量保持一致被放大。结果是有用方向上的平滑加速。</p>
+<h3 id="adammomentum-自适应学习率">Adam：Momentum + 自适应学习率</h3>
+<p>每个参数维护两个指数移动平均：</p>
+<pre><code>m_t = β1 × m_{t-1} + (1 - β1) × gradient       （一阶矩：均值）
+v_t = β2 × v_{t-1} + (1 - β2) × gradient²       （二阶矩：方差）</code></pre>
+<p><strong>偏差修正</strong>是大多数解释跳过的关键细节。第 1 步时 m_1 = (1 - β1) × gradient。β1 = 0.9 的话就是 0.1 × gradient——小了 10 倍。移动平均还没热起来。偏差修正补偿：</p>
+<pre><code>m_hat = m_t / (1 - β1^t)
+v_hat = v_t / (1 - β2^t)</code></pre>
+<p>第 1 步 β1 = 0.9：m_hat = m_1 / 0.1 = 实际梯度。第 100 步：(1 - 0.9¹⁰⁰) ≈ 1.0，修正消失。偏差修正对前 <del>10 步重要，</del>50 步后无关紧要。</p>
+<p>更新：</p>
+<pre><code>w = w - lr × m_hat / (√v_hat + ε)</code></pre>
+<p><strong>Adam 默认值</strong>：lr = 0.001, β1 = 0.9, β2 = 0.999, ε = 1e-8。80% 的问题用这套默认就行。不行时先调 lr，再调 β2。几乎不用动 β1 和 ε。</p>
+<h3 id="adamw权重衰减做对了">AdamW：权重衰减做对了</h3>
+<p>L2 正则化在 loss 里加 λ×w²。在 vanilla SGD 里这等价于权重衰减（每步减 λ×w）。在 Adam 里这个等价性打破了。</p>
+<p>Loshchilov &amp; Hutter 的 insight：当你把 L2 加到 loss 然后让 Adam 处理梯度时，自适应学习率把正则化项也缩放了。梯度方差大的参数得到更少正则化，方差小的得到更多。这不是你想要的——你想要均匀正则化。</p>
+<p><strong>AdamW 把权重衰减直接应用到权重上，在 Adam 更新之后</strong>：</p>
+<pre><code>w = w - lr × m_hat / (√v_hat + ε) - lr × λ × w</code></pre>
+<p>权重衰减项不被 Adam 的自适应因子缩放。每个参数得到相同比例的收缩。</p>
+<p>这看起来是小细节。不是。AdamW 在几乎所有任务上都比 Adam + L2 收敛到更好的解。BERT、GPT、LLaMA、Stable Diffusion——全用 AdamW 训练。</p>
+<h3 id="什么时候用哪个">什么时候用哪个</h3>
+<pre data-label="mermaid"><code class="language-mermaid">flowchart TD
+    Task["你在训练什么？"] --&gt; Type{"模型类型？"}
+
+    Type --&gt;|"Transformer / LLM"| AdamW["AdamW&lt;br/&gt;lr=1e-4, wd=0.01-0.1"]
+    Type --&gt;|"CNN / ResNet"| SGD_M["SGD + Momentum&lt;br/&gt;lr=0.1, momentum=0.9"]
+    Type --&gt;|"GAN"| Adam2["Adam&lt;br/&gt;lr=2e-4, β1=0.5"]
+    Type --&gt;|"微调预训练模型"| AdamW2["AdamW&lt;br/&gt;lr=2e-5, wd=0.01"]
+    Type --&gt;|"不确定"| Default["先用 AdamW&lt;br/&gt;lr=3e-4, wd=0.01"]</code></pre>
+<h2 id="从零实现">从零实现</h2>
+<h3 id="第一步vanilla-sgd">第一步：Vanilla SGD</h3>
+<pre data-label="python"><code class="language-python">class SGD:
+    def __init__(self, lr=0.01):
+        self.lr = lr
+
+    def step(self, params, grads):
+        for i in range(len(params)):
+            params[i] -= self.lr * grads[i]</code></pre>
+<h3 id="第二步sgd-with-momentum">第二步：SGD with Momentum</h3>
+<pre data-label="python"><code class="language-python">class SGDMomentum:
+    def __init__(self, lr=0.01, beta=0.9):
+        self.lr = lr
+        self.beta = beta
+        self.velocities = None
+
+    def step(self, params, grads):
+        if self.velocities is None:
+            self.velocities = [0.0] * len(params)
+        for i in range(len(params)):
+            self.velocities[i] = self.beta * self.velocities[i] + grads[i]
+            params[i] -= self.lr * self.velocities[i]</code></pre>
+<h3 id="第三步adam">第三步：Adam</h3>
+<pre data-label="python"><code class="language-python">import math
+
+class Adam:
+    def __init__(self, lr=0.001, beta1=0.9, beta2=0.999, epsilon=1e-8):
+        self.lr = lr
+        self.beta1 = beta1
+        self.beta2 = beta2
+        self.epsilon = epsilon
+        self.m = None
+        self.v = None
+        self.t = 0
+
+    def step(self, params, grads):
+        if self.m is None:
+            self.m = [0.0] * len(params)
+            self.v = [0.0] * len(params)
+
+        self.t += 1
+        for i in range(len(params)):
+            self.m[i] = self.beta1 * self.m[i] + (1 - self.beta1) * grads[i]
+            self.v[i] = self.beta2 * self.v[i] + (1 - self.beta2) * grads[i] ** 2
+
+            m_hat = self.m[i] / (1 - self.beta1 ** self.t)  # 偏差修正
+            v_hat = self.v[i] / (1 - self.beta2 ** self.t)
+
+            params[i] -= self.lr * m_hat / (math.sqrt(v_hat) + self.epsilon)</code></pre>
+<h3 id="第四步adamw">第四步：AdamW</h3>
+<pre data-label="python"><code class="language-python">class AdamW:
+    def __init__(self, lr=0.001, beta1=0.9, beta2=0.999, epsilon=1e-8, weight_decay=0.01):
+        self.lr = lr
+        self.beta1 = beta1
+        self.beta2 = beta2
+        self.epsilon = epsilon
+        self.wd = weight_decay
+        self.m = None
+        self.v = None
+        self.t = 0
+
+    def step(self, params, grads):
+        if self.m is None:
+            self.m = [0.0] * len(params)
+            self.v = [0.0] * len(params)
+
+        self.t += 1
+        for i in range(len(params)):
+            self.m[i] = self.beta1 * self.m[i] + (1 - self.beta1) * grads[i]
+            self.v[i] = self.beta2 * self.v[i] + (1 - self.beta2) * grads[i] ** 2
+
+            m_hat = self.m[i] / (1 - self.beta1 ** self.t)
+            v_hat = self.v[i] / (1 - self.beta2 ** self.t)
+
+            # Adam 更新
+            params[i] -= self.lr * m_hat / (math.sqrt(v_hat) + self.epsilon)
+            # 解耦的权重衰减（不经过 Adam 的自适应缩放）
+            params[i] -= self.lr * self.wd * params[i]</code></pre>
+<h2 id="用库做同样的事">用库做同样的事</h2>
+<pre data-label="python"><code class="language-python">import torch
+import torch.optim as optim
+
+model = torch.nn.Sequential(
+    torch.nn.Linear(784, 256),
+    torch.nn.ReLU(),
+    torch.nn.Linear(256, 10),
+)
+
+# 优化器
+optimizer = optim.AdamW(model.parameters(), lr=3e-4, weight_decay=0.01)
+
+# 学习率调度
+scheduler = optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=100)
+
+# 训练循环
+for epoch in range(100):
+    optimizer.zero_grad()
+    output = model(torch.randn(32, 784))
+    loss = torch.nn.functional.cross_entropy(output, torch.randint(0, 10, (32,)))
+    loss.backward()
+    torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm=1.0)  # 梯度裁剪
+    optimizer.step()
+    scheduler.step()</code></pre>
+<p>训练循环的顺序永远是：<strong>zero_grad → forward → loss → backward → (clip) → step → (schedule)</strong>。顺序搞错（比如 scheduler.step() 放在 optimizer.step() 前面）是常见的隐蔽 bug。</p>
+<p><strong>经验法则</strong>：</p>
+<ul>
+<li>CNN 经常用 SGD + momentum (lr=0.1, momentum=0.9)，它找到的平坦最小值泛化更好</li>
+<li>Transformer / LLM 用 AdamW + warmup + cosine decay，是无争议的默认</li>
+<li>不知道用什么就先 AdamW，lr=3e-4，weight_decay=0.01</li>
+<li>如果只调一个超参，调学习率。10× 的学习率变化比任何架构决策都重要</li>
+</ul>
+<h2 id="练习">练习</h2>
+<ol>
+<li>实现 Nesterov momentum：在&quot;前瞻&quot;位置 (w - lr×β×v) 而不是当前位置算梯度。跟标准 momentum 比较收敛速度。</li>
+<li>实现学习率 warmup：前 10% 步线性从 0 升到 max_lr，然后 cosine 衰减到 0。跟无 warmup 的 Adam 比较。</li>
+<li>在 Adam 训练中跟踪每个参数的有效学习率 (lr × m_hat / (√v_hat + ε))。第 10、50、200 步时打印有效学习率的分布。所有参数是同速更新的吗？</li>
+<li>实现梯度裁剪（按全局范数裁剪，max_norm=1.0）。用高学习率 (lr=0.01 for Adam) 分别有裁剪和无裁剪训练，用 10 个随机种子统计多少次发散（loss 变 NaN）。</li>
+</ol>
+<h2 id="术语表">术语表</h2>
+<div class="table-wrap"><table><thead><tr>
+<th>术语</th>
+<th>通俗说法</th>
+<th>真正含义</th>
+</tr>
+</thead><tbody><tr>
+<td>Learning rate（学习率）</td>
+<td>&quot;步长&quot;</td>
+<td>梯度更新的缩放因子；训练中最有影响力的单个超参数</td>
+</tr>
+<tr>
+<td>SGD</td>
+<td>&quot;基础梯度下降&quot;</td>
+<td>在 mini-batch 上算梯度，减去 lr × gradient 更新权重</td>
+</tr>
+<tr>
+<td>Momentum（动量）</td>
+<td>&quot;滚球&quot;</td>
+<td>过去梯度的指数移动平均，抑制振荡、加速一致方向</td>
+</tr>
+<tr>
+<td>Adam</td>
+<td>&quot;默认优化器&quot;</td>
+<td>结合 momentum（一阶矩）和 RMSProp（二阶矩），加偏差修正</td>
+</tr>
+<tr>
+<td>AdamW</td>
+<td>&quot;Adam 做对了&quot;</td>
+<td>Adam + 解耦权重衰减；直接对权重做正则化而不是通过梯度</td>
+</tr>
+<tr>
+<td>Bias correction（偏差修正）</td>
+<td>&quot;移动平均的热启动&quot;</td>
+<td>除以 (1-β^t) 补偿 Adam 零初始化矩估计导致的偏差</td>
+</tr>
+<tr>
+<td>Weight decay（权重衰减）</td>
+<td>&quot;让权重变小&quot;</td>
+<td>每步减去权重的一个比例；惩罚大权重的正则化器</td>
+</tr>
+<tr>
+<td>Gradient clipping（梯度裁剪）</td>
+<td>&quot;梯度封顶&quot;</td>
+<td>梯度向量范数超过阈值时等比缩小，防止爆炸性更新</td>
+</tr>
+</tbody></table></div>
+<hr>
+<h2 id="自测题">自测题</h2>
+<div class="quiz-card" data-correct="1" data-quiz-id="1">
+  <div class="quiz-question"><span class="quiz-num">Q1</span>Momentum 解决了梯度下降的什么问题？</div>
+  <div class="quiz-options">
+    <label class="quiz-option" data-index="0">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">减少内存使用</span>
+    </label>
+    <label class="quiz-option" data-index="1">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">通过积累过去梯度抑制振荡，加速一致方向的运动</span>
+    </label>
+    <label class="quiz-option" data-index="2">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">消除了对学习率的需要</span>
+    </label>
+    <label class="quiz-option" data-index="3">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">防止过拟合</span>
+    </label>
+  </div>
+  <button class="quiz-check">Check Answer</button>
+  <div class="quiz-explanation" hidden>窄谷中梯度横穿振荡，沿谷缓慢前进。Momentum 积累过去梯度：一致方向放大、振荡方向抵消，收敛更快更平滑。</div>
+</div>
+
+<div class="quiz-card" data-correct="1" data-quiz-id="2">
+  <div class="quiz-question"><span class="quiz-num">Q2</span>Adam 和 AdamW 的核心区别是什么？</div>
+  <div class="quiz-options">
+    <label class="quiz-option" data-index="0">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">AdamW 用更高的学习率</span>
+    </label>
+    <label class="quiz-option" data-index="1">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">AdamW 把权重衰减直接应用到权重上而非通过梯度，给出正确的正则化</span>
+    </label>
+    <label class="quiz-option" data-index="2">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">AdamW 不用 momentum</span>
+    </label>
+    <label class="quiz-option" data-index="3">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">AdamW 只能用于 Transformer</span>
+    </label>
+  </div>
+  <button class="quiz-check">Check Answer</button>
+  <div class="quiz-explanation" hidden>Adam + L2 中，自适应学习率对正则化项也做了不同的缩放。AdamW 把权重衰减从梯度更新中解耦，不管梯度统计如何都应用均匀收缩。</div>
+</div>
+
+<div class="quiz-card" data-correct="1" data-quiz-id="3">
+  <div class="quiz-question"><span class="quiz-num">Q3</span>为什么 Adam 在早期训练步骤中需要偏差修正？</div>
+  <div class="quiz-options">
+    <label class="quiz-option" data-index="0">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">防止过拟合</span>
+    </label>
+    <label class="quiz-option" data-index="1">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">矩估计初始化为零，早期值偏向零；偏差修正补偿这个冷启动</span>
+    </label>
+    <label class="quiz-option" data-index="2">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">裁剪大梯度</span>
+    </label>
+    <label class="quiz-option" data-index="3">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">加速收敛</span>
+    </label>
+  </div>
+  <button class="quiz-check">Check Answer</button>
+  <div class="quiz-explanation" hidden>第 1 步 β1=0.9 时 m_1 = 0.1 × gradient（小了 10 倍）。除以 (1 - 0.9¹) = 0.1 修正回实际梯度。~50 步后修正变得可忽略。</div>
+</div>
+
+<div class="quiz-card" data-correct="1" data-quiz-id="4">
+  <div class="quiz-question"><span class="quiz-num">Q4</span>Adam 的标准默认超参数是什么？</div>
+  <div class="quiz-options">
+    <label class="quiz-option" data-index="0">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">lr=0.1, β1=0.5, β2=0.5</span>
+    </label>
+    <label class="quiz-option" data-index="1">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">lr=0.001, β1=0.9, β2=0.999, ε=1e-8</span>
+    </label>
+    <label class="quiz-option" data-index="2">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">lr=0.01, β1=0.99, β2=0.99</span>
+    </label>
+    <label class="quiz-option" data-index="3">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">lr=0.0001, β1=0.8, β2=0.9</span>
+    </label>
+  </div>
+  <button class="quiz-check">Check Answer</button>
+  <div class="quiz-explanation" hidden>原论文 (Kingma & Ba, 2014) 推荐 lr=0.001, β1=0.9, β2=0.999, ε=1e-8。对大多数问题都好使。</div>
+</div>
+
+<div class="quiz-card" data-correct="3" data-quiz-id="5">
+  <div class="quiz-question"><span class="quiz-num">Q5</span>训练 Transformer 和 LLM 的现代默认优化器是哪个？</div>
+  <div class="quiz-options">
+    <label class="quiz-option" data-index="0">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">Vanilla SGD</span>
+    </label>
+    <label class="quiz-option" data-index="1">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">SGD with momentum</span>
+    </label>
+    <label class="quiz-option" data-index="2">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">RMSProp</span>
+    </label>
+    <label class="quiz-option" data-index="3">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">AdamW</span>
+    </label>
+  </div>
+  <button class="quiz-check">Check Answer</button>
+  <div class="quiz-explanation" hidden>AdamW（解耦权重衰减的 Adam）用于训练 BERT、GPT、LLaMA 和几乎所有现代 Transformer。它结合了自适应学习率和正确的权重衰减正则化。</div>
+</div>
+
+    <nav class="pager">  <a href="05-loss-functions.html">
+    <span class="label">← 上一章</span>
+    <span class="title">损失函数</span>
+  </a>  <a href="07-regularization.html" class="next">
+    <span class="label">下一章 →</span>
+    <span class="title">正则化</span>
+  </a></nav>
+  </article>
+</div>
+
+<footer>
+  <div class="set">
+    <span>AI Deep Learning Core</span>
+    <span>2026 · EN</span>
+  </div>
+  <div class="set">
+    <span>Mav</span>
+  </div>
+</footer>
+<div class="search-backdrop" id="search-overlay" role="dialog" aria-modal="true" aria-label="搜索" hidden>
+  <div class="search-modal">
+    <div class="search-input-wrap">
+      <input type="search" class="search-input" placeholder="搜索内容..." aria-label="搜索内容" autocomplete="off">
+      <kbd>ESC</kbd>
+    </div>
+    <div class="search-results" role="listbox" aria-label="搜索结果"></div>
+  </div>
+</div>
+
+<!-- Side Panel -->
+<div class="side-panel" id="side-panel">
+  <div class="side-panel-resize" id="side-panel-resize"></div>
+  <div class="side-panel-header">
+    <div class="side-panel-tabs">
+      <button class="side-panel-tab active" data-mode="sidenote">补充</button>
+      <button class="side-panel-tab" data-mode="notepad">笔记</button>
+    </div>
+    <button class="side-panel-close" aria-label="关闭">×</button>
+  </div>
+  <div class="side-panel-body"></div>
+</div>
+<button class="notepad-fab" id="notepad-fab" aria-label="便利贴">✎</button>
+
+<!-- Mobile TOC -->
+<button class="mtoc-fab" id="mtoc-fab" aria-label="目录">TOC</button>
+<div class="mtoc-drawer" id="mtoc-drawer">
+  <div class="mtoc-content"></div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/bash.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/typescript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/yaml.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/javascript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/json.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/python.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/css.min.js"></script>
+<script src="../assets/script.js"></script>
+<script src="../assets/quiz.js"></script>
+<script src="../assets/mermaid-init.js"></script>
+</body>
+</html>

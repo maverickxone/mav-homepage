@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>搭建自己的 Mini 框架 — AI Deep Learning Core</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" id="hljs-light" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+<link rel="stylesheet" id="hljs-dark" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" media="not all">
+<link rel="stylesheet" href="../assets/quiz.css">
+</head>
+<body>
+
+<div class="progress-bar" id="progress-bar"></div>
+
+<nav class="topnav" id="topnav">
+  <div class="topnav-inner">
+    <a class="brand" href="../index.html">AI Deep Learning Core</a>
+    <div class="nav-links">
+      <a href="01-the-perceptron.html">01</a>
+      <a href="02-multi-layer-networks.html">02</a>
+      <a href="03-backpropagation.html">03</a>
+      <a href="04-activation-functions.html">04</a>
+      <a href="05-loss-functions.html">05</a>
+      <a href="06-optimizers.html">06</a>
+      <a href="07-regularization.html">07</a>
+      <a href="08-weight-initialization.html">08</a>
+      <a href="09-learning-rate-schedules.html">09</a>
+      <a href="10-mini-framework.html" class="active">10</a>
+      <a href="11-intro-to-pytorch.html">11</a>
+      <a href="12-intro-to-jax.html">12</a>
+      <a href="13-debugging-neural-networks.html">13</a>
+    </div>
+    <div class="nav-controls">
+      <button class="nav-btn" id="search-btn" aria-label="搜索 (Ctrl+K)">⌘K</button>
+      <button class="nav-btn" id="settings-btn" aria-label="阅读设置">Aa</button>
+      <a class="nav-btn" href="../../index.html" aria-label="返回知识库">← 知识库</a>
+      <a class="nav-btn" href="https://github.com/maverickxone/mav-homepage" target="_blank" rel="noopener" aria-label="GitHub" style="padding: 6px 8px;"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg></a>
+    </div>
+  </div>
+</nav>
+<div class="settings-pop" id="settings-pop">
+  <h5>主题</h5>
+  <div class="row">
+    <button class="seg" data-theme-set="light">明亮</button>
+    <button class="seg" data-theme-set="dark">暗色</button>
+  </div>
+  <h5>字号</h5>
+  <div class="row">
+    <button class="seg" data-size-set="s">小</button>
+    <button class="seg" data-size-set="m">中</button>
+    <button class="seg" data-size-set="l">大</button>
+  </div>
+</div>
+
+<div class="with-sidebar">
+  <aside class="sidebar">
+  <div class="chapter-num">CHAPTER 10</div>
+  <div class="chapter-name">搭建自己的 Mini 框架</div>
+  <h4>目录</h4>
+  <ul>
+    <li><a href="#学习目标">学习目标</a></li>
+    <li><a href="#为什么要学这个">为什么要学这个</a></li>
+    <li><a href="#核心概念">核心概念</a></li>
+    <li><a href="#从零实现">从零实现</a></li>
+    <li><a href="#与-pytorch-的对照">与 PyTorch 的对照</a></li>
+    <li><a href="#练习">练习</a></li>
+    <li><a href="#术语表">术语表</a></li>
+    <li><a href="#自测题">自测题</a></li>
+  </ul>
+</aside>
+  <article class="chapter-body">
+    <header class="chapter-head">
+  <div class="chapter-head-meta">
+    <span class="num">CHAPTER 10</span>
+    <span>≈ 120 MIN READ</span>
+  </div>
+  <h1>搭建自己的 Mini 框架</h1>
+
+</header>
+    <blockquote><p>你已经造了所有零件。现在把它们焊在一起变成一个框架。不是 PyTorch，不是 TensorFlow，是你自己的。</p>
+</blockquote>
+<h2 id="学习目标">学习目标</h2>
+<ul>
+<li>搭建一个完整的深度学习框架（~500 行）：Module、Linear、ReLU、Sigmoid、Dropout、BatchNorm、Sequential、损失函数、优化器、DataLoader</li>
+<li>理解 Module 抽象（forward / backward / parameters）和为什么需要 train/eval 模式切换</li>
+<li>把所有组件接入一个可运行的训练循环，训练 4 层网络做圆形分类</li>
+<li>把你框架的每个组件映射到 PyTorch 等价物</li>
+</ul>
+<h2 id="为什么要学这个">为什么要学这个</h2>
+<p>你有十节课的零件散在各处。Value 类在这，训练循环在那，初始化在另一个文件，调度在又一个。训练一个网络要从五个地方复制粘贴然后手动接线。</p>
+<p>框架解决的就是这个问题。PyTorch 给你 <code>nn.Module</code>、<code>nn.Sequential</code>、<code>optim.Adam</code>、<code>DataLoader</code>——这些不是魔法，是组织模式。你要用 ~500 行纯 Python 搭同样的东西。</p>
+<p>搭完之后，你会精确理解 <code>model = nn.Sequential(...)</code> 背后发生了什么。你会明白为什么 <code>model.train()</code> 和 <code>model.eval()</code> 存在。你会明白为什么 <code>optimizer.zero_grad()</code> 是单独的调用。因为你自己造了这一切。</p>
+<h2 id="核心概念">核心概念</h2>
+<h3 id="module-抽象">Module 抽象</h3>
+<p>PyTorch 中每个层都继承自 <code>nn.Module</code>。一个 Module 有三个职责：</p>
+<ol>
+<li><strong>forward()</strong> — 给定输入计算输出</li>
+<li><strong>parameters()</strong> — 返回所有可训练权重</li>
+<li><strong>backward()</strong> — 计算梯度（PyTorch 中由 autograd 处理，我们的框架中手动实现）</li>
+</ol>
+<p>Linear 层是 Module。ReLU 是 Module。Dropout 是 Module。BatchNorm 是 Module。它们都有相同的接口。</p>
+<h3 id="sequential-容器">Sequential 容器</h3>
+<p><code>nn.Sequential</code> 链接 Module。前向：数据依次通过 Module 1 → Module 2 → Module 3。反向：反过来。容器本身也是 Module——组合模式：一组 Module 的序列本身就是 Module。</p>
+<h3 id="训练-vs-评估模式">训练 vs 评估模式</h3>
+<ul>
+<li>Dropout 训练时随机置零，评估时全部通过</li>
+<li>BatchNorm 训练时用 batch 统计，评估时用移动平均</li>
+</ul>
+<p><code>train()</code> 和 <code>eval()</code> 切换这个行为。每个 Module 有 <code>training</code> 标志。</p>
+<h3 id="训练循环">训练循环</h3>
+<pre data-label="mermaid"><code class="language-mermaid">sequenceDiagram
+    participant DL as DataLoader
+    participant M as Model
+    participant L as Loss
+    participant O as Optimizer
+
+    loop 每个 Epoch
+        DL-&gt;&gt;M: 一批输入
+        M-&gt;&gt;M: 前向传播（逐层）
+        M-&gt;&gt;L: 预测值
+        L-&gt;&gt;L: 计算 loss
+        L-&gt;&gt;M: 反向传播（梯度）
+        M-&gt;&gt;O: 参数 + 梯度
+        O-&gt;&gt;M: 更新后的参数
+        O-&gt;&gt;O: 梯度清零
+    end</code></pre>
+<h3 id="框架架构">框架架构</h3>
+<pre data-label="mermaid"><code class="language-mermaid">graph TD
+    subgraph "Modules"
+        Linear["Linear&lt;br/&gt;W×x + b"]
+        ReLU["ReLU&lt;br/&gt;max(0, x)"]
+        Sigmoid["Sigmoid&lt;br/&gt;1/(1+e⁻ˣ)"]
+        Dropout["Dropout&lt;br/&gt;随机置零"]
+    end
+    subgraph "容器"
+        Sequential["Sequential&lt;br/&gt;链接 modules"]
+    end
+    subgraph "Loss"
+        MSE["MSELoss"]
+        BCE["BCELoss"]
+    end
+    subgraph "优化器"
+        SGD["SGD"]
+        Adam["Adam"]
+    end
+    Sequential --&gt; |"包含"| Linear
+    Sequential --&gt; |"包含"| ReLU
+    SGD --&gt; |"更新"| Sequential</code></pre>
+<h2 id="从零实现">从零实现</h2>
+<h3 id="module-基类">Module 基类</h3>
+<pre data-label="python"><code class="language-python">class Module:
+    def __init__(self):
+        self.training = True
+
+    def forward(self, x):
+        raise NotImplementedError
+
+    def backward(self, grad):
+        raise NotImplementedError
+
+    def parameters(self):
+        return []
+
+    def train(self):
+        self.training = True
+
+    def eval(self):
+        self.training = False</code></pre>
+<h3 id="linear-层">Linear 层</h3>
+<pre data-label="python"><code class="language-python">import math, random
+
+class Linear(Module):
+    def __init__(self, fan_in, fan_out):
+        super().__init__()
+        std = math.sqrt(2.0 / fan_in)  # Kaiming 初始化
+        self.weights = [[random.gauss(0, std) for _ in range(fan_in)] for _ in range(fan_out)]
+        self.biases = [0.0] * fan_out
+        self.weight_grads = [[0.0] * fan_in for _ in range(fan_out)]
+        self.bias_grads = [0.0] * fan_out
+        self.fan_in = fan_in
+        self.fan_out = fan_out
+
+    def forward(self, x):
+        self.input = x
+        output = []
+        for i in range(self.fan_out):
+            val = self.biases[i]
+            for j in range(self.fan_in):
+                val += self.weights[i][j] * x[j]
+            output.append(val)
+        return output
+
+    def backward(self, grad):
+        input_grad = [0.0] * self.fan_in
+        for i in range(self.fan_out):
+            self.bias_grads[i] += grad[i]
+            for j in range(self.fan_in):
+                self.weight_grads[i][j] += grad[i] * self.input[j]
+                input_grad[j] += grad[i] * self.weights[i][j]
+        return input_grad</code></pre>
+<h3 id="激活函数-modules">激活函数 Modules</h3>
+<pre data-label="python"><code class="language-python">class ReLU(Module):
+    def forward(self, x):
+        self.mask = [1.0 if v &gt; 0 else 0.0 for v in x]
+        return [max(0.0, v) for v in x]
+
+    def backward(self, grad):
+        return [g * m for g, m in zip(grad, self.mask)]
+
+class Sigmoid(Module):
+    def forward(self, x):
+        self.output = [1.0/(1.0+math.exp(-max(-500,min(500,v)))) for v in x]
+        return self.output
+
+    def backward(self, grad):
+        return [g * o * (1-o) for g, o in zip(grad, self.output)]</code></pre>
+<h3 id="sequential-容器">Sequential 容器</h3>
+<pre data-label="python"><code class="language-python">class Sequential(Module):
+    def __init__(self, *modules):
+        super().__init__()
+        self.modules = list(modules)
+
+    def forward(self, x):
+        for module in self.modules:
+            x = module.forward(x)
+        return x
+
+    def backward(self, grad):
+        for module in reversed(self.modules):
+            grad = module.backward(grad)
+        return grad
+
+    def parameters(self):
+        return [p for m in self.modules for p in m.parameters()]
+
+    def train(self):
+        for m in self.modules: m.train()
+
+    def eval(self):
+        for m in self.modules: m.eval()</code></pre>
+<h3 id="训练循环">训练循环</h3>
+<pre data-label="python"><code class="language-python"># 定义模型
+model = Sequential(
+    Linear(2, 16), ReLU(),
+    Linear(16, 16), ReLU(),
+    Linear(16, 8), ReLU(),
+    Linear(8, 1), Sigmoid(),
+)
+
+# 训练
+model.train()
+for epoch in range(100):
+    for x, t in data:
+        pred = model.forward(x)            # 前向
+        loss = bce_loss(pred, t)           # 算 loss
+        optimizer.zero_grad()               # 梯度清零
+        grad = loss_backward()              # loss 的梯度
+        model.backward(grad)                # 反向传播
+        optimizer.step()                    # 更新权重
+
+# 评估
+model.eval()
+for x, t in test_data:
+    pred = model.forward(x)                 # 不执行 dropout</code></pre>
+<h2 id="与-pytorch-的对照">与 PyTorch 的对照</h2>
+<div class="table-wrap"><table><thead><tr>
+<th>你的框架</th>
+<th>PyTorch</th>
+<th>作用</th>
+</tr>
+</thead><tbody><tr>
+<td><code>Module</code></td>
+<td><code>nn.Module</code></td>
+<td>层/组件的基类</td>
+</tr>
+<tr>
+<td><code>Sequential(...)</code></td>
+<td><code>nn.Sequential(...)</code></td>
+<td>链接层</td>
+</tr>
+<tr>
+<td><code>Linear(2, 16)</code></td>
+<td><code>nn.Linear(2, 16)</code></td>
+<td>全连接层</td>
+</tr>
+<tr>
+<td><code>ReLU()</code></td>
+<td><code>nn.ReLU()</code></td>
+<td>激活函数</td>
+</tr>
+<tr>
+<td><code>model.forward(x)</code></td>
+<td><code>model(x)</code></td>
+<td>前向传播</td>
+</tr>
+<tr>
+<td><code>model.backward(grad)</code></td>
+<td><code>loss.backward()</code></td>
+<td>反向传播</td>
+</tr>
+<tr>
+<td><code>optimizer.zero_grad()</code></td>
+<td><code>optimizer.zero_grad()</code></td>
+<td>清梯度</td>
+</tr>
+<tr>
+<td><code>optimizer.step()</code></td>
+<td><code>optimizer.step()</code></td>
+<td>更新参数</td>
+</tr>
+<tr>
+<td><code>model.train()</code></td>
+<td><code>model.train()</code></td>
+<td>启用 dropout 等</td>
+</tr>
+<tr>
+<td><code>model.eval()</code></td>
+<td><code>model.eval()</code></td>
+<td>关闭 dropout 等</td>
+</tr>
+</tbody></table></div>
+<p>结构一模一样。你现在看 PyTorch 代码，每一行都知道底下发生了什么。这就是这课的全部意义。</p>
+<h2 id="练习">练习</h2>
+<ol>
+<li>加一个 <code>SoftmaxCrossEntropyLoss</code> 做多分类。在 3 类螺旋数据集上测试。</li>
+<li>给优化器加学习率调度：实现 <code>set_lr()</code> 方法，接入第 9 课的 cosine schedule。</li>
+<li>给 Sequential 加 <code>save()</code> 和 <code>load()</code> 方法，把权重序列化到 JSON。验证加载后预测跟原来一样。</li>
+<li>在 Adam 中实现 weight decay。对比 decay=0 vs decay=0.01 的训练效果。</li>
+</ol>
+<h2 id="术语表">术语表</h2>
+<div class="table-wrap"><table><thead><tr>
+<th>术语</th>
+<th>通俗说法</th>
+<th>真正含义</th>
+</tr>
+</thead><tbody><tr>
+<td>Module</td>
+<td>&quot;一层&quot;</td>
+<td>框架中的基础抽象——有 forward()、backward()、parameters() 的东西</td>
+</tr>
+<tr>
+<td>Sequential</td>
+<td>&quot;按顺序堆层&quot;</td>
+<td>把 modules 链起来的容器，前向按顺序，反向倒着来</td>
+</tr>
+<tr>
+<td>Parameters</td>
+<td>&quot;可训练的权重&quot;</td>
+<td>网络中优化器能更新的所有值</td>
+</tr>
+<tr>
+<td>zero_grad</td>
+<td>&quot;清梯度&quot;</td>
+<td>更新前把所有参数梯度归零，否则梯度会累加（这也是为什么它是单独调用）</td>
+</tr>
+<tr>
+<td>DataLoader</td>
+<td>&quot;喂数据的&quot;</td>
+<td>把数据集分成 batch、可选 shuffle 的迭代器</td>
+</tr>
+<tr>
+<td>train() / eval()</td>
+<td>&quot;训练/评估模式&quot;</td>
+<td>切换 dropout 和 batchnorm 等随机行为的开关</td>
+</tr>
+</tbody></table></div>
+<hr>
+<h2 id="自测题">自测题</h2>
+<div class="quiz-card" data-correct="1" data-quiz-id="1">
+  <div class="quiz-question"><span class="quiz-num">Q1</span>Module 抽象有哪三个核心职责？</div>
+  <div class="quiz-options">
+    <label class="quiz-option" data-index="0">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">加载数据、预处理、增强</span>
+    </label>
+    <label class="quiz-option" data-index="1">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">forward() 做计算、backward() 算梯度、parameters() 暴露可训练权重</span>
+    </label>
+    <label class="quiz-option" data-index="2">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">编译、优化、部署</span>
+    </label>
+    <label class="quiz-option" data-index="3">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">分词、嵌入、解码</span>
+    </label>
+  </div>
+  <button class="quiz-check">Check Answer</button>
+  <div class="quiz-explanation" hidden>每个 Module 实现 forward() 计算输出、backward() 传播梯度、parameters() 暴露可训练权重。统一接口让任何 module 能跟任何其他组合。</div>
+</div>
+
+<div class="quiz-card" data-correct="1" data-quiz-id="2">
+  <div class="quiz-question"><span class="quiz-num">Q2</span>为什么 Sequential 在反向传播时要反向遍历 modules？</div>
+  <div class="quiz-options">
+    <label class="quiz-option" data-index="0">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">随便哪个方向都行</span>
+    </label>
+    <label class="quiz-option" data-index="1">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">梯度从 loss 往回流，最后一层先算梯度再传给前一层</span>
+    </label>
+    <label class="quiz-option" data-index="2">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">反向用更少内存</span>
+    </label>
+    <label class="quiz-option" data-index="3">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">防止梯度爆炸</span>
+    </label>
+  </div>
+  <button class="quiz-check">Check Answer</button>
+  <div class="quiz-explanation" hidden>反向传播从 loss 开始往输入方向传播梯度。最后一层先收到 loss 梯度，算自己的局部梯度，再传给前一层。</div>
+</div>
+
+<div class="quiz-card" data-correct="1" data-quiz-id="3">
+  <div class="quiz-question"><span class="quiz-num">Q3</span>为什么 optimizer.zero_grad() 是单独的调用而不是自动执行？</div>
+  <div class="quiz-options">
+    <label class="quiz-option" data-index="0">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">PyTorch 的设计失误</span>
+    </label>
+    <label class="quiz-option" data-index="1">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">允许跨多个 batch 做梯度累加——多次 backward() 后才做一次 step()</span>
+    </label>
+    <label class="quiz-option" data-index="2">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">节省内存</span>
+    </label>
+    <label class="quiz-option" data-index="3">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">方便调试</span>
+    </label>
+  </div>
+  <button class="quiz-check">Check Answer</button>
+  <div class="quiz-explanation" hidden>分离 zero_grad 和 step 使梯度累加成为可能：你可以跑多次 backward() 把梯度加起来再调一次 step()，模拟更大的 batch size。</div>
+</div>
+
+<div class="quiz-card" data-correct="2" data-quiz-id="4">
+  <div class="quiz-question"><span class="quiz-num">Q4</span>训练循环的正确操作顺序是什么？</div>
+  <div class="quiz-options">
+    <label class="quiz-option" data-index="0">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">backward, forward, zero_grad, step</span>
+    </label>
+    <label class="quiz-option" data-index="1">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">forward, loss, zero_grad, backward, step</span>
+    </label>
+    <label class="quiz-option" data-index="2">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">zero_grad, forward, loss, backward, step</span>
+    </label>
+    <label class="quiz-option" data-index="3">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">forward, zero_grad, backward, loss, step</span>
+    </label>
+  </div>
+  <button class="quiz-check">Check Answer</button>
+  <div class="quiz-explanation" hidden>标准模式：zero_grad（清旧梯度）→ forward（算预测）→ loss（算标量 loss）→ backward（算梯度）→ step（更新参数）。顺序搞错会有隐蔽 bug。</div>
+</div>
+
+<div class="quiz-card" data-correct="1" data-quiz-id="5">
+  <div class="quiz-question"><span class="quiz-num">Q5</span>DataLoader 在框架中的角色是什么？</div>
+  <div class="quiz-options">
+    <label class="quiz-option" data-index="0">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">训练模型</span>
+    </label>
+    <label class="quiz-option" data-index="1">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">把数据分成 batch 并可选地在 epoch 间 shuffle，用于小批量梯度下降</span>
+    </label>
+    <label class="quiz-option" data-index="2">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">计算损失函数</span>
+    </label>
+    <label class="quiz-option" data-index="3">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">初始化权重</span>
+    </label>
+  </div>
+  <button class="quiz-check">Check Answer</button>
+  <div class="quiz-explanation" hidden>DataLoader 处理两个实际问题：分批（大数据放不进内存）和 shuffle（随机顺序防止模型记住数据序列）。</div>
+</div>
+
+    <nav class="pager">  <a href="09-learning-rate-schedules.html">
+    <span class="label">← 上一章</span>
+    <span class="title">学习率调度与 Warmup</span>
+  </a>  <a href="11-intro-to-pytorch.html" class="next">
+    <span class="label">下一章 →</span>
+    <span class="title">PyTorch 入门</span>
+  </a></nav>
+  </article>
+</div>
+
+<footer>
+  <div class="set">
+    <span>AI Deep Learning Core</span>
+    <span>2026 · EN</span>
+  </div>
+  <div class="set">
+    <span>Mav</span>
+  </div>
+</footer>
+<div class="search-backdrop" id="search-overlay" role="dialog" aria-modal="true" aria-label="搜索" hidden>
+  <div class="search-modal">
+    <div class="search-input-wrap">
+      <input type="search" class="search-input" placeholder="搜索内容..." aria-label="搜索内容" autocomplete="off">
+      <kbd>ESC</kbd>
+    </div>
+    <div class="search-results" role="listbox" aria-label="搜索结果"></div>
+  </div>
+</div>
+
+<!-- Side Panel -->
+<div class="side-panel" id="side-panel">
+  <div class="side-panel-resize" id="side-panel-resize"></div>
+  <div class="side-panel-header">
+    <div class="side-panel-tabs">
+      <button class="side-panel-tab active" data-mode="sidenote">补充</button>
+      <button class="side-panel-tab" data-mode="notepad">笔记</button>
+    </div>
+    <button class="side-panel-close" aria-label="关闭">×</button>
+  </div>
+  <div class="side-panel-body"></div>
+</div>
+<button class="notepad-fab" id="notepad-fab" aria-label="便利贴">✎</button>
+
+<!-- Mobile TOC -->
+<button class="mtoc-fab" id="mtoc-fab" aria-label="目录">TOC</button>
+<div class="mtoc-drawer" id="mtoc-drawer">
+  <div class="mtoc-content"></div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/bash.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/typescript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/yaml.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/javascript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/json.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/python.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/css.min.js"></script>
+<script src="../assets/script.js"></script>
+<script src="../assets/quiz.js"></script>
+<script src="../assets/mermaid-init.js"></script>
+</body>
+</html>

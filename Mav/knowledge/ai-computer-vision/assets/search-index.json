@@ -1,0 +1,892 @@
+{
+  "documents": [
+    {
+      "id": "01-image-fundamentals",
+      "title": "图像基础 — 像素、通道与色彩空间",
+      "chapter": "01",
+      "chapterTitle": "图像基础 — 像素、通道与色彩空间",
+      "url": "chapters/01-image-fundamentals.html",
+      "body": "\n  图像是光的采样张量。你将来用到的每一个视觉模型，都从这一个事实出发。\n\n   学习目标\n\n  解释连续场景如何被离散化为像素，以及采样/量化决策如何给下游所有模型设置了天花板\n  把图像当 NumPy 数组来读取、切片和检查，熟练切换 HWC 和 CHW 布局\n  在 RGB、灰度、HSV 和 YCbCr 之间转换，并解释每种色彩空间存在的原因\n  精确执行像素级预处理（归一化、标准化、缩放、通道优先），完全符合 torchvision 的期望\n\n   为什么要学这个\n\n你将来读的每篇论文、下载的每个预训练权重、调用的每个视觉 API，都假设输入是特定编码的。把  uint8  图片喂给期望  float32  的模型——它照样跑，然后默默输出垃圾。把 BGR 送给在 RGB 上训练的网络，准确率掉 10 个百分点。给模型传 channels last 但它期望 channels first，第一个卷积层会把高度当特征通道。这些都不报错，只是毁掉你的指标，然后你花一周找一个藏在\"图片怎么加载\"里的 bug。\n\n卷积本身不复杂——搞清楚它在滑什么才是关键。问题是\"一张图片\"对相机、JPEG 解码器、PIL、OpenCV、torchvision、CUDA kernel 来说含义不同。每个技术栈有自己的轴顺序、字节范围和通道约定。搞不清这些的视觉工程师，发出去的管道必定是坏的。\n\n这节课把地基打好，让后面所有课都能建在上面。学完你会知道像素是什么、为什么每个像素有三个数而不是一个、\"用 ImageNet 统计量归一化\"到底在干什么、以及怎么在后续每节课都会用到的两三种布局之间切换。\n\n   核心概念\n\n    完整预处理管道一览\n\n每个生产级视觉系统都是同一串可逆变换。搞错一步，模型看到的就不是它训练时看到的东西了。\n\n   mermaid\nflowchart LR\n    A \"图像文件<br/  JPEG/PNG \"      B \"解码<br/ uint8 HWC\" \n    B     C \"转换色彩空间<br/  RGB/BGR/YCbCr \" \n    C     D \"缩放<br/ 短边对齐\" \n    D     E \"中心裁剪<br/ 模型尺寸\" \n    E     F \"除以 255<br/ float32  0,1 \" \n    F     G \"减均值<br/ 除标准差\" \n    G     H \"转置<br/ HWC → CHW\" \n    H     I \"批处理<br/ CHW → NCHW\" \n    I     J \"模型\" \n   \n\n80% 的静默故障都出在\"减均值除标准差\"和\"转置布局\"这两步：标准化缺了或布局弄反了。\n\n    像素是采样值，不是方块\n\n相机传感器计数落在一个微型探测器网格上的光子。每个探测器积分几分之一秒的光，发出一个与光子数成正比的电压。传感器把这个电压离散化为整数。一个探测器变成一个像素。\n\n   \n连续场景                    传感器网格                    数字图像\n 无限细节                    H × W 个探测器                H × W 个整数 \n\n                            +  +  +  +  +  +              210 198 180 155 120\n                                                          205 195 178 152 118\n    光线                    +  +  +  +  +  +              200 190 175 150 115\n                                                          195 185 170 148 112\n                            +  +  +  +  +  +              188 180 165 145 108\n   \n\n这一步有两个选择，它们决定了下游所有事情的天花板：\n\n    空间采样   决定每度场景多少个探测器。太少，边缘出锯齿（aliasing）。太多，存储和算力爆炸。\n    亮度量化   决定电压被分成多少档。8 bit 给 256 级，是显示标准。10、12、16 bit 给更平滑的渐变，在医学成像、HDR 和 RAW 管道中重要。\n\n像素不是有面积的彩色方块。它是一次测量。当你缩放或旋转时，你在重采样这个测量网格。\n\n    为什么有三个通道\n\n一个探测器计数整"
+    },
+    {
+      "id": "01-image-fundamentals-学习目标",
+      "title": "学习目标",
+      "chapter": "01",
+      "chapterTitle": "图像基础 — 像素、通道与色彩空间",
+      "url": "chapters/01-image-fundamentals.html#学习目标",
+      "body": ""
+    },
+    {
+      "id": "01-image-fundamentals-为什么要学这个",
+      "title": "为什么要学这个",
+      "chapter": "01",
+      "chapterTitle": "图像基础 — 像素、通道与色彩空间",
+      "url": "chapters/01-image-fundamentals.html#为什么要学这个",
+      "body": ""
+    },
+    {
+      "id": "01-image-fundamentals-核心概念",
+      "title": "核心概念",
+      "chapter": "01",
+      "chapterTitle": "图像基础 — 像素、通道与色彩空间",
+      "url": "chapters/01-image-fundamentals.html#核心概念",
+      "body": ""
+    },
+    {
+      "id": "01-image-fundamentals-完整预处理管道一览",
+      "title": "完整预处理管道一览",
+      "chapter": "01",
+      "chapterTitle": "图像基础 — 像素、通道与色彩空间",
+      "url": "chapters/01-image-fundamentals.html#完整预处理管道一览",
+      "body": ""
+    },
+    {
+      "id": "01-image-fundamentals-像素是采样值不是方块",
+      "title": "像素是采样值，不是方块",
+      "chapter": "01",
+      "chapterTitle": "图像基础 — 像素、通道与色彩空间",
+      "url": "chapters/01-image-fundamentals.html#像素是采样值不是方块",
+      "body": ""
+    },
+    {
+      "id": "01-image-fundamentals-为什么有三个通道",
+      "title": "为什么有三个通道",
+      "chapter": "01",
+      "chapterTitle": "图像基础 — 像素、通道与色彩空间",
+      "url": "chapters/01-image-fundamentals.html#为什么有三个通道",
+      "body": ""
+    },
+    {
+      "id": "01-image-fundamentals-两种布局约定hwc-和-chw",
+      "title": "两种布局约定：HWC 和 CHW",
+      "chapter": "01",
+      "chapterTitle": "图像基础 — 像素、通道与色彩空间",
+      "url": "chapters/01-image-fundamentals.html#两种布局约定hwc-和-chw",
+      "body": ""
+    },
+    {
+      "id": "01-image-fundamentals-字节范围和-dtype",
+      "title": "字节范围和 dtype",
+      "chapter": "01",
+      "chapterTitle": "图像基础 — 像素、通道与色彩空间",
+      "url": "chapters/01-image-fundamentals.html#字节范围和-dtype",
+      "body": ""
+    },
+    {
+      "id": "01-image-fundamentals-色彩空间和它们存在的理由",
+      "title": "色彩空间和它们存在的理由",
+      "chapter": "01",
+      "chapterTitle": "图像基础 — 像素、通道与色彩空间",
+      "url": "chapters/01-image-fundamentals.html#色彩空间和它们存在的理由",
+      "body": ""
+    },
+    {
+      "id": "01-image-fundamentals-宽高比缩放和插值",
+      "title": "宽高比、缩放和插值",
+      "chapter": "01",
+      "chapterTitle": "图像基础 — 像素、通道与色彩空间",
+      "url": "chapters/01-image-fundamentals.html#宽高比缩放和插值",
+      "body": ""
+    },
+    {
+      "id": "01-image-fundamentals-从零实现",
+      "title": "从零实现",
+      "chapter": "01",
+      "chapterTitle": "图像基础 — 像素、通道与色彩空间",
+      "url": "chapters/01-image-fundamentals.html#从零实现",
+      "body": ""
+    },
+    {
+      "id": "01-image-fundamentals-第一步加载图像并检查形状",
+      "title": "第一步：加载图像并检查形状",
+      "chapter": "01",
+      "chapterTitle": "图像基础 — 像素、通道与色彩空间",
+      "url": "chapters/01-image-fundamentals.html#第一步加载图像并检查形状",
+      "body": ""
+    },
+    {
+      "id": "01-image-fundamentals-第二步拆分通道和重排布局",
+      "title": "第二步：拆分通道和重排布局",
+      "chapter": "01",
+      "chapterTitle": "图像基础 — 像素、通道与色彩空间",
+      "url": "chapters/01-image-fundamentals.html#第二步拆分通道和重排布局",
+      "body": ""
+    },
+    {
+      "id": "01-image-fundamentals-第三步灰度和-hsv-转换",
+      "title": "第三步：灰度和 HSV 转换",
+      "chapter": "01",
+      "chapterTitle": "图像基础 — 像素、通道与色彩空间",
+      "url": "chapters/01-image-fundamentals.html#第三步灰度和-hsv-转换",
+      "body": ""
+    },
+    {
+      "id": "01-image-fundamentals-第四步归一化标准化和逆操作",
+      "title": "第四步：归一化、标准化和逆操作",
+      "chapter": "01",
+      "chapterTitle": "图像基础 — 像素、通道与色彩空间",
+      "url": "chapters/01-image-fundamentals.html#第四步归一化标准化和逆操作",
+      "body": ""
+    },
+    {
+      "id": "01-image-fundamentals-第五步三种插值方法对比",
+      "title": "第五步：三种插值方法对比",
+      "chapter": "01",
+      "chapterTitle": "图像基础 — 像素、通道与色彩空间",
+      "url": "chapters/01-image-fundamentals.html#第五步三种插值方法对比",
+      "body": ""
+    },
+    {
+      "id": "01-image-fundamentals-实战用法",
+      "title": "实战用法",
+      "chapter": "01",
+      "chapterTitle": "图像基础 — 像素、通道与色彩空间",
+      "url": "chapters/01-image-fundamentals.html#实战用法",
+      "body": ""
+    },
+    {
+      "id": "01-image-fundamentals-练习",
+      "title": "练习",
+      "chapter": "01",
+      "chapterTitle": "图像基础 — 像素、通道与色彩空间",
+      "url": "chapters/01-image-fundamentals.html#练习",
+      "body": ""
+    },
+    {
+      "id": "01-image-fundamentals-术语表",
+      "title": "术语表",
+      "chapter": "01",
+      "chapterTitle": "图像基础 — 像素、通道与色彩空间",
+      "url": "chapters/01-image-fundamentals.html#术语表",
+      "body": ""
+    },
+    {
+      "id": "01-image-fundamentals-自测题",
+      "title": "自测题",
+      "chapter": "01",
+      "chapterTitle": "图像基础 — 像素、通道与色彩空间",
+      "url": "chapters/01-image-fundamentals.html#自测题",
+      "body": ""
+    },
+    {
+      "id": "02-convolutions-from-scratch",
+      "title": "从零实现卷积",
+      "chapter": "02",
+      "chapterTitle": "从零实现卷积",
+      "url": "chapters/02-convolutions-from-scratch.html",
+      "body": "\n  卷积就是一个小型全连接层，在图像上滑动，每个位置共享同一组权重。\n\n   学习目标\n\n  只用 NumPy 从零实现 2D 卷积，包括嵌套循环版和向量化的 im2col 版\n  对任意输入尺寸、核大小、填充和步幅组合计算输出空间尺寸，理解   H   K + 2P  / S + 1  公式\n  手工设计卷积核（边缘、模糊、锐化、Sobel）并解释每种为什么产生那样的激活模式\n  把卷积堆叠成特征提取器，连接\"堆叠深度\"和\"感受野大小\"的关系\n\n   为什么要学这个\n\n一个全连接层在 224×224 RGB 图像上，每个神经元需要 224×224×3 = 150,528 个输入权重。单隐藏层 1000 个单元就是 1.5 亿参数——什么有用的都还没学到。更糟的是，那个层完全不知道左上角的狗和右下角的狗是同一种模式。它把每个像素位置当独立的，这对图像恰恰是错的：把猫移三个像素不应该强迫网络重新学习\"猫\"这个概念。\n\n图像模型需要两个属性：  平移等变性  （输入平移，输出跟着移）和  参数共享  （同一个特征检测器在所有位置运行）。全连接层两个都给不了。卷积两个都白送。\n\n卷积不是为深度学习发明的。JPEG 压缩、Photoshop 里的高斯模糊、工业视觉中的边缘检测、所有音频滤波器都用同一个操作。CNN 在 2012–2020 年统治 ImageNet 的原因是：卷积是\"邻近值相关、同一模式可出现在任何位置\"的数据的正确先验。\n\n   核心概念\n\n    一个核，滑动\n\n2D 卷积取一个小权重矩阵叫做核（kernel / filter），在输入上滑动，每个位置计算逐元素乘积之和。那个和就是一个输出像素。\n\n   mermaid\nflowchart LR\n    subgraph IN \"输入  H × W \" \n        direction LR\n        I1 \"5 × 5 图像\" \n    end\n    subgraph K \"核  3 × 3 \" \n        K1 \"可学习<br/ 权重\" \n    end\n    subgraph OUT \"输出  H 2 × W 2 \" \n        O1 \"3 × 3 特征图\" \n    end\n    I1      \"滑动核<br/ 每个位置算点积\"  O1\n    K1     O1\n   \n\n具体的 3×3 示例，在 5×5 输入上（无填充，步幅 1）：\n\n   \n输入 X  5 × 5 :                核 W  3 × 3 :\n\n  1  2  0  1  2                  1  0  1\n  0  1  3  1  0                  2  0  2\n  2  1  0  2  1                  1  0  1\n  1  0  2  1  3\n  2  1  1  0  1\n\n核滑过每一个合法的 3×3 窗口。输出 Y 是 3×3：\n\n Y 0,0  = sum  W   X 0:3, 0:3   \n Y 0,1  = sum  W   X 0:3, 1:4   \n Y 0,2  = sum  W   X 0:3, 2:5   \n Y 1,0  = sum  W   X 1:4, 0:3   \n ... 以此类推\n   \n\n一个公式——  共享权重、局部连接、滑动窗口  ——就是全部思想。其他都是簿记工作。\n\n    输出尺寸公式\n\n给定输入空间尺寸  H 、核大小  K 、填充  P 、步幅  S ：\n\n   \nH out = floor   H   K + 2P  / S   + 1\n   \n\n背下来。你设计每个架构时都会算很多遍。\n\n  场景   H   K   P   S   H out  \n                                \n  Valid conv，无填充   32   3   0   1   30  \n  Same conv（保持尺寸）   32   3   1   1   32  \n  2 倍下采样   32   3   1   2   16  \n  2×2 池化   32   2   0   2   16  \n  大感受野   32   7   3   2   16  \n\n\"Same padding\"意思是选 P 让 S=1 时 H out == H。对于奇数 K，就是 P =  K   1  / 2。这就是 3×3 核统治一切的原因——它是最小的奇数核（有中心点）。\n\n    填充（Padding）\n\n没有填充时，每次卷积都缩小特征图。堆 20 层，224×224 变 184×184，浪费边界计算，还让需要匹配尺寸的残"
+    },
+    {
+      "id": "02-convolutions-from-scratch-学习目标",
+      "title": "学习目标",
+      "chapter": "02",
+      "chapterTitle": "从零实现卷积",
+      "url": "chapters/02-convolutions-from-scratch.html#学习目标",
+      "body": ""
+    },
+    {
+      "id": "02-convolutions-from-scratch-为什么要学这个",
+      "title": "为什么要学这个",
+      "chapter": "02",
+      "chapterTitle": "从零实现卷积",
+      "url": "chapters/02-convolutions-from-scratch.html#为什么要学这个",
+      "body": ""
+    },
+    {
+      "id": "02-convolutions-from-scratch-核心概念",
+      "title": "核心概念",
+      "chapter": "02",
+      "chapterTitle": "从零实现卷积",
+      "url": "chapters/02-convolutions-from-scratch.html#核心概念",
+      "body": ""
+    },
+    {
+      "id": "02-convolutions-from-scratch-一个核滑动",
+      "title": "一个核，滑动",
+      "chapter": "02",
+      "chapterTitle": "从零实现卷积",
+      "url": "chapters/02-convolutions-from-scratch.html#一个核滑动",
+      "body": ""
+    },
+    {
+      "id": "02-convolutions-from-scratch-输出尺寸公式",
+      "title": "输出尺寸公式",
+      "chapter": "02",
+      "chapterTitle": "从零实现卷积",
+      "url": "chapters/02-convolutions-from-scratch.html#输出尺寸公式",
+      "body": ""
+    },
+    {
+      "id": "02-convolutions-from-scratch-填充padding",
+      "title": "填充（Padding）",
+      "chapter": "02",
+      "chapterTitle": "从零实现卷积",
+      "url": "chapters/02-convolutions-from-scratch.html#填充padding",
+      "body": ""
+    },
+    {
+      "id": "02-convolutions-from-scratch-步幅stride",
+      "title": "步幅（Stride）",
+      "chapter": "02",
+      "chapterTitle": "从零实现卷积",
+      "url": "chapters/02-convolutions-from-scratch.html#步幅stride",
+      "body": ""
+    },
+    {
+      "id": "02-convolutions-from-scratch-多输入通道",
+      "title": "多输入通道",
+      "chapter": "02",
+      "chapterTitle": "从零实现卷积",
+      "url": "chapters/02-convolutions-from-scratch.html#多输入通道",
+      "body": ""
+    },
+    {
+      "id": "02-convolutions-from-scratch-im2col-技巧",
+      "title": "im2col 技巧",
+      "chapter": "02",
+      "chapterTitle": "从零实现卷积",
+      "url": "chapters/02-convolutions-from-scratch.html#im2col-技巧",
+      "body": ""
+    },
+    {
+      "id": "02-convolutions-from-scratch-感受野receptive-field",
+      "title": "感受野（Receptive Field）",
+      "chapter": "02",
+      "chapterTitle": "从零实现卷积",
+      "url": "chapters/02-convolutions-from-scratch.html#感受野receptive-field",
+      "body": ""
+    },
+    {
+      "id": "02-convolutions-from-scratch-从零实现",
+      "title": "从零实现",
+      "chapter": "02",
+      "chapterTitle": "从零实现卷积",
+      "url": "chapters/02-convolutions-from-scratch.html#从零实现",
+      "body": ""
+    },
+    {
+      "id": "02-convolutions-from-scratch-第一步填充数组",
+      "title": "第一步：填充数组",
+      "chapter": "02",
+      "chapterTitle": "从零实现卷积",
+      "url": "chapters/02-convolutions-from-scratch.html#第一步填充数组",
+      "body": ""
+    },
+    {
+      "id": "02-convolutions-from-scratch-第二步嵌套循环的-2d-卷积",
+      "title": "第二步：嵌套循环的 2D 卷积",
+      "chapter": "02",
+      "chapterTitle": "从零实现卷积",
+      "url": "chapters/02-convolutions-from-scratch.html#第二步嵌套循环的-2d-卷积",
+      "body": ""
+    },
+    {
+      "id": "02-convolutions-from-scratch-第三步用手工设计的核验证",
+      "title": "第三步：用手工设计的核验证",
+      "chapter": "02",
+      "chapterTitle": "从零实现卷积",
+      "url": "chapters/02-convolutions-from-scratch.html#第三步用手工设计的核验证",
+      "body": ""
+    },
+    {
+      "id": "02-convolutions-from-scratch-第四步im2col",
+      "title": "第四步：im2col",
+      "chapter": "02",
+      "chapterTitle": "从零实现卷积",
+      "url": "chapters/02-convolutions-from-scratch.html#第四步im2col",
+      "body": ""
+    },
+    {
+      "id": "02-convolutions-from-scratch-第五步im2col-matmul-快速卷积",
+      "title": "第五步：im2col + matmul 快速卷积",
+      "chapter": "02",
+      "chapterTitle": "从零实现卷积",
+      "url": "chapters/02-convolutions-from-scratch.html#第五步im2col-matmul-快速卷积",
+      "body": ""
+    },
+    {
+      "id": "02-convolutions-from-scratch-第六步一组手工设计的核",
+      "title": "第六步：一组手工设计的核",
+      "chapter": "02",
+      "chapterTitle": "从零实现卷积",
+      "url": "chapters/02-convolutions-from-scratch.html#第六步一组手工设计的核",
+      "body": ""
+    },
+    {
+      "id": "02-convolutions-from-scratch-实战用法",
+      "title": "实战用法",
+      "chapter": "02",
+      "chapterTitle": "从零实现卷积",
+      "url": "chapters/02-convolutions-from-scratch.html#实战用法",
+      "body": ""
+    },
+    {
+      "id": "02-convolutions-from-scratch-练习",
+      "title": "练习",
+      "chapter": "02",
+      "chapterTitle": "从零实现卷积",
+      "url": "chapters/02-convolutions-from-scratch.html#练习",
+      "body": ""
+    },
+    {
+      "id": "02-convolutions-from-scratch-术语表",
+      "title": "术语表",
+      "chapter": "02",
+      "chapterTitle": "从零实现卷积",
+      "url": "chapters/02-convolutions-from-scratch.html#术语表",
+      "body": ""
+    },
+    {
+      "id": "02-convolutions-from-scratch-自测题",
+      "title": "自测题",
+      "chapter": "02",
+      "chapterTitle": "从零实现卷积",
+      "url": "chapters/02-convolutions-from-scratch.html#自测题",
+      "body": ""
+    },
+    {
+      "id": "03-cnns-lenet-to-resnet",
+      "title": "CNN 演化史 — 从 LeNet 到 ResNet",
+      "chapter": "03",
+      "chapterTitle": "CNN 演化史 — 从 LeNet 到 ResNet",
+      "url": "chapters/03-cnns-lenet-to-resnet.html",
+      "body": "\n  过去三十年每个重要的 CNN，都是同一个\"卷积 非线性 下采样\"配方加上一个新想法。按顺序学这些想法。\n\n   学习目标\n\n  追溯 LeNet 5 → AlexNet → VGG → Inception → ResNet 的架构血统，说出每个家族贡献的那一个新想法\n  用 PyTorch 实现 LeNet 5、VGG 风格块和 ResNet BasicBlock，每个不超过 40 行\n  解释为什么残差连接能让 1000 层网络从不可训练变成 SOTA\n  读懂一个现代骨干网络（ResNet 18、ResNet 50）并在看源码前预测其输出形状、感受野和参数量\n\n   为什么要学这个\n\n2011 年最好的 ImageNet 分类器 top 5 准确率约 74%。2012 年 AlexNet 85%。2015 年 ResNet 96%。数据没变，GPU 没换代。提升来自架构思想。\n\n一个能出活的视觉工程师必须知道哪个想法来自哪篇论文，因为你 2026 年发出去的每个生产骨干网络都是那些组件的重组——而且这些思想一直在迁移：grouped conv 从 CNN 走进了 Transformer，残差连接从 ResNet 走进了所有 LLM，Batch Normalization 活在扩散模型里。\n\n按顺序学习这些网络还能免疫一个常见错误：问题只需要 LeNet 级别的网络时伸手去拿最大的模型。MNIST 不需要 ResNet。知道每个家族的性能曲线，就知道自己该坐在哪。\n\n   核心概念\n\n    改变视觉的四个想法\n\n   mermaid\ntimeline\n    title 四个想法，四个家族\n    1998 : LeNet 5 : Conv + pool + FC 做数字识别，CPU 训练，6 万参数\n    2012 : AlexNet : 更深 + ReLU + Dropout + 两块 GPU，ImageNet 赢了 10 个百分点\n    2014 : VGG / Inception : 3×3 堆叠  VGG ，并行多尺度核  Inception \n    2015 : ResNet : 恒等跳跃连接解锁 100+ 层训练\n   \n\n经典视觉中没有别的东西比这四次跳跃更重要。\n\n    LeNet 5  1998 \n\nYann LeCun 的数字识别器。6 万参数。两个 conv pool 块，两个全连接层，tanh 激活。它定义了每个 CNN 继承的模板：\n\n   \n输入  1, 32, 32 \n  conv 5×5 →  6, 28, 28 \n  avg pool 2×2 →  6, 14, 14 \n  conv 5×5 →  16, 10, 10 \n  avg pool 2×2 →  16, 5, 5 \n  flatten → 400\n  dense → 120\n  dense → 84\n  dense → 10\n   \n\n现代世界所谓的 CNN——卷积和下采样交替喂给一个小分类头——就是加了更多层、更大通道、更好激活的 LeNet。\n\n    AlexNet  2012 \n\n三个一起打破了 ImageNet：\n\n1.   ReLU   替代 tanh。梯度不再消失。训练加速 6 倍。\n2.   Dropout   在全连接头中。正则化变成了一个层，不是一个 trick。\n3.   深度和宽度  。五层 conv，三层 dense，6000 万参数，在两块 GPU 上模型并行训练。\n\n    VGG  2014 \n\nVGG 问了一个问题：如果只用 3×3 卷积并且往深里堆，会怎样？\n\n   \n块：   conv 3×3 → conv 3×3 → pool 2×2\n重复： 16 或 19 个卷积层\n   \n\n两个 3×3 conv 看到的输入区域跟一个 5×5 一样大，但参数更少（2×9×C² = 18C² vs 25C²），中间还多一个 ReLU。VGG 把这个观察变成了整个架构。简洁——只有一种块类型，重复——使它成为后来一切的参考点。\n\n代价：1.38 亿参数，训练慢，推理贵。\n\n    Inception  2014，同年 \n\nGoogle 对\"该用多大的核\"的回答是：全都用，并行。\n\n   mermaid\nflowchart LR\n    IN \"输入特征图\"      A \"1×1 conv\" \n    IN     B \"3×3 conv\" \n    IN     C \"5×5 conv\" \n    IN     D \"3×3 max pool\" \n    A     CAT \"沿通道轴<br/ 拼接\" \n    B     CAT\n    C     CAT\n    D     CAT\n"
+    },
+    {
+      "id": "03-cnns-lenet-to-resnet-学习目标",
+      "title": "学习目标",
+      "chapter": "03",
+      "chapterTitle": "CNN 演化史 — 从 LeNet 到 ResNet",
+      "url": "chapters/03-cnns-lenet-to-resnet.html#学习目标",
+      "body": ""
+    },
+    {
+      "id": "03-cnns-lenet-to-resnet-为什么要学这个",
+      "title": "为什么要学这个",
+      "chapter": "03",
+      "chapterTitle": "CNN 演化史 — 从 LeNet 到 ResNet",
+      "url": "chapters/03-cnns-lenet-to-resnet.html#为什么要学这个",
+      "body": ""
+    },
+    {
+      "id": "03-cnns-lenet-to-resnet-核心概念",
+      "title": "核心概念",
+      "chapter": "03",
+      "chapterTitle": "CNN 演化史 — 从 LeNet 到 ResNet",
+      "url": "chapters/03-cnns-lenet-to-resnet.html#核心概念",
+      "body": ""
+    },
+    {
+      "id": "03-cnns-lenet-to-resnet-改变视觉的四个想法",
+      "title": "改变视觉的四个想法",
+      "chapter": "03",
+      "chapterTitle": "CNN 演化史 — 从 LeNet 到 ResNet",
+      "url": "chapters/03-cnns-lenet-to-resnet.html#改变视觉的四个想法",
+      "body": ""
+    },
+    {
+      "id": "03-cnns-lenet-to-resnet-lenet-5-1998",
+      "title": "LeNet-5 (1998)",
+      "chapter": "03",
+      "chapterTitle": "CNN 演化史 — 从 LeNet 到 ResNet",
+      "url": "chapters/03-cnns-lenet-to-resnet.html#lenet-5-1998",
+      "body": ""
+    },
+    {
+      "id": "03-cnns-lenet-to-resnet-alexnet-2012",
+      "title": "AlexNet (2012)",
+      "chapter": "03",
+      "chapterTitle": "CNN 演化史 — 从 LeNet 到 ResNet",
+      "url": "chapters/03-cnns-lenet-to-resnet.html#alexnet-2012",
+      "body": ""
+    },
+    {
+      "id": "03-cnns-lenet-to-resnet-vgg-2014",
+      "title": "VGG (2014)",
+      "chapter": "03",
+      "chapterTitle": "CNN 演化史 — 从 LeNet 到 ResNet",
+      "url": "chapters/03-cnns-lenet-to-resnet.html#vgg-2014",
+      "body": ""
+    },
+    {
+      "id": "03-cnns-lenet-to-resnet-inception-2014同年",
+      "title": "Inception (2014，同年)",
+      "chapter": "03",
+      "chapterTitle": "CNN 演化史 — 从 LeNet 到 ResNet",
+      "url": "chapters/03-cnns-lenet-to-resnet.html#inception-2014同年",
+      "body": ""
+    },
+    {
+      "id": "03-cnns-lenet-to-resnet-退化问题",
+      "title": "退化问题",
+      "chapter": "03",
+      "chapterTitle": "CNN 演化史 — 从 LeNet 到 ResNet",
+      "url": "chapters/03-cnns-lenet-to-resnet.html#退化问题",
+      "body": ""
+    },
+    {
+      "id": "03-cnns-lenet-to-resnet-resnet-2015",
+      "title": "ResNet (2015)",
+      "chapter": "03",
+      "chapterTitle": "CNN 演化史 — 从 LeNet 到 ResNet",
+      "url": "chapters/03-cnns-lenet-to-resnet.html#resnet-2015",
+      "body": ""
+    },
+    {
+      "id": "03-cnns-lenet-to-resnet-残差连接为什么超越视觉",
+      "title": "残差连接为什么超越视觉",
+      "chapter": "03",
+      "chapterTitle": "CNN 演化史 — 从 LeNet 到 ResNet",
+      "url": "chapters/03-cnns-lenet-to-resnet.html#残差连接为什么超越视觉",
+      "body": ""
+    },
+    {
+      "id": "03-cnns-lenet-to-resnet-从零实现",
+      "title": "从零实现",
+      "chapter": "03",
+      "chapterTitle": "CNN 演化史 — 从 LeNet 到 ResNet",
+      "url": "chapters/03-cnns-lenet-to-resnet.html#从零实现",
+      "body": ""
+    },
+    {
+      "id": "03-cnns-lenet-to-resnet-第一步lenet-5",
+      "title": "第一步：LeNet-5",
+      "chapter": "03",
+      "chapterTitle": "CNN 演化史 — 从 LeNet 到 ResNet",
+      "url": "chapters/03-cnns-lenet-to-resnet.html#第一步lenet-5",
+      "body": ""
+    },
+    {
+      "id": "03-cnns-lenet-to-resnet-第二步vgg-块",
+      "title": "第二步：VGG 块",
+      "chapter": "03",
+      "chapterTitle": "CNN 演化史 — 从 LeNet 到 ResNet",
+      "url": "chapters/03-cnns-lenet-to-resnet.html#第二步vgg-块",
+      "body": ""
+    },
+    {
+      "id": "03-cnns-lenet-to-resnet-第三步resnet-basicblock",
+      "title": "第三步：ResNet BasicBlock",
+      "chapter": "03",
+      "chapterTitle": "CNN 演化史 — 从 LeNet 到 ResNet",
+      "url": "chapters/03-cnns-lenet-to-resnet.html#第三步resnet-basicblock",
+      "body": ""
+    },
+    {
+      "id": "03-cnns-lenet-to-resnet-第四步小型-resnet",
+      "title": "第四步：小型 ResNet",
+      "chapter": "03",
+      "chapterTitle": "CNN 演化史 — 从 LeNet 到 ResNet",
+      "url": "chapters/03-cnns-lenet-to-resnet.html#第四步小型-resnet",
+      "body": ""
+    },
+    {
+      "id": "03-cnns-lenet-to-resnet-实战用法",
+      "title": "实战用法",
+      "chapter": "03",
+      "chapterTitle": "CNN 演化史 — 从 LeNet 到 ResNet",
+      "url": "chapters/03-cnns-lenet-to-resnet.html#实战用法",
+      "body": ""
+    },
+    {
+      "id": "03-cnns-lenet-to-resnet-练习",
+      "title": "练习",
+      "chapter": "03",
+      "chapterTitle": "CNN 演化史 — 从 LeNet 到 ResNet",
+      "url": "chapters/03-cnns-lenet-to-resnet.html#练习",
+      "body": ""
+    },
+    {
+      "id": "03-cnns-lenet-to-resnet-术语表",
+      "title": "术语表",
+      "chapter": "03",
+      "chapterTitle": "CNN 演化史 — 从 LeNet 到 ResNet",
+      "url": "chapters/03-cnns-lenet-to-resnet.html#术语表",
+      "body": ""
+    },
+    {
+      "id": "03-cnns-lenet-to-resnet-自测题",
+      "title": "自测题",
+      "chapter": "03",
+      "chapterTitle": "CNN 演化史 — 从 LeNet 到 ResNet",
+      "url": "chapters/03-cnns-lenet-to-resnet.html#自测题",
+      "body": ""
+    },
+    {
+      "id": "04-image-classification",
+      "title": "图像分类",
+      "chapter": "04",
+      "chapterTitle": "图像分类",
+      "url": "chapters/04-image-classification.html",
+      "body": "  分类器就是一个函数：输入像素，输出类别概率分布。其余都是管道工程。\n\n\n\n\n\n\n   学习目标\n\n  在 CIFAR 10 上搭建完整的图像分类流水线：数据集、数据增强、模型、训练循环、评估\n  解释流水线中每个组件（dataloader、损失函数、优化器、学习率调度、数据增强）的作用，并能预判任何一个组件出错时损失曲线会怎么变\n  从零实现 mixup、cutout 和标签平滑（label smoothing），说明每种技术在什么场景下值得加\n  通过混淆矩阵和逐类别 precision/recall 表格来诊断数据集和模型的问题，而不是只看整体准确率\n\n   为什么要学这个\n\n所有上线的视觉任务，底层都是图像分类。检测是对区域做分类，分割是对像素做分类，检索是按类别中心的相似度排序。把分类搞对——数据循环、增强策略、损失函数、评估方式——这套技能可以迁移到后续所有任务。\n\n大多数分类的 bug 不在模型里，而是藏在流水线中：归一化搞错了、训练集没 shuffle、增强操作把标签搞乱了、验证集混入了训练数据、学习率在第 30 个 epoch 后悄悄发散。一个本该在 CIFAR 10 上达到 93% 的 CNN，换个有问题的流水线可能只有 70 75%，而且损失曲线看起来还很正常。\n\n这节课我们手动搭建整条流水线，让每个环节都可检查。不会用任何  torchvision.datasets  中可能隐藏 bug 的东西。\n\n   核心概念\n\n    分类流水线（Classification Pipeline）\n\n   mermaid\nflowchart LR\n    A \"数据集<br/  图片 + 标签 \"      B \"增强<br/  随机变换 \" \n    B     C \"归一化<br/  均值/标准差 \" \n    C     D \"DataLoader<br/  批次 + 打乱 \" \n    D     E \"模型<br/  CNN \" \n    E     F \"Logits<br/  N, C \" \n    F     G \"交叉熵损失\" \n    F     H \"Argmax<br/ 评估时用\" \n    G     I \"反向传播\" \n    I     J \"优化器更新\" \n    J     K \"调度器更新\" \n    K     E\n\n    style A fill: dbeafe,stroke: 2563eb\n    style E fill: fef3c7,stroke: d97706\n    style G fill: fecaca,stroke: dc2626\n    style H fill: dcfce7,stroke: 16a34a\n   \n\n这个循环里每一条线都可能藏 bug。交叉熵（Cross entropy）接收的是原始 logits，不是 softmax 输出——如果你在 loss 之前写了  model x .softmax   ，梯度就悄悄算错了。数据增强只作用于输入，不动标签——除了 mixup，它同时混合两者。 optimizer.zero grad    每步必须调一次；忘了的话梯度会累加，看起来就像学习率不稳定。这些 bug 都不会报错，只是让学习曲线变平。\n\n    交叉熵、Logits 和 Softmax\n\n分类器对每张图输出  C  个数字，叫做 logits（对数几率）。对它做 softmax 就变成概率分布：\n\n   \nsoftmax z  i = exp z i  / sum j exp z j \n   \n\n交叉熵衡量的是正确类别的负对数概率：\n\n   \nCE z, y  =  log  softmax z  y  \n        =  z y + log  sum j exp z j   \n   \n\n右边那个形式就是数值稳定版（log sum exp）。PyTorch 的  nn.CrossEntropyLoss  把 softmax + NLL 融合成一个操作，直接接收原始 logits。如果你自己先做了 softmax 再传进去，实际上是在算 log softmax softmax z   ——一个毫无意义的东西。\n\n    为什么数据增强有效\n\nCNN 的归纳偏置（Inductive Bias）只给了平移不变性（来自权重共享），但它天生不具备对裁剪、翻转、颜色抖动或遮挡的不变性。唯一能让它学会这些不变性的方法就是——给它看经过这些变换的像素。每一个训练时的随机变换都在告诉模型：\"这两张图标签一样，学会忽略它们之间的差异。\"\n\n   \n原图:           \"朝左的狗\"\n水平翻转:       \"朝右的狗\"         <  同"
+    },
+    {
+      "id": "04-image-classification-学习目标",
+      "title": "学习目标",
+      "chapter": "04",
+      "chapterTitle": "图像分类",
+      "url": "chapters/04-image-classification.html#学习目标",
+      "body": ""
+    },
+    {
+      "id": "04-image-classification-为什么要学这个",
+      "title": "为什么要学这个",
+      "chapter": "04",
+      "chapterTitle": "图像分类",
+      "url": "chapters/04-image-classification.html#为什么要学这个",
+      "body": ""
+    },
+    {
+      "id": "04-image-classification-核心概念",
+      "title": "核心概念",
+      "chapter": "04",
+      "chapterTitle": "图像分类",
+      "url": "chapters/04-image-classification.html#核心概念",
+      "body": ""
+    },
+    {
+      "id": "04-image-classification-分类流水线classification-pipeline",
+      "title": "分类流水线（Classification Pipeline）",
+      "chapter": "04",
+      "chapterTitle": "图像分类",
+      "url": "chapters/04-image-classification.html#分类流水线classification-pipeline",
+      "body": ""
+    },
+    {
+      "id": "04-image-classification-交叉熵logits-和-softmax",
+      "title": "交叉熵、Logits 和 Softmax",
+      "chapter": "04",
+      "chapterTitle": "图像分类",
+      "url": "chapters/04-image-classification.html#交叉熵logits-和-softmax",
+      "body": ""
+    },
+    {
+      "id": "04-image-classification-为什么数据增强有效",
+      "title": "为什么数据增强有效",
+      "chapter": "04",
+      "chapterTitle": "图像分类",
+      "url": "chapters/04-image-classification.html#为什么数据增强有效",
+      "body": ""
+    },
+    {
+      "id": "04-image-classification-mixup-和-cutmix",
+      "title": "Mixup 和 Cutmix",
+      "chapter": "04",
+      "chapterTitle": "图像分类",
+      "url": "chapters/04-image-classification.html#mixup-和-cutmix",
+      "body": ""
+    },
+    {
+      "id": "04-image-classification-标签平滑label-smoothing",
+      "title": "标签平滑（Label Smoothing）",
+      "chapter": "04",
+      "chapterTitle": "图像分类",
+      "url": "chapters/04-image-classification.html#标签平滑label-smoothing",
+      "body": ""
+    },
+    {
+      "id": "04-image-classification-超越准确率的评估",
+      "title": "超越准确率的评估",
+      "chapter": "04",
+      "chapterTitle": "图像分类",
+      "url": "chapters/04-image-classification.html#超越准确率的评估",
+      "body": ""
+    },
+    {
+      "id": "04-image-classification-从零实现",
+      "title": "从零实现",
+      "chapter": "04",
+      "chapterTitle": "图像分类",
+      "url": "chapters/04-image-classification.html#从零实现",
+      "body": ""
+    },
+    {
+      "id": "04-image-classification-第一步确定性合成数据集",
+      "title": "第一步：确定性合成数据集",
+      "chapter": "04",
+      "chapterTitle": "图像分类",
+      "url": "chapters/04-image-classification.html#第一步确定性合成数据集",
+      "body": ""
+    },
+    {
+      "id": "04-image-classification-第二步归一化和数据增强",
+      "title": "第二步：归一化和数据增强",
+      "chapter": "04",
+      "chapterTitle": "图像分类",
+      "url": "chapters/04-image-classification.html#第二步归一化和数据增强",
+      "body": ""
+    },
+    {
+      "id": "04-image-classification-第三步mixup",
+      "title": "第三步：Mixup",
+      "chapter": "04",
+      "chapterTitle": "图像分类",
+      "url": "chapters/04-image-classification.html#第三步mixup",
+      "body": ""
+    },
+    {
+      "id": "04-image-classification-第四步训练循环",
+      "title": "第四步：训练循环",
+      "chapter": "04",
+      "chapterTitle": "图像分类",
+      "url": "chapters/04-image-classification.html#第四步训练循环",
+      "body": ""
+    },
+    {
+      "id": "04-image-classification-第五步组装起来",
+      "title": "第五步：组装起来",
+      "chapter": "04",
+      "chapterTitle": "图像分类",
+      "url": "chapters/04-image-classification.html#第五步组装起来",
+      "body": ""
+    },
+    {
+      "id": "04-image-classification-第六步读懂混淆矩阵",
+      "title": "第六步：读懂混淆矩阵",
+      "chapter": "04",
+      "chapterTitle": "图像分类",
+      "url": "chapters/04-image-classification.html#第六步读懂混淆矩阵",
+      "body": ""
+    },
+    {
+      "id": "04-image-classification-实战用法",
+      "title": "实战用法",
+      "chapter": "04",
+      "chapterTitle": "图像分类",
+      "url": "chapters/04-image-classification.html#实战用法",
+      "body": ""
+    },
+    {
+      "id": "04-image-classification-ship-it",
+      "title": "Ship It",
+      "chapter": "04",
+      "chapterTitle": "图像分类",
+      "url": "chapters/04-image-classification.html#ship-it",
+      "body": ""
+    },
+    {
+      "id": "04-image-classification-练习",
+      "title": "练习",
+      "chapter": "04",
+      "chapterTitle": "图像分类",
+      "url": "chapters/04-image-classification.html#练习",
+      "body": ""
+    },
+    {
+      "id": "04-image-classification-术语表",
+      "title": "术语表",
+      "chapter": "04",
+      "chapterTitle": "图像分类",
+      "url": "chapters/04-image-classification.html#术语表",
+      "body": ""
+    },
+    {
+      "id": "04-image-classification-延伸阅读",
+      "title": "延伸阅读",
+      "chapter": "04",
+      "chapterTitle": "图像分类",
+      "url": "chapters/04-image-classification.html#延伸阅读",
+      "body": ""
+    },
+    {
+      "id": "04-image-classification-自测题",
+      "title": "自测题",
+      "chapter": "04",
+      "chapterTitle": "图像分类",
+      "url": "chapters/04-image-classification.html#自测题",
+      "body": ""
+    },
+    {
+      "id": "05-transfer-learning",
+      "title": "迁移学习与微调",
+      "chapter": "05",
+      "chapterTitle": "迁移学习与微调",
+      "url": "chapters/05-transfer-learning.html",
+      "body": "  别人花了上百万 GPU 小时教网络认识边缘、纹理和物体部件。你应该先借用这些特征，再训练自己的模型。\n\n\n\n\n\n\n   学习目标\n\n  区分特征提取（Feature Extraction）和微调（Fine Tuning），根据数据集大小、领域距离和算力预算选择合适策略\n  加载预训练骨干网络，替换分类头，20 行代码内只训练头部跑出一个能用的 baseline\n  渐进式解冻层，配合判别式学习率（Discriminative Learning Rate），让早期通用特征更新幅度小、后期任务特征更新幅度大\n  诊断三种常见翻车：对解冻层用了过高 LR 导致特征漂移、BN 统计量在小数据集上崩溃、灾难性遗忘\n\n   为什么要学这个\n\n从零训练一个 ResNet 50 在 ImageNet 上大约要 2,000 GPU 小时。绝大多数团队没有这个预算给每一个任务都从头来。实际发布的几乎都是：拿一个预训练骨干，换个新头，用几百到几千张任务图片训一下就上线了。\n\n这不是偷懒。ImageNet 训出来的 CNN，第一层卷积学的是边缘和类 Gabor 滤波器，接下来几层学纹理和简单图案，中间层学物体部件，最后几层学的才是跟 ImageNet 那 1000 类强相关的组合特征。前 90% 的特征层级几乎原封不动地迁移到医学影像、工业检测、卫星遥感以及你能想到的其它视觉任务——因为自然界的边缘和纹理词汇是有限的。你真正要训的只是最后那 10%。\n\n但迁移做不好有三个坑等着你：学习率太高把预训练特征炸了、冻得太多导致模型吃不到信息、BatchNorm 的统计量漂移到一个跟网络其余部分完全不匹配的小数据集上。这节课会带你故意踩一遍这三个坑。\n\n   核心概念\n\n    特征提取 vs 微调\n\n两种方案，取决于你对预训练特征的信任程度和你手头有多少数据。\n\n   mermaid\nflowchart TB\n    subgraph FE \"特征提取 — 骨干冻结\" \n        FE1 \"预训练骨干<br/  无梯度 \"      FE2 \"新分类头<br/  训练中 \" \n    end\n    subgraph FT \"微调 — 端到端\" \n        FT1 \"预训练骨干<br/  极小 LR \"      FT2 \"新分类头<br/  正常 LR \" \n    end\n\n    style FE1 fill: e5e7eb,stroke: 6b7280\n    style FE2 fill: dcfce7,stroke: 16a34a\n    style FT1 fill: fef3c7,stroke: d97706\n    style FT2 fill: dcfce7,stroke: 16a34a\n   \n\n经验法则：\n\n  数据集大小   与 ImageNet 的领域距离   策略  \n                                           \n  < 1k 张   近   冻结骨干，只训头部  \n  1k 10k   近   冻结前 2 3 个 stage，微调剩余  \n  10k 100k   任意   端到端微调 + 判别式学习率  \n  100k+   远   全部微调；如果领域足够远，考虑从头训  \n\n\"接近 ImageNet\" 大致意味着自然 RGB 照片、包含物体类内容。医学 CT、遥感卫星图、显微镜图像属于远领域——预训练特征仍然有帮助，但你需要解冻更多层。\n\n    为什么冻结能生效\n\nCNN 在 ImageNet 上学到的特征并不是针对那 1000 类的。它们针对的是自然图像的统计规律：特定方向的边缘、纹理、对比度模式、形状基元。这些统计规律在几乎所有视觉领域都稳定存在。所以一个 ImageNet 训好的模型，骨干完全冻住、只加一个线性头做零样本评估（zero shot linear probe），在 CIFAR 10 上就能拿到 80%+ 的准确率。头部只是在学：已经学好的这些特征，该怎么加权组合来做这个新任务。\n\n    判别式学习率（Discriminative Learning Rate）\n\n解冻之后，早期层应该训得比后期层慢。早期层编码的是你想保留的通用特征；后期层编码的是需要大幅调整的任务相关结构。\n\n   \n典型配置：\n\n  stage 0（stem + 第一组）: lr = base lr / 100    （几乎不动）\n  stage 1:                   lr = base lr / 10\n  stage 2:                   lr = base lr / 3\n  stage 3（最后一组骨干）:    lr = base"
+    },
+    {
+      "id": "05-transfer-learning-学习目标",
+      "title": "学习目标",
+      "chapter": "05",
+      "chapterTitle": "迁移学习与微调",
+      "url": "chapters/05-transfer-learning.html#学习目标",
+      "body": ""
+    },
+    {
+      "id": "05-transfer-learning-为什么要学这个",
+      "title": "为什么要学这个",
+      "chapter": "05",
+      "chapterTitle": "迁移学习与微调",
+      "url": "chapters/05-transfer-learning.html#为什么要学这个",
+      "body": ""
+    },
+    {
+      "id": "05-transfer-learning-核心概念",
+      "title": "核心概念",
+      "chapter": "05",
+      "chapterTitle": "迁移学习与微调",
+      "url": "chapters/05-transfer-learning.html#核心概念",
+      "body": ""
+    },
+    {
+      "id": "05-transfer-learning-特征提取-vs-微调",
+      "title": "特征提取 vs 微调",
+      "chapter": "05",
+      "chapterTitle": "迁移学习与微调",
+      "url": "chapters/05-transfer-learning.html#特征提取-vs-微调",
+      "body": ""
+    },
+    {
+      "id": "05-transfer-learning-为什么冻结能生效",
+      "title": "为什么冻结能生效",
+      "chapter": "05",
+      "chapterTitle": "迁移学习与微调",
+      "url": "chapters/05-transfer-learning.html#为什么冻结能生效",
+      "body": ""
+    },
+    {
+      "id": "05-transfer-learning-判别式学习率discriminative-learning-rate",
+      "title": "判别式学习率（Discriminative Learning Rate）",
+      "chapter": "05",
+      "chapterTitle": "迁移学习与微调",
+      "url": "chapters/05-transfer-learning.html#判别式学习率discriminative-learning-rate",
+      "body": ""
+    },
+    {
+      "id": "05-transfer-learning-batchnorm-的坑",
+      "title": "BatchNorm 的坑",
+      "chapter": "05",
+      "chapterTitle": "迁移学习与微调",
+      "url": "chapters/05-transfer-learning.html#batchnorm-的坑",
+      "body": ""
+    },
+    {
+      "id": "05-transfer-learning-分类头设计",
+      "title": "分类头设计",
+      "chapter": "05",
+      "chapterTitle": "迁移学习与微调",
+      "url": "chapters/05-transfer-learning.html#分类头设计",
+      "body": ""
+    },
+    {
+      "id": "05-transfer-learning-逐层学习率衰减layer-wise-lr-decay",
+      "title": "逐层学习率衰减（Layer-wise LR Decay）",
+      "chapter": "05",
+      "chapterTitle": "迁移学习与微调",
+      "url": "chapters/05-transfer-learning.html#逐层学习率衰减layer-wise-lr-decay",
+      "body": ""
+    },
+    {
+      "id": "05-transfer-learning-该关注什么指标",
+      "title": "该关注什么指标",
+      "chapter": "05",
+      "chapterTitle": "迁移学习与微调",
+      "url": "chapters/05-transfer-learning.html#该关注什么指标",
+      "body": ""
+    },
+    {
+      "id": "05-transfer-learning-从零实现",
+      "title": "从零实现",
+      "chapter": "05",
+      "chapterTitle": "迁移学习与微调",
+      "url": "chapters/05-transfer-learning.html#从零实现",
+      "body": ""
+    },
+    {
+      "id": "05-transfer-learning-第一步加载预训练骨干并查看结构",
+      "title": "第一步：加载预训练骨干并查看结构",
+      "chapter": "05",
+      "chapterTitle": "迁移学习与微调",
+      "url": "chapters/05-transfer-learning.html#第一步加载预训练骨干并查看结构",
+      "body": ""
+    },
+    {
+      "id": "05-transfer-learning-第二步特征提取-冻住一切只换头",
+      "title": "第二步：特征提取 — 冻住一切，只换头",
+      "chapter": "05",
+      "chapterTitle": "迁移学习与微调",
+      "url": "chapters/05-transfer-learning.html#第二步特征提取-冻住一切只换头",
+      "body": ""
+    },
+    {
+      "id": "05-transfer-learning-第三步判别式微调",
+      "title": "第三步：判别式微调",
+      "chapter": "05",
+      "chapterTitle": "迁移学习与微调",
+      "url": "chapters/05-transfer-learning.html#第三步判别式微调",
+      "body": ""
+    },
+    {
+      "id": "05-transfer-learning-第四步处理-batchnorm",
+      "title": "第四步：处理 BatchNorm",
+      "chapter": "05",
+      "chapterTitle": "迁移学习与微调",
+      "url": "chapters/05-transfer-learning.html#第四步处理-batchnorm",
+      "body": ""
+    },
+    {
+      "id": "05-transfer-learning-第五步最小化端到端微调循环",
+      "title": "第五步：最小化端到端微调循环",
+      "chapter": "05",
+      "chapterTitle": "迁移学习与微调",
+      "url": "chapters/05-transfer-learning.html#第五步最小化端到端微调循环",
+      "body": ""
+    },
+    {
+      "id": "05-transfer-learning-第六步渐进式解冻",
+      "title": "第六步：渐进式解冻",
+      "chapter": "05",
+      "chapterTitle": "迁移学习与微调",
+      "url": "chapters/05-transfer-learning.html#第六步渐进式解冻",
+      "body": ""
+    },
+    {
+      "id": "05-transfer-learning-实战用法",
+      "title": "实战用法",
+      "chapter": "05",
+      "chapterTitle": "迁移学习与微调",
+      "url": "chapters/05-transfer-learning.html#实战用法",
+      "body": ""
+    },
+    {
+      "id": "05-transfer-learning-ship-it",
+      "title": "Ship It",
+      "chapter": "05",
+      "chapterTitle": "迁移学习与微调",
+      "url": "chapters/05-transfer-learning.html#ship-it",
+      "body": ""
+    },
+    {
+      "id": "05-transfer-learning-练习",
+      "title": "练习",
+      "chapter": "05",
+      "chapterTitle": "迁移学习与微调",
+      "url": "chapters/05-transfer-learning.html#练习",
+      "body": ""
+    },
+    {
+      "id": "05-transfer-learning-术语表",
+      "title": "术语表",
+      "chapter": "05",
+      "chapterTitle": "迁移学习与微调",
+      "url": "chapters/05-transfer-learning.html#术语表",
+      "body": ""
+    },
+    {
+      "id": "05-transfer-learning-延伸阅读",
+      "title": "延伸阅读",
+      "chapter": "05",
+      "chapterTitle": "迁移学习与微调",
+      "url": "chapters/05-transfer-learning.html#延伸阅读",
+      "body": ""
+    },
+    {
+      "id": "05-transfer-learning-自测题",
+      "title": "自测题",
+      "chapter": "05",
+      "chapterTitle": "迁移学习与微调",
+      "url": "chapters/05-transfer-learning.html#自测题",
+      "body": ""
+    }
+  ]
+}

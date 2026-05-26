@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>感知机 — AI Deep Learning Core</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" id="hljs-light" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+<link rel="stylesheet" id="hljs-dark" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" media="not all">
+<link rel="stylesheet" href="../assets/quiz.css">
+</head>
+<body>
+
+<div class="progress-bar" id="progress-bar"></div>
+
+<nav class="topnav" id="topnav">
+  <div class="topnav-inner">
+    <a class="brand" href="../index.html">AI Deep Learning Core</a>
+    <div class="nav-links">
+      <a href="01-the-perceptron.html" class="active">01</a>
+      <a href="02-multi-layer-networks.html">02</a>
+      <a href="03-backpropagation.html">03</a>
+      <a href="04-activation-functions.html">04</a>
+      <a href="05-loss-functions.html">05</a>
+      <a href="06-optimizers.html">06</a>
+      <a href="07-regularization.html">07</a>
+      <a href="08-weight-initialization.html">08</a>
+      <a href="09-learning-rate-schedules.html">09</a>
+      <a href="10-mini-framework.html">10</a>
+      <a href="11-intro-to-pytorch.html">11</a>
+      <a href="12-intro-to-jax.html">12</a>
+      <a href="13-debugging-neural-networks.html">13</a>
+    </div>
+    <div class="nav-controls">
+      <button class="nav-btn" id="search-btn" aria-label="搜索 (Ctrl+K)">⌘K</button>
+      <button class="nav-btn" id="settings-btn" aria-label="阅读设置">Aa</button>
+      <a class="nav-btn" href="../../index.html" aria-label="返回知识库">← 知识库</a>
+      <a class="nav-btn" href="https://github.com/maverickxone/mav-homepage" target="_blank" rel="noopener" aria-label="GitHub" style="padding: 6px 8px;"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg></a>
+    </div>
+  </div>
+</nav>
+<div class="settings-pop" id="settings-pop">
+  <h5>主题</h5>
+  <div class="row">
+    <button class="seg" data-theme-set="light">明亮</button>
+    <button class="seg" data-theme-set="dark">暗色</button>
+  </div>
+  <h5>字号</h5>
+  <div class="row">
+    <button class="seg" data-size-set="s">小</button>
+    <button class="seg" data-size-set="m">中</button>
+    <button class="seg" data-size-set="l">大</button>
+  </div>
+</div>
+
+<div class="with-sidebar">
+  <aside class="sidebar">
+  <div class="chapter-num">CHAPTER 01</div>
+  <div class="chapter-name">感知机</div>
+  <h4>目录</h4>
+  <ul>
+    <li><a href="#学习目标">学习目标</a></li>
+    <li><a href="#为什么要学这个">为什么要学这个</a></li>
+    <li><a href="#核心概念">核心概念</a></li>
+    <li><a href="#从零实现">从零实现</a></li>
+    <li><a href="#用库做同样的事">用库做同样的事</a></li>
+    <li><a href="#练习">练习</a></li>
+    <li><a href="#术语表">术语表</a></li>
+    <li><a href="#自测题">自测题</a></li>
+  </ul>
+</aside>
+  <article class="chapter-body">
+    <header class="chapter-head">
+  <div class="chapter-head-meta">
+    <span class="num">CHAPTER 01</span>
+    <span>≈ 60 MIN READ</span>
+  </div>
+  <h1>感知机</h1>
+
+</header>
+    <blockquote><p>感知机是神经网络的原子。掰开看里面就是权重、偏置和一个决策。</p>
+</blockquote>
+<h2 id="学习目标">学习目标</h2>
+<ul>
+<li>用 Python 从零实现感知机，包括权重更新规则和阶跃激活函数</li>
+<li>解释为什么单个感知机只能解决线性可分问题，演示 XOR 失败案例</li>
+<li>通过组合 OR、NAND、AND 门构造多层感知机解决 XOR</li>
+<li>训练一个两层 sigmoid 网络用反向传播自动学会 XOR</li>
+</ul>
+<h2 id="为什么要学这个">为什么要学这个</h2>
+<p>你已经知道向量和点积了。你知道矩阵能把输入变成输出。但机器怎么<strong>学会</strong>该用哪个变换？</p>
+<p>感知机回答了这个问题。它是最简单的学习机器：接收输入、乘以权重、加 bias、做出二元判断，然后调整。就这样。历史上所有神经网络都是这个想法一层层堆出来的。</p>
+<p>理解感知机意味着理解&quot;学习&quot;在代码中到底是什么：<strong>调整数字直到输出跟现实匹配</strong>。</p>
+<h2 id="核心概念">核心概念</h2>
+<h3 id="一个神经元一个决策">一个神经元，一个决策</h3>
+<p>感知机接收 n 个输入，每个乘以一个权重，求和，加 bias，然后通过激活函数。</p>
+<pre data-label="mermaid"><code class="language-mermaid">graph LR
+    x1["x1"] -- "w1" --&gt; sum["Σ(wi×xi) + b"]
+    x2["x2"] -- "w2" --&gt; sum
+    x3["x3"] -- "w3" --&gt; sum
+    bias["bias"] --&gt; sum
+    sum --&gt; step["step(z)"]
+    step --&gt; out["输出（0 或 1）"]</code></pre>
+<p>阶跃函数很粗暴：加权和加 bias ≥ 0 就输出 1，否则输出 0。</p>
+<pre><code>step(z) = 1  如果 z ≥ 0
+           0  如果 z &lt; 0</code></pre>
+<p>这就是一个线性分类器。权重和 bias 定义了一条线（高维空间中是超平面），把输入空间切成两半。</p>
+<h3 id="决策边界">决策边界</h3>
+<p>对于两个输入，感知机在二维空间里画一条线：</p>
+<pre><code>  x2
+  ┤
+  │  类别 0         /
+  │    (0)          /
+  │                /
+  │               / w1·x1 + w2·x2 + b = 0
+  │              /
+  │             /     类别 1
+  │            /        (1)
+  ┼───────────/──────────── x1</code></pre>
+<p>线一边输出 0，另一边输出 1。训练就是移动这条线直到它正确分开两类。</p>
+<h3 id="学习规则">学习规则</h3>
+<p>感知机学习规则非常简单：</p>
+<pre><code>对每个训练样本 (x, y_true)：
+    y_pred = predict(x)
+    error = y_true - y_pred
+
+    对每个权重：
+        w_i = w_i + learning_rate × error × x_i
+    bias = bias + learning_rate × error</code></pre>
+<p>预测对了，error = 0，什么都不变。预测 0 但应该是 1，权重增大。预测 1 但应该是 0，权重减小。学习率控制每次调整有多大。</p>
+<h3 id="xor-问题">XOR 问题</h3>
+<p>到这就崩了。看看这些逻辑门：</p>
+<pre><code>AND 门：           OR 门：            XOR 门：
+x1  x2  out       x1  x2  out       x1  x2  out
+0   0   0         0   0   0         0   0   0
+0   1   0         0   1   1         0   1   1
+1   0   0         1   0   1         1   0   1
+1   1   1         1   1   1         1   1   0</code></pre>
+<p>AND 和 OR 是线性可分的——能画一条线把 0 和 1 分开。XOR 不行。没有任何一条线能把 [0,1] 和 [1,0] 跟 [0,0] 和 [1,1] 分开。</p>
+<pre><code>AND（可分）：           XOR（不可分）：
+
+  x2                      x2
+  1 ┤  0     1            1 ┤  1     0
+    │     /                 │
+  0 ┤  0 / 0              0 ┤  0     1
+    ┼──/──────── x1         ┼──────────── x1
+       一条线搞定！           没有一条线能搞定！</code></pre>
+<p>这是根本性限制。单个感知机只能解决线性可分问题。1969 年 Minsky 和 Papert 证明了这一点，差点杀死了神经网络研究十年。</p>
+<p><strong>解决方案</strong>：把感知机堆成层。多层感知机可以通过组合两个线性决策来解决非线性问题。</p>
+<h2 id="从零实现">从零实现</h2>
+<h3 id="第一步perceptron-类">第一步：Perceptron 类</h3>
+<pre data-label="python"><code class="language-python">class Perceptron:
+    def __init__(self, n_inputs, learning_rate=0.1):
+        self.weights = [0.0] * n_inputs
+        self.bias = 0.0
+        self.lr = learning_rate
+
+    def predict(self, inputs):
+        total = sum(w * x for w, x in zip(self.weights, inputs))
+        total += self.bias
+        return 1 if total &gt;= 0 else 0
+
+    def train(self, training_data, epochs=100):
+        for epoch in range(epochs):
+            errors = 0
+            for inputs, target in training_data:
+                prediction = self.predict(inputs)
+                error = target - prediction
+                if error != 0:
+                    errors += 1
+                    for i in range(len(self.weights)):
+                        self.weights[i] += self.lr * error * inputs[i]
+                    self.bias += self.lr * error
+            if errors == 0:
+                print(f"第 {epoch + 1} 轮收敛")
+                return
+        print(f"{epochs} 轮后未收敛")</code></pre>
+<h3 id="第二步在逻辑门上训练">第二步：在逻辑门上训练</h3>
+<pre data-label="python"><code class="language-python">and_data = [([0,0], 0), ([0,1], 0), ([1,0], 0), ([1,1], 1)]
+or_data  = [([0,0], 0), ([0,1], 1), ([1,0], 1), ([1,1], 1)]
+
+print("=== AND 门 ===")
+p_and = Perceptron(2)
+p_and.train(and_data)
+for inputs, _ in and_data:
+    print(f"  {inputs} → {p_and.predict(inputs)}")
+
+print("\n=== OR 门 ===")
+p_or = Perceptron(2)
+p_or.train(or_data)
+for inputs, _ in or_data:
+    print(f"  {inputs} → {p_or.predict(inputs)}")</code></pre>
+<h3 id="第三步看-xor-失败">第三步：看 XOR 失败</h3>
+<pre data-label="python"><code class="language-python">xor_data = [([0,0], 0), ([0,1], 1), ([1,0], 1), ([1,1], 0)]
+
+print("\n=== XOR 门（单层感知机）===")
+p_xor = Perceptron(2)
+p_xor.train(xor_data, epochs=1000)
+for inputs, expected in xor_data:
+    result = p_xor.predict(inputs)
+    status = "✓" if result == expected else "✗"
+    print(f"  {inputs} → {result}（期望 {expected}）{status}")</code></pre>
+<p>永远不会收敛。这就是单感知机解不了 XOR 的铁证。</p>
+<h3 id="第四步用两层解决-xor">第四步：用两层解决 XOR</h3>
+<p>技巧：XOR = (x1 OR x2) AND NOT(x1 AND x2)。组合三个感知机：</p>
+<pre data-label="mermaid"><code class="language-mermaid">graph LR
+    x1["x1"] --&gt; OR["OR 神经元"]
+    x1 --&gt; NAND["NAND 神经元"]
+    x2["x2"] --&gt; OR
+    x2 --&gt; NAND
+    OR --&gt; AND["AND 神经元"]
+    NAND --&gt; AND
+    AND --&gt; out["输出"]</code></pre>
+<pre data-label="python"><code class="language-python">def xor_network(x1, x2):
+    """手动搭建的两层 XOR 网络"""
+    or_neuron = Perceptron(2)
+    or_neuron.weights = [1.0, 1.0]
+    or_neuron.bias = -0.5
+
+    nand_neuron = Perceptron(2)
+    nand_neuron.weights = [-1.0, -1.0]
+    nand_neuron.bias = 1.5
+
+    and_neuron = Perceptron(2)
+    and_neuron.weights = [1.0, 1.0]
+    and_neuron.bias = -1.5
+
+    hidden1 = or_neuron.predict([x1, x2])
+    hidden2 = nand_neuron.predict([x1, x2])
+    output = and_neuron.predict([hidden1, hidden2])
+    return output
+
+print("\n=== XOR 门（多层网络）===")
+for inputs, expected in xor_data:
+    result = xor_network(inputs[0], inputs[1])
+    print(f"  {inputs} → {result}（期望 {expected}）")</code></pre>
+<p>四个情况全对。把感知机堆成层，就能产生单层做不到的决策边界。</p>
+<h3 id="第五步训练一个两层网络">第五步：训练一个两层网络</h3>
+<p>第四步是手动设定权重的。这对 XOR 管用，但真实问题你不知道正确的权重。解决方案：把阶跃函数换成 sigmoid（光滑的，梯度存在），然后通过反向传播自动学习权重。</p>
+<pre data-label="python"><code class="language-python">import random
+import math
+
+class TwoLayerNetwork:
+    def __init__(self, learning_rate=0.5):
+        random.seed(0)
+        # 隐藏层：2 个神经元，每个 2 个输入
+        self.w_hidden = [[random.uniform(-1, 1), random.uniform(-1, 1)] for _ in range(2)]
+        self.b_hidden = [random.uniform(-1, 1), random.uniform(-1, 1)]
+        # 输出层：1 个神经元，2 个输入（来自隐藏层）
+        self.w_output = [random.uniform(-1, 1), random.uniform(-1, 1)]
+        self.b_output = random.uniform(-1, 1)
+        self.lr = learning_rate
+
+    def sigmoid(self, x):
+        x = max(-500, min(500, x))
+        return 1.0 / (1.0 + math.exp(-x))
+
+    def forward(self, inputs):
+        self.inputs = inputs
+        # 隐藏层
+        self.hidden_outputs = []
+        for i in range(2):
+            z = sum(w * x for w, x in zip(self.w_hidden[i], inputs)) + self.b_hidden[i]
+            self.hidden_outputs.append(self.sigmoid(z))
+        # 输出层
+        z_out = sum(w * h for w, h in zip(self.w_output, self.hidden_outputs)) + self.b_output
+        self.output = self.sigmoid(z_out)
+        return self.output
+
+    def train(self, training_data, epochs=10000):
+        for epoch in range(epochs):
+            total_error = 0
+            for inputs, target in training_data:
+                output = self.forward(inputs)
+                error = target - output
+                total_error += error ** 2
+
+                # 输出层梯度
+                d_output = error * output * (1 - output)
+
+                # 隐藏层梯度（链式法则！）
+                hidden_deltas = []
+                for i in range(2):
+                    h = self.hidden_outputs[i]
+                    hd = d_output * self.w_output[i] * h * (1 - h)
+                    hidden_deltas.append(hd)
+
+                # 更新输出层权重
+                for i in range(2):
+                    self.w_output[i] += self.lr * d_output * self.hidden_outputs[i]
+                self.b_output += self.lr * d_output
+
+                # 更新隐藏层权重
+                for i in range(2):
+                    for j in range(len(inputs)):
+                        self.w_hidden[i][j] += self.lr * hidden_deltas[i] * inputs[j]
+                    self.b_hidden[i] += self.lr * hidden_deltas[i]
+
+            if epoch % 2000 == 0:
+                print(f"  epoch {epoch}: loss = {total_error:.6f}")
+
+# 训练
+net = TwoLayerNetwork(learning_rate=2.0)
+net.train(xor_data, epochs=10000)
+
+print("\n训练后的预测：")
+for inputs, expected in xor_data:
+    result = net.forward(inputs)
+    predicted = 1 if result &gt;= 0.5 else 0
+    print(f"  {inputs} → {result:.4f}（四舍五入: {predicted}，期望 {expected}）")</code></pre>
+<p>跟第四步的两个关键区别：一、sigmoid 代替阶跃函数——它是光滑的，梯度存在。二、<code>train</code> 方法把误差从输出层反向传播到隐藏层，按每个权重对误差的贡献来调整。这就是 20 行代码的反向传播。</p>
+<p>这是通往第 3 课的桥梁。<code>d_output</code> 和 <code>hidden_deltas</code> 背后的数学就是链式法则应用到网络图上。那边会正式推导。</p>
+<h2 id="用库做同样的事">用库做同样的事</h2>
+<pre data-label="python"><code class="language-python">from sklearn.linear_model import Perceptron as SkPerceptron
+import numpy as np
+
+X = np.array([[0,0], [0,1], [1,0], [1,1]])
+y = np.array([0, 0, 0, 1])  # AND 门
+
+clf = SkPerceptron(max_iter=100, tol=1e-3)
+clf.fit(X, y)
+print([clf.predict([x])[0] for x in X])  # [0, 0, 0, 1]</code></pre>
+<p>五行。你的 30 行 <code>Perceptron</code> 类做的是同样的事。sklearn 版加了收敛检查、多种损失函数和稀疏输入支持——但核心循环一模一样。</p>
+<p>真正的飞跃在于规模。生产网络的变化：</p>
+<ul>
+<li>阶跃函数变成 sigmoid、ReLU 或其他光滑激活</li>
+<li>权重通过反向传播自动学习（第 3 课）</li>
+<li>层变深：3 层、10 层、100+ 层</li>
+<li>核心原则不变：每层从前一层的输出创建新特征</li>
+</ul>
+<p>单个感知机只能画直线。堆起来，你能画任何形状。</p>
+<h2 id="练习">练习</h2>
+<ol>
+<li>训练一个 NAND 门感知机（万能门——任何逻辑电路都能用 NAND 搭）。验证它的权重和 bias 形成合法的决策边界。</li>
+<li>修改 Perceptron 类，在每个 epoch 追踪决策边界 (w1×x1 + w2×x2 + b = 0)。打印 AND 门训练过程中这条线的移动。</li>
+<li>搭一个 3 输入感知机，只在至少 2 个输入为 1 时输出 1（多数投票）。这是线性可分的吗？为什么？</li>
+</ol>
+<h2 id="术语表">术语表</h2>
+<div class="table-wrap"><table><thead><tr>
+<th>术语</th>
+<th>通俗说法</th>
+<th>真正含义</th>
+</tr>
+</thead><tbody><tr>
+<td>Perceptron（感知机）</td>
+<td>&quot;假神经元&quot;</td>
+<td>线性分类器：输入和权重的点积加 bias，通过阶跃函数</td>
+</tr>
+<tr>
+<td>Weight（权重）</td>
+<td>&quot;输入有多重要&quot;</td>
+<td>缩放每个输入对决策贡献的乘数</td>
+</tr>
+<tr>
+<td>Bias（偏置）</td>
+<td>&quot;阈值&quot;</td>
+<td>平移决策边界的常数，让感知机在输入为零时也能激活</td>
+</tr>
+<tr>
+<td>Activation function（激活函数）</td>
+<td>&quot;压缩值的东西&quot;</td>
+<td>加权和之后应用的函数。感知机用阶跃函数，现代网络用 sigmoid/ReLU</td>
+</tr>
+<tr>
+<td>Linearly separable（线性可分）</td>
+<td>&quot;能画一条线分开&quot;</td>
+<td>一个超平面能完美分开两类的数据集</td>
+</tr>
+<tr>
+<td>XOR problem</td>
+<td>&quot;感知机做不到的事&quot;</td>
+<td>证明单层网络无法学习非线性可分函数</td>
+</tr>
+<tr>
+<td>Decision boundary（决策边界）</td>
+<td>&quot;分类器切换的地方&quot;</td>
+<td>超平面 w·x + b = 0，把输入空间分成两类</td>
+</tr>
+<tr>
+<td>MLP（多层感知机）</td>
+<td>&quot;真正的神经网络&quot;</td>
+<td>感知机堆成层，每层的输出作为下一层的输入</td>
+</tr>
+</tbody></table></div>
+<hr>
+<h2 id="自测题">自测题</h2>
+<div class="quiz-card" data-correct="1" data-quiz-id="1">
+  <div class="quiz-question"><span class="quiz-num">Q1</span>感知机在应用激活函数之前对输入做了什么数学运算？</div>
+  <div class="quiz-options">
+    <label class="quiz-option" data-index="0">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">矩阵求逆</span>
+    </label>
+    <label class="quiz-option" data-index="1">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">加权求和加偏置</span>
+    </label>
+    <label class="quiz-option" data-index="2">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">傅里叶变换</span>
+    </label>
+    <label class="quiz-option" data-index="3">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">特征值分解</span>
+    </label>
+  </div>
+  <button class="quiz-check">Check Answer</button>
+  <div class="quiz-explanation" hidden>感知机计算输入和权重的点积，加上 bias，然后通过阶跃函数。加权求和加偏置是核心计算。</div>
+</div>
+
+<div class="quiz-card" data-correct="1" data-quiz-id="2">
+  <div class="quiz-question"><span class="quiz-num">Q2</span>"线性可分"对分类问题意味着什么？</div>
+  <div class="quiz-options">
+    <label class="quiz-option" data-index="0">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">数据可以按顺序排列</span>
+    </label>
+    <label class="quiz-option" data-index="1">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">一条直线（或超平面）可以完美分开两类</span>
+    </label>
+    <label class="quiz-option" data-index="2">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">特征跟标签有线性关系</span>
+    </label>
+    <label class="quiz-option" data-index="3">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">数据只有两个维度</span>
+    </label>
+  </div>
+  <button class="quiz-check">Check Answer</button>
+  <div class="quiz-explanation" hidden>线性可分意味着能画一个超平面完美把输入空间分成正确的类别。AND 和 OR 是线性可分的；XOR 不是。</div>
+</div>
+
+<div class="quiz-card" data-correct="2" data-quiz-id="3">
+  <div class="quiz-question"><span class="quiz-num">Q3</span>为什么单个感知机学不了 XOR？</div>
+  <div class="quiz-options">
+    <label class="quiz-option" data-index="0">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">学习率太低</span>
+    </label>
+    <label class="quiz-option" data-index="1">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">XOR 输入太多</span>
+    </label>
+    <label class="quiz-option" data-index="2">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">XOR 不是线性可分的——没有一条直线能分开这些类</span>
+    </label>
+    <label class="quiz-option" data-index="3">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">阶跃函数阻止了梯度流动</span>
+    </label>
+  </div>
+  <button class="quiz-check">Check Answer</button>
+  <div class="quiz-explanation" hidden>XOR 把 [0,1] 和 [1,0] 放一边，[0,0] 和 [1,1] 放另一边。没有一条直线能分开这两组，所以只能画一条线性边界的单感知机解不了 XOR。</div>
+</div>
+
+<div class="quiz-card" data-correct="2" data-quiz-id="4">
+  <div class="quiz-question"><span class="quiz-num">Q4</span>感知机学习规则中，预测正确时会发生什么？</div>
+  <div class="quiz-options">
+    <label class="quiz-option" data-index="0">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">权重翻倍</span>
+    </label>
+    <label class="quiz-option" data-index="1">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">权重归零</span>
+    </label>
+    <label class="quiz-option" data-index="2">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">什么都不变——error 为零所以更新量为零</span>
+    </label>
+    <label class="quiz-option" data-index="3">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">学习率减半</span>
+    </label>
+  </div>
+  <button class="quiz-check">Check Answer</button>
+  <div class="quiz-explanation" hidden>更新规则是 w_i = w_i + lr × error × x_i。预测等于目标时 error = 0，所有权重更新为零。感知机只在犯错时才调整。</div>
+</div>
+
+<div class="quiz-card" data-correct="1" data-quiz-id="5">
+  <div class="quiz-question"><span class="quiz-num">Q5</span>多个感知机怎么解决 XOR？</div>
+  <div class="quiz-options">
+    <label class="quiz-option" data-index="0">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">对单个感知机用更大的学习率</span>
+    </label>
+    <label class="quiz-option" data-index="1">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">用 OR、NAND 和 AND 感知机组合成两层</span>
+    </label>
+    <label class="quiz-option" data-index="2">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">给单个感知机加更多输入</span>
+    </label>
+    <label class="quiz-option" data-index="3">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">去掉 bias 项</span>
+    </label>
+  </div>
+  <button class="quiz-check">Check Answer</button>
+  <div class="quiz-explanation" hidden>XOR = (x1 OR x2) AND NOT(x1 AND x2)。隐藏层放一个 OR 神经元和一个 NAND 神经元，输出层是 AND 神经元——从线性组件构造出非线性决策边界。</div>
+</div>
+
+    <nav class="pager">  <a class="disabled"><span class="label">← 上一章</span><span class="title"></span></a>  <a href="02-multi-layer-networks.html" class="next">
+    <span class="label">下一章 →</span>
+    <span class="title">多层网络与前向传播</span>
+  </a></nav>
+  </article>
+</div>
+
+<footer>
+  <div class="set">
+    <span>AI Deep Learning Core</span>
+    <span>2026 · EN</span>
+  </div>
+  <div class="set">
+    <span>Mav</span>
+  </div>
+</footer>
+<div class="search-backdrop" id="search-overlay" role="dialog" aria-modal="true" aria-label="搜索" hidden>
+  <div class="search-modal">
+    <div class="search-input-wrap">
+      <input type="search" class="search-input" placeholder="搜索内容..." aria-label="搜索内容" autocomplete="off">
+      <kbd>ESC</kbd>
+    </div>
+    <div class="search-results" role="listbox" aria-label="搜索结果"></div>
+  </div>
+</div>
+
+<!-- Side Panel -->
+<div class="side-panel" id="side-panel">
+  <div class="side-panel-resize" id="side-panel-resize"></div>
+  <div class="side-panel-header">
+    <div class="side-panel-tabs">
+      <button class="side-panel-tab active" data-mode="sidenote">补充</button>
+      <button class="side-panel-tab" data-mode="notepad">笔记</button>
+    </div>
+    <button class="side-panel-close" aria-label="关闭">×</button>
+  </div>
+  <div class="side-panel-body"></div>
+</div>
+<button class="notepad-fab" id="notepad-fab" aria-label="便利贴">✎</button>
+
+<!-- Mobile TOC -->
+<button class="mtoc-fab" id="mtoc-fab" aria-label="目录">TOC</button>
+<div class="mtoc-drawer" id="mtoc-drawer">
+  <div class="mtoc-content"></div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/bash.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/typescript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/yaml.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/javascript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/json.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/python.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/css.min.js"></script>
+<script src="../assets/script.js"></script>
+<script src="../assets/quiz.js"></script>
+<script src="../assets/mermaid-init.js"></script>
+</body>
+</html>

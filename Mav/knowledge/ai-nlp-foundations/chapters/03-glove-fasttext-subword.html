@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GloVe、FastText 与子词嵌入 — AI NLP Foundations</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" id="hljs-light" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+<link rel="stylesheet" id="hljs-dark" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" media="not all">
+<link rel="stylesheet" href="../assets/quiz.css">
+</head>
+<body>
+
+<div class="progress-bar" id="progress-bar"></div>
+
+<nav class="topnav" id="topnav">
+  <div class="topnav-inner">
+    <a class="brand" href="../index.html">AI NLP Foundations</a>
+    <div class="nav-links">
+      <a href="01-text-processing.html">01</a>
+      <a href="02-word-embeddings-word2vec.html">02</a>
+      <a href="03-glove-fasttext-subword.html" class="active">03</a>
+      <a href="04-cnns-rnns-for-text.html">04</a>
+      <a href="05-sequence-to-sequence.html">05</a>
+      <a href="06-attention-mechanism.html">06</a>
+      <a href="07-subword-tokenization.html">07</a>
+    </div>
+    <div class="nav-controls">
+      <button class="nav-btn" id="search-btn" aria-label="搜索 (Ctrl+K)">⌘K</button>
+      <button class="nav-btn" id="settings-btn" aria-label="阅读设置">Aa</button>
+      <a class="nav-btn" href="../../index.html" aria-label="返回知识库">← 知识库</a>
+      <a class="nav-btn" href="https://github.com/maverickxone/mav-homepage" target="_blank" rel="noopener" aria-label="GitHub" style="padding: 6px 8px;"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg></a>
+    </div>
+  </div>
+</nav>
+<div class="settings-pop" id="settings-pop">
+  <h5>主题</h5>
+  <div class="row">
+    <button class="seg" data-theme-set="light">明亮</button>
+    <button class="seg" data-theme-set="dark">暗色</button>
+  </div>
+  <h5>字号</h5>
+  <div class="row">
+    <button class="seg" data-size-set="s">小</button>
+    <button class="seg" data-size-set="m">中</button>
+    <button class="seg" data-size-set="l">大</button>
+  </div>
+</div>
+
+<div class="with-sidebar">
+  <aside class="sidebar">
+  <div class="chapter-num">CHAPTER 03</div>
+  <div class="chapter-name">GloVe、FastText 与子词嵌入</div>
+  <h4>目录</h4>
+  <ul>
+    <li><a href="#为什么要学这个">为什么要学这个</a></li>
+    <li><a href="#核心概念">核心概念</a></li>
+    <li><a href="#从零实现">从零实现</a></li>
+    <li><a href="#实战用法">实战用法</a></li>
+    <li><a href="#ship-it">Ship It</a></li>
+    <li><a href="#练习">练习</a></li>
+    <li><a href="#术语表">术语表</a></li>
+    <li><a href="#延伸阅读">延伸阅读</a></li>
+    <li><a href="#自测题">自测题</a></li>
+  </ul>
+</aside>
+  <article class="chapter-body">
+    <header class="chapter-head">
+  <div class="chapter-head-meta">
+    <span class="num">CHAPTER 03</span>
+    <span>≈ 45 MIN READ</span>
+  </div>
+  <h1>GloVe、FastText 与子词嵌入</h1>
+
+</header>
+    <blockquote><p>Word2Vec 给每个词训练一个向量。GloVe 分解了共现矩阵。FastText 嵌入了词的碎片。BPE 架起了通往 Transformer 的桥。</p>
+</blockquote>
+<h2 id="为什么要学这个">为什么要学这个</h2>
+<p>Word2Vec 留下了两个未解之题。</p>
+<p>第一，当时有一条平行的研究路线直接分解共现矩阵（LSA、HAL），而不是像 skip-gram 那样做在线更新。Word2Vec 的迭代式方法真的本质上更优吗，还是两种方法在处理计数方式上的差异造成了假象？<strong>GloVe（Global Vectors）</strong> 给出了答案：只要损失函数设计得当，矩阵分解可以匹敌甚至超过 Word2Vec，而且训练成本更低。</p>
+<p>第二，这两种方法都没法处理从未见过的词。<code>Zoomer-approved</code>、<code>dogecoin</code>、上周刚发明的任何专有名词、稀有词根的各种屈折形式——统统搞不定。<strong>FastText</strong> 通过嵌入字符 n-gram 解决了这个问题：一个词就是它各部分的总和（包括词素），所以即使是词表外的词也能得到合理的向量。</p>
+<p>第三，Transformer 出现后，问题再次转变。词级别的词表上限大约一百万个条目；真实语言比这开放得多。<strong>字节对编码（Byte-Pair Encoding, BPE）</strong> 及其变体通过学习一组高频子词单元来覆盖一切，解决了这个问题。现在每个主流 LLM 的每个分词器都是子词分词器。</p>
+<p>这节课把三者都走一遍，然后告诉你什么场景该用哪个。</p>
+<h2 id="核心概念">核心概念</h2>
+<p><strong>GloVe（Global Vectors，全局向量）。</strong> 构建词-词共现矩阵（co-occurrence matrix） <code>X</code>，其中 <code>X[i][j]</code> 是词 <code>j</code> 出现在词 <code>i</code> 上下文中的次数。训练向量使得 <code>v_i · v_j + b_i + b_j ≈ log(X[i][j])</code>。对损失加权，让高频词对不会主导训练。搞定。</p>
+<p><strong>FastText。</strong> 一个词是它的字符 n-gram 加上词本身的总和。<code>where</code> 变成 <code>&lt;wh, whe, her, ere, re&gt;, &lt;where&gt;</code>。词向量就是这些组件向量的总和。训练方式和 Word2Vec 一样。好处：没见过的词（<code>whereupon</code>）可以从已知的 n-gram 组合出来。</p>
+<p><strong>BPE（Byte-Pair Encoding，字节对编码）。</strong> 从一个由单个字节（或字符）组成的词表开始。统计语料中所有相邻对的频率。把最高频的那对合并成一个新 token。重复 <code>k</code> 次。结果：一个 <code>k + 256</code> 大小的词表，其中高频序列（<code>ing</code>、<code>tion</code>、<code>the</code>）是单个 token，而稀有词被拆成熟悉的碎片。任何句子都能被分词。</p>
+<h2 id="从零实现">从零实现</h2>
+<h3 id="glove分解共现矩阵">GloVe：分解共现矩阵</h3>
+<pre data-label="python"><code class="language-python">import numpy as np
+from collections import Counter
+
+
+def build_cooccurrence(docs, window=5):
+    pair_counts = Counter()
+    vocab = {}
+    for doc in docs:
+        for token in doc:
+            if token not in vocab:
+                vocab[token] = len(vocab)
+    for doc in docs:
+        indexed = [vocab[t] for t in doc]
+        for i, center in enumerate(indexed):
+            for j in range(max(0, i - window), min(len(indexed), i + window + 1)):
+                if i != j:
+                    distance = abs(i - j)
+                    pair_counts[(center, indexed[j])] += 1.0 / distance
+    return vocab, pair_counts
+
+
+def glove_train(vocab, pair_counts, dim=16, epochs=100, lr=0.05, x_max=100, alpha=0.75, seed=0):
+    n = len(vocab)
+    rng = np.random.default_rng(seed)
+    W = rng.normal(0, 0.1, size=(n, dim))
+    W_tilde = rng.normal(0, 0.1, size=(n, dim))
+    b = np.zeros(n)
+    b_tilde = np.zeros(n)
+
+    for epoch in range(epochs):
+        for (i, j), x_ij in pair_counts.items():
+            weight = (x_ij / x_max) ** alpha if x_ij &lt; x_max else 1.0
+            diff = W[i] @ W_tilde[j] + b[i] + b_tilde[j] - np.log(x_ij)
+            coef = weight * diff
+
+            grad_W_i = coef * W_tilde[j]
+            grad_W_tilde_j = coef * W[i]
+            W[i] -= lr * grad_W_i
+            W_tilde[j] -= lr * grad_W_tilde_j
+            b[i] -= lr * coef
+            b_tilde[j] -= lr * coef
+
+    return W + W_tilde</code></pre>
+<p>有两个值得注意的设计。加权函数 <code>f(x) = (x/x_max)^alpha</code> 会降低极高频词对（比如 <code>(the, and)</code>）的权重，防止它们主导损失。最终嵌入是 <code>W</code>（中心词表）和 <code>W_tilde</code>（上下文词表）的求和。两个表相加是论文里的一个技巧，效果通常比只用其中一个好。</p>
+<h3 id="fasttext带子词感知的嵌入">FastText：带子词感知的嵌入</h3>
+<pre data-label="python"><code class="language-python">def char_ngrams(word, n_min=3, n_max=6):
+    wrapped = f"&lt;{word}&gt;"
+    grams = {wrapped}
+    for n in range(n_min, n_max + 1):
+        for i in range(len(wrapped) - n + 1):
+            grams.add(wrapped[i:i + n])
+    return grams</code></pre>
+<pre data-label="python"><code class="language-python">&gt;&gt;&gt; char_ngrams("where")
+{'&lt;where&gt;', '&lt;wh', 'whe', 'her', 'ere', 're&gt;', '&lt;whe', 'wher', 'here', 'ere&gt;', '&lt;wher', 'where', 'here&gt;'}</code></pre>
+<p>每个词用它的 n-gram 集合表示（通常取 3 到 6 个字符）。词嵌入就是其所有 n-gram 嵌入的加和。在 skip-gram 训练中，把这个替代 Word2Vec 使用的单一向量即可。</p>
+<pre data-label="python"><code class="language-python">def fasttext_vector(word, ngram_table):
+    grams = char_ngrams(word)
+    vecs = [ngram_table[g] for g in grams if g in ngram_table]
+    if not vecs:
+        return None
+    return np.sum(vecs, axis=0)</code></pre>
+<p>对于没见过的词，只要它的部分 n-gram 是已知的，你就能拿到向量。<code>whereupon</code> 和 <code>where</code> 共享 <code>&lt;wh</code>、<code>her</code>、<code>ere</code>、<code>&lt;where</code>，所以两者会落在向量空间中相近的位置。</p>
+<h3 id="bpe学习出来的子词词表">BPE：学习出来的子词词表</h3>
+<pre data-label="python"><code class="language-python">def learn_bpe(corpus, k_merges):
+    vocab = Counter()
+    for word, freq in corpus.items():
+        tokens = tuple(word) + ("&lt;/w&gt;",)
+        vocab[tokens] = freq
+
+    merges = []
+    for _ in range(k_merges):
+        pair_freq = Counter()
+        for tokens, freq in vocab.items():
+            for a, b in zip(tokens, tokens[1:]):
+                pair_freq[(a, b)] += freq
+        if not pair_freq:
+            break
+        best = pair_freq.most_common(1)[0][0]
+        merges.append(best)
+
+        new_vocab = Counter()
+        for tokens, freq in vocab.items():
+            new_tokens = []
+            i = 0
+            while i &lt; len(tokens):
+                if i + 1 &lt; len(tokens) and (tokens[i], tokens[i + 1]) == best:
+                    new_tokens.append(tokens[i] + tokens[i + 1])
+                    i += 2
+                else:
+                    new_tokens.append(tokens[i])
+                    i += 1
+            new_vocab[tuple(new_tokens)] = freq
+        vocab = new_vocab
+    return merges
+
+
+def apply_bpe(word, merges):
+    tokens = list(word) + ["&lt;/w&gt;"]
+    for a, b in merges:
+        new_tokens = []
+        i = 0
+        while i &lt; len(tokens):
+            if i + 1 &lt; len(tokens) and tokens[i] == a and tokens[i + 1] == b:
+                new_tokens.append(a + b)
+                i += 2
+            else:
+                new_tokens.append(tokens[i])
+                i += 1
+        tokens = new_tokens
+    return tokens</code></pre>
+<pre data-label="python"><code class="language-python">&gt;&gt;&gt; corpus = Counter({"low": 5, "lower": 2, "newest": 6, "widest": 3})
+&gt;&gt;&gt; merges = learn_bpe(corpus, k_merges=10)
+&gt;&gt;&gt; apply_bpe("lowest", merges)
+['low', 'est&lt;/w&gt;']</code></pre>
+<p>第一次迭代合并最常见的相邻对。经过足够多的迭代，常见子串（<code>low</code>、<code>est</code>、<code>tion</code>）变成单个 token，稀有词则被干净地拆开。</p>
+<p>真正的 GPT / BERT / T5 分词器会学习 30k-100k 次合并。结果：任何文本都能被分词成有界长度的已知 ID 序列，永远不会 OOV。</p>
+<h2 id="实战用法">实战用法</h2>
+<p>实际工作中你很少自己从头训练这些模型，一般都是加载预训练的 checkpoint。</p>
+<pre data-label="python"><code class="language-python">import fasttext.util
+fasttext.util.download_model("en", if_exists="ignore")
+ft = fasttext.load_model("cc.en.300.bin")
+print(ft.get_word_vector("whereupon").shape)
+print(ft.get_word_vector("zoomerapproved").shape)</code></pre>
+<p>对于 Transformer 时代的 BPE 子词分词：</p>
+<pre data-label="python"><code class="language-python">from transformers import AutoTokenizer
+
+tok = AutoTokenizer.from_pretrained("gpt2")
+print(tok.tokenize("unbelievably tokenized"))</code></pre>
+<pre><code>['un', 'bel', 'iev', 'ably', 'Ġtoken', 'ized']</code></pre>
+<p><code>Ġ</code> 前缀标记词边界（GPT-2 的约定）。现代的每一个分词器要么是 BPE 变体、WordPiece（BERT），要么是 SentencePiece（T5、LLaMA）。</p>
+<h3 id="什么时候选哪个">什么时候选哪个</h3>
+<div class="table-wrap"><table><thead><tr>
+<th>场景</th>
+<th>选择</th>
+</tr>
+</thead><tbody><tr>
+<td>需要预训练的通用词向量，不需要处理 OOV</td>
+<td>GloVe 300d</td>
+</tr>
+<tr>
+<td>需要预训练的通用词向量，必须处理拼写错误 / 新造词 / 形态丰富的语言</td>
+<td>FastText</td>
+</tr>
+<tr>
+<td>任何进入 Transformer 的东西（训练或推理）</td>
+<td>模型自带的分词器。永远不要换。</td>
+</tr>
+<tr>
+<td>从头训练自己的语言模型</td>
+<td>先在你的语料上训练一个 BPE 或 SentencePiece 分词器</td>
+</tr>
+<tr>
+<td>用线性模型做生产级文本分类</td>
+<td>还是 TF-IDF。第 02 课讲过。</td>
+</tr>
+</tbody></table></div>
+<h2 id="ship-it">Ship It</h2>
+<p>保存为 <code>outputs/skill-embeddings-picker.md</code>：</p>
+<pre data-label="markdown"><code class="language-markdown">---
+name: tokenizer-picker
+description: Pick a tokenization approach for a new language model or text pipeline.
+version: 1.0.0
+phase: 5
+lesson: 04
+tags: [nlp, tokenization, embeddings]
+---
+
+Given a task and dataset description, you output:
+
+1. Tokenization strategy (word-level, BPE, WordPiece, SentencePiece, byte-level). One-sentence reason.
+2. Vocabulary size target (e.g., 32k for an English-only LM, 64k-100k for multilingual).
+3. Library call with the exact training command. Name the library. Quote the arguments.
+4. One reproducibility pitfall. Tokenizer-model mismatch is the single most common silent production bug; call out which pair must be used together.
+
+Refuse to recommend training a custom tokenizer when the user is fine-tuning a pretrained LLM. Refuse to recommend word-level tokenization for any model targeting production inference. Flag non-English / multi-script corpora as needing SentencePiece with byte fallback.</code></pre>
+<h2 id="练习">练习</h2>
+<ol>
+<li><strong>简单。</strong> 运行 <code>char_ngrams(&quot;playing&quot;)</code> 和 <code>char_ngrams(&quot;played&quot;)</code>。计算两个 n-gram 集合的 Jaccard 重叠度。你应该能看到大量共享的片段（<code>pla</code>、<code>lay</code>、<code>play</code>），这就是为什么 FastText 能跨形态变体迁移。</li>
+<li><strong>中等。</strong> 扩展 <code>learn_bpe</code> 来追踪词表增长。画出&quot;每个语料字符对应的 token 数&quot;随合并次数变化的曲线。你会看到一开始压缩很快，然后渐近到约 2-3 字符/token。</li>
+<li><strong>困难。</strong> 在莎士比亚全集上训练一个 1000 次合并的 BPE。比较常见词和罕见专有名词的分词结果。测量合并前后每个词的平均 token 数。写下让你意外的发现。</li>
+</ol>
+<h2 id="术语表">术语表</h2>
+<div class="table-wrap"><table><thead><tr>
+<th>术语</th>
+<th>通俗说法</th>
+<th>实际含义</th>
+</tr>
+</thead><tbody><tr>
+<td>共现矩阵（Co-occurrence matrix）</td>
+<td>词-词频率表</td>
+<td><code>X[i][j]</code> = 词 <code>j</code> 出现在词 <code>i</code> 窗口内的次数。</td>
+</tr>
+<tr>
+<td>子词（Subword）</td>
+<td>词的碎片</td>
+<td>字符 n-gram（FastText）或学习出来的 token（BPE/WordPiece/SentencePiece）。</td>
+</tr>
+<tr>
+<td>BPE（Byte-Pair Encoding）</td>
+<td>字节对编码</td>
+<td>迭代合并最高频的相邻对，直到词表达到目标大小。</td>
+</tr>
+<tr>
+<td>OOV（Out of vocabulary）</td>
+<td>词表外词</td>
+<td>模型从未见过的词。Word2Vec/GloVe 搞不定。FastText 和 BPE 能处理。</td>
+</tr>
+<tr>
+<td>字节级 BPE（Byte-level BPE）</td>
+<td>基于原始字节的 BPE</td>
+<td>GPT-2 的方案。词表从 256 个字节开始，所以什么东西都不会 OOV。</td>
+</tr>
+</tbody></table></div>
+<h2 id="延伸阅读">延伸阅读</h2>
+<ul>
+<li><a href="https://nlp.stanford.edu/pubs/glove.pdf">Pennington, Socher, Manning (2014). GloVe: Global Vectors for Word Representation</a> — GloVe 论文，七页纸，至今仍是对损失函数最好的推导。</li>
+<li><a href="https://arxiv.org/abs/1607.04606">Bojanowski et al. (2017). Enriching Word Vectors with Subword Information</a> — FastText。</li>
+<li><a href="https://arxiv.org/abs/1508.07909">Sennrich, Haddow, Birch (2016). Neural Machine Translation of Rare Words with Subword Units</a> — 把 BPE 引入现代 NLP 的论文。</li>
+<li><a href="https://huggingface.co/docs/transformers/tokenizer_summary">Hugging Face tokenizer summary</a> — BPE、WordPiece 和 SentencePiece 在实践中到底有什么区别。</li>
+</ul>
+<hr>
+<h2 id="自测题">自测题</h2>
+<div class="quiz-card" data-correct="0" data-quiz-id="1">
+  <div class="quiz-question"><span class="quiz-num">Q1</span>GloVe 相比 Word2Vec 贡献了什么？</div>
+  <div class="quiz-options">
+    <label class="quiz-option" data-index="0">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">用加权损失直接分解词-词共现矩阵</span>
+    </label>
+    <label class="quiz-option" data-index="1">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">字节级分词</span>
+    </label>
+    <label class="quiz-option" data-index="2">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">更深的神经网络</span>
+    </label>
+    <label class="quiz-option" data-index="3">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">子词 n-gram 嵌入</span>
+    </label>
+  </div>
+  <button class="quiz-check">Check Answer</button>
+  <div class="quiz-explanation" hidden>GloVe 用精心设计的加权对数损失分解全局共现矩阵。</div>
+</div>
+
+<div class="quiz-card" data-correct="2" data-quiz-id="2">
+  <div class="quiz-question"><span class="quiz-num">Q2</span>FastText 解决了 Word2Vec 和 GloVe 无法解决的什么问题？</div>
+  <div class="quiz-options">
+    <label class="quiz-option" data-index="0">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">降低训练成本</span>
+    </label>
+    <label class="quiz-option" data-index="1">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">多语言迁移</span>
+    </label>
+    <label class="quiz-option" data-index="2">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">通过组合字符 n-gram 为未见过的词生成向量</span>
+    </label>
+    <label class="quiz-option" data-index="3">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">多义词消歧</span>
+    </label>
+  </div>
+  <button class="quiz-check">Check Answer</button>
+  <div class="quiz-explanation" hidden>FastText 从子词 n-gram 组合出词向量，所以 OOV 词也能获得合理的向量。</div>
+</div>
+
+<div class="quiz-card" data-correct="0" data-quiz-id="3">
+  <div class="quiz-question"><span class="quiz-num">Q3</span>在 GloVe 中，加权函数 f(x) = (x/x_max)^alpha 起什么作用？</div>
+  <div class="quiz-options">
+    <label class="quiz-option" data-index="0">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">降低极高频词对的权重，防止它们主导损失</span>
+    </label>
+    <label class="quiz-option" data-index="1">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">选择负样本</span>
+    </label>
+    <label class="quiz-option" data-index="2">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">随机初始化权重</span>
+    </label>
+    <label class="quiz-option" data-index="3">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">把向量归一化到单位长度</span>
+    </label>
+  </div>
+  <button class="quiz-check">Check Answer</button>
+  <div class="quiz-explanation" hidden>加权函数防止像 (the, and) 这样无处不在的共现对主导训练。</div>
+</div>
+
+<div class="quiz-card" data-correct="2" data-quiz-id="4">
+  <div class="quiz-question"><span class="quiz-num">Q4</span>BPE 的合并步骤是怎么选择要合并哪一对的？</div>
+  <div class="quiz-options">
+    <label class="quiz-option" data-index="0">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">随机选一对</span>
+    </label>
+    <label class="quiz-option" data-index="1">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">字典序最靠前的一对</span>
+    </label>
+    <label class="quiz-option" data-index="2">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">语料中出现频率最高的相邻 token 对</span>
+    </label>
+    <label class="quiz-option" data-index="3">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">IDF 最高的一对</span>
+    </label>
+  </div>
+  <button class="quiz-check">Check Answer</button>
+  <div class="quiz-explanation" hidden>BPE 每次迭代合并最高频的相邻对。</div>
+</div>
+
+<div class="quiz-card" data-correct="1" data-quiz-id="5">
+  <div class="quiz-question"><span class="quiz-num">Q5</span>GPT-2 为什么使用字节级 BPE？</div>
+  <div class="quiz-options">
+    <label class="quiz-option" data-index="0">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">字节级 BPE 不需要训练合并规则</span>
+    </label>
+    <label class="quiz-option" data-index="1">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">以 256 个字节为基础词表可以覆盖任何输入，彻底消除 OOV</span>
+    </label>
+    <label class="quiz-option" data-index="2">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">字节比字符训练更快</span>
+    </label>
+    <label class="quiz-option" data-index="3">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">字节能隐式保留大小写</span>
+    </label>
+  </div>
+  <button class="quiz-check">Check Answer</button>
+  <div class="quiz-explanation" hidden>从 256 个字节起步意味着任何 UTF-8 字符串都能被分词；没有什么是 OOV。</div>
+</div>
+
+<div class="quiz-card" data-correct="1" data-quiz-id="6">
+  <div class="quiz-question"><span class="quiz-num">Q6</span>微调预训练 Transformer 时应该用哪个分词器？</div>
+  <div class="quiz-options">
+    <label class="quiz-option" data-index="0">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">一律用 SentencePiece</span>
+    </label>
+    <label class="quiz-option" data-index="1">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">模型自带的那个分词器；不匹配会破坏嵌入</span>
+    </label>
+    <label class="quiz-option" data-index="2">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">词表最大的那个</span>
+    </label>
+    <label class="quiz-option" data-index="3">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">一律用字节级 BPE</span>
+    </label>
+  </div>
+  <button class="quiz-check">Check Answer</button>
+  <div class="quiz-explanation" hidden>分词器和模型不匹配会无声地破坏输入；永远用模型配套的分词器。</div>
+</div>
+
+<div class="quiz-card" data-correct="1" data-quiz-id="7">
+  <div class="quiz-question"><span class="quiz-num">Q7</span>什么时候该选 FastText 而不是 GloVe 的预训练词向量？</div>
+  <div class="quiz-options">
+    <label class="quiz-option" data-index="0">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">需要 50 维模型的时候</span>
+    </label>
+    <label class="quiz-option" data-index="1">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">形态丰富的语言，或频繁出现新造词和拼写错误的领域</span>
+    </label>
+    <label class="quiz-option" data-index="2">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">延迟要求最严格的时候</span>
+    </label>
+    <label class="quiz-option" data-index="3">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">语料非常小的时候</span>
+    </label>
+  </div>
+  <button class="quiz-check">Check Answer</button>
+  <div class="quiz-explanation" hidden>FastText 的子词组合能处理屈折变化、新造词和拼写错误，GloVe 做不到。</div>
+</div>
+
+<div class="quiz-card" data-correct="3" data-quiz-id="8">
+  <div class="quiz-question"><span class="quiz-num">Q8</span>WordPiece、BPE 和 SentencePiece 词表的基本单位是什么？</div>
+  <div class="quiz-options">
+    <label class="quiz-option" data-index="0">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">句子</span>
+    </label>
+    <label class="quiz-option" data-index="1">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">完整的词</span>
+    </label>
+    <label class="quiz-option" data-index="2">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">段落</span>
+    </label>
+    <label class="quiz-option" data-index="3">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">词以下级别的子词片段（字符、n-gram 或学到的合并单元）</span>
+    </label>
+  </div>
+  <button class="quiz-check">Check Answer</button>
+  <div class="quiz-explanation" hidden>三者都是子词分词器；它们的区别在于合并/片段的学习方式，而不在于子词这一点。</div>
+</div>
+
+    <nav class="pager">  <a href="02-word-embeddings-word2vec.html">
+    <span class="label">← 上一章</span>
+    <span class="title">词嵌入 — 从零实现 Word2Vec</span>
+  </a>  <a href="04-cnns-rnns-for-text.html" class="next">
+    <span class="label">下一章 →</span>
+    <span class="title">用 CNN 和 RNN 处理文本</span>
+  </a></nav>
+  </article>
+</div>
+
+<footer>
+  <div class="set">
+    <span>AI NLP Foundations</span>
+    <span>2026 · EN</span>
+  </div>
+  <div class="set">
+    <span>Mav</span>
+  </div>
+</footer>
+<div class="search-backdrop" id="search-overlay" role="dialog" aria-modal="true" aria-label="搜索" hidden>
+  <div class="search-modal">
+    <div class="search-input-wrap">
+      <input type="search" class="search-input" placeholder="搜索内容..." aria-label="搜索内容" autocomplete="off">
+      <kbd>ESC</kbd>
+    </div>
+    <div class="search-results" role="listbox" aria-label="搜索结果"></div>
+  </div>
+</div>
+
+<!-- Side Panel -->
+<div class="side-panel" id="side-panel">
+  <div class="side-panel-resize" id="side-panel-resize"></div>
+  <div class="side-panel-header">
+    <div class="side-panel-tabs">
+      <button class="side-panel-tab active" data-mode="sidenote">补充</button>
+      <button class="side-panel-tab" data-mode="notepad">笔记</button>
+    </div>
+    <button class="side-panel-close" aria-label="关闭">×</button>
+  </div>
+  <div class="side-panel-body"></div>
+</div>
+<button class="notepad-fab" id="notepad-fab" aria-label="便利贴">✎</button>
+
+<!-- Mobile TOC -->
+<button class="mtoc-fab" id="mtoc-fab" aria-label="目录">TOC</button>
+<div class="mtoc-drawer" id="mtoc-drawer">
+  <div class="mtoc-content"></div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/bash.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/typescript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/yaml.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/javascript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/json.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/python.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/css.min.js"></script>
+<script src="../assets/script.js"></script>
+<script src="../assets/quiz.js"></script>
+<script src="../assets/mermaid-init.js"></script>
+</body>
+</html>

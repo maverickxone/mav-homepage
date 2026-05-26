@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>文本预处理——分词、词干提取、词形还原 — AI NLP Foundations</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" id="hljs-light" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+<link rel="stylesheet" id="hljs-dark" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" media="not all">
+<link rel="stylesheet" href="../assets/quiz.css">
+</head>
+<body>
+
+<div class="progress-bar" id="progress-bar"></div>
+
+<nav class="topnav" id="topnav">
+  <div class="topnav-inner">
+    <a class="brand" href="../index.html">AI NLP Foundations</a>
+    <div class="nav-links">
+      <a href="01-text-processing.html" class="active">01</a>
+      <a href="02-word-embeddings-word2vec.html">02</a>
+      <a href="03-glove-fasttext-subword.html">03</a>
+      <a href="04-cnns-rnns-for-text.html">04</a>
+      <a href="05-sequence-to-sequence.html">05</a>
+      <a href="06-attention-mechanism.html">06</a>
+      <a href="07-subword-tokenization.html">07</a>
+    </div>
+    <div class="nav-controls">
+      <button class="nav-btn" id="search-btn" aria-label="搜索 (Ctrl+K)">⌘K</button>
+      <button class="nav-btn" id="settings-btn" aria-label="阅读设置">Aa</button>
+      <a class="nav-btn" href="../../index.html" aria-label="返回知识库">← 知识库</a>
+      <a class="nav-btn" href="https://github.com/maverickxone/mav-homepage" target="_blank" rel="noopener" aria-label="GitHub" style="padding: 6px 8px;"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg></a>
+    </div>
+  </div>
+</nav>
+<div class="settings-pop" id="settings-pop">
+  <h5>主题</h5>
+  <div class="row">
+    <button class="seg" data-theme-set="light">明亮</button>
+    <button class="seg" data-theme-set="dark">暗色</button>
+  </div>
+  <h5>字号</h5>
+  <div class="row">
+    <button class="seg" data-size-set="s">小</button>
+    <button class="seg" data-size-set="m">中</button>
+    <button class="seg" data-size-set="l">大</button>
+  </div>
+</div>
+
+<div class="with-sidebar">
+  <aside class="sidebar">
+  <div class="chapter-num">CHAPTER 01</div>
+  <div class="chapter-name">文本预处理——分词、词干提取、词形还原</div>
+  <h4>目录</h4>
+  <ul>
+    <li><a href="#为什么要学这个">为什么要学这个</a></li>
+    <li><a href="#核心概念">核心概念</a></li>
+    <li><a href="#从零实现">从零实现</a></li>
+    <li><a href="#实战用法">实战用法</a></li>
+    <li><a href="#ship-it">Ship It</a></li>
+    <li><a href="#练习">练习</a></li>
+    <li><a href="#术语表">术语表</a></li>
+    <li><a href="#延伸阅读">延伸阅读</a></li>
+    <li><a href="#自测题">自测题</a></li>
+  </ul>
+</aside>
+  <article class="chapter-body">
+    <header class="chapter-head">
+  <div class="chapter-head-meta">
+    <span class="num">CHAPTER 01</span>
+    <span>≈ 45 MIN READ</span>
+  </div>
+  <h1>文本预处理——分词、词干提取、词形还原</h1>
+
+</header>
+    <blockquote><p>语言是连续的，模型是离散的。预处理就是两者之间的桥。</p>
+</blockquote>
+<h2 id="为什么要学这个">为什么要学这个</h2>
+<p>模型没法读&quot;The cats were running.&quot;这句话。它只认整数。</p>
+<p>每个 NLP 系统上来就要回答三个问题：词从哪里断开？一个词的&quot;根&quot;是什么？&quot;run&quot;、&quot;running&quot;、&quot;ran&quot;什么时候该当同一个东西处理，什么时候该区分开？</p>
+<p>分词（Tokenization）搞错了，模型就是在垃圾上学习。如果你的分词器把 <code>don&#39;t</code> 当一个 token，但把 <code>do n&#39;t</code> 当两个，训练分布就裂了。如果你的词干提取器把 <code>organization</code> 和 <code>organ</code> 砍成同一个词根，主题模型直接废掉。如果你的词形还原器需要词性信息但你没传，动词会被当名词处理。</p>
+<p>这节课从零搭建三个预处理原语，然后展示 NLTK 和 spaCy 怎么做同样的事，让你看清其中的取舍。</p>
+<h2 id="核心概念">核心概念</h2>
+<p>三种操作，各有各的职责和翻车方式。</p>
+<p><strong>分词（Tokenization）</strong> 把字符串切成 token。&quot;Token&quot;这个词故意定义得很模糊，因为正确的粒度取决于任务。经典 NLP 用词级别，Transformer 用子词（subword），没有空格的语言（比如中文）用字符级别。</p>
+<p><strong>词干提取（Stemming）</strong> 用规则砍后缀。快、猛、笨。<code>running -&gt; run</code>，没问题。<code>organization -&gt; organ</code>，翻车了。第二个就是它的失败模式。</p>
+<p><strong>词形还原（Lemmatization）</strong> 利用语法知识把词还原成字典形式。更慢、更准、需要查找表或形态分析器。<code>ran -&gt; run</code>（需要知道 ran 是 run 的过去式）。<code>better -&gt; good</code>（需要知道比较级形式）。</p>
+<p>经验法则：当速度重要且能容忍噪声时用词干提取（搜索索引、粗分类）。当语义重要时用词形还原（问答、语义搜索、任何用户会看到的文本）。</p>
+<h2 id="从零实现">从零实现</h2>
+<h3 id="第一步正则分词器">第一步：正则分词器</h3>
+<p>最简单有用的分词器在非字母数字字符处断开，同时把标点符号作为独立 token。不完美，但一行就能跑。</p>
+<pre data-label="python"><code class="language-python">import re
+
+def tokenize(text):
+    return re.findall(r"[A-Za-z]+(?:'[A-Za-z]+)?|[0-9]+|[^\sA-Za-z0-9]", text)</code></pre>
+<p>三个模式按优先级排列。带可选内部撇号的单词（<code>don&#39;t</code>、<code>it&#39;s</code>）。纯数字。任何单个非空白非字母数字字符作为独立 token（标点）。</p>
+<pre data-label="python"><code class="language-python">&gt;&gt;&gt; tokenize("The cats weren't running at 3pm.")
+['The', 'cats', "weren't", 'running', 'at', '3', 'pm', '.']</code></pre>
+<p>注意失败模式：<code>3pm</code> 被拆成 <code>[&#39;3&#39;, &#39;pm&#39;]</code>，因为字母和数字交替了。大多数任务够用。URL、邮箱、话题标签全会断错。生产环境要在通用模式前面加专门的模式。</p>
+<h3 id="第二步porter-词干提取器仅-step-1a">第二步：Porter 词干提取器（仅 step 1a）</h3>
+<p>完整的 Porter 算法有五个阶段的规则。只实现 step 1a 就能覆盖最高频的英语后缀，而且足以教会你整体模式。</p>
+<pre data-label="python"><code class="language-python">def stem_step_1a(word):
+    if word.endswith("sses"):
+        return word[:-2]
+    if word.endswith("ies"):
+        return word[:-2]
+    if word.endswith("ss"):
+        return word
+    if word.endswith("s") and len(word) &gt; 1:
+        return word[:-1]
+    return word</code></pre>
+<pre data-label="python"><code class="language-python">&gt;&gt;&gt; [stem_step_1a(w) for w in ["caresses", "ponies", "caress", "cats"]]
+['caress', 'poni', 'caress', 'cat']</code></pre>
+<p>从上往下读规则。<code>ies -&gt; i</code> 规则是 <code>ponies -&gt; poni</code>（而不是 <code>pony</code>）的原因。真正的 Porter 有 step 1b 会修正这个。规则之间相互竞争，前面的规则先赢。顺序比任何单条规则都重要。</p>
+<h3 id="第三步基于查找表的词形还原器">第三步：基于查找表的词形还原器</h3>
+<p>真正的词形还原需要形态学知识。教学版用一个小查找表加兜底规则就够了。</p>
+<pre data-label="python"><code class="language-python">LEMMA_TABLE = {
+    ("running", "VERB"): "run",
+    ("ran", "VERB"): "run",
+    ("runs", "VERB"): "run",
+    ("better", "ADJ"): "good",
+    ("best", "ADJ"): "good",
+    ("cats", "NOUN"): "cat",
+    ("cat", "NOUN"): "cat",
+    ("were", "VERB"): "be",
+    ("was", "VERB"): "be",
+    ("is", "VERB"): "be",
+}
+
+def lemmatize(word, pos):
+    key = (word.lower(), pos)
+    if key in LEMMA_TABLE:
+        return LEMMA_TABLE[key]
+    if pos == "VERB" and word.endswith("ing"):
+        return word[:-3]
+    if pos == "NOUN" and word.endswith("s"):
+        return word[:-1]
+    return word.lower()</code></pre>
+<pre data-label="python"><code class="language-python">&gt;&gt;&gt; lemmatize("running", "VERB")
+'run'
+&gt;&gt;&gt; lemmatize("cats", "NOUN")
+'cat'
+&gt;&gt;&gt; lemmatize("better", "ADJ")
+'good'
+&gt;&gt;&gt; lemmatize("watched", "VERB")
+'watched'</code></pre>
+<p>最后一个例子是关键教学点。<code>watched</code> 不在我们的表里，兜底规则也只处理了 <code>ing</code>。真正的词形还原要覆盖 <code>ed</code>、不规则动词、比较级形容词、不规则复数（<code>children -&gt; child</code>）。这就是为什么生产系统用 WordNet、spaCy 的形态分析器或完整的形态学引擎。</p>
+<h3 id="第四步把它们串起来">第四步：把它们串起来</h3>
+<pre data-label="python"><code class="language-python">def preprocess(text, pos_tagger=None):
+    tokens = tokenize(text)
+    stems = [stem_step_1a(t.lower()) for t in tokens]
+    tags = pos_tagger(tokens) if pos_tagger else [(t, "NOUN") for t in tokens]
+    lemmas = [lemmatize(word, pos) for word, pos in tags]
+    return {"tokens": tokens, "stems": stems, "lemmas": lemmas}</code></pre>
+<p>缺的那块是词性标注器（POS tagger）。Phase 5 · 07（词性标注）那节课会搭一个。现在先默认所有词都当 NOUN，承认这个局限。</p>
+<h2 id="实战用法">实战用法</h2>
+<p>NLTK 和 spaCy 自带生产级实现，几行代码搞定。</p>
+<h3 id="nltk">NLTK</h3>
+<pre data-label="python"><code class="language-python">import nltk
+nltk.download("punkt_tab")
+nltk.download("wordnet")
+nltk.download("averaged_perceptron_tagger_eng")
+
+from nltk.tokenize import word_tokenize
+from nltk.stem import PorterStemmer, WordNetLemmatizer
+from nltk import pos_tag
+
+text = "The cats were running."
+tokens = word_tokenize(text)
+stems = [PorterStemmer().stem(t) for t in tokens]
+lemmatizer = WordNetLemmatizer()
+tagged = pos_tag(tokens)
+
+
+def nltk_pos_to_wordnet(tag):
+    if tag.startswith("V"):
+        return "v"
+    if tag.startswith("J"):
+        return "a"
+    if tag.startswith("R"):
+        return "r"
+    return "n"
+
+
+lemmas = [lemmatizer.lemmatize(t, nltk_pos_to_wordnet(tag)) for t, tag in tagged]</code></pre>
+<p><code>word_tokenize</code> 能处理缩写、Unicode 和你的正则漏掉的各种边界情况。<code>PorterStemmer</code> 跑完全部五个阶段。<code>WordNetLemmatizer</code> 需要把 NLTK 的 Penn Treebank 词性标签转成 WordNet 的缩写格式。上面那个转换函数就是大多数教程跳过的部分。</p>
+<h3 id="spacy">spaCy</h3>
+<pre data-label="python"><code class="language-python">import spacy
+
+nlp = spacy.load("en_core_web_sm")
+doc = nlp("The cats were running.")
+
+for token in doc:
+    print(token.text, token.lemma_, token.pos_)</code></pre>
+<pre><code>The      the     DET
+cats     cat     NOUN
+were     be      AUX
+running  run     VERB
+.        .       PUNCT</code></pre>
+<p>spaCy 把整个流水线藏在 <code>nlp(text)</code> 后面。分词、词性标注、词形还原一次性全跑了。大规模处理时比 NLTK 快，开箱即用精度更高。代价是你很难单独替换某个组件。</p>
+<h3 id="什么时候选哪个">什么时候选哪个</h3>
+<div class="table-wrap"><table><thead><tr>
+<th>场景</th>
+<th>选择</th>
+</tr>
+</thead><tbody><tr>
+<td>教学、研究、需要灵活替换组件</td>
+<td>NLTK</td>
+</tr>
+<tr>
+<td>生产环境、多语言、速度重要</td>
+<td>spaCy</td>
+</tr>
+<tr>
+<td>Transformer 流水线（反正要用模型自带的分词器）</td>
+<td>用 <code>tokenizers</code> / <code>transformers</code>，跳过经典预处理</td>
+</tr>
+</tbody></table></div>
+<h3 id="没人警告你的两个翻车模式">没人警告你的两个翻车模式</h3>
+<p>大多数教程讲完算法就停了。真正的预处理流水线里有两个坑，几乎从来没人提。</p>
+<p><strong>可复现性漂移。</strong> NLTK 和 spaCy 的分词和词形还原行为在版本之间会变。spaCy 2.x 产出 <code>[&#39;do&#39;, &quot;n&#39;t&quot;]</code> 的地方，3.x 可能产出 <code>[&quot;don&#39;t&quot;]</code>。你的模型是在一种分布上训练的，推理时跑的却是另一种分布。准确率悄悄下滑，没人知道为什么。解法：在 <code>requirements.txt</code> 里锁死库版本。写一个预处理回归测试，冻结 20 条样本句子的预期分词结果。每次升级都跑一遍。</p>
+<p><strong>训练/推理不一致。</strong> 训练时用了激进的预处理（小写化、去停用词、词干提取），部署时却喂原始用户输入，然后看着性能崩溃。这是生产 NLP 最常见的故障。训练时做了预处理，推理时就必须跑一模一样的函数。把预处理打包成模型包里的函数，而不是留在 notebook 里让上线团队重写。</p>
+<h2 id="ship-it">Ship It</h2>
+<p>一个可复用的 prompt，帮工程师在不翻三本教科书的前提下选择预处理策略。</p>
+<p>保存为 <code>outputs/prompt-preprocessing-advisor.md</code>：</p>
+<pre data-label="markdown"><code class="language-markdown">---
+name: preprocessing-advisor
+description: Recommends a tokenization, stemming, and lemmatization setup for an NLP task.
+phase: 5
+lesson: 01
+---
+
+You advise on classical NLP preprocessing. Given a task description, you output:
+
+1. Tokenization choice (regex, NLTK word_tokenize, spaCy, or transformer tokenizer). Explain why.
+2. Whether to stem, lemmatize, both, or neither. Explain why.
+3. Specific library calls. Name the functions. Quote the POS-tag translation if NLTK is involved.
+4. One failure mode the user should test for.
+
+Refuse to recommend stemming for user-visible text. Refuse to recommend lemmatization without POS tags. Flag non-English input as needing a different pipeline.</code></pre>
+<h2 id="练习">练习</h2>
+<ol>
+<li><strong>简单。</strong> 扩展 <code>tokenize</code>，让它把 URL 保留为单个 token。测试：<code>tokenize(&quot;Visit https://example.com today.&quot;)</code> 应该产出一个完整的 URL token。</li>
+<li><strong>中等。</strong> 实现 Porter step 1b。如果单词包含元音且以 <code>ed</code> 或 <code>ing</code> 结尾就去掉后缀。处理双辅音规则（<code>hopping -&gt; hop</code>，而不是 <code>hopp</code>）。</li>
+<li><strong>困难。</strong> 搭一个词形还原器：用 WordNet 做查找表，WordNet 查不到的退回你的 Porter 词干提取器。在标注语料库上对比纯 WordNet 和纯 Porter 的准确率。</li>
+</ol>
+<h2 id="术语表">术语表</h2>
+<div class="table-wrap"><table><thead><tr>
+<th>术语</th>
+<th>常见说法</th>
+<th>真正含义</th>
+</tr>
+</thead><tbody><tr>
+<td>Token（标记）</td>
+<td>&quot;一个词&quot;</td>
+<td>模型实际消费的任何单元。可以是词、子词、字符或字节。</td>
+</tr>
+<tr>
+<td>Stem（词干）</td>
+<td>&quot;词根&quot;</td>
+<td>基于规则砍后缀的结果。不一定是真实存在的词。</td>
+</tr>
+<tr>
+<td>Lemma（词元）</td>
+<td>&quot;字典形式&quot;</td>
+<td>你会在词典里查到的那个形式。需要语法上下文才能正确计算。</td>
+</tr>
+<tr>
+<td>POS tag（词性标签）</td>
+<td>&quot;词性&quot;</td>
+<td>NOUN、VERB、ADJ 这类类别。准确做词形还原必须要它。</td>
+</tr>
+<tr>
+<td>Morphology（形态学）</td>
+<td>&quot;词形变化规则&quot;</td>
+<td>一个词根据时态、数、格等变化形式的规则。词形还原依赖于此。</td>
+</tr>
+</tbody></table></div>
+<h2 id="延伸阅读">延伸阅读</h2>
+<ul>
+<li><a href="https://tartarus.org/martin/PorterStemmer/def.txt">Porter, M. F. (1980). An algorithm for suffix stripping</a> — 原始论文，五页纸，至今是最清楚的解释。</li>
+<li><a href="https://spacy.io/usage/linguistic-features">spaCy 101 — linguistic features</a> — 看看真实流水线怎么接线。</li>
+<li><a href="https://www.nltk.org/book/ch03.html">NLTK book, chapter 3</a> — 你没想到的分词边界情况。</li>
+</ul>
+<hr>
+<h2 id="自测题">自测题</h2>
+<div class="quiz-card" data-correct="1" data-quiz-id="1">
+  <div class="quiz-question"><span class="quiz-num">Q1</span>为什么语言模型在训练前需要预处理？</div>
+  <div class="quiz-options">
+    <label class="quiz-option" data-index="0">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">预处理提升 GPU 利用率</span>
+    </label>
+    <label class="quiz-option" data-index="1">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">模型消费的是离散整数 token，不是原始文本</span>
+    </label>
+    <label class="quiz-option" data-index="2">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">模型可以直接读字符串</span>
+    </label>
+    <label class="quiz-option" data-index="3">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">预处理只有没有空格的语言才需要</span>
+    </label>
+  </div>
+  <button class="quiz-check">Check Answer</button>
+  <div class="quiz-explanation" hidden>模型在整数 token ID 上运作；预处理是把连续语言桥接到离散输入的过程。</div>
+</div>
+
+<div class="quiz-card" data-correct="0" data-quiz-id="2">
+  <div class="quiz-question"><span class="quiz-num">Q2</span>哪种预处理操作是"基于规则砍后缀"？</div>
+  <div class="quiz-options">
+    <label class="quiz-option" data-index="0">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">词干提取（Stemming）</span>
+    </label>
+    <label class="quiz-option" data-index="1">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">词性标注（POS tagging）</span>
+    </label>
+    <label class="quiz-option" data-index="2">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">词形还原（Lemmatization）</span>
+    </label>
+    <label class="quiz-option" data-index="3">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">分词（Tokenization）</span>
+    </label>
+  </div>
+  <button class="quiz-check">Check Answer</button>
+  <div class="quiz-explanation" hidden>词干提取用规则砍后缀，速度快但容易出错。</div>
+</div>
+
+<div class="quiz-card" data-correct="3" data-quiz-id="3">
+  <div class="quiz-question"><span class="quiz-num">Q3</span>Porter 词干提取器的 step 1a 对 'ponies' 返回什么？</div>
+  <div class="quiz-options">
+    <label class="quiz-option" data-index="0">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">ponies</span>
+    </label>
+    <label class="quiz-option" data-index="1">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">ponie</span>
+    </label>
+    <label class="quiz-option" data-index="2">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">pony</span>
+    </label>
+    <label class="quiz-option" data-index="3">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">poni</span>
+    </label>
+  </div>
+  <button class="quiz-check">Check Answer</button>
+  <div class="quiz-explanation" hidden>'ies' 规则把后缀替换成 'i'，产出 'poni'；真正 Porter 的 step 1b 会修正它。</div>
+</div>
+
+<div class="quiz-card" data-correct="2" data-quiz-id="4">
+  <div class="quiz-question"><span class="quiz-num">Q4</span>为什么词形还原通常需要词性标签？</div>
+  <div class="quiz-options">
+    <label class="quiz-option" data-index="0">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">Unicode 处理需要</span>
+    </label>
+    <label class="quiz-option" data-index="1">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">为了速度</span>
+    </label>
+    <label class="quiz-option" data-index="2">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">语法上下文能消歧 'better'（形容词）和 'better'（动词）这类形式</span>
+    </label>
+    <label class="quiz-option" data-index="3">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">为了减少内存占用</span>
+    </label>
+  </div>
+  <button class="quiz-check">Check Answer</button>
+  <div class="quiz-explanation" hidden>词元取决于语法角色；没有词性标签，查找就是模糊的。</div>
+</div>
+
+<div class="quiz-card" data-correct="1" data-quiz-id="5">
+  <div class="quiz-question"><span class="quiz-num">Q5</span>把 NLTK Penn Treebank 词性标签转成 WordNet 标签时，以 'V' 开头的标签映射到什么？</div>
+  <div class="quiz-options">
+    <label class="quiz-option" data-index="0">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">'n'（名词）</span>
+    </label>
+    <label class="quiz-option" data-index="1">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">'v'（动词）</span>
+    </label>
+    <label class="quiz-option" data-index="2">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">'r'（副词）</span>
+    </label>
+    <label class="quiz-option" data-index="3">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">'a'（形容词）</span>
+    </label>
+  </div>
+  <button class="quiz-check">Check Answer</button>
+  <div class="quiz-explanation" hidden>以动词前缀开头的 Penn Treebank 标签映射到 WordNet 的 'v'。</div>
+</div>
+
+<div class="quiz-card" data-correct="1" data-quiz-id="6">
+  <div class="quiz-question"><span class="quiz-num">Q6</span>NLP 预处理中的"训练/推理不一致"是什么？</div>
+  <div class="quiz-options">
+    <label class="quiz-option" data-index="0">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">训练和测试的 batch size 不同</span>
+    </label>
+    <label class="quiz-option" data-index="1">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">训练和上线时用了不同的预处理，模型在推理时看到的是陌生的分布</span>
+    </label>
+    <label class="quiz-option" data-index="2">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">一个 GPU 内存问题</span>
+    </label>
+    <label class="quiz-option" data-index="3">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">在一个 notebook 里混用了多个分词库</span>
+    </label>
+  </div>
+  <button class="quiz-check">Check Answer</button>
+  <div class="quiz-explanation" hidden>训练和推理的预处理不同是生产 NLP 最常见的故障。</div>
+</div>
+
+<div class="quiz-card" data-correct="1" data-quiz-id="7">
+  <div class="quiz-question"><span class="quiz-num">Q7</span>在 Transformer 流水线中，你会用什么来代替经典预处理？</div>
+  <div class="quiz-options">
+    <label class="quiz-option" data-index="0">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">NLTK word_tokenize</span>
+    </label>
+    <label class="quiz-option" data-index="1">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">模型自带的分词器（比如通过 tokenizers / transformers 库）</span>
+    </label>
+    <label class="quiz-option" data-index="2">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">正则分词器</span>
+    </label>
+    <label class="quiz-option" data-index="3">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">spaCy en_core_web_sm</span>
+    </label>
+  </div>
+  <button class="quiz-check">Check Answer</button>
+  <div class="quiz-explanation" hidden>Transformer 模型自带配对的分词器；经典预处理被直接跳过。</div>
+</div>
+
+<div class="quiz-card" data-correct="1" data-quiz-id="8">
+  <div class="quiz-question"><span class="quiz-num">Q8</span>为什么要在 requirements 里锁定 NLTK 和 spaCy 版本？</div>
+  <div class="quiz-options">
+    <label class="quiz-option" data-index="0">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">许可证兼容性</span>
+    </label>
+    <label class="quiz-option" data-index="1">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">分词器和词形还原器的行为在小版本之间会变，悄悄改变训练分布</span>
+    </label>
+    <label class="quiz-option" data-index="2">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">旧版本支持更多语言</span>
+    </label>
+    <label class="quiz-option" data-index="3">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">新版本更慢</span>
+    </label>
+  </div>
+  <button class="quiz-check">Check Answer</button>
+  <div class="quiz-explanation" hidden>库升级可能改变分词输出，导致偏离训练分布。</div>
+</div>
+
+    <nav class="pager">  <a class="disabled"><span class="label">← 上一章</span><span class="title"></span></a>  <a href="02-word-embeddings-word2vec.html" class="next">
+    <span class="label">下一章 →</span>
+    <span class="title">词嵌入 — 从零实现 Word2Vec</span>
+  </a></nav>
+  </article>
+</div>
+
+<footer>
+  <div class="set">
+    <span>AI NLP Foundations</span>
+    <span>2026 · EN</span>
+  </div>
+  <div class="set">
+    <span>Mav</span>
+  </div>
+</footer>
+<div class="search-backdrop" id="search-overlay" role="dialog" aria-modal="true" aria-label="搜索" hidden>
+  <div class="search-modal">
+    <div class="search-input-wrap">
+      <input type="search" class="search-input" placeholder="搜索内容..." aria-label="搜索内容" autocomplete="off">
+      <kbd>ESC</kbd>
+    </div>
+    <div class="search-results" role="listbox" aria-label="搜索结果"></div>
+  </div>
+</div>
+
+<!-- Side Panel -->
+<div class="side-panel" id="side-panel">
+  <div class="side-panel-resize" id="side-panel-resize"></div>
+  <div class="side-panel-header">
+    <div class="side-panel-tabs">
+      <button class="side-panel-tab active" data-mode="sidenote">补充</button>
+      <button class="side-panel-tab" data-mode="notepad">笔记</button>
+    </div>
+    <button class="side-panel-close" aria-label="关闭">×</button>
+  </div>
+  <div class="side-panel-body"></div>
+</div>
+<button class="notepad-fab" id="notepad-fab" aria-label="便利贴">✎</button>
+
+<!-- Mobile TOC -->
+<button class="mtoc-fab" id="mtoc-fab" aria-label="目录">TOC</button>
+<div class="mtoc-drawer" id="mtoc-drawer">
+  <div class="mtoc-content"></div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/bash.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/typescript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/yaml.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/javascript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/json.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/python.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/css.min.js"></script>
+<script src="../assets/script.js"></script>
+<script src="../assets/quiz.js"></script>
+<script src="../assets/mermaid-init.js"></script>
+</body>
+</html>

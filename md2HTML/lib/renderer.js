@@ -154,6 +154,50 @@ ${content.trim()}
     }
   );
 
+  // :::quiz — interactive multiple-choice quiz block
+  let _quizCounter = 0;
+  result = result.replace(
+    /^:::quiz\n([\s\S]*?)^:::/gm,
+    (match, body) => {
+      _quizCounter++;
+      const qMatch = body.match(/^question:\s*(.+)$/m);
+      const cMatch = body.match(/^correct:\s*(\d+)$/m);
+      const eMatch = body.match(/^explanation:\s*(.+)$/m);
+
+      const question = qMatch ? qMatch[1].trim() : '';
+      const correct = cMatch ? parseInt(cMatch[1]) : 0;
+      const explanation = eMatch ? eMatch[1].trim() : '';
+
+      // Extract options
+      const options = [];
+      const optBlock = body.match(/^options:\n((?:\s+-\s+.+\n?)+)/m);
+      if (optBlock) {
+        const optLines = optBlock[1].match(/^\s+-\s+(.+)$/gm);
+        if (optLines) {
+          optLines.forEach(line => {
+            options.push(line.replace(/^\s+-\s+/, '').trim());
+          });
+        }
+      }
+
+      const optionsHtml = options.map((opt, i) => {
+        return `    <label class="quiz-option" data-index="${i}">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">${opt}</span>
+    </label>`;
+      }).join('\n');
+
+      return `<div class="quiz-card" data-correct="${correct}" data-quiz-id="${_quizCounter}">
+  <div class="quiz-question"><span class="quiz-num">Q${_quizCounter}</span>${question}</div>
+  <div class="quiz-options">
+${optionsHtml}
+  </div>
+  <button class="quiz-check">Check Answer</button>
+  <div class="quiz-explanation" hidden>${explanation}</div>
+</div>`;
+    }
+  );
+
   return result;
 }
 

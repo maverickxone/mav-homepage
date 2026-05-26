@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>多层网络与前向传播 — AI Deep Learning Core</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" id="hljs-light" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+<link rel="stylesheet" id="hljs-dark" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" media="not all">
+<link rel="stylesheet" href="../assets/quiz.css">
+</head>
+<body>
+
+<div class="progress-bar" id="progress-bar"></div>
+
+<nav class="topnav" id="topnav">
+  <div class="topnav-inner">
+    <a class="brand" href="../index.html">AI Deep Learning Core</a>
+    <div class="nav-links">
+      <a href="01-the-perceptron.html">01</a>
+      <a href="02-multi-layer-networks.html" class="active">02</a>
+      <a href="03-backpropagation.html">03</a>
+      <a href="04-activation-functions.html">04</a>
+      <a href="05-loss-functions.html">05</a>
+      <a href="06-optimizers.html">06</a>
+      <a href="07-regularization.html">07</a>
+      <a href="08-weight-initialization.html">08</a>
+      <a href="09-learning-rate-schedules.html">09</a>
+      <a href="10-mini-framework.html">10</a>
+      <a href="11-intro-to-pytorch.html">11</a>
+      <a href="12-intro-to-jax.html">12</a>
+      <a href="13-debugging-neural-networks.html">13</a>
+    </div>
+    <div class="nav-controls">
+      <button class="nav-btn" id="search-btn" aria-label="搜索 (Ctrl+K)">⌘K</button>
+      <button class="nav-btn" id="settings-btn" aria-label="阅读设置">Aa</button>
+      <a class="nav-btn" href="../../index.html" aria-label="返回知识库">← 知识库</a>
+      <a class="nav-btn" href="https://github.com/maverickxone/mav-homepage" target="_blank" rel="noopener" aria-label="GitHub" style="padding: 6px 8px;"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg></a>
+    </div>
+  </div>
+</nav>
+<div class="settings-pop" id="settings-pop">
+  <h5>主题</h5>
+  <div class="row">
+    <button class="seg" data-theme-set="light">明亮</button>
+    <button class="seg" data-theme-set="dark">暗色</button>
+  </div>
+  <h5>字号</h5>
+  <div class="row">
+    <button class="seg" data-size-set="s">小</button>
+    <button class="seg" data-size-set="m">中</button>
+    <button class="seg" data-size-set="l">大</button>
+  </div>
+</div>
+
+<div class="with-sidebar">
+  <aside class="sidebar">
+  <div class="chapter-num">CHAPTER 02</div>
+  <div class="chapter-name">多层网络与前向传播</div>
+  <h4>目录</h4>
+  <ul>
+    <li><a href="#学习目标">学习目标</a></li>
+    <li><a href="#为什么要学这个">为什么要学这个</a></li>
+    <li><a href="#核心概念">核心概念</a></li>
+    <li><a href="#从零实现">从零实现</a></li>
+    <li><a href="#用库做同样的事">用库做同样的事</a></li>
+    <li><a href="#练习">练习</a></li>
+    <li><a href="#术语表">术语表</a></li>
+    <li><a href="#自测题">自测题</a></li>
+  </ul>
+</aside>
+  <article class="chapter-body">
+    <header class="chapter-head">
+  <div class="chapter-head-meta">
+    <span class="num">CHAPTER 02</span>
+    <span>≈ 90 MIN READ</span>
+  </div>
+  <h1>多层网络与前向传播</h1>
+
+</header>
+    <blockquote><p>一个神经元画直线。堆起来，你能画任何东西。</p>
+</blockquote>
+<h2 id="学习目标">学习目标</h2>
+<ul>
+<li>从零搭建 Layer 和 Network 类，完成完整的前向传播</li>
+<li>跟踪每一层的矩阵维度，识别形状不匹配的 bug</li>
+<li>解释为什么堆叠非线性激活让网络能学习弯曲的决策边界</li>
+<li>用 2-2-1 架构配合手调 sigmoid 权重解决 XOR</li>
+</ul>
+<h2 id="为什么要学这个">为什么要学这个</h2>
+<p>单个神经元是画线器——就这。一条直线穿过数据。AI 里的每个真实问题——图像识别、语言理解、下围棋——都需要曲线。把神经元堆成层就是获得曲线的方法。</p>
+<p>1969 年 Minsky 和 Papert 证明了单层网络数学上不可能学 XOR。这让神经网络研究冻结了十年。解决方案事后看很明显：不要只用一层。把神经元堆成层。让第一层把输入空间切出新特征，让第二层组合这些特征做出单条直线做不到的决策。</p>
+<p>这个堆叠就是多层网络。今天生产中的每个深度学习模型都建立在它之上。前向传播——数据从输入流经隐藏层到输出——是你需要搭建的第一个东西。</p>
+<h2 id="核心概念">核心概念</h2>
+<h3 id="三种层输入隐藏输出">三种层：输入、隐藏、输出</h3>
+<pre data-label="mermaid"><code class="language-mermaid">graph LR
+    subgraph Input["输入层"]
+        x1["x1"]
+        x2["x2"]
+    end
+    subgraph Hidden["隐藏层（3 个神经元）"]
+        h1["h1"]
+        h2["h2"]
+        h3["h3"]
+    end
+    subgraph Output["输出层"]
+        y["y"]
+    end
+    x1 --&gt; h1
+    x1 --&gt; h2
+    x1 --&gt; h3
+    x2 --&gt; h1
+    x2 --&gt; h2
+    x2 --&gt; h3
+    h1 --&gt; y
+    h2 --&gt; y
+    h3 --&gt; y</code></pre>
+<p>这是一个 2-3-1 网络：2 个输入，3 个隐藏神经元，1 个输出。每条连接带一个权重，每个神经元（除输入）带一个 bias。</p>
+<p><strong>输入层</strong>——不是真正的&quot;层&quot;。存原始数据。没有计算。</p>
+<p><strong>隐藏层</strong>——工作在这里发生。每个神经元取前一层的所有输出，应用权重和 bias，通过激活函数。&quot;隐藏&quot;是因为训练数据里看不到这些值。</p>
+<p><strong>输出层</strong>——最终答案。二分类用一个 sigmoid 神经元，多分类用每类一个神经元。</p>
+<h3 id="前向传播数据怎么流">前向传播：数据怎么流</h3>
+<p>前向传播把输入数据逐层推过网络直到输出。不学习。纯计算：乘，加，激活，重复。</p>
+<pre data-label="mermaid"><code class="language-mermaid">graph TD
+    X["输入: [x1, x2]"] --&gt; WH["乘以权重矩阵 W1 (3×2)"]
+    WH --&gt; BH["加偏置向量 b1 (3,)"]
+    BH --&gt; AH["每个元素过 sigmoid"]
+    AH --&gt; H["隐藏层输出: [h1, h2, h3]"]
+    H --&gt; WO["乘以权重矩阵 W2 (1×3)"]
+    WO --&gt; BO["加偏置 b2 (1,)"]
+    BO --&gt; AO["过 sigmoid"]
+    AO --&gt; Y["输出: y"]</code></pre>
+<p>每层三步：</p>
+<pre><code>z = W × input + b       （线性变换）
+a = sigmoid(z)           （激活）</code></pre>
+<p>一层的输出变成下一层的输入。这就是整个前向传播。</p>
+<h3 id="矩阵维度追踪">矩阵维度追踪</h3>
+<p>追踪维度是深度学习中最重要的调试技能。2-3-1 网络：</p>
+<div class="table-wrap"><table><thead><tr>
+<th>步骤</th>
+<th>操作</th>
+<th>维度</th>
+<th>结果形状</th>
+</tr>
+</thead><tbody><tr>
+<td>输入</td>
+<td>x</td>
+<td>—</td>
+<td>(2,)</td>
+</tr>
+<tr>
+<td>隐藏层线性</td>
+<td>W1 × x + b1</td>
+<td>W1: (3, 2), b1: (3,)</td>
+<td>(3,)</td>
+</tr>
+<tr>
+<td>隐藏层激活</td>
+<td>sigmoid(z1)</td>
+<td>—</td>
+<td>(3,)</td>
+</tr>
+<tr>
+<td>输出层线性</td>
+<td>W2 × h + b2</td>
+<td>W2: (1, 3), b2: (1,)</td>
+<td>(1,)</td>
+</tr>
+<tr>
+<td>输出层激活</td>
+<td>sigmoid(z2)</td>
+<td>—</td>
+<td>(1,)</td>
+</tr>
+</tbody></table></div>
+<p><strong>规则</strong>：第 k 层的权重矩阵形状是 (本层神经元数, 上一层神经元数)。行对应当前层，列对应前一层。形状对不上就有 bug。</p>
+<h3 id="万能近似定理">万能近似定理</h3>
+<p>1989 年 Cybenko 证明：一个隐藏层 + 足够多神经元的网络可以逼近任何连续函数到任意精度。</p>
+<p>这不意味着一层总是最好的。它意味着这个架构理论上有能力。实际中更深的网络（更多层、每层更少神经元）用更少的总参数就能学到一样的函数——这就是为什么深度学习有效。</p>
+<p>直觉：隐藏层的每个神经元学一个&quot;小凸起&quot;。凸起放对位置就能逼近任何光滑曲线。神经元越多，凸起越多，逼近越好。</p>
+<pre data-label="mermaid"><code class="language-mermaid">graph LR
+    subgraph FewNeurons["4 个隐藏神经元"]
+        A["粗略逼近"]
+    end
+    subgraph MoreNeurons["16 个隐藏神经元"]
+        B["接近逼近"]
+    end
+    subgraph ManyNeurons["64 个隐藏神经元"]
+        C["几乎完美"]
+    end
+    FewNeurons --&gt; MoreNeurons --&gt; ManyNeurons</code></pre>
+<h2 id="从零实现">从零实现</h2>
+<p>纯 Python，不用 NumPy。每个矩阵操作从零写。</p>
+<h3 id="第一步sigmoid-激活">第一步：Sigmoid 激活</h3>
+<pre data-label="python"><code class="language-python">import math
+
+def sigmoid(x):
+    x = max(-500.0, min(500.0, x))  # 防止 overflow
+    return 1.0 / (1.0 + math.exp(-x))</code></pre>
+<h3 id="第二步layer-类">第二步：Layer 类</h3>
+<p>深度学习中最重要的运算是矩阵乘法。每一层、每个 attention head、每次前向传播——全是 matmul。线性层就是 y = Wx + b。这一个方程占了神经网络 90% 的计算量。</p>
+<pre data-label="python"><code class="language-python">class Layer:
+    def __init__(self, n_inputs, n_neurons, weights=None, biases=None):
+        if weights is not None:
+            self.weights = weights
+        else:
+            import random
+            self.weights = [
+                [random.uniform(-1, 1) for _ in range(n_inputs)]
+                for _ in range(n_neurons)
+            ]
+        self.biases = biases if biases is not None else [0.0] * n_neurons
+
+    def forward(self, inputs):
+        """前向传播：z = Wx + b，然后 sigmoid"""
+        self.last_input = inputs
+        self.last_output = []
+        for neuron_idx in range(len(self.weights)):
+            z = sum(w * x for w, x in zip(self.weights[neuron_idx], inputs))
+            z += self.biases[neuron_idx]
+            self.last_output.append(sigmoid(z))
+        return self.last_output</code></pre>
+<p>权重矩阵形状是 (n_neurons, n_inputs)。每行是一个神经元对所有输入的权重。forward 遍历神经元，算加权和加 bias，过 sigmoid，收集结果。</p>
+<h3 id="第三步network-类">第三步：Network 类</h3>
+<p>网络就是一列 Layer。前向传播就是链式调用：第 k 层的输出喂入第 k+1 层。</p>
+<pre data-label="python"><code class="language-python">class Network:
+    def __init__(self, layers):
+        self.layers = layers
+
+    def forward(self, inputs):
+        current = inputs
+        for layer in self.layers:
+            current = layer.forward(current)
+        return current</code></pre>
+<p>整个前向传播，四行逻辑。数据进去，逐层流过，从另一头出来。</p>
+<h3 id="第四步手调权重解-xor">第四步：手调权重解 XOR</h3>
+<p>用 Layer 和 Network 类。2-2-1 架构：2 输入，2 个隐藏神经元，1 输出。</p>
+<pre data-label="python"><code class="language-python"># 大权重让 sigmoid 表现得像阶跃函数
+hidden = Layer(
+    n_inputs=2, n_neurons=2,
+    weights=[[20.0, 20.0], [-20.0, -20.0]],  # 第一个≈OR，第二个≈NAND
+    biases=[-10.0, 30.0],
+)
+output = Layer(
+    n_inputs=2, n_neurons=1,
+    weights=[[20.0, 20.0]],  # ≈AND
+    biases=[-30.0],
+)
+
+xor_net = Network([hidden, output])
+
+xor_data = [([0,0], 0), ([0,1], 1), ([1,0], 1), ([1,1], 0)]
+
+for inputs, expected in xor_data:
+    result = xor_net.forward(inputs)
+    predicted = 1 if result[0] &gt;= 0.5 else 0
+    print(f"  {inputs} → {result[0]:.6f}（四舍五入: {predicted}，期望: {expected}）")</code></pre>
+<h3 id="第五步圆形分类">第五步：圆形分类</h3>
+<p>更难的问题：分类二维点是否在半径 0.5 的圆内。需要弯曲的决策边界——单感知机不可能。</p>
+<pre data-label="python"><code class="language-python">import random
+
+random.seed(42)
+
+data = []
+for _ in range(200):
+    x = random.uniform(-1, 1)
+    y = random.uniform(-1, 1)
+    label = 1 if (x*x + y*y) &lt; 0.25 else 0
+    data.append(([x, y], label))
+
+# 2-8-1 网络（随机权重）
+circle_net = Network([
+    Layer(n_inputs=2, n_neurons=8),
+    Layer(n_inputs=8, n_neurons=1),
+])
+
+# 随机权重的准确率
+correct = sum(1 for inputs, expected in data
+              if (1 if circle_net.forward(inputs)[0] &gt;= 0.5 else 0) == expected)
+print(f"随机权重准确率: {correct}/{len(data)} ({100*correct/len(data):.1f}%)")</code></pre>
+<p>随机权重准确率很差——通常比猜多数类还差。训练后（第 3 课），同样的 8 个隐藏神经元架构就能画出弯曲边界分开圆内外。</p>
+<h2 id="用库做同样的事">用库做同样的事</h2>
+<p>PyTorch 四行搞定以上所有：</p>
+<pre data-label="python"><code class="language-python">import torch
+import torch.nn as nn
+
+model = nn.Sequential(
+    nn.Linear(2, 8),   # 你的 Layer 类：权重 (8,2) + bias (8,)
+    nn.Sigmoid(),       # 你的 sigmoid 函数
+    nn.Linear(8, 1),   # 又一层
+    nn.Sigmoid(),
+)
+
+x = torch.tensor([[0.0, 0.0], [0.0, 1.0], [1.0, 0.0], [1.0, 1.0]])
+output = model(x)
+print(output)</code></pre>
+<p><code>nn.Linear(2, 8)</code> 就是你的 Layer 类。<code>nn.Sequential</code> 就是你的 Network 类。区别在于速度和规模——PyTorch 在 GPU 上跑，处理几百万样本的 batch，自动算反向传播的梯度。但前向传播逻辑跟你从零写的一模一样。</p>
+<h2 id="练习">练习</h2>
+<ol>
+<li>搭一个 2-4-2-1 网络（两个隐藏层），用随机权重在 XOR 数据上跑前向传播。打印中间隐藏层输出看表示如何逐层变换。</li>
+<li>把圆形分类器的隐藏层大小从 8 改成 2、再改成 32。每次用随机权重跑前向传播。隐藏神经元数量改变了输出的范围或分布吗？为什么？</li>
+<li>给 Network 类实现 <code>count_parameters</code> 方法，返回总的可训练权重和 bias 数量。在 784-256-128-10 网络（经典 MNIST 架构）上测试，多少参数？</li>
+<li>把 sigmoid 换成&quot;leaky step&quot;：z &lt; 0 返回 0.01×z，否则返回 1.0。用第四步同样的手调权重跑 XOR。还能用吗？为什么光滑的 sigmoid 优于硬切换？</li>
+</ol>
+<h2 id="术语表">术语表</h2>
+<div class="table-wrap"><table><thead><tr>
+<th>术语</th>
+<th>通俗说法</th>
+<th>真正含义</th>
+</tr>
+</thead><tbody><tr>
+<td>Forward pass（前向传播）</td>
+<td>&quot;跑一下模型&quot;</td>
+<td>把输入逐层推过——乘权重、加 bias、过激活——产生输出</td>
+</tr>
+<tr>
+<td>Hidden layer（隐藏层）</td>
+<td>&quot;中间部分&quot;</td>
+<td>输入和输出之间的任何层，其值在训练数据中不直接可见</td>
+</tr>
+<tr>
+<td>Activation function（激活函数）</td>
+<td>&quot;非线性&quot;</td>
+<td>线性变换之后的函数，引入曲线到决策边界中</td>
+</tr>
+<tr>
+<td>Sigmoid</td>
+<td>&quot;S 形曲线&quot;</td>
+<td>σ(z) = 1/(1+e⁻ᶻ)，把任何实数压到 (0,1)，光滑可微</td>
+</tr>
+<tr>
+<td>Weight matrix（权重矩阵）</td>
+<td>&quot;参数&quot;</td>
+<td>形状 (本层神经元, 上层神经元) 的矩阵，包含可学习的连接强度</td>
+</tr>
+<tr>
+<td>Universal approximation（万能近似）</td>
+<td>&quot;神经网络什么都能学&quot;</td>
+<td>一个隐藏层加足够多神经元能逼近任何连续函数——但&quot;足够多&quot;可能是几十亿</td>
+</tr>
+<tr>
+<td>Linear transformation（线性变换）</td>
+<td>&quot;矩阵乘那步&quot;</td>
+<td>z = Wx + b，激活之前的计算，把输入映射到新空间</td>
+</tr>
+<tr>
+<td>Decision boundary（决策边界）</td>
+<td>&quot;分类器切换的地方&quot;</td>
+<td>输入空间中网络输出跨过分类阈值的曲面</td>
+</tr>
+</tbody></table></div>
+<hr>
+<h2 id="自测题">自测题</h2>
+<div class="quiz-card" data-correct="1" data-quiz-id="1">
+  <div class="quiz-question"><span class="quiz-num">Q1</span>隐藏层在多层网络中的作用是什么？</div>
+  <div class="quiz-options">
+    <label class="quiz-option" data-index="0">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">存储训练数据</span>
+    </label>
+    <label class="quiz-option" data-index="1">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">把输入变换成新的特征表示，使非线性决策边界成为可能</span>
+    </label>
+    <label class="quiz-option" data-index="2">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">减少参数数量</span>
+    </label>
+    <label class="quiz-option" data-index="3">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">应用损失函数</span>
+    </label>
+  </div>
+  <button class="quiz-check">Check Answer</button>
+  <div class="quiz-explanation" hidden>隐藏层通过权重、bias 和激活函数创建新的特征表示。这些中间特征让网络能学到单层做不到的非线性映射。</div>
+</div>
+
+<div class="quiz-card" data-correct="2" data-quiz-id="2">
+  <div class="quiz-question"><span class="quiz-num">Q2</span>前向传播做什么？</div>
+  <div class="quiz-options">
+    <label class="quiz-option" data-index="0">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">用梯度更新权重</span>
+    </label>
+    <label class="quiz-option" data-index="1">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">为反向传播计算梯度</span>
+    </label>
+    <label class="quiz-option" data-index="2">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">把输入逐层推过网络产生输出</span>
+    </label>
+    <label class="quiz-option" data-index="3">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">打乱训练数据</span>
+    </label>
+  </div>
+  <button class="quiz-check">Check Answer</button>
+  <div class="quiz-explanation" hidden>前向传播是纯计算：每层乘权重、加 bias、过激活，把结果传给下一层。前向传播不学习。</div>
+</div>
+
+<div class="quiz-card" data-correct="1" data-quiz-id="3">
+  <div class="quiz-question"><span class="quiz-num">Q3</span>一层有 3 个神经元，接收来自 2 个神经元的输入，权重矩阵形状是？</div>
+  <div class="quiz-options">
+    <label class="quiz-option" data-index="0">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">(2, 3)</span>
+    </label>
+    <label class="quiz-option" data-index="1">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">(3, 2)</span>
+    </label>
+    <label class="quiz-option" data-index="2">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">(3, 3)</span>
+    </label>
+    <label class="quiz-option" data-index="3">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">(2, 2)</span>
+    </label>
+  </div>
+  <button class="quiz-check">Check Answer</button>
+  <div class="quiz-explanation" hidden>权重矩阵形状是 (当前层神经元数, 上一层神经元数) = (3, 2)。每行包含一个神经元对所有输入的权重。</div>
+</div>
+
+<div class="quiz-card" data-correct="1" data-quiz-id="4">
+  <div class="quiz-question"><span class="quiz-num">Q4</span>万能近似定理保证了什么？</div>
+  <div class="quiz-options">
+    <label class="quiz-option" data-index="0">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">任何网络都能在多项式时间内训练</span>
+    </label>
+    <label class="quiz-option" data-index="1">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">一个隐藏层加足够多神经元可以逼近任何连续函数</span>
+    </label>
+    <label class="quiz-option" data-index="2">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">更深的网络总是比浅网络好</span>
+    </label>
+    <label class="quiz-option" data-index="3">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">神经网络能解决任何计算问题</span>
+    </label>
+  </div>
+  <button class="quiz-check">Check Answer</button>
+  <div class="quiz-explanation" hidden>Cybenko (1989) 证明了一个隐藏层加足够多神经元的网络可以逼近任何连续函数到任意精度。实际中更深的网络用更少的总参数达到同样效果。</div>
+</div>
+
+<div class="quiz-card" data-correct="2" data-quiz-id="5">
+  <div class="quiz-question"><span class="quiz-num">Q5</span>为什么 sigmoid 激活函数让学习成为可能，而感知机的阶跃函数不行？</div>
+  <div class="quiz-options">
+    <label class="quiz-option" data-index="0">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">Sigmoid 输出更大的值</span>
+    </label>
+    <label class="quiz-option" data-index="1">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">Sigmoid 算得更快</span>
+    </label>
+    <label class="quiz-option" data-index="2">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">Sigmoid 光滑可微，到处有梯度，反向传播需要梯度</span>
+    </label>
+    <label class="quiz-option" data-index="3">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">Sigmoid 输出负值</span>
+    </label>
+  </div>
+  <button class="quiz-check">Check Answer</button>
+  <div class="quiz-explanation" hidden>阶跃函数几乎到处梯度为零，在阈值处梯度未定义。Sigmoid 光滑，在每个点都有明确的导数 s×(1-s)，这对基于梯度的学习是必需的。</div>
+</div>
+
+    <nav class="pager">  <a href="01-the-perceptron.html">
+    <span class="label">← 上一章</span>
+    <span class="title">感知机</span>
+  </a>  <a href="03-backpropagation.html" class="next">
+    <span class="label">下一章 →</span>
+    <span class="title">从零实现反向传播</span>
+  </a></nav>
+  </article>
+</div>
+
+<footer>
+  <div class="set">
+    <span>AI Deep Learning Core</span>
+    <span>2026 · EN</span>
+  </div>
+  <div class="set">
+    <span>Mav</span>
+  </div>
+</footer>
+<div class="search-backdrop" id="search-overlay" role="dialog" aria-modal="true" aria-label="搜索" hidden>
+  <div class="search-modal">
+    <div class="search-input-wrap">
+      <input type="search" class="search-input" placeholder="搜索内容..." aria-label="搜索内容" autocomplete="off">
+      <kbd>ESC</kbd>
+    </div>
+    <div class="search-results" role="listbox" aria-label="搜索结果"></div>
+  </div>
+</div>
+
+<!-- Side Panel -->
+<div class="side-panel" id="side-panel">
+  <div class="side-panel-resize" id="side-panel-resize"></div>
+  <div class="side-panel-header">
+    <div class="side-panel-tabs">
+      <button class="side-panel-tab active" data-mode="sidenote">补充</button>
+      <button class="side-panel-tab" data-mode="notepad">笔记</button>
+    </div>
+    <button class="side-panel-close" aria-label="关闭">×</button>
+  </div>
+  <div class="side-panel-body"></div>
+</div>
+<button class="notepad-fab" id="notepad-fab" aria-label="便利贴">✎</button>
+
+<!-- Mobile TOC -->
+<button class="mtoc-fab" id="mtoc-fab" aria-label="目录">TOC</button>
+<div class="mtoc-drawer" id="mtoc-drawer">
+  <div class="mtoc-content"></div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/bash.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/typescript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/yaml.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/javascript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/json.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/python.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/css.min.js"></script>
+<script src="../assets/script.js"></script>
+<script src="../assets/quiz.js"></script>
+<script src="../assets/mermaid-init.js"></script>
+</body>
+</html>

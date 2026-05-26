@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>学习率调度与 Warmup — AI Deep Learning Core</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" id="hljs-light" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+<link rel="stylesheet" id="hljs-dark" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" media="not all">
+<link rel="stylesheet" href="../assets/quiz.css">
+</head>
+<body>
+
+<div class="progress-bar" id="progress-bar"></div>
+
+<nav class="topnav" id="topnav">
+  <div class="topnav-inner">
+    <a class="brand" href="../index.html">AI Deep Learning Core</a>
+    <div class="nav-links">
+      <a href="01-the-perceptron.html">01</a>
+      <a href="02-multi-layer-networks.html">02</a>
+      <a href="03-backpropagation.html">03</a>
+      <a href="04-activation-functions.html">04</a>
+      <a href="05-loss-functions.html">05</a>
+      <a href="06-optimizers.html">06</a>
+      <a href="07-regularization.html">07</a>
+      <a href="08-weight-initialization.html">08</a>
+      <a href="09-learning-rate-schedules.html" class="active">09</a>
+      <a href="10-mini-framework.html">10</a>
+      <a href="11-intro-to-pytorch.html">11</a>
+      <a href="12-intro-to-jax.html">12</a>
+      <a href="13-debugging-neural-networks.html">13</a>
+    </div>
+    <div class="nav-controls">
+      <button class="nav-btn" id="search-btn" aria-label="搜索 (Ctrl+K)">⌘K</button>
+      <button class="nav-btn" id="settings-btn" aria-label="阅读设置">Aa</button>
+      <a class="nav-btn" href="../../index.html" aria-label="返回知识库">← 知识库</a>
+      <a class="nav-btn" href="https://github.com/maverickxone/mav-homepage" target="_blank" rel="noopener" aria-label="GitHub" style="padding: 6px 8px;"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg></a>
+    </div>
+  </div>
+</nav>
+<div class="settings-pop" id="settings-pop">
+  <h5>主题</h5>
+  <div class="row">
+    <button class="seg" data-theme-set="light">明亮</button>
+    <button class="seg" data-theme-set="dark">暗色</button>
+  </div>
+  <h5>字号</h5>
+  <div class="row">
+    <button class="seg" data-size-set="s">小</button>
+    <button class="seg" data-size-set="m">中</button>
+    <button class="seg" data-size-set="l">大</button>
+  </div>
+</div>
+
+<div class="with-sidebar">
+  <aside class="sidebar">
+  <div class="chapter-num">CHAPTER 09</div>
+  <div class="chapter-name">学习率调度与 Warmup</div>
+  <h4>目录</h4>
+  <ul>
+    <li><a href="#学习目标">学习目标</a></li>
+    <li><a href="#为什么要学这个">为什么要学这个</a></li>
+    <li><a href="#核心概念">核心概念</a></li>
+    <li><a href="#从零实现">从零实现</a></li>
+    <li><a href="#用库做同样的事">用库做同样的事</a></li>
+    <li><a href="#练习">练习</a></li>
+    <li><a href="#术语表">术语表</a></li>
+    <li><a href="#自测题">自测题</a></li>
+  </ul>
+</aside>
+  <article class="chapter-body">
+    <header class="chapter-head">
+  <div class="chapter-head-meta">
+    <span class="num">CHAPTER 09</span>
+    <span>≈ 90 MIN READ</span>
+  </div>
+  <h1>学习率调度与 Warmup</h1>
+
+</header>
+    <blockquote><p>学习率是最重要的超参数。不是架构，不是数据集大小，不是激活函数。如果你只调一个东西，调学习率。</p>
+</blockquote>
+<h2 id="学习目标">学习目标</h2>
+<ul>
+<li>从零实现 constant、step decay、cosine annealing、warmup + cosine、1cycle 学习率调度</li>
+<li>演示学习率选择的三种失败模式：发散（太高）、停滞（太低）、振荡（没衰减）</li>
+<li>解释为什么 Adam 类优化器需要 warmup，它如何稳定早期训练</li>
+<li>在同一任务上比较五种调度的收敛速度</li>
+</ul>
+<h2 id="为什么要学这个">为什么要学这个</h2>
+<p>lr = 0.1：训练发散，3 步后 loss 飞到 inf。lr = 0.0001：训练爬行，100 epoch 后模型几乎没动。lr = 0.01：前 50 epoch 正常，然后 loss 在最小值附近振荡永远下不去——步长太大了。</p>
+<p>最优学习率不是常数，它在训练过程中变化。早期想走大步快速推进，后期想走小步精细调整。90% 精度和 95% 精度之间的差距经常就是调度策略。</p>
+<p>LLaMA 3 用 peak lr=3e-4，2000 步 warmup，cosine 衰减到 3e-5。GPT-3 用 lr=6e-4，warmup 覆盖 3.75 亿 token。这些不是随便选的——是几百万美元超参搜索的结果。</p>
+<h2 id="核心概念">核心概念</h2>
+<h3 id="常数学习率">常数学习率</h3>
+<p>最简单。选一个数，每步都用。</p>
+<pre><code>lr(t) = lr₀</code></pre>
+<p>很少是最优的。对训练后期太高（在最小值附近振荡）或对开头太低（浪费算力走小步）。适合小模型和调试，不适合正式训练。</p>
+<h3 id="step-decay阶梯衰减">Step Decay（阶梯衰减）</h3>
+<p>ResNet 时代的老做法。在固定 epoch 处把学习率砍一刀（通常除以 10）。</p>
+<pre><code>lr(t) = lr₀ × γ^(floor(epoch / step_size))
+
+例：lr₀=0.1, γ=0.1, 每 30 epoch 砍一次
+  epoch 0-29:  lr = 0.1
+  epoch 30-59: lr = 0.01
+  epoch 60-89: lr = 0.001</code></pre>
+<p>简单有效，但需要手动选什么时候砍。现代做法更平滑。</p>
+<h3 id="cosine-annealing余弦退火">Cosine Annealing（余弦退火）</h3>
+<p>从最大 lr 平滑下降到最小 lr，遵循余弦曲线。</p>
+<pre><code>lr(t) = lr_min + 0.5 × (lr_max - lr_min) × (1 + cos(π × t / T))</code></pre>
+<p>T 是总步数。前半段 lr 下降慢（在高处多待一会），后半段下降快。没有需要调的&quot;砍的时机&quot;——曲线形状固定。这是 Transformer 训练的标准选择。</p>
+<h3 id="warmup热启动">Warmup（热启动）</h3>
+<p>训练前几步从很小的 lr 线性升到目标 lr。</p>
+<pre><code>if t &lt; warmup_steps:
+    lr(t) = lr_max × (t / warmup_steps)
+else:
+    lr(t) = 后续调度（cosine decay 等）</code></pre>
+<p><strong>为什么 Adam 需要 warmup</strong>：Adam 的二阶矩（v_t）跟踪梯度平方的移动平均。前几步 v_t 还没稳定，估计很不准。如果一开始就用大 lr，不准的自适应缩放会导致某些参数走大步——方向都未必对。Warmup 在 v_t 稳定之前保持小步，给优化器时间&quot;热机&quot;。</p>
+<p>通常 warmup 占总训练的 1-10%。LLM 训练典型值：2000 步。</p>
+<h3 id="warmup-cosine-decay现代标准">Warmup + Cosine Decay（现代标准）</h3>
+<pre><code>warmup_steps = total_steps × 0.05    （前 5% 升温）
+lr_max = 3e-4                         （峰值学习率）
+lr_min = lr_max × 0.1                 （最终学习率）
+
+if t &lt; warmup_steps:
+    lr = lr_max × (t / warmup_steps)
+else:
+    progress = (t - warmup_steps) / (total_steps - warmup_steps)
+    lr = lr_min + 0.5 × (lr_max - lr_min) × (1 + cos(π × progress))</code></pre>
+<p>这是 GPT、LLaMA、BERT 等几乎所有现代大模型的标准调度。</p>
+<h3 id="1cycle一个周期">1Cycle（一个周期）</h3>
+<p>Smith (2019) 的超收敛方法。前半程升学习率，后半程降，最后用很小的 lr 做 anneal。</p>
+<pre><code>前半程：lr 从 lr_max/25 升到 lr_max
+后半程：lr 从 lr_max 降到 lr_max/25
+最后 ~10%：lr 进一步降到 lr_max/25000</code></pre>
+<p>激进但在 CNN 训练中很有效，能在更少的 epoch 达到更好结果。</p>
+<h3 id="三种失败模式对比">三种失败模式对比</h3>
+<div class="table-wrap"><table><thead><tr>
+<th>问题</th>
+<th>症状</th>
+<th>原因</th>
+<th>修复</th>
+</tr>
+</thead><tbody><tr>
+<td>发散</td>
+<td>Loss 飞到 inf 或 NaN</td>
+<td>lr 太高</td>
+<td>降低 lr 或加 warmup</td>
+</tr>
+<tr>
+<td>停滞</td>
+<td>Loss 几乎不动</td>
+<td>lr 太低</td>
+<td>提高 lr</td>
+</tr>
+<tr>
+<td>振荡</td>
+<td>Loss 在某值附近上下跳</td>
+<td>末期 lr 太高，没有衰减</td>
+<td>加 cosine 衰减</td>
+</tr>
+</tbody></table></div>
+<h2 id="从零实现">从零实现</h2>
+<pre data-label="python"><code class="language-python">import math
+
+def constant_schedule(step, lr=0.001, **kwargs):
+    return lr
+
+def step_decay_schedule(step, lr=0.01, drop_factor=0.1, drop_every=30, **kwargs):
+    return lr * (drop_factor ** (step // drop_every))
+
+def cosine_schedule(step, lr_max=0.001, lr_min=1e-5, total_steps=1000, **kwargs):
+    progress = min(step / total_steps, 1.0)
+    return lr_min + 0.5 * (lr_max - lr_min) * (1 + math.cos(math.pi * progress))
+
+def warmup_cosine_schedule(step, lr_max=0.001, lr_min=1e-5, warmup_steps=100, total_steps=1000, **kwargs):
+    if step &lt; warmup_steps:
+        return lr_max * (step / warmup_steps)
+    progress = (step - warmup_steps) / (total_steps - warmup_steps)
+    return lr_min + 0.5 * (lr_max - lr_min) * (1 + math.cos(math.pi * progress))
+
+def one_cycle_schedule(step, lr_max=0.01, total_steps=1000, **kwargs):
+    pct = step / total_steps
+    if pct &lt; 0.45:
+        return lr_max * (pct / 0.45)
+    elif pct &lt; 0.9:
+        progress = (pct - 0.45) / 0.45
+        return lr_max * (1 - progress)
+    else:
+        return lr_max * 0.001
+
+# 打印各调度在关键步骤的 lr
+total = 1000
+print(f"{'Step':&lt;8} {'Constant':&lt;10} {'StepDecay':&lt;10} {'Cosine':&lt;10} {'W+Cos':&lt;10} {'1Cycle':&lt;10}")
+for step in [0, 50, 100, 250, 500, 750, 999]:
+    c = constant_schedule(step)
+    sd = step_decay_schedule(step, total_steps=total, drop_every=333)
+    co = cosine_schedule(step, total_steps=total)
+    wc = warmup_cosine_schedule(step, warmup_steps=100, total_steps=total)
+    oc = one_cycle_schedule(step, total_steps=total)
+    print(f"{step:&lt;8} {c:&lt;10.6f} {sd:&lt;10.6f} {co:&lt;10.6f} {wc:&lt;10.6f} {oc:&lt;10.6f}")</code></pre>
+<h2 id="用库做同样的事">用库做同样的事</h2>
+<pre data-label="python"><code class="language-python">import torch.optim as optim
+
+optimizer = optim.AdamW(model.parameters(), lr=3e-4)
+
+# Cosine annealing
+scheduler = optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=100, eta_min=1e-5)
+
+# Warmup + cosine（用 lambda 组合）
+warmup_steps = 100
+total_steps = 2000
+
+def lr_lambda(step):
+    if step &lt; warmup_steps:
+        return step / warmup_steps
+    progress = (step - warmup_steps) / (total_steps - warmup_steps)
+    return 0.5 * (1 + math.cos(math.pi * progress))
+
+scheduler = optim.lr_scheduler.LambdaLR(optimizer, lr_lambda)
+
+# 1Cycle
+scheduler = optim.lr_scheduler.OneCycleLR(optimizer, max_lr=0.01, total_steps=2000)
+
+# 训练循环中
+for step in range(total_steps):
+    optimizer.zero_grad()
+    loss = compute_loss()
+    loss.backward()
+    optimizer.step()
+    scheduler.step()  # 每步更新 lr</code></pre>
+<h2 id="练习">练习</h2>
+<ol>
+<li>在同一个任务上用 5 种调度分别训练，画 lr 曲线和 loss 曲线。哪个收敛最快？哪个最终 loss 最低？</li>
+<li>尝试不同的 warmup 步数 (0, 50, 200, 1000)，观察对早期训练稳定性的影响。</li>
+<li>实现 LR Range Test (Smith 2017)：从极小 lr 开始指数增大，记录每步的 loss。loss 开始上升的点就是最大可用 lr。</li>
+</ol>
+<h2 id="术语表">术语表</h2>
+<div class="table-wrap"><table><thead><tr>
+<th>术语</th>
+<th>通俗说法</th>
+<th>真正含义</th>
+</tr>
+</thead><tbody><tr>
+<td>Learning rate schedule</td>
+<td>&quot;lr 随时间变&quot;</td>
+<td>根据训练步数动态调整学习率的函数</td>
+</tr>
+<tr>
+<td>Warmup</td>
+<td>&quot;热启动&quot;</td>
+<td>前几步从小 lr 线性升到峰值，给优化器时间稳定</td>
+</tr>
+<tr>
+<td>Cosine annealing</td>
+<td>&quot;余弦退火&quot;</td>
+<td>lr 按余弦曲线从高到低平滑下降</td>
+</tr>
+<tr>
+<td>Step decay</td>
+<td>&quot;阶梯衰减&quot;</td>
+<td>固定间隔把 lr 砍一刀（通常除以 10）</td>
+</tr>
+<tr>
+<td>1Cycle</td>
+<td>&quot;超收敛&quot;</td>
+<td>先升后降的 lr 策略，能在更少 epoch 达到更好结果</td>
+</tr>
+<tr>
+<td>Peak lr</td>
+<td>&quot;峰值学习率&quot;</td>
+<td>warmup 结束时达到的最大学习率</td>
+</tr>
+<tr>
+<td>Divergence（发散）</td>
+<td>&quot;loss 飞了&quot;</td>
+<td>lr 太高导致参数更新过大，loss 不降反升</td>
+</tr>
+</tbody></table></div>
+<hr>
+<h2 id="自测题">自测题</h2>
+<div class="quiz-card" data-correct="1" data-quiz-id="1">
+  <div class="quiz-question"><span class="quiz-num">Q1</span>为什么固定学习率通常不是最优选择？</div>
+  <div class="quiz-options">
+    <label class="quiz-option" data-index="0">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">固定 lr 训练更慢但最终更好</span>
+    </label>
+    <label class="quiz-option" data-index="1">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">训练早期需要大步快速推进，后期需要小步精细调整，固定 lr 只能折中</span>
+    </label>
+    <label class="quiz-option" data-index="2">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">固定 lr 会导致梯度消失</span>
+    </label>
+    <label class="quiz-option" data-index="3">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">现代 GPU 不支持固定 lr</span>
+    </label>
+  </div>
+  <button class="quiz-check">Check Answer</button>
+  <div class="quiz-explanation" hidden>训练初期距最小值远，大 lr 走得快。末期在最小值附近，大 lr 会来回跳过。调度策略让两阶段都获得合适的步长。</div>
+</div>
+
+<div class="quiz-card" data-correct="1" data-quiz-id="2">
+  <div class="quiz-question"><span class="quiz-num">Q2</span>Warmup 为什么对 Adam 优化器重要？</div>
+  <div class="quiz-options">
+    <label class="quiz-option" data-index="0">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">Adam 计算太慢需要热机</span>
+    </label>
+    <label class="quiz-option" data-index="1">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">Adam 的二阶矩估计前几步不稳定，大 lr 会导致不靠谱的大步更新</span>
+    </label>
+    <label class="quiz-option" data-index="2">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">Warmup 减少内存使用</span>
+    </label>
+    <label class="quiz-option" data-index="3">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">Adam 的参数需要几步才能加载到 GPU</span>
+    </label>
+  </div>
+  <button class="quiz-check">Check Answer</button>
+  <div class="quiz-explanation" hidden>Adam 用梯度平方的移动平均做自适应缩放。前几步这个估计还没稳定（偏差修正虽然有但不完美）。Warmup 保持小步让估计稳定后再给大步。</div>
+</div>
+
+<div class="quiz-card" data-correct="1" data-quiz-id="3">
+  <div class="quiz-question"><span class="quiz-num">Q3</span>Cosine annealing 相比 step decay 的优势是什么？</div>
+  <div class="quiz-options">
+    <label class="quiz-option" data-index="0">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">计算更快</span>
+    </label>
+    <label class="quiz-option" data-index="1">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">平滑连续下降不需要手动选"什么时候砍 lr"，避免了突变带来的训练不稳定</span>
+    </label>
+    <label class="quiz-option" data-index="2">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">最终 lr 更高</span>
+    </label>
+    <label class="quiz-option" data-index="3">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">只适用于 CNN</span>
+    </label>
+  </div>
+  <button class="quiz-check">Check Answer</button>
+  <div class="quiz-explanation" hidden>Step decay 在固定点突然把 lr 砍到 1/10，可能导致 loss 突然跳动。Cosine 连续平滑下降，没有需要调的超参（除了总步数），训练更稳定。</div>
+</div>
+
+<div class="quiz-card" data-correct="2" data-quiz-id="4">
+  <div class="quiz-question"><span class="quiz-num">Q4</span>LLaMA 3 和 GPT-3 使用的学习率调度策略是什么？</div>
+  <div class="quiz-options">
+    <label class="quiz-option" data-index="0">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">固定学习率</span>
+    </label>
+    <label class="quiz-option" data-index="1">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">Step decay</span>
+    </label>
+    <label class="quiz-option" data-index="2">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">Warmup + cosine decay</span>
+    </label>
+    <label class="quiz-option" data-index="3">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">指数衰减</span>
+    </label>
+  </div>
+  <button class="quiz-check">Check Answer</button>
+  <div class="quiz-explanation" hidden>几乎所有现代 LLM 都用 warmup + cosine decay：先线性升温到峰值 lr，再按余弦曲线平滑衰减到接近零。这是无争议的标准。</div>
+</div>
+
+<div class="quiz-card" data-correct="1" data-quiz-id="5">
+  <div class="quiz-question"><span class="quiz-num">Q5</span>训练过程中 loss 在某值附近上下振荡而不下降，最可能的原因是？</div>
+  <div class="quiz-options">
+    <label class="quiz-option" data-index="0">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">模型太小</span>
+    </label>
+    <label class="quiz-option" data-index="1">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">学习率在训练末期太高，需要加衰减策略</span>
+    </label>
+    <label class="quiz-option" data-index="2">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">数据有问题</span>
+    </label>
+    <label class="quiz-option" data-index="3">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">batch size 太大</span>
+    </label>
+  </div>
+  <button class="quiz-check">Check Answer</button>
+  <div class="quiz-explanation" hidden>当 lr 太高时，每步都跳过最小值在两侧弹跳。加 cosine 或其他衰减让末期 lr 足够小，模型才能稳定收敛到最小值。</div>
+</div>
+
+    <nav class="pager">  <a href="08-weight-initialization.html">
+    <span class="label">← 上一章</span>
+    <span class="title">权重初始化与训练稳定性</span>
+  </a>  <a href="10-mini-framework.html" class="next">
+    <span class="label">下一章 →</span>
+    <span class="title">搭建自己的 Mini 框架</span>
+  </a></nav>
+  </article>
+</div>
+
+<footer>
+  <div class="set">
+    <span>AI Deep Learning Core</span>
+    <span>2026 · EN</span>
+  </div>
+  <div class="set">
+    <span>Mav</span>
+  </div>
+</footer>
+<div class="search-backdrop" id="search-overlay" role="dialog" aria-modal="true" aria-label="搜索" hidden>
+  <div class="search-modal">
+    <div class="search-input-wrap">
+      <input type="search" class="search-input" placeholder="搜索内容..." aria-label="搜索内容" autocomplete="off">
+      <kbd>ESC</kbd>
+    </div>
+    <div class="search-results" role="listbox" aria-label="搜索结果"></div>
+  </div>
+</div>
+
+<!-- Side Panel -->
+<div class="side-panel" id="side-panel">
+  <div class="side-panel-resize" id="side-panel-resize"></div>
+  <div class="side-panel-header">
+    <div class="side-panel-tabs">
+      <button class="side-panel-tab active" data-mode="sidenote">补充</button>
+      <button class="side-panel-tab" data-mode="notepad">笔记</button>
+    </div>
+    <button class="side-panel-close" aria-label="关闭">×</button>
+  </div>
+  <div class="side-panel-body"></div>
+</div>
+<button class="notepad-fab" id="notepad-fab" aria-label="便利贴">✎</button>
+
+<!-- Mobile TOC -->
+<button class="mtoc-fab" id="mtoc-fab" aria-label="目录">TOC</button>
+<div class="mtoc-drawer" id="mtoc-drawer">
+  <div class="mtoc-content"></div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/bash.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/typescript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/yaml.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/javascript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/json.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/python.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/css.min.js"></script>
+<script src="../assets/script.js"></script>
+<script src="../assets/quiz.js"></script>
+<script src="../assets/mermaid-init.js"></script>
+</body>
+</html>

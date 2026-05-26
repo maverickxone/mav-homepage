@@ -116,29 +116,23 @@ body { font-family: "Inter", -apple-system, sans-serif; background: #fafafa; ove
     .graphData({ nodes, links })
     .nodeId('id')
     .backgroundColor('#fafafa')
-    // Simulation: never stop, low damping for fluid motion
     .d3AlphaMin(0)
     .d3AlphaDecay(0.01)
     .d3VelocityDecay(0.2)
     .warmupTicks(150)
     .cooldownTicks(Infinity)
-    // Don't pin on drag end (Obsidian behavior)
     .onNodeDragEnd(node => { node.fx = undefined; node.fy = undefined; draggedNode = null; hoveredNode = null; })
     .onNodeDrag(node => { draggedNode = node; hoveredNode = node; })
-    // Node rendering
     .nodeCanvasObject((node, ctx, globalScale) => {
       const isBook = node.nodeType === 'book';
       const r = isBook ? 3 : 2;
 
-      // Opacity based on hover state
       let alpha = 1;
       if (hoveredNode) {
         const hn = hoveredNode;
         if (hn.nodeType === 'book') {
-          // Hovering book: show book + its chapters
           alpha = (node.id === hn.id || node.bookId === hn.id) ? 1 : 0.08;
         } else {
-          // Hovering chapter: show parent cluster + cross-connected nodes
           const parentBook = hn.bookId;
           const isSameCluster = node.id === parentBook || node.bookId === parentBook;
           const isCrossConnected = links.some(l =>
@@ -156,7 +150,6 @@ body { font-family: "Inter", -apple-system, sans-serif; background: #fafafa; ove
       ctx.fillStyle = isBook ? '#444' : '#aaa';
       ctx.fill();
 
-      // Label
       if (isBook) {
         const fontSize = Math.max(10 / globalScale, 2.5);
         ctx.font = `500 ${fontSize}px "Inter", sans-serif`;
@@ -181,13 +174,11 @@ body { font-family: "Inter", -apple-system, sans-serif; background: #fafafa; ove
       ctx.fillStyle = color;
       ctx.fill();
     })
-    // Link rendering
     .linkCanvasObject((link, ctx, globalScale) => {
       const s = link.source, t = link.target;
       if (!s.x || !t.x) return;
 
       if (link.edgeType === 'internal') {
-        // Internal links: always visible
         let alpha = 0.15;
         if (hoveredNode) {
           const hn = hoveredNode;
@@ -201,7 +192,6 @@ body { font-family: "Inter", -apple-system, sans-serif; background: #fafafa; ove
         ctx.lineWidth = 0.5 / globalScale;
         ctx.stroke();
       } else {
-        // Cross links: always visible (faint), highlighted on hover
         let alpha = 0.1;
         let width = 0.5;
         if (hoveredNode) {
@@ -220,12 +210,10 @@ body { font-family: "Inter", -apple-system, sans-serif; background: #fafafa; ove
       }
     })
     .linkCanvasObjectMode(() => 'replace')
-    // Hover
     .onNodeHover(node => {
       if (!draggedNode) hoveredNode = node;
       container.style.cursor = node ? 'pointer' : 'grab';
     })
-    // Click
     .onNodeClick((node, event) => {
       const isBook = node.nodeType === 'book';
       const meta = isBook ? `${node.chapterCount} 章` : (bookLabels[node.bookId] || '');
@@ -242,11 +230,11 @@ body { font-family: "Inter", -apple-system, sans-serif; background: #fafafa; ove
     })
     .onBackgroundClick(() => { tooltip.classList.remove('visible'); });
 
-  // === Forces ===
   Graph.d3Force('charge').strength(n => n.nodeType === 'book' ? -60 : -3);
   Graph.d3Force('link')
     .distance(l => l.edgeType === 'internal' ? 20 : 60)
     .strength(l => l.edgeType === 'internal' ? 1.2 : 0.2);
+  Graph.d3Force('center').strength(0.8);
 })();
 </script>
 </body>

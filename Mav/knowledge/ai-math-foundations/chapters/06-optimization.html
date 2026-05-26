@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>优化 — AI Math Foundations</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" id="hljs-light" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+<link rel="stylesheet" id="hljs-dark" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" media="not all">
+<link rel="stylesheet" href="../assets/quiz.css">
+</head>
+<body>
+
+<div class="progress-bar" id="progress-bar"></div>
+
+<nav class="topnav" id="topnav">
+  <div class="topnav-inner">
+    <a class="brand" href="../index.html">AI Math Foundations</a>
+    <div class="nav-links">
+      <a href="01-linear-algebra-intuition.html">01</a>
+      <a href="02-vectors-matrices-operations.html">02</a>
+      <a href="03-calculus-for-ml.html">03</a>
+      <a href="04-chain-rule-and-autodiff.html">04</a>
+      <a href="05-probability-and-distributions.html">05</a>
+      <a href="06-optimization.html" class="active">06</a>
+      <a href="07-tensor-operations.html">07</a>
+      <a href="08-numerical-stability.html">08</a>
+    </div>
+    <div class="nav-controls">
+      <button class="nav-btn" id="search-btn" aria-label="搜索 (Ctrl+K)">⌘K</button>
+      <button class="nav-btn" id="settings-btn" aria-label="阅读设置">Aa</button>
+      <a class="nav-btn" href="../../index.html" aria-label="返回知识库">← 知识库</a>
+      <a class="nav-btn" href="https://github.com/maverickxone/mav-homepage" target="_blank" rel="noopener" aria-label="GitHub" style="padding: 6px 8px;"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg></a>
+    </div>
+  </div>
+</nav>
+<div class="settings-pop" id="settings-pop">
+  <h5>主题</h5>
+  <div class="row">
+    <button class="seg" data-theme-set="light">明亮</button>
+    <button class="seg" data-theme-set="dark">暗色</button>
+  </div>
+  <h5>字号</h5>
+  <div class="row">
+    <button class="seg" data-size-set="s">小</button>
+    <button class="seg" data-size-set="m">中</button>
+    <button class="seg" data-size-set="l">大</button>
+  </div>
+</div>
+
+<div class="with-sidebar">
+  <aside class="sidebar">
+  <div class="chapter-num">CHAPTER 06</div>
+  <div class="chapter-name">优化</div>
+  <h4>目录</h4>
+  <ul>
+    <li><a href="#学习目标">学习目标</a></li>
+    <li><a href="#为什么要学这个">为什么要学这个</a></li>
+    <li><a href="#核心概念">核心概念</a></li>
+    <li><a href="#从零实现">从零实现</a></li>
+    <li><a href="#实际使用">实际使用</a></li>
+    <li><a href="#练习">练习</a></li>
+    <li><a href="#术语表">术语表</a></li>
+    <li><a href="#自测题">自测题</a></li>
+  </ul>
+</aside>
+  <article class="chapter-body">
+    <header class="chapter-head">
+  <div class="chapter-head-meta">
+    <span class="num">CHAPTER 06</span>
+    <span>≈ 75 MIN READ</span>
+  </div>
+  <h1>优化</h1>
+
+</header>
+    <blockquote><p>训练神经网络就是找山谷的最低点。</p>
+</blockquote>
+<h2 id="学习目标">学习目标</h2>
+<ul>
+<li>从零实现 vanilla 梯度下降、SGD with momentum 和 Adam</li>
+<li>在 Rosenbrock 函数上比较优化器收敛速度，解释 Adam 为什么给每个权重自适应学习率</li>
+<li>区分凸和非凸损失面，解释高维空间中鞍点的角色</li>
+<li>配置学习率调度策略（step decay、cosine annealing、warmup）</li>
+</ul>
+<h2 id="为什么要学这个">为什么要学这个</h2>
+<p>你有一个 loss 函数——告诉你模型有多错。你有梯度——告诉你哪个方向会让 loss 变大。现在你需要一个策略来往下坡走。</p>
+<p>最朴素的做法：往梯度反方向走一步，步长乘以一个叫学习率的数。重复。这就是梯度下降，它能用。但&quot;能用&quot;有前提——学习率太大会跳过谷底，太小会爬得巨慢，遇到鞍点会停住明明还没到最小值。</p>
+<p>深度学习中的每个优化器都在回答同一个问题：<strong>怎么更快更稳地到达谷底？</strong></p>
+<h2 id="核心概念">核心概念</h2>
+<h3 id="优化是什么">优化是什么</h3>
+<p>优化 = 找到让函数取最小值（或最大值）的输入。在 ML 中，函数是 loss，输入是模型权重。训练就是优化。</p>
+<pre><code>最小化 L(w)，其中：
+  L = 损失函数
+  w = 模型权重（可能有几百万个）</code></pre>
+<h3 id="梯度下降vanilla">梯度下降（Vanilla）</h3>
+<p>最简单的优化器。算 loss 对每个权重的梯度，让每个权重往梯度反方向走一步，步长乘以学习率。</p>
+<pre><code>w = w - lr × gradient</code></pre>
+<p>就这一行。整个算法。</p>
+<pre data-label="mermaid"><code class="language-mermaid">graph TD
+    A["● 起点（高 loss）"] --&gt; B["沿梯度方向下山"]
+    B --&gt; C["接近最小值"]
+    C --&gt; D["○ 最小值（低 loss）"]</code></pre>
+<h3 id="学习率最重要的超参数">学习率：最重要的超参数</h3>
+<p>学习率控制步长，决定了收敛的一切。</p>
+<pre data-label="mermaid"><code class="language-mermaid">graph LR
+    subgraph TooLarge["太大（lr = 1.0）"]
+        A1["Step 1"] --&gt;|"跳过去"| A2["Step 2"]
+        A2 --&gt;|"跳过去"| A3["Step 3"]
+        A3 --&gt;|"发散"| A4["..."]
+    end
+    subgraph TooSmall["太小（lr = 0.0001）"]
+        B1["Step 1"] --&gt;|"一丢丢"| B2["Step 2"]
+        B2 --&gt;|"一丢丢"| B3["Step 3"]
+        B3 --&gt;|"一万步后"| B4["最小值"]
+    end
+    subgraph JustRight["刚好（lr = 0.01）"]
+        C1["开始"] --&gt; C2["..."] --&gt; C3["~100 步收敛"]
+    end</code></pre>
+<p>没有公式能给出&quot;正确的&quot;学习率，靠实验找。常见起点：Adam 用 0.001，SGD+momentum 用 0.01。</p>
+<h3 id="sgd-vs-批量-vs-小批量">SGD vs 批量 vs 小批量</h3>
+<div class="table-wrap"><table><thead><tr>
+<th>变体</th>
+<th>每步用多少数据</th>
+<th>梯度质量</th>
+<th>速度</th>
+<th>噪声</th>
+</tr>
+</thead><tbody><tr>
+<td>批量梯度下降</td>
+<td>整个数据集</td>
+<td>精确</td>
+<td>慢</td>
+<td>无</td>
+</tr>
+<tr>
+<td>随机梯度下降 (SGD)</td>
+<td>1 个样本</td>
+<td>非常吵</td>
+<td>快</td>
+<td>高</td>
+</tr>
+<tr>
+<td>小批量</td>
+<td>32-256 个样本</td>
+<td>不错的估计</td>
+<td>平衡</td>
+<td>适中</td>
+</tr>
+</tbody></table></div>
+<p>SGD 和小批量中的噪声不是 bug——它帮助逃离浅的局部最小值和鞍点。</p>
+<h3 id="momentum下坡滚球">Momentum：下坡滚球</h3>
+<p>Vanilla 梯度下降只看当前梯度。如果梯度来回拐弯（窄山谷中很常见），进展很慢。Momentum 通过积累过去的梯度到一个&quot;速度&quot;项来解决这个问题。</p>
+<pre><code>v = beta × v + gradient
+w = w - lr × v</code></pre>
+<p>类比：一颗球在山坡上滚。它不会在每个凸起处停下来重新启动，而是在一致的方向上积累速度，在振荡方向上被抑制。</p>
+<pre data-label="mermaid"><code class="language-mermaid">graph TD
+    subgraph Without["无 Momentum（锯齿，慢）"]
+        W1["起点"] --&gt;|"左"| W2[" "]
+        W2 --&gt;|"右"| W3[" "]
+        W3 --&gt;|"左"| W4[" "]
+        W4 --&gt;|"右"| W5["最小值"]
+    end
+    subgraph With["有 Momentum（平滑，快）"]
+        M1["起点"] --&gt; M2[" "] --&gt; M3[" "] --&gt; M4["最小值"]
+    end</code></pre>
+<p><code>beta</code>（通常 0.9）控制保留多少历史。越大动量越强、路径越平滑，但对方向变化的响应越慢。</p>
+<h3 id="adam自适应学习率">Adam：自适应学习率</h3>
+<p>不同的权重需要不同的学习率。一个很少收到大梯度的权重，终于收到时应该走大步。一个总是收到巨大梯度的权重应该走小步。</p>
+<p>Adam（Adaptive Moment Estimation）对每个权重跟踪两样东西：</p>
+<ol>
+<li><strong>一阶矩 (m)</strong>：梯度的指数移动平均（像 momentum）</li>
+<li><strong>二阶矩 (v)</strong>：梯度平方的指数移动平均（梯度大小）</li>
+</ol>
+<pre><code>m = beta1 × m + (1 - beta1) × gradient
+v = beta2 × v + (1 - beta2) × gradient²
+
+m_hat = m / (1 - beta1^t)    偏差修正
+v_hat = v / (1 - beta2^t)    偏差修正
+
+w = w - lr × m_hat / (√v_hat + ε)</code></pre>
+<p>除以 <code>√v_hat</code> 是关键：梯度大的权重被除以大数（有效步长小），梯度小的权重被除以小数（有效步长大）。每个权重自动获得自己的学习率。</p>
+<p>默认超参数：<code>lr=0.001, beta1=0.9, beta2=0.999, ε=1e-8</code>。对大多数问题都好使。</p>
+<h3 id="学习率调度">学习率调度</h3>
+<p>固定学习率是折中。训练早期想走大步快速推进，后期想走小步精细调整。</p>
+<div class="table-wrap"><table><thead><tr>
+<th>调度策略</th>
+<th>做法</th>
+<th>用途</th>
+</tr>
+</thead><tbody><tr>
+<td>Step decay</td>
+<td>每 N 个 epoch 乘以衰减系数</td>
+<td>简单，手动控制</td>
+</tr>
+<tr>
+<td>指数衰减</td>
+<td>lr = lr₀ × decay^t</td>
+<td>平滑下降</td>
+</tr>
+<tr>
+<td>Cosine annealing</td>
+<td>按余弦曲线从高到低</td>
+<td>Transformer，现代训练</td>
+</tr>
+<tr>
+<td>Warmup + decay</td>
+<td>先线性升温，再衰减</td>
+<td>大模型，防止早期不稳定</td>
+</tr>
+</tbody></table></div>
+<h3 id="凸-vs-非凸">凸 vs 非凸</h3>
+<p>凸函数只有一个最小值，梯度下降一定能找到。<code>f(x) = x²</code> 是凸的。</p>
+<p>神经网络的 loss 函数是<strong>非凸</strong>的——有很多局部最小值、鞍点和平坦区域。</p>
+<pre data-label="mermaid"><code class="language-mermaid">graph LR
+    subgraph Convex["凸：一个谷底，一个答案"]
+        direction TB
+        CV1["高 loss"] --&gt; CV2["全局最小值"]
+    end
+    subgraph NonConvex["非凸：多个谷底，鞍点"]
+        direction TB
+        NC1["起点"] --&gt; NC2["局部最小值"]
+        NC1 --&gt; NC3["鞍点"]
+        NC1 --&gt; NC4["全局最小值"]
+    end</code></pre>
+<p>实际中，高维神经网络的局部最小值很少是问题——大部分局部最小值的 loss 跟全局最小值差不多。真正的障碍是<strong>鞍点</strong>（某些方向平坦，某些方向弯曲）。Momentum 和小批量的噪声帮助逃离它们。</p>
+<h2 id="从零实现">从零实现</h2>
+<h3 id="第一步测试函数">第一步：测试函数</h3>
+<p>Rosenbrock 函数是经典优化基准。最小值在 (1, 1)，藏在一个窄弯曲谷里——容易找到谷的入口但难以沿着谷底走。</p>
+<pre data-label="python"><code class="language-python">def rosenbrock(params):
+    x, y = params
+    return (1 - x) ** 2 + 100 * (y - x ** 2) ** 2
+
+def rosenbrock_gradient(params):
+    x, y = params
+    df_dx = -2 * (1 - x) + 200 * (y - x**2) * (-2 * x)
+    df_dy = 200 * (y - x**2)
+    return [df_dx, df_dy]</code></pre>
+<h3 id="第二步vanilla-梯度下降">第二步：Vanilla 梯度下降</h3>
+<pre data-label="python"><code class="language-python">class GradientDescent:
+    def __init__(self, lr=0.001):
+        self.lr = lr
+
+    def step(self, params, grads):
+        return [p - self.lr * g for p, g in zip(params, grads)]</code></pre>
+<h3 id="第三步sgd-with-momentum">第三步：SGD with Momentum</h3>
+<pre data-label="python"><code class="language-python">class SGDMomentum:
+    def __init__(self, lr=0.001, momentum=0.9):
+        self.lr = lr
+        self.momentum = momentum
+        self.velocity = None
+
+    def step(self, params, grads):
+        if self.velocity is None:
+            self.velocity = [0.0] * len(params)
+        self.velocity = [
+            self.momentum * v + g
+            for v, g in zip(self.velocity, grads)
+        ]
+        return [p - self.lr * v for p, v in zip(params, self.velocity)]</code></pre>
+<h3 id="第四步adam">第四步：Adam</h3>
+<pre data-label="python"><code class="language-python">class Adam:
+    def __init__(self, lr=0.001, beta1=0.9, beta2=0.999, epsilon=1e-8):
+        self.lr = lr
+        self.beta1 = beta1
+        self.beta2 = beta2
+        self.epsilon = epsilon
+        self.m = None  # 一阶矩
+        self.v = None  # 二阶矩
+        self.t = 0     # 步数
+
+    def step(self, params, grads):
+        if self.m is None:
+            self.m = [0.0] * len(params)
+            self.v = [0.0] * len(params)
+
+        self.t += 1
+
+        # 更新一阶矩（梯度的移动平均）
+        self.m = [self.beta1 * m + (1 - self.beta1) * g
+                  for m, g in zip(self.m, grads)]
+        # 更新二阶矩（梯度平方的移动平均）
+        self.v = [self.beta2 * v + (1 - self.beta2) * g ** 2
+                  for v, g in zip(self.v, grads)]
+
+        # 偏差修正
+        m_hat = [m / (1 - self.beta1 ** self.t) for m in self.m]
+        v_hat = [v / (1 - self.beta2 ** self.t) for v in self.v]
+
+        # 更新参数
+        return [
+            p - self.lr * mh / (vh ** 0.5 + self.epsilon)
+            for p, mh, vh in zip(params, m_hat, v_hat)
+        ]</code></pre>
+<h3 id="第五步跑一跑比较">第五步：跑一跑比较</h3>
+<pre data-label="python"><code class="language-python">def optimize(optimizer, func, grad_func, start, steps=5000):
+    params = list(start)
+    for _ in range(steps):
+        grads = grad_func(params)
+        params = optimizer.step(params, grads)
+    return params
+
+start = [-1.0, 1.0]
+
+gd_final = optimize(GradientDescent(lr=0.0005), rosenbrock, rosenbrock_gradient, start)
+sgd_final = optimize(SGDMomentum(lr=0.0001, momentum=0.9), rosenbrock, rosenbrock_gradient, start)
+adam_final = optimize(Adam(lr=0.01), rosenbrock, rosenbrock_gradient, start)
+
+for name, final in [("GD", gd_final), ("SGD+M", sgd_final), ("Adam", adam_final)]:
+    loss = rosenbrock(final)
+    print(f"{name:6s} → x={final[0]:.6f}, y={final[1]:.6f}, loss={loss:.8f}")</code></pre>
+<p>预期结果：Adam 收敛最快，SGD+Momentum 路径更平滑，Vanilla GD 在窄谷里慢慢蹭。</p>
+<h2 id="实际使用">实际使用</h2>
+<p>实践中用 PyTorch 的优化器，它们处理了参数组、权重衰减、梯度裁剪和 GPU 加速。</p>
+<pre data-label="python"><code class="language-python">import torch
+
+model = torch.nn.Linear(784, 10)
+
+# 几种常用优化器
+sgd = torch.optim.SGD(model.parameters(), lr=0.01, momentum=0.9)
+adam = torch.optim.Adam(model.parameters(), lr=0.001)
+adamw = torch.optim.AdamW(model.parameters(), lr=0.001, weight_decay=0.01)
+
+# 学习率调度
+scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(adam, T_max=100)</code></pre>
+<p>经验法则：</p>
+<ul>
+<li>从 Adam (lr=0.001) 开始，大多数问题不用调就能跑</li>
+<li>需要最好的最终精度且愿意多调参时，切换到 SGD+momentum (lr=0.01, momentum=0.9)</li>
+<li>Transformer 用 AdamW（解耦权重衰减的 Adam）</li>
+<li>超过几个 epoch 的训练一定要加学习率调度</li>
+<li>训练不稳定就降学习率，训练太慢就升学习率</li>
+</ul>
+<h2 id="练习">练习</h2>
+<ol>
+<li><strong>学习率扫描。</strong> 用 vanilla GD 在 Rosenbrock 函数上分别试 lr=[0.0001, 0.0005, 0.001, 0.005, 0.01]，5000 步后打印最终 loss。找出仍然收敛的最大学习率。</li>
+<li><strong>Momentum 比较。</strong> 用 momentum=[0.0, 0.5, 0.9, 0.99] 跑 SGD。哪个收敛最快？哪个过冲了？</li>
+<li><strong>逃离鞍点。</strong> 函数 f(x, y) = x² - y²（原点是鞍点）。从 (0.01, 0.01) 出发，比较 vanilla GD、SGD+momentum、Adam 的行为。</li>
+<li><strong>实现学习率衰减。</strong> 给 GradientDescent 加指数衰减：<code>lr = lr₀ × 0.999^step</code>。比较有无衰减的收敛差异。</li>
+</ol>
+<h2 id="术语表">术语表</h2>
+<div class="table-wrap"><table><thead><tr>
+<th>术语</th>
+<th>通俗说法</th>
+<th>真正含义</th>
+</tr>
+</thead><tbody><tr>
+<td>Gradient descent（梯度下降）</td>
+<td>&quot;往下坡走&quot;</td>
+<td>从权重中减去梯度乘以学习率。最基本的优化器。</td>
+</tr>
+<tr>
+<td>Learning rate（学习率）</td>
+<td>&quot;步长&quot;</td>
+<td>控制每步走多远的标量。太大发散，太小浪费算力。</td>
+</tr>
+<tr>
+<td>Momentum（动量）</td>
+<td>&quot;继续滚&quot;</td>
+<td>把过去的梯度积累成速度向量，抑制振荡、加速一致方向的运动。</td>
+</tr>
+<tr>
+<td>SGD</td>
+<td>&quot;随机采样&quot;</td>
+<td>用随机子集而非全部数据来估计梯度。实际中几乎总是指小批量 SGD。</td>
+</tr>
+<tr>
+<td>Mini-batch（小批量）</td>
+<td>&quot;一块数据&quot;</td>
+<td>用于估计梯度的一小部分训练数据（32-256 样本），平衡速度和梯度质量。</td>
+</tr>
+<tr>
+<td>Adam</td>
+<td>&quot;默认优化器&quot;</td>
+<td>跟踪每个权重的梯度均值和梯度平方均值，给每个权重自适应学习率。</td>
+</tr>
+<tr>
+<td>Convex（凸）</td>
+<td>&quot;一个谷底&quot;</td>
+<td>任何局部最小值都是全局最小值。梯度下降一定能找到。神经网络 loss 不是凸的。</td>
+</tr>
+<tr>
+<td>Saddle point（鞍点）</td>
+<td>&quot;平但不是最小值&quot;</td>
+<td>梯度为零，但某些方向是最小值、某些方向是最大值。高维空间中常见。</td>
+</tr>
+<tr>
+<td>Loss landscape（损失面）</td>
+<td>&quot;地形&quot;</td>
+<td>Loss 函数在权重空间上的图。通过沿两个随机方向切片来可视化。</td>
+</tr>
+<tr>
+<td>Learning rate schedule</td>
+<td>&quot;学习率随时间变&quot;</td>
+<td>训练过程中调整学习率的策略。早期大步走，后期小步调。</td>
+</tr>
+</tbody></table></div>
+<hr>
+<h2 id="自测题">自测题</h2>
+<div class="quiz-card" data-correct="1" data-quiz-id="1">
+  <div class="quiz-question"><span class="quiz-num">Q1</span>在训练神经网络的语境中，"优化"是什么意思？</div>
+  <div class="quiz-options">
+    <label class="quiz-option" data-index="0">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">让代码跑得更快</span>
+    </label>
+    <label class="quiz-option" data-index="1">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">找到使损失函数最小化的模型权重</span>
+    </label>
+    <label class="quiz-option" data-index="2">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">减少模型参数数量</span>
+    </label>
+    <label class="quiz-option" data-index="3">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">选择最好的训练硬件</span>
+    </label>
+  </div>
+  <button class="quiz-check">Check Answer</button>
+  <div class="quiz-explanation" hidden>训练神经网络就是优化。Loss 函数衡量模型有多错，优化找到让 loss 尽可能小的权重值。</div>
+</div>
+
+<div class="quiz-card" data-correct="1" data-quiz-id="2">
+  <div class="quiz-question"><span class="quiz-num">Q2</span>学习率太大时梯度下降会怎样？</div>
+  <div class="quiz-options">
+    <label class="quiz-option" data-index="0">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">更快收敛到全局最小值</span>
+    </label>
+    <label class="quiz-option" data-index="1">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">跳过最小值，loss 发散（来回弹跳或持续增大）</span>
+    </label>
+    <label class="quiz-option" data-index="2">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">梯度变成零</span>
+    </label>
+    <label class="quiz-option" data-index="3">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">模型自动降低学习率</span>
+    </label>
+  </div>
+  <button class="quiz-check">Check Answer</button>
+  <div class="quiz-explanation" hidden>学习率太大导致每一步都跳过谷底，可能在谷壁之间弹跳甚至完全发散。Loss 增大而非减小。</div>
+</div>
+
+<div class="quiz-card" data-correct="1" data-quiz-id="3">
+  <div class="quiz-question"><span class="quiz-num">Q3</span>Adam 跟 vanilla 梯度下降有什么区别？</div>
+  <div class="quiz-options">
+    <label class="quiz-option" data-index="0">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">Adam 用固定学习率而 GD 用自适应学习率</span>
+    </label>
+    <label class="quiz-option" data-index="1">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">Adam 跟踪梯度和梯度平方的移动平均，给每个权重自适应学习率</span>
+    </label>
+    <label class="quiz-option" data-index="2">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">Adam 计算精确的二阶导数而 GD 用一阶导数</span>
+    </label>
+    <label class="quiz-option" data-index="3">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">Adam 每步处理全部数据而 GD 用小批量</span>
+    </label>
+  </div>
+  <button class="quiz-check">Check Answer</button>
+  <div class="quiz-explanation" hidden>Adam 维护每个权重的一阶矩（梯度方向）和二阶矩（梯度大小）估计。除以 sqrt(二阶矩) 让大梯度的权重走小步，小梯度的权重走大步。</div>
+</div>
+
+<div class="quiz-card" data-correct="1" data-quiz-id="4">
+  <div class="quiz-question"><span class="quiz-num">Q4</span>为什么小批量 SGD 中的噪声被认为是有益的而不仅是麻烦？</div>
+  <div class="quiz-options">
+    <label class="quiz-option" data-index="0">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">噪声减少了训练时的内存使用</span>
+    </label>
+    <label class="quiz-option" data-index="1">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">噪声帮助优化器逃离浅的局部最小值和鞍点，无噪声的优化器会卡住</span>
+    </label>
+    <label class="quiz-option" data-index="2">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">噪声没有好处，总是让收敛变慢</span>
+    </label>
+    <label class="quiz-option" data-index="3">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">噪声让损失函数变凸</span>
+    </label>
+  </div>
+  <button class="quiz-check">Check Answer</button>
+  <div class="quiz-explanation" hidden>随机小批量带来的噪声提供随机扰动，能把优化器推出浅的局部最小值和鞍点，带来更好的泛化能力。</div>
+</div>
+
+<div class="quiz-card" data-correct="1" data-quiz-id="5">
+  <div class="quiz-question"><span class="quiz-num">Q5</span>Cosine annealing 学习率调度做了什么？</div>
+  <div class="quiz-options">
+    <label class="quiz-option" data-index="0">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">整个训练过程中按余弦曲线增大学习率</span>
+    </label>
+    <label class="quiz-option" data-index="1">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">从高学习率开始，按余弦曲线平滑降低，可选 warmup</span>
+    </label>
+    <label class="quiz-option" data-index="2">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">在两个固定值之间交替学习率</span>
+    </label>
+    <label class="quiz-option" data-index="3">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">把学习率设为当前 epoch 数的余弦值</span>
+    </label>
+  </div>
+  <button class="quiz-check">Check Answer</button>
+  <div class="quiz-explanation" hidden>Cosine annealing 按半余弦曲线从 lr_max 平滑降到 lr_min。早期大步快速推进，后期小步精细收敛。</div>
+</div>
+
+    <nav class="pager">  <a href="05-probability-and-distributions.html">
+    <span class="label">← 上一章</span>
+    <span class="title">概率与分布</span>
+  </a>  <a href="07-tensor-operations.html" class="next">
+    <span class="label">下一章 →</span>
+    <span class="title">张量运算</span>
+  </a></nav>
+  </article>
+</div>
+
+<footer>
+  <div class="set">
+    <span>AI Math Foundations</span>
+    <span>2026 · EN</span>
+  </div>
+  <div class="set">
+    <span>Mav</span>
+  </div>
+</footer>
+<div class="search-backdrop" id="search-overlay" role="dialog" aria-modal="true" aria-label="搜索" hidden>
+  <div class="search-modal">
+    <div class="search-input-wrap">
+      <input type="search" class="search-input" placeholder="搜索内容..." aria-label="搜索内容" autocomplete="off">
+      <kbd>ESC</kbd>
+    </div>
+    <div class="search-results" role="listbox" aria-label="搜索结果"></div>
+  </div>
+</div>
+
+<!-- Side Panel -->
+<div class="side-panel" id="side-panel">
+  <div class="side-panel-resize" id="side-panel-resize"></div>
+  <div class="side-panel-header">
+    <div class="side-panel-tabs">
+      <button class="side-panel-tab active" data-mode="sidenote">补充</button>
+      <button class="side-panel-tab" data-mode="notepad">笔记</button>
+    </div>
+    <button class="side-panel-close" aria-label="关闭">×</button>
+  </div>
+  <div class="side-panel-body"></div>
+</div>
+<button class="notepad-fab" id="notepad-fab" aria-label="便利贴">✎</button>
+
+<!-- Mobile TOC -->
+<button class="mtoc-fab" id="mtoc-fab" aria-label="目录">TOC</button>
+<div class="mtoc-drawer" id="mtoc-drawer">
+  <div class="mtoc-content"></div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/bash.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/typescript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/yaml.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/javascript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/json.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/python.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/css.min.js"></script>
+<script src="../assets/script.js"></script>
+<script src="../assets/quiz.js"></script>
+<script src="../assets/mermaid-init.js"></script>
+</body>
+</html>

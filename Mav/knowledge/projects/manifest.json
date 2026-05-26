@@ -48,6 +48,40 @@
     ]
   },
   {
+    "title": "从零开始学 Transformer",
+    "slug": "from-zero-to-transformer",
+    "description": "从数学直觉到 Transformer 架构——每个算法从零手写一遍，再用框架跑一遍",
+    "bookCount": 5,
+    "readTimeMinutes": 2970,
+    "books": [
+      {
+        "slug": "ai-math-foundations",
+        "title": "AI 数学基础",
+        "role": "数学底座：线代、微积分、概率、优化"
+      },
+      {
+        "slug": "ai-deep-learning-core",
+        "title": "AI 深度学习核心",
+        "role": "MLP：感知机、反向传播、写一个 mini 框架"
+      },
+      {
+        "slug": "ai-computer-vision",
+        "title": "AI 计算机视觉",
+        "role": "CNN：卷积、经典架构、图像分类"
+      },
+      {
+        "slug": "ai-nlp-foundations",
+        "title": "AI 自然语言处理基础",
+        "role": "RNN：词嵌入、序列模型、注意力机制"
+      },
+      {
+        "slug": "ai-transformers",
+        "title": "AI Transformer 深度剖析",
+        "role": "Transformer：Self-Attention → BERT → GPT"
+      }
+    ]
+  },
+  {
     "title": "计算机是怎么工作的",
     "slug": "how-computer-works",
     "description": "从晶体管到浏览器，一路向上——理解你每天用的这台机器",

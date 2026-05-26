@@ -40,7 +40,8 @@ function getAllProjects() {
   if (!fs.existsSync(PROJECTS_SRC)) return [];
   return fs.readdirSync(PROJECTS_SRC)
     .filter(f => f.endsWith('.yaml'))
-    .map(f => readProjectYaml(path.join(PROJECTS_SRC, f)));
+    .map(f => readProjectYaml(path.join(PROJECTS_SRC, f)))
+    .filter(p => p && Array.isArray(p.books) && p.slug);
 }
 
 /**

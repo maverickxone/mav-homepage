@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>位置编码（Positional Encoding）——正弦、RoPE、ALiBi — AI Transformers Deep Dive</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" id="hljs-light" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+<link rel="stylesheet" id="hljs-dark" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" media="not all">
+<link rel="stylesheet" href="../assets/quiz.css">
+</head>
+<body>
+
+<div class="progress-bar" id="progress-bar"></div>
+
+<nav class="topnav" id="topnav">
+  <div class="topnav-inner">
+    <a class="brand" href="../index.html">AI Transformers Deep Dive</a>
+    <div class="nav-links">
+      <a href="01-why-transformers.html">01</a>
+      <a href="02-self-attention-from-scratch.html">02</a>
+      <a href="03-multi-head-attention.html">03</a>
+      <a href="04-positional-encoding.html" class="active">04</a>
+      <a href="05-full-transformer.html">05</a>
+      <a href="06-bert-masked-language-modeling.html">06</a>
+      <a href="07-gpt-causal-language-modeling.html">07</a>
+    </div>
+    <div class="nav-controls">
+      <button class="nav-btn" id="search-btn" aria-label="搜索 (Ctrl+K)">⌘K</button>
+      <button class="nav-btn" id="settings-btn" aria-label="阅读设置">Aa</button>
+      <a class="nav-btn" href="../../index.html" aria-label="返回知识库">← 知识库</a>
+      <a class="nav-btn" href="https://github.com/maverickxone/mav-homepage" target="_blank" rel="noopener" aria-label="GitHub" style="padding: 6px 8px;"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg></a>
+    </div>
+  </div>
+</nav>
+<div class="settings-pop" id="settings-pop">
+  <h5>主题</h5>
+  <div class="row">
+    <button class="seg" data-theme-set="light">明亮</button>
+    <button class="seg" data-theme-set="dark">暗色</button>
+  </div>
+  <h5>字号</h5>
+  <div class="row">
+    <button class="seg" data-size-set="s">小</button>
+    <button class="seg" data-size-set="m">中</button>
+    <button class="seg" data-size-set="l">大</button>
+  </div>
+</div>
+
+<div class="with-sidebar">
+  <aside class="sidebar">
+  <div class="chapter-num">CHAPTER 04</div>
+  <div class="chapter-name">位置编码（Positional Encoding）——正弦、RoPE、ALiBi</div>
+  <h4>目录</h4>
+  <ul>
+    <li><a href="#问题在哪">问题在哪</a></li>
+    <li><a href="#核心概念">核心概念</a></li>
+    <li><a href="#动手搭">动手搭</a></li>
+    <li><a href="#怎么用">怎么用</a></li>
+    <li><a href="#交付件">交付件</a></li>
+    <li><a href="#练习">练习</a></li>
+    <li><a href="#关键术语">关键术语</a></li>
+    <li><a href="#延伸阅读">延伸阅读</a></li>
+  </ul>
+</aside>
+  <article class="chapter-body">
+    <header class="chapter-head">
+  <div class="chapter-head-meta">
+    <span class="num">CHAPTER 04</span>
+    <span>≈ 45 MIN READ</span>
+  </div>
+  <h1>位置编码（Positional Encoding）——正弦、RoPE、ALiBi</h1>
+
+</header>
+    <blockquote><p>注意力机制对顺序完全不敏感。&quot;The cat sat on the mat&quot; 和 &quot;mat the on sat cat the&quot; 在没有位置信号的情况下产生完全相同的输出。3 种算法修复了这个问题——每种对&quot;位置&quot;的定义下了不同的赌注。</p>
+</blockquote>
+<h2 id="问题在哪">问题在哪</h2>
+<p>缩放点积注意力（Scaled dot-product attention）对顺序视而不见。注意力矩阵 <code>softmax(Q K^T / √d) V</code> 靠的是两两之间的相似度。把 <code>X</code> 的行打乱，输出的行也只是跟着打乱。注意力机制内部根本不关心位置。</p>
+<p>对词袋模型来说这不算 bug。但对语言、代码、音频、视频——任何顺序承载意义的东西——这是致命的。</p>
+<p>修复方法是想办法把位置注入到嵌入（Embedding）里。3 个时代的答案：</p>
+<ol>
+<li><strong>绝对正弦编码（Absolute sinusoidal）</strong>（Vaswani 2017）。把 <code>sin/cos</code> 的位置信号加到嵌入向量上。简单、无需学习参数，但外推到训练长度之外效果很差。</li>
+<li><strong>RoPE——旋转位置嵌入（Rotary Position Embeddings）</strong>（Su 2021）。按照与位置成比例的角度旋转 Q 和 K 向量。直接在点积中编码<em>相对</em>位置。2026 年的主流。</li>
+<li><strong>ALiBi——线性偏置注意力（Attention with Linear Biases）</strong>（Press 2022）。完全跳过嵌入；根据距离给注意力分数加一个逐头的线性惩罚。长度外推效果优秀。</li>
+</ol>
+<p>截至 2026 年，几乎所有前沿开源模型都用 RoPE：Llama 2/3/4、Qwen 2/3、Mistral、Mixtral、DeepSeek-V3、Kimi。少数长上下文模型用 ALiBi 或其现代变体。绝对正弦编码已经成为历史。</p>
+<h2 id="核心概念">核心概念</h2>
+<p><img src="../assets/positional-encoding.svg" alt="正弦绝对编码 vs RoPE 旋转 vs ALiBi 距离偏置"></p>
+<h3 id="绝对正弦编码absolute-sinusoidal">绝对正弦编码（Absolute sinusoidal）</h3>
+<p>预计算一个固定矩阵 <code>PE</code>，形状为 <code>(max_len, d_model)</code>：</p>
+<pre><code>PE[pos, 2i]   = sin(pos / 10000^(2i / d_model))
+PE[pos, 2i+1] = cos(pos / 10000^(2i / d_model))</code></pre>
+<p>然后在注意力之前 <code>X&#39; = X + PE[:N]</code>。每个维度是一个不同频率的正弦波。模型学会从相位模式中读取位置信息。超过 <code>max_len</code> 就完蛋：没有人告诉模型位置 2048 该是什么样子，而它只见过位置 0–2047。</p>
+<h3 id="rope">RoPE</h3>
+<p>旋转 Q 和 K 向量（不是嵌入向量）。对于每对维度 <code>(2i, 2i+1)</code>：</p>
+<pre><code>[q'_2i    ]   [ cos(pos·θ_i)  -sin(pos·θ_i) ] [q_2i   ]
+[q'_2i+1  ] = [ sin(pos·θ_i)   cos(pos·θ_i) ] [q_2i+1 ]
+
+θ_i = base^(-2i / d_head),  base = 10000 by default</code></pre>
+<p>对 K 也施加同样的旋转，用位置 <code>pos_k</code>。点积 <code>q&#39;_m · k&#39;_n</code> 变成只和 <code>(m - n)</code> 有关的函数。也就是说：<strong>注意力分数只取决于相对距离</strong>，尽管旋转是用绝对位置算的。漂亮的把戏。</p>
+<p>扩展 RoPE：可以缩放 <code>base</code>（NTK-aware、YaRN、LongRoPE）来外推到更长的上下文，无需重新训练。Llama 3 就是这样从 8K 扩展到 128K 上下文的。</p>
+<h3 id="alibi">ALiBi</h3>
+<p>跳过嵌入那一套。直接偏置注意力分数：</p>
+<pre><code>attn_score[i, j] = (q_i · k_j) / √d  -  m_h · |i - j|</code></pre>
+<p>其中 <code>m_h</code> 是每个头特有的斜率（例如 <code>1 / 2^(8·h/H)</code>）。距离近的 token 得到加成；远的被惩罚。没有训练开销。论文表明长度外推效果超过正弦编码，在原始训练长度上与 RoPE 持平。</p>
+<h3 id="2026-年该选哪个">2026 年该选哪个</h3>
+<div class="table-wrap"><table><thead><tr>
+<th>变体</th>
+<th>外推能力</th>
+<th>训练开销</th>
+<th>使用者</th>
+</tr>
+</thead><tbody><tr>
+<td>绝对正弦编码（Absolute sinusoidal）</td>
+<td>差</td>
+<td>无</td>
+<td>原始 Transformer、早期 BERT</td>
+</tr>
+<tr>
+<td>可学习绝对编码（Learned absolute）</td>
+<td>无</td>
+<td>极小</td>
+<td>GPT-2、GPT-3</td>
+</tr>
+<tr>
+<td>RoPE</td>
+<td>好（需缩放）</td>
+<td>无</td>
+<td>Llama 2/3/4、Qwen 2/3、Mistral、DeepSeek-V3、Kimi</td>
+</tr>
+<tr>
+<td>RoPE + YaRN</td>
+<td>优秀</td>
+<td>微调阶段</td>
+<td>Qwen2-1M、Llama 3.1 128K</td>
+</tr>
+<tr>
+<td>ALiBi</td>
+<td>优秀</td>
+<td>无</td>
+<td>BLOOM、MPT、Baichuan</td>
+</tr>
+</tbody></table></div>
+<p>RoPE 胜出的原因：它直接嵌入注意力而不改变架构，编码相对位置，而且它的 <code>base</code> 超参数为长上下文微调提供了一个干净的调节旋钮。</p>
+<h2 id="动手搭">动手搭</h2>
+<h3 id="第-1-步正弦编码">第 1 步：正弦编码</h3>
+<p>参见 <code>code/main.py</code>。4 行搞定：</p>
+<pre data-label="python"><code class="language-python">def sinusoidal(N, d):
+    pe = [[0.0] * d for _ in range(N)]
+    for pos in range(N):
+        for i in range(d // 2):
+            theta = pos / (10000 ** (2 * i / d))
+            pe[pos][2 * i]     = math.sin(theta)
+            pe[pos][2 * i + 1] = math.cos(theta)
+    return pe</code></pre>
+<p>在第一个注意力层之前把它加到嵌入矩阵上。</p>
+<h3 id="第-2-步rope-作用于-qk">第 2 步：RoPE 作用于 Q、K</h3>
+<p>RoPE 对 Q 和 K 就地操作。对每对维度：</p>
+<pre data-label="python"><code class="language-python">def apply_rope(x, pos, base=10000):
+    d = len(x)
+    out = list(x)
+    for i in range(d // 2):
+        theta = pos / (base ** (2 * i / d))
+        c, s = math.cos(theta), math.sin(theta)
+        a, b = x[2 * i], x[2 * i + 1]
+        out[2 * i]     = a * c - b * s
+        out[2 * i + 1] = a * s + b * c
+    return out</code></pre>
+<p>关键：对位置 <code>m</code> 的 Q 和位置 <code>n</code> 的 K 施加同样的函数。它们的点积会在每对坐标上产生一个 <code>cos((m-n)·θ_i)</code> 因子。注意力免费学到了相对位置。</p>
+<h3 id="第-3-步alibi-斜率和偏置">第 3 步：ALiBi 斜率和偏置</h3>
+<pre data-label="python"><code class="language-python">def alibi_bias(n_heads, seq_len):
+    # slope_h = 2 ** (-8 * h / n_heads) for h = 1..n_heads
+    slopes = [2 ** (-8 * (h + 1) / n_heads) for h in range(n_heads)]
+    bias = []
+    for m in slopes:
+        row = [[-m * abs(i - j) for j in range(seq_len)] for i in range(seq_len)]
+        bias.append(row)
+    return bias  # add to attention scores before softmax</code></pre>
+<p>把 <code>bias[h]</code> 加到第 <code>h</code> 个头的 <code>(seq_len, seq_len)</code> 注意力分数矩阵上，然后再 softmax。</p>
+<h3 id="第-4-步验证-rope-的相对距离性质">第 4 步：验证 RoPE 的相对距离性质</h3>
+<p>随机取两个向量 <code>a, b</code>。按 <code>(pos_a, pos_b)</code> 旋转。再按 <code>(pos_a + k, pos_b + k)</code> 旋转。两次点积在浮点误差内必须相等。这个性质就是 RoPE 的全部精髓——它对绝对偏移不变，只有相对间距才重要。</p>
+<h2 id="怎么用">怎么用</h2>
+<p>PyTorch 2.5+ 在 <code>torch.nn.functional</code> 中提供了 RoPE 工具函数。大多数生产代码用 <code>flash_attn</code> 或 <code>xformers</code>，RoPE 在注意力 kernel 内部完成。</p>
+<pre data-label="python"><code class="language-python">from transformers import AutoModel
+model = AutoModel.from_pretrained("meta-llama/Llama-3.2-3B")
+# model.config.rope_scaling → {"type": "yarn", "factor": 32.0, "original_max_position_embeddings": 8192}</code></pre>
+<p><strong>2026 年的长上下文技巧：</strong></p>
+<ul>
+<li><strong>NTK-aware 插值（NTK-aware interpolation）。</strong> 从 4K 扩展到 16K+ 时，把 <code>base</code> 缩放为 <code>base * (scale_factor)^(d/(d-2))</code>。</li>
+<li><strong>YaRN。</strong> 更聪明的插值方式，在长上下文上保持注意力熵（Attention entropy）。Llama 3.1 128K 用的就是它。</li>
+<li><strong>LongRoPE。</strong> 微软 2024 年的方法，用进化搜索（Evolutionary search）为每个维度挑选缩放因子。Phi-3-Long 用的就是它。</li>
+<li><strong>位置插值（Position interpolation）+ 微调。</strong> 把位置除以扩展因子然后微调 1–5B token。出人意料地好使。</li>
+</ul>
+<h2 id="交付件">交付件</h2>
+<p>参见 <code>outputs/skill-positional-encoding-picker.md</code>。这个 skill 根据目标上下文长度、外推需求和训练预算，为新模型选择编码策略。</p>
+<h2 id="练习">练习</h2>
+<ol>
+<li><strong>简单。</strong> 把正弦 <code>PE</code> 矩阵画成热力图，<code>max_len=512, d=128</code>。确认&quot;随着维度索引增大，条纹越来越宽&quot;的模式。</li>
+<li><strong>中等。</strong> 实现 NTK-aware RoPE 缩放。用长度 256 的序列训练一个小型语言模型，然后在长度 1024 上测试（有缩放 vs 无缩放）。对比困惑度（Perplexity）。</li>
+<li><strong>困难。</strong> 在同一个注意力模块里同时实现 ALiBi 和 RoPE。用长度 512 的复制任务训练一个 4 层 Transformer。测试时外推到 2048。对比退化程度。</li>
+</ol>
+<h2 id="关键术语">关键术语</h2>
+<div class="table-wrap"><table><thead><tr>
+<th>术语</th>
+<th>通俗说法</th>
+<th>实际含义</th>
+</tr>
+</thead><tbody><tr>
+<td>位置编码（Positional encoding）</td>
+<td>&quot;告诉注意力顺序信息&quot;</td>
+<td>加到嵌入或注意力上的任何编码位置的信号。</td>
+</tr>
+<tr>
+<td>正弦编码（Sinusoidal）</td>
+<td>&quot;最初那个&quot;</td>
+<td>几何频率的 <code>sin/cos</code> 加到嵌入上；不能外推。</td>
+</tr>
+<tr>
+<td>RoPE</td>
+<td>&quot;旋转嵌入（Rotary embeddings）&quot;</td>
+<td>按位置相关的角度旋转 Q、K；点积编码相对距离。</td>
+</tr>
+<tr>
+<td>ALiBi</td>
+<td>&quot;线性偏置（Linear bias）技巧&quot;</td>
+<td>给注意力分数加 `-m·</td>
+</tr>
+<tr>
+<td>base</td>
+<td>&quot;RoPE 的旋钮&quot;</td>
+<td>RoPE 中的频率缩放器；增大它可以在推理时扩展上下文。</td>
+</tr>
+<tr>
+<td>NTK-aware</td>
+<td>&quot;一种 RoPE 缩放技巧&quot;</td>
+<td>缩放 <code>base</code> 使得上下文扩展时高频维度不被挤压。</td>
+</tr>
+<tr>
+<td>YaRN</td>
+<td>&quot;高级那个&quot;</td>
+<td>逐维度的插值+外推，保持注意力熵不变。</td>
+</tr>
+<tr>
+<td>外推（Extrapolation）</td>
+<td>&quot;超出训练长度还能用&quot;</td>
+<td>位置编码方案能否在超过训练时 <code>max_len</code> 后仍给出正确输出？</td>
+</tr>
+</tbody></table></div>
+<h2 id="延伸阅读">延伸阅读</h2>
+<ul>
+<li><a href="https://arxiv.org/abs/1706.03762">Vaswani et al. (2017). Attention Is All You Need §3.5</a> —— 原始正弦编码。</li>
+<li><a href="https://arxiv.org/abs/2104.09864">Su et al. (2021). RoFormer: Enhanced Transformer with Rotary Position Embedding</a> —— RoPE 论文。</li>
+<li><a href="https://arxiv.org/abs/2108.12409">Press, Smith, Lewis (2021). Train Short, Test Long: Attention with Linear Biases Enables Input Length Extrapolation</a> —— ALiBi。</li>
+<li><a href="https://arxiv.org/abs/2309.00071">Peng et al. (2023). YaRN: Efficient Context Window Extension of Large Language Models</a> —— 当前最先进的 RoPE 缩放。</li>
+<li><a href="https://arxiv.org/abs/2306.15595">Chen et al. (2023). Extending Context Window of Large Language Models via Positional Interpolation</a> —— Meta 的 Llama 2 长上下文论文。</li>
+<li><a href="https://arxiv.org/abs/2402.13753">Ding et al. (2024). LongRoPE: Extending LLM Context Window Beyond 2 Million Tokens</a> —— 微软的方法，Phi-3-Long 用的就是它。</li>
+<li><a href="https://github.com/huggingface/transformers/blob/main/src/transformers/modeling_rope_utils.py">HuggingFace Transformers — <code>modeling_rope_utils.py</code></a> —— 所有 RoPE 缩放方案的生产级实现（default、linear、dynamic、YaRN、LongRoPE、Llama-3）。</li>
+</ul>
+
+    <nav class="pager">  <a href="03-multi-head-attention.html">
+    <span class="label">← 上一章</span>
+    <span class="title">多头注意力</span>
+  </a>  <a href="05-full-transformer.html" class="next">
+    <span class="label">下一章 →</span>
+    <span class="title">完整的 Transformer — 编码器 + 解码器</span>
+  </a></nav>
+  </article>
+</div>
+
+<footer>
+  <div class="set">
+    <span>AI Transformers Deep Dive</span>
+    <span>2026 · EN</span>
+  </div>
+  <div class="set">
+    <span>Mav</span>
+  </div>
+</footer>
+<div class="search-backdrop" id="search-overlay" role="dialog" aria-modal="true" aria-label="搜索" hidden>
+  <div class="search-modal">
+    <div class="search-input-wrap">
+      <input type="search" class="search-input" placeholder="搜索内容..." aria-label="搜索内容" autocomplete="off">
+      <kbd>ESC</kbd>
+    </div>
+    <div class="search-results" role="listbox" aria-label="搜索结果"></div>
+  </div>
+</div>
+
+<!-- Side Panel -->
+<div class="side-panel" id="side-panel">
+  <div class="side-panel-resize" id="side-panel-resize"></div>
+  <div class="side-panel-header">
+    <div class="side-panel-tabs">
+      <button class="side-panel-tab active" data-mode="sidenote">补充</button>
+      <button class="side-panel-tab" data-mode="notepad">笔记</button>
+    </div>
+    <button class="side-panel-close" aria-label="关闭">×</button>
+  </div>
+  <div class="side-panel-body"></div>
+</div>
+<button class="notepad-fab" id="notepad-fab" aria-label="便利贴">✎</button>
+
+<!-- Mobile TOC -->
+<button class="mtoc-fab" id="mtoc-fab" aria-label="目录">TOC</button>
+<div class="mtoc-drawer" id="mtoc-drawer">
+  <div class="mtoc-content"></div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/bash.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/typescript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/yaml.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/javascript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/json.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/python.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/css.min.js"></script>
+<script src="../assets/script.js"></script>
+<script src="../assets/quiz.js"></script>
+<script src="../assets/mermaid-init.js"></script>
+</body>
+</html>

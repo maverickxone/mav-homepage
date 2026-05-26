@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>子词分词——BPE、WordPiece、Unigram、SentencePiece — AI NLP Foundations</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" id="hljs-light" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+<link rel="stylesheet" id="hljs-dark" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" media="not all">
+<link rel="stylesheet" href="../assets/quiz.css">
+</head>
+<body>
+
+<div class="progress-bar" id="progress-bar"></div>
+
+<nav class="topnav" id="topnav">
+  <div class="topnav-inner">
+    <a class="brand" href="../index.html">AI NLP Foundations</a>
+    <div class="nav-links">
+      <a href="01-text-processing.html">01</a>
+      <a href="02-word-embeddings-word2vec.html">02</a>
+      <a href="03-glove-fasttext-subword.html">03</a>
+      <a href="04-cnns-rnns-for-text.html">04</a>
+      <a href="05-sequence-to-sequence.html">05</a>
+      <a href="06-attention-mechanism.html">06</a>
+      <a href="07-subword-tokenization.html" class="active">07</a>
+    </div>
+    <div class="nav-controls">
+      <button class="nav-btn" id="search-btn" aria-label="搜索 (Ctrl+K)">⌘K</button>
+      <button class="nav-btn" id="settings-btn" aria-label="阅读设置">Aa</button>
+      <a class="nav-btn" href="../../index.html" aria-label="返回知识库">← 知识库</a>
+      <a class="nav-btn" href="https://github.com/maverickxone/mav-homepage" target="_blank" rel="noopener" aria-label="GitHub" style="padding: 6px 8px;"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg></a>
+    </div>
+  </div>
+</nav>
+<div class="settings-pop" id="settings-pop">
+  <h5>主题</h5>
+  <div class="row">
+    <button class="seg" data-theme-set="light">明亮</button>
+    <button class="seg" data-theme-set="dark">暗色</button>
+  </div>
+  <h5>字号</h5>
+  <div class="row">
+    <button class="seg" data-size-set="s">小</button>
+    <button class="seg" data-size-set="m">中</button>
+    <button class="seg" data-size-set="l">大</button>
+  </div>
+</div>
+
+<div class="with-sidebar">
+  <aside class="sidebar">
+  <div class="chapter-num">CHAPTER 07</div>
+  <div class="chapter-name">子词分词——BPE、WordPiece、Unigram、SentencePiece</div>
+  <h4>目录</h4>
+  <ul>
+    <li><a href="#为什么要学这个">为什么要学这个</a></li>
+    <li><a href="#核心概念">核心概念</a></li>
+    <li><a href="#从零实现">从零实现</a></li>
+    <li><a href="#2026-年还在踩的坑">2026 年还在踩的坑</a></li>
+    <li><a href="#实战用法">实战用法</a></li>
+    <li><a href="#产出物">产出物</a></li>
+    <li><a href="#练习">练习</a></li>
+    <li><a href="#术语表">术语表</a></li>
+    <li><a href="#延伸阅读">延伸阅读</a></li>
+    <li><a href="#自测题">自测题</a></li>
+  </ul>
+</aside>
+  <article class="chapter-body">
+    <header class="chapter-head">
+  <div class="chapter-head-meta">
+    <span class="num">CHAPTER 07</span>
+    <span>≈ 60 MIN READ</span>
+  </div>
+  <h1>子词分词——BPE、WordPiece、Unigram、SentencePiece</h1>
+
+</header>
+    <blockquote><p>词级分词遇到生词就抓瞎，字符级分词又把序列长度炸上天。子词分词取了个折中——2026 年每个主流大模型都用它。</p>
+</blockquote>
+<h2 id="为什么要学这个">为什么要学这个</h2>
+<p>你的词表有 50,000 个词。用户输入了&quot;untokenizable&quot;。分词器直接返回 <code>[UNK]</code>。模型对这个词完全没有信号。更惨的是：语料库中 90% 分位的文档包含 40 个罕见词，意味着每篇文档平均丢掉 40 bit 的信息。</p>
+<p>子词分词（Subword Tokenization）解决了这个问题。常见词保持一个 token 不动，罕见词拆成有意义的片段：<code>untokenizable</code> → <code>un</code>, <code>token</code>, <code>izable</code>。训练数据能覆盖一切，因为任何字符串归根到底都是一串字节。</p>
+<p>2026 年每个前沿大模型都用三种算法之一（BPE、Unigram、WordPiece），套在三个库之一（tiktoken、SentencePiece、HF Tokenizers）上跑。你没法在不选定分词器的情况下发布语言模型。</p>
+<h2 id="核心概念">核心概念</h2>
+<p><img src="../assets/subword-tokenization.svg" alt="BPE vs Unigram vs WordPiece，逐字符视角"></p>
+<p><strong>BPE（Byte-Pair Encoding，字节对编码）。</strong> 从字符级词表开始。统计所有相邻字符对的频率。把最高频的那对合并成一个新 token。重复，直到达到目标词表大小。主流算法：GPT-2/3/4、Llama、Gemma、Qwen2、Mistral。</p>
+<p><strong>字节级 BPE（Byte-level BPE）。</strong> 同样的算法，但操作对象是原始字节（256 个基础 token）而不是 Unicode 字符。保证零 <code>[UNK]</code>——任何字节序列都能编码。GPT-2 使用 50,257 个 token（256 字节 + 50,000 次合并 + 1 个特殊 token）。</p>
+<p><strong>Unigram（一元语言模型分词）。</strong> 从一个巨大词表开始。为每个 token 分配一元概率。反复裁剪那些&quot;移除后对语料对数似然损失最小&quot;的 token。推理时是概率性的：可以采样不同的分词方式（对子词正则化做数据增强很有用）。T5、mBART、ALBERT、XLNet、Gemma 使用此方法。</p>
+<p><strong>WordPiece。</strong> 合并时选择能最大化训练语料似然的字符对，而不是单纯选频率最高的。BERT、DistilBERT、ELECTRA 使用此方法。</p>
+<p><strong>SentencePiece vs tiktoken。</strong> SentencePiece 是一个<strong>训练</strong>词表的库（BPE 或 Unigram），直接在原始 Unicode 文本上操作，将空格编码为 <code>▁</code>。tiktoken 是 OpenAI 的快速<strong>编码器</strong>，使用预构建词表；它不负责训练。</p>
+<p>经验法则：</p>
+<ul>
+<li><strong>训练新词表：</strong> SentencePiece（多语言、无需预分词）或 HF Tokenizers。</li>
+<li><strong>快速推理 + GPT 词表：</strong> tiktoken（cl100k_base、o200k_base）。</li>
+<li><strong>两者兼顾：</strong> HF Tokenizers——一个库搞定训练 + 服务。</li>
+</ul>
+<h2 id="从零实现">从零实现</h2>
+<h3 id="第一步从零写-bpe">第一步：从零写 BPE</h3>
+<p>参见 <code>code/main.py</code>。核心循环：</p>
+<pre data-label="python"><code class="language-python">def train_bpe(corpus, num_merges):
+    vocab = {tuple(word) + ("&lt;/w&gt;",): count for word, count in corpus.items()}
+    merges = []
+    for _ in range(num_merges):
+        pairs = Counter()
+        for symbols, freq in vocab.items():
+            for a, b in zip(symbols, symbols[1:]):
+                pairs[(a, b)] += freq
+        if not pairs:
+            break
+        best = pairs.most_common(1)[0][0]
+        merges.append(best)
+        vocab = apply_merge(vocab, best)
+    return merges</code></pre>
+<p>这个算法编码了三个关键事实。<code>&lt;/w&gt;</code> 标记词尾，让&quot;low&quot;（后缀）和&quot;lower&quot;（前缀）保持区分。频率加权让高频对优先合并。合并列表有序——推理时按训练顺序依次应用。</p>
+<h3 id="第二步用学到的合并规则编码">第二步：用学到的合并规则编码</h3>
+<pre data-label="python"><code class="language-python">def encode_bpe(word, merges):
+    symbols = list(word) + ["&lt;/w&gt;"]
+    for a, b in merges:
+        i = 0
+        while i &lt; len(symbols) - 1:
+            if symbols[i] == a and symbols[i + 1] == b:
+                symbols = symbols[:i] + [a + b] + symbols[i + 2:]
+            else:
+                i += 1
+    return symbols</code></pre>
+<p>朴素实现 O(n·|merges|)。生产级实现（tiktoken、HF Tokenizers）用合并排名查找 + 优先队列，近似线性时间。</p>
+<h3 id="第三步sentencepiece-实战">第三步：SentencePiece 实战</h3>
+<pre data-label="python"><code class="language-python">import sentencepiece as spm
+
+spm.SentencePieceTrainer.train(
+    input="corpus.txt",
+    model_prefix="my_tokenizer",
+    vocab_size=8000,
+    model_type="bpe",          # 或 "unigram"
+    character_coverage=0.9995, # CJK 场景可以更低（英文 0.9995，日文 0.995）
+    normalization_rule_name="nmt_nfkc",
+)
+
+sp = spm.SentencePieceProcessor(model_file="my_tokenizer.model")
+print(sp.encode("untokenizable", out_type=str))
+# ['▁un', 'token', 'izable']</code></pre>
+<p>注意：不需要预分词，空格编码为 <code>▁</code>，<code>character_coverage</code> 控制稀有字符是保留还是映射为 <code>&lt;unk&gt;</code>。</p>
+<h3 id="第四步tiktoken-用于-openai-兼容词表">第四步：tiktoken 用于 OpenAI 兼容词表</h3>
+<pre data-label="python"><code class="language-python">import tiktoken
+enc = tiktoken.get_encoding("o200k_base")
+print(enc.encode("untokenizable"))        # [127340, 101028]
+print(len(enc.encode("Hello, world!")))   # 4</code></pre>
+<p>只做编码。极快（Rust 后端）。与 GPT-4/5 分词完全一致，适合字节计数、成本估算、上下文窗口预算。</p>
+<h2 id="2026-年还在踩的坑">2026 年还在踩的坑</h2>
+<ul>
+<li><strong>分词器漂移（Tokenizer drift）。</strong> 训练时用词表 A，部署时用词表 B。Token ID 对不上，模型输出垃圾。在 CI 里检查 <code>tokenizer.json</code> 的哈希值。</li>
+<li><strong>空格歧义。</strong> BPE 处理 &quot;hello&quot; 和 &quot; hello&quot; 会产生不同 token。一定要显式指定 <code>add_special_tokens</code> 和 <code>add_prefix_space</code>。</li>
+<li><strong>多语言欠训练。</strong> 英语为主的语料训出来的词表，会把非拉丁文字拆成 5-10 倍的 token。同样的 prompt，日文/阿拉伯文在 GPT-3.5 上开销高 5-10 倍。o200k_base 部分修复了这个问题。</li>
+<li><strong>Emoji 分裂。</strong> 一个 emoji 可能吃掉 5 个 token。做上下文预算时别忘了 emoji 的开销。</li>
+</ul>
+<h2 id="实战用法">实战用法</h2>
+<p>2026 年的技术栈：</p>
+<div class="table-wrap"><table><thead><tr>
+<th>场景</th>
+<th>选择</th>
+</tr>
+</thead><tbody><tr>
+<td>从零训练单语模型</td>
+<td>HF Tokenizers（BPE）</td>
+</tr>
+<tr>
+<td>训练多语言模型</td>
+<td>SentencePiece（Unigram，<code>character_coverage=0.9995</code>）</td>
+</tr>
+<tr>
+<td>服务 OpenAI 兼容 API</td>
+<td>tiktoken（GPT-4+ 用 <code>o200k_base</code>）</td>
+</tr>
+<tr>
+<td>领域专用词表（代码、数学、蛋白质）</td>
+<td>在领域语料上训练自定义 BPE，合并到基础词表</td>
+</tr>
+<tr>
+<td>边缘推理、小模型</td>
+<td>Unigram（小词表效果更好）</td>
+</tr>
+</tbody></table></div>
+<p>词表大小是一个随规模变化的决策，不是常数。粗略经验：&lt;1B 参数用 32k，1-10B 用 50-100k，多语言/前沿模型用 200k+。</p>
+<h2 id="产出物">产出物</h2>
+<p>保存为 <code>outputs/skill-bpe-vs-wordpiece.md</code>：</p>
+<pre data-label="markdown"><code class="language-markdown">---
+name: tokenizer-picker
+description: Pick tokenizer algorithm, vocab size, library for a given corpus and deployment target.
+version: 1.0.0
+phase: 5
+lesson: 19
+tags: [nlp, tokenization]
+---
+
+Given a corpus (size, languages, domain) and deployment target (training from scratch / fine-tuning / API-compatible inference), output:
+
+1. Algorithm. BPE, Unigram, or WordPiece. One-sentence reason.
+2. Library. SentencePiece, HF Tokenizers, or tiktoken. Reason.
+3. Vocab size. Rounded to nearest 1k. Reason tied to model size and language coverage.
+4. Coverage settings. `character_coverage`, `byte_fallback`, special-token list.
+5. Validation plan. Average tokens-per-word on held-out set, OOV rate, compression ratio, round-trip decode equality.
+
+Refuse to train a character-coverage &lt;0.995 tokenizer on corpora with rare-script content. Refuse to ship a vocab without a frozen `tokenizer.json` hash check in CI. Flag any monolingual tokenizer under 16k vocab as likely under-spec.</code></pre>
+<h2 id="练习">练习</h2>
+<ol>
+<li><strong>简单。</strong> 用 <code>code/main.py</code> 的小型语料训练一个 500 次合并的 BPE。编码三个未见过的词。其中多少个恰好是 1 个 token，多少个 &gt;1 个 token？</li>
+<li><strong>中等。</strong> 在 100 句英文维基百科句子上，比较 <code>cl100k_base</code>、<code>o200k_base</code> 和你自己训练的 vocab=32k SentencePiece BPE 的 token 数。报告每种方案的压缩率。</li>
+<li><strong>困难。</strong> 用同一语料分别训练 BPE、Unigram 和 WordPiece。在一个小型情感分类器上测量各自的下游准确率。分词方式能拉开超过 1 个 F1 点的差距吗？</li>
+</ol>
+<h2 id="术语表">术语表</h2>
+<div class="table-wrap"><table><thead><tr>
+<th>术语</th>
+<th>口语说法</th>
+<th>实际含义</th>
+</tr>
+</thead><tbody><tr>
+<td>BPE</td>
+<td>字节对编码（Byte-Pair Encoding）</td>
+<td>贪心合并最高频字符对，直到达到目标词表大小</td>
+</tr>
+<tr>
+<td>字节级 BPE（Byte-level BPE）</td>
+<td>永远没有未知 token</td>
+<td>在原始 256 字节上做 BPE；GPT-2 / Llama 采用</td>
+</tr>
+<tr>
+<td>Unigram</td>
+<td>概率分词器</td>
+<td>从大候选集出发，用对数似然裁剪；T5、Gemma 使用</td>
+</tr>
+<tr>
+<td>SentencePiece</td>
+<td>那个处理空格的库</td>
+<td>在原始文本上训练 BPE/Unigram 的库；空格编码为 <code>▁</code></td>
+</tr>
+<tr>
+<td>tiktoken</td>
+<td>那个贼快的</td>
+<td>OpenAI 的 Rust 后端 BPE 编码器，用于预构建词表。不训练</td>
+</tr>
+<tr>
+<td>合并列表（Merge list）</td>
+<td>那串神奇数字</td>
+<td>有序的 <code>(a, b) → ab</code> 合并规则；推理时按顺序应用</td>
+</tr>
+<tr>
+<td>字符覆盖率（Character coverage）</td>
+<td>多罕见算太罕见？</td>
+<td>分词器必须覆盖的训练语料字符比例；通常 ~0.9995</td>
+</tr>
+</tbody></table></div>
+<h2 id="延伸阅读">延伸阅读</h2>
+<ul>
+<li><a href="https://arxiv.org/abs/1508.07909">Sennrich, Haddow, Birch (2015). Neural Machine Translation of Rare Words with Subword Units</a> — BPE 论文。</li>
+<li><a href="https://arxiv.org/abs/1804.10959">Kudo (2018). Subword Regularization with Unigram Language Model</a> — Unigram 论文。</li>
+<li><a href="https://arxiv.org/abs/1808.06226">Kudo, Richardson (2018). SentencePiece: A simple and language independent subword tokenizer</a> — SentencePiece 库论文。</li>
+<li><a href="https://huggingface.co/docs/transformers/tokenizer_summary">Hugging Face — Summary of the tokenizers</a> — 简洁参考。</li>
+<li><a href="https://github.com/openai/tiktoken">OpenAI tiktoken repo</a> — 教程 + 编码列表。</li>
+</ul>
+<hr>
+<h2 id="自测题">自测题</h2>
+<div class="quiz-card" data-correct="0" data-quiz-id="1">
+  <div class="quiz-question"><span class="quiz-num">Q1</span>子词分词相比词级词表，核心优势是什么？</div>
+  <div class="quiz-options">
+    <label class="quiz-option" data-index="0">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">罕见词被拆成已知子词片段，消除 OOV 问题，同时词表大小可控</span>
+    </label>
+    <label class="quiz-option" data-index="1">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">模型更小</span>
+    </label>
+    <label class="quiz-option" data-index="2">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">训练更快</span>
+    </label>
+    <label class="quiz-option" data-index="3">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">嵌入更好</span>
+    </label>
+  </div>
+  <button class="quiz-check">Check Answer</button>
+  <div class="quiz-explanation" hidden>子词 token 通过分解覆盖任何输入，彻底解决词级词表的 OOV 问题。</div>
+</div>
+
+<div class="quiz-card" data-correct="2" data-quiz-id="2">
+  <div class="quiz-question"><span class="quiz-num">Q2</span>GPT-2 为什么用字节级 BPE 而不是字符级 BPE？</div>
+  <div class="quiz-options">
+    <label class="quiz-option" data-index="0">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">Transformer 要求</span>
+    </label>
+    <label class="quiz-option" data-index="1">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">字节 BPE 跳过合并</span>
+    </label>
+    <label class="quiz-option" data-index="2">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">256 字节的基础词表能覆盖任何 UTF-8 输入，保证不会出现 [UNK] token</span>
+    </label>
+    <label class="quiz-option" data-index="3">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">字节更小</span>
+    </label>
+  </div>
+  <button class="quiz-check">Check Answer</button>
+  <div class="quiz-explanation" hidden>字节级 BPE 从 256 个字节起步，任何输入都能编码，不存在 OOV。</div>
+</div>
+
+<div class="quiz-card" data-correct="1" data-quiz-id="3">
+  <div class="quiz-question"><span class="quiz-num">Q3</span>Unigram 分词器是怎么构建词表的？</div>
+  <div class="quiz-options">
+    <label class="quiz-option" data-index="0">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">贪心 IDF 加权</span>
+    </label>
+    <label class="quiz-option" data-index="1">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">从一个大候选集出发，反复裁剪那些移除后对语料对数似然损失最小的 token</span>
+    </label>
+    <label class="quiz-option" data-index="2">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">贪心高频对合并</span>
+    </label>
+    <label class="quiz-option" data-index="3">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">随机采样</span>
+    </label>
+  </div>
+  <button class="quiz-check">Check Answer</button>
+  <div class="quiz-explanation" hidden>Unigram 拟合一元语言模型，迭代移除最不重要的 token 直到达到目标大小。</div>
+</div>
+
+<div class="quiz-card" data-correct="2" data-quiz-id="4">
+  <div class="quiz-question"><span class="quiz-num">Q4</span>WordPiece 的合并标准和 BPE 有什么区别？</div>
+  <div class="quiz-options">
+    <label class="quiz-option" data-index="0">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">WordPiece 用字节</span>
+    </label>
+    <label class="quiz-option" data-index="1">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">WordPiece 是无监督的</span>
+    </label>
+    <label class="quiz-option" data-index="2">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">WordPiece 合并能最大化训练语料似然的字符对，BPE 合并最高频的字符对</span>
+    </label>
+    <label class="quiz-option" data-index="3">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">WordPiece 跳过合并</span>
+    </label>
+  </div>
+  <button class="quiz-check">Check Answer</button>
+  <div class="quiz-explanation" hidden>WordPiece 按似然选合并对；BPE 按频率选。</div>
+</div>
+
+<div class="quiz-card" data-correct="3" data-quiz-id="5">
+  <div class="quiz-question"><span class="quiz-num">Q5</span>哪个工具能直接在原始多语言 Unicode 文本上训练分词器？</div>
+  <div class="quiz-options">
+    <label class="quiz-option" data-index="0">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">spaCy</span>
+    </label>
+    <label class="quiz-option" data-index="1">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">tiktoken</span>
+    </label>
+    <label class="quiz-option" data-index="2">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">tokenizers-lite</span>
+    </label>
+    <label class="quiz-option" data-index="3">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">SentencePiece（将空格编码为特殊标记，训练 BPE 或 Unigram）</span>
+    </label>
+  </div>
+  <button class="quiz-check">Check Answer</button>
+  <div class="quiz-explanation" hidden>SentencePiece 在原始文本上训练 BPE/Unigram，无需预分词；tiktoken 只做编码。</div>
+</div>
+
+<div class="quiz-card" data-correct="0" data-quiz-id="6">
+  <div class="quiz-question"><span class="quiz-num">Q6</span>为什么生产环境 CI 必须对部署的 tokenizer.json 做哈希校验？</div>
+  <div class="quiz-options">
+    <label class="quiz-option" data-index="0">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">分词器漂移会产生与模型训练时不同的 token ID，悄无声息地毁掉输出</span>
+    </label>
+    <label class="quiz-option" data-index="1">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">Hugging Face 要求</span>
+    </label>
+    <label class="quiz-option" data-index="2">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">压缩存储</span>
+    </label>
+    <label class="quiz-option" data-index="3">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">减少词表大小</span>
+    </label>
+  </div>
+  <button class="quiz-check">Check Answer</button>
+  <div class="quiz-explanation" hidden>哪怕微小的分词器变动也会移位 ID；哈希检查能在问题到达用户前拦截漂移。</div>
+</div>
+
+<div class="quiz-card" data-correct="1" data-quiz-id="7">
+  <div class="quiz-question"><span class="quiz-num">Q7</span>单个 emoji 为什么经常占好多 token？</div>
+  <div class="quiz-options">
+    <label class="quiz-option" data-index="0">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">Emoji 是保留字</span>
+    </label>
+    <label class="quiz-option" data-index="1">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">多码点 emoji 编码成多个 UTF-8 字节；如果没有专门的 token，每个字节就是一个子词</span>
+    </label>
+    <label class="quiz-option" data-index="2">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">Emoji 存储为浮点数</span>
+    </label>
+    <label class="quiz-option" data-index="3">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">Emoji 是停止符</span>
+    </label>
+  </div>
+  <button class="quiz-check">Check Answer</button>
+  <div class="quiz-explanation" hidden>组合 emoji 编码为多个字节；字节级分词器可能对每个字形使用多个 token。</div>
+</div>
+
+<div class="quiz-card" data-correct="2" data-quiz-id="8">
+  <div class="quiz-question"><span class="quiz-num">Q8</span>新训单语 Transformer 的词表大小有什么经验法则？</div>
+  <div class="quiz-options">
+    <label class="quiz-option" data-index="0">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">永远 8000</span>
+    </label>
+    <label class="quiz-option" data-index="1">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">永远 1M</span>
+    </label>
+    <label class="quiz-option" data-index="2">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">大约 1B 参数以下用 32k；1-10B 用 50-100k；多语言或前沿模型用 200k+</span>
+    </label>
+    <label class="quiz-option" data-index="3">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">跟训练语料大小匹配</span>
+    </label>
+  </div>
+  <button class="quiz-check">Check Answer</button>
+  <div class="quiz-explanation" hidden>词表大小随模型和语言覆盖需求扩展；这些是社区粗略共识。</div>
+</div>
+
+
+    <nav class="pager">  <a href="06-attention-mechanism.html">
+    <span class="label">← 上一章</span>
+    <span class="title">注意力机制——突破瓶颈的那一刻</span>
+  </a>  <a class="disabled next"><span class="label">下一章 →</span><span class="title"></span></a></nav>
+  </article>
+</div>
+
+<footer>
+  <div class="set">
+    <span>AI NLP Foundations</span>
+    <span>2026 · EN</span>
+  </div>
+  <div class="set">
+    <span>Mav</span>
+  </div>
+</footer>
+<div class="search-backdrop" id="search-overlay" role="dialog" aria-modal="true" aria-label="搜索" hidden>
+  <div class="search-modal">
+    <div class="search-input-wrap">
+      <input type="search" class="search-input" placeholder="搜索内容..." aria-label="搜索内容" autocomplete="off">
+      <kbd>ESC</kbd>
+    </div>
+    <div class="search-results" role="listbox" aria-label="搜索结果"></div>
+  </div>
+</div>
+
+<!-- Side Panel -->
+<div class="side-panel" id="side-panel">
+  <div class="side-panel-resize" id="side-panel-resize"></div>
+  <div class="side-panel-header">
+    <div class="side-panel-tabs">
+      <button class="side-panel-tab active" data-mode="sidenote">补充</button>
+      <button class="side-panel-tab" data-mode="notepad">笔记</button>
+    </div>
+    <button class="side-panel-close" aria-label="关闭">×</button>
+  </div>
+  <div class="side-panel-body"></div>
+</div>
+<button class="notepad-fab" id="notepad-fab" aria-label="便利贴">✎</button>
+
+<!-- Mobile TOC -->
+<button class="mtoc-fab" id="mtoc-fab" aria-label="目录">TOC</button>
+<div class="mtoc-drawer" id="mtoc-drawer">
+  <div class="mtoc-content"></div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/bash.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/typescript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/yaml.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/javascript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/json.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/python.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/css.min.js"></script>
+<script src="../assets/script.js"></script>
+<script src="../assets/quiz.js"></script>
+<script src="../assets/mermaid-init.js"></script>
+</body>
+</html>

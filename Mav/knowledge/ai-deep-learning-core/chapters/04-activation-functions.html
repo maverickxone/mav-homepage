@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>激活函数 — AI Deep Learning Core</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" id="hljs-light" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+<link rel="stylesheet" id="hljs-dark" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" media="not all">
+<link rel="stylesheet" href="../assets/quiz.css">
+</head>
+<body>
+
+<div class="progress-bar" id="progress-bar"></div>
+
+<nav class="topnav" id="topnav">
+  <div class="topnav-inner">
+    <a class="brand" href="../index.html">AI Deep Learning Core</a>
+    <div class="nav-links">
+      <a href="01-the-perceptron.html">01</a>
+      <a href="02-multi-layer-networks.html">02</a>
+      <a href="03-backpropagation.html">03</a>
+      <a href="04-activation-functions.html" class="active">04</a>
+      <a href="05-loss-functions.html">05</a>
+      <a href="06-optimizers.html">06</a>
+      <a href="07-regularization.html">07</a>
+      <a href="08-weight-initialization.html">08</a>
+      <a href="09-learning-rate-schedules.html">09</a>
+      <a href="10-mini-framework.html">10</a>
+      <a href="11-intro-to-pytorch.html">11</a>
+      <a href="12-intro-to-jax.html">12</a>
+      <a href="13-debugging-neural-networks.html">13</a>
+    </div>
+    <div class="nav-controls">
+      <button class="nav-btn" id="search-btn" aria-label="搜索 (Ctrl+K)">⌘K</button>
+      <button class="nav-btn" id="settings-btn" aria-label="阅读设置">Aa</button>
+      <a class="nav-btn" href="../../index.html" aria-label="返回知识库">← 知识库</a>
+      <a class="nav-btn" href="https://github.com/maverickxone/mav-homepage" target="_blank" rel="noopener" aria-label="GitHub" style="padding: 6px 8px;"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg></a>
+    </div>
+  </div>
+</nav>
+<div class="settings-pop" id="settings-pop">
+  <h5>主题</h5>
+  <div class="row">
+    <button class="seg" data-theme-set="light">明亮</button>
+    <button class="seg" data-theme-set="dark">暗色</button>
+  </div>
+  <h5>字号</h5>
+  <div class="row">
+    <button class="seg" data-size-set="s">小</button>
+    <button class="seg" data-size-set="m">中</button>
+    <button class="seg" data-size-set="l">大</button>
+  </div>
+</div>
+
+<div class="with-sidebar">
+  <aside class="sidebar">
+  <div class="chapter-num">CHAPTER 04</div>
+  <div class="chapter-name">激活函数</div>
+  <h4>目录</h4>
+  <ul>
+    <li><a href="#学习目标">学习目标</a></li>
+    <li><a href="#为什么要学这个">为什么要学这个</a></li>
+    <li><a href="#核心概念">核心概念</a></li>
+    <li><a href="#从零实现">从零实现</a></li>
+    <li><a href="#用库做同样的事">用库做同样的事</a></li>
+    <li><a href="#练习">练习</a></li>
+    <li><a href="#术语表">术语表</a></li>
+    <li><a href="#自测题">自测题</a></li>
+  </ul>
+</aside>
+  <article class="chapter-body">
+    <header class="chapter-head">
+  <div class="chapter-head-meta">
+    <span class="num">CHAPTER 04</span>
+    <span>≈ 75 MIN READ</span>
+  </div>
+  <h1>激活函数</h1>
+
+</header>
+    <blockquote><p>没有非线性，你的 100 层网络只是一个花哨的矩阵乘法。激活函数是让神经网络能画曲线的门。</p>
+</blockquote>
+<h2 id="学习目标">学习目标</h2>
+<ul>
+<li>从零实现 sigmoid、tanh、ReLU、Leaky ReLU、GELU、Swish 和 softmax 及其导数</li>
+<li>通过测量 10+ 层中的激活值大小来诊断梯度消失问题</li>
+<li>检测 ReLU 网络中的死神经元，解释为什么 GELU 避免了这个问题</li>
+<li>为不同架构选择正确的激活函数（Transformer、CNN、RNN、输出层）</li>
+</ul>
+<h2 id="为什么要学这个">为什么要学这个</h2>
+<p>堆两个线性变换：y = W2(W1x + b1) + b2。展开：y = (W2W1)x + (W2b1 + b2) = Ax + c。还是一个线性变换。不管你堆多少线性层，结果坍缩成一次矩阵乘。你的 100 层网络跟 1 层的表达能力一样。</p>
+<p>这不是理论好奇心。它意味着纯线性深度网络连 XOR 都学不了，螺旋数据分不开，人脸识不了。没有激活函数，深度是幻觉。</p>
+<p>激活函数打破线性。它们把每层输出扭过一个非线性函数，让网络能弯曲决策边界、逼近任意函数、真正学习。但选错了：sigmoid 让梯度消失，ReLU 让神经元死掉。激活函数的选择直接决定网络能不能学。</p>
+<h2 id="核心概念">核心概念</h2>
+<h3 id="为什么非线性是必须的">为什么非线性是必须的</h3>
+<p>证明。线性层计算 f(x) = Wx + b。堆两层：</p>
+<pre><code>h = W1 × x + b1
+y = W2 × h + b2</code></pre>
+<p>代入：</p>
+<pre><code>y = W2 × (W1 × x + b1) + b2
+  = (W2×W1) × x + (W2×b1 + b2)
+  = A × x + c</code></pre>
+<p>一层。在层间插入非线性激活 g()：</p>
+<pre><code>h = g(W1 × x + b1)
+y = W2 × h + b2</code></pre>
+<p>现在代入就断了。W2 × g(W1 × x + b1) + b2 不能化简成单次线性变换。网络能表示非线性函数了。</p>
+<h3 id="sigmoid">Sigmoid</h3>
+<p>最早的神经网络激活函数。</p>
+<pre><code>sigmoid(x) = 1 / (1 + e⁻ˣ)
+输出范围: (0, 1)
+导数: sigmoid'(x) = sigmoid(x) × (1 - sigmoid(x))
+导数最大值: 0.25（在 x = 0 时）</code></pre>
+<p>问题：10 层 sigmoid，梯度最多被乘以 0.25¹⁰ = 0.000001。前面的层收不到有效信号。这就是梯度消失。</p>
+<p>另一个问题：输出总是正的 (0,1)，导致权重梯度永远同号，梯度下降时锯齿前进。</p>
+<h3 id="tanh">Tanh</h3>
+<p>Sigmoid 的居中版。</p>
+<pre><code>tanh(x) = (eˣ - e⁻ˣ) / (eˣ + e⁻ˣ)
+输出范围: (-1, 1)
+导数: tanh'(x) = 1 - tanh(x)²
+导数最大值: 1.0（在 x = 0 时）</code></pre>
+<p>零中心化消除了锯齿问题。导数最大值 1.0，比 sigmoid 好 4 倍。但大输入时导数仍然趋近零，梯度消失仍然存在，只是没那么严重。</p>
+<h3 id="relu突破">ReLU：突破</h3>
+<p>Rectified Linear Unit。2010 年被 Nair 和 Hinton 推广后改变了一切。</p>
+<pre><code>relu(x) = max(0, x)
+输出范围: [0, ∞)
+导数: relu'(x) = 1 如果 x &gt; 0，0 如果 x ≤ 0</code></pre>
+<p>正输入不消失梯度——导数恰好是 1，直接传过去。这就是为什么深度网络变得可训练：ReLU 跨层保持梯度大小。</p>
+<p>但有失败模式：<strong>死神经元</strong>。如果一个神经元的加权输入永远是负的（因为大的负 bias 或不幸的初始化），它的输出永远是 0，梯度永远是 0，永远不更新。永久死亡。实际中 ReLU 网络 10-40% 的神经元可能在训练中死掉。</p>
+<h3 id="leaky-relu">Leaky ReLU</h3>
+<p>死神经元最简单的修复。</p>
+<pre><code>leaky_relu(x) = x         如果 x &gt; 0
+                alpha × x  如果 x ≤ 0  （alpha 通常 = 0.01）</code></pre>
+<p>负侧有小斜率而非零，死神经元仍能收到梯度信号并可能恢复。</p>
+<h3 id="gelu现代默认">GELU：现代默认</h3>
+<p>Gaussian Error Linear Unit。BERT、GPT 和大多数现代 Transformer 的默认激活。</p>
+<pre><code>gelu(x) = x × Φ(x)    （Φ 是标准正态的 CDF）
+
+近似公式：
+gelu(x) ≈ 0.5 × x × (1 + tanh(√(2/π) × (x + 0.044715 × x³)))</code></pre>
+<p>GELU 处处光滑，允许小的负值（不像 ReLU 硬切到零），有概率解释：用输入在高斯分布下为正的概率来加权。这种平滑门控在 Transformer 中优于 ReLU，提供更好的梯度流并完全避免死神经元。</p>
+<h3 id="swish-silu">Swish / SiLU</h3>
+<p>自门控激活，2017 年 Google 通过自动搜索发现。</p>
+<pre><code>swish(x) = x × sigmoid(x)</code></pre>
+<p>跟 GELU 一样光滑、非单调、允许小负值。区别细微：Swish 用 sigmoid 做门控，GELU 用高斯 CDF。实际性能几乎一样。Swish 用在 EfficientNet，GELU 统治语言模型。</p>
+<h3 id="选哪个激活函数">选哪个激活函数</h3>
+<pre data-label="mermaid"><code class="language-mermaid">flowchart TD
+    Start["你在搭什么？"] --&gt; Hidden{"隐藏层\n还是输出层？"}
+
+    Hidden --&gt;|"隐藏层"| Arch{"架构？"}
+    Hidden --&gt;|"输出层"| Task{"任务类型？"}
+
+    Arch --&gt;|"Transformer / NLP"| GELU["用 GELU"]
+    Arch --&gt;|"CNN / 视觉"| ReLU["用 ReLU 或 Swish"]
+    Arch --&gt;|"RNN / LSTM"| Tanh["用 Tanh"]
+    Arch --&gt;|"简单 MLP"| ReLU2["用 ReLU"]
+
+    Task --&gt;|"二分类"| Sigmoid["用 Sigmoid"]
+    Task --&gt;|"多分类"| Softmax["用 Softmax"]
+    Task --&gt;|"回归"| Linear["不用激活（线性）"]</code></pre>
+<h2 id="从零实现">从零实现</h2>
+<h3 id="第一步所有激活函数及其导数">第一步：所有激活函数及其导数</h3>
+<pre data-label="python"><code class="language-python">import math
+
+def sigmoid(x):
+    x = max(-500, min(500, x))
+    return 1.0 / (1.0 + math.exp(-x))
+
+def sigmoid_derivative(x):
+    s = sigmoid(x)
+    return s * (1 - s)
+
+def tanh_act(x):
+    return math.tanh(x)
+
+def tanh_derivative(x):
+    t = math.tanh(x)
+    return 1 - t * t
+
+def relu(x):
+    return max(0.0, x)
+
+def relu_derivative(x):
+    return 1.0 if x &gt; 0 else 0.0
+
+def leaky_relu(x, alpha=0.01):
+    return x if x &gt; 0 else alpha * x
+
+def leaky_relu_derivative(x, alpha=0.01):
+    return 1.0 if x &gt; 0 else alpha
+
+def gelu(x):
+    return 0.5 * x * (1 + math.tanh(math.sqrt(2/math.pi) * (x + 0.044715 * x**3)))
+
+def gelu_derivative(x):
+    phi = 0.5 * (1 + math.erf(x / math.sqrt(2)))
+    pdf = math.exp(-0.5 * x * x) / math.sqrt(2 * math.pi)
+    return phi + x * pdf
+
+def swish(x):
+    return x * sigmoid(x)
+
+def swish_derivative(x):
+    s = sigmoid(x)
+    return s + x * s * (1 - s)
+
+def softmax(xs):
+    max_x = max(xs)
+    exps = [math.exp(x - max_x) for x in xs]
+    total = sum(exps)
+    return [e / total for e in exps]</code></pre>
+<h3 id="第二步梯度死区扫描">第二步：梯度死区扫描</h3>
+<pre data-label="python"><code class="language-python">def gradient_scan(name, derivative_fn, start=-5, end=5, n=100):
+    """扫描激活函数在 [-5, 5] 范围内的梯度死区比例"""
+    step = (end - start) / n
+    near_zero = sum(1 for i in range(n) if abs(derivative_fn(start + i * step)) &lt; 0.01)
+    pct_dead = near_zero / n * 100
+    print(f"{name:15s}: {n - near_zero:3d} 健康, {near_zero:3d} 近零 ({pct_dead:.0f}% 死区)")
+
+gradient_scan("Sigmoid", sigmoid_derivative)
+gradient_scan("Tanh", tanh_derivative)
+gradient_scan("ReLU", relu_derivative)
+gradient_scan("Leaky ReLU", leaky_relu_derivative)
+gradient_scan("GELU", gelu_derivative)
+gradient_scan("Swish", swish_derivative)</code></pre>
+<h3 id="第三步梯度消失实验">第三步：梯度消失实验</h3>
+<p>把信号穿过 N 层 sigmoid vs ReLU，看激活值怎么变。</p>
+<pre data-label="python"><code class="language-python">import random
+
+def vanishing_gradient_experiment(activation_fn, name, n_layers=10, n_inputs=5):
+    random.seed(42)
+    values = [random.gauss(0, 1) for _ in range(n_inputs)]
+
+    print(f"\n{name} 穿过 {n_layers} 层：")
+    for layer in range(n_layers):
+        weights = [random.gauss(0, 1) for _ in range(n_inputs)]
+        z = sum(w * v for w, v in zip(weights, values))
+        activated = activation_fn(z)
+        magnitude = abs(activated)
+        bar = "█" * int(magnitude * 20)
+        print(f"  Layer {layer+1:2d}: magnitude = {magnitude:.6f} {bar}")
+        values = [activated] * n_inputs
+
+vanishing_gradient_experiment(sigmoid, "Sigmoid")
+vanishing_gradient_experiment(relu, "ReLU")
+vanishing_gradient_experiment(gelu, "GELU")</code></pre>
+<h3 id="第四步死神经元检测器">第四步：死神经元检测器</h3>
+<pre data-label="python"><code class="language-python">def dead_neuron_detector(n_inputs=5, hidden_size=20, n_samples=1000):
+    """检测 ReLU 网络中有多少神经元从不激活"""
+    random.seed(0)
+    weights = [[random.gauss(0, 1) for _ in range(n_inputs)] for _ in range(hidden_size)]
+    biases = [random.gauss(0, 1) for _ in range(hidden_size)]
+
+    fire_counts = [0] * hidden_size
+    for _ in range(n_samples):
+        inputs = [random.gauss(0, 1) for _ in range(n_inputs)]
+        for i in range(hidden_size):
+            z = sum(w * x for w, x in zip(weights[i], inputs)) + biases[i]
+            if relu(z) &gt; 0:
+                fire_counts[i] += 1
+
+    dead = sum(1 for c in fire_counts if c == 0)
+    print(f"\n死神经元报告（{hidden_size} 个神经元，{n_samples} 个样本）：")
+    print(f"  死亡（从未激活）: {dead}")
+    print(f"  死亡率: {dead/hidden_size*100:.1f}%")
+
+dead_neuron_detector()</code></pre>
+<h2 id="用库做同样的事">用库做同样的事</h2>
+<pre data-label="python"><code class="language-python">import torch
+import torch.nn as nn
+import torch.nn.functional as F
+
+x = torch.randn(4, 10)
+
+relu_out = F.relu(x)
+gelu_out = F.gelu(x)
+sigmoid_out = torch.sigmoid(x)
+swish_out = F.silu(x)       # SiLU = Swish
+
+logits = torch.randn(4, 5)
+probs = F.softmax(logits, dim=1)
+
+# Transformer 风格的隐藏层
+model = nn.Sequential(
+    nn.Linear(10, 64),
+    nn.GELU(),
+    nn.Linear(64, 32),
+    nn.GELU(),
+    nn.Linear(32, 5),
+)</code></pre>
+<p><strong>实用默认值</strong>：Transformer 隐藏层用 GELU。CNN 隐藏层用 ReLU。分类输出用 softmax。回归输出不用激活（线性）。概率输出用 sigmoid。从这些默认值开始，只在有证据时才换。</p>
+<h2 id="练习">练习</h2>
+<ol>
+<li>实现 Parametric ReLU (PReLU)：负侧斜率 alpha 是可学习参数。在圆形数据集上训练，跟固定 Leaky ReLU 比较。</li>
+<li>把梯度消失实验扩展到 50 层。逐层打印 sigmoid、tanh、ReLU、GELU 的信号大小。每种激活在第几层信号有效归零？</li>
+<li>实现 ELU：elu(x) = x if x &gt; 0, alpha×(eˣ-1) if x ≤ 0。跟 ReLU 比较死神经元率。</li>
+<li>搭一个&quot;梯度健康监控器&quot;：训练过程中每个 epoch 计算各层平均梯度大小。梯度低于 0.001 或超过 100 时打印警告。</li>
+</ol>
+<h2 id="术语表">术语表</h2>
+<div class="table-wrap"><table><thead><tr>
+<th>术语</th>
+<th>通俗说法</th>
+<th>真正含义</th>
+</tr>
+</thead><tbody><tr>
+<td>Activation function（激活函数）</td>
+<td>&quot;非线性那部分&quot;</td>
+<td>施加在每个神经元输出上打破线性的函数</td>
+</tr>
+<tr>
+<td>Vanishing gradient（梯度消失）</td>
+<td>&quot;前面的层学不到&quot;</td>
+<td>激活函数导数 &lt; 1 时梯度逐层指数衰减</td>
+</tr>
+<tr>
+<td>Dead neuron（死神经元）</td>
+<td>&quot;不学了的神经元&quot;</td>
+<td>ReLU 神经元输入永远为负，输出永远为零，梯度永远为零</td>
+</tr>
+<tr>
+<td>Sigmoid</td>
+<td>&quot;把值压到 0-1&quot;</td>
+<td>1/(1+e⁻ˣ)，历史重要但深层网络中导致梯度消失</td>
+</tr>
+<tr>
+<td>ReLU</td>
+<td>&quot;负数变零&quot;</td>
+<td>max(0, x)，让深度学习成为实际可行的激活函数</td>
+</tr>
+<tr>
+<td>GELU</td>
+<td>&quot;Transformer 的激活&quot;</td>
+<td>高斯误差线性单元，光滑，避免死神经元，现代默认</td>
+</tr>
+<tr>
+<td>Softmax</td>
+<td>&quot;分数变概率&quot;</td>
+<td>把 logits 归一化为概率分布，值在 (0,1) 且和为 1</td>
+</tr>
+<tr>
+<td>Saturation（饱和）</td>
+<td>&quot;sigmoid 的平坦区&quot;</td>
+<td>激活函数导数趋近零的区域，阻断梯度流</td>
+</tr>
+</tbody></table></div>
+<hr>
+<h2 id="自测题">自测题</h2>
+<div class="quiz-card" data-correct="1" data-quiz-id="1">
+  <div class="quiz-question"><span class="quiz-num">Q1</span>为什么纯线性层（没有激活函数）的深度网络没用？</div>
+  <div class="quiz-options">
+    <label class="quiz-option" data-index="0">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">线性层太慢</span>
+    </label>
+    <label class="quiz-option" data-index="1">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">堆叠线性层坍缩成一次线性变换，深度带来不了任何好处</span>
+    </label>
+    <label class="quiz-option" data-index="2">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">线性层没有 bias</span>
+    </label>
+    <label class="quiz-option" data-index="3">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">线性层不能处理批量数据</span>
+    </label>
+  </div>
+  <button class="quiz-check">Check Answer</button>
+  <div class="quiz-explanation" hidden>y = W2(W1×x + b1) + b2 化简为 y = Ax + c。不管堆多少线性层，结果等价于一层。激活函数打破了这种可组合性。</div>
+</div>
+
+<div class="quiz-card" data-correct="2" data-quiz-id="2">
+  <div class="quiz-question"><span class="quiz-num">Q2</span>ReLU 激活函数的输出范围是什么？</div>
+  <div class="quiz-options">
+    <label class="quiz-option" data-index="0">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">(-1, 1)</span>
+    </label>
+    <label class="quiz-option" data-index="1">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">(0, 1)</span>
+    </label>
+    <label class="quiz-option" data-index="2">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">[0, ∞)</span>
+    </label>
+    <label class="quiz-option" data-index="3">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">(-∞, ∞)</span>
+    </label>
+  </div>
+  <button class="quiz-check">Check Answer</button>
+  <div class="quiz-explanation" hidden>ReLU(x) = max(0, x)。负输入输出 0，正输入原样通过。范围是 [0, ∞)。</div>
+</div>
+
+<div class="quiz-card" data-correct="1" data-quiz-id="3">
+  <div class="quiz-question"><span class="quiz-num">Q3</span>ReLU 网络中的"死神经元"问题是什么？</div>
+  <div class="quiz-options">
+    <label class="quiz-option" data-index="0">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">计算太慢的神经元</span>
+    </label>
+    <label class="quiz-option" data-index="1">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">输入永远为负的神经元，输出永远为零、梯度永远为零、永远不更新</span>
+    </label>
+    <label class="quiz-option" data-index="2">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">产生 NaN 的神经元</span>
+    </label>
+    <label class="quiz-option" data-index="3">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">bias 为零的神经元</span>
+    </label>
+  </div>
+  <button class="quiz-check">Check Answer</button>
+  <div class="quiz-explanation" hidden>如果 ReLU 神经元的加权输入永远是负的（坏的初始化或大的负 bias），它输出 0 梯度 0。零梯度意味着零更新，它永远不能恢复。</div>
+</div>
+
+<div class="quiz-card" data-correct="2" data-quiz-id="4">
+  <div class="quiz-question"><span class="quiz-num">Q4</span>现代 Transformer（GPT、BERT）隐藏层默认用什么激活函数？</div>
+  <div class="quiz-options">
+    <label class="quiz-option" data-index="0">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">Sigmoid</span>
+    </label>
+    <label class="quiz-option" data-index="1">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">ReLU</span>
+    </label>
+    <label class="quiz-option" data-index="2">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">GELU</span>
+    </label>
+    <label class="quiz-option" data-index="3">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">Tanh</span>
+    </label>
+  </div>
+  <button class="quiz-check">Check Answer</button>
+  <div class="quiz-explanation" hidden>GELU 是 Transformer 的默认激活。它提供平滑的梯度流，避免死神经元，在语言模型中表现优于 ReLU。</div>
+</div>
+
+<div class="quiz-card" data-correct="1" data-quiz-id="5">
+  <div class="quiz-question"><span class="quiz-num">Q5</span>为什么 softmax 只用在输出层而不用在隐藏层？</div>
+  <div class="quiz-options">
+    <label class="quiz-option" data-index="0">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">太慢了</span>
+    </label>
+    <label class="quiz-option" data-index="1">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">它把向量转成概率分布（值和为 1），这是分类输出需要的，但不适合中间表示</span>
+    </label>
+    <label class="quiz-option" data-index="2">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">会导致梯度爆炸</span>
+    </label>
+    <label class="quiz-option" data-index="3">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">只能处理两个类别</span>
+    </label>
+  </div>
+  <button class="quiz-check">Check Answer</button>
+  <div class="quiz-explanation" hidden>Softmax 归一化向量让所有值在 (0,1) 且和为 1，创建概率分布。隐藏层需要保留和变换信息，不是把它压缩成概率。</div>
+</div>
+
+    <nav class="pager">  <a href="03-backpropagation.html">
+    <span class="label">← 上一章</span>
+    <span class="title">从零实现反向传播</span>
+  </a>  <a href="05-loss-functions.html" class="next">
+    <span class="label">下一章 →</span>
+    <span class="title">损失函数</span>
+  </a></nav>
+  </article>
+</div>
+
+<footer>
+  <div class="set">
+    <span>AI Deep Learning Core</span>
+    <span>2026 · EN</span>
+  </div>
+  <div class="set">
+    <span>Mav</span>
+  </div>
+</footer>
+<div class="search-backdrop" id="search-overlay" role="dialog" aria-modal="true" aria-label="搜索" hidden>
+  <div class="search-modal">
+    <div class="search-input-wrap">
+      <input type="search" class="search-input" placeholder="搜索内容..." aria-label="搜索内容" autocomplete="off">
+      <kbd>ESC</kbd>
+    </div>
+    <div class="search-results" role="listbox" aria-label="搜索结果"></div>
+  </div>
+</div>
+
+<!-- Side Panel -->
+<div class="side-panel" id="side-panel">
+  <div class="side-panel-resize" id="side-panel-resize"></div>
+  <div class="side-panel-header">
+    <div class="side-panel-tabs">
+      <button class="side-panel-tab active" data-mode="sidenote">补充</button>
+      <button class="side-panel-tab" data-mode="notepad">笔记</button>
+    </div>
+    <button class="side-panel-close" aria-label="关闭">×</button>
+  </div>
+  <div class="side-panel-body"></div>
+</div>
+<button class="notepad-fab" id="notepad-fab" aria-label="便利贴">✎</button>
+
+<!-- Mobile TOC -->
+<button class="mtoc-fab" id="mtoc-fab" aria-label="目录">TOC</button>
+<div class="mtoc-drawer" id="mtoc-drawer">
+  <div class="mtoc-content"></div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/bash.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/typescript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/yaml.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/javascript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/json.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/python.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/css.min.js"></script>
+<script src="../assets/script.js"></script>
+<script src="../assets/quiz.js"></script>
+<script src="../assets/mermaid-init.js"></script>
+</body>
+</html>

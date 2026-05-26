@@ -1,0 +1,722 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>线性代数直觉 — AI Math Foundations</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" id="hljs-light" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+<link rel="stylesheet" id="hljs-dark" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" media="not all">
+<link rel="stylesheet" href="../assets/quiz.css">
+</head>
+<body>
+
+<div class="progress-bar" id="progress-bar"></div>
+
+<nav class="topnav" id="topnav">
+  <div class="topnav-inner">
+    <a class="brand" href="../index.html">AI Math Foundations</a>
+    <div class="nav-links">
+      <a href="01-linear-algebra-intuition.html" class="active">01</a>
+      <a href="02-vectors-matrices-operations.html">02</a>
+      <a href="03-calculus-for-ml.html">03</a>
+      <a href="04-chain-rule-and-autodiff.html">04</a>
+      <a href="05-probability-and-distributions.html">05</a>
+      <a href="06-optimization.html">06</a>
+      <a href="07-tensor-operations.html">07</a>
+      <a href="08-numerical-stability.html">08</a>
+    </div>
+    <div class="nav-controls">
+      <button class="nav-btn" id="search-btn" aria-label="搜索 (Ctrl+K)">⌘K</button>
+      <button class="nav-btn" id="settings-btn" aria-label="阅读设置">Aa</button>
+      <a class="nav-btn" href="../../index.html" aria-label="返回知识库">← 知识库</a>
+      <a class="nav-btn" href="https://github.com/maverickxone/mav-homepage" target="_blank" rel="noopener" aria-label="GitHub" style="padding: 6px 8px;"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg></a>
+    </div>
+  </div>
+</nav>
+<div class="settings-pop" id="settings-pop">
+  <h5>主题</h5>
+  <div class="row">
+    <button class="seg" data-theme-set="light">明亮</button>
+    <button class="seg" data-theme-set="dark">暗色</button>
+  </div>
+  <h5>字号</h5>
+  <div class="row">
+    <button class="seg" data-size-set="s">小</button>
+    <button class="seg" data-size-set="m">中</button>
+    <button class="seg" data-size-set="l">大</button>
+  </div>
+</div>
+
+<div class="with-sidebar">
+  <aside class="sidebar">
+  <div class="chapter-num">CHAPTER 01</div>
+  <div class="chapter-name">线性代数直觉</div>
+  <h4>目录</h4>
+  <ul>
+    <li><a href="#学习目标">学习目标</a></li>
+    <li><a href="#为什么要学这个">为什么要学这个</a></li>
+    <li><a href="#核心概念">核心概念</a></li>
+    <li><a href="#从零实现">从零实现</a></li>
+    <li><a href="#用库做同样的事">用库做同样的事</a></li>
+    <li><a href="#各概念在-ai-中的对应">各概念在 AI 中的对应</a></li>
+    <li><a href="#练习">练习</a></li>
+    <li><a href="#术语表">术语表</a></li>
+    <li><a href="#自测题">自测题</a></li>
+  </ul>
+</aside>
+  <article class="chapter-body">
+    <header class="chapter-head">
+  <div class="chapter-head-meta">
+    <span class="num">CHAPTER 01</span>
+    <span>≈ 60 MIN READ</span>
+  </div>
+  <h1>线性代数直觉</h1>
+
+</header>
+    <blockquote><p>所有 AI 模型本质上就是矩阵运算穿了件花衣服。</p>
+</blockquote>
+<h2 id="学习目标">学习目标</h2>
+<ul>
+<li>用 Python 从零实现向量和矩阵运算（加法、点积、矩阵乘法）</li>
+<li>从几何角度理解点积、投影、Gram-Schmidt 过程在做什么</li>
+<li>用行化简判断线性无关、秩和基</li>
+<li>把线性代数概念跟 AI 应用联系起来：embedding、attention score、LoRA</li>
+</ul>
+<h2 id="为什么要学这个">为什么要学这个</h2>
+<p>打开任何一篇 ML 论文，第一页就会看到向量、矩阵、点积、变换。如果没有线性代数的直觉，这些就是一堆看不懂的符号。有了直觉之后，你能看到神经网络到底在做什么——<strong>在空间里移动点</strong>。</p>
+<p>你不需要成为数学家。你需要的是理解这些运算在几何上的含义，然后自己写一遍代码。</p>
+<h2 id="核心概念">核心概念</h2>
+<h3 id="向量-空间中的点也是方向">向量 = 空间中的点（也是方向）</h3>
+<p>向量就是一串数字。但这些数字有含义——它们是空间中的坐标。</p>
+<p><strong>二维向量 [3, 2]：</strong></p>
+<div class="table-wrap"><table><thead><tr>
+<th>x</th>
+<th>y</th>
+<th>含义</th>
+</tr>
+</thead><tbody><tr>
+<td>3</td>
+<td>2</td>
+<td>从原点 (0,0) 指向 (3, 2) 的箭头</td>
+</tr>
+</tbody></table></div>
+<p>这个向量的长度是 sqrt(3² + 2²) = sqrt(13)，方向是右上方。</p>
+<p>在 AI 里，向量用来表示一切：</p>
+<ul>
+<li>一个词 → 768 个数字的向量（它在 embedding 空间里的&quot;含义&quot;）</li>
+<li>一张图 → 几百万像素值组成的向量</li>
+<li>一个用户 → 一组偏好数值</li>
+</ul>
+<h3 id="矩阵-变换">矩阵 = 变换</h3>
+<p>矩阵把一个向量变成另一个向量。它可以旋转、缩放、拉伸、投影。</p>
+<pre data-label="mermaid"><code class="language-mermaid">graph LR
+    subgraph Before
+        A["点 A"]
+        B["点 B"]
+    end
+    subgraph Matrix["矩阵乘法"]
+        M["M（变换）"]
+    end
+    subgraph After
+        A2["点 A'"]
+        B2["点 B'"]
+    end
+    A --&gt; M
+    B --&gt; M
+    M --&gt; A2
+    M --&gt; B2</code></pre>
+<p>在 AI 里，矩阵<strong>就是</strong>模型：</p>
+<ul>
+<li>神经网络的权重 → 把输入变换成输出的矩阵</li>
+<li>Attention 分数 → 决定关注什么的矩阵</li>
+<li>Embedding → 把词映射成向量的矩阵</li>
+</ul>
+<h3 id="点积衡量相似度">点积衡量相似度</h3>
+<p>两个向量的点积告诉你它们有多相似。</p>
+<pre><code>a · b = a₁×b₁ + a₂×b₂ + ... + aₙ×bₙ
+
+同方向：      a · b &gt; 0（相似）
+垂直：        a · b = 0（无关）
+反方向：      a · b &lt; 0（相反）</code></pre>
+<p>搜索引擎、推荐系统、RAG 就是这么工作的——找到点积最大的那些向量。</p>
+<h3 id="线性无关">线性无关</h3>
+<p>一组向量线性无关 = 其中没有任何一个能被其他向量组合出来。</p>
+<p>如果 v1、v2、v3 线性无关，它们撑起一个三维空间。如果有一个能被其余的组合出来，它们只能撑起一个平面。</p>
+<p><strong>这对 AI 意味着什么？</strong> 你的特征矩阵应该有线性无关的列。如果两个特征完美相关（线性相关），模型就无法区分它们各自的贡献。这会导致回归中的多重共线性——权重矩阵变得不稳定，输入微小的变化就会让输出剧烈波动。</p>
+<p><strong>具体例子：</strong></p>
+<pre><code>v1 = [1, 0, 0]
+v2 = [0, 1, 0]
+v3 = [2, 1, 0]   # v3 = 2*v1 + v2</code></pre>
+<p>v1 和 v2 是独立的——谁也不能写成另一个的倍数或组合。但 v3 = 2×v1 + v2，所以 {v1, v2, v3} 是线性相关的。这三个向量都躺在 xy 平面里，无论怎么组合都够不到 [0, 0, 1]。你有三个向量，但只有两个维度的自由。</p>
+<p>换成数据集的语言：如果 feature_3 = 2×feature_1 + feature_2，那加入 feature_3 给模型带来的新信息是零。更糟的是，它会让正规方程变成奇异的——权重没有唯一解。</p>
+<h3 id="基和秩">基和秩</h3>
+<p>**基（Basis）**是能撑起整个空间的最小一组线性无关向量。基向量的个数就是空间的维度。</p>
+<p>三维空间的标准基是 {[1,0,0], [0,1,0], [0,0,1]}。但任何三个线性无关的三维向量都能组成一组有效的基。选择不同的基就是选择不同的坐标系。</p>
+<p><strong>秩（Rank）</strong>= 矩阵线性无关列的数量 = 线性无关行的数量。如果秩 &lt; min(行数, 列数)，矩阵就是秩亏的（rank-deficient）。这意味着：</p>
+<ul>
+<li>方程组有无穷多解（或无解）</li>
+<li>变换过程中丢失了信息</li>
+<li>矩阵不可逆</li>
+</ul>
+<div class="table-wrap"><table><thead><tr>
+<th>情况</th>
+<th>秩</th>
+<th>对 ML 的意义</th>
+</tr>
+</thead><tbody><tr>
+<td>满秩（rank = min(m, n)）</td>
+<td>最大值</td>
+<td>最小二乘有唯一解，模型状态良好</td>
+</tr>
+<tr>
+<td>秩亏（rank &lt; min(m, n)）</td>
+<td>低于最大</td>
+<td>特征冗余，权重有无穷多解，需要正则化</td>
+</tr>
+<tr>
+<td>秩为 1</td>
+<td>1</td>
+<td>每一列都是同一个向量的缩放，所有数据都在一条直线上</td>
+</tr>
+<tr>
+<td>接近秩亏（有很小的奇异值）</td>
+<td>数值上很低</td>
+<td>矩阵病态，微小噪声导致巨大输出变化，需要 SVD 截断或 ridge 回归</td>
+</tr>
+</tbody></table></div>
+<h3 id="投影">投影</h3>
+<p>把向量 <strong>a</strong> 投影到向量 <strong>b</strong> 上，得到 <strong>a</strong> 在 <strong>b</strong> 方向上的分量：</p>
+<pre><code>proj_b(a) = (a · b / b · b) × b</code></pre>
+<p>残差 (a - proj_b(a)) 与 b 垂直。这个正交分解是最小二乘拟合的基础。</p>
+<p>投影在 ML 里无处不在：</p>
+<ul>
+<li>线性回归：最小化观测值到列空间的距离——解本身就是一个投影</li>
+<li>PCA：把数据投影到方差最大的方向上</li>
+<li>Transformer 的 Attention：计算 query 在 key 上的投影</li>
+</ul>
+<pre data-label="mermaid"><code class="language-mermaid">graph LR
+    subgraph Projection["向量 a 在 b 上的投影"]
+        direction TB
+        O["原点"] --&gt; |"b（方向）"| B["b"]
+        O --&gt; |"a（原始）"| A["a"]
+        O --&gt; |"proj_b(a)"| P["投影"]
+        A -.-&gt; |"残差（垂直）"| P
+    end</code></pre>
+<p><strong>例子：</strong> a = [3, 4]，b = [1, 0]</p>
+<p>proj_b(a) = (3×1 + 4×0) / (1×1 + 0×0) × [1, 0] = 3 × [1, 0] = [3, 0]</p>
+<p>投影把 y 分量丢掉了。这就是最简单的降维——扔掉你不关心的方向。</p>
+<h3 id="gram-schmidt-过程">Gram-Schmidt 过程</h3>
+<p>把任意一组线性无关的向量变成<strong>正交归一基</strong>（orthonormal basis）。正交归一 = 每个向量长度为 1 + 每对向量互相垂直。</p>
+<p>算法：</p>
+<ol>
+<li>取第一个向量，归一化</li>
+<li>取第二个向量，减去它在第一个上的投影，归一化</li>
+<li>取第三个向量，减去它在所有前面向量上的投影，归一化</li>
+<li>对剩余向量重复</li>
+</ol>
+<pre><code>输入：v1, v2, v3, ...（线性无关）
+
+u1 = v1 / |v1|
+
+w2 = v2 - (v2 · u1) × u1
+u2 = w2 / |w2|
+
+w3 = v3 - (v3 · u1) × u1 - (v3 · u2) × u2
+u3 = w3 / |w3|
+
+输出：u1, u2, u3, ...（正交归一基）</code></pre>
+<p>这就是 QR 分解内部的工作方式。Q 是正交归一基，R 记录投影系数。QR 分解用在：</p>
+<ul>
+<li>解线性方程组（比高斯消元更稳定）</li>
+<li>计算特征值（QR 算法）</li>
+<li>最小二乘回归（标准的数值方法）</li>
+</ul>
+<h2 id="从零实现">从零实现</h2>
+<h3 id="第一步手写向量类python">第一步：手写向量类（Python）</h3>
+<pre data-label="python"><code class="language-python">class Vector:
+    def __init__(self, components):
+        self.components = list(components)
+        self.dim = len(self.components)
+
+    def __add__(self, other):
+        return Vector([a + b for a, b in zip(self.components, other.components)])
+
+    def __sub__(self, other):
+        return Vector([a - b for a, b in zip(self.components, other.components)])
+
+    def dot(self, other):
+        return sum(a * b for a, b in zip(self.components, other.components))
+
+    def magnitude(self):
+        return sum(x**2 for x in self.components) ** 0.5
+
+    def normalize(self):
+        mag = self.magnitude()
+        return Vector([x / mag for x in self.components])
+
+    def cosine_similarity(self, other):
+        return self.dot(other) / (self.magnitude() * other.magnitude())
+
+    def __repr__(self):
+        return f"Vector({self.components})"
+
+
+a = Vector([1, 2, 3])
+b = Vector([4, 5, 6])
+
+print(f"a + b = {a + b}")
+print(f"a · b = {a.dot(b)}")
+print(f"|a| = {a.magnitude():.4f}")
+print(f"cosine similarity = {a.cosine_similarity(b):.4f}")</code></pre>
+<h3 id="第二步手写矩阵类python">第二步：手写矩阵类（Python）</h3>
+<pre data-label="python"><code class="language-python">class Matrix:
+    def __init__(self, rows):
+        self.rows = [list(row) for row in rows]
+        self.shape = (len(self.rows), len(self.rows[0]))
+
+    def __matmul__(self, other):
+        if isinstance(other, Vector):
+            return Vector([
+                sum(self.rows[i][j] * other.components[j] for j in range(self.shape[1]))
+                for i in range(self.shape[0])
+            ])
+        rows = []
+        for i in range(self.shape[0]):
+            row = []
+            for j in range(other.shape[1]):
+                row.append(sum(
+                    self.rows[i][k] * other.rows[k][j]
+                    for k in range(self.shape[1])
+                ))
+            rows.append(row)
+        return Matrix(rows)
+
+    def transpose(self):
+        return Matrix([
+            [self.rows[j][i] for j in range(self.shape[0])]
+            for i in range(self.shape[1])
+        ])
+
+    def __repr__(self):
+        return f"Matrix({self.rows})"
+
+
+# 旋转 90 度的变换矩阵
+rotation_90 = Matrix([[0, -1], [1, 0]])
+point = Vector([3, 1])
+
+rotated = rotation_90 @ point
+print(f"原始点: {point}")
+print(f"旋转 90° 后: {rotated}")</code></pre>
+<h3 id="第三步这跟-ai-有什么关系">第三步：这跟 AI 有什么关系</h3>
+<pre data-label="python"><code class="language-python">import random
+
+random.seed(42)
+# 一个 2×3 的权重矩阵，就是神经网络的一层
+weights = Matrix([[random.gauss(0, 0.1) for _ in range(3)] for _ in range(2)])
+input_vector = Vector([1.0, 0.5, -0.3])
+
+output = weights @ input_vector
+print(f"输入 (3D): {input_vector}")
+print(f"输出 (2D): {output}")
+print("这就是神经网络的一层在做的事——矩阵乘法。")</code></pre>
+<h3 id="第四步julia-版本">第四步：Julia 版本</h3>
+<pre data-label="julia"><code class="language-julia">a = [1.0, 2.0, 3.0]
+b = [4.0, 5.0, 6.0]
+
+println("a + b = ", a + b)
+println("a · b = ", a ⋅ b)       # Julia 支持 unicode 运算符
+println("|a| = ", √(a ⋅ a))
+println("cosine = ", (a ⋅ b) / (√(a ⋅ a) * √(b ⋅ b)))
+
+# 矩阵-向量乘法
+W = [0.1 -0.2 0.3; 0.4 0.5 -0.1]
+x = [1.0, 0.5, -0.3]
+println("Wx = ", W * x)
+println("这就是神经网络的一层。")</code></pre>
+<h3 id="第五步线性无关与投影python">第五步：线性无关与投影（Python）</h3>
+<pre data-label="python"><code class="language-python">def is_linearly_independent(vectors):
+    """通过行化简判断一组向量是否线性无关"""
+    n = len(vectors)
+    dim = len(vectors[0].components)
+    rows = [v.components[:] for v in vectors]
+    rank = 0
+    for col in range(dim):
+        pivot = None
+        for row in range(rank, len(rows)):
+            if abs(rows[row][col]) &gt; 1e-10:
+                pivot = row
+                break
+        if pivot is None:
+            continue
+        rows[rank], rows[pivot] = rows[pivot], rows[rank]
+        scale = rows[rank][col]
+        rows[rank] = [x / scale for x in rows[rank]]
+        for row in range(len(rows)):
+            if row != rank and abs(rows[row][col]) &gt; 1e-10:
+                factor = rows[row][col]
+                rows[row] = [rows[row][j] - factor * rows[rank][j] for j in range(dim)]
+        rank += 1
+    return rank == n
+
+
+def project(a, b):
+    """把向量 a 投影到向量 b 上"""
+    scalar = a.dot(b) / b.dot(b)
+    return Vector([scalar * x for x in b.components])
+
+
+def gram_schmidt(vectors):
+    """Gram-Schmidt 正交化"""
+    orthonormal = []
+    for v in vectors:
+        w = v
+        for u in orthonormal:
+            proj = project(w, u)
+            w = w - proj
+        if w.magnitude() &lt; 1e-10:
+            continue
+        orthonormal.append(w.normalize())
+    return orthonormal
+
+
+v1 = Vector([1, 0, 0])
+v2 = Vector([1, 1, 0])
+v3 = Vector([1, 1, 1])
+basis = gram_schmidt([v1, v2, v3])
+for i, u in enumerate(basis):
+    print(f"u{i+1} = {u}")
+    print(f"  |u{i+1}| = {u.magnitude():.6f}")
+
+# 验证正交性
+print(f"u1 · u2 = {basis[0].dot(basis[1]):.6f}")
+print(f"u1 · u3 = {basis[0].dot(basis[2]):.6f}")
+print(f"u2 · u3 = {basis[1].dot(basis[2]):.6f}")</code></pre>
+<h2 id="用库做同样的事">用库做同样的事</h2>
+<p>写完之后，用 NumPy 一行搞定——但你已经知道底层在发生什么了：</p>
+<pre data-label="python"><code class="language-python">import numpy as np
+
+a = np.array([1, 2, 3], dtype=float)
+b = np.array([4, 5, 6], dtype=float)
+
+print(f"a + b = {a + b}")
+print(f"a · b = {np.dot(a, b)}")
+print(f"|a| = {np.linalg.norm(a):.4f}")
+print(f"cosine = {np.dot(a, b) / (np.linalg.norm(a) * np.linalg.norm(b)):.4f}")
+
+# 神经网络的一层
+W = np.random.randn(2, 3) * 0.1
+x = np.array([1.0, 0.5, -0.3])
+print(f"Wx = {W @ x}")</code></pre>
+<h3 id="秩投影qr-分解">秩、投影、QR 分解</h3>
+<pre data-label="python"><code class="language-python">import numpy as np
+
+# 秩
+A = np.array([[1, 2], [2, 4]])
+print(f"秩: {np.linalg.matrix_rank(A)}")  # 1，因为第二行是第一行的 2 倍
+
+# 投影
+a = np.array([3, 4])
+b = np.array([1, 0])
+proj = (np.dot(a, b) / np.dot(b, b)) * b
+print(f"{a} 在 {b} 上的投影: {proj}")
+
+# QR 分解
+Q, R = np.linalg.qr(np.random.randn(3, 3))
+print(f"Q 是正交矩阵: {np.allclose(Q @ Q.T, np.eye(3))}")
+print(f"R 是上三角矩阵: {np.allclose(R, np.triu(R))}")</code></pre>
+<h3 id="pytorch-带自动求导的向量">PyTorch —— 带自动求导的向量</h3>
+<pre data-label="python"><code class="language-python">import torch
+
+x = torch.randn(3, requires_grad=True)
+y = torch.tensor([1.0, 0.0, 0.0])
+
+similarity = torch.dot(x, y)
+similarity.backward()
+
+print(f"x = {x.data}")
+print(f"y = {y.data}")
+print(f"点积 = {similarity.item():.4f}")
+print(f"d(点积)/dx = {x.grad}")  # 点积对 x 的梯度就是 y</code></pre>
+<p>点积对 x 的梯度就是 y。PyTorch 自动算出来了。神经网络里的每一个操作都是由这些基本运算构成的——矩阵乘法、点积、投影——而自动求导会跟踪所有梯度。</p>
+<h2 id="各概念在-ai-中的对应">各概念在 AI 中的对应</h2>
+<div class="table-wrap"><table><thead><tr>
+<th>概念</th>
+<th>在 AI 哪里出现</th>
+</tr>
+</thead><tbody><tr>
+<td>点积</td>
+<td>Transformer 的 attention score，RAG 的余弦相似度</td>
+</tr>
+<tr>
+<td>矩阵乘法</td>
+<td>每一层神经网络，每一个线性变换</td>
+</tr>
+<tr>
+<td>线性无关</td>
+<td>特征选择，避免多重共线性</td>
+</tr>
+<tr>
+<td>秩</td>
+<td>判断方程是否可解，LoRA（低秩适配）</td>
+</tr>
+<tr>
+<td>投影</td>
+<td>线性回归（投影到列空间），PCA</td>
+</tr>
+<tr>
+<td>Gram-Schmidt / QR</td>
+<td>数值求解器，特征值计算</td>
+</tr>
+<tr>
+<td>正交归一基</td>
+<td>稳定的数值计算，白化变换</td>
+</tr>
+</tbody></table></div>
+<p><strong>LoRA 值得单独说一下。</strong> 它通过把权重更新分解成低秩矩阵来微调大语言模型。不是更新一个 4096×4096 的权重矩阵（1600 万参数），而是更新两个矩阵：4096×16 和 16×4096（总共 13.1 万参数）。秩为 16 意味着 LoRA 假设权重更新只住在完整 4096 维空间中的一个 16 维子空间里。这就是线性代数在实际干活。</p>
+<h2 id="练习">练习</h2>
+<ol>
+<li>实现 <code>Vector.angle_between(other)</code>，返回两个向量之间的夹角（度数）</li>
+<li>创建一个 2D 缩放矩阵（x 方向放大 2 倍，y 方向放大 3 倍），然后作用于向量 [1, 1]</li>
+<li>随机生成 5 个 50 维的&quot;类词向量&quot;，用余弦相似度找出最相似的一对</li>
+<li>验证 Gram-Schmidt 的输出确实是正交归一的：检查每对点积为 0，每个向量长度为 1</li>
+<li>构造一个秩为 2 的 3×3 矩阵，用代码验证秩，然后解释列向量张成了什么几何体</li>
+<li>把向量 [1, 2, 3] 投影到 [1, 1, 1] 上，结果在几何上代表什么？</li>
+</ol>
+<h2 id="术语表">术语表</h2>
+<div class="table-wrap"><table><thead><tr>
+<th>术语</th>
+<th>通俗说法</th>
+<th>真正含义</th>
+</tr>
+</thead><tbody><tr>
+<td>Vector（向量）</td>
+<td>&quot;一个箭头&quot;</td>
+<td>一串数字，表示 n 维空间中的一个点或方向</td>
+</tr>
+<tr>
+<td>Matrix（矩阵）</td>
+<td>&quot;一张数字表&quot;</td>
+<td>一个变换，把向量从一个空间映射到另一个空间</td>
+</tr>
+<tr>
+<td>Dot product（点积）</td>
+<td>&quot;乘起来加一加&quot;</td>
+<td>衡量两个向量有多对齐——相似度搜索的核心</td>
+</tr>
+<tr>
+<td>Embedding</td>
+<td>&quot;AI 的某种魔法&quot;</td>
+<td>把某个东西（词、图片、用户）的含义表示成一个向量</td>
+</tr>
+<tr>
+<td>Linear independence（线性无关）</td>
+<td>&quot;它们不重叠&quot;</td>
+<td>集合中没有任何一个向量能被其他向量组合出来</td>
+</tr>
+<tr>
+<td>Rank（秩）</td>
+<td>&quot;有几个维度&quot;</td>
+<td>矩阵中线性无关的列（或行）的数量</td>
+</tr>
+<tr>
+<td>Projection（投影）</td>
+<td>&quot;影子&quot;</td>
+<td>一个向量在另一个方向上的分量</td>
+</tr>
+<tr>
+<td>Basis（基）</td>
+<td>&quot;坐标轴&quot;</td>
+<td>能撑起整个空间的最小一组独立向量</td>
+</tr>
+<tr>
+<td>Orthonormal（正交归一）</td>
+<td>&quot;互相垂直的单位向量&quot;</td>
+<td>向量两两垂直，且每个长度为 1</td>
+</tr>
+</tbody></table></div>
+<hr>
+<h2 id="自测题">自测题</h2>
+<div class="quiz-card" data-correct="1" data-quiz-id="1">
+  <div class="quiz-question"><span class="quiz-num">Q1</span>两个向量的点积衡量的是什么？</div>
+  <div class="quiz-options">
+    <label class="quiz-option" data-index="0">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">两个向量之间的距离</span>
+    </label>
+    <label class="quiz-option" data-index="1">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">两个向量有多相似/对齐</span>
+    </label>
+    <label class="quiz-option" data-index="2">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">两个向量之间的夹角（度数）</span>
+    </label>
+    <label class="quiz-option" data-index="3">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">两个向量共有的维度数量</span>
+    </label>
+  </div>
+  <button class="quiz-check">Check Answer</button>
+  <div class="quiz-explanation" hidden>点积衡量对齐程度：正值表示同方向（相似），零表示垂直（无关），负值表示反方向（相反）。这就是 AI 中相似度搜索的基础。</div>
+</div>
+
+<div class="quiz-card" data-correct="1" data-quiz-id="2">
+  <div class="quiz-question"><span class="quiz-num">Q2</span>在 AI 中，"embedding"指的是什么？</div>
+  <div class="quiz-options">
+    <label class="quiz-option" data-index="0">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">把一个模型嵌入到另一个模型里</span>
+    </label>
+    <label class="quiz-option" data-index="1">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">用一个向量来表示某个东西（词、图片、用户）的含义</span>
+    </label>
+    <label class="quiz-option" data-index="2">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">一种压缩模型权重的技术</span>
+    </label>
+    <label class="quiz-option" data-index="3">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">把代码编译成机器指令的过程</span>
+    </label>
+  </div>
+  <button class="quiz-check">Check Answer</button>
+  <div class="quiz-explanation" hidden>Embedding 把离散对象（词、图片、用户）映射为高维空间中的连续向量，相似的东西在空间中距离相近。它是现实概念和数学运算之间的桥梁。</div>
+</div>
+
+<div class="quiz-card" data-correct="1" data-quiz-id="3">
+  <div class="quiz-question"><span class="quiz-num">Q3</span>给定三个向量 v1=[1,0,0], v2=[0,1,0], v3=[2,1,0]，它们线性无关吗？</div>
+  <div class="quiz-options">
+    <label class="quiz-option" data-index="0">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">是的，因为三维空间里有三个向量</span>
+    </label>
+    <label class="quiz-option" data-index="1">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">不是，因为 v3 = 2×v1 + v2，v3 是其他向量的线性组合</span>
+    </label>
+    <label class="quiz-option" data-index="2">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">是的，因为没有两个向量完全相同</span>
+    </label>
+    <label class="quiz-option" data-index="3">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">不是，因为它们都有一个分量是零</span>
+    </label>
+  </div>
+  <button class="quiz-check">Check Answer</button>
+  <div class="quiz-explanation" hidden>v3 = 2×v1 + v2，所以这组向量线性相关。三个向量都在 xy 平面内，无法到达 [0,0,1]。虽然有 3 个向量在三维空间中，但它们只张成一个二维子空间。</div>
+</div>
+
+<div class="quiz-card" data-correct="1" data-quiz-id="4">
+  <div class="quiz-question"><span class="quiz-num">Q4</span>在机器学习中，矩阵的秩告诉你什么？</div>
+  <div class="quiz-options">
+    <label class="quiz-option" data-index="0">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">矩阵乘法的速度有多快</span>
+    </label>
+    <label class="quiz-option" data-index="1">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">线性无关列的数量，即包含多少维度的有效信息</span>
+    </label>
+    <label class="quiz-option" data-index="2">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">矩阵中的最大值</span>
+    </label>
+    <label class="quiz-option" data-index="3">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">矩阵中非零元素的数量</span>
+    </label>
+  </div>
+  <button class="quiz-check">Check Answer</button>
+  <div class="quiz-explanation" hidden>秩 = 线性无关列的数量。在 ML 中，特征矩阵秩亏意味着特征冗余、权重有无穷多解、需要正则化。</div>
+</div>
+
+<div class="quiz-card" data-correct="1" data-quiz-id="5">
+  <div class="quiz-question"><span class="quiz-num">Q5</span>LoRA（低秩适配）如何利用线性代数来高效微调大语言模型？</div>
+  <div class="quiz-options">
+    <label class="quiz-option" data-index="0">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">删除权重矩阵中不用的行来缩小模型</span>
+    </label>
+    <label class="quiz-option" data-index="1">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">把权重更新分解成两个小的低秩矩阵，而不是更新整个权重矩阵</span>
+    </label>
+    <label class="quiz-option" data-index="2">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">把所有权重从 float32 转成 int8</span>
+    </label>
+    <label class="quiz-option" data-index="3">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">冻结 embedding 层，只训练输出层</span>
+    </label>
+  </div>
+  <button class="quiz-check">Check Answer</button>
+  <div class="quiz-explanation" hidden>LoRA 把一个 4096×4096 的权重更新分解成两个矩阵：4096×16 和 16×4096（秩为 16），把可训练参数从 1600 万降到 13.1 万，前提假设是更新只存在于一个低维子空间中。</div>
+</div>
+
+    <nav class="pager">  <a class="disabled"><span class="label">← 上一章</span><span class="title"></span></a>  <a href="02-vectors-matrices-operations.html" class="next">
+    <span class="label">下一章 →</span>
+    <span class="title">向量、矩阵与运算</span>
+  </a></nav>
+  </article>
+</div>
+
+<footer>
+  <div class="set">
+    <span>AI Math Foundations</span>
+    <span>2026 · EN</span>
+  </div>
+  <div class="set">
+    <span>Mav</span>
+  </div>
+</footer>
+<div class="search-backdrop" id="search-overlay" role="dialog" aria-modal="true" aria-label="搜索" hidden>
+  <div class="search-modal">
+    <div class="search-input-wrap">
+      <input type="search" class="search-input" placeholder="搜索内容..." aria-label="搜索内容" autocomplete="off">
+      <kbd>ESC</kbd>
+    </div>
+    <div class="search-results" role="listbox" aria-label="搜索结果"></div>
+  </div>
+</div>
+
+<!-- Side Panel -->
+<div class="side-panel" id="side-panel">
+  <div class="side-panel-resize" id="side-panel-resize"></div>
+  <div class="side-panel-header">
+    <div class="side-panel-tabs">
+      <button class="side-panel-tab active" data-mode="sidenote">补充</button>
+      <button class="side-panel-tab" data-mode="notepad">笔记</button>
+    </div>
+    <button class="side-panel-close" aria-label="关闭">×</button>
+  </div>
+  <div class="side-panel-body"></div>
+</div>
+<button class="notepad-fab" id="notepad-fab" aria-label="便利贴">✎</button>
+
+<!-- Mobile TOC -->
+<button class="mtoc-fab" id="mtoc-fab" aria-label="目录">TOC</button>
+<div class="mtoc-drawer" id="mtoc-drawer">
+  <div class="mtoc-content"></div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/bash.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/typescript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/yaml.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/javascript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/json.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/python.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/css.min.js"></script>
+<script src="../assets/script.js"></script>
+<script src="../assets/quiz.js"></script>
+<script src="../assets/mermaid-init.js"></script>
+</body>
+</html>

@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>用 CNN 和 RNN 处理文本 — AI NLP Foundations</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" id="hljs-light" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+<link rel="stylesheet" id="hljs-dark" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" media="not all">
+<link rel="stylesheet" href="../assets/quiz.css">
+</head>
+<body>
+
+<div class="progress-bar" id="progress-bar"></div>
+
+<nav class="topnav" id="topnav">
+  <div class="topnav-inner">
+    <a class="brand" href="../index.html">AI NLP Foundations</a>
+    <div class="nav-links">
+      <a href="01-text-processing.html">01</a>
+      <a href="02-word-embeddings-word2vec.html">02</a>
+      <a href="03-glove-fasttext-subword.html">03</a>
+      <a href="04-cnns-rnns-for-text.html" class="active">04</a>
+      <a href="05-sequence-to-sequence.html">05</a>
+      <a href="06-attention-mechanism.html">06</a>
+      <a href="07-subword-tokenization.html">07</a>
+    </div>
+    <div class="nav-controls">
+      <button class="nav-btn" id="search-btn" aria-label="搜索 (Ctrl+K)">⌘K</button>
+      <button class="nav-btn" id="settings-btn" aria-label="阅读设置">Aa</button>
+      <a class="nav-btn" href="../../index.html" aria-label="返回知识库">← 知识库</a>
+      <a class="nav-btn" href="https://github.com/maverickxone/mav-homepage" target="_blank" rel="noopener" aria-label="GitHub" style="padding: 6px 8px;"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg></a>
+    </div>
+  </div>
+</nav>
+<div class="settings-pop" id="settings-pop">
+  <h5>主题</h5>
+  <div class="row">
+    <button class="seg" data-theme-set="light">明亮</button>
+    <button class="seg" data-theme-set="dark">暗色</button>
+  </div>
+  <h5>字号</h5>
+  <div class="row">
+    <button class="seg" data-size-set="s">小</button>
+    <button class="seg" data-size-set="m">中</button>
+    <button class="seg" data-size-set="l">大</button>
+  </div>
+</div>
+
+<div class="with-sidebar">
+  <aside class="sidebar">
+  <div class="chapter-num">CHAPTER 04</div>
+  <div class="chapter-name">用 CNN 和 RNN 处理文本</div>
+  <h4>目录</h4>
+  <ul>
+    <li><a href="#为什么要学这个">为什么要学这个</a></li>
+    <li><a href="#核心概念">核心概念</a></li>
+    <li><a href="#从零实现">从零实现</a></li>
+    <li><a href="#实战用法">实战用法</a></li>
+    <li><a href="#练习">练习</a></li>
+    <li><a href="#术语表">术语表</a></li>
+    <li><a href="#延伸阅读">延伸阅读</a></li>
+    <li><a href="#自测题">自测题</a></li>
+  </ul>
+</aside>
+  <article class="chapter-body">
+    <header class="chapter-head">
+  <div class="chapter-head-meta">
+    <span class="num">CHAPTER 04</span>
+    <span>≈ 75 MIN READ</span>
+  </div>
+  <h1>用 CNN 和 RNN 处理文本</h1>
+
+</header>
+    <blockquote><p>卷积学 n-gram，循环记上下文。两者都被注意力取代了，但在受限硬件上依然有用武之地。</p>
+</blockquote>
+<h2 id="为什么要学这个">为什么要学这个</h2>
+<p>TF-IDF 和 Word2Vec 产出的是扁平向量，完全忽略词序。用它们做分类器，分不出「狗咬人」和「人咬狗」的区别。而词序有时候恰恰是关键信号。</p>
+<p>在 Transformer 出现之前，有两类架构填补了这个空白。</p>
+<p><strong>文本卷积网络（TextCNN）。</strong> 在词嵌入序列上做一维卷积。宽度为 3 的卷积核就是一个可学习的三元组（trigram）检测器：它横跨三个词，输出一个得分。堆叠不同宽度（2、3、4、5）就能捕捉多尺度模式。最大池化（Max-pool）压成定长表示。并行、扁平、快。</p>
+<p><strong>循环网络（RNN、LSTM、GRU）。</strong> 逐 token 处理，维护一个隐状态（hidden state），把信息一直向前传。顺序处理、带记忆、能接受任意长度输入。从 2014 到 2017 主导序列建模，然后注意力机制来了。</p>
+<p>这一课我们两个都造，然后点出它们的失败——正是那个失败催生了注意力。</p>
+<h2 id="核心概念">核心概念</h2>
+<p><strong>TextCNN</strong>（Kim, 2014）。Token 先做嵌入。宽度为 <code>k</code> 的一维卷积核在连续的 <code>k</code>-gram 嵌入上滑动，产出一个特征图（feature map）。对该特征图做全局最大池化（global max-pooling），取最强激活值。把多个宽度的池化输出拼接起来，送入分类头。</p>
+<p>为什么有效？一个卷积核就是一个可学习的 n-gram。最大池化是位置无关的，所以 &quot;not good&quot; 出现在评论开头还是中间，激活的特征一样。三种宽度各 100 个卷积核，就是 300 个学出来的 n-gram 检测器。训练可以并行，没有顺序依赖。</p>
+<p><strong>RNN。</strong> 在每个时间步 <code>t</code>，隐状态更新为 <code>h_t = f(W * x_t + U * h_{t-1} + b)</code>。<code>W</code>、<code>U</code>、<code>b</code> 在所有时间步共享。时间步 <code>T</code> 的隐状态就是整个前缀的摘要。做分类时，对 <code>h_1 ... h_T</code> 做池化（max、mean 或取最后一个）。</p>
+<p>普通 RNN 有梯度消失（vanishing gradient）问题。<strong>LSTM</strong> 加入了门控机制——决定遗忘什么、存储什么、输出什么——让梯度在长序列中保持稳定。<strong>GRU</strong> 把 LSTM 简化成两个门；效果差不多，参数更少。</p>
+<p><strong>双向 RNN（Bidirectional RNN）</strong> 跑一个正向 RNN 和一个反向 RNN，把隐状态拼起来。每个 token 的表示同时看到左右两侧的上下文。对标注任务来说不可或缺。</p>
+<h2 id="从零实现">从零实现</h2>
+<h3 id="第一步用-pytorch-搭-textcnn">第一步：用 PyTorch 搭 TextCNN</h3>
+<pre data-label="python"><code class="language-python">import torch
+import torch.nn as nn
+import torch.nn.functional as F
+
+
+class TextCNN(nn.Module):
+    def __init__(self, vocab_size, embed_dim, n_classes, filter_widths=(2, 3, 4), n_filters=64, dropout=0.3):
+        super().__init__()
+        self.embed = nn.Embedding(vocab_size, embed_dim, padding_idx=0)
+        self.convs = nn.ModuleList([
+            nn.Conv1d(embed_dim, n_filters, kernel_size=k)
+            for k in filter_widths
+        ])
+        self.dropout = nn.Dropout(dropout)
+        self.fc = nn.Linear(n_filters * len(filter_widths), n_classes)
+
+    def forward(self, token_ids):
+        x = self.embed(token_ids).transpose(1, 2)
+        pooled = []
+        for conv in self.convs:
+            c = F.relu(conv(x))
+            p = F.max_pool1d(c, c.size(2)).squeeze(2)
+            pooled.append(p)
+        h = torch.cat(pooled, dim=1)
+        return self.fc(self.dropout(h))</code></pre>
+<p><code>transpose(1, 2)</code> 把形状从 <code>[batch, seq_len, embed_dim]</code> 变成 <code>[batch, embed_dim, seq_len]</code>，因为 <code>nn.Conv1d</code> 把中间那个轴当通道（channels）。池化后输出是定长的，跟输入长度无关。</p>
+<h3 id="第二步lstm-分类器">第二步：LSTM 分类器</h3>
+<pre data-label="python"><code class="language-python">class LSTMClassifier(nn.Module):
+    def __init__(self, vocab_size, embed_dim, hidden_dim, n_classes, bidirectional=True, dropout=0.3):
+        super().__init__()
+        self.embed = nn.Embedding(vocab_size, embed_dim, padding_idx=0)
+        self.lstm = nn.LSTM(embed_dim, hidden_dim, batch_first=True, bidirectional=bidirectional)
+        factor = 2 if bidirectional else 1
+        self.dropout = nn.Dropout(dropout)
+        self.fc = nn.Linear(hidden_dim * factor, n_classes)
+
+    def forward(self, token_ids):
+        x = self.embed(token_ids)
+        out, _ = self.lstm(x)
+        pooled = out.max(dim=1).values
+        return self.fc(self.dropout(pooled))</code></pre>
+<p>对序列做 max-pool，而不是取最后一个隐状态。做分类时，max-pooling 通常比取最后隐状态效果好，因为长序列末尾的信息往往会主导最后的隐状态，掩盖了前面的证据。</p>
+<h3 id="第三步梯度消失直觉演示">第三步：梯度消失直觉演示</h3>
+<p>没有门控的普通 RNN 学不了长距离依赖。想象一个玩具任务：预测 token <code>A</code> 是否在序列中出现过。如果 <code>A</code> 在位置 1，序列长 100 个 token，那梯度要从 loss 反向流过 99 次循环权重的连乘。如果权重小于 1，梯度消失；大于 1，梯度爆炸。</p>
+<pre data-label="python"><code class="language-python">def vanishing_gradient_sim(seq_len, recurrent_weight=0.9):
+    import math
+    return math.pow(recurrent_weight, seq_len)
+
+
+# 权重=0.9，经过 100 步：
+#   0.9 ^ 100 ≈ 2.7e-5
+# 从第 100 步到第 1 步的梯度基本是零。</code></pre>
+<p>LSTM 用一条<strong>细胞状态（cell state）</strong> 解决这个问题——它在网络中只做加法交互（遗忘门会乘以缩放系数，但梯度依然能沿着这条&quot;高速公路&quot;流通）。GRU 用更少的参数做了类似的事。两者都能让训练在 100 步以上的序列里保持稳定。</p>
+<h3 id="第四步为什么这还不够">第四步：为什么这还不够</h3>
+<p>即使用了 LSTM，三个问题依然存在。</p>
+<ol>
+<li><strong>顺序瓶颈。</strong> 训练一个长度为 1000 的序列需要 1000 次串行前向/反向步骤。时间维度没法并行。</li>
+<li><strong>编码器-解码器中的定长上下文向量。</strong> 解码器只看到编码器最后一个隐状态——整个输入被压缩进一个向量。输入越长，细节丢越多。第 09 课会直接讲这个。</li>
+<li><strong>远距离依赖准确率天花板。</strong> LSTM 比普通 RNN 好，但要把特定信息传过 200 步以上，还是很吃力。</li>
+</ol>
+<p>注意力机制（Attention）解决了以上三个问题。Transformer 直接丢掉了循环结构。第 10 课是转折点。</p>
+<h2 id="实战用法">实战用法</h2>
+<p>PyTorch 的 <code>nn.LSTM</code>、<code>nn.GRU</code>、<code>nn.Conv1d</code> 都是生产级的，训练代码写法标准。</p>
+<p>Hugging Face 提供了预训练嵌入，可以直接当输入层插进来：</p>
+<pre data-label="python"><code class="language-python">from transformers import AutoModel
+
+encoder = AutoModel.from_pretrained("bert-base-uncased")
+for param in encoder.parameters():
+    param.requires_grad = False
+
+
+class BertCNN(nn.Module):
+    def __init__(self, n_classes, filter_widths=(2, 3, 4), n_filters=64):
+        super().__init__()
+        self.encoder = encoder
+        self.convs = nn.ModuleList([nn.Conv1d(768, n_filters, kernel_size=k) for k in filter_widths])
+        self.fc = nn.Linear(n_filters * len(filter_widths), n_classes)
+
+    def forward(self, input_ids, attention_mask):
+        with torch.no_grad():
+            out = self.encoder(input_ids=input_ids, attention_mask=attention_mask).last_hidden_state
+        x = out.transpose(1, 2)
+        pooled = [F.max_pool1d(F.relu(conv(x)), kernel_size=conv(x).size(2)).squeeze(2) for conv in self.convs]
+        return self.fc(torch.cat(pooled, dim=1))</code></pre>
+<p>什么时候该用这些架构？对照清单：</p>
+<ul>
+<li><strong>端侧 / 设备上推理。</strong> TextCNN 搭配 GloVe 嵌入，比 Transformer 小 10-100 倍。如果部署目标是手机，这就是你的方案。</li>
+<li><strong>流式 / 在线分类。</strong> RNN 逐 token 处理；Transformer 需要完整序列。对实时输入文本来说，LSTM 仍然赢。</li>
+<li><strong>小模型做基线。</strong> 新任务快速迭代。用 CPU 5 分钟就能训完一个 TextCNN。</li>
+<li><strong>少量数据的序列标注。</strong> BiLSTM-CRF（第 06 课）在 1k-10k 标注句子上仍是生产级 NER 架构。</li>
+</ul>
+<p>其余场景都交给 Transformer。</p>
+<h2 id="练习">练习</h2>
+<ol>
+<li><strong>简单。</strong> 在一个 3 类玩具数据集上训 TextCNN（数据自己造）。验证多宽度卷积核（2, 3, 4）在平均 F1 上优于单宽度（3）。</li>
+<li><strong>中等。</strong> 为 LSTM 分类器实现 max-pool、mean-pool 和 last-state 三种池化。在小数据集上对比，记录哪种赢了并分析原因。</li>
+<li><strong>困难。</strong> 搭一个 BiLSTM-CRF NER 标注器（结合第 06 课和本课）。在 CoNLL-2003 上训练。与第 06 课的纯 CRF 基线和 BERT 微调对比。报告训练时间、内存和 F1。</li>
+</ol>
+<h2 id="术语表">术语表</h2>
+<div class="table-wrap"><table><thead><tr>
+<th>术语</th>
+<th>口语说法</th>
+<th>实际含义</th>
+</tr>
+</thead><tbody><tr>
+<td>TextCNN</td>
+<td>文本 CNN</td>
+<td>在词嵌入上做一维卷积 + 全局最大池化。Kim (2014)。</td>
+</tr>
+<tr>
+<td>RNN</td>
+<td>循环网络</td>
+<td>每个时间步更新隐状态：<code>h_t = f(W x_t + U h_{t-1})</code>。</td>
+</tr>
+<tr>
+<td>LSTM</td>
+<td>门控 RNN</td>
+<td>加了输入门/遗忘门/输出门 + 细胞状态。长序列训练稳定。</td>
+</tr>
+<tr>
+<td>GRU</td>
+<td>简化版 LSTM</td>
+<td>两个门而不是三个。精度相近，参数更少。</td>
+</tr>
+<tr>
+<td>双向（Bidirectional）</td>
+<td>两个方向都跑</td>
+<td>正向 + 反向 RNN 拼接。每个 token 同时看到左右上下文。</td>
+</tr>
+<tr>
+<td>梯度消失（Vanishing gradient）</td>
+<td>训练信号消失</td>
+<td>普通 RNN 中小于 1 的权重反复相乘，让早期时间步梯度趋近于零。</td>
+</tr>
+</tbody></table></div>
+<h2 id="延伸阅读">延伸阅读</h2>
+<ul>
+<li><a href="https://arxiv.org/abs/1408.5882">Kim, Y. (2014). Convolutional Neural Networks for Sentence Classification</a> — TextCNN 论文。8 页，可读性很强。</li>
+<li><a href="https://www.bioinf.jku.at/publications/older/2604.pdf">Hochreiter, S. and Schmidhuber, J. (1997). Long Short-Term Memory</a> — LSTM 论文。意外地清晰。</li>
+<li><a href="https://colah.github.io/posts/2015-08-Understanding-LSTMs/">Olah, C. (2015). Understanding LSTM Networks</a> — 让 LSTM 变得人人能懂的那些图。</li>
+</ul>
+<hr>
+<h2 id="自测题">自测题</h2>
+<div class="quiz-card" data-correct="2" data-quiz-id="1">
+  <div class="quiz-question"><span class="quiz-num">Q1</span>宽度为 3 的一维卷积核作用在词嵌入上，本质上学的是什么？</div>
+  <div class="quiz-options">
+    <label class="quiz-option" data-index="0">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">一个可学习的 bigram 检测器</span>
+    </label>
+    <label class="quiz-option" data-index="1">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">一种位置编码</span>
+    </label>
+    <label class="quiz-option" data-index="2">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">一个可学习的 trigram（n-gram）检测器</span>
+    </label>
+    <label class="quiz-option" data-index="3">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">一种 unigram 计数</span>
+    </label>
+  </div>
+  <button class="quiz-check">Check Answer</button>
+  <div class="quiz-explanation" hidden>宽度为 3 的卷积核横跨三个连续 token，本质上就是一个可学习的 trigram 检测器。</div>
+</div>
+
+<div class="quiz-card" data-correct="0" data-quiz-id="2">
+  <div class="quiz-question"><span class="quiz-num">Q2</span>LSTM 为什么要用以加法交互为主的细胞状态？</div>
+  <div class="quiz-options">
+    <label class="quiz-option" data-index="0">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">加法通道让梯度在长序列中传播时不会消失或爆炸</span>
+    </label>
+    <label class="quiz-option" data-index="1">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">加速 softmax</span>
+    </label>
+    <label class="quiz-option" data-index="2">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">省内存</span>
+    </label>
+    <label class="quiz-option" data-index="3">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">避免矩阵求逆</span>
+    </label>
+  </div>
+  <button class="quiz-check">Check Answer</button>
+  <div class="quiz-explanation" hidden>细胞状态"高速公路"让梯度在数百步中保持稳定，解决了梯度消失问题。</div>
+</div>
+
+<div class="quiz-card" data-correct="3" data-quiz-id="3">
+  <div class="quiz-question"><span class="quiz-num">Q3</span>TextCNN 在卷积层之后为什么用全局最大池化？</div>
+  <div class="quiz-options">
+    <label class="quiz-option" data-index="0">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">为了让反向传播生效</span>
+    </label>
+    <label class="quiz-option" data-index="1">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">为了去掉嵌入</span>
+    </label>
+    <label class="quiz-option" data-index="2">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">为了缩减词表</span>
+    </label>
+    <label class="quiz-option" data-index="3">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">最大池化给出定长且位置无关的表示——取每个卷积核的最强激活</span>
+    </label>
+  </div>
+  <button class="quiz-check">Check Answer</button>
+  <div class="quiz-explanation" hidden>全局最大池化产出定长特征向量，不受输入长度影响，且具有位置不变性。</div>
+</div>
+
+<div class="quiz-card" data-correct="1" data-quiz-id="4">
+  <div class="quiz-question"><span class="quiz-num">Q4</span>双向 RNN 相比单向 RNN，在序列标注上的主要优势是什么？</div>
+  <div class="quiz-options">
+    <label class="quiz-option" data-index="0">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">训练更快</span>
+    </label>
+    <label class="quiz-option" data-index="1">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">每个 token 的表示同时看到左右上下文，这对标注任务至关重要</span>
+    </label>
+    <label class="quiz-option" data-index="2">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">不需要嵌入</span>
+    </label>
+    <label class="quiz-option" data-index="3">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">内存更省</span>
+    </label>
+  </div>
+  <button class="quiz-check">Check Answer</button>
+  <div class="quiz-explanation" hidden>双向网络拼接正向和反向隐状态，标注时可以利用完整上下文。</div>
+</div>
+
+<div class="quiz-card" data-correct="1" data-quiz-id="5">
+  <div class="quiz-question"><span class="quiz-num">Q5</span>做分类时，对 LSTM 输出序列做 max-pooling 为什么通常比只取最后一个隐状态好？</div>
+  <div class="quiz-options">
+    <label class="quiz-option" data-index="0">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">max-pool 可微分，last-state 不可微</span>
+    </label>
+    <label class="quiz-option" data-index="1">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">长序列末尾的信息往往主导最后隐状态，掩盖了前面的证据</span>
+    </label>
+    <label class="quiz-option" data-index="2">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">max-pool 去除了大写</span>
+    </label>
+    <label class="quiz-option" data-index="3">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">last-state 池化会忽略 padding</span>
+    </label>
+  </div>
+  <button class="quiz-check">Check Answer</button>
+  <div class="quiz-explanation" hidden>max-pool 在所有位置取最强信号；last-state 容易丢失前面的证据。</div>
+</div>
+
+<div class="quiz-card" data-correct="2" data-quiz-id="6">
+  <div class="quiz-question"><span class="quiz-num">Q6</span>LSTM/RNN 编码器-解码器的哪个局限催生了注意力机制？</div>
+  <div class="quiz-options">
+    <label class="quiz-option" data-index="0">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">它们需要子词分词器</span>
+    </label>
+    <label class="quiz-option" data-index="1">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">它们不能用嵌入</span>
+    </label>
+    <label class="quiz-option" data-index="2">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">解码器只看到定长编码器状态，长输入丢失细节；循环结构还让训练必须串行</span>
+    </label>
+    <label class="quiz-option" data-index="3">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">它们不能嵌入 token</span>
+    </label>
+  </div>
+  <button class="quiz-check">Check Answer</button>
+  <div class="quiz-explanation" hidden>定长压缩和串行训练是注意力机制所解决的两大失败。</div>
+</div>
+
+<div class="quiz-card" data-correct="1" data-quiz-id="7">
+  <div class="quiz-question"><span class="quiz-num">Q7</span>2026 年，TextCNN 或 BiLSTM 在什么场景下仍然能打败 Transformer？</div>
+  <div class="quiz-options">
+    <label class="quiz-option" data-index="0">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">处理图像输入时</span>
+    </label>
+    <label class="quiz-option" data-index="1">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">端侧/设备上推理、逐 token 流式输入、或小数据快速基线</span>
+    </label>
+    <label class="quiz-option" data-index="2">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">多语言数据集</span>
+    </label>
+    <label class="quiz-option" data-index="3">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">延迟要求极度宽松时</span>
+    </label>
+  </div>
+  <button class="quiz-check">Check Answer</button>
+  <div class="quiz-explanation" hidden>小架构在端侧推理、流式输入和快速基线场景仍然有优势。</div>
+</div>
+
+<div class="quiz-card" data-correct="0" data-quiz-id="8">
+  <div class="quiz-question"><span class="quiz-num">Q8</span>普通 RNN 中的梯度消失问题是怎么回事？</div>
+  <div class="quiz-options">
+    <label class="quiz-option" data-index="0">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">小于 1 的循环权重反复相乘，导致早期时间步的梯度趋近于零</span>
+    </label>
+    <label class="quiz-option" data-index="1">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">嵌入矩阵变得奇异</span>
+    </label>
+    <label class="quiz-option" data-index="2">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">输入变为零</span>
+    </label>
+    <label class="quiz-option" data-index="3">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">loss 变成负数</span>
+    </label>
+  </div>
+  <button class="quiz-check">Check Answer</button>
+  <div class="quiz-explanation" hidden>长链连乘让梯度消失（或爆炸），这就是 LSTM 和 GRU 存在的原因。</div>
+</div>
+
+    <nav class="pager">  <a href="03-glove-fasttext-subword.html">
+    <span class="label">← 上一章</span>
+    <span class="title">GloVe、FastText 与子词嵌入</span>
+  </a>  <a href="05-sequence-to-sequence.html" class="next">
+    <span class="label">下一章 →</span>
+    <span class="title">序列到序列模型</span>
+  </a></nav>
+  </article>
+</div>
+
+<footer>
+  <div class="set">
+    <span>AI NLP Foundations</span>
+    <span>2026 · EN</span>
+  </div>
+  <div class="set">
+    <span>Mav</span>
+  </div>
+</footer>
+<div class="search-backdrop" id="search-overlay" role="dialog" aria-modal="true" aria-label="搜索" hidden>
+  <div class="search-modal">
+    <div class="search-input-wrap">
+      <input type="search" class="search-input" placeholder="搜索内容..." aria-label="搜索内容" autocomplete="off">
+      <kbd>ESC</kbd>
+    </div>
+    <div class="search-results" role="listbox" aria-label="搜索结果"></div>
+  </div>
+</div>
+
+<!-- Side Panel -->
+<div class="side-panel" id="side-panel">
+  <div class="side-panel-resize" id="side-panel-resize"></div>
+  <div class="side-panel-header">
+    <div class="side-panel-tabs">
+      <button class="side-panel-tab active" data-mode="sidenote">补充</button>
+      <button class="side-panel-tab" data-mode="notepad">笔记</button>
+    </div>
+    <button class="side-panel-close" aria-label="关闭">×</button>
+  </div>
+  <div class="side-panel-body"></div>
+</div>
+<button class="notepad-fab" id="notepad-fab" aria-label="便利贴">✎</button>
+
+<!-- Mobile TOC -->
+<button class="mtoc-fab" id="mtoc-fab" aria-label="目录">TOC</button>
+<div class="mtoc-drawer" id="mtoc-drawer">
+  <div class="mtoc-content"></div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/bash.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/typescript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/yaml.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/javascript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/json.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/python.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/css.min.js"></script>
+<script src="../assets/script.js"></script>
+<script src="../assets/quiz.js"></script>
+<script src="../assets/mermaid-init.js"></script>
+</body>
+</html>

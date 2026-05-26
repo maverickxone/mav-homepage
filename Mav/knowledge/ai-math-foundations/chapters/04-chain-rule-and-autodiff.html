@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>链式法则与自动微分 — AI Math Foundations</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" id="hljs-light" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+<link rel="stylesheet" id="hljs-dark" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" media="not all">
+<link rel="stylesheet" href="../assets/quiz.css">
+</head>
+<body>
+
+<div class="progress-bar" id="progress-bar"></div>
+
+<nav class="topnav" id="topnav">
+  <div class="topnav-inner">
+    <a class="brand" href="../index.html">AI Math Foundations</a>
+    <div class="nav-links">
+      <a href="01-linear-algebra-intuition.html">01</a>
+      <a href="02-vectors-matrices-operations.html">02</a>
+      <a href="03-calculus-for-ml.html">03</a>
+      <a href="04-chain-rule-and-autodiff.html" class="active">04</a>
+      <a href="05-probability-and-distributions.html">05</a>
+      <a href="06-optimization.html">06</a>
+      <a href="07-tensor-operations.html">07</a>
+      <a href="08-numerical-stability.html">08</a>
+    </div>
+    <div class="nav-controls">
+      <button class="nav-btn" id="search-btn" aria-label="搜索 (Ctrl+K)">⌘K</button>
+      <button class="nav-btn" id="settings-btn" aria-label="阅读设置">Aa</button>
+      <a class="nav-btn" href="../../index.html" aria-label="返回知识库">← 知识库</a>
+      <a class="nav-btn" href="https://github.com/maverickxone/mav-homepage" target="_blank" rel="noopener" aria-label="GitHub" style="padding: 6px 8px;"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg></a>
+    </div>
+  </div>
+</nav>
+<div class="settings-pop" id="settings-pop">
+  <h5>主题</h5>
+  <div class="row">
+    <button class="seg" data-theme-set="light">明亮</button>
+    <button class="seg" data-theme-set="dark">暗色</button>
+  </div>
+  <h5>字号</h5>
+  <div class="row">
+    <button class="seg" data-size-set="s">小</button>
+    <button class="seg" data-size-set="m">中</button>
+    <button class="seg" data-size-set="l">大</button>
+  </div>
+</div>
+
+<div class="with-sidebar">
+  <aside class="sidebar">
+  <div class="chapter-num">CHAPTER 04</div>
+  <div class="chapter-name">链式法则与自动微分</div>
+  <h4>目录</h4>
+  <ul>
+    <li><a href="#学习目标">学习目标</a></li>
+    <li><a href="#为什么要学这个">为什么要学这个</a></li>
+    <li><a href="#核心概念">核心概念</a></li>
+    <li><a href="#从零实现">从零实现</a></li>
+    <li><a href="#跟-pytorch-对照">跟 PyTorch 对照</a></li>
+    <li><a href="#练习">练习</a></li>
+    <li><a href="#术语表">术语表</a></li>
+    <li><a href="#自测题">自测题</a></li>
+  </ul>
+</aside>
+  <article class="chapter-body">
+    <header class="chapter-head">
+  <div class="chapter-head-meta">
+    <span class="num">CHAPTER 04</span>
+    <span>≈ 90 MIN READ</span>
+  </div>
+  <h1>链式法则与自动微分</h1>
+
+</header>
+    <blockquote><p>链式法则是每个能学习的神经网络背后的引擎。</p>
+</blockquote>
+<h2 id="学习目标">学习目标</h2>
+<ul>
+<li>从零构建一个最小 autograd 引擎（Value 类），记录操作并通过反向模式自动微分计算梯度</li>
+<li>用拓扑排序实现计算图的前向和反向传播</li>
+<li>只用手写的 autograd 引擎构建并训练一个多层感知机解决 XOR 问题</li>
+<li>用数值差分做梯度检查，验证 autodiff 的正确性</li>
+</ul>
+<h2 id="为什么要学这个">为什么要学这个</h2>
+<p>你已经会算简单函数的导数了。但神经网络不是简单函数——它是几百个函数嵌套在一起：矩阵乘、加 bias、过激活函数、再矩阵乘、softmax、交叉熵 loss。输出是函数套函数套函数。</p>
+<p>要训练网络，你需要 loss 对每个权重的梯度。手算不可能（几百万参数）。数值差分太慢。</p>
+<p>链式法则给你数学。自动微分给你算法。它们一起让你能在跟前向传播相当的时间内，精确计算任意复合函数的梯度。</p>
+<p>PyTorch、TensorFlow、JAX 的底层就是这个。你现在要从零搭一个迷你版。</p>
+<h2 id="核心概念">核心概念</h2>
+<h3 id="链式法则">链式法则</h3>
+<p>如果 <code>y = f(g(x))</code>，y 对 x 的导数是：</p>
+<pre><code>dy/dx = dy/dg × dg/dx = f'(g(x)) × g'(x)</code></pre>
+<p>沿着链条把导数乘起来。每个环节贡献自己的局部导数。</p>
+<p>例子：<code>y = sin(x²)</code></p>
+<pre><code>g(x) = x²       g'(x) = 2x
+f(g) = sin(g)    f'(g) = cos(g)
+
+dy/dx = cos(x²) × 2x</code></pre>
+<p>更深的嵌套，链条更长：</p>
+<pre><code>y = f(g(h(x)))
+
+dy/dx = f'(g(h(x))) × g'(h(x)) × h'(x)</code></pre>
+<p>神经网络的每一层就是这条链上的一环。</p>
+<h3 id="计算图">计算图</h3>
+<p>计算图让链式法则可视化。每个操作变成一个节点。数据前向流动，梯度反向流动。</p>
+<p><strong>前向传播（计算值）：</strong></p>
+<pre data-label="mermaid"><code class="language-mermaid">graph TD
+    x1["x1 = 2"] --&gt; mul["×（乘法）"]
+    x2["x2 = 3"] --&gt; mul
+    mul --&gt;|"a = 6"| add["+（加法）"]
+    b["b = 1"] --&gt; add
+    add --&gt;|"c = 7"| relu["relu"]
+    relu --&gt;|"y = 7"| y["输出 y"]</code></pre>
+<p><strong>反向传播（计算梯度）：</strong></p>
+<pre data-label="mermaid"><code class="language-mermaid">graph TD
+    dy["dy/dy = 1"] --&gt;|"relu'(c)=1（因为 c&gt;0）"| dc["dy/dc = 1"]
+    dc --&gt;|"dc/da = 1"| da["dy/da = 1"]
+    dc --&gt;|"dc/db = 1"| db["dy/db = 1"]
+    da --&gt;|"da/dx1 = x2 = 3"| dx1["dy/dx1 = 3"]
+    da --&gt;|"da/dx2 = x1 = 2"| dx2["dy/dx2 = 2"]</code></pre>
+<p>反向传播在每个节点应用链式法则，把梯度从输出传播到输入。</p>
+<h3 id="前向模式-vs-反向模式">前向模式 vs 反向模式</h3>
+<p>有两种方式在图中应用链式法则。</p>
+<p><strong>前向模式</strong>从输入出发，把导数往前推。适合输入少、输出多的情况。</p>
+<p><strong>反向模式</strong>从输出出发，把梯度往回拉。适合输入多、输出少的情况。</p>
+<p>神经网络有几百万个输入（权重）和一个输出（loss）。反向模式一次反向传播就能算出所有梯度。这就是为什么反向传播用反向模式。</p>
+<div class="table-wrap"><table><thead><tr>
+<th>模式</th>
+<th>种子</th>
+<th>方向</th>
+<th>适合</th>
+</tr>
+</thead><tbody><tr>
+<td>前向</td>
+<td><code>dxᵢ/dxᵢ = 1</code></td>
+<td>输入→输出</td>
+<td>输入少，输出多</td>
+</tr>
+<tr>
+<td>反向</td>
+<td><code>dy/dy = 1</code></td>
+<td>输出→输入</td>
+<td>输入多，输出少（神经网络）</td>
+</tr>
+</tbody></table></div>
+<h3 id="构建-autograd-引擎需要什么">构建 Autograd 引擎需要什么</h3>
+<p>一个 autograd 引擎需要三样东西：</p>
+<ol>
+<li><strong>值包装。</strong> 把每个数字包在一个对象里，存它的值和梯度。</li>
+<li><strong>图记录。</strong> 每个操作记录它的输入和局部梯度函数。</li>
+<li><strong>反向传播。</strong> 对图做拓扑排序，然后逆序遍历，在每个节点应用链式法则。</li>
+</ol>
+<p>这就是 PyTorch 的 <code>autograd</code> 在做的事。<code>torch.Tensor</code> 包装值，<code>requires_grad=True</code> 时记录操作，调用 <code>.backward()</code> 时计算梯度。</p>
+<h2 id="从零实现">从零实现</h2>
+<h3 id="第一步value-类">第一步：Value 类</h3>
+<pre data-label="python"><code class="language-python">class Value:
+    def __init__(self, data, children=(), op=''):
+        self.data = data
+        self.grad = 0.0
+        self._backward = lambda: None
+        self._prev = set(children)
+        self._op = op
+
+    def __repr__(self):
+        return f"Value(data={self.data:.4f}, grad={self.grad:.4f})"</code></pre>
+<p>每个 <code>Value</code> 存它的数值、梯度（初始为零）、一个反向函数、以及产生它的子节点。</p>
+<h3 id="第二步带梯度追踪的算术运算">第二步：带梯度追踪的算术运算</h3>
+<pre data-label="python"><code class="language-python">    def __add__(self, other):
+        other = other if isinstance(other, Value) else Value(other)
+        out = Value(self.data + other.data, (self, other), '+')
+        def _backward():
+            self.grad += out.grad     # 加法对两个输入的局部导数都是 1
+            other.grad += out.grad
+        out._backward = _backward
+        return out
+
+    def __mul__(self, other):
+        other = other if isinstance(other, Value) else Value(other)
+        out = Value(self.data * other.data, (self, other), '*')
+        def _backward():
+            self.grad += other.data * out.grad   # 乘法：对 self 的导数是 other
+            other.grad += self.data * out.grad   # 对 other 的导数是 self
+        out._backward = _backward
+        return out
+
+    def relu(self):
+        out = Value(max(0, self.data), (self,), 'relu')
+        def _backward():
+            self.grad += (1.0 if out.data &gt; 0 else 0.0) * out.grad
+        out._backward = _backward
+        return out
+
+    def tanh(self):
+        import math
+        t = math.tanh(self.data)
+        out = Value(t, (self,), 'tanh')
+        def _backward():
+            self.grad += (1 - t ** 2) * out.grad
+        out._backward = _backward
+        return out
+
+    def __pow__(self, n):
+        out = Value(self.data ** n, (self,), f'**{n}')
+        def _backward():
+            self.grad += n * (self.data ** (n - 1)) * out.grad
+        out._backward = _backward
+        return out
+
+    def __neg__(self):
+        return self * -1
+
+    def __sub__(self, other):
+        return self + (-other)
+
+    def __radd__(self, other):
+        return self + other
+
+    def __rmul__(self, other):
+        return self * other</code></pre>
+<p>每个操作创建一个闭包，知道怎么算局部梯度并乘以上游梯度（<code>out.grad</code>）。<code>+=</code> 处理一个值被多个操作使用的情况——梯度要累加，不是覆盖。</p>
+<h3 id="第三步反向传播">第三步：反向传播</h3>
+<pre data-label="python"><code class="language-python">    def backward(self):
+        # 拓扑排序
+        topo = []
+        visited = set()
+        def build_topo(v):
+            if v not in visited:
+                visited.add(v)
+                for child in v._prev:
+                    build_topo(child)
+                topo.append(v)
+        build_topo(self)
+
+        # 种子梯度：dy/dy = 1
+        self.grad = 1.0
+        # 逆序遍历，在每个节点应用链式法则
+        for v in reversed(topo):
+            v._backward()</code></pre>
+<p>拓扑排序确保每个节点的梯度在传播给子节点之前已经完全计算好。种子梯度是 1.0（dy/dy = 1）。</p>
+<h3 id="第四步用它搭一个-mlp">第四步：用它搭一个 MLP</h3>
+<p>有了完整的 Value 类，你可以搭神经网络了。不用 PyTorch，不用 NumPy，只有 Value 和链式法则。</p>
+<pre data-label="python"><code class="language-python">import random
+
+class Neuron:
+    def __init__(self, n_inputs):
+        self.w = [Value(random.uniform(-1, 1)) for _ in range(n_inputs)]
+        self.b = Value(0.0)
+
+    def __call__(self, x):
+        # w1*x1 + w2*x2 + ... + b
+        act = sum((wi * xi for wi, xi in zip(self.w, x)), self.b)
+        return act.tanh()
+
+    def parameters(self):
+        return self.w + [self.b]
+
+class Layer:
+    def __init__(self, n_in, n_out):
+        self.neurons = [Neuron(n_in) for _ in range(n_out)]
+
+    def __call__(self, x):
+        return [n(x) for n in self.neurons]
+
+    def parameters(self):
+        return [p for n in self.neurons for p in n.parameters()]
+
+class MLP:
+    def __init__(self, sizes):
+        self.layers = [Layer(sizes[i], sizes[i+1]) for i in range(len(sizes)-1)]
+
+    def __call__(self, x):
+        for layer in self.layers:
+            x = layer(x)
+        return x[0] if len(x) == 1 else x
+
+    def parameters(self):
+        return [p for layer in self.layers for p in layer.parameters()]</code></pre>
+<p>一个 <code>Neuron</code> 算 <code>tanh(w1×x1 + w2×x2 + ... + b)</code>。一个 <code>Layer</code> 是一组神经元。一个 <code>MLP</code> 堆叠多层。每个权重都是 <code>Value</code>，所以调用 <code>loss.backward()</code> 就会把梯度传播到每个参数。</p>
+<h3 id="第五步在-xor-上训练">第五步：在 XOR 上训练</h3>
+<pre data-label="python"><code class="language-python">random.seed(42)
+model = MLP([2, 4, 1])  # 2 输入，4 个隐藏神经元，1 输出
+
+xs = [[0, 0], [0, 1], [1, 0], [1, 1]]
+ys = [-1, 1, 1, -1]  # XOR（用 -1/1 配合 tanh）
+
+for step in range(100):
+    # 前向
+    preds = [model(x) for x in xs]
+    loss = sum((p - y) ** 2 for p, y in zip(preds, ys))
+
+    # 梯度清零
+    for p in model.parameters():
+        p.grad = 0.0
+    # 反向
+    loss.backward()
+
+    # 更新
+    lr = 0.05
+    for p in model.parameters():
+        p.data -= lr * p.grad
+
+    if step % 20 == 0:
+        print(f"step {step:3d}  loss = {loss.data:.4f}")
+
+print("\n训练后的预测：")
+for x, y in zip(xs, ys):
+    print(f"  输入={x}  目标={y:2d}  预测={model(x).data:6.3f}")</code></pre>
+<p>这就是 micrograd——纯 Python 实现的完整神经网络训练循环，带自动微分。每个商业深度学习框架在大规模上做的是同样的事。</p>
+<h3 id="第六步梯度检查">第六步：梯度检查</h3>
+<p>怎么知道你的 autodiff 是对的？跟数值导数比较。这就是梯度检查。</p>
+<pre data-label="python"><code class="language-python">def gradient_check(build_expr, x_val, h=1e-7):
+    """比较 autodiff 梯度和数值梯度"""
+    x = Value(x_val)
+    y = build_expr(x)
+    y.backward()
+    autodiff_grad = x.grad
+
+    y_plus = build_expr(Value(x_val + h)).data
+    y_minus = build_expr(Value(x_val - h)).data
+    numerical_grad = (y_plus - y_minus) / (2 * h)
+
+    diff = abs(autodiff_grad - numerical_grad)
+    return autodiff_grad, numerical_grad, diff
+
+# 测试复杂表达式
+def expr(x):
+    return (x ** 3 + x * 2 + 1).tanh()
+
+ad, num, diff = gradient_check(expr, 0.5)
+print(f"Autodiff:  {ad:.8f}")
+print(f"数值法:    {num:.8f}")
+print(f"差异:      {diff:.2e}")  # 应该 &lt; 1e-5</code></pre>
+<p>梯度检查在实现新操作时必不可少。如果你的反向传播有 bug，数值检查能抓到。</p>
+<h3 id="第七步跟手算对照">第七步：跟手算对照</h3>
+<pre data-label="python"><code class="language-python">x1 = Value(2.0)
+x2 = Value(3.0)
+a = x1 * x2          # a = 6.0
+b = a + Value(1.0)   # b = 7.0
+y = b.relu()         # y = 7.0
+
+y.backward()
+
+print(f"y = {y.data}")          # 7.0
+print(f"dy/dx1 = {x1.grad}")   # 3.0（= x2）
+print(f"dy/dx2 = {x2.grad}")   # 2.0（= x1）</code></pre>
+<p>手算验证：<code>y = relu(x1×x2 + 1)</code>。因为 <code>x1×x2 + 1 = 7 &gt; 0</code>，relu 是恒等函数。
+<code>dy/dx1 = x2 = 3</code>。<code>dy/dx2 = x1 = 2</code>。引擎算对了。</p>
+<h2 id="跟-pytorch-对照">跟 PyTorch 对照</h2>
+<pre data-label="python"><code class="language-python">import torch
+
+x1 = torch.tensor(2.0, requires_grad=True)
+x2 = torch.tensor(3.0, requires_grad=True)
+a = x1 * x2
+b = a + 1.0
+y = torch.relu(b)
+y.backward()
+
+print(f"PyTorch dy/dx1 = {x1.grad.item()}")  # 3.0
+print(f"PyTorch dy/dx2 = {x2.grad.item()}")  # 2.0</code></pre>
+<p>结果一样。你的引擎和 PyTorch 算出相同的梯度，因为底层数学一样：通过链式法则的反向模式自动微分。</p>
+<h2 id="练习">练习</h2>
+<ol>
+<li>给 Value 类加 <code>__pow__</code> 运算。验证 <code>d/dx(x³)</code> 在 x=2 等于 12.0</li>
+<li>加 <code>tanh</code> 激活函数。验证 <code>tanh&#39;(0) = 1</code>，<code>tanh&#39;(2) ≈ 0.0707</code></li>
+<li>为单个神经元构建计算图：<code>y = relu(w1×x1 + w2×x2 + b)</code>。计算所有五个梯度，跟 PyTorch 对照</li>
+<li>用双数（dual numbers）实现前向模式 autodiff。创建一个 <code>Dual</code> 类，验证它跟你的反向模式引擎给出相同的导数</li>
+</ol>
+<h2 id="术语表">术语表</h2>
+<div class="table-wrap"><table><thead><tr>
+<th>术语</th>
+<th>通俗说法</th>
+<th>真正含义</th>
+</tr>
+</thead><tbody><tr>
+<td>Chain rule（链式法则）</td>
+<td>&quot;导数乘起来&quot;</td>
+<td>复合函数的导数 = 每个函数局部导数的乘积</td>
+</tr>
+<tr>
+<td>Computational graph（计算图）</td>
+<td>&quot;网络图&quot;</td>
+<td>有向无环图，节点是操作，边携带值（前向）或梯度（反向）</td>
+</tr>
+<tr>
+<td>Forward mode（前向模式）</td>
+<td>&quot;从输入开始推&quot;</td>
+<td>从输入到输出传播导数。每个输入变量需要一次遍历。</td>
+</tr>
+<tr>
+<td>Reverse mode（反向模式）</td>
+<td>&quot;反向传播&quot;</td>
+<td>从输出到输入传播梯度。每个输出变量需要一次遍历。</td>
+</tr>
+<tr>
+<td>Autograd（自动求导）</td>
+<td>&quot;自动算梯度&quot;</td>
+<td>记录值上的操作、建图、通过链式法则计算精确梯度的系统</td>
+</tr>
+<tr>
+<td>Topological sort（拓扑排序）</td>
+<td>&quot;按依赖顺序排&quot;</td>
+<td>让图中每个节点排在它所有依赖之后。正确传播梯度的前提。</td>
+</tr>
+<tr>
+<td>Gradient accumulation（梯度累加）</td>
+<td>&quot;加起来，不要覆盖&quot;</td>
+<td>一个值参与多个操作时，它的梯度是所有来路贡献之和</td>
+</tr>
+<tr>
+<td>Dynamic graph（动态图）</td>
+<td>&quot;边跑边建&quot;</td>
+<td>每次前向传播时重建计算图，允许模型内使用 if/else 和循环（PyTorch 风格）</td>
+</tr>
+<tr>
+<td>Gradient checking（梯度检查）</td>
+<td>&quot;数值验证&quot;</td>
+<td>把 autodiff 梯度跟数值差分梯度对比，验证反向传播的正确性</td>
+</tr>
+</tbody></table></div>
+<hr>
+<h2 id="自测题">自测题</h2>
+<div class="quiz-card" data-correct="1" data-quiz-id="1">
+  <div class="quiz-question"><span class="quiz-num">Q1</span>链式法则说的是什么？</div>
+  <div class="quiz-options">
+    <label class="quiz-option" data-index="0">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">和的导数等于导数的和</span>
+    </label>
+    <label class="quiz-option" data-index="1">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">复合函数的导数等于各个函数局部导数的乘积</span>
+    </label>
+    <label class="quiz-option" data-index="2">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">乘积的积分等于积分的乘积</span>
+    </label>
+    <label class="quiz-option" data-index="3">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">只有线性函数才能求导</span>
+    </label>
+  </div>
+  <button class="quiz-check">Check Answer</button>
+  <div class="quiz-explanation" hidden>对于 y = f(g(x))，链式法则说 dy/dx = f'(g(x)) × g'(x)。沿链条把每环的导数乘起来。这就是反向传播的数学基础。</div>
+</div>
+
+<div class="quiz-card" data-correct="1" data-quiz-id="2">
+  <div class="quiz-question"><span class="quiz-num">Q2</span>计算图是什么？</div>
+  <div class="quiz-options">
+    <label class="quiz-option" data-index="0">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">loss 随训练步数变化的图</span>
+    </label>
+    <label class="quiz-option" data-index="1">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">有向图，节点是操作，边前向携带值、反向携带梯度</span>
+    </label>
+    <label class="quiz-option" data-index="2">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">展示神经网络架构的示意图</span>
+    </label>
+    <label class="quiz-option" data-index="3">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">存储训练数据的图数据库</span>
+    </label>
+  </div>
+  <button class="quiz-check">Check Answer</button>
+  <div class="quiz-explanation" hidden>计算图表示计算中的操作序列。数据前向流过图，梯度在反向传播时反向流动。</div>
+</div>
+
+<div class="quiz-card" data-correct="1" data-quiz-id="3">
+  <div class="quiz-question"><span class="quiz-num">Q3</span>为什么 PyTorch 用反向模式 autodiff（反向传播）而不是前向模式？</div>
+  <div class="quiz-options">
+    <label class="quiz-option" data-index="0">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">反向模式数值精度更高</span>
+    </label>
+    <label class="quiz-option" data-index="1">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">反向模式一次反向传播就能算出所有梯度，而前向模式每个输入变量需要一次——神经网络有百万输入但只有一个 loss 输出</span>
+    </label>
+    <label class="quiz-option" data-index="2">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">反向模式用的内存更少</span>
+    </label>
+    <label class="quiz-option" data-index="3">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">前向模式处理不了非线性函数</span>
+    </label>
+  </div>
+  <button class="quiz-check">Check Answer</button>
+  <div class="quiz-explanation" hidden>神经网络有百万级的权重输入但只产生一个标量 loss。反向模式总共只需要一次反向传播。前向模式每个权重要一次——几百万次——完全不实际。</div>
+</div>
+
+<div class="quiz-card" data-correct="1" data-quiz-id="4">
+  <div class="quiz-question"><span class="quiz-num">Q4</span>Value 类的反向函数为什么用 '+=' 而不是 '=' 来累加梯度？</div>
+  <div class="quiz-options">
+    <label class="quiz-option" data-index="0">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">为了在多个样本间平均梯度</span>
+    </label>
+    <label class="quiz-option" data-index="1">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">因为一个值参与多个操作时，会从每个操作收到梯度贡献，必须求和</span>
+    </label>
+    <label class="quiz-option" data-index="2">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">为了防止梯度数值溢出</span>
+    </label>
+    <label class="quiz-option" data-index="3">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">因为 Python 闭包中不支持 '=' 运算符</span>
+    </label>
+  </div>
+  <button class="quiz-check">Check Answer</button>
+  <div class="quiz-explanation" hidden>当一个值参与多个操作时（比如 x 同时用在 x×y 和 x+z 中），它的总梯度是所有来路贡献之和。用 '=' 会覆盖掉之前的贡献。</div>
+</div>
+
+<div class="quiz-card" data-correct="1" data-quiz-id="5">
+  <div class="quiz-question"><span class="quiz-num">Q5</span>梯度检查是什么？什么时候用？</div>
+  <div class="quiz-options">
+    <label class="quiz-option" data-index="0">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">检查梯度是否低于阈值以防止梯度爆炸</span>
+    </label>
+    <label class="quiz-option" data-index="1">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">把 autodiff 梯度和数值差分梯度对比，验证反向传播实现的正确性</span>
+    </label>
+    <label class="quiz-option" data-index="2">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">检查所有参数在训练中是否收到了非零梯度</span>
+    </label>
+    <label class="quiz-option" data-index="3">
+      <span class="quiz-radio"></span>
+      <span class="quiz-option-text">监控训练过程中的梯度大小以检测梯度消失</span>
+    </label>
+  </div>
+  <button class="quiz-check">Check Answer</button>
+  <div class="quiz-explanation" hidden>梯度检查通过 (f(x+h) - f(x-h)) / 2h 计算数值导数，跟 autodiff 梯度对比。在给 autograd 引擎添加新操作或调试训练失败时使用。</div>
+</div>
+
+    <nav class="pager">  <a href="03-calculus-for-ml.html">
+    <span class="label">← 上一章</span>
+    <span class="title">机器学习中的微积分</span>
+  </a>  <a href="05-probability-and-distributions.html" class="next">
+    <span class="label">下一章 →</span>
+    <span class="title">概率与分布</span>
+  </a></nav>
+  </article>
+</div>
+
+<footer>
+  <div class="set">
+    <span>AI Math Foundations</span>
+    <span>2026 · EN</span>
+  </div>
+  <div class="set">
+    <span>Mav</span>
+  </div>
+</footer>
+<div class="search-backdrop" id="search-overlay" role="dialog" aria-modal="true" aria-label="搜索" hidden>
+  <div class="search-modal">
+    <div class="search-input-wrap">
+      <input type="search" class="search-input" placeholder="搜索内容..." aria-label="搜索内容" autocomplete="off">
+      <kbd>ESC</kbd>
+    </div>
+    <div class="search-results" role="listbox" aria-label="搜索结果"></div>
+  </div>
+</div>
+
+<!-- Side Panel -->
+<div class="side-panel" id="side-panel">
+  <div class="side-panel-resize" id="side-panel-resize"></div>
+  <div class="side-panel-header">
+    <div class="side-panel-tabs">
+      <button class="side-panel-tab active" data-mode="sidenote">补充</button>
+      <button class="side-panel-tab" data-mode="notepad">笔记</button>
+    </div>
+    <button class="side-panel-close" aria-label="关闭">×</button>
+  </div>
+  <div class="side-panel-body"></div>
+</div>
+<button class="notepad-fab" id="notepad-fab" aria-label="便利贴">✎</button>
+
+<!-- Mobile TOC -->
+<button class="mtoc-fab" id="mtoc-fab" aria-label="目录">TOC</button>
+<div class="mtoc-drawer" id="mtoc-drawer">
+  <div class="mtoc-content"></div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/bash.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/typescript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/yaml.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/javascript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/json.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/python.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/css.min.js"></script>
+<script src="../assets/script.js"></script>
+<script src="../assets/quiz.js"></script>
+<script src="../assets/mermaid-init.js"></script>
+</body>
+</html>
