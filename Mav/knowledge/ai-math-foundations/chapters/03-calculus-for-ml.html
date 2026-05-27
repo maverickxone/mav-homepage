@@ -3,14 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>机器学习中的微积分 — AI Math Foundations</title>
+<title>机器学习中的微积分 — AI 数学基础</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="../assets/style.css">
 <link rel="stylesheet" id="hljs-light" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
 <link rel="stylesheet" id="hljs-dark" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" media="not all">
-<link rel="stylesheet" href="../assets/quiz.css">
 </head>
 <body>
 
@@ -18,7 +17,7 @@
 
 <nav class="topnav" id="topnav">
   <div class="topnav-inner">
-    <a class="brand" href="../index.html">AI Math Foundations</a>
+    <a class="brand" href="../index.html">AI 数学基础</a>
     <div class="nav-links">
       <a href="01-linear-algebra-intuition.html">01</a>
       <a href="02-vectors-matrices-operations.html">02</a>
@@ -278,29 +277,29 @@ f(x) = sigmoid   f'(x) = f(x)(1-f(x))   Sigmoid 激活函数</code></pre>
 <p>核心 insight：所有基于梯度的优化，本质上都是在<strong>局部近似损失函数</strong>，然后走到那个近似的最小值处。</p>
 <h3 id="计算图中的多变量链式法则">计算图中的多变量链式法则</h3>
 <p>链式法则不只适用于一条直线上的标量函数。在神经网络中，变量会分叉和汇合。下面是一个简单前向传播中导数的流动方式：</p>
-<pre data-label="mermaid"><code class="language-mermaid">graph LR
-    x["x（输入）"] --&gt;|"×w"| z1["z1 = w×x"]
-    z1 --&gt;|"+b"| z2["z2 = w×x + b"]
-    z2 --&gt;|"sigmoid"| a["a = sigmoid(z2)"]
-    a --&gt;|"loss fn"| L["L = -(y×log(a) + (1-y)×log(1-a))"]</code></pre>
+<div class="mermaid">graph LR
+    x["x（输入）"] -->|"×w"| z1["z1 = w×x"]
+    z1 -->|"+b"| z2["z2 = w×x + b"]
+    z2 -->|"sigmoid"| a["a = sigmoid(z2)"]
+    a -->|"loss fn"| L["L = -(y×log(a) + (1-y)×log(1-a))"]</div>
 <p>反向传播从右到左计算梯度：</p>
-<pre data-label="mermaid"><code class="language-mermaid">graph RL
-    dL["dL/dL = 1"] --&gt;|"dL/da"| da["dL/da = -y/a + (1-y)/(1-a)"]
-    da --&gt;|"da/dz2 = a(1-a)"| dz2["dL/dz2 = dL/da × a(1-a)"]
-    dz2 --&gt;|"dz2/dw = x"| dw["dL/dw = dL/dz2 × x"]
-    dz2 --&gt;|"dz2/db = 1"| db["dL/db = dL/dz2 × 1"]</code></pre>
+<div class="mermaid">graph RL
+    dL["dL/dL = 1"] -->|"dL/da"| da["dL/da = -y/a + (1-y)/(1-a)"]
+    da -->|"da/dz2 = a(1-a)"| dz2["dL/dz2 = dL/da × a(1-a)"]
+    dz2 -->|"dz2/dw = x"| dw["dL/dw = dL/dz2 × x"]
+    dz2 -->|"dz2/db = 1"| db["dL/db = dL/dz2 × 1"]</div>
 <p>每条箭头乘以局部导数。任何参数的梯度 = 从 loss 到该参数路径上所有局部导数的乘积。当路径分叉汇合时，贡献相加（多变量链式法则）。</p>
 <p>这就是反向传播的全部：链式法则在计算图中从输出到输入系统地应用。</p>
 <h3 id="为什么这对神经网络重要">为什么这对神经网络重要</h3>
 <p>神经网络的每个权重都有一个梯度。梯度告诉你怎么调整这个权重来减少 loss。</p>
-<pre data-label="mermaid"><code class="language-mermaid">graph LR
+<div class="mermaid">graph LR
     subgraph Forward["前向传播"]
-        I["输入"] --&gt; W1["W1"] --&gt; R["relu"] --&gt; W2["W2"] --&gt; S["softmax"] --&gt; L["loss"]
-    end</code></pre>
-<pre data-label="mermaid"><code class="language-mermaid">graph RL
+        I["输入"] --> W1["W1"] --> R["relu"] --> W2["W2"] --> S["softmax"] --> L["loss"]
+    end</div>
+<div class="mermaid">graph RL
     subgraph Backward["反向传播"]
-        dL["dL/dloss"] --&gt; dW2["dL/dW2"] --&gt; d2["..."] --&gt; dW1["dL/dW1"]
-    end</code></pre>
+        dL["dL/dloss"] --> dW2["dL/dW2"] --> d2["..."] --> dW1["dL/dW1"]
+    end</div>
 <p>每次权重更新：</p>
 <ul>
 <li><code>W1 = W1 - lr × dL/dW1</code></li>
@@ -641,8 +640,8 @@ print(f"学到的: y = {w:.2f}x + {b:.2f}")</code></pre>
 
 <footer>
   <div class="set">
-    <span>AI Math Foundations</span>
-    <span>2026 · EN</span>
+    <span>AI 数学基础</span>
+    <span>2026 · ZH-CN</span>
   </div>
   <div class="set">
     <span>Mav</span>
@@ -686,8 +685,8 @@ print(f"学到的: y = {w:.2f}x + {b:.2f}")</code></pre>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/json.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/python.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/css.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+<script>mermaid.initialize({startOnLoad:true, theme:'neutral', fontFamily:'Inter, sans-serif'});</script>
 <script src="../assets/script.js"></script>
-<script src="../assets/quiz.js"></script>
-<script src="../assets/mermaid-init.js"></script>
 </body>
 </html>

@@ -3,14 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>激活函数 — AI Deep Learning Core</title>
+<title>激活函数 — AI 深度学习核心</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="../assets/style.css">
 <link rel="stylesheet" id="hljs-light" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
 <link rel="stylesheet" id="hljs-dark" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" media="not all">
-<link rel="stylesheet" href="../assets/quiz.css">
 </head>
 <body>
 
@@ -18,7 +17,7 @@
 
 <nav class="topnav" id="topnav">
   <div class="topnav-inner">
-    <a class="brand" href="../index.html">AI Deep Learning Core</a>
+    <a class="brand" href="../index.html">AI 深度学习核心</a>
     <div class="nav-links">
       <a href="01-the-perceptron.html">01</a>
       <a href="02-multi-layer-networks.html">02</a>
@@ -146,20 +145,20 @@ gelu(x) ≈ 0.5 × x × (1 + tanh(√(2/π) × (x + 0.044715 × x³)))</code></p
 <pre><code>swish(x) = x × sigmoid(x)</code></pre>
 <p>跟 GELU 一样光滑、非单调、允许小负值。区别细微：Swish 用 sigmoid 做门控，GELU 用高斯 CDF。实际性能几乎一样。Swish 用在 EfficientNet，GELU 统治语言模型。</p>
 <h3 id="选哪个激活函数">选哪个激活函数</h3>
-<pre data-label="mermaid"><code class="language-mermaid">flowchart TD
-    Start["你在搭什么？"] --&gt; Hidden{"隐藏层\n还是输出层？"}
+<div class="mermaid">flowchart TD
+    Start["你在搭什么？"] --> Hidden{"隐藏层\n还是输出层？"}
 
-    Hidden --&gt;|"隐藏层"| Arch{"架构？"}
-    Hidden --&gt;|"输出层"| Task{"任务类型？"}
+    Hidden -->|"隐藏层"| Arch{"架构？"}
+    Hidden -->|"输出层"| Task{"任务类型？"}
 
-    Arch --&gt;|"Transformer / NLP"| GELU["用 GELU"]
-    Arch --&gt;|"CNN / 视觉"| ReLU["用 ReLU 或 Swish"]
-    Arch --&gt;|"RNN / LSTM"| Tanh["用 Tanh"]
-    Arch --&gt;|"简单 MLP"| ReLU2["用 ReLU"]
+    Arch -->|"Transformer / NLP"| GELU["用 GELU"]
+    Arch -->|"CNN / 视觉"| ReLU["用 ReLU 或 Swish"]
+    Arch -->|"RNN / LSTM"| Tanh["用 Tanh"]
+    Arch -->|"简单 MLP"| ReLU2["用 ReLU"]
 
-    Task --&gt;|"二分类"| Sigmoid["用 Sigmoid"]
-    Task --&gt;|"多分类"| Softmax["用 Softmax"]
-    Task --&gt;|"回归"| Linear["不用激活（线性）"]</code></pre>
+    Task -->|"二分类"| Sigmoid["用 Sigmoid"]
+    Task -->|"多分类"| Softmax["用 Softmax"]
+    Task -->|"回归"| Linear["不用激活（线性）"]</div>
 <h2 id="从零实现">从零实现</h2>
 <h3 id="第一步所有激活函数及其导数">第一步：所有激活函数及其导数</h3>
 <pre data-label="python"><code class="language-python">import math
@@ -479,8 +478,8 @@ model = nn.Sequential(
 
 <footer>
   <div class="set">
-    <span>AI Deep Learning Core</span>
-    <span>2026 · EN</span>
+    <span>AI 深度学习核心</span>
+    <span>2026 · ZH-CN</span>
   </div>
   <div class="set">
     <span>Mav</span>
@@ -524,8 +523,8 @@ model = nn.Sequential(
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/json.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/python.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/css.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+<script>mermaid.initialize({startOnLoad:true, theme:'neutral', fontFamily:'Inter, sans-serif'});</script>
 <script src="../assets/script.js"></script>
-<script src="../assets/quiz.js"></script>
-<script src="../assets/mermaid-init.js"></script>
 </body>
 </html>

@@ -3,14 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>张量运算 — AI Math Foundations</title>
+<title>张量运算 — AI 数学基础</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="../assets/style.css">
 <link rel="stylesheet" id="hljs-light" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
 <link rel="stylesheet" id="hljs-dark" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" media="not all">
-<link rel="stylesheet" href="../assets/quiz.css">
 </head>
 <body>
 
@@ -18,7 +17,7 @@
 
 <nav class="topnav" id="topnav">
   <div class="topnav-inner">
-    <a class="brand" href="../index.html">AI Math Foundations</a>
+    <a class="brand" href="../index.html">AI 数学基础</a>
     <div class="nav-links">
       <a href="01-linear-algebra-intuition.html">01</a>
       <a href="02-vectors-matrices-operations.html">02</a>
@@ -92,37 +91,37 @@
 <h2 id="核心概念">核心概念</h2>
 <h3 id="张量是什么">张量是什么</h3>
 <p>张量是多维数组，数据类型统一。维度数叫做<strong>阶</strong>（rank）。每个维度是一个<strong>轴</strong>（axis）。<strong>Shape</strong> 是一个元组，列出每个轴的大小。</p>
-<pre data-label="mermaid"><code class="language-mermaid">graph LR
-    S["标量&lt;br/&gt;rank 0&lt;br/&gt;shape: ()"] --&gt; V["向量&lt;br/&gt;rank 1&lt;br/&gt;shape: (3,)"]
-    V --&gt; M["矩阵&lt;br/&gt;rank 2&lt;br/&gt;shape: (2,3)"]
-    M --&gt; T3["3D 张量&lt;br/&gt;rank 3&lt;br/&gt;shape: (2,2,2)"]
-    T3 --&gt; T4["4D 张量&lt;br/&gt;rank 4&lt;br/&gt;shape: (B,C,H,W)"]</code></pre>
+<div class="mermaid">graph LR
+    S["标量<br/>rank 0<br/>shape: ()"] --> V["向量<br/>rank 1<br/>shape: (3,)"]
+    V --> M["矩阵<br/>rank 2<br/>shape: (2,3)"]
+    M --> T3["3D 张量<br/>rank 3<br/>shape: (2,2,2)"]
+    T3 --> T4["4D 张量<br/>rank 4<br/>shape: (B,C,H,W)"]</div>
 <p>总元素数 = 所有维度大小的乘积。Shape <code>(2, 3, 4)</code> 有 <code>2 × 3 × 4 = 24</code> 个元素。</p>
 <h3 id="深度学习中的张量形状">深度学习中的张量形状</h3>
 <p>不同数据类型按惯例对应特定的张量形状。</p>
-<pre data-label="mermaid"><code class="language-mermaid">graph TD
+<div class="mermaid">graph TD
     subgraph 视觉
-        V1["(B, C, H, W)&lt;br/&gt;32, 3, 224, 224"]
+        V1["(B, C, H, W)<br/>32, 3, 224, 224"]
     end
     subgraph NLP
-        N1["(B, T, D)&lt;br/&gt;16, 128, 768"]
+        N1["(B, T, D)<br/>16, 128, 768"]
     end
     subgraph Attention
-        A1["(B, H, T, D)&lt;br/&gt;16, 12, 128, 64"]
+        A1["(B, H, T, D)<br/>16, 12, 128, 64"]
     end
     subgraph 权重
-        W1["Linear: (out, in)&lt;br/&gt;Conv2D: (out_c, in_c, kH, kW)&lt;br/&gt;Embedding: (vocab, dim)"]
-    end</code></pre>
+        W1["Linear: (out, in)<br/>Conv2D: (out_c, in_c, kH, kW)<br/>Embedding: (vocab, dim)"]
+    end</div>
 <p>PyTorch 用 NCHW（通道在前），TensorFlow 默认 NHWC（通道在后）。搞混布局会导致无声的速度下降或错误。</p>
 <h3 id="内存布局与-stride">内存布局与 Stride</h3>
 <p>二维数组在内存中是一段连续的字节。<strong>Stride</strong> 告诉你沿每个轴移动一步要跳过多少个元素。</p>
-<pre data-label="mermaid"><code class="language-mermaid">graph LR
+<div class="mermaid">graph LR
     subgraph "行优先（C 顺序）"
-        R["a b c d e f&lt;br/&gt;strides: (3, 1)"]
+        R["a b c d e f<br/>strides: (3, 1)"]
     end
     subgraph "列优先（F 顺序）"
-        C["a d b e c f&lt;br/&gt;strides: (1, 2)"]
-    end</code></pre>
+        C["a d b e c f<br/>strides: (1, 2)"]
+    end</div>
 <p>Transpose 不移动数据——它交换 stride，让张量变成<strong>非连续</strong>的（一行的元素在内存中不再相邻）。</p>
 <h3 id="broadcasting-规则">Broadcasting 规则</h3>
 <p>Broadcasting 让你对不同形状的张量做运算而不需要复制数据。从右边对齐形状。两个维度兼容的条件：相等，或其中一个是 1。维度少的那个在左边补 1。</p>
@@ -132,11 +131,11 @@
 结果：      (8, 7, 6, 5)</code></pre>
 <h3 id="einsum万能张量运算">Einsum：万能张量运算</h3>
 <p>Einstein 求和用字母标记每个轴。出现在输入但不在输出中的轴被求和（收缩），两边都有的保留。</p>
-<pre data-label="mermaid"><code class="language-mermaid">graph LR
-    subgraph "矩阵乘法: ik,kj -&gt; ij"
-        A["A(I,K)"] --&gt; |"对 k 求和"| C["C(I,J)"]
-        B["B(K,J)"] --&gt; |"对 k 求和"| C
-    end</code></pre>
+<div class="mermaid">graph LR
+    subgraph "矩阵乘法: ik,kj -> ij"
+        A["A(I,K)"] --> |"对 k 求和"| C["C(I,J)"]
+        B["B(K,J)"] --> |"对 k 求和"| C
+    end</div>
 <p>常用模式：</p>
 <ul>
 <li><code>i,i-&gt;</code> 点积</li>
@@ -542,8 +541,8 @@ print(f"输入: {X.shape} → 输出: {output.shape}")</code></pre>
 
 <footer>
   <div class="set">
-    <span>AI Math Foundations</span>
-    <span>2026 · EN</span>
+    <span>AI 数学基础</span>
+    <span>2026 · ZH-CN</span>
   </div>
   <div class="set">
     <span>Mav</span>
@@ -587,8 +586,8 @@ print(f"输入: {X.shape} → 输出: {output.shape}")</code></pre>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/json.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/python.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/css.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+<script>mermaid.initialize({startOnLoad:true, theme:'neutral', fontFamily:'Inter, sans-serif'});</script>
 <script src="../assets/script.js"></script>
-<script src="../assets/quiz.js"></script>
-<script src="../assets/mermaid-init.js"></script>
 </body>
 </html>

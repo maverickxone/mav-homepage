@@ -3,14 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>图像分类 — AI Computer Vision</title>
+<title>图像分类 — AI 计算机视觉</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="../assets/style.css">
 <link rel="stylesheet" id="hljs-light" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
 <link rel="stylesheet" id="hljs-dark" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" media="not all">
-<link rel="stylesheet" href="../assets/quiz.css">
 </head>
 <body>
 
@@ -18,7 +17,7 @@
 
 <nav class="topnav" id="topnav">
   <div class="topnav-inner">
-    <a class="brand" href="../index.html">AI Computer Vision</a>
+    <a class="brand" href="../index.html">AI 计算机视觉</a>
     <div class="nav-links">
       <a href="01-image-fundamentals.html">01</a>
       <a href="02-convolutions-from-scratch.html">02</a>
@@ -90,23 +89,23 @@
 <p>这节课我们手动搭建整条流水线，让每个环节都可检查。不会用任何 <code>torchvision.datasets</code> 中可能隐藏 bug 的东西。</p>
 <h2 id="核心概念">核心概念</h2>
 <h3 id="分类流水线classification-pipeline">分类流水线（Classification Pipeline）</h3>
-<pre data-label="mermaid"><code class="language-mermaid">flowchart LR
-    A["数据集&lt;br/&gt;(图片 + 标签)"] --&gt; B["增强&lt;br/&gt;(随机变换)"]
-    B --&gt; C["归一化&lt;br/&gt;(均值/标准差)"]
-    C --&gt; D["DataLoader&lt;br/&gt;(批次 + 打乱)"]
-    D --&gt; E["模型&lt;br/&gt;(CNN)"]
-    E --&gt; F["Logits&lt;br/&gt;(N, C)"]
-    F --&gt; G["交叉熵损失"]
-    F --&gt; H["Argmax&lt;br/&gt;评估时用"]
-    G --&gt; I["反向传播"]
-    I --&gt; J["优化器更新"]
-    J --&gt; K["调度器更新"]
-    K --&gt; E
+<div class="mermaid">flowchart LR
+    A["数据集<br/>(图片 + 标签)"] --> B["增强<br/>(随机变换)"]
+    B --> C["归一化<br/>(均值/标准差)"]
+    C --> D["DataLoader<br/>(批次 + 打乱)"]
+    D --> E["模型<br/>(CNN)"]
+    E --> F["Logits<br/>(N, C)"]
+    F --> G["交叉熵损失"]
+    F --> H["Argmax<br/>评估时用"]
+    G --> I["反向传播"]
+    I --> J["优化器更新"]
+    J --> K["调度器更新"]
+    K --> E
 
     style A fill:#dbeafe,stroke:#2563eb
     style E fill:#fef3c7,stroke:#d97706
     style G fill:#fecaca,stroke:#dc2626
-    style H fill:#dcfce7,stroke:#16a34a</code></pre>
+    style H fill:#dcfce7,stroke:#16a34a</div>
 <p>这个循环里每一条线都可能藏 bug。交叉熵（Cross-entropy）接收的是原始 logits，不是 softmax 输出——如果你在 loss 之前写了 <code>model(x).softmax()</code>，梯度就悄悄算错了。数据增强只作用于输入，不动标签——除了 mixup，它同时混合两者。<code>optimizer.zero_grad()</code> 每步必须调一次；忘了的话梯度会累加，看起来就像学习率不稳定。这些 bug 都不会报错，只是让学习曲线变平。</p>
 <h3 id="交叉熵logits-和-softmax">交叉熵、Logits 和 Softmax</h3>
 <p>分类器对每张图输出 <code>C</code> 个数字，叫做 logits（对数几率）。对它做 softmax 就变成概率分布：</p>
@@ -579,8 +578,8 @@ val_ds   = CIFAR10(root="./data", train=False, download=True, transform=eval_tf)
 
 <footer>
   <div class="set">
-    <span>AI Computer Vision</span>
-    <span>2026 · EN</span>
+    <span>AI 计算机视觉</span>
+    <span>2026 · ZH-CN</span>
   </div>
   <div class="set">
     <span>Mav</span>
@@ -624,8 +623,8 @@ val_ds   = CIFAR10(root="./data", train=False, download=True, transform=eval_tf)
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/json.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/python.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/css.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+<script>mermaid.initialize({startOnLoad:true, theme:'neutral', fontFamily:'Inter, sans-serif'});</script>
 <script src="../assets/script.js"></script>
-<script src="../assets/quiz.js"></script>
-<script src="../assets/mermaid-init.js"></script>
 </body>
 </html>

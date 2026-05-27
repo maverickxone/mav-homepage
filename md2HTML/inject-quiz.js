@@ -47,13 +47,15 @@ for (const slug of BOOKS) {
       '<link rel="stylesheet" href="../assets/quiz.css">\n</head>'
     );
 
-    // Inject mermaid-init.js before </body>
-    html = html.replace(
-      '</body>',
-      '<script src="../assets/mermaid-init.js"></script>\n</body>'
-    );
+    // Inject mermaid-init.js BEFORE script.js (must run before highlight.js)
+    if (!html.includes('mermaid-init.js')) {
+      html = html.replace(
+        '<script src="../assets/script.js"></script>',
+        '<script src="../assets/mermaid-init.js"></script>\n<script src="../assets/script.js"></script>'
+      );
+    }
 
-    // Inject JS before </body>
+    // Inject quiz JS before </body>
     html = html.replace(
       '</body>',
       '<script src="../assets/quiz.js"></script>\n</body>'

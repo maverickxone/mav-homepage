@@ -3,14 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>感知机 — AI Deep Learning Core</title>
+<title>感知机 — AI 深度学习核心</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="../assets/style.css">
 <link rel="stylesheet" id="hljs-light" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
 <link rel="stylesheet" id="hljs-dark" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" media="not all">
-<link rel="stylesheet" href="../assets/quiz.css">
 </head>
 <body>
 
@@ -18,7 +17,7 @@
 
 <nav class="topnav" id="topnav">
   <div class="topnav-inner">
-    <a class="brand" href="../index.html">AI Deep Learning Core</a>
+    <a class="brand" href="../index.html">AI 深度学习核心</a>
     <div class="nav-links">
       <a href="01-the-perceptron.html" class="active">01</a>
       <a href="02-multi-layer-networks.html">02</a>
@@ -97,13 +96,13 @@
 <h2 id="核心概念">核心概念</h2>
 <h3 id="一个神经元一个决策">一个神经元，一个决策</h3>
 <p>感知机接收 n 个输入，每个乘以一个权重，求和，加 bias，然后通过激活函数。</p>
-<pre data-label="mermaid"><code class="language-mermaid">graph LR
-    x1["x1"] -- "w1" --&gt; sum["Σ(wi×xi) + b"]
-    x2["x2"] -- "w2" --&gt; sum
-    x3["x3"] -- "w3" --&gt; sum
-    bias["bias"] --&gt; sum
-    sum --&gt; step["step(z)"]
-    step --&gt; out["输出（0 或 1）"]</code></pre>
+<div class="mermaid">graph LR
+    x1["x1"] -- "w1" --> sum["Σ(wi×xi) + b"]
+    x2["x2"] -- "w2" --> sum
+    x3["x3"] -- "w3" --> sum
+    bias["bias"] --> sum
+    sum --> step["step(z)"]
+    step --> out["输出（0 或 1）"]</div>
 <p>阶跃函数很粗暴：加权和加 bias ≥ 0 就输出 1，否则输出 0。</p>
 <pre><code>step(z) = 1  如果 z ≥ 0
            0  如果 z &lt; 0</code></pre>
@@ -206,14 +205,14 @@ for inputs, expected in xor_data:
 <p>永远不会收敛。这就是单感知机解不了 XOR 的铁证。</p>
 <h3 id="第四步用两层解决-xor">第四步：用两层解决 XOR</h3>
 <p>技巧：XOR = (x1 OR x2) AND NOT(x1 AND x2)。组合三个感知机：</p>
-<pre data-label="mermaid"><code class="language-mermaid">graph LR
-    x1["x1"] --&gt; OR["OR 神经元"]
-    x1 --&gt; NAND["NAND 神经元"]
-    x2["x2"] --&gt; OR
-    x2 --&gt; NAND
-    OR --&gt; AND["AND 神经元"]
-    NAND --&gt; AND
-    AND --&gt; out["输出"]</code></pre>
+<div class="mermaid">graph LR
+    x1["x1"] --> OR["OR 神经元"]
+    x1 --> NAND["NAND 神经元"]
+    x2["x2"] --> OR
+    x2 --> NAND
+    OR --> AND["AND 神经元"]
+    NAND --> AND
+    AND --> out["输出"]</div>
 <pre data-label="python"><code class="language-python">def xor_network(x1, x2):
     """手动搭建的两层 XOR 网络"""
     or_neuron = Perceptron(2)
@@ -516,8 +515,8 @@ print([clf.predict([x])[0] for x in X])  # [0, 0, 0, 1]</code></pre>
 
 <footer>
   <div class="set">
-    <span>AI Deep Learning Core</span>
-    <span>2026 · EN</span>
+    <span>AI 深度学习核心</span>
+    <span>2026 · ZH-CN</span>
   </div>
   <div class="set">
     <span>Mav</span>
@@ -561,8 +560,8 @@ print([clf.predict([x])[0] for x in X])  # [0, 0, 0, 1]</code></pre>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/json.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/python.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/css.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+<script>mermaid.initialize({startOnLoad:true, theme:'neutral', fontFamily:'Inter, sans-serif'});</script>
 <script src="../assets/script.js"></script>
-<script src="../assets/quiz.js"></script>
-<script src="../assets/mermaid-init.js"></script>
 </body>
 </html>

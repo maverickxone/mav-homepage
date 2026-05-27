@@ -3,14 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>CNN 演化史 — 从 LeNet 到 ResNet — AI Computer Vision</title>
+<title>CNN 演化史 — 从 LeNet 到 ResNet — AI 计算机视觉</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="../assets/style.css">
 <link rel="stylesheet" id="hljs-light" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
 <link rel="stylesheet" id="hljs-dark" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" media="not all">
-<link rel="stylesheet" href="../assets/quiz.css">
 </head>
 <body>
 
@@ -18,7 +17,7 @@
 
 <nav class="topnav" id="topnav">
   <div class="topnav-inner">
-    <a class="brand" href="../index.html">AI Computer Vision</a>
+    <a class="brand" href="../index.html">AI 计算机视觉</a>
     <div class="nav-links">
       <a href="01-image-fundamentals.html">01</a>
       <a href="02-convolutions-from-scratch.html">02</a>
@@ -88,12 +87,12 @@
 <p>按顺序学习这些网络还能免疫一个常见错误：问题只需要 LeNet 级别的网络时伸手去拿最大的模型。MNIST 不需要 ResNet。知道每个家族的性能曲线，就知道自己该坐在哪。</p>
 <h2 id="核心概念">核心概念</h2>
 <h3 id="改变视觉的四个想法">改变视觉的四个想法</h3>
-<pre data-label="mermaid"><code class="language-mermaid">timeline
+<div class="mermaid">timeline
     title 四个想法，四个家族
     1998 : LeNet-5 : Conv + pool + FC 做数字识别，CPU 训练，6 万参数
     2012 : AlexNet : 更深 + ReLU + Dropout + 两块 GPU，ImageNet 赢了 10 个百分点
     2014 : VGG / Inception : 3×3 堆叠 (VGG)，并行多尺度核 (Inception)
-    2015 : ResNet : 恒等跳跃连接解锁 100+ 层训练</code></pre>
+    2015 : ResNet : 恒等跳跃连接解锁 100+ 层训练</div>
 <p>经典视觉中没有别的东西比这四次跳跃更重要。</p>
 <h3 id="lenet-5-1998">LeNet-5 (1998)</h3>
 <p>Yann LeCun 的数字识别器。6 万参数。两个 conv-pool 块，两个全连接层，tanh 激活。它定义了每个 CNN 继承的模板：</p>
@@ -122,16 +121,16 @@
 <p>代价：1.38 亿参数，训练慢，推理贵。</p>
 <h3 id="inception-2014同年">Inception (2014，同年)</h3>
 <p>Google 对&quot;该用多大的核&quot;的回答是：全都用，并行。</p>
-<pre data-label="mermaid"><code class="language-mermaid">flowchart LR
-    IN["输入特征图"] --&gt; A["1×1 conv"]
-    IN --&gt; B["3×3 conv"]
-    IN --&gt; C["5×5 conv"]
-    IN --&gt; D["3×3 max pool"]
-    A --&gt; CAT["沿通道轴&lt;br/&gt;拼接"]
-    B --&gt; CAT
-    C --&gt; CAT
-    D --&gt; CAT
-    CAT --&gt; OUT["下一个块"]</code></pre>
+<div class="mermaid">flowchart LR
+    IN["输入特征图"] --> A["1×1 conv"]
+    IN --> B["3×3 conv"]
+    IN --> C["5×5 conv"]
+    IN --> D["3×3 max pool"]
+    A --> CAT["沿通道轴<br/>拼接"]
+    B --> CAT
+    C --> CAT
+    D --> CAT
+    CAT --> OUT["下一个块"]</div>
 <p>每个分支特化——1×1 做通道混合，3×3 做局部纹理，5×5 做更大模式，pool 做平移不变特征——拼接让下一层自己挑有用的。Inception v1 在每个分支里加 1×1 卷积当瓶颈来控制参数量。</p>
 <h3 id="退化问题">退化问题</h3>
 <p>到 2015 年，VGG-19 能跑但 VGG-32 不行。深度本应有帮助，但超过约 20 层，训练和测试 loss 都变差了。这不是过拟合。这是优化器找不到有用的权重，因为梯度通过每层都在乘性缩小。</p>
@@ -148,12 +147,12 @@
 <pre><code>标准块：   y = F(x)
 残差块：   y = F(x) + x</code></pre>
 <p><code>+ x</code> 意味着层总是可以选择什么都不做——把 <code>F(x)</code> 驱动为零就行。一个 1000 层 ResNet 最差也不会比 1 层网络差，因为每多一个块都有一个平凡的逃生口。有了这个保证，优化器愿意让每个块<em>稍微</em>有用——而&quot;稍微有用&quot;堆 100 次就是 SOTA。</p>
-<pre data-label="mermaid"><code class="language-mermaid">flowchart LR
-    X["输入 x"] --&gt; F["F(x)&lt;br/&gt;conv + BN + ReLU&lt;br/&gt;conv + BN"]
-    X -.-&gt;|恒等跳跃| PLUS(["+"])
-    F --&gt; PLUS
-    PLUS --&gt; RELU["ReLU"]
-    RELU --&gt; OUT["y"]</code></pre>
+<div class="mermaid">flowchart LR
+    X["输入 x"] --> F["F(x)<br/>conv + BN + ReLU<br/>conv + BN"]
+    X -.->|恒等跳跃| PLUS(["+"])
+    F --> PLUS
+    PLUS --> RELU["ReLU"]
+    RELU --> OUT["y"]</div>
 <p>两种变体到处都是：</p>
 <ul>
 <li><strong>BasicBlock</strong>（ResNet-18、ResNet-34）：两个 3×3 conv，skip 绕过两个。</li>
@@ -495,8 +494,8 @@ r18.fc = nn.Linear(r18.fc.in_features, 10)</code></pre>
 
 <footer>
   <div class="set">
-    <span>AI Computer Vision</span>
-    <span>2026 · EN</span>
+    <span>AI 计算机视觉</span>
+    <span>2026 · ZH-CN</span>
   </div>
   <div class="set">
     <span>Mav</span>
@@ -540,8 +539,8 @@ r18.fc = nn.Linear(r18.fc.in_features, 10)</code></pre>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/json.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/python.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/css.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+<script>mermaid.initialize({startOnLoad:true, theme:'neutral', fontFamily:'Inter, sans-serif'});</script>
 <script src="../assets/script.js"></script>
-<script src="../assets/quiz.js"></script>
-<script src="../assets/mermaid-init.js"></script>
 </body>
 </html>

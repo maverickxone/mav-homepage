@@ -3,14 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>损失函数 — AI Deep Learning Core</title>
+<title>损失函数 — AI 深度学习核心</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="../assets/style.css">
 <link rel="stylesheet" id="hljs-light" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
 <link rel="stylesheet" id="hljs-dark" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" media="not all">
-<link rel="stylesheet" href="../assets/quiz.css">
 </head>
 <body>
 
@@ -18,7 +17,7 @@
 
 <nav class="topnav" id="topnav">
   <div class="topnav-inner">
-    <a class="brand" href="../index.html">AI Deep Learning Core</a>
+    <a class="brand" href="../index.html">AI 深度学习核心</a>
     <div class="nav-links">
       <a href="01-the-perceptron.html">01</a>
       <a href="02-multi-layer-networks.html">02</a>
@@ -116,19 +115,19 @@
 <pre><code>CCE = -Σ(yᵢ × log(pᵢ))</code></pre>
 <p>只有真实类别贡献 loss（其他 yᵢ 都是零）。10 个类别中正确类别概率 0.1（随机猜），loss = -log(0.1) = 2.3。正确类别概率 0.9，loss = -log(0.9) = 0.105。模型学会把概率集中到正确答案上。</p>
 <h3 id="为什么-mse-用于分类会失败">为什么 MSE 用于分类会失败</h3>
-<pre data-label="mermaid"><code class="language-mermaid">graph TD
+<div class="mermaid">graph TD
     subgraph "MSE 做分类"
-        P1["预测 0.5（真标签 1）&lt;br/&gt;MSE = 0.25"]
-        P2["预测 0.9&lt;br/&gt;MSE = 0.01"]
-        P3["预测 0.1&lt;br/&gt;MSE = 0.81"]
+        P1["预测 0.5（真标签 1）<br/>MSE = 0.25"]
+        P2["预测 0.9<br/>MSE = 0.01"]
+        P3["预测 0.1<br/>MSE = 0.81"]
     end
     subgraph "交叉熵做分类"
-        C1["预测 0.5&lt;br/&gt;CE = 0.693"]
-        C2["预测 0.9&lt;br/&gt;CE = 0.105"]
-        C3["预测 0.1&lt;br/&gt;CE = 2.303"]
+        C1["预测 0.5<br/>CE = 0.693"]
+        C2["预测 0.9<br/>CE = 0.105"]
+        C3["预测 0.1<br/>CE = 2.303"]
     end
-    P3 --&gt;|"MSE 梯度在\nsigmoid 饱和区变平"| Slow["纠正慢"]
-    C3 --&gt;|"CE 梯度在\n错误答案处爆发"| Fast["纠正快"]</code></pre>
+    P3 -->|"MSE 梯度在\nsigmoid 饱和区变平"| Slow["纠正慢"]
+    C3 -->|"CE 梯度在\n错误答案处爆发"| Fast["纠正快"]</div>
 <p>MSE 梯度在预测接近 0 或 1 时变平（sigmoid 饱和）。交叉熵梯度补偿了这个——-log 抵消了 sigmoid 的平坦区域，在最需要梯度的地方给出强信号。</p>
 <h3 id="label-smoothing">Label Smoothing</h3>
 <p>标准 one-hot 标签说&quot;这 100% 是类别 3，0% 其他&quot;。这是很强的断言。Label smoothing 把它软化：</p>
@@ -146,23 +145,23 @@
 <pre><code>FL = -α × (1 - pₜ)^γ × log(pₜ)</code></pre>
 <p>γ = 2 时：容易的样本（pₜ = 0.9）权重 = 0.01，几乎忽略。困难的样本（pₜ = 0.1）权重 = 0.81，完整梯度信号。</p>
 <h3 id="怎么选-loss-函数">怎么选 Loss 函数</h3>
-<pre data-label="mermaid"><code class="language-mermaid">flowchart TD
-    Start["你的任务是？"] --&gt; Reg{"回归？"}
-    Start --&gt; Cls{"分类？"}
-    Start --&gt; Emb{"学嵌入？"}
+<div class="mermaid">flowchart TD
+    Start["你的任务是？"] --> Reg{"回归？"}
+    Start --> Cls{"分类？"}
+    Start --> Emb{"学嵌入？"}
 
-    Reg --&gt;|"是"| Outliers{"对异常值敏感？"}
-    Outliers --&gt;|"要惩罚异常值"| MSE["用 MSE"]
-    Outliers --&gt;|"要对异常值鲁棒"| MAE["用 MAE / Huber"]
+    Reg -->|"是"| Outliers{"对异常值敏感？"}
+    Outliers -->|"要惩罚异常值"| MSE["用 MSE"]
+    Outliers -->|"要对异常值鲁棒"| MAE["用 MAE / Huber"]
 
-    Cls --&gt;|"二分类"| BCE["用 Binary CE"]
-    Cls --&gt;|"多分类"| CCE["用 Categorical CE"]
-    Cls --&gt;|"不平衡"| FL["用 Focal Loss"]
-    CCE --&gt;|"过度自信？"| LS["加 Label Smoothing"]
+    Cls -->|"二分类"| BCE["用 Binary CE"]
+    Cls -->|"多分类"| CCE["用 Categorical CE"]
+    Cls -->|"不平衡"| FL["用 Focal Loss"]
+    CCE -->|"过度自信？"| LS["加 Label Smoothing"]
 
-    Emb --&gt;|"配对数据"| CL["用 Contrastive Loss"]
-    Emb --&gt;|"有三元组"| TL["用 Triplet Loss"]
-    Emb --&gt;|"大 batch 自监督"| NCE["用 InfoNCE"]</code></pre>
+    Emb -->|"配对数据"| CL["用 Contrastive Loss"]
+    Emb -->|"有三元组"| TL["用 Triplet Loss"]
+    Emb -->|"大 batch 自监督"| NCE["用 InfoNCE"]</div>
 <h2 id="从零实现">从零实现</h2>
 <h3 id="第一步mse-及其梯度">第一步：MSE 及其梯度</h3>
 <pre data-label="python"><code class="language-python">import math
@@ -494,8 +493,8 @@ ce_smooth = F.cross_entropy(logits, target, label_smoothing=0.1)</code></pre>
 
 <footer>
   <div class="set">
-    <span>AI Deep Learning Core</span>
-    <span>2026 · EN</span>
+    <span>AI 深度学习核心</span>
+    <span>2026 · ZH-CN</span>
   </div>
   <div class="set">
     <span>Mav</span>
@@ -539,8 +538,8 @@ ce_smooth = F.cross_entropy(logits, target, label_smoothing=0.1)</code></pre>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/json.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/python.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/css.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+<script>mermaid.initialize({startOnLoad:true, theme:'neutral', fontFamily:'Inter, sans-serif'});</script>
 <script src="../assets/script.js"></script>
-<script src="../assets/quiz.js"></script>
-<script src="../assets/mermaid-init.js"></script>
 </body>
 </html>

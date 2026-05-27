@@ -3,14 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>优化 — AI Math Foundations</title>
+<title>优化 — AI 数学基础</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="../assets/style.css">
 <link rel="stylesheet" id="hljs-light" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
 <link rel="stylesheet" id="hljs-dark" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" media="not all">
-<link rel="stylesheet" href="../assets/quiz.css">
 </head>
 <body>
 
@@ -18,7 +17,7 @@
 
 <nav class="topnav" id="topnav">
   <div class="topnav-inner">
-    <a class="brand" href="../index.html">AI Math Foundations</a>
+    <a class="brand" href="../index.html">AI 数学基础</a>
     <div class="nav-links">
       <a href="01-linear-algebra-intuition.html">01</a>
       <a href="02-vectors-matrices-operations.html">02</a>
@@ -99,26 +98,26 @@
 <p>最简单的优化器。算 loss 对每个权重的梯度，让每个权重往梯度反方向走一步，步长乘以学习率。</p>
 <pre><code>w = w - lr × gradient</code></pre>
 <p>就这一行。整个算法。</p>
-<pre data-label="mermaid"><code class="language-mermaid">graph TD
-    A["● 起点（高 loss）"] --&gt; B["沿梯度方向下山"]
-    B --&gt; C["接近最小值"]
-    C --&gt; D["○ 最小值（低 loss）"]</code></pre>
+<div class="mermaid">graph TD
+    A["● 起点（高 loss）"] --> B["沿梯度方向下山"]
+    B --> C["接近最小值"]
+    C --> D["○ 最小值（低 loss）"]</div>
 <h3 id="学习率最重要的超参数">学习率：最重要的超参数</h3>
 <p>学习率控制步长，决定了收敛的一切。</p>
-<pre data-label="mermaid"><code class="language-mermaid">graph LR
+<div class="mermaid">graph LR
     subgraph TooLarge["太大（lr = 1.0）"]
-        A1["Step 1"] --&gt;|"跳过去"| A2["Step 2"]
-        A2 --&gt;|"跳过去"| A3["Step 3"]
-        A3 --&gt;|"发散"| A4["..."]
+        A1["Step 1"] -->|"跳过去"| A2["Step 2"]
+        A2 -->|"跳过去"| A3["Step 3"]
+        A3 -->|"发散"| A4["..."]
     end
     subgraph TooSmall["太小（lr = 0.0001）"]
-        B1["Step 1"] --&gt;|"一丢丢"| B2["Step 2"]
-        B2 --&gt;|"一丢丢"| B3["Step 3"]
-        B3 --&gt;|"一万步后"| B4["最小值"]
+        B1["Step 1"] -->|"一丢丢"| B2["Step 2"]
+        B2 -->|"一丢丢"| B3["Step 3"]
+        B3 -->|"一万步后"| B4["最小值"]
     end
     subgraph JustRight["刚好（lr = 0.01）"]
-        C1["开始"] --&gt; C2["..."] --&gt; C3["~100 步收敛"]
-    end</code></pre>
+        C1["开始"] --> C2["..."] --> C3["~100 步收敛"]
+    end</div>
 <p>没有公式能给出&quot;正确的&quot;学习率，靠实验找。常见起点：Adam 用 0.001，SGD+momentum 用 0.01。</p>
 <h3 id="sgd-vs-批量-vs-小批量">SGD vs 批量 vs 小批量</h3>
 <div class="table-wrap"><table><thead><tr>
@@ -156,16 +155,16 @@
 <pre><code>v = beta × v + gradient
 w = w - lr × v</code></pre>
 <p>类比：一颗球在山坡上滚。它不会在每个凸起处停下来重新启动，而是在一致的方向上积累速度，在振荡方向上被抑制。</p>
-<pre data-label="mermaid"><code class="language-mermaid">graph TD
+<div class="mermaid">graph TD
     subgraph Without["无 Momentum（锯齿，慢）"]
-        W1["起点"] --&gt;|"左"| W2[" "]
-        W2 --&gt;|"右"| W3[" "]
-        W3 --&gt;|"左"| W4[" "]
-        W4 --&gt;|"右"| W5["最小值"]
+        W1["起点"] -->|"左"| W2[" "]
+        W2 -->|"右"| W3[" "]
+        W3 -->|"左"| W4[" "]
+        W4 -->|"右"| W5["最小值"]
     end
     subgraph With["有 Momentum（平滑，快）"]
-        M1["起点"] --&gt; M2[" "] --&gt; M3[" "] --&gt; M4["最小值"]
-    end</code></pre>
+        M1["起点"] --> M2[" "] --> M3[" "] --> M4["最小值"]
+    end</div>
 <p><code>beta</code>（通常 0.9）控制保留多少历史。越大动量越强、路径越平滑，但对方向变化的响应越慢。</p>
 <h3 id="adam自适应学习率">Adam：自适应学习率</h3>
 <p>不同的权重需要不同的学习率。一个很少收到大梯度的权重，终于收到时应该走大步。一个总是收到巨大梯度的权重应该走小步。</p>
@@ -214,17 +213,17 @@ w = w - lr × m_hat / (√v_hat + ε)</code></pre>
 <h3 id="凸-vs-非凸">凸 vs 非凸</h3>
 <p>凸函数只有一个最小值，梯度下降一定能找到。<code>f(x) = x²</code> 是凸的。</p>
 <p>神经网络的 loss 函数是<strong>非凸</strong>的——有很多局部最小值、鞍点和平坦区域。</p>
-<pre data-label="mermaid"><code class="language-mermaid">graph LR
+<div class="mermaid">graph LR
     subgraph Convex["凸：一个谷底，一个答案"]
         direction TB
-        CV1["高 loss"] --&gt; CV2["全局最小值"]
+        CV1["高 loss"] --> CV2["全局最小值"]
     end
     subgraph NonConvex["非凸：多个谷底，鞍点"]
         direction TB
-        NC1["起点"] --&gt; NC2["局部最小值"]
-        NC1 --&gt; NC3["鞍点"]
-        NC1 --&gt; NC4["全局最小值"]
-    end</code></pre>
+        NC1["起点"] --> NC2["局部最小值"]
+        NC1 --> NC3["鞍点"]
+        NC1 --> NC4["全局最小值"]
+    end</div>
 <p>实际中，高维神经网络的局部最小值很少是问题——大部分局部最小值的 loss 跟全局最小值差不多。真正的障碍是<strong>鞍点</strong>（某些方向平坦，某些方向弯曲）。Momentum 和小批量的噪声帮助逃离它们。</p>
 <h2 id="从零实现">从零实现</h2>
 <h3 id="第一步测试函数">第一步：测试函数</h3>
@@ -531,8 +530,8 @@ scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(adam, T_max=100)</code></
 
 <footer>
   <div class="set">
-    <span>AI Math Foundations</span>
-    <span>2026 · EN</span>
+    <span>AI 数学基础</span>
+    <span>2026 · ZH-CN</span>
   </div>
   <div class="set">
     <span>Mav</span>
@@ -576,8 +575,8 @@ scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(adam, T_max=100)</code></
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/json.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/python.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/css.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+<script>mermaid.initialize({startOnLoad:true, theme:'neutral', fontFamily:'Inter, sans-serif'});</script>
 <script src="../assets/script.js"></script>
-<script src="../assets/quiz.js"></script>
-<script src="../assets/mermaid-init.js"></script>
 </body>
 </html>

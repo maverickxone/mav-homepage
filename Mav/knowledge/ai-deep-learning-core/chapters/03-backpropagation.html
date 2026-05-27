@@ -3,14 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>从零实现反向传播 — AI Deep Learning Core</title>
+<title>从零实现反向传播 — AI 深度学习核心</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="../assets/style.css">
 <link rel="stylesheet" id="hljs-light" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
 <link rel="stylesheet" id="hljs-dark" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" media="not all">
-<link rel="stylesheet" href="../assets/quiz.css">
 </head>
 <body>
 
@@ -18,7 +17,7 @@
 
 <nav class="topnav" id="topnav">
   <div class="topnav-inner">
-    <a class="brand" href="../index.html">AI Deep Learning Core</a>
+    <a class="brand" href="../index.html">AI 深度学习核心</a>
     <div class="nav-links">
       <a href="01-the-perceptron.html">01</a>
       <a href="02-multi-layer-networks.html">02</a>
@@ -100,40 +99,40 @@
 <p>在神经网络中，&quot;链&quot;是从输入到 loss 的操作序列。每层施加权重、加 bias、通过激活函数。Loss 函数比较最终输出和目标。反向传播就是沿这条链反向追踪，计算每个操作对误差的贡献。</p>
 <h3 id="计算图">计算图</h3>
 <p>每次前向传播都建一个图。每个节点是操作（乘、加、sigmoid），每条边前向携带值、反向携带梯度。</p>
-<pre data-label="mermaid"><code class="language-mermaid">graph LR
-    x["x"] --&gt; mul["×"]
-    w["w"] --&gt; mul
-    mul -- "z1 = w×x" --&gt; add["+"]
-    b["b"] --&gt; add
-    add -- "z2 = z1 + b" --&gt; sig["sigmoid"]
-    sig -- "a = sigmoid(z2)" --&gt; loss["Loss"]
-    y["目标"] --&gt; loss</code></pre>
+<div class="mermaid">graph LR
+    x["x"] --> mul["×"]
+    w["w"] --> mul
+    mul -- "z1 = w×x" --> add["+"]
+    b["b"] --> add
+    add -- "z2 = z1 + b" --> sig["sigmoid"]
+    sig -- "a = sigmoid(z2)" --> loss["Loss"]
+    y["目标"] --> loss</div>
 <p><strong>前向</strong>：值从左到右流。x 和 w 产生 z1 = w×x。加 b 得 z2。Sigmoid 给出激活 a。跟目标 y 比较算 loss。</p>
 <p><strong>反向</strong>：梯度从右到左流。从 dL/da 开始，乘以 sigmoid 导数得 dL/dz2，然后分裂：dL/db = dL/dz2（加法的导数是 1），dL/dw = dL/dz1 × x，dL/dx = dL/dz1 × w。</p>
 <p>每个节点在反向传播中只有一个工作：接收上游梯度，乘以自己的局部导数，往下传。</p>
 <h3 id="前向-vs-反向">前向 vs 反向</h3>
-<pre data-label="mermaid"><code class="language-mermaid">graph TB
+<div class="mermaid">graph TB
     subgraph Forward["前向传播"]
         direction LR
-        f1["输入 x"] --&gt; f2["z = Wx + b"]
-        f2 --&gt; f3["a = sigmoid(z)"]
-        f3 --&gt; f4["Loss = (a - y)²"]
+        f1["输入 x"] --> f2["z = Wx + b"]
+        f2 --> f3["a = sigmoid(z)"]
+        f3 --> f4["Loss = (a - y)²"]
     end
     subgraph Backward["反向传播"]
         direction RL
-        b4["dL/dL = 1"] --&gt; b3["dL/da = 2(a-y)"]
-        b3 --&gt; b2["dL/dz = dL/da × a(1-a)"]
-        b2 --&gt; b1["dL/dW = dL/dz × x\ndL/db = dL/dz"]
+        b4["dL/dL = 1"] --> b3["dL/da = 2(a-y)"]
+        b3 --> b2["dL/dz = dL/da × a(1-a)"]
+        b2 --> b1["dL/dW = dL/dz × x\ndL/db = dL/dz"]
     end
-    Forward --&gt; Backward</code></pre>
+    Forward --> Backward</div>
 <p>前向传播存储所有中间值（z、a、每层的输入）。反向传播需要这些存储值来计算梯度。这是反向传播核心的<strong>内存-计算权衡</strong>：用内存（存激活值）换速度（一次遍历替代几百万次）。</p>
 <h3 id="梯度在网络中的流动">梯度在网络中的流动</h3>
 <p>3 层网络中，梯度链式穿过每一层：</p>
-<pre data-label="mermaid"><code class="language-mermaid">graph RL
-    L["Loss"] -- "dL/da3" --&gt; L3["第 3 层\na3 = sigmoid(z3)"]
-    L3 -- "dL/dz3 = dL/da3 × sigmoid'(z3)" --&gt; L2["第 2 层\na2 = sigmoid(z2)"]
-    L2 -- "dL/dz2 = dL/da2 × sigmoid'(z2)" --&gt; L1["第 1 层\na1 = sigmoid(z1)"]
-    L1 -- "dL/dz1 = dL/da1 × sigmoid'(z1)" --&gt; I["输入"]</code></pre>
+<div class="mermaid">graph RL
+    L["Loss"] -- "dL/da3" --> L3["第 3 层\na3 = sigmoid(z3)"]
+    L3 -- "dL/dz3 = dL/da3 × sigmoid'(z3)" --> L2["第 2 层\na2 = sigmoid(z2)"]
+    L2 -- "dL/dz2 = dL/da2 × sigmoid'(z2)" --> L1["第 1 层\na1 = sigmoid(z1)"]
+    L1 -- "dL/dz1 = dL/da1 × sigmoid'(z1)" --> I["输入"]</div>
 <p>每经过一层，梯度被乘以 sigmoid 导数。Sigmoid 导数是 a×(1-a)，最大值 0.25（当 a = 0.5 时）。三层深，梯度最多被乘以 0.25³ = 0.0156。十层深：0.25¹⁰ = 0.000001。</p>
 <h3 id="梯度消失问题">梯度消失问题</h3>
 <p>这就是<strong>梯度消失问题</strong>。Sigmoid 把输出压在 0 到 1 之间，它的导数永远小于 0.25。堆够多的 sigmoid 层，梯度缩小到几乎为零。前面的层几乎学不到任何东西。</p>
@@ -562,8 +561,8 @@ with torch.no_grad():
 
 <footer>
   <div class="set">
-    <span>AI Deep Learning Core</span>
-    <span>2026 · EN</span>
+    <span>AI 深度学习核心</span>
+    <span>2026 · ZH-CN</span>
   </div>
   <div class="set">
     <span>Mav</span>
@@ -607,8 +606,8 @@ with torch.no_grad():
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/json.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/python.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/css.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+<script>mermaid.initialize({startOnLoad:true, theme:'neutral', fontFamily:'Inter, sans-serif'});</script>
 <script src="../assets/script.js"></script>
-<script src="../assets/quiz.js"></script>
-<script src="../assets/mermaid-init.js"></script>
 </body>
 </html>

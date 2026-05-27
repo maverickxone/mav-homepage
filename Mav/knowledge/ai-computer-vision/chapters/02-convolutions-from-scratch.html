@@ -3,14 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>从零实现卷积 — AI Computer Vision</title>
+<title>从零实现卷积 — AI 计算机视觉</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="../assets/style.css">
 <link rel="stylesheet" id="hljs-light" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
 <link rel="stylesheet" id="hljs-dark" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" media="not all">
-<link rel="stylesheet" href="../assets/quiz.css">
 </head>
 <body>
 
@@ -18,7 +17,7 @@
 
 <nav class="topnav" id="topnav">
   <div class="topnav-inner">
-    <a class="brand" href="../index.html">AI Computer Vision</a>
+    <a class="brand" href="../index.html">AI 计算机视觉</a>
     <div class="nav-links">
       <a href="01-image-fundamentals.html">01</a>
       <a href="02-convolutions-from-scratch.html" class="active">02</a>
@@ -89,19 +88,19 @@
 <h2 id="核心概念">核心概念</h2>
 <h3 id="一个核滑动">一个核，滑动</h3>
 <p>2D 卷积取一个小权重矩阵叫做核（kernel / filter），在输入上滑动，每个位置计算逐元素乘积之和。那个和就是一个输出像素。</p>
-<pre data-label="mermaid"><code class="language-mermaid">flowchart LR
+<div class="mermaid">flowchart LR
     subgraph IN["输入 (H × W)"]
         direction LR
         I1["5 × 5 图像"]
     end
     subgraph K["核 (3 × 3)"]
-        K1["可学习&lt;br/&gt;权重"]
+        K1["可学习<br/>权重"]
     end
     subgraph OUT["输出 (H-2 × W-2)"]
         O1["3 × 3 特征图"]
     end
-    I1 --&gt; |"滑动核&lt;br/&gt;每个位置算点积"| O1
-    K1 --&gt; O1</code></pre>
+    I1 --> |"滑动核<br/>每个位置算点积"| O1
+    K1 --> O1</div>
 <p>具体的 3×3 示例，在 5×5 输入上（无填充，步幅 1）：</p>
 <pre><code>输入 X (5 × 5):                核 W (3 × 3):
 
@@ -216,13 +215,13 @@
 <p>最后一行是你规划模型时要算的。一个 64 通道 3×3 conv 在 3 通道输入上有 <code>64 × 3 × 3 × 3 + 64 = 1,792</code> 个参数。很便宜。</p>
 <h3 id="im2col-技巧">im2col 技巧</h3>
 <p>嵌套循环好读但慢。GPU 要大矩阵乘法。技巧：把输入的每个感受野窗口展平成大矩阵的一列，核展平成一行，整个卷积就变成一个 matmul。</p>
-<pre data-label="mermaid"><code class="language-mermaid">flowchart LR
-    X["输入&lt;br/&gt;(C_in, H, W)"] --&gt; IM2COL["im2col&lt;br/&gt;(提取 patch)"]
-    IM2COL --&gt; COLS["列矩阵&lt;br/&gt;(C_in×K×K, H_out×W_out)"]
-    W["权重&lt;br/&gt;(C_out, C_in, K, K)"] --&gt; FLAT["展平&lt;br/&gt;(C_out, C_in×K×K)"]
-    FLAT --&gt; MM["matmul"]
-    COLS --&gt; MM
-    MM --&gt; OUT["输出&lt;br/&gt;(C_out, H_out×W_out)&lt;br/&gt;reshape 成 (C_out, H_out, W_out)"]</code></pre>
+<div class="mermaid">flowchart LR
+    X["输入<br/>(C_in, H, W)"] --> IM2COL["im2col<br/>(提取 patch)"]
+    IM2COL --> COLS["列矩阵<br/>(C_in×K×K, H_out×W_out)"]
+    W["权重<br/>(C_out, C_in, K, K)"] --> FLAT["展平<br/>(C_out, C_in×K×K)"]
+    FLAT --> MM["matmul"]
+    COLS --> MM
+    MM --> OUT["输出<br/>(C_out, H_out×W_out)<br/>reshape 成 (C_out, H_out, W_out)"]</div>
 <p>每个生产级卷积实现都是 im2col 的某种变体加缓存分块技巧。理解 im2col 就理解了核心。</p>
 <h3 id="感受野receptive-field">感受野（Receptive Field）</h3>
 <p>一个 3×3 conv 看 9 个输入像素。堆两个 3×3 conv，第二层的神经元看到 5×5 输入像素。三个给 7×7。一般规律：</p>
@@ -548,8 +547,8 @@ print(f"output shape: {tuple(y.shape)}")</code></pre>
 
 <footer>
   <div class="set">
-    <span>AI Computer Vision</span>
-    <span>2026 · EN</span>
+    <span>AI 计算机视觉</span>
+    <span>2026 · ZH-CN</span>
   </div>
   <div class="set">
     <span>Mav</span>
@@ -593,8 +592,8 @@ print(f"output shape: {tuple(y.shape)}")</code></pre>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/json.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/python.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/css.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+<script>mermaid.initialize({startOnLoad:true, theme:'neutral', fontFamily:'Inter, sans-serif'});</script>
 <script src="../assets/script.js"></script>
-<script src="../assets/quiz.js"></script>
-<script src="../assets/mermaid-init.js"></script>
 </body>
 </html>

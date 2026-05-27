@@ -3,14 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>权重初始化与训练稳定性 — AI Deep Learning Core</title>
+<title>权重初始化与训练稳定性 — AI 深度学习核心</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="../assets/style.css">
 <link rel="stylesheet" id="hljs-light" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
 <link rel="stylesheet" id="hljs-dark" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" media="not all">
-<link rel="stylesheet" href="../assets/quiz.css">
 </head>
 <body>
 
@@ -18,7 +17,7 @@
 
 <nav class="topnav" id="topnav">
   <div class="topnav-inner">
-    <a class="brand" href="../index.html">AI Deep Learning Core</a>
+    <a class="brand" href="../index.html">AI 深度学习核心</a>
     <div class="nav-links">
       <a href="01-the-perceptron.html">01</a>
       <a href="02-multi-layer-networks.html">02</a>
@@ -125,13 +124,13 @@ w ~ Normal(0, √(2 / fan_in))</code></pre>
 <p>残差连接把每个子层的输出加到输入上：<code>x = x + sublayer(x)</code>。每次加法增加方差。N 个残差层后方差按 N 增长。GPT-2 把残差层权重缩放 1/√(2N)。</p>
 <p>LLaMA 3（4050 亿参数，126 层）用类似方案。不缩放的话残差流会在 126 层 attention 和 FFN 中无界增长。</p>
 <h3 id="选哪个初始化">选哪个初始化</h3>
-<pre data-label="mermaid"><code class="language-mermaid">flowchart TD
-    Start["什么激活函数？"] --&gt; Act{"激活类型？"}
+<div class="mermaid">flowchart TD
+    Start["什么激活函数？"] --> Act{"激活类型？"}
 
-    Act --&gt;|"Sigmoid / Tanh"| Xavier["Xavier/Glorot&lt;br/&gt;Var = 2/(fan_in + fan_out)"]
-    Act --&gt;|"ReLU / Leaky ReLU"| Kaiming["Kaiming/He&lt;br/&gt;Var = 2/fan_in"]
-    Act --&gt;|"GELU / Swish"| Kaiming2["Kaiming/He&lt;br/&gt;（跟 ReLU 一样）"]
-    Act --&gt;|"Transformer 残差层"| GPT["缩放 1/√(2N)&lt;br/&gt;N = 层数"]</code></pre>
+    Act -->|"Sigmoid / Tanh"| Xavier["Xavier/Glorot<br/>Var = 2/(fan_in + fan_out)"]
+    Act -->|"ReLU / Leaky ReLU"| Kaiming["Kaiming/He<br/>Var = 2/fan_in"]
+    Act -->|"GELU / Swish"| Kaiming2["Kaiming/He<br/>（跟 ReLU 一样）"]
+    Act -->|"Transformer 残差层"| GPT["缩放 1/√(2N)<br/>N = 层数"]</div>
 <h2 id="从零实现">从零实现</h2>
 <h3 id="第一步四种初始化策略">第一步：四种初始化策略</h3>
 <pre data-label="python"><code class="language-python">import math
@@ -407,8 +406,8 @@ nn.init.zeros_(layer.bias)</code></pre>
 
 <footer>
   <div class="set">
-    <span>AI Deep Learning Core</span>
-    <span>2026 · EN</span>
+    <span>AI 深度学习核心</span>
+    <span>2026 · ZH-CN</span>
   </div>
   <div class="set">
     <span>Mav</span>
@@ -452,8 +451,8 @@ nn.init.zeros_(layer.bias)</code></pre>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/json.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/python.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/css.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+<script>mermaid.initialize({startOnLoad:true, theme:'neutral', fontFamily:'Inter, sans-serif'});</script>
 <script src="../assets/script.js"></script>
-<script src="../assets/quiz.js"></script>
-<script src="../assets/mermaid-init.js"></script>
 </body>
 </html>

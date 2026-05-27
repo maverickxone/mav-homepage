@@ -3,14 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>PyTorch 入门 — AI Deep Learning Core</title>
+<title>PyTorch 入门 — AI 深度学习核心</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="../assets/style.css">
 <link rel="stylesheet" id="hljs-light" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
 <link rel="stylesheet" id="hljs-dark" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" media="not all">
-<link rel="stylesheet" href="../assets/quiz.css">
 </head>
 <body>
 
@@ -18,7 +17,7 @@
 
 <nav class="topnav" id="topnav">
   <div class="topnav-inner">
-    <a class="brand" href="../index.html">AI Deep Learning Core</a>
+    <a class="brand" href="../index.html">AI 深度学习核心</a>
     <div class="nav-links">
       <a href="01-the-perceptron.html">01</a>
       <a href="02-multi-layer-networks.html">02</a>
@@ -157,16 +156,16 @@ x.unsqueeze(0)     # 加一维: (1, 2, 3, 4)
 x.squeeze()        # 去掉大小为 1 的维度</code></pre>
 <h3 id="自动微分autograd">自动微分（Autograd）</h3>
 <p>你的 mini framework 要求你给每个模块实现 backward()。PyTorch 不需要。它把张量上的每一步运算记录进一个有向无环图（计算图），然后反向遍历这个图来自动计算梯度。</p>
-<pre data-label="mermaid"><code class="language-mermaid">graph LR
-    x["x（叶子节点）"] --&gt; mul["×"]
-    w["w（叶子，requires_grad）"] --&gt; mul
-    mul --&gt; add["+"]
-    b["b（叶子，requires_grad）"] --&gt; add
-    add --&gt; loss["loss"]
-    loss --&gt; |".backward()"| add
-    add --&gt; |"梯度"| b
-    add --&gt; |"梯度"| mul
-    mul --&gt; |"梯度"| w</code></pre>
+<div class="mermaid">graph LR
+    x["x（叶子节点）"] --> mul["×"]
+    w["w（叶子，requires_grad）"] --> mul
+    mul --> add["+"]
+    b["b（叶子，requires_grad）"] --> add
+    add --> loss["loss"]
+    loss --> |".backward()"| add
+    add --> |"梯度"| b
+    add --> |"梯度"| mul
+    mul --> |"梯度"| w</div>
 <p>跟你的框架的核心区别：PyTorch 用基于 tape 的自动微分。前向传播时每个操作都追加到一条&quot;磁带&quot;上。调用 <code>.backward()</code> 就是倒放这条磁带。</p>
 <pre data-label="python"><code class="language-python">x = torch.randn(3, requires_grad=True)
 y = x ** 2 + 3 * x
@@ -307,20 +306,20 @@ class MLP(nn.Module):
 </tbody></table></div>
 <h3 id="训练循环">训练循环</h3>
 <p>每个 PyTorch 训练循环都遵循同一个 5 步模式。你在第 10 课就见过了。</p>
-<pre data-label="mermaid"><code class="language-mermaid">sequenceDiagram
+<div class="mermaid">sequenceDiagram
     participant D as DataLoader
     participant M as Model
     participant L as Loss fn
     participant O as Optimizer
 
     loop 每个 Epoch
-        D-&gt;&gt;M: batch = next(dataloader)
-        M-&gt;&gt;L: predictions = model(batch)
-        L-&gt;&gt;L: loss = criterion(predictions, targets)
-        L-&gt;&gt;M: loss.backward()
-        O-&gt;&gt;M: optimizer.step()
-        O-&gt;&gt;O: optimizer.zero_grad()
-    end</code></pre>
+        D->>M: batch = next(dataloader)
+        M->>L: predictions = model(batch)
+        L->>L: loss = criterion(predictions, targets)
+        L->>M: loss.backward()
+        O->>M: optimizer.step()
+        O->>O: optimizer.zero_grad()
+    end</div>
 <p>标准写法：</p>
 <pre data-label="python"><code class="language-python">for epoch in range(num_epochs):
     model.train()
@@ -826,8 +825,8 @@ for epoch in range(10):
 
 <footer>
   <div class="set">
-    <span>AI Deep Learning Core</span>
-    <span>2026 · EN</span>
+    <span>AI 深度学习核心</span>
+    <span>2026 · ZH-CN</span>
   </div>
   <div class="set">
     <span>Mav</span>
@@ -871,8 +870,8 @@ for epoch in range(10):
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/json.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/python.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/css.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+<script>mermaid.initialize({startOnLoad:true, theme:'neutral', fontFamily:'Inter, sans-serif'});</script>
 <script src="../assets/script.js"></script>
-<script src="../assets/quiz.js"></script>
-<script src="../assets/mermaid-init.js"></script>
 </body>
 </html>

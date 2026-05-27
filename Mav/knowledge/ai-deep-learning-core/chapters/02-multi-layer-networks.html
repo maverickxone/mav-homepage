@@ -3,14 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>多层网络与前向传播 — AI Deep Learning Core</title>
+<title>多层网络与前向传播 — AI 深度学习核心</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="../assets/style.css">
 <link rel="stylesheet" id="hljs-light" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
 <link rel="stylesheet" id="hljs-dark" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" media="not all">
-<link rel="stylesheet" href="../assets/quiz.css">
 </head>
 <body>
 
@@ -18,7 +17,7 @@
 
 <nav class="topnav" id="topnav">
   <div class="topnav-inner">
-    <a class="brand" href="../index.html">AI Deep Learning Core</a>
+    <a class="brand" href="../index.html">AI 深度学习核心</a>
     <div class="nav-links">
       <a href="01-the-perceptron.html">01</a>
       <a href="02-multi-layer-networks.html" class="active">02</a>
@@ -96,7 +95,7 @@
 <p>这个堆叠就是多层网络。今天生产中的每个深度学习模型都建立在它之上。前向传播——数据从输入流经隐藏层到输出——是你需要搭建的第一个东西。</p>
 <h2 id="核心概念">核心概念</h2>
 <h3 id="三种层输入隐藏输出">三种层：输入、隐藏、输出</h3>
-<pre data-label="mermaid"><code class="language-mermaid">graph LR
+<div class="mermaid">graph LR
     subgraph Input["输入层"]
         x1["x1"]
         x2["x2"]
@@ -109,30 +108,30 @@
     subgraph Output["输出层"]
         y["y"]
     end
-    x1 --&gt; h1
-    x1 --&gt; h2
-    x1 --&gt; h3
-    x2 --&gt; h1
-    x2 --&gt; h2
-    x2 --&gt; h3
-    h1 --&gt; y
-    h2 --&gt; y
-    h3 --&gt; y</code></pre>
+    x1 --> h1
+    x1 --> h2
+    x1 --> h3
+    x2 --> h1
+    x2 --> h2
+    x2 --> h3
+    h1 --> y
+    h2 --> y
+    h3 --> y</div>
 <p>这是一个 2-3-1 网络：2 个输入，3 个隐藏神经元，1 个输出。每条连接带一个权重，每个神经元（除输入）带一个 bias。</p>
 <p><strong>输入层</strong>——不是真正的&quot;层&quot;。存原始数据。没有计算。</p>
 <p><strong>隐藏层</strong>——工作在这里发生。每个神经元取前一层的所有输出，应用权重和 bias，通过激活函数。&quot;隐藏&quot;是因为训练数据里看不到这些值。</p>
 <p><strong>输出层</strong>——最终答案。二分类用一个 sigmoid 神经元，多分类用每类一个神经元。</p>
 <h3 id="前向传播数据怎么流">前向传播：数据怎么流</h3>
 <p>前向传播把输入数据逐层推过网络直到输出。不学习。纯计算：乘，加，激活，重复。</p>
-<pre data-label="mermaid"><code class="language-mermaid">graph TD
-    X["输入: [x1, x2]"] --&gt; WH["乘以权重矩阵 W1 (3×2)"]
-    WH --&gt; BH["加偏置向量 b1 (3,)"]
-    BH --&gt; AH["每个元素过 sigmoid"]
-    AH --&gt; H["隐藏层输出: [h1, h2, h3]"]
-    H --&gt; WO["乘以权重矩阵 W2 (1×3)"]
-    WO --&gt; BO["加偏置 b2 (1,)"]
-    BO --&gt; AO["过 sigmoid"]
-    AO --&gt; Y["输出: y"]</code></pre>
+<div class="mermaid">graph TD
+    X["输入: [x1, x2]"] --> WH["乘以权重矩阵 W1 (3×2)"]
+    WH --> BH["加偏置向量 b1 (3,)"]
+    BH --> AH["每个元素过 sigmoid"]
+    AH --> H["隐藏层输出: [h1, h2, h3]"]
+    H --> WO["乘以权重矩阵 W2 (1×3)"]
+    WO --> BO["加偏置 b2 (1,)"]
+    BO --> AO["过 sigmoid"]
+    AO --> Y["输出: y"]</div>
 <p>每层三步：</p>
 <pre><code>z = W × input + b       （线性变换）
 a = sigmoid(z)           （激活）</code></pre>
@@ -181,7 +180,7 @@ a = sigmoid(z)           （激活）</code></pre>
 <p>1989 年 Cybenko 证明：一个隐藏层 + 足够多神经元的网络可以逼近任何连续函数到任意精度。</p>
 <p>这不意味着一层总是最好的。它意味着这个架构理论上有能力。实际中更深的网络（更多层、每层更少神经元）用更少的总参数就能学到一样的函数——这就是为什么深度学习有效。</p>
 <p>直觉：隐藏层的每个神经元学一个&quot;小凸起&quot;。凸起放对位置就能逼近任何光滑曲线。神经元越多，凸起越多，逼近越好。</p>
-<pre data-label="mermaid"><code class="language-mermaid">graph LR
+<div class="mermaid">graph LR
     subgraph FewNeurons["4 个隐藏神经元"]
         A["粗略逼近"]
     end
@@ -191,7 +190,7 @@ a = sigmoid(z)           （激活）</code></pre>
     subgraph ManyNeurons["64 个隐藏神经元"]
         C["几乎完美"]
     end
-    FewNeurons --&gt; MoreNeurons --&gt; ManyNeurons</code></pre>
+    FewNeurons --> MoreNeurons --> ManyNeurons</div>
 <h2 id="从零实现">从零实现</h2>
 <p>纯 Python，不用 NumPy。每个矩阵操作从零写。</p>
 <h3 id="第一步sigmoid-激活">第一步：Sigmoid 激活</h3>
@@ -486,8 +485,8 @@ print(output)</code></pre>
 
 <footer>
   <div class="set">
-    <span>AI Deep Learning Core</span>
-    <span>2026 · EN</span>
+    <span>AI 深度学习核心</span>
+    <span>2026 · ZH-CN</span>
   </div>
   <div class="set">
     <span>Mav</span>
@@ -531,8 +530,8 @@ print(output)</code></pre>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/json.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/python.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/css.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+<script>mermaid.initialize({startOnLoad:true, theme:'neutral', fontFamily:'Inter, sans-serif'});</script>
 <script src="../assets/script.js"></script>
-<script src="../assets/quiz.js"></script>
-<script src="../assets/mermaid-init.js"></script>
 </body>
 </html>

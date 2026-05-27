@@ -3,14 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>图像基础 — 像素、通道与色彩空间 — AI Computer Vision</title>
+<title>图像基础 — 像素、通道与色彩空间 — AI 计算机视觉</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="../assets/style.css">
 <link rel="stylesheet" id="hljs-light" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
 <link rel="stylesheet" id="hljs-dark" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" media="not all">
-<link rel="stylesheet" href="../assets/quiz.css">
 </head>
 <body>
 
@@ -18,7 +17,7 @@
 
 <nav class="topnav" id="topnav">
   <div class="topnav-inner">
-    <a class="brand" href="../index.html">AI Computer Vision</a>
+    <a class="brand" href="../index.html">AI 计算机视觉</a>
     <div class="nav-links">
       <a href="01-image-fundamentals.html" class="active">01</a>
       <a href="02-convolutions-from-scratch.html">02</a>
@@ -89,16 +88,16 @@
 <h2 id="核心概念">核心概念</h2>
 <h3 id="完整预处理管道一览">完整预处理管道一览</h3>
 <p>每个生产级视觉系统都是同一串可逆变换。搞错一步，模型看到的就不是它训练时看到的东西了。</p>
-<pre data-label="mermaid"><code class="language-mermaid">flowchart LR
-    A["图像文件&lt;br/&gt;(JPEG/PNG)"] --&gt; B["解码&lt;br/&gt;uint8 HWC"]
-    B --&gt; C["转换色彩空间&lt;br/&gt;(RGB/BGR/YCbCr)"]
-    C --&gt; D["缩放&lt;br/&gt;短边对齐"]
-    D --&gt; E["中心裁剪&lt;br/&gt;模型尺寸"]
-    E --&gt; F["除以 255&lt;br/&gt;float32 [0,1]"]
-    F --&gt; G["减均值&lt;br/&gt;除标准差"]
-    G --&gt; H["转置&lt;br/&gt;HWC → CHW"]
-    H --&gt; I["批处理&lt;br/&gt;CHW → NCHW"]
-    I --&gt; J["模型"]</code></pre>
+<div class="mermaid">flowchart LR
+    A["图像文件<br/>(JPEG/PNG)"] --> B["解码<br/>uint8 HWC"]
+    B --> C["转换色彩空间<br/>(RGB/BGR/YCbCr)"]
+    C --> D["缩放<br/>短边对齐"]
+    D --> E["中心裁剪<br/>模型尺寸"]
+    E --> F["除以 255<br/>float32 [0,1]"]
+    F --> G["减均值<br/>除标准差"]
+    G --> H["转置<br/>HWC → CHW"]
+    H --> I["批处理<br/>CHW → NCHW"]
+    I --> J["模型"]</div>
 <p>80% 的静默故障都出在&quot;减均值除标准差&quot;和&quot;转置布局&quot;这两步：标准化缺了或布局弄反了。</p>
 <h3 id="像素是采样值不是方块">像素是采样值，不是方块</h3>
 <p>相机传感器计数落在一个微型探测器网格上的光子。每个探测器积分几分之一秒的光，发出一个与光子数成正比的电压。传感器把这个电压离散化为整数。一个探测器变成一个像素。</p>
@@ -147,7 +146,7 @@ H |R G B|R G B|R G B|                 C |R R R R R R|
 <pre data-label="python"><code class="language-python">img_chw = img_hwc.transpose(2, 0, 1)      # NumPy
 img_chw = img_hwc.permute(2, 0, 1)        # PyTorch tensor</code></pre>
 <p>内存布局示意：</p>
-<pre data-label="mermaid"><code class="language-mermaid">flowchart TB
+<div class="mermaid">flowchart TB
     subgraph HWC["HWC — 像素交错存储（PIL, OpenCV, JPEG）"]
         H1["第0行: R G B | R G B | R G B ..."]
         H2["第1行: R G B | R G B | R G B ..."]
@@ -158,8 +157,8 @@ img_chw = img_hwc.permute(2, 0, 1)        # PyTorch tensor</code></pre>
         C2["G 平面: 整个 H×W 的绿色值"]
         C3["B 平面: 整个 H×W 的蓝色值"]
     end
-    HWC --&gt;|"transpose(2, 0, 1)"| CHW
-    CHW --&gt;|"transpose(1, 2, 0)"| HWC</code></pre>
+    HWC -->|"transpose(2, 0, 1)"| CHW
+    CHW -->|"transpose(1, 2, 0)"| HWC</div>
 <h3 id="字节范围和-dtype">字节范围和 dtype</h3>
 <p>三种约定主导：</p>
 <div class="table-wrap"><table><thead><tr>
@@ -546,8 +545,8 @@ print(f"\nbatched shape: {tuple(batch.shape)}   # (N, C, H, W) — 可以喂模�
 
 <footer>
   <div class="set">
-    <span>AI Computer Vision</span>
-    <span>2026 · EN</span>
+    <span>AI 计算机视觉</span>
+    <span>2026 · ZH-CN</span>
   </div>
   <div class="set">
     <span>Mav</span>
@@ -591,8 +590,8 @@ print(f"\nbatched shape: {tuple(batch.shape)}   # (N, C, H, W) — 可以喂模�
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/json.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/python.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/css.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+<script>mermaid.initialize({startOnLoad:true, theme:'neutral', fontFamily:'Inter, sans-serif'});</script>
 <script src="../assets/script.js"></script>
-<script src="../assets/quiz.js"></script>
-<script src="../assets/mermaid-init.js"></script>
 </body>
 </html>

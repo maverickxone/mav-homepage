@@ -3,14 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>线性代数直觉 — AI Math Foundations</title>
+<title>线性代数直觉 — AI 数学基础</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="../assets/style.css">
 <link rel="stylesheet" id="hljs-light" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
 <link rel="stylesheet" id="hljs-dark" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" media="not all">
-<link rel="stylesheet" href="../assets/quiz.css">
 </head>
 <body>
 
@@ -18,7 +17,7 @@
 
 <nav class="topnav" id="topnav">
   <div class="topnav-inner">
-    <a class="brand" href="../index.html">AI Math Foundations</a>
+    <a class="brand" href="../index.html">AI 数学基础</a>
     <div class="nav-links">
       <a href="01-linear-algebra-intuition.html" class="active">01</a>
       <a href="02-vectors-matrices-operations.html">02</a>
@@ -113,7 +112,7 @@
 </ul>
 <h3 id="矩阵-变换">矩阵 = 变换</h3>
 <p>矩阵把一个向量变成另一个向量。它可以旋转、缩放、拉伸、投影。</p>
-<pre data-label="mermaid"><code class="language-mermaid">graph LR
+<div class="mermaid">graph LR
     subgraph Before
         A["点 A"]
         B["点 B"]
@@ -125,10 +124,10 @@
         A2["点 A'"]
         B2["点 B'"]
     end
-    A --&gt; M
-    B --&gt; M
-    M --&gt; A2
-    M --&gt; B2</code></pre>
+    A --> M
+    B --> M
+    M --> A2
+    M --> B2</div>
 <p>在 AI 里，矩阵<strong>就是</strong>模型：</p>
 <ul>
 <li>神经网络的权重 → 把输入变换成输出的矩阵</li>
@@ -198,14 +197,14 @@ v3 = [2, 1, 0]   # v3 = 2*v1 + v2</code></pre>
 <li>PCA：把数据投影到方差最大的方向上</li>
 <li>Transformer 的 Attention：计算 query 在 key 上的投影</li>
 </ul>
-<pre data-label="mermaid"><code class="language-mermaid">graph LR
+<div class="mermaid">graph LR
     subgraph Projection["向量 a 在 b 上的投影"]
         direction TB
-        O["原点"] --&gt; |"b（方向）"| B["b"]
-        O --&gt; |"a（原始）"| A["a"]
-        O --&gt; |"proj_b(a)"| P["投影"]
-        A -.-&gt; |"残差（垂直）"| P
-    end</code></pre>
+        O["原点"] --> |"b（方向）"| B["b"]
+        O --> |"a（原始）"| A["a"]
+        O --> |"proj_b(a)"| P["投影"]
+        A -.-> |"残差（垂直）"| P
+    end</div>
 <p><strong>例子：</strong> a = [3, 4]，b = [1, 0]</p>
 <p>proj_b(a) = (3×1 + 4×0) / (1×1 + 0×0) × [1, 0] = 3 × [1, 0] = [3, 0]</p>
 <p>投影把 y 分量丢掉了。这就是最简单的降维——扔掉你不关心的方向。</p>
@@ -670,8 +669,8 @@ print(f"d(点积)/dx = {x.grad}")  # 点积对 x 的梯度就是 y</code></pre>
 
 <footer>
   <div class="set">
-    <span>AI Math Foundations</span>
-    <span>2026 · EN</span>
+    <span>AI 数学基础</span>
+    <span>2026 · ZH-CN</span>
   </div>
   <div class="set">
     <span>Mav</span>
@@ -715,8 +714,8 @@ print(f"d(点积)/dx = {x.grad}")  # 点积对 x 的梯度就是 y</code></pre>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/json.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/python.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/css.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+<script>mermaid.initialize({startOnLoad:true, theme:'neutral', fontFamily:'Inter, sans-serif'});</script>
 <script src="../assets/script.js"></script>
-<script src="../assets/quiz.js"></script>
-<script src="../assets/mermaid-init.js"></script>
 </body>
 </html>

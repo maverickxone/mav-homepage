@@ -3,14 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>迁移学习与微调 — AI Computer Vision</title>
+<title>迁移学习与微调 — AI 计算机视觉</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="../assets/style.css">
 <link rel="stylesheet" id="hljs-light" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
 <link rel="stylesheet" id="hljs-dark" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" media="not all">
-<link rel="stylesheet" href="../assets/quiz.css">
 </head>
 <body>
 
@@ -18,7 +17,7 @@
 
 <nav class="topnav" id="topnav">
   <div class="topnav-inner">
-    <a class="brand" href="../index.html">AI Computer Vision</a>
+    <a class="brand" href="../index.html">AI 计算机视觉</a>
     <div class="nav-links">
       <a href="01-image-fundamentals.html">01</a>
       <a href="02-convolutions-from-scratch.html">02</a>
@@ -91,18 +90,18 @@
 <h2 id="核心概念">核心概念</h2>
 <h3 id="特征提取-vs-微调">特征提取 vs 微调</h3>
 <p>两种方案，取决于你对预训练特征的信任程度和你手头有多少数据。</p>
-<pre data-label="mermaid"><code class="language-mermaid">flowchart TB
+<div class="mermaid">flowchart TB
     subgraph FE["特征提取 — 骨干冻结"]
-        FE1["预训练骨干&lt;br/&gt;(无梯度)"] --&gt; FE2["新分类头&lt;br/&gt;(训练中)"]
+        FE1["预训练骨干<br/>(无梯度)"] --> FE2["新分类头<br/>(训练中)"]
     end
     subgraph FT["微调 — 端到端"]
-        FT1["预训练骨干&lt;br/&gt;(极小 LR)"] --&gt; FT2["新分类头&lt;br/&gt;(正常 LR)"]
+        FT1["预训练骨干<br/>(极小 LR)"] --> FT2["新分类头<br/>(正常 LR)"]
     end
 
     style FE1 fill:#e5e7eb,stroke:#6b7280
     style FE2 fill:#dcfce7,stroke:#16a34a
     style FT1 fill:#fef3c7,stroke:#d97706
-    style FT2 fill:#dcfce7,stroke:#16a34a</code></pre>
+    style FT2 fill:#dcfce7,stroke:#16a34a</div>
 <p>经验法则：</p>
 <div class="table-wrap"><table><thead><tr>
 <th>数据集大小</th>
@@ -512,8 +511,8 @@ optimizer = torch.optim.AdamW(model.parameters(), lr=1e-4, weight_decay=1e-4)</c
 
 <footer>
   <div class="set">
-    <span>AI Computer Vision</span>
-    <span>2026 · EN</span>
+    <span>AI 计算机视觉</span>
+    <span>2026 · ZH-CN</span>
   </div>
   <div class="set">
     <span>Mav</span>
@@ -557,8 +556,8 @@ optimizer = torch.optim.AdamW(model.parameters(), lr=1e-4, weight_decay=1e-4)</c
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/json.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/python.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/css.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+<script>mermaid.initialize({startOnLoad:true, theme:'neutral', fontFamily:'Inter, sans-serif'});</script>
 <script src="../assets/script.js"></script>
-<script src="../assets/quiz.js"></script>
-<script src="../assets/mermaid-init.js"></script>
 </body>
 </html>

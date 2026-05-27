@@ -3,14 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>链式法则与自动微分 — AI Math Foundations</title>
+<title>链式法则与自动微分 — AI 数学基础</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="../assets/style.css">
 <link rel="stylesheet" id="hljs-light" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
 <link rel="stylesheet" id="hljs-dark" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" media="not all">
-<link rel="stylesheet" href="../assets/quiz.css">
 </head>
 <body>
 
@@ -18,7 +17,7 @@
 
 <nav class="topnav" id="topnav">
   <div class="topnav-inner">
-    <a class="brand" href="../index.html">AI Math Foundations</a>
+    <a class="brand" href="../index.html">AI 数学基础</a>
     <div class="nav-links">
       <a href="01-linear-algebra-intuition.html">01</a>
       <a href="02-vectors-matrices-operations.html">02</a>
@@ -108,20 +107,20 @@ dy/dx = f'(g(h(x))) × g'(h(x)) × h'(x)</code></pre>
 <h3 id="计算图">计算图</h3>
 <p>计算图让链式法则可视化。每个操作变成一个节点。数据前向流动，梯度反向流动。</p>
 <p><strong>前向传播（计算值）：</strong></p>
-<pre data-label="mermaid"><code class="language-mermaid">graph TD
-    x1["x1 = 2"] --&gt; mul["×（乘法）"]
-    x2["x2 = 3"] --&gt; mul
-    mul --&gt;|"a = 6"| add["+（加法）"]
-    b["b = 1"] --&gt; add
-    add --&gt;|"c = 7"| relu["relu"]
-    relu --&gt;|"y = 7"| y["输出 y"]</code></pre>
+<div class="mermaid">graph TD
+    x1["x1 = 2"] --> mul["×（乘法）"]
+    x2["x2 = 3"] --> mul
+    mul -->|"a = 6"| add["+（加法）"]
+    b["b = 1"] --> add
+    add -->|"c = 7"| relu["relu"]
+    relu -->|"y = 7"| y["输出 y"]</div>
 <p><strong>反向传播（计算梯度）：</strong></p>
-<pre data-label="mermaid"><code class="language-mermaid">graph TD
-    dy["dy/dy = 1"] --&gt;|"relu'(c)=1（因为 c&gt;0）"| dc["dy/dc = 1"]
-    dc --&gt;|"dc/da = 1"| da["dy/da = 1"]
-    dc --&gt;|"dc/db = 1"| db["dy/db = 1"]
-    da --&gt;|"da/dx1 = x2 = 3"| dx1["dy/dx1 = 3"]
-    da --&gt;|"da/dx2 = x1 = 2"| dx2["dy/dx2 = 2"]</code></pre>
+<div class="mermaid">graph TD
+    dy["dy/dy = 1"] -->|"relu'(c)=1（因为 c>0）"| dc["dy/dc = 1"]
+    dc -->|"dc/da = 1"| da["dy/da = 1"]
+    dc -->|"dc/db = 1"| db["dy/db = 1"]
+    da -->|"da/dx1 = x2 = 3"| dx1["dy/dx1 = 3"]
+    da -->|"da/dx2 = x1 = 2"| dx2["dy/dx2 = 2"]</div>
 <p>反向传播在每个节点应用链式法则，把梯度从输出传播到输入。</p>
 <h3 id="前向模式-vs-反向模式">前向模式 vs 反向模式</h3>
 <p>有两种方式在图中应用链式法则。</p>
@@ -555,8 +554,8 @@ print(f"PyTorch dy/dx2 = {x2.grad.item()}")  # 2.0</code></pre>
 
 <footer>
   <div class="set">
-    <span>AI Math Foundations</span>
-    <span>2026 · EN</span>
+    <span>AI 数学基础</span>
+    <span>2026 · ZH-CN</span>
   </div>
   <div class="set">
     <span>Mav</span>
@@ -600,8 +599,8 @@ print(f"PyTorch dy/dx2 = {x2.grad.item()}")  # 2.0</code></pre>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/json.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/python.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/css.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+<script>mermaid.initialize({startOnLoad:true, theme:'neutral', fontFamily:'Inter, sans-serif'});</script>
 <script src="../assets/script.js"></script>
-<script src="../assets/quiz.js"></script>
-<script src="../assets/mermaid-init.js"></script>
 </body>
 </html>

@@ -3,14 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>优化器 — AI Deep Learning Core</title>
+<title>优化器 — AI 深度学习核心</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="../assets/style.css">
 <link rel="stylesheet" id="hljs-light" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
 <link rel="stylesheet" id="hljs-dark" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" media="not all">
-<link rel="stylesheet" href="../assets/quiz.css">
 </head>
 <body>
 
@@ -18,7 +17,7 @@
 
 <nav class="topnav" id="topnav">
   <div class="topnav-inner">
-    <a class="brand" href="../index.html">AI Deep Learning Core</a>
+    <a class="brand" href="../index.html">AI 深度学习核心</a>
     <div class="nav-links">
       <a href="01-the-perceptron.html">01</a>
       <a href="02-multi-layer-networks.html">02</a>
@@ -127,14 +126,14 @@ v_hat = v_t / (1 - β2^t)</code></pre>
 <p>权重衰减项不被 Adam 的自适应因子缩放。每个参数得到相同比例的收缩。</p>
 <p>这看起来是小细节。不是。AdamW 在几乎所有任务上都比 Adam + L2 收敛到更好的解。BERT、GPT、LLaMA、Stable Diffusion——全用 AdamW 训练。</p>
 <h3 id="什么时候用哪个">什么时候用哪个</h3>
-<pre data-label="mermaid"><code class="language-mermaid">flowchart TD
-    Task["你在训练什么？"] --&gt; Type{"模型类型？"}
+<div class="mermaid">flowchart TD
+    Task["你在训练什么？"] --> Type{"模型类型？"}
 
-    Type --&gt;|"Transformer / LLM"| AdamW["AdamW&lt;br/&gt;lr=1e-4, wd=0.01-0.1"]
-    Type --&gt;|"CNN / ResNet"| SGD_M["SGD + Momentum&lt;br/&gt;lr=0.1, momentum=0.9"]
-    Type --&gt;|"GAN"| Adam2["Adam&lt;br/&gt;lr=2e-4, β1=0.5"]
-    Type --&gt;|"微调预训练模型"| AdamW2["AdamW&lt;br/&gt;lr=2e-5, wd=0.01"]
-    Type --&gt;|"不确定"| Default["先用 AdamW&lt;br/&gt;lr=3e-4, wd=0.01"]</code></pre>
+    Type -->|"Transformer / LLM"| AdamW["AdamW<br/>lr=1e-4, wd=0.01-0.1"]
+    Type -->|"CNN / ResNet"| SGD_M["SGD + Momentum<br/>lr=0.1, momentum=0.9"]
+    Type -->|"GAN"| Adam2["Adam<br/>lr=2e-4, β1=0.5"]
+    Type -->|"微调预训练模型"| AdamW2["AdamW<br/>lr=2e-5, wd=0.01"]
+    Type -->|"不确定"| Default["先用 AdamW<br/>lr=3e-4, wd=0.01"]</div>
 <h2 id="从零实现">从零实现</h2>
 <h3 id="第一步vanilla-sgd">第一步：Vanilla SGD</h3>
 <pre data-label="python"><code class="language-python">class SGD:
@@ -434,8 +433,8 @@ for epoch in range(100):
 
 <footer>
   <div class="set">
-    <span>AI Deep Learning Core</span>
-    <span>2026 · EN</span>
+    <span>AI 深度学习核心</span>
+    <span>2026 · ZH-CN</span>
   </div>
   <div class="set">
     <span>Mav</span>
@@ -479,8 +478,8 @@ for epoch in range(100):
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/json.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/python.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/css.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+<script>mermaid.initialize({startOnLoad:true, theme:'neutral', fontFamily:'Inter, sans-serif'});</script>
 <script src="../assets/script.js"></script>
-<script src="../assets/quiz.js"></script>
-<script src="../assets/mermaid-init.js"></script>
 </body>
 </html>

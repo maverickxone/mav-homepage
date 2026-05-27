@@ -3,14 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>搭建自己的 Mini 框架 — AI Deep Learning Core</title>
+<title>搭建自己的 Mini 框架 — AI 深度学习核心</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="../assets/style.css">
 <link rel="stylesheet" id="hljs-light" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
 <link rel="stylesheet" id="hljs-dark" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" media="not all">
-<link rel="stylesheet" href="../assets/quiz.css">
 </head>
 <body>
 
@@ -18,7 +17,7 @@
 
 <nav class="topnav" id="topnav">
   <div class="topnav-inner">
-    <a class="brand" href="../index.html">AI Deep Learning Core</a>
+    <a class="brand" href="../index.html">AI 深度学习核心</a>
     <div class="nav-links">
       <a href="01-the-perceptron.html">01</a>
       <a href="02-multi-layer-networks.html">02</a>
@@ -112,32 +111,32 @@
 </ul>
 <p><code>train()</code> 和 <code>eval()</code> 切换这个行为。每个 Module 有 <code>training</code> 标志。</p>
 <h3 id="训练循环">训练循环</h3>
-<pre data-label="mermaid"><code class="language-mermaid">sequenceDiagram
+<div class="mermaid">sequenceDiagram
     participant DL as DataLoader
     participant M as Model
     participant L as Loss
     participant O as Optimizer
 
     loop 每个 Epoch
-        DL-&gt;&gt;M: 一批输入
-        M-&gt;&gt;M: 前向传播（逐层）
-        M-&gt;&gt;L: 预测值
-        L-&gt;&gt;L: 计算 loss
-        L-&gt;&gt;M: 反向传播（梯度）
-        M-&gt;&gt;O: 参数 + 梯度
-        O-&gt;&gt;M: 更新后的参数
-        O-&gt;&gt;O: 梯度清零
-    end</code></pre>
+        DL->>M: 一批输入
+        M->>M: 前向传播（逐层）
+        M->>L: 预测值
+        L->>L: 计算 loss
+        L->>M: 反向传播（梯度）
+        M->>O: 参数 + 梯度
+        O->>M: 更新后的参数
+        O->>O: 梯度清零
+    end</div>
 <h3 id="框架架构">框架架构</h3>
-<pre data-label="mermaid"><code class="language-mermaid">graph TD
+<div class="mermaid">graph TD
     subgraph "Modules"
-        Linear["Linear&lt;br/&gt;W×x + b"]
-        ReLU["ReLU&lt;br/&gt;max(0, x)"]
-        Sigmoid["Sigmoid&lt;br/&gt;1/(1+e⁻ˣ)"]
-        Dropout["Dropout&lt;br/&gt;随机置零"]
+        Linear["Linear<br/>W×x + b"]
+        ReLU["ReLU<br/>max(0, x)"]
+        Sigmoid["Sigmoid<br/>1/(1+e⁻ˣ)"]
+        Dropout["Dropout<br/>随机置零"]
     end
     subgraph "容器"
-        Sequential["Sequential&lt;br/&gt;链接 modules"]
+        Sequential["Sequential<br/>链接 modules"]
     end
     subgraph "Loss"
         MSE["MSELoss"]
@@ -147,9 +146,9 @@
         SGD["SGD"]
         Adam["Adam"]
     end
-    Sequential --&gt; |"包含"| Linear
-    Sequential --&gt; |"包含"| ReLU
-    SGD --&gt; |"更新"| Sequential</code></pre>
+    Sequential --> |"包含"| Linear
+    Sequential --> |"包含"| ReLU
+    SGD --> |"更新"| Sequential</div>
 <h2 id="从零实现">从零实现</h2>
 <h3 id="module-基类">Module 基类</h3>
 <pre data-label="python"><code class="language-python">class Module:
@@ -502,8 +501,8 @@ for x, t in test_data:
 
 <footer>
   <div class="set">
-    <span>AI Deep Learning Core</span>
-    <span>2026 · EN</span>
+    <span>AI 深度学习核心</span>
+    <span>2026 · ZH-CN</span>
   </div>
   <div class="set">
     <span>Mav</span>
@@ -547,8 +546,8 @@ for x, t in test_data:
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/json.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/python.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/css.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+<script>mermaid.initialize({startOnLoad:true, theme:'neutral', fontFamily:'Inter, sans-serif'});</script>
 <script src="../assets/script.js"></script>
-<script src="../assets/quiz.js"></script>
-<script src="../assets/mermaid-init.js"></script>
 </body>
 </html>

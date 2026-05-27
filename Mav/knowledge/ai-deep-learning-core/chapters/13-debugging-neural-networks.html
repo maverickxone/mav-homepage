@@ -3,14 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>调试神经网络 — AI Deep Learning Core</title>
+<title>调试神经网络 — AI 深度学习核心</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="../assets/style.css">
 <link rel="stylesheet" id="hljs-light" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
 <link rel="stylesheet" id="hljs-dark" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" media="not all">
-<link rel="stylesheet" href="../assets/quiz.css">
 </head>
 <body>
 
@@ -18,7 +17,7 @@
 
 <nav class="topnav" id="topnav">
   <div class="topnav-inner">
-    <a class="brand" href="../index.html">AI Deep Learning Core</a>
+    <a class="brand" href="../index.html">AI 深度学习核心</a>
     <div class="nav-links">
       <a href="01-the-perceptron.html">01</a>
       <a href="02-multi-layer-networks.html">02</a>
@@ -100,19 +99,19 @@
 <h3 id="调试心态">调试心态</h3>
 <p>忘掉 print 大法。神经网络调试需要系统化方法，因为反馈循环很慢（一次训练跑几分钟到几小时），而且症状模糊（loss 不好可能意味着 20 种不同的问题）。</p>
 <p>金规则：<strong>从简单开始，每次只加一个复杂度，独立验证每一块。</strong></p>
-<pre data-label="mermaid"><code class="language-mermaid">flowchart TD
-    A["Loss 不降"] --&gt; B{"检查学习率"}
-    B --&gt;|"太高"| C["Loss 振荡或爆炸"]
-    B --&gt;|"太低"| D["Loss 几乎不动"]
-    B --&gt;|"合理"| E{"检查梯度"}
-    E --&gt;|"全是零"| F["Dead ReLU 或梯度消失"]
-    E --&gt;|"NaN/Inf"| G["梯度爆炸"]
-    E --&gt;|"正常"| H{"检查数据管道"}
-    H --&gt;|"标签打乱了"| I["准确率等于随机猜"]
-    H --&gt;|"预处理 bug"| J["模型在学噪声"]
-    H --&gt;|"数据没问题"| K{"检查架构"}
-    K --&gt;|"太小"| L["欠拟合"]
-    K --&gt;|"太深"| M["优化困难"]</code></pre>
+<div class="mermaid">flowchart TD
+    A["Loss 不降"] --> B{"检查学习率"}
+    B -->|"太高"| C["Loss 振荡或爆炸"]
+    B -->|"太低"| D["Loss 几乎不动"]
+    B -->|"合理"| E{"检查梯度"}
+    E -->|"全是零"| F["Dead ReLU 或梯度消失"]
+    E -->|"NaN/Inf"| G["梯度爆炸"]
+    E -->|"正常"| H{"检查数据管道"}
+    H -->|"标签打乱了"| I["准确率等于随机猜"]
+    H -->|"预处理 bug"| J["模型在学噪声"]
+    H -->|"数据没问题"| K{"检查架构"}
+    K -->|"太小"| L["欠拟合"]
+    K -->|"太深"| M["优化困难"]</div>
 <h3 id="症状一loss-不降">症状一：Loss 不降</h3>
 <p>最常见的抱怨。训练循环在跑，epoch 在走，loss 一直平的或者疯狂振荡。</p>
 <p><strong>学习率错了。</strong> 太高：loss 振荡或直接 NaN。太低：loss 降得极慢看着像不动。Adam 从 1e-3 开始试，SGD 从 1e-1 或 1e-2 开始。在得出&quot;别的地方有问题&quot;的结论之前，永远先试 3 个差 10 倍的学习率（比如 1e-2、1e-3、1e-4）。</p>
@@ -137,16 +136,16 @@
 <p>一致性度量（相对差异）：</p>
 <pre><code>rel_diff = |grad_analytical - grad_numerical| / max(|grad_analytical|, |grad_numerical|, 1e-8)</code></pre>
 <p><code>rel_diff &lt; 1e-5</code>：正确。<code>rel_diff &gt; 1e-3</code>：几乎肯定有 bug。</p>
-<pre data-label="mermaid"><code class="language-mermaid">flowchart LR
-    A["参数 w"] --&gt; B["w + eps"]
-    A --&gt; C["w - eps"]
-    B --&gt; D["前向传播"]
-    C --&gt; E["前向传播"]
-    D --&gt; F["loss+"]
-    E --&gt; G["loss-"]
-    F --&gt; H["(loss+ - loss-) / 2eps"]
-    G --&gt; H
-    H --&gt; I["与反向传播梯度对比"]</code></pre>
+<div class="mermaid">flowchart LR
+    A["参数 w"] --> B["w + eps"]
+    A --> C["w - eps"]
+    B --> D["前向传播"]
+    C --> E["前向传播"]
+    D --> F["loss+"]
+    E --> G["loss-"]
+    F --> H["(loss+ - loss-) / 2eps"]
+    G --> H
+    H --> I["与反向传播梯度对比"]</div>
 <h3 id="技巧二激活值统计">技巧二：激活值统计</h3>
 <p>训练过程中监控每层激活值的均值和标准差。健康的网络保持激活值均值接近 0、标准差接近 1（归一化后），或至少有界。</p>
 <div class="table-wrap"><table><thead><tr>
@@ -182,14 +181,14 @@
 </tbody></table></div>
 <h3 id="技巧三梯度流可视化">技巧三：梯度流可视化</h3>
 <p>画出每层的平均梯度大小。健康的网络中，各层梯度大小应该大致相近。如果前面的层梯度比后面的小 1000 倍，你有梯度消失问题。</p>
-<pre data-label="mermaid"><code class="language-mermaid">graph LR
+<div class="mermaid">graph LR
     subgraph "健康的梯度流"
-        L1["第1层&lt;br/&gt;grad: 0.05"] --- L2["第2层&lt;br/&gt;grad: 0.04"] --- L3["第3层&lt;br/&gt;grad: 0.06"] --- L4["第4层&lt;br/&gt;grad: 0.05"]
-    end</code></pre>
-<pre data-label="mermaid"><code class="language-mermaid">graph LR
+        L1["第1层<br/>grad: 0.05"] --- L2["第2层<br/>grad: 0.04"] --- L3["第3层<br/>grad: 0.06"] --- L4["第4层<br/>grad: 0.05"]
+    end</div>
+<div class="mermaid">graph LR
     subgraph "梯度消失"
-        V1["第1层&lt;br/&gt;grad: 0.0001"] --- V2["第2层&lt;br/&gt;grad: 0.003"] --- V3["第3层&lt;br/&gt;grad: 0.02"] --- V4["第4层&lt;br/&gt;grad: 0.08"]
-    end</code></pre>
+        V1["第1层<br/>grad: 0.0001"] --- V2["第2层<br/>grad: 0.003"] --- V3["第3层<br/>grad: 0.02"] --- V4["第4层<br/>grad: 0.08"]
+    end</div>
 <h3 id="技巧四过拟合单个-batch-测试">技巧四：过拟合单个 Batch 测试</h3>
 <p>深度学习中最重要的单一调试技巧。</p>
 <p>取一小批样本（8–32 个），训练 100+ 次迭代。Loss 应该降到接近 0，训练准确率应该到 100%。如果做不到，你的模型或训练循环有根本性 bug——不要继续全量训练。</p>
@@ -204,15 +203,15 @@
 <p>跑 30 秒就能省几小时的全量调试时间。</p>
 <h3 id="技巧五学习率搜索器lr-finder">技巧五：学习率搜索器（LR Finder）</h3>
 <p>Leslie Smith（2017）提出：在一个 epoch 内把学习率从极小（1e-7）指数级增加到极大（10），同时记录 loss。画 loss vs 学习率图。最优学习率大约是 loss 开始最快下降那个点的 1/10。</p>
-<pre data-label="mermaid"><code class="language-mermaid">graph TD
+<div class="mermaid">graph TD
     subgraph "LR Finder 示意"
         direction LR
-        A["1e-7: loss=2.3"] --&gt; B["1e-5: loss=2.3"]
-        B --&gt; C["1e-3: loss=1.8"]
-        C --&gt; D["1e-2: loss=0.9 — 最陡"]
-        D --&gt; E["1e-1: loss=0.5"]
-        E --&gt; F["1.0: loss=NaN — 太大了"]
-    end</code></pre>
+        A["1e-7: loss=2.3"] --> B["1e-5: loss=2.3"]
+        B --> C["1e-3: loss=1.8"]
+        C --> D["1e-2: loss=0.9 — 最陡"]
+        D --> E["1e-1: loss=0.5"]
+        E --> F["1.0: loss=NaN — 太大了"]
+    end</div>
 <p>这个例子中最佳 LR：约 1e-3（最陡点前一个数量级）。</p>
 <h3 id="常见-pytorch-bug">常见 PyTorch Bug</h3>
 <p>这些是 PyTorch 社区累计浪费时间最多的 bug：</p>
@@ -921,8 +920,8 @@ for epoch in range(100):
 
 <footer>
   <div class="set">
-    <span>AI Deep Learning Core</span>
-    <span>2026 · EN</span>
+    <span>AI 深度学习核心</span>
+    <span>2026 · ZH-CN</span>
   </div>
   <div class="set">
     <span>Mav</span>
@@ -966,8 +965,8 @@ for epoch in range(100):
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/json.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/python.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/css.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+<script>mermaid.initialize({startOnLoad:true, theme:'neutral', fontFamily:'Inter, sans-serif'});</script>
 <script src="../assets/script.js"></script>
-<script src="../assets/quiz.js"></script>
-<script src="../assets/mermaid-init.js"></script>
 </body>
 </html>

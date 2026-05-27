@@ -3,14 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>正则化 — AI Deep Learning Core</title>
+<title>正则化 — AI 深度学习核心</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="../assets/style.css">
 <link rel="stylesheet" id="hljs-light" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
 <link rel="stylesheet" id="hljs-dark" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" media="not all">
-<link rel="stylesheet" href="../assets/quiz.css">
 </head>
 <body>
 
@@ -18,7 +17,7 @@
 
 <nav class="topnav" id="topnav">
   <div class="topnav-inner">
-    <a class="brand" href="../index.html">AI Deep Learning Core</a>
+    <a class="brand" href="../index.html">AI 深度学习核心</a>
     <div class="nav-links">
       <a href="01-the-perceptron.html">01</a>
       <a href="02-multi-layer-networks.html">02</a>
@@ -96,9 +95,9 @@
 <h2 id="核心概念">核心概念</h2>
 <h3 id="过拟合光谱">过拟合光谱</h3>
 <p>每个模型都在欠拟合（太简单抓不住规律）到过拟合（太复杂连噪声都抓）之间。甜点在中间，正则化从过拟合侧把模型往回推。</p>
-<pre data-label="mermaid"><code class="language-mermaid">graph LR
-    Under["欠拟合&lt;br/&gt;训练: 60%&lt;br/&gt;测试: 58%&lt;br/&gt;模型太简单"] --&gt; Good["好的拟合&lt;br/&gt;训练: 95%&lt;br/&gt;测试: 92%&lt;br/&gt;泛化好"]
-    Good --&gt; Over["过拟合&lt;br/&gt;训练: 99.9%&lt;br/&gt;测试: 65%&lt;br/&gt;背下了噪声"]</code></pre>
+<div class="mermaid">graph LR
+    Under["欠拟合<br/>训练: 60%<br/>测试: 58%<br/>模型太简单"] --> Good["好的拟合<br/>训练: 95%<br/>测试: 92%<br/>泛化好"]
+    Good --> Over["过拟合<br/>训练: 99.9%<br/>测试: 65%<br/>背下了噪声"]</div>
 <h3 id="dropout">Dropout</h3>
 <p>训练时随机把每个神经元输出以概率 p 置零。</p>
 <pre><code>训练时: output = activation(z) × mask / (1 - p)    (inverted dropout)
@@ -141,32 +140,32 @@ y = γ × x / rms</code></pre>
 <p>就这样。不算均值，没有 β 参数。观察发现：LayerNorm 中的再中心化（减均值）对模型性能贡献极小，但花计算。去掉它精度一样但快约 10%。</p>
 <p><strong>LLaMA、Mistral 和大多数现代 LLM 都用 RMSNorm 代替 LayerNorm。</strong> 在数十亿参数和万亿 token 的规模上，10% 的节省很可观。</p>
 <h3 id="归一化方法对比">归一化方法对比</h3>
-<pre data-label="mermaid"><code class="language-mermaid">graph TD
+<div class="mermaid">graph TD
     subgraph "Batch Normalization"
-        BN["对 BATCH 维度归一化&lt;br/&gt;每个特征独立&lt;br/&gt;需要 batch &gt; 32&lt;br/&gt;训练和推理不同&lt;br/&gt;用于 CNN"]
+        BN["对 BATCH 维度归一化<br/>每个特征独立<br/>需要 batch > 32<br/>训练和推理不同<br/>用于 CNN"]
     end
     subgraph "Layer Normalization"
-        LN["对 FEATURE 维度归一化&lt;br/&gt;每个样本独立&lt;br/&gt;不依赖 batch&lt;br/&gt;训练推理一致&lt;br/&gt;用于 Transformer"]
+        LN["对 FEATURE 维度归一化<br/>每个样本独立<br/>不依赖 batch<br/>训练推理一致<br/>用于 Transformer"]
     end
     subgraph "RMS Normalization"
-        RN["跟 LayerNorm 一样&lt;br/&gt;但跳过减均值&lt;br/&gt;快 10%&lt;br/&gt;精度不变&lt;br/&gt;用于 LLaMA, Mistral"]
-    end</code></pre>
+        RN["跟 LayerNorm 一样<br/>但跳过减均值<br/>快 10%<br/>精度不变<br/>用于 LLaMA, Mistral"]
+    end</div>
 <h3 id="什么时候用什么">什么时候用什么</h3>
-<pre data-label="mermaid"><code class="language-mermaid">flowchart TD
-    Gap{"训练-测试&lt;br/&gt;准确率差距？"} --&gt;|"&gt; 10%"| Heavy["重正则化"]
-    Gap --&gt;|"5-10%"| Medium["中等正则化"]
-    Gap --&gt;|"&lt; 5%"| Light["轻正则化"]
+<div class="mermaid">flowchart TD
+    Gap{"训练-测试<br/>准确率差距？"} -->|"> 10%"| Heavy["重正则化"]
+    Gap -->|"5-10%"| Medium["中等正则化"]
+    Gap -->|"< 5%"| Light["轻正则化"]
 
-    Heavy --&gt; D5["Dropout p=0.3-0.5"]
-    Heavy --&gt; WD2["Weight decay 0.01-0.1"]
-    Heavy --&gt; Aug["激进数据增强"]
+    Heavy --> D5["Dropout p=0.3-0.5"]
+    Heavy --> WD2["Weight decay 0.01-0.1"]
+    Heavy --> Aug["激进数据增强"]
 
-    Medium --&gt; D3["Dropout p=0.1-0.2"]
-    Medium --&gt; WD1["Weight decay 0.001-0.01"]
-    Medium --&gt; Norm["BatchNorm 或 LayerNorm"]
+    Medium --> D3["Dropout p=0.1-0.2"]
+    Medium --> WD1["Weight decay 0.001-0.01"]
+    Medium --> Norm["BatchNorm 或 LayerNorm"]
 
-    Light --&gt; D1["Dropout p=0.05-0.1"]
-    Light --&gt; WD0["Weight decay 1e-4"]</code></pre>
+    Light --> D1["Dropout p=0.05-0.1"]
+    Light --> WD0["Weight decay 1e-4"]</div>
 <h2 id="从零实现">从零实现</h2>
 <h3 id="第一步dropout">第一步：Dropout</h3>
 <pre data-label="python"><code class="language-python">import random
@@ -486,8 +485,8 @@ class RMSNorm(nn.Module):
 
 <footer>
   <div class="set">
-    <span>AI Deep Learning Core</span>
-    <span>2026 · EN</span>
+    <span>AI 深度学习核心</span>
+    <span>2026 · ZH-CN</span>
   </div>
   <div class="set">
     <span>Mav</span>
@@ -531,8 +530,8 @@ class RMSNorm(nn.Module):
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/json.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/python.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/css.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+<script>mermaid.initialize({startOnLoad:true, theme:'neutral', fontFamily:'Inter, sans-serif'});</script>
 <script src="../assets/script.js"></script>
-<script src="../assets/quiz.js"></script>
-<script src="../assets/mermaid-init.js"></script>
 </body>
 </html>

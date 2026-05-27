@@ -29,6 +29,11 @@ function createRenderer() {
   };
 
   renderer.code = function (code, lang) {
+    // Mermaid: output as div for client-side rendering
+    if (lang === 'mermaid') {
+      return `<div class="mermaid">${code}</div>\n`;
+    }
+
     const langLabel = lang || '';
     const dataLabel = langLabel ? ` data-label="${langLabel}"` : '';
     const langClass = langLabel ? ` class="language-${langLabel}"` : '';
