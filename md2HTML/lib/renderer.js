@@ -219,7 +219,33 @@ function renderMarkdown(markdown) {
   });
 
   const preprocessed = preprocessExtendedSyntax(markdown);
-  return marked.parse(preprocessed);
+
+  // Protect math expressions from marked processing
+  const mathBlocks = [];
+  let safeText = preprocessed;
+
+  // Protect $$ block math first (greedy within same paragraph)
+  safeText = safeText.replace(/\$\$([\s\S]*?)\$\$/g, (match) => {
+    const idx = mathBlocks.length;
+    mathBlocks.push(match);
+    return `\u0000MATH_BLOCK_${idx}\u0000`;
+  });
+
+  // Protect $ inline math
+  safeText = safeText.replace(/\$([^\$\n]+?)\$/g, (match) => {
+    const idx = mathBlocks.length;
+    mathBlocks.push(match);
+    return `\u0000MATH_BLOCK_${idx}\u0000`;
+  });
+
+  let html = marked.parse(safeText);
+
+  // Restore math expressions
+  html = html.replace(/\u0000MATH_BLOCK_(\d+)\u0000/g, (_, idx) => {
+    return mathBlocks[parseInt(idx)];
+  });
+
+  return html;
 }
 
 /**
