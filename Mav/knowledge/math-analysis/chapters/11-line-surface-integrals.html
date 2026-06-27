@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>第 11 章 曲线积分和曲面积分 — 数学分析讲义</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" id="hljs-light" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+<link rel="stylesheet" id="hljs-dark" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" media="not all">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+</head>
+<body>
+
+<div class="progress-bar" id="progress-bar"></div>
+
+<nav class="topnav" id="topnav">
+  <div class="topnav-inner">
+    <a class="brand" href="../index.html">数学分析讲义</a>
+    <div class="nav-links">
+      <a href="08-analytic-geometry.html">01</a>
+      <a href="09-multivariable-differentiation.html">02</a>
+      <a href="10-multivariable-integration.html">03</a>
+      <a href="11-line-surface-integrals.html" class="active">04</a>
+      <a href="12-fourier-analysis.html">05</a>
+      <a href="13-improper-parameter-integrals.html">06</a>
+    </div>
+    <div class="nav-controls">
+      <button class="nav-btn" id="search-btn" aria-label="搜索 (Ctrl+K)">⌘K</button>
+      <button class="nav-btn" id="settings-btn" aria-label="阅读设置">Aa</button>
+      <a class="nav-btn" href="../../index.html" aria-label="返回知识库">← 知识库</a>
+      <a class="nav-btn" href="https://github.com/maverickxone/mav-homepage" target="_blank" rel="noopener" aria-label="GitHub" style="padding: 6px 8px;"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg></a>
+    </div>
+  </div>
+</nav>
+<div class="settings-pop" id="settings-pop">
+  <h5>主题</h5>
+  <div class="row">
+    <button class="seg" data-theme-set="light">明亮</button>
+    <button class="seg" data-theme-set="dark">暗色</button>
+  </div>
+  <h5>字号</h5>
+  <div class="row">
+    <button class="seg" data-size-set="s">小</button>
+    <button class="seg" data-size-set="m">中</button>
+    <button class="seg" data-size-set="l">大</button>
+  </div>
+</div>
+
+<div class="with-sidebar">
+  <aside class="sidebar">
+  <div class="chapter-num">CHAPTER 04</div>
+  <div class="chapter-name">第 11 章 曲线积分和曲面积分</div>
+  <h4>目录</h4>
+  <ul>
+    <li><a href="#111-数量场在曲线上的积分">11.1 数量场在曲线上的积分</a></li>
+    <li><a href="#112-数量场在曲面上的积分">11.2 数量场在曲面上的积分</a></li>
+    <li><a href="#113-向量场在曲线上的积分">11.3 向量场在曲线上的积分</a></li>
+    <li><a href="#114-向量场在曲面上的积分">11.4 向量场在曲面上的积分</a></li>
+    <li><a href="#115-gauss-定理和-stokes-定理">11.5 Gauss 定理和 Stokes 定理</a></li>
+    <li><a href="#116-其他形式的曲线曲面积分">11.6 其他形式的曲线、曲面积分</a></li>
+    <li><a href="#117-保守场与势函数">11.7 保守场与势函数</a></li>
+    <li><a href="#118-微分形式的积分">11.8 微分形式的积分</a></li>
+    <li><a href="#本章综合习题选">本章综合习题（选）</a></li>
+  </ul>
+</aside>
+  <article class="chapter-body">
+    <header class="chapter-head">
+  <div class="chapter-head-meta">
+    <span class="num">CHAPTER 04</span>
+    <span>≈ 100 MIN READ</span>
+  </div>
+  <h1>第 11 章 曲线积分和曲面积分</h1>
+
+</header>
+    <p>第 10 章把二重、三重积分建立在平面、空间区域上；本章把积分「挂」到<strong>曲线</strong>和<strong>曲面</strong>上——前者回答沿路径做功、环流，后者回答通过曲面的通量、曲面的质量。Green、Gauss、Stokes 三条定理把「边界上的积分」与「内部（或更高维区域）上的积分」联系起来，是向量分析的核心，也是期末计算大题的主线。</p>
+<hr>
+<h2 id="111-数量场在曲线上的积分">11.1 数量场在曲线上的积分</h2>
+<h3 id="1111-基本概念">11.1.1 基本概念</h3>
+<p>设 $L$ 为 $xy$ 平面（或空间）中的<strong>光滑曲线</strong>，$f$ 在 $L$ 上有定义。<strong>第一类曲线积分</strong>（对弧长的积分）：
+$$\int_L f\,ds=\int_\alpha^\beta f\big(x(t),y(t),z(t)\big)\,\sqrt{x'^2+y'^2+z'^2}\,dt.$$
+若 $L$ 有参数 $\mathbf{r}(t)=(x(t),y(t),z(t))$，$t\in[\alpha,\beta]$，则 $ds=|\mathbf{r}'(t)|\,dt$。</p>
+<p><strong>物理意义</strong>：若 $f$ 是线密度，则 $\int_L f\,ds$ 是曲线 $L$ 的总质量。</p>
+<p><strong>性质</strong>：与参数选取无关（弧长不变）；对曲线可加（分段光滑时）。</p>
+<p><strong>平面曲线</strong> $y=y(x)$：$ds=\sqrt{1+(y')^2}\,dx$。</p>
+<h3 id="1112-数量场在曲线上的积分的计算">11.1.2 数量场在曲线上的积分的计算</h3>
+<p><strong>步骤</strong>：</p>
+<ol>
+<li>写出 $L$ 的参数方程或显式方程；</li>
+<li>计算 $ds$；</li>
+<li>化为关于参数（或 $x$）的定积分。</li>
+</ol>
+<p><strong>例 11.1</strong> 计算 $\displaystyle\int_L (x+y)\,ds$，$L$ 为从 $(0,0)$ 到 $(1,1)$ 的直线段。
+参数 $x=t,\ y=t,\ t\in[0,1]$，$ds=\sqrt2\,dt$，
+$$\int_0^1 2t\cdot\sqrt2\,dt=\sqrt2.$$</p>
+<p><strong>例 11.2</strong> 计算 $\displaystyle\int_L x^2\,ds$，$L$ 为圆 $x^2+y^2=R^2$ 第一象限弧。
+参数 $x=R\cos t,\ y=R\sin t,\ t\in[0,\pi/2]$，$ds=R\,dt$，
+$$\int_0^{\pi/2} R^2\cos^2 t\cdot R\,dt=R^3\int_0^{\pi/2}\cos^2 t\,dt=\frac{\pi R^3}{4}.$$</p>
+<p><strong>对称性</strong>：若 $L$ 关于坐标轴或原点对称，$f$ 为奇函数，可化简积分（类似重积分对称性）。</p>
+<blockquote><p>[要点]</p>
+<ul>
+<li><strong>第一类曲线积分</strong> $\int_L f\,ds$：对<strong>弧长</strong>，<strong>无方向</strong>。</li>
+<li>核心公式：$ds=|\mathbf{r}'(t)|\,dt$。</li>
+<li>物理：线密度 ⇒ 总质量。</li>
+</ul>
+</blockquote>
+<hr>
+<h2 id="112-数量场在曲面上的积分">11.2 数量场在曲面上的积分</h2>
+<h3 id="1121-曲面的面积">11.2.1 曲面的面积</h3>
+<p><strong>参数曲面</strong> $\mathbf{r}(u,v)$，面积元素
+$$dS=|\mathbf{r}_u\times\mathbf{r}_v|\,du\,dv.$$
+<strong>隐式曲面</strong> $F(x,y,z)=0$，若 $F_z\neq 0$，则
+$$dS=\frac{\sqrt{F_x^2+F_y^2+F_z^2}}{|F_z|}\,dx\,dy$$
+（在 $xy$ 投影上积分时）。</p>
+<p><strong>例 11.3</strong> 球面 $x^2+y^2+z^2=R^2$ 的面积。参数化得 $dS=R^2\sin\varphi\,d\varphi\,d\theta$，
+$$S=\int_0^{2\pi}\int_0^\pi R^2\sin\varphi\,d\varphi\,d\theta=4\pi R^2.$$</p>
+<h3 id="1122-数量场在曲面上的积分的计算">11.2.2 数量场在曲面上的积分的计算</h3>
+<p><strong>第一类曲面积分</strong>：
+$$\iint_S f\,dS=\iint_D f\big(\mathbf{r}(u,v)\big)\,|\mathbf{r}_u\times\mathbf{r}_v|\,du\,dv.$$
+若 $S$ 为 $z=z(x,y)$，$(x,y)\in D_{xy}$，则
+$$dS=\sqrt{1+z_x^2+z_y^2}\,dx\,dy,\qquad \iint_S f\,dS=\iint_{D_{xy}} f\big(x,y,z(x,y)\big)\sqrt{1+z_x^2+z_y^2}\,dx\,dy.$$</p>
+<p><strong>例 11.4</strong> $\displaystyle\iint_S z\,dS$，$S$ 为平面 $x+y+z=1$ 在第一卦限部分。
+$z=1-x-y$，$D_{xy}:x\ge0,y\ge0,x+y\le1$，$z_x=z_y=-1$，$\sqrt{1+z_x^2+z_y^2}=\sqrt3$，
+$$\iint_{D_{xy}}(1-x-y)\sqrt3\,dx\,dy=\sqrt3\iint_{D_{xy}}(1-x-y)\,dx\,dy=\frac{\sqrt3}{6}.$$</p>
+<hr>
+<h2 id="113-向量场在曲线上的积分">11.3 向量场在曲线上的积分</h2>
+<h3 id="1131-曲线的定向">11.3.1 曲线的定向</h3>
+<p><strong>定向曲线</strong> $L^+$：指定沿 $L$ 的行进方向。闭曲线常取<strong>逆时针</strong>（从 $z$ 轴正向看）为正方向。</p>
+<p>参数 $\mathbf{r}(t)$ 增加的方向与 $L^+$ 一致时，切向量 $\mathbf{T}=\mathbf{r}'/|\mathbf{r}'|$ 与定向一致。</p>
+<h3 id="1132-向量场在曲线上的积分的定义和计算">11.3.2 向量场在曲线上的积分的定义和计算</h3>
+<p>设 $\mathbf{F}=(P,Q,R)$。<strong>第二类曲线积分</strong>（对坐标的积分）：
+$$\int_{L^+} P\,dx+Q\,dy+R\,dz=\int_\alpha^\beta\big(Px'+Qy'+Rz'\big)\,dt.$$
+<strong>物理意义</strong>：力场 $\mathbf{F}$ 沿 $L$ 做功 $W=\int_{L^+}\mathbf{F}\cdot d\mathbf{r}$，其中 $d\mathbf{r}=(dx,dy,dz)$。</p>
+<p><strong>与第一类关系</strong>：$\int_{L^+}\mathbf{F}\cdot d\mathbf{r}=\int_L \mathbf{F}\cdot\mathbf{T}\,ds$，其中 $\mathbf{T}$ 与 $L^+$ 同向。</p>
+<p><strong>例 11.5</strong> $\displaystyle\int_{L^+} y\,dx+x\,dy$，$L^+$ 为 $(0,0)\to(1,0)\to(1,1)$ 折线。
+第一段：$y=0,\ dy=0$，$\int_0^1 0\,dx=0$。
+第二段：$x=1,\ dx=0$，$\int_0^1 x\,dy=\int_0^1 1\,dy=1$。
+合计 $1$。</p>
+<p><strong>例 11.6</strong> $\displaystyle\oint_{L^+} y\,dx-x\,dy$，$L^+$ 为圆 $x^2+y^2=a^2$ 逆时针。
+参数 $x=a\cos t,\ y=a\sin t$，$dx=-a\sin t\,dt,\ dy=a\cos t\,dt$，
+$$\oint =\int_0^{2\pi}\big(-a^2\sin^2 t-a^2\cos^2 t\big)\,dt=-2\pi a^2.$$
+（也可用 Green 定理验证，见下节。）</p>
+<h3 id="1133-green-定理">11.3.3 Green 定理</h3>
+<p><strong>定理</strong>：设 $D$ 为 $xy$ 平面上由分段光滑闭曲线 $L^+$ 围成的<strong>单连通</strong>区域，$P,Q$ 在 $D$ 上连续，$\partial P/\partial y,\ \partial Q/\partial x$ 在 $D$ 内连续，则
+$$\boxed{\oint_{L^+} P\,dx+Q\,dy=\iint_D\Big(\frac{\partial Q}{\partial x}-\frac{\partial P}{\partial y}\Big)\,dx\,dy}.$$</p>
+<p><strong>证明思路</strong>：对 $\iint_D \dfrac{\partial Q}{\partial x}\,dx\,dy$ 先对 $x$ 积分，化为上下边界上的 $Q$ 之差；对 $\dfrac{\partial P}{\partial y}$ 类似；相加即得 $L^+$ 上的环量。要求 $D$ 单连通（无「洞」）以便边界定向一致。</p>
+<p><strong>例 11.7</strong> 用 Green 定理重算例 11.6。取 $P=y,\ Q=-x$，则
+$$\frac{\partial Q}{\partial x}-\frac{\partial P}{\partial y}=-1-1=-2.$$
+$D$ 为圆盘 $x^2+y^2\le a^2$，面积 $\pi a^2$，故
+$$\oint_{L^+} y\,dx-x\,dy=-2\iint_D 1\,dx\,dy=-2\pi a^2,$$
+与参数化直接计算一致。</p>
+<p><strong>应用</strong>：化环量为二重积分，或反之；求面积 $A=\dfrac12\oint_{L^+}x\,dy-y\,dx$。</p>
+<blockquote><p>[要点]</p>
+<ul>
+<li><strong>第二类</strong> $\int P\,dx+Q\,dy$：与<strong>定向</strong>有关；物理上 = 做功。</li>
+<li><strong>Green</strong>：$\oint P\,dx+Q\,dy=\iint_D(Q_x-P_y)\,dx\,dy$，$D$ 单连通。</li>
+<li>算环量：能写 $D$ 时优先 Green，否则参数化。</li>
+</ul>
+</blockquote>
+<hr>
+<h2 id="114-向量场在曲面上的积分">11.4 向量场在曲面上的积分</h2>
+<h3 id="1141-双侧曲面及其定向">11.4.1 双侧曲面及其定向</h3>
+<p><strong>双侧曲面</strong>：可连续指定法向量 $\mathbf{n}$ 的一侧（如球面、平面）。<strong>定向曲面</strong> $S^+$ 选定一侧为「正侧」，对应单位法向量 $\mathbf{n}$。</p>
+<p><strong>参数曲面</strong>：$\mathbf{r}_u\times\mathbf{r}_v$ 与 $\mathbf{n}$ 同向时取 $+$；闭曲面常取<strong>外法向</strong>为正。</p>
+<h3 id="1142-向量场在曲面上的积分的定义和计算">11.4.2 向量场在曲面上的积分的定义和计算</h3>
+<p><strong>第二类曲面积分（通量）</strong>：
+$$\iint_{S^+} P\,dy\,dz+Q\,dz\,dx+R\,dx\,dy=\iint_{S^+}\mathbf{F}\cdot\mathbf{n}\,dS.$$
+若 $S:z=z(x,y)$ 取上侧（$\mathbf{n}$ 与 $z$ 轴成锐角），则
+$$\iint_{S^+}\mathbf{F}\cdot\mathbf{n}\,dS=\iint_{D_{xy}}\big(-Pz_x-Qz_y+R\big)\,dx\,dy.$$</p>
+<p><strong>例 11.8</strong> $\displaystyle\iint_{S^+} x\,dy\,dz+y\,dz\,dx+z\,dx\,dy$，$S^+$ 为球面 $x^2+y^2+z^2=R^2$ <strong>外侧</strong>。
+由对称性或 Gauss：$\nabla\cdot\mathbf{F}=3$，$\iint_{S^+}\mathbf{F}\cdot\mathbf{n}\,dS=\iiint_V 3\,dV=3\cdot\tfrac{4}{3}\pi R^3=4\pi R^3$。</p>
+<hr>
+<h2 id="115-gauss-定理和-stokes-定理">11.5 Gauss 定理和 Stokes 定理</h2>
+<h3 id="1151-gauss-定理散度定理">11.5.1 Gauss 定理（散度定理）</h3>
+<p>设 $V$ 为空间有界闭区域，边界 $\partial V=S^+$ 取<strong>外法向</strong>，$\mathbf{F}=(P,Q,R)$ 在 $V$ 上 $C^1$，则
+$$\boxed{\oiint_{S^+} P\,dy\,dz+Q\,dz\,dx+R\,dx\,dy=\iiint_V\Big(\frac{\partial P}{\partial x}+\frac{\partial Q}{\partial y}+\frac{\partial R}{\partial z}\Big)\,dV=\iiint_V \nabla\cdot\mathbf{F}\,dV}.$$</p>
+<p><strong>证明思路</strong>（以 $R\,dx\,dy$ 项为例）：$V$ 投影到 $xy$ 平面为 $D_{xy}$，上下曲面 $z=z_2(x,y),\ z=z_1(x,y)$。对 $\iiint_V \dfrac{\partial R}{\partial z}\,dV$ 先对 $z$ 积分：
+$$\int_{z_1}^{z_2}\frac{\partial R}{\partial z}\,dz=R\big|_{z_1}^{z_2}=R(x,y,z_2)-R(x,y,z_1),$$
+恰为上下两面上 $R\,dx\,dy$ 贡献之差（法向符号对应外法向），三项相加得通量 = 散度的体积分。</p>
+<p><strong>例 11.9</strong> 设 $\mathbf{F}=(x^3,y^3,z^3)$，$S$ 为球 $x^2+y^2+z^2=R^2$ 外侧。
+$\nabla\cdot\mathbf{F}=3x^2+3y^2+3z^2$，球坐标：
+$$\iiint_V 3r^2\cdot r^2\sin\theta\,dr\,d\theta\,d\varphi=3\int_0^{2\pi}d\varphi\int_0^\pi\sin\theta\,d\theta\int_0^R r^4\,dr=3\cdot 2\pi\cdot 2\cdot\frac{R^5}{5}=\frac{12\pi R^5}{5}.$$</p>
+<h3 id="1152-stokes-定理">11.5.2 Stokes 定理</h3>
+<p>设 $S^+$ 为定向曲面，边界 $\partial S^+=L^+$（定向与 $S^+$ 右手法则一致），$\mathbf{F}$ 在 $S$ 邻域 $C^1$，则
+$$\boxed{\oint_{L^+} P\,dx+Q\,dy+R\,dz=\iint_{S^+}\Big(\frac{\partial R}{\partial y}-\frac{\partial Q}{\partial z}\Big)\,dy\,dz+\Big(\frac{\partial P}{\partial z}-\frac{\partial R}{\partial x}\Big)\,dz\,dx+\Big(\frac{\partial Q}{\partial x}-\frac{\partial P}{\partial y}\Big)\,dx\,dy=\iint_{S^+}(\nabla\times\mathbf{F})\cdot\mathbf{n}\,dS}.$$</p>
+<p><strong>特例（平面）</strong>：$S$ 为 $xy$ 平面区域 $D$，$L=\partial D$，则 Stokes 退化为 <strong>Green 定理</strong>。</p>
+<p><strong>例 11.10</strong> $\displaystyle\oint_{L^+} y\,dx+2z\,dy+3x\,dz$，$L^+$ 为圆 $x^2+y^2=1,\ z=0$ 逆时针（从 $z$ 正向看）。$\mathbf{F}=(y,2z,3x)$，
+$$\nabla\times\mathbf{F}=\Big(\frac{\partial(3x)}{\partial y}-\frac{\partial(2z)}{\partial z},\ \frac{\partial y}{\partial z}-\frac{\partial(3x)}{\partial x},\ \frac{\partial(2z)}{\partial x}-\frac{\partial y}{\partial y}\Big)=(-2,\ -3,\ -1).$$
+取 $S$ 为圆盘 $x^2+y^2\le1,\ z=0$，上侧 $\mathbf{n}=(0,0,1)$，
+$$\iint_S (\nabla\times\mathbf{F})\cdot\mathbf{n}\,dS=\iint_D (-1)\,dx\,dy=-\pi.$$</p>
+<p><strong>三大定理关系</strong>：</p>
+<div class="table-wrap"><table><thead><tr>
+<th>定理</th>
+<th>边界</th>
+<th>区域</th>
+<th>联系</th>
+</tr>
+</thead><tbody><tr>
+<td>Green</td>
+<td>闭曲线 $L$（1 维）</td>
+<td>平面区域 $D$（2 维）</td>
+<td>$\oint \mathbf{F}\cdot d\mathbf{r}=\iint_D (\nabla\times\mathbf{F})_z\,dx\,dy$</td>
+</tr>
+<tr>
+<td>Gauss</td>
+<td>闭曲面 $S$（2 维）</td>
+<td>体 $V$（3 维）</td>
+<td>$\oiint \mathbf{F}\cdot\mathbf{n}\,dS=\iiint_V \nabla\cdot\mathbf{F}\,dV$</td>
+</tr>
+<tr>
+<td>Stokes</td>
+<td>闭曲线 $L=\partial S$</td>
+<td>曲面 $S$</td>
+<td>$\oint_L \mathbf{F}\cdot d\mathbf{r}=\iint_S (\nabla\times\mathbf{F})\cdot\mathbf{n}\,dS$</td>
+</tr>
+</tbody></table></div>
+<blockquote><p>[要点]</p>
+<ul>
+<li><strong>Gauss</strong>：通量 = 体内散度积分；算通量时若 $\nabla\cdot\mathbf{F}$ 简单，优先 Gauss。</li>
+<li><strong>Stokes</strong>：环量 = 曲面上旋度通量；$L$ 是空间曲线时选以 $L$ 为边界的 $S$。</li>
+<li><strong>定向</strong>：闭曲面外法向；曲线与曲面用<strong>右手法则</strong>配套。</li>
+</ul>
+</blockquote>
+<hr>
+<h2 id="116-其他形式的曲线曲面积分">11.6 其他形式的曲线、曲面积分</h2>
+<p>同一积分有多种写法，便于换用定理：</p>
+<p>$$\int_{L^+}\mathbf{F}\cdot d\mathbf{r}=\int_{L^+}P\,dx+Q\,dy+R\,dz=\int_L \mathbf{F}\cdot\mathbf{T}\,ds.$$</p>
+<p>$$\iint_{S^+}\mathbf{F}\cdot\mathbf{n}\,dS=\iint_{S^+}P\,dy\,dz+Q\,dz\,dx+R\,dx\,dy.$$</p>
+<p><strong>无旋场</strong>：若 $\nabla\times\mathbf{F}=\mathbf{0}$ 在单连通域内，则 $\int_{L^+}\mathbf{F}\cdot d\mathbf{r}$ 只依赖起点终点，与路径无关（见 §11.7）。</p>
+<hr>
+<h2 id="117-保守场与势函数">11.7 保守场与势函数</h2>
+<h3 id="1171-保守场与势函数">11.7.1 保守场与势函数</h3>
+<p><strong>定义</strong>：若存在标量函数 $\varphi$ 使 $\mathbf{F}=\nabla\varphi$，则 $\mathbf{F}$ 为<strong>保守场</strong>（或<strong>梯度场</strong>），$\varphi$ 为<strong>势函数</strong>。</p>
+<p><strong>定理</strong>：在<strong>单连通</strong>区域 $\Omega$ 上，以下条件等价：</p>
+<ol>
+<li>$\mathbf{F}$ 保守；</li>
+<li>$\int_{L^+}\mathbf{F}\cdot d\mathbf{r}$ 只依赖 $L$ 的端点；</li>
+<li>对任意闭曲线 $L$，$\oint_{L^+}\mathbf{F}\cdot d\mathbf{r}=0$；</li>
+<li>$\nabla\times\mathbf{F}=\mathbf{0}$（在 $\Omega$ 上）。</li>
+</ol>
+<p><strong>求势函数</strong>：线积分 $\varphi(P)=\int_{P_0}^P \mathbf{F}\cdot d\mathbf{r}$（路径可任取），或解 $P=\varphi_x,\ Q=\varphi_y,\ R=\varphi_z$。</p>
+<p><strong>例 11.11</strong> $\mathbf{F}=(2xy+y^2,\ x^2+2xy,\ 0)$。检验 $Q_x=2x+2y=P_y$，$P_z=0=R_x$ 等，无旋。求 $\varphi$：
+$\varphi_x=2xy+y^2\Rightarrow \varphi=x^2y+xy^2+h(y,z)$，$\varphi_y=x^2+2xy\Rightarrow h_y=0$，取 $h=0$，$\varphi=x^2y+xy^2+C$。</p>
+<h3 id="1172-无源场与向量势">11.7.2 无源场与向量势</h3>
+<p>若 $\nabla\cdot\mathbf{F}=0$（<strong>无源场</strong>），在适当单连通条件下存在<strong>向量势</strong> $\mathbf{A}$ 使 $\mathbf{F}=\nabla\times\mathbf{A}$（类比 $\nabla\cdot(\nabla\times\mathbf{A})=0$）。电磁学中 $\mathbf{B}=\nabla\times\mathbf{A}$ 即此结构。</p>
+<hr>
+<h2 id="118-微分形式的积分">11.8 微分形式的积分</h2>
+<h3 id="1181-微分形式的积分">11.8.1 微分形式的积分</h3>
+<p><strong>1-形式</strong> $\omega=P\,dx+Q\,dy+R\,dz$ 沿定向曲线 $L^+$：
+$$\int_{L^+}\omega=\int_{L^+}P\,dx+Q\,dy+R\,dz.$$</p>
+<p><strong>2-形式</strong> $\eta=P\,dy\wedge dz+Q\,dz\wedge dx+R\,dx\wedge dy$ 在定向曲面 $S^+$：
+$$\iint_{S^+}\eta=\iint_{S^+}P\,dy\,dz+Q\,dz\,dx+R\,dx\,dy.$$</p>
+<p><strong>Stokes 一般形式</strong>：$\displaystyle\int_{\partial\Omega}\omega=\int_\Omega d\omega$。0-形式 $f$：$df$ 的积分给出 $\int_L df=f(B)-f(A)$（微积分基本定理）；1-形式：Green/Stokes；2-形式：Gauss。</p>
+<h3 id="1182-全微分方程">11.8.2 全微分方程</h3>
+<p>形如 $P\,dx+Q\,dy=0$，若存在 $u$ 使 $du=P\,dx+Q\,dy$（即 $P=u_x,\ Q=u_y$），则通解 $u(x,y)=C$。<strong>恰当方程</strong>条件：$P_y=Q_x$（平面单连通）。</p>
+<p><strong>例 11.12</strong> $(2xy+3)\,dx+(x^2-1)\,dy=0$。$P_y=2x=Q_x$，恰当。同例 11.11 方法得 $u=x^2y+3x-y+C_1=0$。</p>
+<hr>
+<h2 id="本章综合习题选">本章综合习题（选）</h2>
+<p><strong>11.1</strong> 计算 $\displaystyle\int_L (x^2+y^2)\,ds$，$L$ 为摆线 $x=a(t-\sin t),\ y=a(1-\cos t)$，$t\in[0,2\pi]$。</p>
+<p><strong>11.2</strong> 用 Green 定理求 $\displaystyle\oint_{L^+}(e^x\sin y-2y)\,dx+(e^x\cos y+2x)\,dy$，$L^+$ 为椭圆 $\frac{x^2}{a^2}+\frac{y^2}{b^2}=1$ 逆时针。</p>
+<p><strong>11.3</strong> 用 Gauss 定理求 $\displaystyle\oiint_{S^+} x^2\,dy\,dz+y^2\,dz\,dx+z^2\,dx\,dy$，$S$ 为立方体 $[0,a]^3$ 表面外侧。</p>
+<p><strong>11.4</strong> 验证 $\mathbf{F}=(-y/(x^2+y^2),\ x/(x^2+y^2))$ 在去掉原点的平面上无旋，求沿单位圆逆时针的环量，并说明为何不是保守场（原点奇点，域非单连通）。</p>
+<p><strong>11.5</strong> 计算 $\displaystyle\iint_{S^+} z\,dS$，$S$ 为锥面 $z=\sqrt{x^2+y^2}$ 被 $z=1$ 所截部分（取上侧）。</p>
+<p>（详解可在后续修订中补入。）</p>
+
+    <nav class="pager">  <a href="10-multivariable-integration.html">
+    <span class="label">← 上一章</span>
+    <span class="title">第 10 章 多变量函数的积分</span>
+  </a>  <a href="12-fourier-analysis.html" class="next">
+    <span class="label">下一章 →</span>
+    <span class="title">第 12 章 Fourier 分析</span>
+  </a></nav>
+  </article>
+</div>
+
+<footer>
+  <div class="set">
+    <span>数学分析讲义</span>
+    <span>2026 · ZH-CN</span>
+  </div>
+  <div class="set">
+    <span>Mav</span>
+  </div>
+</footer>
+<div class="search-backdrop" id="search-overlay" role="dialog" aria-modal="true" aria-label="搜索" hidden>
+  <div class="search-modal">
+    <div class="search-input-wrap">
+      <input type="search" class="search-input" placeholder="搜索内容..." aria-label="搜索内容" autocomplete="off">
+      <kbd>ESC</kbd>
+    </div>
+    <div class="search-results" role="listbox" aria-label="搜索结果"></div>
+  </div>
+</div>
+
+<!-- Side Panel -->
+<div class="side-panel" id="side-panel">
+  <div class="side-panel-resize" id="side-panel-resize"></div>
+  <div class="side-panel-header">
+    <div class="side-panel-tabs">
+      <button class="side-panel-tab active" data-mode="sidenote">补充</button>
+      <button class="side-panel-tab" data-mode="notepad">笔记</button>
+    </div>
+    <button class="side-panel-close" aria-label="关闭">×</button>
+  </div>
+  <div class="side-panel-body"></div>
+</div>
+<button class="notepad-fab" id="notepad-fab" aria-label="便利贴">✎</button>
+
+<!-- Mobile TOC -->
+<button class="mtoc-fab" id="mtoc-fab" aria-label="目录">TOC</button>
+<div class="mtoc-drawer" id="mtoc-drawer">
+  <div class="mtoc-content"></div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/bash.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/typescript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/yaml.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/javascript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/json.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/python.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/css.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+<script>mermaid.initialize({startOnLoad:true, theme:'neutral', fontFamily:'Inter, sans-serif'});</script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}]});"></script>
+<script src="../assets/script.js"></script>
+</body>
+</html>
