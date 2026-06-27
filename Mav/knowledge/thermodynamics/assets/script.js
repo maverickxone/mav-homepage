@@ -7,13 +7,26 @@
 (function () {
   'use strict';
 
-  // ---------- 0. Theme & size preference ----------
+  // ---------- localStorage fallback ----------
+  let memoryStore = {};
+  function safeGetItem(key) {
+    try { return localStorage.getItem(key); }
+    catch (e) { return memoryStore[key] || null; }
+  }
+  function safeSetItem(key, value) {
+    try { localStorage.setItem(key, value); }
+    catch (e) { memoryStore[key] = value; }
+  }
+
+  // ---------- 0. Theme, size & style preference ----------
   const root = document.documentElement;
-  const savedTheme = localStorage.getItem('md2html-theme');
-  const savedSize = localStorage.getItem('md2html-size');
+  const savedTheme = safeGetItem('md2html-theme');
+  const savedSize = safeGetItem('md2html-size');
+  const savedStyle = safeGetItem('md2html-style');
   if (savedTheme === 'dark') root.setAttribute('data-theme', 'dark');
   if (savedSize) root.setAttribute('data-size', savedSize);
   else root.setAttribute('data-size', 'm');
+  if (savedStyle && savedStyle !== 'minimal') root.setAttribute('data-style', savedStyle);
 
   // ---------- 1. Reading progress bar ----------
   const bar = document.getElementById('progress-bar');
@@ -92,13 +105,13 @@
   const API_BASE = '/api';
 
   function getOrCreateUser() {
-    if (!localStorage.getItem('mavUserId')) {
-      localStorage.setItem('mavUserId', crypto.randomUUID());
-      localStorage.setItem('mavUsername', '读者#' + Math.floor(Math.random() * 9000 + 1000));
+    if (!safeGetItem('mavUserId')) {
+      safeSetItem('mavUserId', crypto.randomUUID());
+      safeSetItem('mavUsername', '读者#' + Math.floor(Math.random() * 9000 + 1000));
     }
     return {
-      userId: localStorage.getItem('mavUserId'),
-      username: localStorage.getItem('mavUsername'),
+      userId: safeGetItem('mavUserId'),
+      username: safeGetItem('mavUsername'),
     };
   }
 
@@ -197,11 +210,11 @@
     document.getElementById('identity-name').textContent = username;
 
     document.getElementById('username-edit-btn').addEventListener('click', function () {
-      const cur = localStorage.getItem('mavUsername');
+      const cur = safeGetItem('mavUsername');
       const next = prompt('修改用户名：', cur);
       if (next && next.trim()) {
         const trimmed = next.trim().slice(0, 50);
-        localStorage.setItem('mavUsername', trimmed);
+        safeSetItem('mavUsername', trimmed);
         document.getElementById('identity-name').textContent = trimmed;
       }
     });
@@ -240,7 +253,7 @@
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             userId: userId,
-            username: localStorage.getItem('mavUsername'),
+            username: safeGetItem('mavUsername'),
             content: content,
           }),
         });
@@ -294,11 +307,24 @@
   });
 })();
 
-  // ---------- 4. Settings popover (theme + size) ----------
+  // ---------- 4. Settings popover (theme + size + style) ----------
   (function () {
     const btn = document.getElementById('settings-btn');
     const pop = document.getElementById('settings-pop');
     if (!btn || !pop) return;
+
+    // Inject style picker into settings popover
+    const styleSection = document.createElement('div');
+    styleSection.innerHTML = '<h5>风格</h5><div class="row style-row">' +
+      '<button class="seg" data-style-set="minimal">极简</button>' +
+      '<button class="seg" data-style-set="azure">Azure</button>' +
+      '<button class="seg" data-style-set="cobalt">Cobalt</button>' +
+      '</div><div class="row style-row">' +
+      '<button class="seg" data-style-set="warm">暖色</button>' +
+      '<button class="seg" data-style-set="sepia">Sepia</button>' +
+      '<button class="seg" data-style-set="graphite">石墨</button>' +
+      '</div>';
+    pop.appendChild(styleSection);
 
     function syncActive() {
       pop.querySelectorAll('[data-theme-set]').forEach((b) => {
@@ -306,6 +332,10 @@
       });
       pop.querySelectorAll('[data-size-set]').forEach((b) => {
         b.classList.toggle('active', (root.getAttribute('data-size') || 'm') === b.getAttribute('data-size-set'));
+      });
+      const currentStyle = root.getAttribute('data-style') || 'minimal';
+      pop.querySelectorAll('[data-style-set]').forEach((b) => {
+        b.classList.toggle('active', currentStyle === b.getAttribute('data-style-set'));
       });
     }
 
@@ -322,16 +352,34 @@
       const t = e.target.closest('[data-theme-set]');
       if (t) {
         const mode = t.getAttribute('data-theme-set');
-        if (mode === 'light') { root.removeAttribute('data-theme'); localStorage.setItem('md2html-theme', 'light'); }
-        else { root.setAttribute('data-theme', 'dark'); localStorage.setItem('md2html-theme', 'dark'); }
+        if (mode === 'light') { root.removeAttribute('data-theme'); safeSetItem('md2html-theme', 'light'); }
+        else { root.setAttribute('data-theme', 'dark'); safeSetItem('md2html-theme', 'dark'); }
         syncActive();
       }
       const s = e.target.closest('[data-size-set]');
       if (s) {
         const size = s.getAttribute('data-size-set');
         root.setAttribute('data-size', size);
-        localStorage.setItem('md2html-size', size);
+        safeSetItem('md2html-size', size);
         syncActive();
+      }
+      const st = e.target.closest('[data-style-set]');
+      if (st) {
+        const style = st.getAttribute('data-style-set');
+        // Add transition class before changing style (user-initiated only)
+        root.classList.add('style-transitioning');
+        if (style === 'minimal') {
+          root.removeAttribute('data-style');
+          safeSetItem('md2html-style', 'minimal');
+        } else {
+          root.setAttribute('data-style', style);
+          safeSetItem('md2html-style', style);
+        }
+        syncActive();
+        // Remove transition class after animation completes
+        setTimeout(function () {
+          root.classList.remove('style-transitioning');
+        }, 350);
       }
     });
     syncActive();
@@ -576,7 +624,7 @@
 
     function getProgress() {
       try {
-        const data = localStorage.getItem(STORAGE_KEY);
+        const data = safeGetItem(STORAGE_KEY);
         if (!data) return {};
         return JSON.parse(data) || {};
       } catch { return {}; }
@@ -586,7 +634,7 @@
       try {
         const progress = getProgress();
         progress[key] = value;
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(progress));
+        safeSetItem(STORAGE_KEY, JSON.stringify(progress));
       } catch {}
     }
 
@@ -662,11 +710,11 @@
       if (mode === 'sidenote') {
         bodyEl.innerHTML = '<div class="side-panel-sidenote-content">' + content + '</div>';
       } else {
-        const saved = localStorage.getItem(NOTES_KEY) || '';
+        const saved = safeGetItem(NOTES_KEY) || '';
         bodyEl.innerHTML = '<textarea class="side-panel-notepad" placeholder="随手记点什么...">' + escapeHtml(saved) + '</textarea>';
         const textarea = bodyEl.querySelector('.side-panel-notepad');
         textarea.addEventListener('input', () => {
-          localStorage.setItem(NOTES_KEY, textarea.value);
+          safeSetItem(NOTES_KEY, textarea.value);
           notepadDirty = textarea.value.trim().length > 0;
         });
         textarea.addEventListener('focus', () => panel.classList.add('typing'));
@@ -811,12 +859,12 @@
 
     function savePanelState() {
       const state = { open: panel.classList.contains('open'), mode: currentMode };
-      localStorage.setItem(PANEL_STATE_KEY, JSON.stringify(state));
+      safeSetItem(PANEL_STATE_KEY, JSON.stringify(state));
     }
 
     function restorePanelState() {
       try {
-        const raw = localStorage.getItem(PANEL_STATE_KEY);
+        const raw = safeGetItem(PANEL_STATE_KEY);
         if (!raw) return;
         const state = JSON.parse(raw);
         if (state.open && state.mode === 'notepad') {
@@ -934,191 +982,3 @@
     });
 
   })();
-
-
-// ============================================================
-// KaTeX math rendering
-// Loads KaTeX from CDN and renders all $...$ and $$...$$ math
-// ============================================================
-(function () {
-  'use strict';
-
-  // Check if there's any math content on the page
-  const body = document.body.innerHTML;
-  if (!body.includes('$')) return;
-
-  // Load KaTeX CSS
-  const link = document.createElement('link');
-  link.rel = 'stylesheet';
-  link.href = 'https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css';
-  document.head.appendChild(link);
-
-  // Load KaTeX JS
-  const script = document.createElement('script');
-  script.src = 'https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js';
-  script.onload = function () {
-    // Load auto-render extension
-    const autoRender = document.createElement('script');
-    autoRender.src = 'https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/contrib/auto-render.min.js';
-    autoRender.onload = function () {
-      renderMathInElement(document.body, {
-        delimiters: [
-          { left: '$$', right: '$$', display: true },
-          { left: '$', right: '$', display: false }
-        ],
-        throwOnError: false
-      });
-    };
-    document.head.appendChild(autoRender);
-  };
-  document.head.appendChild(script);
-})();
-
-
-// ============================================================
-// Image placeholder rendering (ported from euv-lithography)
-// Converts [图片：...] / [图片 NN-MM：...] blockquotes to <figure>
-// with auto-loaded images from ../assets/images/{chapter}-{seq}.{ext}
-// ============================================================
-(function () {
-  'use strict';
-
-  // Inject figure styling (self-contained so it survives rebuilds —
-  // script.js is locked in build-lock.yaml, style.css is not).
-  const css = document.createElement('style');
-  css.textContent = [
-    '.image-placeholder{margin:2rem auto;text-align:center;max-width:100%;}',
-    '.image-placeholder img{max-width:100%;height:auto;border-radius:6px;}',
-    '.image-placeholder figcaption{margin-top:.6rem;font-size:.85rem;color:var(--text-muted,#888);line-height:1.5;}',
-    '.image-placeholder.no-image .img-missing{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.4rem;padding:2.5rem 1rem;border:1px dashed var(--border,#ccc);border-radius:6px;color:var(--text-muted,#999);}',
-    '.image-placeholder .img-missing-icon{font-size:1.6rem;opacity:.5;}',
-    '.image-placeholder .img-missing-text{font-family:var(--font-mono,monospace);font-size:.8rem;}'
-  ].join('');
-  document.head.appendChild(css);
-
-  const path = window.location.pathname;
-  const match = path.match(/(\d{2})-[^/]+\.html$/);
-  if (!match) return; // not a chapter page
-
-  const chapterPrefix = match[1];
-  const basePath = '../assets/images/';
-  const extensions = ['webp', 'png', 'jpg', 'jpeg', 'gif'];
-
-  const blockquotes = document.querySelectorAll('blockquote');
-  let imgIndex = 0;
-
-  blockquotes.forEach(function (bq) {
-    const text = bq.textContent.trim();
-    if (!text.startsWith('[图片')) return;
-
-    imgIndex++;
-
-    const explicitIdMatch = text.match(/^\[图片\s+(\d{2}-\d{2})[：:]/);
-    let imgId;
-    let caption;
-
-    if (explicitIdMatch) {
-      imgId = explicitIdMatch[1];
-      caption = text.replace(/^\[图片\s+\d{2}-\d{2}[：:]\s*/, '').replace(/\]$/, '').trim();
-    } else {
-      const seq = String(imgIndex).padStart(2, '0');
-      imgId = chapterPrefix + '-' + seq;
-      caption = text.replace(/^\[图片[：:]\s*/, '').replace(/\]$/, '').trim();
-    }
-
-    const figure = document.createElement('figure');
-    figure.className = 'image-placeholder';
-    figure.setAttribute('data-img-id', imgId);
-
-    const img = document.createElement('img');
-    img.alt = caption;
-    img.loading = 'lazy';
-
-    const figcaption = document.createElement('figcaption');
-    figcaption.textContent = caption;
-
-    function tryLoad(extIdx) {
-      if (extIdx >= extensions.length) {
-        figure.classList.add('no-image');
-        const placeholder = document.createElement('div');
-        placeholder.className = 'img-missing';
-        placeholder.innerHTML = '<span class="img-missing-icon">🖼</span><span class="img-missing-text">' + imgId + '</span>';
-        figure.insertBefore(placeholder, figcaption);
-        return;
-      }
-      const testImg = new Image();
-      testImg.src = basePath + imgId + '.' + extensions[extIdx];
-      testImg.onload = function () {
-        img.src = testImg.src;
-        figure.insertBefore(img, figcaption);
-        figure.classList.add('has-image');
-      };
-      testImg.onerror = function () {
-        tryLoad(extIdx + 1);
-      };
-    }
-
-    figure.appendChild(figcaption);
-    tryLoad(0);
-
-    bq.parentNode.replaceChild(figure, bq);
-  });
-})();
-
-
-// ============================================================
-// Key-points box rendering
-// Converts blockquotes that start with [要点] into a sky-blue
-// "本节要点" card — a visual break from the long narrative prose,
-// holding the concise must-learn points & formulas of a section.
-// ============================================================
-(function () {
-  'use strict';
-
-  const css = document.createElement('style');
-  css.textContent = [
-    '.key-points{background:#e9f5fd;border:1px solid #bfe2f7;border-left:4px solid #3aa3e8;',
-    'border-radius:8px;padding:1rem 1.25rem;margin:1.6rem 0;}',
-    '.key-points .kp-title{font-weight:600;font-size:.78rem;letter-spacing:.06em;',
-    'color:#1f80c2;margin:0 0 .55rem;text-transform:uppercase;}',
-    '.key-points p{margin:.5rem 0;}',
-    '.key-points ul,.key-points ol{margin:.4rem 0;padding-left:1.25rem;}',
-    '.key-points li{margin:.32rem 0;line-height:1.6;}',
-    // Override the site-wide dash marker with a proper round dot inside cards.
-    '.key-points ul li::before{content:"";width:6px;height:6px;border-radius:50%;',
-    'background:#3aa3e8;top:.6em;left:1px;}',
-    '.key-points > :last-child{margin-bottom:0;}',
-    '[data-theme="dark"] .key-points{background:#102733;border-color:#1d435a;',
-    'border-left-color:#3aa3e8;}',
-    '[data-theme="dark"] .key-points .kp-title{color:#5cb8ee;}'
-  ].join('');
-  document.head.appendChild(css);
-
-  document.querySelectorAll('blockquote').forEach(function (bq) {
-    const txt = bq.textContent.trim();
-    if (!txt.startsWith('[要点]')) return;
-
-    const div = document.createElement('div');
-    div.className = 'key-points';
-
-    const title = document.createElement('div');
-    title.className = 'kp-title';
-    title.textContent = '💡 本节要点';
-    div.appendChild(title);
-
-    // Move blockquote children over, dropping the [要点] marker.
-    Array.from(bq.childNodes).forEach(function (node) {
-      if (node.nodeType === 1 && node.tagName === 'P' &&
-          node.textContent.trim() === '[要点]') return;
-      div.appendChild(node);
-    });
-    // If the marker sat inline at the start of the first paragraph, strip it.
-    const firstP = div.querySelector('p');
-    if (firstP && firstP.textContent.trim().startsWith('[要点]')) {
-      firstP.innerHTML = firstP.innerHTML.replace(/^\s*\[要点\]\s*/, '');
-      if (!firstP.textContent.trim()) firstP.remove();
-    }
-
-    bq.parentNode.replaceChild(div, bq);
-  });
-})();
