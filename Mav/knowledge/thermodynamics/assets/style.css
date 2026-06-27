@@ -493,9 +493,10 @@ ul li::before {
   content: "";
   position: absolute;
   left: 0;
-  top: 0.75em;
-  width: 12px;
-  height: 1px;
+  top: 0.55em;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
   background: var(--muted);
 }
 ol { counter-reset: ol-counter; }

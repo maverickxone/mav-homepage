@@ -10,6 +10,7 @@
 <link rel="stylesheet" href="../assets/style.css">
 <link rel="stylesheet" id="hljs-light" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
 <link rel="stylesheet" id="hljs-dark" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" media="not all">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
 </head>
 <body>
 
@@ -54,330 +55,202 @@
   <div class="chapter-name">固体、液体与相变</div>
   <h4>目录</h4>
   <ul>
-    <li><a href="#61-超越理想气体">6.1 超越理想气体</a></li>
-    <li><a href="#62-分子间作用力">6.2 分子间作用力</a></li>
-    <li><a href="#63-范德瓦尔斯方程">6.3 范德瓦尔斯方程</a></li>
+    <li><a href="#61-理想气体的尽头">6.1 理想气体的尽头</a></li>
+    <li><a href="#62-分子间作用力近排斥远吸引">6.2 分子间作用力：近排斥、远吸引</a></li>
+    <li><a href="#63-范德瓦尔斯方程给理想气体打两个补丁">6.3 范德瓦尔斯方程：给理想气体打两个补丁</a></li>
     <li><a href="#64-相与相变">6.4 相与相变</a></li>
-    <li><a href="#65-相图">6.5 相图</a></li>
-    <li><a href="#66-克拉珀龙方程">6.6 克拉珀龙方程</a></li>
-    <li><a href="#67-固体的热性质">6.7 固体的热性质</a></li>
+    <li><a href="#65-相图物质在哪个相一张图说清">6.5 相图：物质在哪个相，一张图说清</a></li>
+    <li><a href="#66-克拉珀龙方程相平衡曲线有多陡">6.6 克拉珀龙方程：相平衡曲线有多陡</a></li>
+    <li><a href="#67-固体的热性质dulong-petit-与它的失效">6.7 固体的热性质：Dulong-Petit 与它的失效</a></li>
     <li><a href="#68-液体的表面张力">6.8 液体的表面张力</a></li>
-    <li><a href="#69-概念辨析">6.9 概念辨析</a></li>
-    <li><a href="#610-本章公式总结">6.10 本章公式总结</a></li>
-    <li><a href="#611-本章小结">6.11 本章小结</a></li>
+    <li><a href="#69-例题精讲">6.9 例题精讲</a></li>
+    <li><a href="#610-概念辨析">6.10 概念辨析</a></li>
+    <li><a href="#611-公式速查卡">6.11 公式速查卡</a></li>
+    <li><a href="#612-本章小结与全课回望">6.12 本章小结与全课回望</a></li>
   </ul>
 </aside>
   <article class="chapter-body">
     <header class="chapter-head">
   <div class="chapter-head-meta">
     <span class="num">CHAPTER 06</span>
-    <span>≈ 40 MIN READ</span>
+    <span>≈ 50 MIN READ</span>
   </div>
   <h1>固体、液体与相变</h1>
 
 </header>
-    <h2 id="61-超越理想气体">6.1 超越理想气体</h2>
-<p>前五章的主角是理想气体——分子间无相互作用、分子无体积。这个模型在常温常压下表现优秀，但它无法解释：</p>
+    <h2 id="61-理想气体的尽头">6.1 理想气体的尽头</h2>
+<p>前五章，理想气体一直是当之无愧的主角——它简单、好算，在常温常压下表现优异。可这个模型有它走不到的地方，而那些地方恰恰是真实世界最有趣的部分。理想气体解释不了：为什么气体在低温高压下会凝结成液体？为什么存在一个临界温度，超过它无论怎么加压气体都不肯液化？固体又为什么能保持确定的形状，不像气体那样四处弥散？</p>
+<p>这些问题理想气体统统答不上来，原因只有一个——它把分子间的相互作用一笔勾销了。理想气体的两条假设（分子是质点、分子间无相互作用）在常温常压下无伤大雅，可一旦温度降低、分子挨得够近，被忽略的那点吸引力就开始主宰一切：它把分子拉到一起凝成液体、冻成固体。所以这最后一章要做的，就是把分子间作用力请回舞台，看看由此打开的真实物质世界——范德瓦尔斯方程、相变、相图、克拉珀龙方程，一路到固体热容和液体表面张力。这一章也是全课的合流：前面分头铺设的宏观热力学与微观分子图像，将在这里交汇。</p>
+<blockquote><p>[要点]</p>
 <ul>
-<li>为什么气体在低温高压下会变成液体？</li>
-<li>为什么存在一个临界温度，超过它气体无论如何加压都不会液化？</li>
-<li>固体为什么有确定的形状？</li>
+<li>理想气体解释不了液化、临界点、固体有定形——根源在于它<strong>忽略了分子间作用力</strong>。</li>
+<li>低温、分子靠近时，被忽略的吸引力开始主宰，凝成液体/固体。</li>
+<li>本章把分子间作用力请回来，打开真实物质世界，也是宏观与微观的合流。</li>
 </ul>
-<p>要回答这些问题，必须把分子间的相互作用纳入考虑。</p>
+</blockquote>
 <hr>
-<h2 id="62-分子间作用力">6.2 分子间作用力</h2>
-<h3 id="力的特征">力的特征</h3>
-<p>两个中性分子之间的相互作用力有一个典型的形状：</p>
+<h2 id="62-分子间作用力近排斥远吸引">6.2 分子间作用力：近排斥、远吸引</h2>
+<p>一切要从两个中性分子之间的作用力说起，它有一个非常典型的形状。在较远处（$r>r_0$）分子间是吸引力（$F<0$，这就是 van der Waals 吸引）；在极近处（$r<r_0$）则是强烈的排斥力（$F>0$，源于电子云重叠时的 Pauli 排斥）；在某个平衡距离 $r_0$ 处，吸引与排斥恰好平衡，$F=0$，势能取极小值。把这个力对应的势能画出来，常用 <strong>Lennard-Jones 势</strong> 来描述 $U(r)=4\varepsilon[(\sigma/r)^{12}-(\sigma/r)^6]$，其中 $\varepsilon$ 是势阱深度（约 $10^{-21}$ J，即 ~0.01 eV），$\sigma$ 是势能为零处的距离（约 $10^{-10}$ m）；那个 $r^{-12}$ 项管短程排斥，$r^{-6}$ 项管长程吸引。</p>
+<blockquote><p>[图片 06-01：Lennard-Jones 势能曲线。近距（r&lt;r₀）强排斥（电子云重叠），远距（r&gt;r₀）吸引（van der Waals 力），平衡距离 r₀ 处势能最低、F=0；势阱深度为 ε。]</p>
+</blockquote>
+<p>这条势能曲线，是理解物质三态的钥匙。决定物态的，是热运动能量 $kT$ 与势阱深度 $\varepsilon$ 的较量。气态时分子间距远大于 $r_0$，$kT\gg\varepsilon$，分子有足够动能挣脱势阱、自由飞行、偶尔碰撞；液态时分子间距约为 $r_0$，$kT\sim\varepsilon$，分子被困在势阱里振动，却仍能缓慢挪动位置；固态时分子间距也约 $r_0$，但 $kT\ll\varepsilon$，分子只能在势阱底部小幅振动、位置基本固定。于是&quot;加热&quot;这件事，在微观上就是增大 $kT$、让分子一步步挣脱势阱的束缚——从固到液到气，正是 $kT$ 逐渐压倒 $\varepsilon$ 的过程。</p>
+<blockquote><p>[要点]</p>
 <ul>
-<li><strong>远距离</strong>（$r &gt; r_0$）：吸引力，$F &lt; 0$（分子间存在 van der Waals 吸引力）</li>
-<li><strong>极近距离</strong>（$r &lt; r_0$）：强烈排斥力，$F &gt; 0$（电子云重叠，Pauli 排斥）</li>
-<li><strong>平衡距离</strong> $r_0$：$F = 0$，势能取极小值</li>
+<li>分子间作用力：<strong>近排斥</strong>（电子云重叠/Pauli）、<strong>远吸引</strong>（van der Waals）、平衡距离 $r_0$ 处 $F=0$、势能最低。</li>
+<li><strong>Lennard-Jones 势</strong> $U(r)=4\varepsilon[(\sigma/r)^{12}-(\sigma/r)^6]$：$r^{-12}$ 排斥、$r^{-6}$ 吸引。</li>
+<li>物态由 $kT$ 与势阱深度 $\varepsilon$ 较量决定：$kT\gg\varepsilon$ 气、$\sim\varepsilon$ 液、$\ll\varepsilon$ 固。</li>
 </ul>
-<h3 id="势能">势能</h3>
-<p>对应的势能曲线（Lennard-Jones 势）：</p>
-<p>$U(r) = 4\varepsilon\left[\left(\frac{\sigma}{r}\right)^{12} - \left(\frac{\sigma}{r}\right)^6\right]$</p>
-<ul>
-<li>$\varepsilon$：势阱深度（~$10^{-21}$ J 量级，即 ~0.01 eV）</li>
-<li>$\sigma$：势能为零时的距离（~$10^{-10}$ m 量级）</li>
-<li>$r^{-12}$ 项：短程排斥</li>
-<li>$r^{-6}$ 项：长程吸引（van der Waals 力）</li>
-</ul>
-<h3 id="三态的微观理解">三态的微观理解</h3>
-<div class="table-wrap"><table><thead><tr>
-<th>状态</th>
-<th>分子间距</th>
-<th align="center">$kT$ vs $\varepsilon$</th>
-<th>分子运动特征</th>
-</tr>
-</thead><tbody><tr>
-<td>气态</td>
-<td>远大于 $r_0$</td>
-<td align="center">$kT \gg \varepsilon$</td>
-<td>自由飞行，偶尔碰撞</td>
-</tr>
-<tr>
-<td>液态</td>
-<td>约 $r_0$</td>
-<td align="center">$kT \sim \varepsilon$</td>
-<td>在势阱中振动但可以缓慢移动</td>
-</tr>
-<tr>
-<td>固态</td>
-<td>约 $r_0$</td>
-<td align="center">$kT \ll \varepsilon$</td>
-<td>在势阱底部小幅振动，位置固定</td>
-</tr>
-</tbody></table></div>
-<p>温度升高 = $kT$ 增大 = 分子有足够动能挣脱势阱 → 从固态到液态到气态。</p>
+</blockquote>
 <hr>
-<h2 id="63-范德瓦尔斯方程">6.3 范德瓦尔斯方程</h2>
-<h3 id="从理想气体到实际气体">从理想气体到实际气体</h3>
-<p>理想气体方程 $pV = nRT$ 做了两个不合理的假设。范德瓦尔斯（1873）对这两个假设做了修正：</p>
-<p><strong>修正一：分子有体积</strong></p>
-<p>$N$ 个分子各自占据一定体积。有效的可运动空间不是 $V$，而是 $V - nb$，其中 $b$ 是 1 mol 气体分子自身&quot;排斥体积&quot;（约为分子实际体积的 4 倍）。</p>
-<p><strong>修正二：分子间有吸引力</strong></p>
-<p>靠近器壁的分子被内部分子向内吸引，撞壁的冲量减小。这使得实际压强比理想情况低。减少量和分子密度的平方成正比（因为吸引是两两之间的）：</p>
-<p>$\Delta p = -\frac{a}{V_m^2}$</p>
-<h3 id="范德瓦尔斯方程">范德瓦尔斯方程</h3>
-<p>综合两处修正：</p>
-<p>$\boxed{\left(p + \frac{a}{V_m^2}\right)(V_m - b) = RT}$</p>
-<p>其中 $V_m = V/n$ 是摩尔体积，$a$ 和 $b$ 是与气体种类有关的经验常数。</p>
-<p>对 $n$ mol 气体：</p>
-<p>$\left(p + \frac{n^2a}{V^2}\right)(V - nb) = nRT$</p>
-<h3 id="a-和-b-的物理含义">$a$ 和 $b$ 的物理含义</h3>
-<div class="table-wrap"><table><thead><tr>
-<th>参数</th>
-<th>物理含义</th>
-<th>量级</th>
-</tr>
-</thead><tbody><tr>
-<td>$a$</td>
-<td>描述分子间吸引力的强度</td>
-<td>~0.1-1 Pa·m⁶/mol²</td>
-</tr>
-<tr>
-<td>$b$</td>
-<td>描述分子自身的排斥体积</td>
-<td>~$10^{-5}$ m³/mol</td>
-</tr>
-</tbody></table></div>
-<p>$a$ 大 → 分子间吸引力强 → 更容易液化
-$b$ 大 → 分子体积大</p>
-<h3 id="范德瓦尔斯等温线">范德瓦尔斯等温线</h3>
-<p>把范德瓦尔斯方程改写为 $p$ 关于 $V_m$ 的函数：</p>
-<p>$p = \frac{RT}{V_m - b} - \frac{a}{V_m^2}$</p>
-<p>在 p-V 图上画等温线（固定 $T$ 时 $p$ vs $V_m$ 的曲线），会发现：</p>
+<h2 id="63-范德瓦尔斯方程给理想气体打两个补丁">6.3 范德瓦尔斯方程：给理想气体打两个补丁</h2>
+<p>把分子间作用力纳入考虑，最经典的成果就是范德瓦尔斯方程（1873）。它没有推倒重来，而是对理想气体方程那两条不合理的假设各打一个补丁。<strong>补丁一，分子有体积</strong>：$N$ 个分子各占一定空间，真正能自由运动的体积不是 $V$，而是 $V-nb$，其中 $b$ 是 1 mol 分子的&quot;排斥体积&quot;（约为分子实际体积的 4 倍）。<strong>补丁二，分子间有吸引力</strong>：靠近器壁的分子被内部分子往回拽，撞壁冲量减小，使实际压强比理想值偏低，减少量正比于分子密度的平方（因为吸引是两两之间的），即 $\Delta p=-a/V_m^2$。两个补丁合起来，便是</p>
+<p>$$\boxed{\left(p+\frac{a}{V_m^2}\right)(V_m-b)=RT},$$</p>
+<p>其中 $V_m=V/n$ 是摩尔体积，$a$、$b$ 是与气体种类有关的经验常数：$a$ 描述分子间吸引力的强度（量级约 0.1–1 Pa·m⁶/mol²），$a$ 越大分子间吸引越强、越容易液化；$b$ 描述分子自身的排斥体积（量级约 $10^{-5}$ m³/mol），$b$ 越大分子体积越大。</p>
+<p>把它改写成 $p=\dfrac{RT}{V_m-b}-\dfrac{a}{V_m^2}$，在 $p$-$V$ 图上画等温线，会看到理想气体所没有的新行为。</p>
+<blockquote><p>[图片 06-02：范德瓦尔斯等温线。高温（T&gt;Tc）形如理想气体单调下降；低温（T&lt;Tc）出现 S 形振荡（对应气液共存）；恰在临界温度 Tc 时 S 形缩成一个拐点（临界点）。]</p>
+</blockquote>
+<p>高温时（$T>T_c$）等温线大体单调递减，和理想气体差不多；但低温时（$T<T_c$）等温线会出现一段&quot;S 形&quot;振荡——先降后升再降。这段 S 形在物理上对应<strong>气液共存区</strong>：实际过程中气体会在这里发生相变（液化），等温线被一段水平直线取代（压强恒定，体积从纯气态连续变到纯液态），水平线的确切位置由 <strong>Maxwell 等面积法则</strong>（S 形曲线上下围成的面积相等）确定。随着温度升高，S 形的起伏越来越小，到某个特定温度恰好缩成一个水平拐点，这就是<strong>临界点</strong>。在临界点处同时满足 $\partial p/\partial V_m=0$ 和 $\partial^2 p/\partial V_m^2=0$（拐点条件），解这两个方程连同状态方程，可得临界参量 $T_c=\dfrac{8a}{27Rb}$、$V_{m,c}=3b$、$p_c=\dfrac{a}{27b^2}$。一个漂亮的检验是 $\dfrac{p_cV_{m,c}}{RT_c}=\dfrac38=0.375$，与各种真实气体实测的 0.2–0.3 数量级吻合（偏差来自范氏方程本身的粗糙）。更妙的是，用约化变量 $\tilde p=p/p_c$、$\tilde V=V_m/V_{m,c}$、$\tilde T=T/T_c$ 重写方程，会得到 $\left(\tilde p+\dfrac{3}{\tilde V^2}\right)\left(\tilde V-\dfrac13\right)=\dfrac83\tilde T$——里面不含 $a$、$b$！这意味着所有遵循范氏方程的气体在约化坐标下有相同的状态方程，这就是<strong>对应态定律</strong>的近似表述。</p>
+<blockquote><p>[要点]</p>
 <ul>
-<li><strong>高温</strong>（$T &gt; T_c$）：等温线形状类似理想气体（单调递减），只是有些变形</li>
-<li><strong>低温</strong>（$T &lt; T_c$）：等温线出现一段&quot;S 形&quot;振荡——先降后升再降</li>
+<li><strong>范德瓦尔斯方程</strong> $\boxed{\left(p+\dfrac{a}{V_m^2}\right)(V_m-b)=RT}$：补丁 $b$（分子体积/排斥）+ 补丁 $a/V_m^2$（吸引使压强偏低）。</li>
+<li>$T<T_c$ 等温线出现 S 形 → 气液共存（Maxwell 等面积定水平线）；$T=T_c$ 缩成拐点 = <strong>临界点</strong>。</li>
+<li>临界参量 $T_c=\dfrac{8a}{27Rb}$、$V_{m,c}=3b$、$p_c=\dfrac{a}{27b^2}$；$p_cV_{m,c}/RT_c=3/8$。</li>
+<li>约化方程不含 $a,b$ → <strong>对应态定律</strong>。</li>
 </ul>
-<p>S 形区域在物理上对应<strong>气液共存区</strong>。实际上在这个区域气体会发生相变（液化），等温线变成一段水平线（$p$ = const，体积从纯气态到纯液态）。</p>
-<h3 id="临界点">临界点</h3>
-<p>定义<strong>临界温度</strong> $T_c$：S 形振荡恰好消失为一个拐点时的温度。</p>
-<p>在临界点处：$\frac{\partial p}{\partial V_m} = 0$ 且 $\frac{\partial^2 p}{\partial V_m^2} = 0$（拐点条件）。</p>
-<p>解这两个方程加上状态方程，可以得到临界参量：</p>
-<p>$T_c = \frac{8a}{27Rb}, \quad V_{m,c} = 3b, \quad p_c = \frac{a}{27b^2}$</p>
-<p>验证：$\frac{p_cV_{m,c}}{RT_c} = \frac{3}{8} = 0.375$</p>
-<p>实验上不同气体的 $p_cV_{m,c}/(RT_c)$ 约为 0.2-0.3，数量级吻合（偏差来自范德瓦尔斯方程本身的粗糙性）。</p>
-<h3 id="对应态定律">对应态定律</h3>
-<p>用约化变量 $\tilde{p} = p/p_c$，$\tilde{V} = V_m/V_{m,c}$，$\tilde{T} = T/T_c$ 重写范德瓦尔斯方程：</p>
-<p>$\left(\tilde{p} + \frac{3}{\tilde{V}^2}\right)\left(\tilde{V} - \frac{1}{3}\right) = \frac{8}{3}\tilde{T}$</p>
-<p>这个方程不含 $a$ 和 $b$——即<strong>所有遵循范德瓦尔斯方程的气体，在约化坐标下有相同的状态方程</strong>。这就是对应态定律的近似表述。</p>
+</blockquote>
 <hr>
 <h2 id="64-相与相变">6.4 相与相变</h2>
-<h3 id="基本概念">基本概念</h3>
-<p><strong>相</strong>（phase）：系统中物理性质均匀的部分。一杯冰水中有两个相——固相（冰）和液相（水）。</p>
-<p><strong>相变</strong>（phase transition）：物质从一个相转变为另一个相。</p>
-<p>常见相变：</p>
-<div class="table-wrap"><table><thead><tr>
-<th>相变</th>
-<th>方向</th>
-<th>潜热</th>
-</tr>
-</thead><tbody><tr>
-<td>熔化</td>
-<td>固→液</td>
-<td>吸热</td>
-</tr>
-<tr>
-<td>凝固</td>
-<td>液→固</td>
-<td>放热</td>
-</tr>
-<tr>
-<td>汽化</td>
-<td>液→气</td>
-<td>吸热</td>
-</tr>
-<tr>
-<td>液化（凝结）</td>
-<td>气→液</td>
-<td>放热</td>
-</tr>
-<tr>
-<td>升华</td>
-<td>固→气</td>
-<td>吸热</td>
-</tr>
-<tr>
-<td>凝华</td>
-<td>气→固</td>
-<td>放热</td>
-</tr>
-</tbody></table></div>
-<h3 id="相变的特征">相变的特征</h3>
-<p><strong>一级相变</strong>：伴随潜热（相变过程中温度不变但吸收/释放热量），体积发生突变。上述六种都是一级相变。</p>
-<p><strong>二级相变</strong>：无潜热，无体积突变，但热容、压缩率等二阶导数量发生突变。例如：铁磁→顺磁转变（居里点）、超导转变。本课程不深入。</p>
-<h3 id="潜热">潜热</h3>
-<p>相变潜热 $L$：单位质量（或 1 mol）的物质在相变温度下完成相变所需的热量。</p>
-<p>例如：水在 100°C（1 atm）下的汽化潜热 $L_v = 2260$ kJ/kg = 40.7 kJ/mol。</p>
-<p>注意潜热巨大——把 1 kg 100°C 的水变成 100°C 的蒸气需要的能量，是把同样的水从 0°C 加热到 100°C 所需能量的 5 倍多。</p>
-<hr>
-<h2 id="65-相图">6.5 相图</h2>
-<h3 id="p-t-相图">p-T 相图</h3>
-<p>相图描述了在不同温度和压强下，物质处于哪个相。</p>
-<p>典型的 p-T 相图有三条线和一个特殊点：</p>
+<p>有了范氏方程描述液化，我们需要把&quot;相&quot;和&quot;相变&quot;的语言讲清楚。<strong>相</strong>是系统中物理性质均匀的部分——一杯冰水里就有两个相，固相的冰和液相的水。<strong>相变</strong>则是物质从一个相转变为另一个相。常见的相变有六种，两两成对：熔化（固→液，吸热）与凝固（液→固，放热）、汽化（液→气，吸热）与液化（气→液，放热）、升华（固→气，吸热）与凝华（气→固，放热）。</p>
+<p>这六种相变有一个共同的特征，叫<strong>一级相变</strong>：它们都伴随<strong>潜热</strong>（相变过程中温度不变，却要吸收或释放热量），并且体积发生突变。与之相对的是<strong>二级相变</strong>（无潜热、无体积突变，但热容、压缩率等二阶导数量发生突变，例如铁磁→顺磁的居里点转变、超导转变），本课程不深入。这里的核心概念是潜热——相变潜热 $L$ 是单位质量（或 1 mol）物质在相变温度下完成相变所需的热量。潜热往往大得惊人：水在 100°C、1 atm 下的汽化潜热 $L_v=2260$ kJ/kg = 40.7 kJ/mol，把 1 kg 100°C 的水变成 100°C 的蒸气所需的能量，是把同样的水从 0°C 加热到 100°C 所需能量的 5 倍多。这也解释了为什么出汗、蒸发能如此高效地带走热量。</p>
+<blockquote><p>[要点]</p>
 <ul>
-<li><strong>熔化曲线</strong>：固液平衡线（固液共存条件）</li>
-<li><strong>汽化曲线</strong>：液气平衡线（液气共存条件）</li>
-<li><strong>升华曲线</strong>：固气平衡线（固气共存条件）</li>
-<li><strong>三相点</strong>：三条线交汇处，三相共存（温度和压强唯一确定）</li>
-<li><strong>临界点</strong>：汽化曲线的终点；超过此点液相和气相不可区分</li>
+<li><strong>相</strong> = 物理性质均匀的部分；<strong>相变</strong> = 相之间的转变。</li>
+<li>六种一级相变（熔化/凝固、汽化/液化、升华/凝华）都伴随<strong>潜热</strong>与体积突变。</li>
+<li><strong>潜热</strong> $L$：相变温度下单位质量完成相变所需的热（温度不变）；水的汽化潜热 40.7 kJ/mol，极大。</li>
 </ul>
-<h3 id="水的相图特殊性">水的相图特殊性</h3>
-<p>大部分物质的熔化曲线斜率为正（$dp/dT &gt; 0$）——增大压强会升高熔点。</p>
-<p>水是例外：水的熔化曲线斜率为负！增大压强反而降低冰的熔点。</p>
-<p>原因：水结冰时体积膨胀（冰的密度比水小）。增大压强有利于体积小的相（液态水），所以高压下冰更容易融化。</p>
-<p>这解释了为什么冰刀能在冰面上滑行（刀刃处压强极大→冰融化→形成水膜→减小摩擦），以及为什么深海冰川底部可能存在液态水。</p>
-<h3 id="p-v-相图与-maxwell-构造">p-V 相图与 Maxwell 构造</h3>
-<p>在 p-V 图上，低于临界温度的等温线中，气液共存区是一段水平线（$p$ = const，$V$ 从纯气态体积变到纯液态体积）。</p>
-<p>范德瓦尔斯方程给出 S 形曲线，实际的水平线位置由 <strong>Maxwell 等面积法则</strong>确定：S 形曲线围成的上下两块面积相等。</p>
+</blockquote>
 <hr>
-<h2 id="66-克拉珀龙方程">6.6 克拉珀龙方程</h2>
-<h3 id="动机">动机</h3>
-<p>相平衡曲线（比如汽化曲线）$p = p(T)$ 的斜率是多少？这就是克拉珀龙方程要回答的问题。</p>
-<h3 id="推导">推导</h3>
-<p>考虑物质在相变温度 $T$、压强 $p$ 下，1 mol 从相 1（如液态）变为相 2（如气态）。</p>
-<p>相平衡条件：两相的摩尔吉布斯自由能相等 $G_{m,1} = G_{m,2}$。</p>
-<p>当 $T$ 和 $p$ 同时变化 $dT$ 和 $dp$（沿着相平衡曲线移动）时，两相的 $G_m$ 变化量必须相等：</p>
-<p>$dG_{m,1} = dG_{m,2}$</p>
-<p>由热力学基本关系 $dG_m = -S_m,dT + V_m,dp$：</p>
-<p>$-S_{m,1},dT + V_{m,1},dp = -S_{m,2},dT + V_{m,2},dp$</p>
-<p>整理：</p>
-<p>$(S_{m,2} - S_{m,1}),dT = (V_{m,2} - V_{m,1}),dp$</p>
-<p>$\boxed{\frac{dp}{dT} = \frac{\Delta S_m}{\Delta V_m} = \frac{L}{T\Delta V_m}}$</p>
-<p>最后一步用了 $\Delta S_m = L/T$（相变在恒温下发生，$L$ 是摩尔潜热）。</p>
-<p>这就是 <strong>克拉珀龙方程</strong>（Clausius-Clapeyron equation 的精确形式）。</p>
-<h3 id="物理含义">物理含义</h3>
-<p>$\frac{dp}{dT} = \frac{L}{T\Delta V_m}$</p>
+<h2 id="65-相图物质在哪个相一张图说清">6.5 相图：物质在哪个相，一张图说清</h2>
+<p>把不同温度、压强下物质处于哪个相，画在一张 $p$-$T$ 图上，就是<strong>相图</strong>。典型相图有三条线和两个特殊点：<strong>熔化曲线</strong>（固液平衡）、<strong>汽化曲线</strong>（液气平衡）、<strong>升华曲线</strong>（固气平衡）三条线交汇于<strong>三相点</strong>——三相共存的唯一确定的温度和压强；而汽化曲线并非无限延伸，它终止于<strong>临界点</strong>，越过这一点液相与气相不再可区分。</p>
+<blockquote><p>[图片 06-03：p-T 相图。固、液、气三个区域由熔化曲线、汽化曲线、升华曲线分隔，三线交于三相点；汽化曲线终止于临界点，越过它气液不可区分。]</p>
+</blockquote>
+<p>水的相图有一个著名的反常，常被拿来考。大多数物质的熔化曲线斜率为正（$dp/dT>0$，增大压强升高熔点），水却相反——它的熔化曲线斜率为<strong>负</strong>，增大压强反而降低冰的熔点。原因在于水结冰时体积膨胀（冰比水轻），增大压强有利于体积更小的液态水，于是高压下冰更容易融化。这解释了为什么冰刀能在冰面上滑行（刀刃处压强极大，使冰融化形成水膜润滑），也解释了深海冰川底部为何可能存在液态水。补充一点 $p$-$V$ 图上的图景：低于临界温度的等温线，其气液共存段是一条水平线（压强恒定，体积从纯气到纯液），而范氏方程给的 S 形曲线该被水平线取代的位置，正由上一节提到的 Maxwell 等面积法则确定。</p>
+<blockquote><p>[要点]</p>
 <ul>
-<li>$L &gt; 0$（相变吸热）且 $\Delta V_m &gt; 0$（体积增大，如液→气）→ $dp/dT &gt; 0$：温度升高，相平衡压强也升高</li>
-<li>水的固→液：$L &gt; 0$ 但 $\Delta V_m &lt; 0$（冰融化体积减小）→ $dp/dT &lt; 0$：压强增大，熔点下降</li>
+<li><strong>相图</strong>（$p$-$T$）：三条相平衡线（熔化/汽化/升华）交于<strong>三相点</strong>；汽化曲线止于<strong>临界点</strong>。</li>
+<li>越过临界点气液不可区分（超临界流体）。</li>
+<li><strong>水的反常</strong>：熔化曲线斜率为负（结冰膨胀），加压降低熔点 → 冰刀滑行、深海冰下液态水。</li>
 </ul>
-<h3 id="克拉珀龙-克劳修斯方程">克拉珀龙-克劳修斯方程</h3>
-<p>对于液-气或固-气相变，气相体积远大于凝聚相：$\Delta V_m \approx V_{m,gas} = RT/p$。代入：</p>
-<p>$\frac{dp}{dT} = \frac{Lp}{RT^2}$</p>
-<p>分离变量：</p>
-<p>$\frac{dp}{p} = \frac{L}{R}\frac{dT}{T^2}$</p>
-<p>积分（假设 $L$ 不随温度变化）：</p>
-<p>$\boxed{\ln\frac{p_2}{p_1} = \frac{L}{R}\left(\frac{1}{T_1} - \frac{1}{T_2}\right)}$</p>
-<p>或：</p>
-<p>$p = p_0 \exp\left(-\frac{L}{RT}\right)$</p>
-<p>这给出了蒸气压随温度的指数增长关系。</p>
-<h3 id="应用举例">应用举例</h3>
-<p>水在 100°C 时蒸气压为 1 atm。问：在 110°C 时蒸气压是多少？</p>
-<p>$\ln\frac{p_2}{p_1} = \frac{L}{R}\left(\frac{1}{T_1} - \frac{1}{T_2}\right) = \frac{40700}{8.314}\left(\frac{1}{373} - \frac{1}{383}\right) \approx 0.343$</p>
-<p>$p_2 = 1 \times e^{0.343} \approx 1.41 \text{ atm}$</p>
-<p>实验值约 1.43 atm，吻合良好。</p>
+</blockquote>
 <hr>
-<h2 id="67-固体的热性质">6.7 固体的热性质</h2>
-<h3 id="固体的热容dulong-petit-定律">固体的热容——Dulong-Petit 定律</h3>
-<p>经典理论预言：固体中每个原子在三个方向上做谐振动，每个方向有 2 个自由度（动能 + 势能），共 6 个自由度。</p>
-<p>由能量均分定理：</p>
-<p>$U = 3NkT = 3nRT$</p>
-<p>$C_{V,m} = 3R \approx 25 \text{ J/(mol·K)}$</p>
-<p>这就是 <strong>Dulong-Petit 定律</strong>（1819）：在高温时，所有固体的摩尔定容热容都趋于 $3R$。</p>
-<p>实验在室温下对大多数金属成立（铜 24.4，铝 24.2，铁 25.1 J/(mol·K)）。</p>
-<h3 id="低温偏离">低温偏离</h3>
-<p>在低温下，实验热容远小于 $3R$ 并趋于零（$C_V \to 0$ as $T \to 0$）。</p>
-<p>经典理论无法解释这一点——能量均分定理总是给出 $C_V = 3R$。</p>
-<p><strong>爱因斯坦模型</strong>（1907）：把固体中的每个原子看成频率为 $\nu$ 的量子谐振子。在 $kT \ll h\nu$ 时，振动自由度被冻结，热容下降。</p>
-<p><strong>德拜模型</strong>（1912）：更精确，考虑了固体中振动频率的分布（声子频谱），给出 $C_V \propto T^3$（低温），定量吻合实验。</p>
-<p>本课程不要求掌握这两个模型的细节，只需要知道：Dulong-Petit 是高温极限，低温偏离需要量子力学解释。</p>
+<h2 id="66-克拉珀龙方程相平衡曲线有多陡">6.6 克拉珀龙方程：相平衡曲线有多陡</h2>
+<p>相图上那几条相平衡曲线 $p=p(T)$，它们的斜率由什么决定？回答这个问题的，是<strong>克拉珀龙方程</strong>。推导的出发点是相平衡条件：在相变温度 $T$、压强 $p$ 下，两相的摩尔吉布斯自由能相等 $G_{m,1}=G_{m,2}$（这正用上了第三章的自由能判据）。当 $T$、$p$ 沿相平衡曲线一起变化时，两相的 $G_m$ 变化量也必须始终相等 $dG_{m,1}=dG_{m,2}$。代入热力学基本关系 $dG_m=-S_m\,dT+V_m\,dp$，得 $-S_{m,1}\,dT+V_{m,1}\,dp=-S_{m,2}\,dT+V_{m,2}\,dp$，整理就得到</p>
+<p>$$\boxed{\frac{dp}{dT}=\frac{\Delta S_m}{\Delta V_m}=\frac{L}{T\Delta V_m}},$$</p>
+<p>最后一步用了相变在恒温下进行、$\Delta S_m=L/T$（$L$ 是摩尔潜热）。这个式子立刻解释了相平衡曲线的斜率方向：液→气这类 $L>0$ 且 $\Delta V_m>0$（体积增大）的相变，$dp/dT>0$；而水的固→液，$L>0$ 但 $\Delta V_m<0$（冰融化体积减小），$dp/dT<0$——这正是上一节水的反常的定量根据。</p>
+<p>对液-气或固-气相变还能进一步简化：气相体积远大于凝聚相，$\Delta V_m\approx V_{m,gas}=RT/p$，代入得 $\dfrac{dp}{dT}=\dfrac{Lp}{RT^2}$，分离变量积分（假设 $L$ 不随温度变）便得到 <strong>克劳修斯-克拉珀龙方程</strong></p>
+<p>$$\boxed{\ln\frac{p_2}{p_1}=\frac{L}{R}\left(\frac{1}{T_1}-\frac{1}{T_2}\right)},$$</p>
+<p>或等价的 $p=p_0\exp(-L/RT)$，它给出了蒸气压随温度的指数增长关系——温度稍升，蒸气压猛涨，这就是为什么高压锅能让水在更高温度沸腾、为什么高原上水不到 100°C 就开。</p>
+<blockquote><p>[要点]</p>
+<ul>
+<li><strong>克拉珀龙方程</strong> $\boxed{\dfrac{dp}{dT}=\dfrac{L}{T\Delta V_m}}$（由两相 $G_m$ 相等推出）：定相平衡曲线斜率。</li>
+<li>$\Delta V_m>0$（如液→气）斜率为正；水固→液 $\Delta V_m<0$ 故斜率为负。</li>
+<li><strong>克劳修斯-克拉珀龙方程</strong> $\boxed{\ln\dfrac{p_2}{p_1}=\dfrac{L}{R}\left(\dfrac{1}{T_1}-\dfrac{1}{T_2}\right)}$：蒸气压随温度指数增长。</li>
+</ul>
+</blockquote>
+<hr>
+<h2 id="67-固体的热性质dulong-petit-与它的失效">6.7 固体的热性质：Dulong-Petit 与它的失效</h2>
+<p>把视线转到固体，先看它的热容。经典理论这样估算：固体里每个原子在三个方向上做谐振动，每个方向有 2 个自由度（动能加势能），共 6 个自由度；由能量均分定理（第四章），内能 $U=3NkT=3nRT$，于是定容摩尔热容 $C_{V,m}=3R\approx25$ J/(mol·K)。这就是 <strong>Dulong-Petit 定律</strong>（1819）——高温下所有固体的摩尔定容热容都趋于 $3R$。它在室温下对大多数金属成立得相当好（铜 24.4、铝 24.2、铁 25.1 J/(mol·K)）。</p>
+<blockquote><p>[图片 06-05：固体摩尔热容随温度变化。高温趋于 Dulong-Petit 极限 3R，低温则一路趋于零（C_V→0 as T→0）——经典能量均分解释不了低温下降，需要量子模型。]</p>
+</blockquote>
+<p>但 Dulong-Petit 在低温下彻底失灵：实验测得的热容远小于 $3R$，并随温度趋于零（$C_V\to0$ as $T\to0$）。经典的能量均分定理对此完全无能为力——它永远只会给出常数 $3R$。这又一次需要量子力学来救场。<strong>爱因斯坦模型</strong>（1907）把每个原子看成频率为 $\nu$ 的量子谐振子，当 $kT\ll h\nu$ 时振动自由度被冻结、热容随之下降；<strong>德拜模型</strong>（1912）更精细，考虑了固体中振动频率的分布（声子频谱），给出低温下 $C_V\propto T^3$，与实验定量吻合。本课程不要求掌握这两个模型的细节，只需记住：Dulong-Petit 是高温极限，低温的偏离必须靠量子力学解释——这与第四章气体热容的&quot;自由度冻结&quot;是同一个量子故事。</p>
+<blockquote><p>[要点]</p>
+<ul>
+<li><strong>Dulong-Petit 定律</strong>：高温固体 $C_{V,m}=3R\approx25$ J/(mol·K)（每原子 6 个自由度）。</li>
+<li>室温对多数金属成立（铜/铝/铁约 24–25）。</li>
+<li>低温失效：$C_V\to0$，需量子解释（爱因斯坦/德拜模型，低温 $C_V\propto T^3$）——与气体自由度冻结同源。</li>
+</ul>
+</blockquote>
 <hr>
 <h2 id="68-液体的表面张力">6.8 液体的表面张力</h2>
-<h3 id="现象">现象</h3>
-<p>液体表面有收缩趋势——水滴呈球形（球形面积最小），肥皂泡是球的。这是因为表面层的分子受力不对称——内部分子四周都有邻居吸引（合力为零），但表面分子只有内侧有邻居，受到一个向内的净力。</p>
-<h3 id="表面张力系数">表面张力系数</h3>
-<p><strong>表面张力</strong> $\sigma$：使液体表面增加单位面积所需做的功（J/m² = N/m）。</p>
-<p>等价地：$\sigma$ 是垂直于表面边界线、沿表面方向、单位长度上的拉力。</p>
-<p>水的表面张力：$\sigma \approx 0.073$ N/m（20°C）。温度升高，表面张力减小（分子热运动更剧烈，分子间吸引力相对不重要）。</p>
-<h3 id="附加压强">附加压强</h3>
-<p>球形液滴内部的压强比外部高——这是表面张力的效果。</p>
-<p>对半径为 $R$ 的球形液滴：</p>
-<p>$\Delta p = p_{内} - p_{外} = \frac{2\sigma}{R}$</p>
-<p>这就是 <strong>拉普拉斯公式</strong>（Young-Laplace equation 的球形特例）。</p>
-<p>液滴越小，附加压强越大。这解释了为什么极小的水滴蒸发特别快（内部压强高→蒸气压高）。</p>
-<hr>
-<h2 id="69-概念辨析">6.9 概念辨析</h2>
-<h3 id="q临界温度以上为什么不能液化">Q：临界温度以上为什么不能液化？</h3>
-<p>在临界温度以上，液相和气相的差别消失——不存在&quot;相界面&quot;。无论你加多大压强，得到的都是一种均匀的&quot;超临界流体&quot;（密度可以连续变化，但没有从气到液的突变）。</p>
-<h3 id="q水的三相点和冰点一样吗">Q：水的三相点和冰点一样吗？</h3>
-<p>不完全一样。水的三相点是 273.16 K（0.01°C），而冰点是 273.15 K（0°C，在 1 atm 下）。差别来自：三相点的压强是 611 Pa（远低于 1 atm），而冰点是在 1 atm 下定义的。由于水的熔化曲线斜率为负，增大压强使熔点略微降低。</p>
-<h3 id="q沸腾和蒸发的区别">Q：沸腾和蒸发的区别？</h3>
+<p>最后看液体一个独特的性质——表面张力。水滴总是尽量缩成球形，肥皂泡也是球的，这背后是表面层分子的受力不对称：内部分子四周都有邻居吸引、合力为零，而表面分子只有内侧有邻居，受到一个净的向内的拉力，于是液体表面有收缩到最小面积的趋势（球的表面积最小）。</p>
+<blockquote><p>[图片 06-04：液体表面张力。内部分子四周受力平衡（合力为零），表面分子只有内侧有邻居、受净向内的力，使表面趋于收缩；由此球形液滴内外有附加压强 Δp=2σ/R（拉普拉斯）。]</p>
+</blockquote>
+<p>定量地，<strong>表面张力</strong> $\sigma$ 定义为使液体表面增加单位面积所需做的功（J/m² = N/m），等价地也是沿表面、垂直于边界线、单位长度上的拉力。水的表面张力约 $\sigma\approx0.073$ N/m（20°C），温度升高它会减小（分子热运动加剧、分子间吸引相对不重要）。表面张力还会在弯曲液面两侧造成压强差：对半径 $R$ 的球形液滴，内部压强比外部高 $\Delta p=p_{内}-p_{外}=\dfrac{2\sigma}{R}$，这就是<strong>拉普拉斯公式</strong>（Young-Laplace 方程的球形特例）。液滴越小、附加压强越大，所以极小的水滴蒸发得特别快（内部压强高、蒸气压高）。</p>
+<blockquote><p>[要点]</p>
 <ul>
-<li><strong>蒸发</strong>：在任何温度下都发生，只在液体表面进行，是液面分子逃逸的过程</li>
-<li><strong>沸腾</strong>：在特定温度（沸点）下发生，是液体内部形成气泡并上升的过程。条件：液体内部的蒸气压等于外界压强</li>
+<li><strong>表面张力</strong>源于表面分子受力不对称（净向内），使液面趋于收缩到最小面积。</li>
+<li>$\sigma$ = 单位面积表面能（N/m）；水约 0.073 N/m，随温度升高而减小。</li>
+<li><strong>拉普拉斯公式</strong> $\boxed{\Delta p=\dfrac{2\sigma}{R}}$：球形液滴内压比外高；液滴越小附加压强越大。</li>
 </ul>
-<h3 id="q范德瓦尔斯方程准确吗">Q：范德瓦尔斯方程准确吗？</h3>
-<p>不够准确——它只是一个两参数的简单修正。在临界点附近和高密度区偏差显著。但它定性地给出了所有重要特征（液化、临界点、对应态），作为理解实际气体行为的第一步非常有价值。</p>
+</blockquote>
 <hr>
-<h2 id="610-本章公式总结">6.10 本章公式总结</h2>
-<h3 id="范德瓦尔斯方程">范德瓦尔斯方程</h3>
-<p>$\left(p + \frac{a}{V_m^2}\right)(V_m - b) = RT \tag{6.1}$</p>
-<h3 id="临界参量">临界参量</h3>
-<p>$T_c = \frac{8a}{27Rb}, \quad V_{m,c} = 3b, \quad p_c = \frac{a}{27b^2} \tag{6.2}$</p>
-<h3 id="克拉珀龙方程">克拉珀龙方程</h3>
-<p>$\frac{dp}{dT} = \frac{L}{T\Delta V_m} \tag{6.3}$</p>
-<h3 id="克拉珀龙-克劳修斯方程">克拉珀龙-克劳修斯方程</h3>
-<p>$\ln\frac{p_2}{p_1} = \frac{L}{R}\left(\frac{1}{T_1} - \frac{1}{T_2}\right) \tag{6.4}$</p>
-<h3 id="拉普拉斯公式">拉普拉斯公式</h3>
-<p>$\Delta p = \frac{2\sigma}{R} \tag{6.5}$</p>
-<h3 id="dulong-petit">Dulong-Petit</h3>
-<p>$C_{V,m} = 3R \approx 25 \text{ J/(mol·K)} \quad \text{（高温固体）} \tag{6.6}$</p>
+<h2 id="69-例题精讲">6.9 例题精讲</h2>
+<blockquote><p>三道题对应本章主要考法：克-克方程算蒸气压、临界参量、拉普拉斯附加压强。</p>
+</blockquote>
+<h3 id="例题-1克劳修斯-克拉珀龙方程算蒸气压">例题 1：克劳修斯-克拉珀龙方程算蒸气压</h3>
+<p><strong>题目</strong>：水在 100°C（373 K）时饱和蒸气压为 1 atm，汽化潜热 $L=40.7$ kJ/mol。求 110°C（383 K）时的饱和蒸气压。</p>
+<p><strong>思路</strong>：典型的克-克方程应用，套 $\ln(p_2/p_1)=\dfrac{L}{R}\left(\dfrac1{T_1}-\dfrac1{T_2}\right)$，注意温度用开尔文。</p>
+<p><strong>解答</strong>：$\ln\dfrac{p_2}{p_1}=\dfrac{40700}{8.314}\left(\dfrac1{373}-\dfrac1{383}\right)\approx4896\times7.0\times10^{-5}\approx0.343$，故 $p_2=1\times e^{0.343}\approx1.41$ atm（实验值约 1.43 atm，吻合良好）。温度仅升 10 K，蒸气压就涨了四成——指数增长的威力。</p>
+<h3 id="例题-2临界参量">例题 2：临界参量</h3>
+<p><strong>题目</strong>：某气体的范德瓦尔斯常数 $a=0.14$ Pa·m⁶/mol²，$b=3.9\times10^{-5}$ m³/mol。求它的临界温度与临界压强。</p>
+<p><strong>思路</strong>：直接套 $T_c=\dfrac{8a}{27Rb}$、$p_c=\dfrac{a}{27b^2}$。</p>
+<p><strong>解答</strong>：$T_c=\dfrac{8\times0.14}{27\times8.314\times3.9\times10^{-5}}\approx\dfrac{1.12}{8.76\times10^{-3}}\approx128$ K。$p_c=\dfrac{0.14}{27\times(3.9\times10^{-5})^2}\approx\dfrac{0.14}{4.11\times10^{-8}}\approx3.4\times10^6$ Pa（约 34 atm）。（这组数值接近氮气，$T_c\approx126$ K。）</p>
+<h3 id="例题-3拉普拉斯附加压强">例题 3：拉普拉斯附加压强</h3>
+<p><strong>题目</strong>：20°C 下水的表面张力 $\sigma=0.073$ N/m。求半径 $R=1.0\times10^{-3}$ m 的小水滴内部比外部高出的压强；若半径缩小到 $1.0\times10^{-6}$ m 呢？</p>
+<p><strong>思路</strong>：套拉普拉斯公式 $\Delta p=2\sigma/R$，注意附加压强与半径成反比。</p>
+<p><strong>解答</strong>：$R=1.0\times10^{-3}$ m 时，$\Delta p=\dfrac{2\times0.073}{1.0\times10^{-3}}=146$ Pa。$R=1.0\times10^{-6}$ m 时，$\Delta p=\dfrac{2\times0.073}{1.0\times10^{-6}}=1.46\times10^5$ Pa（约 1.4 atm）。半径缩小 1000 倍，附加压强增大 1000 倍——这就是微小液滴蒸气压偏高、蒸发飞快的原因。</p>
 <hr>
-<h2 id="611-本章小结">6.11 本章小结</h2>
+<h2 id="610-概念辨析">6.10 概念辨析</h2>
+<p><strong>临界温度以上为什么不能液化？</strong> 在临界温度以上，液相和气相的差别消失了——不再存在相界面。无论加多大压强，得到的都是一种均匀的&quot;超临界流体&quot;，密度可以连续变化，但没有从气到液的突变，自然谈不上&quot;液化&quot;。</p>
+<p><strong>水的三相点和冰点一样吗？</strong> 不完全一样。水的三相点是 273.16 K（0.01°C），冰点是 273.15 K（0°C，在 1 atm 下）。差别在于：三相点的压强是 611 Pa（远低于 1 atm），冰点是在 1 atm 下定义的；由于水的熔化曲线斜率为负，增大压强使熔点略微降低。</p>
+<p><strong>沸腾和蒸发有什么区别？</strong> 蒸发在任何温度下都发生，只在液体表面进行，是液面分子逃逸的过程；沸腾则在特定温度（沸点）才发生，是液体内部形成气泡并上升的过程，条件是液体内部的饱和蒸气压等于外界压强。</p>
+<p><strong>范德瓦尔斯方程准确吗？</strong> 不够准确——它只是一个两参数的简单修正，在临界点附近和高密度区偏差显著。但它定性地抓住了所有重要特征（液化、临界点、对应态），作为理解实际气体行为的第一步极有价值。</p>
+<hr>
+<h2 id="611-公式速查卡">6.11 公式速查卡</h2>
+<blockquote><p>考前最后扫一遍。★ 必背直接套，○ 理解即可。</p>
+</blockquote>
+<p><strong>范德瓦尔斯方程 ★</strong></p>
+<p>$$\left(p+\frac{a}{V_m^2}\right)(V_m-b)=RT$$</p>
+<p><strong>临界参量 ★</strong></p>
+<p>$$T_c=\frac{8a}{27Rb},\qquad V_{m,c}=3b,\qquad p_c=\frac{a}{27b^2},\qquad \frac{p_cV_{m,c}}{RT_c}=\frac38$$</p>
+<p><strong>克拉珀龙方程 ★</strong></p>
+<p>$$\frac{dp}{dT}=\frac{L}{T\Delta V_m},\qquad \ln\frac{p_2}{p_1}=\frac{L}{R}\left(\frac{1}{T_1}-\frac{1}{T_2}\right)$$</p>
+<p><strong>拉普拉斯公式 ★</strong>：$\Delta p=\dfrac{2\sigma}{R}$。<strong>Dulong-Petit ○</strong>：高温固体 $C_{V,m}=3R\approx25$ J/(mol·K)。</p>
+<hr>
+<h2 id="612-本章小结与全课回望">6.12 本章小结与全课回望</h2>
+<p>这一章我们把分子间作用力请回了舞台。从 Lennard-Jones 势的&quot;近排斥、远吸引&quot;出发，$kT$ 与势阱深度 $\varepsilon$ 的较量决定了物质的三态；范德瓦尔斯方程给理想气体打上&quot;体积&quot;和&quot;吸引&quot;两个补丁，一举解释了液化、S 形等温线和临界点；相图把固液气的疆界和三相点、临界点收进一张图；克拉珀龙方程算出相平衡曲线的斜率，并由克-克方程给出蒸气压的指数增长；最后固体的 Dulong-Petit 定律和液体的表面张力，又各自把宏观性质追溯到了微观。</p>
+<p>回望整门课，一条主线贯穿始终——<strong>如何在 $10^{23}$ 个分子的尺度上，把宏观与微观对接起来</strong>。第一章建立语言并第一次打通宏微观（压强、温度的微观本质）；第二章用第一定律守住能量；第三章用第二定律和熵守住方向；第四、五章从微观出发，用统计分布和分子运动重新推出宏观规律；第六章则让两条路线在真实物质上合流。理想气体是我们一路的脚手架，而这最后一章拆掉脚手架后露出的，正是分子间作用力塑造的、有相变、有临界点、会凝结也会蒸发的真实世界。</p>
 <div class="table-wrap"><table><thead><tr>
 <th>核心概念</th>
-<th>要点</th>
+<th>一句话抓住它</th>
 </tr>
 </thead><tbody><tr>
 <td>分子间作用力</td>
-<td>远程吸引 + 近程排斥；$kT$ vs $\varepsilon$ 决定物态</td>
+<td>近排斥、远吸引；$kT$ vs $\varepsilon$ 决定三态</td>
 </tr>
 <tr>
 <td>范德瓦尔斯方程</td>
-<td>修正体积（$b$）+ 修正压强（$a/V_m^2$）</td>
+<td>补丁 $b$（体积）+ $a/V_m^2$（吸引）；$T<T_c$ 现 S 形</td>
 </tr>
 <tr>
 <td>临界点</td>
-<td>气液不可区分；$T_c, p_c, V_{m,c}$ 由 $a, b$ 确定</td>
+<td>气液不可区分；$T_c,p_c,V_{m,c}$ 由 $a,b$ 定</td>
 </tr>
 <tr>
 <td>相图</td>
-<td>三相点唯一；临界点是汽化曲线终点</td>
+<td>三相点唯一、临界点是汽化曲线终点；水熔化线斜率反常为负</td>
 </tr>
 <tr>
 <td>克拉珀龙方程</td>
-<td>相平衡曲线斜率 = $L/(T\Delta V_m)$</td>
+<td>相平衡斜率 $=L/(T\Delta V_m)$；克-克给蒸气压指数增长</td>
 </tr>
 <tr>
 <td>Dulong-Petit</td>
-<td>固体高温热容 $\approx 3R$；低温偏离需量子解释</td>
+<td>固体高温热容 $\approx3R$；低温趋零需量子</td>
 </tr>
 <tr>
 <td>表面张力</td>
-<td>表面分子受力不对称；$\Delta p = 2\sigma/R$</td>
+<td>表面分子受力不对称；$\Delta p=2\sigma/R$</td>
 </tr>
 </tbody></table></div>
 
@@ -435,6 +308,10 @@ $b$ 大 → 分子体积大</p>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/json.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/python.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/css.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+<script>mermaid.initialize({startOnLoad:true, theme:'neutral', fontFamily:'Inter, sans-serif'});</script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}]});"></script>
 <script src="../assets/script.js"></script>
 </body>
 </html>
