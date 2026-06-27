@@ -470,6 +470,54 @@
   color: var(--ink);
 }
 
+/* ── Project completion ───────────────────────────────────── */
+.project-finish {
+  margin-top: var(--space-8);
+  padding: var(--space-7) 0 0;
+  border-top: 1px solid var(--line);
+  max-width: 720px;
+}
+.project-finish .eyebrow {
+  margin-bottom: var(--space-3);
+}
+.project-finish h2 {
+  font-size: var(--text-xl);
+  font-weight: var(--weight-medium);
+  letter-spacing: -0.015em;
+  margin-bottom: var(--space-2);
+}
+.project-finish p {
+  max-width: 620px;
+  color: var(--ink-soft);
+  font-size: var(--text-sm);
+  line-height: 1.6;
+}
+.project-finish-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-5);
+  margin-top: var(--space-5);
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.04em;
+}
+.project-finish-actions a {
+  color: var(--muted);
+}
+.project-finish-actions a:hover {
+  color: var(--ink);
+}
+.project-finish-actions .finish-primary {
+  padding: var(--space-3) var(--space-4);
+  border: 1px solid var(--line-2);
+  color: var(--ink);
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+.project-finish-actions .finish-primary:hover {
+  background: var(--bg-soft);
+  border-color: var(--ink);
+}
+
 /* ── Responsive ───────────────────────────────────────────── */
 @media (max-width: 900px) {
   .project-layout {
@@ -491,5 +539,10 @@
   }
   .path-dots-labels {
     display: none;
+  }
+  .project-finish-actions {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: var(--space-4);
   }
 }

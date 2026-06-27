@@ -1,0 +1,1044 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>线性表、栈、队列与串数组 — 数据结构：从指针到算法</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" id="hljs-light" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+<link rel="stylesheet" id="hljs-dark" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" media="not all">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+</head>
+<body>
+
+<div class="progress-bar" id="progress-bar"></div>
+
+<nav class="topnav" id="topnav">
+  <div class="topnav-inner">
+    <a class="brand" href="../index.html">数据结构：从指针到算法</a>
+    <div class="nav-links">
+      <a href="01-intro-and-c.html">01</a>
+      <a href="02-linear.html" class="active">02</a>
+      <a href="03-tree.html">03</a>
+      <a href="04-graph.html">04</a>
+      <a href="05-search-sort.html">05</a>
+      <a href="06-algorithm-design.html">06</a>
+      <a href="07-practice-cheatsheet.html">07</a>
+      <a href="08-appendix-code.html">08</a>
+      <a href="09-review.html">09</a>
+    </div>
+    <div class="nav-controls">
+      <button class="nav-btn" id="search-btn" aria-label="搜索 (Ctrl+K)">⌘K</button>
+      <button class="nav-btn" id="settings-btn" aria-label="阅读设置">Aa</button>
+      <a class="nav-btn" href="../../index.html" aria-label="返回知识库">← 知识库</a>
+      <a class="nav-btn" href="https://github.com/maverickxone/mav-homepage" target="_blank" rel="noopener" aria-label="GitHub" style="padding: 6px 8px;"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg></a>
+    </div>
+  </div>
+</nav>
+<div class="settings-pop" id="settings-pop">
+  <h5>主题</h5>
+  <div class="row">
+    <button class="seg" data-theme-set="light">明亮</button>
+    <button class="seg" data-theme-set="dark">暗色</button>
+  </div>
+  <h5>字号</h5>
+  <div class="row">
+    <button class="seg" data-size-set="s">小</button>
+    <button class="seg" data-size-set="m">中</button>
+    <button class="seg" data-size-set="l">大</button>
+  </div>
+</div>
+
+<div class="with-sidebar">
+  <aside class="sidebar">
+  <div class="chapter-num">CHAPTER 02</div>
+  <div class="chapter-name">线性表、栈、队列与串数组</div>
+  <h4>目录</h4>
+  <ul>
+    <li><a href="#21-什么是线性表">2.1 什么是线性表</a></li>
+    <li><a href="#22-顺序表线性表的顺序存储实现">2.2 顺序表（线性表的顺序存储实现）</a></li>
+    <li><a href="#23-单链表线性表的链式存储实现">2.3 单链表（线性表的链式存储实现）</a></li>
+    <li><a href="#24-循环链表与双链表变体了解-会基本操作">2.4 循环链表与双链表（变体，了解 + 会基本操作）</a></li>
+    <li><a href="#25-顺序表-vs-链表必考对比做成一张表记死">2.5 顺序表 vs 链表（必考对比，做成一张表记死）</a></li>
+    <li><a href="#26-经典题型这些是后续刷题的高频原型先理解思路">2.6 经典题型（这些是后续刷题的高频原型，先理解思路）</a></li>
+    <li><a href="#27-线性表自测">2.7 线性表自测</a></li>
+    <li><a href="#28-栈stack">2.8 栈（Stack）</a></li>
+    <li><a href="#29-队列queue">2.9 队列（Queue）</a></li>
+    <li><a href="#210-栈-vs-队列一句话对比">2.10 栈 vs 队列（一句话对比）</a></li>
+    <li><a href="#211-栈与队列自测">2.11 栈与队列自测</a></li>
+    <li><a href="#212-串string">2.12 串（String）</a></li>
+    <li><a href="#213-数组">2.13 数组</a></li>
+    <li><a href="#214-串与数组自测">2.14 串与数组自测</a></li>
+    <li><a href="#215-本段总自测清单">2.15 本段总自测清单</a></li>
+  </ul>
+</aside>
+  <article class="chapter-body">
+    <header class="chapter-head">
+  <div class="chapter-head-meta">
+    <span class="num">CHAPTER 02</span>
+    <span>≈ 54 MIN READ</span>
+  </div>
+  <h1>线性表、栈、队列与串数组</h1>
+
+</header>
+    <p>线性表是这门课<strong>第一个正式的数据结构</strong>，也是后面栈、队列、串的基础。它最简单，但「顺序实现 vs 链式实现」这套对比的思维方式，会在后面每一章重演。务必把这一章当成模板吃透。</p>
+<h2 id="21-什么是线性表">2.1 什么是线性表</h2>
+<p><strong>线性表</strong>是 n 个<strong>类型相同</strong>的数据元素排成的<strong>有限有序序列</strong>，记作 (a₁, a₂, ..., aₙ)。</p>
+<p>把这个定义拆开理解：</p>
+<ul>
+<li><strong>有限</strong>：元素个数 n 是有限的（n 叫表的<strong>长度</strong>；n=0 时叫<strong>空表</strong>）。</li>
+<li><strong>有序</strong>：这里的「序」不是指数值大小排序，而是指<strong>有先后位置关系</strong>——a₁ 在 a₂ 前面，这个次序是确定的。</li>
+<li><strong>类型相同</strong>：所有元素是同一种类型（都是学生，或都是整数）。</li>
+</ul>
+<p>线性表的「线性」体现在元素间的关系上：除了第一个元素没有前驱、最后一个元素没有后继，<strong>中间每个元素都恰好有一个直接前驱和一个直接后继</strong>。这就是典型的「1 对 1」线性结构。生活中的例子到处都是：一队排队的人、一串糖葫芦、字母表 A-Z。</p>
+<p>线性表的基本操作（ADT，理解即可）：初始化、求长度、按位置取元素、按值查找、插入、删除、判空、遍历。下面我们分别用「顺序存储」和「链式存储」把这些操作实现出来——<strong>这正是本章的核心</strong>。</p>
+<h2 id="22-顺序表线性表的顺序存储实现">2.2 顺序表（线性表的顺序存储实现）</h2>
+<h3 id="221-思想">2.2.1 思想</h3>
+<p><strong>顺序表</strong>就是用一个<strong>数组</strong>把线性表的元素<strong>挨个连续地</strong>存起来。逻辑上相邻（a₁ 挨着 a₂），物理上也相邻（数组里下标相邻）。这是最朴素、最直接的实现。</p>
+<h3 id="222-结构定义">2.2.2 结构定义</h3>
+<pre data-label="c"><code class="language-c">#define MAXSIZE 100          // 顺序表最大容量(预先定好)
+typedef int ElemType;        // 元素类型,本课约定先用 int
+
+typedef struct {
+    ElemType data[MAXSIZE];  // 存元素的数组,这就是那块"连续内存"
+    int length;              // 当前实际有多少个元素(注意:不是数组容量,是实际长度)
+} SqList;                    // SqList = Sequence List 顺序表</code></pre>
+<p>这里有个<strong>极其重要、初学者必栽的坑</strong>：<code>length</code>（表里实际有几个元素）和 <code>MAXSIZE</code>（数组最多能装几个）是两码事。数组开了 100 个格子不代表里面有 100 个元素。<code>length</code> 才是「这张表现在有几个元素」。</p>
+<p>另一个关键约定：教材通常约定<strong>逻辑位序从 1 开始</strong>（第 1 个元素、第 2 个元素……），但<strong>数组下标从 0 开始</strong>。所以「第 i 个元素」存在 <code>data[i-1]</code>。这个「位序 i ↔ 下标 i-1」的换算，是顺序表所有代码 bug 的高发区，时刻警惕。</p>
+<h3 id="223-随机访问为什么是-o1">2.2.3 随机访问为什么是 O(1)</h3>
+<p>取第 i 个元素，直接 <code>return L.data[i-1];</code>，一步到位。底层是 <code>地址 = 首地址 + (i-1) × 每个元素大小</code>，一次乘加算出地址直接取，<strong>和表有多长完全无关</strong>。这就是顺序表最大的优点：<strong>随机访问 O(1)</strong>。</p>
+<h3 id="224-插入操作核心必考移动次数">2.2.4 插入操作（核心，必考移动次数）</h3>
+<p>要在第 i 个位置插入一个新元素 e，意味着原来第 i 个及它后面的元素，<strong>都得集体往后挪一格</strong>给新元素腾位子。注意一个反直觉的细节：挪动必须<strong>从后往前</strong>进行，否则会把后面的数据覆盖掉。</p>
+<pre data-label="c"><code class="language-c">// 在顺序表 L 的第 i 个位置插入元素 e。成功返回 1,失败返回 0。
+// 注意第一个参数是 SqList *L (指针!) ——因为我们要修改 L 的内容(length 会变),
+// 必须传地址进来(回顾 0.6 节:想改外面的东西就传地址)
+int ListInsert(SqList *L, int i, ElemType e) {
+    // 1. 合法性检查
+    if (i &lt; 1 || i &gt; L-&gt;length + 1)      // 插入位置必须在 [1, length+1] 之间
+        return 0;                         // (可以插在末尾的下一个位置,所以是 length+1)
+    if (L-&gt;length &gt;= MAXSIZE)            // 表满了,插不下
+        return 0;
+
+    // 2. 从最后一个元素开始,逐个往后挪,直到第 i 个位置
+    //    位序 i 对应下标 i-1;最后一个元素下标是 length-1
+    for (int j = L-&gt;length - 1; j &gt;= i - 1; j--) {
+        L-&gt;data[j + 1] = L-&gt;data[j];     // 把第 j 格的内容搬到第 j+1 格
+    }
+
+    // 3. 此时下标 i-1 的位置空出来了,放入新元素
+    L-&gt;data[i - 1] = e;
+
+    // 4. 表长加 1
+    L-&gt;length++;
+    return 1;
+}</code></pre>
+<p><strong>复杂度分析（高频考点）</strong>：插入的代价主要在「挪动元素」。</p>
+<ul>
+<li>插在<strong>表尾</strong>（i = length+1）：不用挪，最好情况 O(1)。</li>
+<li>插在<strong>表头</strong>（i = 1）：后面全部 n 个元素都要挪，最坏情况 O(n)。</li>
+<li><strong>平均</strong>：假设等概率插在任意位置，平均要挪动 <strong>n/2</strong> 个元素，所以平均时间复杂度 <strong>O(n)</strong>。</li>
+</ul>
+<blockquote><p>记牢这个结论：<strong>顺序表插入平均移动 n/2 个元素</strong>。删除是 (n-1)/2，见下。</p>
+</blockquote>
+<h3 id="225-删除操作">2.2.5 删除操作</h3>
+<p>删除第 i 个元素，则它后面的元素都要<strong>往前挪一格</strong>填补空缺。这次要<strong>从前往后</strong>挪。</p>
+<pre data-label="c"><code class="language-c">// 删除顺序表 L 的第 i 个元素,被删的值通过指针 e 带回去给调用者
+int ListDelete(SqList *L, int i, ElemType *e) {
+    if (i &lt; 1 || i &gt; L-&gt;length)        // 删除位置必须在 [1, length] 之间
+        return 0;                       // (注意上界是 length,不是 length+1)
+
+    *e = L-&gt;data[i - 1];               // 先把要删的元素值保存出来(通过指针带回)
+
+    // 从第 i+1 个元素开始,逐个往前挪
+    for (int j = i; j &lt; L-&gt;length; j++) {
+        L-&gt;data[j - 1] = L-&gt;data[j];   // 把第 j 格搬到第 j-1 格
+    }
+
+    L-&gt;length--;                       // 表长减 1
+    return 1;
+}</code></pre>
+<p><strong>复杂度</strong>：删表尾不用挪 O(1)；删表头要挪 n-1 个 O(n)；<strong>平均移动 (n-1)/2 个元素，平均 O(n)</strong>。</p>
+<h3 id="226-顺序表小结">2.2.6 顺序表小结</h3>
+<ul>
+<li><strong>优点</strong>：随机访问 O(1)（最大卖点）；不用额外存指针，空间紧凑；缓存友好。</li>
+<li><strong>缺点</strong>：插入/删除平均 O(n)（要挪一堆元素）；容量要预先定死，可能浪费或不够。</li>
+<li><strong>适用</strong>：元素相对稳定、查得多改得少、需要按下标快速访问的场景。</li>
+</ul>
+<h2 id="23-单链表线性表的链式存储实现">2.3 单链表（线性表的链式存储实现）</h2>
+<h3 id="231-思想用指针把散落的节点串起来">2.3.1 思想：用指针把散落的节点串起来</h3>
+<p>顺序表的痛点是「插入删除要挪一堆元素」。<strong>链表</strong>换了个思路：元素不再连续存放，而是<strong>每个元素单独打包成一个「节点」</strong>，节点里除了存数据，还额外存一个<strong>指针指向下一个节点</strong>。这样所有节点像一串珠子，靠指针线串在一起，散落在内存各处也没关系。</p>
+<p>这样做的好处立竿见影：<strong>插入/删除只需要改几个指针，完全不用挪动其它元素</strong>。代价是：想找第 k 个元素，必须从头顺着指针一个个数过去，<strong>失去了随机访问</strong>。这正是 1.8 节说的权衡——链表用「访问慢」换来了「增删快」。</p>
+<h3 id="232-节点结构定义">2.3.2 节点结构定义</h3>
+<pre data-label="c"><code class="language-c">typedef int ElemType;
+
+typedef struct LNode {
+    ElemType      data;   // 数据域:存这个节点的值
+    struct LNode *next;   // 指针域:存"下一个节点"的地址。注意类型是指向自己这种结构的指针
+} LNode, *LinkList;       // 两个别名:
+                          //   LNode    = struct LNode      (强调这是一个"节点")
+                          //   LinkList = struct LNode *    (强调这是"指向节点的指针",常用作整个链表的头)</code></pre>
+<p>这里有个让初学者懵的点：结构体内部怎么能有一个「指向自己这种结构的指针」？因为指针只是个地址（大小固定），编译器完全能处理。<strong>注意这里必须写完整的 <code>struct LNode *next</code>，不能用还没定义完的别名。</strong></p>
+<p><code>LNode</code> 和 <code>LinkList</code> 本质是同一个东西的两个名字，区别只在<strong>表达意图</strong>：用 <code>LNode *p</code> 强调「p 是一个节点指针」，用 <code>LinkList L</code> 强调「L 是一整条链表（的头指针）」。这是教材的惯用约定，跟着用就行。</p>
+<h3 id="233-头指针头结点首元结点极易混务必分清">2.3.3 头指针、头结点、首元结点（极易混，务必分清）</h3>
+<p>这三个名词长得像，含义不同，是单链表第一个大坑：</p>
+<ul>
+<li><strong>首元结点</strong>：存第一个实际数据 a₁ 的那个节点。</li>
+<li><strong>头指针</strong>：指向链表第一个节点的指针，是<strong>整条链表的入口</strong>。丢了头指针，整条链表就找不到了。</li>
+<li><strong>头结点</strong>：一个<strong>额外加在最前面、不存实际数据</strong>的「哑节点」。它的 data 域一般空着不用，next 指向首元结点。</li>
+</ul>
+<p><strong>为什么要费力加一个不存数据的头结点？</strong> 因为它能让代码<strong>统一、不用特判</strong>。没有头结点时，「在第一个位置插入/删除」要特殊处理（得改头指针本身）；有了头结点，第一个位置就和其它位置一模一样了（都是「改前一个节点的 next」），代码干净很多。<strong>本课默认都用「带头结点」的单链表</strong>，下面代码全部基于此。</p>
+<p>带头结点的空表长这样：<code>头指针 → [头结点|next=NULL]</code>，即头结点的 next 是 NULL。判断空表就是看 <code>L-&gt;next == NULL</code>。</p>
+<h3 id="234-建立链表头插法与尾插法">2.3.4 建立链表：头插法与尾插法</h3>
+<h4 id="头插法每个新节点都插在头结点后面结果逆序">头插法：每个新节点都插在头结点后面（结果逆序）</h4>
+<pre data-label="c"><code class="language-c">// 头插法建表:依次读入 n 个数据,每个都插到头结点之后
+// 结果链表的顺序和读入顺序"相反"(最后读入的在最前面)
+LinkList CreateListHead(int n) {
+    LinkList L = (LinkList)malloc(sizeof(LNode));  // 1. 创建头结点
+    L-&gt;next = NULL;                                 //    初始为空表
+
+    for (int i = 0; i &lt; n; i++) {
+        LNode *s = (LNode *)malloc(sizeof(LNode));  // 2. 为新数据创建一个节点 s
+        scanf("%d", &amp;s-&gt;data);                      //    读入数据
+        s-&gt;next = L-&gt;next;                          // 3. 关键两步(顺序不能反!):
+                                                    //    新节点的 next 先接上原来的第一个节点
+        L-&gt;next = s;                                // 4. 头结点再指向新节点 s
+    }                                               //    于是 s 成了新的"第一个节点"
+    return L;
+}</code></pre>
+<p>理解第 3、4 步为什么不能交换：必须<strong>先让新节点接住后面的链</strong>，再让头结点指向新节点。如果先做第 4 步（<code>L-&gt;next = s</code>），就把原来 <code>L-&gt;next</code> 的值（指向原第一个节点的地址）覆盖丢了，后面的链全断了。<strong>「先接后断」是链表操作的铁律，画图就一目了然。</strong></p>
+<h4 id="尾插法每个新节点都接到链表尾巴结果顺序">尾插法：每个新节点都接到链表尾巴（结果顺序）</h4>
+<pre data-label="c"><code class="language-c">// 尾插法建表:每个新节点接到当前链表的末尾,结果顺序和读入顺序一致
+LinkList CreateListTail(int n) {
+    LinkList L = (LinkList)malloc(sizeof(LNode));  // 头结点
+    L-&gt;next = NULL;
+    LNode *tail = L;                                // tail 始终指向"当前最后一个节点",初始就是头结点
+
+    for (int i = 0; i &lt; n; i++) {
+        LNode *s = (LNode *)malloc(sizeof(LNode));
+        scanf("%d", &amp;s-&gt;data);
+        s-&gt;next = NULL;                            // 新节点将成为最后一个,它的 next 是 NULL
+        tail-&gt;next = s;                            // 把它接到当前尾巴后面
+        tail = s;                                  // 更新 tail,让它指向新的尾巴
+    }
+    return L;
+}</code></pre>
+<p>尾插法多用了一个 <code>tail</code> 指针来记住尾巴，省得每次插入都从头找到尾（否则每次插入都是 O(n)，建 n 个就 O(n²)）。有了 tail，每次插入 O(1)，建表整体 O(n)。</p>
+<h3 id="235-按位置查找on链表的软肋">2.3.5 按位置查找（O(n)，链表的软肋）</h3>
+<pre data-label="c"><code class="language-c">// 返回单链表 L 中第 i 个节点的指针;找不到返回 NULL
+// (带头结点:头结点算第 0 个,第 1 个数据节点是 L-&gt;next)
+LNode *GetElem(LinkList L, int i) {
+    if (i &lt; 1) return NULL;
+    LNode *p = L;          // p 从头结点出发
+    int j = 0;             // j 是 p 当前所在的位置编号(头结点是 0)
+    while (p != NULL &amp;&amp; j &lt; i) {
+        p = p-&gt;next;       // 往后走一步
+        j++;
+    }
+    return p;              // 走了 i 步后,p 指向第 i 个节点(若中途到 NULL 则返回 NULL)
+}</code></pre>
+<p><strong>注意这就是链表的根本弱点</strong>：要找第 i 个元素，只能从头一步步走 i 步，<strong>O(n)</strong>，没有捷径。这和顺序表的 O(1) 随机访问形成鲜明对比。</p>
+<h3 id="236-插入操作核心体会改指针">2.3.6 插入操作（核心，体会「改指针」）</h3>
+<p>要在第 i 个位置插入新节点，关键是<strong>先找到第 i-1 个节点</strong>（即插入位置的前驱），然后改两个指针。</p>
+<pre data-label="c"><code class="language-c">// 在带头结点单链表 L 的第 i 个位置插入元素 e
+int ListInsert(LinkList L, int i, ElemType e) {
+    LNode *p = GetElem(L, i - 1);     // 1. 找到第 i-1 个节点(前驱)。注意是 i-1!
+    if (p == NULL) return 0;          //    前驱不存在,位置非法
+
+    LNode *s = (LNode *)malloc(sizeof(LNode));  // 2. 创建新节点
+    s-&gt;data = e;
+
+    s-&gt;next = p-&gt;next;                // 3. "先接":新节点 s 指向原来 p 的后继
+    p-&gt;next = s;                      // 4. "后断":前驱 p 改为指向新节点 s
+
+    return 1;
+}</code></pre>
+<p><strong>为什么找的是第 i-1 个（前驱）而不是第 i 个？</strong> 因为插入要修改「前一个节点的 next」让它指向新节点。你必须站在前驱身上才能改它的 next。这就是 2.3.3 节说「头结点让首位置不用特判」的好处——即使插在第 1 个位置，前驱也是头结点（第 0 个），存在且统一处理。</p>
+<p><strong>第 3、4 步又是「先接后断」</strong>，顺序绝不能反，否则 <code>p-&gt;next</code> 被覆盖、后面的链全丢。画个图：插入前 <code>p → q</code>，要变成 <code>p → s → q</code>。先让 <code>s-&gt;next</code> 接住 q（此时 p 还指着 q，没丢），再让 <code>p-&gt;next</code> 改指 s。完美。</p>
+<p><strong>复杂度</strong>：改指针本身是 O(1)，但<strong>找第 i-1 个节点要 O(n)</strong>，所以整体 O(n)。注意：如果题目说「已知指向某节点的指针，在它后面插入」，那就是纯 O(1)，不用找——这是链表插入相比顺序表的真正优势所在（已知位置时 O(1)）。</p>
+<h3 id="237-删除操作">2.3.7 删除操作</h3>
+<p>删除第 i 个节点，同样要先找到它的<strong>前驱</strong>（第 i-1 个），然后让前驱「跳过」被删节点。</p>
+<pre data-label="c"><code class="language-c">// 删除带头结点单链表 L 的第 i 个节点,值带回给 *e
+int ListDelete(LinkList L, int i, ElemType *e) {
+    LNode *p = GetElem(L, i - 1);          // 1. 找到第 i-1 个节点(前驱)
+    if (p == NULL || p-&gt;next == NULL)      //    前驱不存在,或前驱没有后继(第 i 个不存在)
+        return 0;
+
+    LNode *q = p-&gt;next;                    // 2. q 指向真正要删的第 i 个节点
+    *e = q-&gt;data;                          //    保存它的值
+
+    p-&gt;next = q-&gt;next;                     // 3. 前驱跳过 q,直接指向 q 的后继
+    free(q);                               // 4. 别忘了释放被删节点的内存!
+
+    return 1;
+}</code></pre>
+<p><strong>第 4 步 <code>free(q)</code> 千万不能漏</strong>——这是链表和顺序表的一大区别。顺序表删除只是挪数据，链表删除是真把一个节点「干掉并归还内存」。漏了 free 就内存泄漏。另外注意删除前先用 <code>q</code> 记住要删的节点，否则 <code>p-&gt;next = q-&gt;next</code> 之后就找不到它、没法 free 了。</p>
+<p><strong>复杂度</strong>：O(n)（瓶颈仍是找前驱）。</p>
+<h3 id="238-单链表小结">2.3.8 单链表小结</h3>
+<ul>
+<li><strong>优点</strong>：插入/删除（已知位置时）只改指针 O(1)，不用挪动元素；长度可动态增长，不用预设容量。</li>
+<li><strong>缺点</strong>：不能随机访问，按位查找 O(n)；每个节点多花一个指针的空间；不缓存友好。</li>
+<li><strong>适用</strong>：频繁插入删除、长度变化大、不需要按下标随机访问的场景。</li>
+</ul>
+<h2 id="24-循环链表与双链表变体了解-会基本操作">2.4 循环链表与双链表（变体，了解 + 会基本操作）</h2>
+<h3 id="241-循环链表">2.4.1 循环链表</h3>
+<p>把单链表<strong>最后一个节点的 next 由 NULL 改为指向头结点</strong>，整条链就首尾相连成一个环。好处是从任意一个节点出发都能遍历到所有节点（不会像单链表那样走到 NULL 就到头）。判空条件相应变成 <code>L-&gt;next == L</code>（头结点指向自己）。</p>
+<h3 id="242-双链表双向链表">2.4.2 双链表（双向链表）</h3>
+<p>单链表只能往后走（只有 next），想找一个节点的前驱得从头再来一遍，很亏。<strong>双链表</strong>给每个节点<strong>额外加一个 prior 指针指向前驱</strong>，于是前后都能走。</p>
+<pre data-label="c"><code class="language-c">typedef struct DNode {
+    ElemType      data;
+    struct DNode *prior;   // 指向前驱
+    struct DNode *next;    // 指向后继
+} DNode, *DLinkList;</code></pre>
+<p>代价是每个节点多存一个指针（更费空间）、插入删除要多维护一组指针。双链表插入节点 s 到 p 之后，要改<strong>四个</strong>指针（顺序有讲究，仍是「先接后断」的思路）：</p>
+<pre data-label="c"><code class="language-c">s-&gt;next = p-&gt;next;        // s 的后继 = p 原来的后继
+p-&gt;next-&gt;prior = s;       // p 原后继的"前驱"改成 s  (注意:这步要在 p-&gt;next 被改之前做)
+s-&gt;prior = p;             // s 的前驱 = p
+p-&gt;next = s;              // p 的后继 = s</code></pre>
+<p>顺序的关键：<strong>凡是要用到 <code>p-&gt;next</code>（p 的原后继）的语句，必须放在 <code>p-&gt;next = s</code> 之前</strong>，否则原后继就找不到了。这类「四指针顺序题」考试爱考，画图就清楚。</p>
+<h3 id="243-静态链表了解选择题偶尔考">2.4.3 静态链表（了解，选择题偶尔考）</h3>
+<p><strong>静态链表</strong>用<strong>数组</strong>模拟链表：数组每个元素含 <code>data</code> 和一个 <code>cur</code>（游标，存「下一个元素的数组下标」而非真正的指针）。它在没有指针的语言里也能实现链式结构，本质是「用数组下标当指针」。特点：仍是链式逻辑（插入删除改游标、不挪数据），但容量像数组一样预先固定。考点：知道「静态链表 = 数组下标代替指针」即可。</p>
+<blockquote><p>这几个变体不用死记代码，理解「循环 = 尾连头」「双向 = 多一个前驱指针」「静态 = 下标当指针」的动机和判空/操作要点即可。考试常考填空和画图。</p>
+</blockquote>
+<h2 id="25-顺序表-vs-链表必考对比做成一张表记死">2.5 顺序表 vs 链表（必考对比，做成一张表记死）</h2>
+<div class="table-wrap"><table><thead><tr>
+<th>对比维度</th>
+<th>顺序表（数组）</th>
+<th>链表（指针串）</th>
+</tr>
+</thead><tbody><tr>
+<td>存储方式</td>
+<td>一块连续内存</td>
+<td>散落，靠指针连接</td>
+</tr>
+<tr>
+<td>随机访问第 i 个</td>
+<td><strong>O(1)</strong> 直接算地址</td>
+<td>O(n) 从头数</td>
+</tr>
+<tr>
+<td>插入/删除（已知位置）</td>
+<td>O(n) 要挪元素</td>
+<td><strong>O(1)</strong> 只改指针</td>
+</tr>
+<tr>
+<td>插入/删除（按位序，含查找）</td>
+<td>O(n)</td>
+<td>O(n)（瓶颈在找位置）</td>
+</tr>
+<tr>
+<td>空间：是否预分配</td>
+<td>要预先定容量，可能浪费/不够</td>
+<td>用多少分多少，动态</td>
+</tr>
+<tr>
+<td>空间：额外开销</td>
+<td>无（紧凑）</td>
+<td>每节点多一个指针</td>
+</tr>
+<tr>
+<td>适用场景</td>
+<td>查多改少、要随机访问</td>
+<td>改多查少、长度多变</td>
+</tr>
+</tbody></table></div>
+<p><strong>怎么选的考点逻辑</strong>：「主要操作是按下标查找」→ 顺序表；「主要操作是频繁插入删除」→ 链表；「长度难以预估」→ 链表；「内存紧张且元素小」→ 顺序表（指针开销占比大时链表反而费）。</p>
+<h2 id="26-经典题型这些是后续刷题的高频原型先理解思路">2.6 经典题型（这些是后续刷题的高频原型，先理解思路）</h2>
+<p>这几个是链表的「明星问题」，原理在这里讲清，代码你后续 3 天自己练手：</p>
+<ol>
+<li><p><strong>反转单链表</strong>：用三个指针 <code>prev</code>、<code>cur</code>、<code>next</code> 滚动。每一步：先用 next 记住 cur 的下一个（防止断链），把 cur-&gt;next 掉头指向 prev，然后三个指针整体后移一位。走到尾，prev 就是新的头。O(n)、O(1) 空间。</p>
+</li>
+<li><p><strong>找倒数第 k 个 / 找中点（快慢指针）</strong>：让 fast 指针先走 k 步，再让 fast 和 slow 一起走，fast 到头时 slow 正好在倒数第 k 个。找中点则让 fast 一次走两步、slow 一次走一步，fast 到尾时 slow 在正中间。<strong>快慢指针是链表的核心技巧，务必理解。</strong></p>
+</li>
+<li><p><strong>判断链表是否有环</strong>：快慢指针，fast 走两步 slow 走一步，若有环两者必然在环内相遇；若 fast 走到 NULL 则无环。（这叫 Floyd 判圈法）</p>
+</li>
+<li><p><strong>合并两个有序链表</strong>：两个指针分别扫两条链，每次把较小的节点接到结果链尾，类似归并排序的「合并」步骤。O(m+n)。</p>
+</li>
+</ol>
+<h2 id="27-线性表自测">2.7 线性表自测</h2>
+<ol>
+<li>线性表定义里的「有序」指的是什么序？空表的长度是多少？</li>
+<li>顺序表里 <code>length</code> 和 <code>MAXSIZE</code> 有什么区别？「第 i 个元素」存在数组的哪个下标？</li>
+<li>顺序表插入/删除平均要移动多少个元素？时间复杂度多少？</li>
+<li>头指针、头结点、首元结点分别是什么？为什么要加头结点？</li>
+<li>链表插入时为什么要先找第 i-1 个节点？「先接后断」是什么意思，反了会怎样？</li>
+<li>链表删除节点为什么必须 free？漏了会怎样？</li>
+<li>单链表为什么不能 O(1) 随机访问？双链表比单链表多了什么、代价是什么？</li>
+<li>默写顺序表 vs 链表的对比表（至少访问、增删、空间三行）。</li>
+<li>快慢指针怎么找链表中点？怎么判断有环？</li>
+</ol>
+<hr>
+<p>栈和队列本质上都是<strong>「操作受限的线性表」</strong>——它们还是线性表（元素排成一队），只是规定了「只能在特定的位置增删」。正是这种「受限」让它们在特定问题里特别好用。这一章概念不难，但应用（表达式求值、循环队列判满判空）是高频考点。</p>
+<h2 id="28-栈stack">2.8 栈（Stack）</h2>
+<h3 id="281-定义与核心规则-lifo">2.8.1 定义与核心规则 LIFO</h3>
+<p><strong>栈</strong>是一种<strong>只能在一端进行插入和删除</strong>的线性表。这一端叫<strong>栈顶（top）</strong>，另一端叫<strong>栈底（bottom）</strong>。</p>
+<p>它的核心规则是 <strong>LIFO（Last In First Out，后进先出）</strong>：最后放进去的元素，最先被拿出来。生活中的完美例子是<strong>一摞盘子</strong>：你只能往最上面放盘子（入栈/push），也只能从最上面拿盘子（出栈/pop），最后放上去的盘子最先被拿走。再比如手枪弹匣、浏览器的「后退」、编辑器的「撤销」，都是栈。</p>
+<p>两个基本操作的术语：</p>
+<ul>
+<li><strong>入栈（push）</strong>：在栈顶放一个元素。</li>
+<li><strong>出栈（pop）</strong>：从栈顶取走一个元素。</li>
+</ul>
+<h3 id="282-顺序栈用数组实现">2.8.2 顺序栈（用数组实现）</h3>
+<p>用一个数组存元素，再用一个整数 <code>top</code> 记录栈顶位置。</p>
+<pre data-label="c"><code class="language-c">#define MAXSIZE 100
+typedef int ElemType;
+
+typedef struct {
+    ElemType data[MAXSIZE];
+    int top;                 // 栈顶指针(其实是数组下标)。约定 top 指向"当前栈顶元素"
+} SqStack;
+
+// 初始化:空栈。约定 top = -1 表示空(因为还没有任何元素,栈顶下标无效)
+void InitStack(SqStack *S) {
+    S-&gt;top = -1;
+}
+
+// 判空:top 回到 -1 即为空
+int StackEmpty(SqStack *S) {
+    return S-&gt;top == -1;
+}
+
+// 入栈
+int Push(SqStack *S, ElemType e) {
+    if (S-&gt;top == MAXSIZE - 1)    // 栈满(top 已到达最大下标),溢出
+        return 0;
+    S-&gt;top++;                     // 先让 top 上移一格
+    S-&gt;data[S-&gt;top] = e;          // 再把元素放到新的栈顶位置
+    return 1;
+}
+
+// 出栈:弹出的值带回给 *e
+int Pop(SqStack *S, ElemType *e) {
+    if (S-&gt;top == -1)             // 栈空,无可弹
+        return 0;
+    *e = S-&gt;data[S-&gt;top];         // 先取出当前栈顶元素
+    S-&gt;top--;                     // top 下移一格(那个元素就"出栈"了)
+    return 1;
+}</code></pre>
+<p><strong>关于 top 的约定要统一</strong>：上面约定「top 指向当前栈顶元素，空栈 top = -1」。也有教材约定「top 指向栈顶元素的下一个空位，空栈 top = 0」——两种都对，但一套代码里必须自始至终用同一种，否则判满判空全乱。<strong>考试看清题目用哪种约定。</strong> 本讲义统一用「top 指向栈顶元素，空栈 -1，满栈 MAXSIZE-1」。</p>
+<h3 id="283-链栈用链表实现">2.8.3 链栈（用链表实现）</h3>
+<p>也可以用链表实现栈，规定<strong>只在链表头部插入和删除</strong>（头部就是栈顶）。因为链表头部增删是 O(1)，天然适合做栈，而且没有「栈满」的烦恼（只要内存够）。入栈就是头插，出栈就是删头节点。结构和单链表头插法几乎一样，这里不重复代码，理解「链栈 = 只在头部操作的单链表」即可。</p>
+<h3 id="284-栈的应用高频考点重点理解">2.8.4 栈的应用（高频考点，重点理解）</h3>
+<p>栈的威力在于它「记住来路、原路返回」的特性，适合一切「后遇到的先处理」的场景。</p>
+<h4 id="应用一括号匹配">应用一：括号匹配</h4>
+<p>检查 <code>( [ { } ] )</code> 这类括号是否正确配对。<strong>算法</strong>：从左到右扫描，遇到<strong>左括号就入栈</strong>；遇到<strong>右括号，就看栈顶</strong>——如果栈顶是与之匹配的左括号，就弹出（配对成功）；否则匹配失败。扫描结束时栈恰好为空，才算全部匹配。</p>
+<p>为什么用栈？因为括号是「最近打开的最先需要关闭」——典型 LIFO。比如 <code>([])</code>，遇到 <code>]</code> 时，最近打开的是 <code>[</code>（正在栈顶），正好匹配。</p>
+<h4 id="应用二表达式求值与中缀转后缀经典大题">应用二：表达式求值与中缀转后缀（经典大题）</h4>
+<p>我们平时写的 <code>3 + 4 * 2</code> 叫<strong>中缀表达式</strong>（运算符在两个操作数中间），人好懂但机器难算（要考虑优先级、括号）。计算机喜欢<strong>后缀表达式</strong>（又叫<strong>逆波兰式</strong>），运算符放在操作数后面，比如上式变成 <code>3 4 2 * +</code>。后缀表达式<strong>没有括号、不用考虑优先级</strong>，机器一遍扫描就能算。</p>
+<p><strong>后缀表达式求值（用一个栈）</strong>：从左到右扫描——遇到<strong>操作数就入栈</strong>；遇到<strong>运算符，就弹出栈顶两个操作数做运算，结果再压回栈</strong>。扫描结束栈里剩的唯一一个数就是答案。</p>
+<blockquote><p>注意弹出两个操作数做减法/除法时的顺序：先弹出的是右操作数。比如算 <code>a b -</code>，先弹出的 b 是减数，结果是 <code>（后弹的 a） - （先弹的 b）</code>。这个顺序考试爱挖坑。</p>
+</blockquote>
+<p>举例算 <code>3 4 2 * +</code>：</p>
+<ul>
+<li>读 3 → 入栈，栈：[3]</li>
+<li>读 4 → 入栈，栈：[3,4]</li>
+<li>读 2 → 入栈，栈：[3,4,2]</li>
+<li>读 <code>*</code> → 弹出 2 和 4，算 4*2=8，压回，栈：[3,8]</li>
+<li>读 <code>+</code> → 弹出 8 和 3，算 3+8=11，压回，栈：[11]</li>
+<li>结束，答案 11。✓</li>
+</ul>
+<p><strong>中缀转后缀</strong>也用栈（栈这次存<strong>运算符</strong>）。扫描中缀式，对每个 token 按下面四条规则处理（背下来）：</p>
+<ol>
+<li><strong>操作数</strong>：直接输出到后缀式。</li>
+<li><strong>左括号 <code>(</code></strong>：直接入栈（它像一道「墙」，括号内的运算自成一体）。</li>
+<li><strong>右括号 <code>)</code></strong>：连续弹出栈顶运算符并输出，<strong>直到遇到左括号</strong>，然后把那个左括号弹掉丢弃（括号本身不进入后缀式）。</li>
+<li><strong>运算符 op</strong>：当栈非空、栈顶不是 <code>(</code>、且<strong>栈顶运算符优先级 ≥ op 的优先级</strong>时，反复弹出栈顶并输出；然后把 op 入栈。</li>
+<li>扫描结束后，把栈里<strong>剩余的运算符全部弹出</strong>输出。</li>
+</ol>
+<blockquote><p>优先级：<code>* /</code> 高于 <code>+ -</code>。关键陷阱：<strong>栈顶优先级「等于」当前运算符时也要先弹出</strong>（保证同级运算左结合，先算左边）。</p>
+</blockquote>
+<p><strong>完整手算示例</strong>：中缀 <code>A + B * C - D</code> 转后缀。</p>
+<div class="table-wrap"><table><thead><tr>
+<th>读到</th>
+<th>动作</th>
+<th>输出(后缀)</th>
+<th>栈(底→顶)</th>
+</tr>
+</thead><tbody><tr>
+<td>A</td>
+<td>操作数,输出</td>
+<td>A</td>
+<td>（空）</td>
+</tr>
+<tr>
+<td>+</td>
+<td>栈空,入栈</td>
+<td>A</td>
+<td>+</td>
+</tr>
+<tr>
+<td>B</td>
+<td>操作数,输出</td>
+<td>A B</td>
+<td>+</td>
+</tr>
+<tr>
+<td>*</td>
+<td><code>*</code>&gt;<code>+</code>,不弹,入栈</td>
+<td>A B</td>
+<td>+ *</td>
+</tr>
+<tr>
+<td>C</td>
+<td>操作数,输出</td>
+<td>A B C</td>
+<td>+ *</td>
+</tr>
+<tr>
+<td>-</td>
+<td><code>*</code>≥<code>-</code>弹*、<code>+</code>≥<code>-</code>弹+,再入-</td>
+<td>A B C * +</td>
+<td>-</td>
+</tr>
+<tr>
+<td>D</td>
+<td>操作数,输出</td>
+<td>A B C * + D</td>
+<td>-</td>
+</tr>
+<tr>
+<td>结束</td>
+<td>弹出栈中剩余</td>
+<td>A B C * + D -</td>
+<td>（空）</td>
+</tr>
+</tbody></table></div>
+<p>结果后缀式：<strong><code>A B C * + D -</code></strong>。</p>
+<p><strong>带括号示例</strong>：<code>A * (B + C)</code> → 读 A(输出)、*(入栈)、<code>(</code>(入栈)、B(输出)、+(栈顶是<code>(</code>不比较,入栈)、C(输出)、<code>)</code>(弹出+输出,弹掉<code>(</code>)、结束弹出* → 后缀 <strong><code>A B C + *</code></strong>。</p>
+<blockquote><p>考点固定：① 给中缀式手算后缀（用上面表格逐步走）；② 反过来给后缀式求值（用 3.1.4 应用二的方法）。两者都是机械送分题，多练两个就稳。</p>
+</blockquote>
+<h4 id="应用三函数调用与递归">应用三：函数调用与递归</h4>
+<p>程序运行时，每调用一个函数，系统就把「返回地址、参数、局部变量」打包成一个<strong>栈帧（Stack Frame）</strong>压入<strong>系统栈</strong>；函数返回时弹出栈帧、回到调用处。这天然是 LIFO（最后调用的函数最先返回）。<strong>递归</strong>就是函数自己调自己，每深一层就多压一个栈帧——所以递归太深会「栈溢出」，所以递归的空间复杂度要算栈的深度（回顾 1.7 节）。<strong>任何递归都能用一个栈改写成非递归</strong>，本质就是手动模拟系统栈干的事。</p>
+<blockquote><p><strong>栈帧机制（c03 可能出简答/选择，了解即可）</strong>：两个关键寄存器——<strong>SP（栈指针）指向当前栈顶</strong>、<strong>BP（基址指针）指向当前栈帧的底部</strong>（用来稳定地访问参数和局部变量）。一次函数调用的大致过程：<strong>实参压栈 → 返回地址压栈 → 保存调用者的 BP → 设新 BP → 分配局部变量 → 执行函数体 → 恢复 BP → 弹返回地址 → 清理参数</strong>。多数体系里系统栈是<strong>向下增长</strong>的（从高地址向低地址）。这些是「为什么递归=压栈、为什么能改成非递归」的底层原理，简答题答到「每次调用建一个栈帧、LIFO、递归靠系统栈」即可得分。</p>
+</blockquote>
+<h4 id="应用四判断合法出栈序列选择填空最高频">应用四：判断合法出栈序列（⭐选择/填空最高频）</h4>
+<blockquote><p><strong>这是栈这一章的头号考点</strong>，几乎每年以选择/填空出现，务必练熟。</p>
+</blockquote>
+<p><strong>题型</strong>：元素按 <code>1,2,3,...,n</code> 的顺序<strong>依次入栈</strong>（注意是「依次」，不是一次全压进去），入栈和出栈可以任意交错。问：给定一个序列，<strong>它是否可能是一个合法的出栈序列</strong>？</p>
+<p><strong>核心规则（必须理解）</strong>：入栈顺序固定为 1→2→…→n，但每个元素<strong>入栈后可以立刻出、也可以压着等会儿出</strong>。所以同一个入栈序列能产生多种出栈序列。</p>
+<p><strong>判断方法一：模拟法（最稳，一定对）</strong>
+准备一个栈，一个指针指向「下一个待入栈的数」（从 1 开始）。逐个核对目标出栈序列的每个数 x：</p>
+<ul>
+<li>若 x 还没入栈，就把「待入栈的数」一路 push 进栈，直到 x 被压入栈顶；</li>
+<li>此时检查栈顶是不是 x：是就 pop（匹配成功，看下一个目标数）；不是就<strong>非法</strong>。</li>
+<li>全部匹配完则<strong>合法</strong>。</li>
+</ul>
+<p><strong>例</strong>：入栈序 <code>1 2 3 4 5</code>，判断 <code>4 5 3 2 1</code> 是否合法。</p>
+<pre><code>目标4: push1,2,3,4 → 栈[1,2,3,4]，顶=4 ✓ pop → 栈[1,2,3]
+目标5: push5 → 栈[1,2,3,5]，顶=5 ✓ pop → 栈[1,2,3]
+目标3: 顶=3 ✓ pop → 栈[1,2]
+目标2: 顶=2 ✓ pop → 栈[1]
+目标1: 顶=1 ✓ pop → 栈空。全部匹配 → 合法 ✓</code></pre>
+<p>再判断 <code>4 3 5 1 2</code>：到目标1 时栈里是 <code>[1,2]</code>，顶=2≠1 → <strong>非法</strong>。</p>
+<p><strong>判断方法二：口诀法（快速排除）</strong>
+<strong>已经出栈的元素中，比某个数大的若干个数，它们的相对出栈顺序必须是递减的</strong>。更实用的一句话陷阱判据：<strong>对出栈序列，若存在三个位置 i&lt;j&lt;k 使得 <code>序列[j] &lt; 序列[k] &lt; 序列[i]</code>，则非法</strong>（即不能出现「中间小、后面中、前面大」这种 312 模式）。考试时方法一模拟最不容易错，方法二用来快速秒杀选择题。</p>
+<p><strong>送分结论（直接记）</strong>：n 个元素依次入栈，可能的合法出栈序列总数 = <strong>卡特兰数</strong> <code>C(2n, n)/(n+1)</code>。</p>
+<ul>
+<li>n=3 → 5 种；n=4 → 14 种；n=5 → 42 种。</li>
+<li>这个「n=3 有几种合法出栈序列」是经典填空题，答案 <strong>5</strong>。</li>
+</ul>
+<h2 id="29-队列queue">2.9 队列（Queue）</h2>
+<h3 id="291-定义与核心规则-fifo">2.9.1 定义与核心规则 FIFO</h3>
+<p><strong>队列</strong>也是操作受限的线性表，但和栈相反：它<strong>在一端插入、在另一端删除</strong>。插入的一端叫<strong>队尾（rear）</strong>，删除的一端叫<strong>队头（front）</strong>。</p>
+<p>核心规则是 <strong>FIFO（First In First Out，先进先出）</strong>，完美对应生活中的<strong>排队</strong>：先来的人先办事先离开，后来的人排在队尾等。</p>
+<p>两个基本操作：</p>
+<ul>
+<li><strong>入队（enqueue）</strong>：在队尾加一个元素。</li>
+<li><strong>出队（dequeue）</strong>：从队头取走一个元素。</li>
+</ul>
+<h3 id="292-队列的顺序实现与假溢出问题">2.9.2 队列的顺序实现与「假溢出」问题</h3>
+<p>用数组实现队列，配两个指针 <code>front</code>（队头）和 <code>rear</code>（队尾）。入队 rear 往后移，出队 front 往后移。问题来了：随着不断入队出队，front 和 rear 都只增不减、一路往数组后面跑。即使前面出队腾出了大量空位，rear 一旦到达数组末尾就「满了」入不了队——<strong>可前面明明是空的！</strong> 这种「明明有空间却报满」的现象叫<strong>假溢出</strong>。</p>
+<h3 id="293-循环队列解决假溢出必考">2.9.3 循环队列（解决假溢出，必考）</h3>
+<p><strong>循环队列</strong>的思路：把数组想象成<strong>首尾相接的一个圆环</strong>。当指针走到数组末尾时，下一步<strong>绕回到数组开头</strong>（下标 0），这样后面腾出的空位就能重新利用。绕回靠<strong>取模运算 <code>% MAXSIZE</code></strong> 实现：</p>
+<pre><code>下一个位置 = (当前位置 + 1) % MAXSIZE</code></pre>
+<p>比如 MAXSIZE=5，rear 在下标 4，<code>(4+1)%5 = 0</code>，自动绕回开头。</p>
+<h4 id="关键难点怎么区分队空和队满">关键难点：怎么区分「队空」和「队满」</h4>
+<p>这是循环队列<strong>最大的考点</strong>。麻烦在于：队空时 <code>front == rear</code>；可如果元素填满整圈，rear 绕一圈又追上 front，也会 <code>front == rear</code>。<strong>两种情况下指针长得一模一样，没法区分！</strong></p>
+<p>主流解决办法（教材标准做法）：<strong>牺牲一个存储单元不用</strong>。即规定「当 rear 的下一个位置就是 front 时，就算满」，这样队满时 front 和 rear 之间永远空一格，就和队空区分开了：</p>
+<pre data-label="c"><code class="language-c">#define MAXSIZE 100
+typedef int ElemType;
+
+typedef struct {
+    ElemType data[MAXSIZE];
+    int front;    // 指向队头元素
+    int rear;     // 指向队尾元素的"下一个"位置(约定)
+} SqQueue;
+
+void InitQueue(SqQueue *Q) {
+    Q-&gt;front = Q-&gt;rear = 0;        // 初始都指向 0
+}
+
+// 判空:队头追上队尾
+int QueueEmpty(SqQueue *Q) {
+    return Q-&gt;front == Q-&gt;rear;
+}
+
+// 判满:rear 的下一个位置就是 front(中间空一格)
+int QueueFull(SqQueue *Q) {
+    return (Q-&gt;rear + 1) % MAXSIZE == Q-&gt;front;
+}
+
+// 入队
+int EnQueue(SqQueue *Q, ElemType e) {
+    if ((Q-&gt;rear + 1) % MAXSIZE == Q-&gt;front)   // 满
+        return 0;
+    Q-&gt;data[Q-&gt;rear] = e;                       // 元素放到队尾位置
+    Q-&gt;rear = (Q-&gt;rear + 1) % MAXSIZE;          // rear 后移(可能绕回)
+    return 1;
+}
+
+// 出队
+int DeQueue(SqQueue *Q, ElemType *e) {
+    if (Q-&gt;front == Q-&gt;rear)                    // 空
+        return 0;
+    *e = Q-&gt;data[Q-&gt;front];                     // 取队头元素
+    Q-&gt;front = (Q-&gt;front + 1) % MAXSIZE;        // front 后移(可能绕回)
+    return 1;
+}</code></pre>
+<h4 id="必背的三个公式">必背的三个公式</h4>
+<p>这是送分点，背死：</p>
+<ul>
+<li><strong>判空</strong>：<code>front == rear</code></li>
+<li><strong>判满</strong>：<code>(rear + 1) % MAXSIZE == front</code>（牺牲一个单元的方案下）</li>
+<li><strong>元素个数</strong>：<code>(rear - front + MAXSIZE) % MAXSIZE</code><ul>
+<li>为什么加 MAXSIZE 再取模？因为 rear 可能已经绕回到 front 前面（rear &lt; front），直接相减会得负数，加一个 MAXSIZE 再取模就能修正回正确的正数。</li>
+</ul>
+</li>
+</ul>
+<blockquote><p>除了「牺牲一个单元」，还有另一种区分空满的办法：额外加一个 <code>size</code> 计数器（或一个标志位 tag）记录当前元素个数，size==0 为空、size==MAXSIZE 为满。这样能用满整个数组。考试两种都可能考，看题目要求。</p>
+</blockquote>
+<blockquote><p><strong>⚠️ 必看易错点：front/rear 的定义不止一种，公式不能死套！</strong> 本讲义用的是「<strong>front 指向队头元素、rear 指向队尾的下一个空位</strong>」。但有的教材/题目用另一套约定：「<strong>front 指向队头元素的前一个位置、rear 指向队尾元素本身</strong>」。两套约定下，入队/出队谁先动指针、判空判满公式都不同。<strong>做题第一步永远是先看清题目给的是哪套定义</strong>，再套相应公式。例如在「front 指队头前一位、rear 指队尾」这套里，入队是「先 <code>rear=(rear+1)%M</code> 再放元素」、元素个数仍是 <code>(rear-front+M)%M</code>。核心思想（取模绕回、牺牲一格区分空满）不变，变的只是指针落点。</p>
+</blockquote>
+<h3 id="294-链队列用链表实现">2.9.4 链队列（用链表实现）</h3>
+<p>用链表实现队列，需要<strong>两个指针</strong>：front 指向链表头（队头，从这删）、rear 指向链表尾（队尾，往这加）。带头结点的链队列入队是尾插、出队是删头结点之后的节点，都是 O(1)，且没有「满」的限制。链队列适合长度变化大、上限不好预估的场景。</p>
+<h3 id="295-队列的应用与变体">2.9.5 队列的应用与变体</h3>
+<ul>
+<li><strong>应用</strong>：BFS（广度优先搜索，第 6 章图的遍历核心用队列）、操作系统的任务/打印排队、各种缓冲区。<strong>凡是「公平地按到达顺序处理」就用队列。</strong></li>
+<li><strong>双端队列（deque）</strong>：两端都能进出的队列，更灵活。</li>
+<li><strong>优先队列</strong>：出队的不是「最先进的」而是「优先级最高的」，它的高效实现就是<strong>堆</strong>（第 5 章讲）。</li>
+</ul>
+<h2 id="210-栈-vs-队列一句话对比">2.10 栈 vs 队列（一句话对比）</h2>
+<div class="table-wrap"><table><thead><tr>
+<th></th>
+<th>栈 Stack</th>
+<th>队列 Queue</th>
+</tr>
+</thead><tbody><tr>
+<td>规则</td>
+<td>LIFO 后进先出</td>
+<td>FIFO 先进先出</td>
+</tr>
+<tr>
+<td>操作位置</td>
+<td>同一端（栈顶）进出</td>
+<td>一端进（队尾）、另一端出（队头）</td>
+</tr>
+<tr>
+<td>生活类比</td>
+<td>一摞盘子</td>
+<td>排队</td>
+</tr>
+<tr>
+<td>典型应用</td>
+<td>括号匹配、表达式求值、递归</td>
+<td>BFS、任务调度、缓冲区</td>
+</tr>
+</tbody></table></div>
+<h2 id="211-栈与队列自测">2.11 栈与队列自测</h2>
+<ol>
+<li>栈和队列为什么叫「操作受限的线性表」？各受了什么限制？</li>
+<li>LIFO 和 FIFO 分别是什么？各举一个生活例子。</li>
+<li>顺序栈用 top=-1 表示空，那么判满条件是什么？入栈时是先动 top 还是先放元素？</li>
+<li>后缀表达式 <code>5 1 2 + 4 * + 3 -</code> 的值是多少？（动手用栈模拟一遍）</li>
+<li>什么是「假溢出」？循环队列怎么解决它？</li>
+<li>写出循环队列（牺牲一个单元方案）的判空、判满、求元素个数三个公式。</li>
+<li>求元素个数的公式里为什么要 <code>+ MAXSIZE</code> 再取模？</li>
+<li>为什么递归会导致栈溢出？递归和栈是什么关系？</li>
+<li>BFS 为什么用队列而不是栈？</li>
+</ol>
+<hr>
+<p>这一章包含两个相对独立的主题：<strong>串</strong>（字符串，重点是 KMP 模式匹配算法）和<strong>数组</strong>（重点是多维数组地址计算与特殊矩阵压缩存储）。KMP 是本章——也是整个线性结构部分——最硬的一块骨头，我们慢慢啃。</p>
+<h2 id="212-串string">2.12 串（String）</h2>
+<h3 id="2121-定义">2.12.1 定义</h3>
+<p><strong>串</strong>就是由零个或多个<strong>字符</strong>组成的有限序列，也就是我们常说的「字符串」，比如 <code>&quot;hello&quot;</code>。它本质上是一种<strong>元素为字符的特殊线性表</strong>，所以前面线性表的存储思想（顺序/链式）都适用。一些术语：</p>
+<ul>
+<li><strong>串长</strong>：串中字符的个数（<code>&quot;hello&quot;</code> 长度 5）。长度为 0 的叫<strong>空串</strong>。</li>
+<li><strong>子串</strong>：串中任意连续的一段字符（<code>&quot;ell&quot;</code> 是 <code>&quot;hello&quot;</code> 的子串）。包含它的串叫<strong>主串</strong>。</li>
+<li><strong>子串的位置</strong>：子串首字符在主串中的位置。</li>
+</ul>
+<p>串大多数操作（求长、连接、求子串等）都比较直观，本章真正的核心、也是必考的难点，是<strong>模式匹配</strong>——在一个主串里查找一个子串第一次出现的位置。</p>
+<h3 id="2122-朴素模式匹配bf-算法">2.12.2 朴素模式匹配（BF 算法）</h3>
+<p><strong>问题</strong>：在主串 S 中，找模式串 P 第一次出现的位置。</p>
+<p><strong>朴素（Brute Force，暴力）思路</strong>：拿 P 去和 S 的每一个可能的起始位置逐字符比对。从 S 的第 0 位开始，逐字符比 P；一旦某个字符不匹配，就让 P 整体右移一位，从 S 的第 1 位重新开始整段比对……如此直到匹配成功或 S 走完。</p>
+<pre data-label="c"><code class="language-c">// 在主串 S 中查找模式串 P,返回 P 首次出现的位置下标(从 0 开始);找不到返回 -1
+int BF(char *S, char *P) {
+    int n = strlen(S), m = strlen(P);
+    int i = 0;                       // i 扫描主串 S
+    int j = 0;                       // j 扫描模式串 P
+    while (i &lt; n &amp;&amp; j &lt; m) {
+        if (S[i] == P[j]) {          // 当前字符匹配:两个指针都前进
+            i++;
+            j++;
+        } else {                     // 失配:i 回退到本次起点的下一个,j 归零重来
+            i = i - j + 1;           // i - j 是本次起点,+1 就是下一个起点
+            j = 0;
+        }
+    }
+    if (j == m) return i - m;        // j 走完整个 P,说明匹配成功,返回起始位置
+    else return -1;                  // 没找到
+}</code></pre>
+<p><strong>复杂度</strong>：最坏情况（比如 S = &quot;aaaaaaab&quot;，P = &quot;aaab&quot;），每个起点都要比到最后才失配，总共约 n×m 次比较，<strong>O(n×m)</strong>。问题出在那句 <code>i = i - j + 1</code>——每次失配，主串指针 i 都要<strong>退回去</strong>，之前比过的字符白比了，这是浪费的根源。</p>
+<h3 id="2123-kmp-算法必考重点全章最硬">2.12.3 KMP 算法（必考重点，全章最硬）</h3>
+<h4 id="kmp-的核心思想失配时主串指针-i-永不回退">KMP 的核心思想：失配时，主串指针 i 永不回退</h4>
+<p>KMP 的天才之处在于发现：<strong>失配时，那些已经匹配成功的字符里，藏着有用的信息</strong>。利用这些信息，模式串 P 可以「聪明地」往右滑动一大段，而主串指针 i <strong>完全不用回退</strong>。这样整个匹配过程 i 一路向前走到底，复杂度降到 <strong>O(n+m)</strong>。</p>
+<h4 id="用例子建立直觉">用例子建立直觉</h4>
+<p>假设主串 S = <code>a b a b a b c</code>，模式串 P = <code>a b a b c</code>。</p>
+<pre><code>S: a b a b a b c
+P: a b a b c
+   0 1 2 3 4</code></pre>
+<p>匹配到 P[4]=&#39;c&#39; 和 S[4]=&#39;a&#39; 时失配。此时 P 的前 4 个字符 <code>abab</code> 已经和 S 对应位置匹配过了。朴素算法会把 i 退回到 1，P 退回 0 重头比。但 KMP 注意到：模式串 <code>abab</code> 的<strong>开头的 <code>ab</code></strong> 和<strong>结尾的 <code>ab</code></strong> 是一样的（这叫「最长相等前后缀」）。既然结尾的 <code>ab</code> 已经和主串匹配了，而开头的 <code>ab</code> 又和结尾的 <code>ab</code> 相同，那把 P 往右滑、让开头的 <code>ab</code> 对齐到刚才结尾 <code>ab</code> 的位置，这两个字符必然还是匹配的，<strong>不用重新比</strong>！于是 j 直接跳到 2（对齐到开头 ab 之后），i 不动，从 P[2] 继续比。</p>
+<h4 id="next-数组失配后-j-该跳到哪">next 数组：失配后 j 该跳到哪</h4>
+<p>KMP 把「失配后 j 该跳到哪」这个信息预先算好，存成一个数组，叫 <strong>next 数组</strong>。<code>next[j]</code> 的含义是：<strong>当模式串第 j 个字符失配时，j 应该跳回到 next[j] 这个位置继续比</strong>（i 不动）。</p>
+<p>而 <code>next[j]</code> 的值，本质上等于 <strong>P 中 P[0..j-1] 这段子串的「最长相等前后缀」的长度</strong>。</p>
+<ul>
+<li><strong>前缀</strong>：不包含最后一个字符的、从头开始的所有子串。</li>
+<li><strong>后缀</strong>：不包含第一个字符的、到末尾结束的所有子串。</li>
+<li><strong>最长相等前后缀</strong>：在前缀集合和后缀集合里，找一个最长的、内容相同的。</li>
+</ul>
+<p>例子，P = <code>a b a b c</code>，手算每个位置的 next（这里用「next[j] = P[0..j-1] 的最长相等前后缀长度」这一常见定义，next[0] 规定为 -1 或 0，依教材；这里令 next[0]=0、next[1]=0 起步说明含义）：</p>
+<div class="table-wrap"><table><thead><tr>
+<th>j</th>
+<th>P[j]</th>
+<th>P[0..j-1]</th>
+<th>最长相等前后缀</th>
+<th>next[j]</th>
+</tr>
+</thead><tbody><tr>
+<td>0</td>
+<td>a</td>
+<td>（空）</td>
+<td>—</td>
+<td>-1（特殊，约定）</td>
+</tr>
+<tr>
+<td>1</td>
+<td>b</td>
+<td>&quot;a&quot;</td>
+<td>无（单字符无前后缀）</td>
+<td>0</td>
+</tr>
+<tr>
+<td>2</td>
+<td>a</td>
+<td>&quot;ab&quot;</td>
+<td>无</td>
+<td>0</td>
+</tr>
+<tr>
+<td>3</td>
+<td>b</td>
+<td>&quot;aba&quot;</td>
+<td>&quot;a&quot;（前缀a=后缀a）长度1</td>
+<td>1</td>
+</tr>
+<tr>
+<td>4</td>
+<td>c</td>
+<td>&quot;abab&quot;</td>
+<td>&quot;ab&quot;（前缀ab=后缀ab）长度2</td>
+<td>2</td>
+</tr>
+</tbody></table></div>
+<blockquote><p><strong>重要提醒</strong>：next 数组的具体定义（从 0 还是从 1 开始、next[0] 取 -1 还是 0、有没有「nextval 优化版」）<strong>各教材不统一</strong>。中科大课本用哪一种，以你课本为准——但<strong>核心思想完全一样</strong>：next[j] 就是「P[0..j-1] 的最长相等前后缀长度」，记住这个本质，碰到任何定义都能换算。考试如果给定了定义，照定义算即可。</p>
+</blockquote>
+<h4 id="kmp-匹配过程代码">KMP 匹配过程代码</h4>
+<pre data-label="c"><code class="language-c">// 假设 next 数组已经算好。在主串 S 中匹配模式串 P
+int KMP(char *S, char *P, int *next) {
+    int n = strlen(S), m = strlen(P);
+    int i = 0;                  // 主串指针,全程只增不减(这就是 KMP 的关键!)
+    int j = 0;                  // 模式串指针
+    while (i &lt; n &amp;&amp; j &lt; m) {
+        if (j == -1 || S[i] == P[j]) {   // j==-1 表示模式串第一个就失配,i,j 都前进
+            i++;
+            j++;
+        } else {
+            j = next[j];        // 失配:i 不动,j 跳到 next[j](利用已匹配信息)
+        }
+    }
+    if (j == m) return i - m;   // 匹配成功
+    else return -1;
+}</code></pre>
+<p>对比朴素算法，唯一的区别就是失配那一支：朴素是 <code>i 回退、j 归零</code>，KMP 是 <code>i 不动、j = next[j]</code>。就这一改，复杂度从 O(nm) 降到 O(n+m)。</p>
+<h4 id="next-数组怎么计算手算-代码">next 数组怎么计算（手算 + 代码）</h4>
+<p><strong>手算方法</strong>（考试这么做）：对模式串每个前缀 P[0..j-1]，写出它的所有前缀和后缀，找最长的相等的那对，长度就是 next[j]。多算几个例子（比如 &quot;aabaaf&quot;、&quot;abcabc&quot;）就熟了，这是<strong>必考的机械送分题</strong>，务必练到闭眼会。</p>
+<p><strong>求 next 的代码</strong>（思想是「用 P 自己和自己做 KMP」，理解即可，先记住会查表用）：</p>
+<pre data-label="c"><code class="language-c">void GetNext(char *P, int *next) {
+    int m = strlen(P);
+    next[0] = -1;
+    int i = 0, j = -1;
+    while (i &lt; m - 1) {
+        if (j == -1 || P[i] == P[j]) {
+            i++; j++;
+            next[i] = j;        // 记录当前位置的最长相等前后缀长度
+        } else {
+            j = next[j];        // 这里又用到了 next 自己,是个精妙的递推
+        }
+    }
+}</code></pre>
+<h4 id="手算-next-的错位速算法考试这样最快">手算 next 的「错位」速算法（考试这样最快）</h4>
+<p>考试手算 next 不用真去枚举前后缀，用这个机械口诀更快（以 <strong>next[1]=0、next[2]=1 起步，下标从 1 开始</strong> 的常见课本定义为例）：</p>
+<ul>
+<li><code>next[1] = 0</code>（第一个字符失配，约定为 0，有的课本写 -1）；<code>next[2] = 1</code>。</li>
+<li>求 <code>next[j]</code>：看 <code>P[1..j-1]</code> 的最长相等前后缀长度，再 +1。等价做法：把模式串和它自己「错位比对」，能对上多长。</li>
+</ul>
+<p><strong>完整示例</strong>：模式串 <code>P = a b a a b c a c</code>（下标 1~8），求 next（课本定义，next[j]=最长相等前后缀长+1）：</p>
+<div class="table-wrap"><table><thead><tr>
+<th>j</th>
+<th>1</th>
+<th>2</th>
+<th>3</th>
+<th>4</th>
+<th>5</th>
+<th>6</th>
+<th>7</th>
+<th>8</th>
+</tr>
+</thead><tbody><tr>
+<td>P[j]</td>
+<td>a</td>
+<td>b</td>
+<td>a</td>
+<td>a</td>
+<td>b</td>
+<td>c</td>
+<td>a</td>
+<td>c</td>
+</tr>
+<tr>
+<td>next[j]</td>
+<td>0</td>
+<td>1</td>
+<td>1</td>
+<td>2</td>
+<td>2</td>
+<td>3</td>
+<td>1</td>
+<td>2</td>
+</tr>
+</tbody></table></div>
+<blockquote><p>注：若课本用「next[0]=-1、从 0 下标」的版本，数值会整体差 1，<strong>本质完全一样</strong>，对应代码里 <code>j=-1</code> 表示「模式串第一个就失配」。考试给哪套定义就用哪套，先抄题目的 next[1]（或 next[0]）起始值。</p>
+</blockquote>
+<h4 id="nextvalnext-的优化版常考">nextval（next 的优化版，常考）</h4>
+<p>next 还能再优化成 <strong>nextval</strong>：当模式串里 <code>P[j] == P[next[j]]</code> 时，跳到 next[j] 后还会立刻再次失配（因为字符相同），白跳一步，于是直接令 <code>nextval[j] = nextval[next[j]]</code>，一步到位。</p>
+<p><strong>规则（手算）</strong>：先求出 next，再逐个修正：</p>
+<ul>
+<li>若 <code>P[j] == P[next[j]]</code>：<code>nextval[j] = nextval[next[j]]</code>（继承）。</li>
+<li>否则：<code>nextval[j] = next[j]</code>（不变）。</li>
+</ul>
+<p><strong>接着上例</strong>（<code>a b a a b c a c</code>）求 nextval：</p>
+<div class="table-wrap"><table><thead><tr>
+<th>j</th>
+<th>1</th>
+<th>2</th>
+<th>3</th>
+<th>4</th>
+<th>5</th>
+<th>6</th>
+<th>7</th>
+<th>8</th>
+</tr>
+</thead><tbody><tr>
+<td>P[j]</td>
+<td>a</td>
+<td>b</td>
+<td>a</td>
+<td>a</td>
+<td>b</td>
+<td>c</td>
+<td>a</td>
+<td>c</td>
+</tr>
+<tr>
+<td>next</td>
+<td>0</td>
+<td>1</td>
+<td>1</td>
+<td>2</td>
+<td>2</td>
+<td>3</td>
+<td>1</td>
+<td>2</td>
+</tr>
+<tr>
+<td>nextval</td>
+<td>0</td>
+<td>1</td>
+<td>0</td>
+<td>2</td>
+<td>1</td>
+<td>3</td>
+<td>0</td>
+<td>2</td>
+</tr>
+</tbody></table></div>
+<p>（如 j=3：P[3]=&#39;a&#39;，P[next[3]]=P[1]=&#39;a&#39;，相同 → nextval[3]=nextval[1]=0。）</p>
+<h4 id="kmp-小结与考点">KMP 小结与考点</h4>
+<ul>
+<li><strong>思想</strong>：失配时主串指针 i 不回退，靠 next 数组让模式串「智能右滑」。</li>
+<li><strong>复杂度</strong>：求 next 是 O(m)，匹配是 O(n)，总 O(n+m)。<strong>朴素 BF 是 O(nm)</strong>——对比记牢。</li>
+<li><strong>考点</strong>：① 手算 next 和 <strong>nextval</strong> 数组——最高频；② 理解「为什么 i 不用回退」；③ 给定主串模式串模拟匹配过程、数「比较了多少次/模式串移动了几次」。</li>
+<li><strong>⚠️ 易错</strong>：next 的定义各课本不统一（next[0] 取 0/-1、下标从 0/1 开始），<strong>务必先看清题目给的定义和起始值再算</strong>；核心原则始终是「主串指针不回退、模式串按 next 回退」。</li>
+</ul>
+<h2 id="213-数组">2.13 数组</h2>
+<h3 id="2131-多维数组的存储与地址计算">2.13.1 多维数组的存储与地址计算</h3>
+<p>数组（尤其二维数组/矩阵）虽然逻辑上是「行列」的二维结构，但内存是<strong>一维线性</strong>的，所以必须把二维「压平」成一维来存。有两种压平顺序：</p>
+<ul>
+<li><strong>行优先（Row-major）</strong>：一行一行地存，存完第 0 行再存第 1 行……（C 语言用这种）。</li>
+<li><strong>列优先（Column-major）</strong>：一列一列地存（Fortran、MATLAB 用这种）。</li>
+</ul>
+<p><strong>地址计算公式（必考）</strong>：设二维数组 A 有 m 行 n 列，每个元素占 L 个字节，首元素 A[0][0] 的地址为 Loc(0,0)，<strong>按行优先</strong>存储，则元素 A[i][j] 的地址为：</p>
+<pre><code>Loc(i, j) = Loc(0, 0) + (i × n + j) × L</code></pre>
+<p>理解：A[i][j] 前面有「完整的 i 行」（共 i×n 个元素）加上「本行 j 列前面的 j 个元素」，一共 (i×n + j) 个元素，每个占 L 字节，所以从首地址偏移这么多。<strong>列优先</strong>则是 <code>Loc(i,j) = Loc(0,0) + (j × m + i) × L</code>（先数完整的 j 列，每列 m 个）。</p>
+<blockquote><p>考点就是给你行列数、起始地址、按行还是按列、某元素下标，让你算它的物理地址。代入公式即可，注意下标从 0 还是从 1 开始（题目会说明，从 1 开始时公式里要相应 -1）。</p>
+</blockquote>
+<p><strong>三维数组地址公式（也会考，套路相同）</strong>：设三维数组 <code>A[m₁][m₂][m₃]</code>（即第二维大小 n=m₂、第三维大小 p=m₃），按行优先（最右下标变化最快），元素 <code>A[i][j][k]</code> 的地址为：</p>
+<pre><code>Loc(i,j,k) = Loc(0,0,0) + (i × m₂ × m₃ + j × m₃ + k) × L</code></pre>
+<p>理解：跳过 i 个「完整的二维面」（每面 m₂×m₃ 个元素）+ 本面跳过 j 个「完整行」（每行 m₃ 个）+ 本行再走 k 个。<strong>口诀：每一维的「权」= 它后面所有维大小的乘积。</strong> 推广到任意维都是这个规律。下标从 1 开始时，把每个下标各减 1 再代入。</p>
+<h3 id="2132-特殊矩阵的压缩存储">2.13.2 特殊矩阵的压缩存储</h3>
+<p>有些矩阵有大量<strong>规律性的、重复或为零的元素</strong>，全存太浪费。<strong>压缩存储</strong>的思想是：<strong>只存有用的元素，省掉规律性的部分</strong>，用公式建立「矩阵下标 ↔ 一维数组下标」的映射。</p>
+<h4 id="对称矩阵">对称矩阵</h4>
+<p>满足 <code>a[i][j] == a[j][i]</code> 的方阵。既然上三角和下三角对称相等，<strong>只需存一半</strong>（比如下三角，含对角线），另一半用对称性现算。n 阶对称矩阵只存 <code>n(n+1)/2</code> 个元素。把下三角按行存进一维数组 B，元素 a[i][j]（i≥j，下标从 1 开始）对应 B 的下标公式：</p>
+<pre><code>k = i(i-1)/2 + j - 1     (i ≥ j,下三角区)
+当 i &lt; j(上三角)时,利用对称性,改用 a[j][i] 的位置: k = j(j-1)/2 + i - 1</code></pre>
+<p>理解：第 i 行（下三角）前面有 1+2+...+(i-1) = i(i-1)/2 个元素，本行第 j 个再加 j，减 1 转成从 0 开始的下标。</p>
+<h4 id="三角矩阵对角矩阵">三角矩阵、对角矩阵</h4>
+<ul>
+<li><strong>三角矩阵</strong>：上（或下）三角全是同一个常数（常是 0）。只存非常数的那个三角 + 一个常数值即可。</li>
+<li><strong>对角矩阵（带状矩阵）</strong>：非零元素都集中在主对角线附近的几条带上，其余全 0。只存那几条带上的元素。</li>
+</ul>
+<p>这些都是同一个思路：<strong>找出规律 → 只存不规律的部分 → 用公式做下标映射</strong>。考点是给定矩阵和压缩方式，求某元素在一维数组里的下标，或反过来。</p>
+<h4 id="稀疏矩阵">稀疏矩阵</h4>
+<p><strong>稀疏矩阵</strong>指非零元素<strong>极少</strong>（远少于零元素）的矩阵。如果还按常规存，绝大部分空间都浪费在存 0 上。压缩办法是<strong>只存非零元素</strong>，常用两种：</p>
+<ul>
+<li><strong>三元组表示</strong>：每个非零元素记成一个三元组 <code>(行, 列, 值)</code>，把所有非零元素的三元组存进一个数组。简单直观，适合非零元素不常变动的场景。</li>
+<li><strong>十字链表表示</strong>：用链表把每行、每列的非零元素分别串起来，每个非零元素节点同时在它的「行链」和「列链」上，像十字交叉。适合非零元素经常增删的场景（增删只改指针）。</li>
+</ul>
+<p>考点：理解三元组怎么表示一个给定稀疏矩阵；了解十字链表的动机。</p>
+<h2 id="214-串与数组自测">2.14 串与数组自测</h2>
+<ol>
+<li>串是什么特殊的线性表？什么是子串、主串、子串的位置？</li>
+<li>朴素模式匹配的时间复杂度是多少？瓶颈（浪费）出在哪一步？</li>
+<li>KMP 的核心思想一句话概括是什么？它的时间复杂度？</li>
+<li>next[j] 的本质含义是什么（用「前后缀」描述）？手算 P=&quot;ababa&quot; 的 next 数组。</li>
+<li>KMP 匹配过程里，失配时 i 和 j 分别怎么变？（和朴素算法对比）</li>
+<li>二维数组 A[m][n] 按行优先，A[i][j] 的地址公式是什么？解释每一项的含义。</li>
+<li>n 阶对称矩阵压缩后只需存多少个元素？为什么？</li>
+<li>稀疏矩阵的三元组表示法存的是什么？</li>
+</ol>
+<hr>
+<h2 id="215-本段总自测清单">2.15 本段总自测清单</h2>
+<p><strong>C 基础</strong></p>
+<ul>
+<li><input disabled="" type="checkbox"> <code>*</code> 和 <code>&amp;</code> 的两个含义；<code>p-&gt;x</code> 等价于什么；传值 vs 传址</li>
+<li><input disabled="" type="checkbox"> malloc/free 怎么用，为什么 free 后置 NULL</li>
+</ul>
+<p><strong>导论 + 复杂度</strong></p>
+<ul>
+<li><input disabled="" type="checkbox"> 逻辑结构四类 / 存储结构两类；同一逻辑结构多种存储举例</li>
+<li><input disabled="" type="checkbox"> 算法五大特性</li>
+<li><input disabled="" type="checkbox"> 会从代码数出 O(1)/O(n)/O(n²)/O(log n)/O(n log n)</li>
+<li><input disabled="" type="checkbox"> 顺序查找最好/平均/最坏复杂度</li>
+<li><input disabled="" type="checkbox"> 全课灵魂：访问快 vs 增删快的权衡</li>
+</ul>
+<p><strong>线性表</strong></p>
+<ul>
+<li><input disabled="" type="checkbox"> 顺序表插入/删除平均移动元素数、复杂度</li>
+<li><input disabled="" type="checkbox"> 头指针/头结点/首元结点的区别，为什么加头结点</li>
+<li><input disabled="" type="checkbox"> 链表插入删除画得对、「先接后断」、记得 free</li>
+<li><input disabled="" type="checkbox"> 顺序表 vs 链表对比表能默写</li>
+<li><input disabled="" type="checkbox"> 快慢指针找中点/判环</li>
+</ul>
+<p><strong>栈与队列</strong></p>
+<ul>
+<li><input disabled="" type="checkbox"> 顺序栈入栈出栈、top 约定</li>
+<li><input disabled="" type="checkbox"> 后缀表达式求值能手动模拟</li>
+<li><input disabled="" type="checkbox"> 循环队列假溢出、判空判满求长三公式</li>
+<li><input disabled="" type="checkbox"> 栈用于递归、队列用于 BFS</li>
+</ul>
+<p><strong>串和数组</strong></p>
+<ul>
+<li><input disabled="" type="checkbox"> 朴素匹配 O(nm) 及其浪费</li>
+<li><input disabled="" type="checkbox"> KMP 思想、next 本质、能手算 next</li>
+<li><input disabled="" type="checkbox"> 二维数组地址公式</li>
+<li><input disabled="" type="checkbox"> 对称矩阵压缩下标公式、稀疏矩阵三元组</li>
+</ul>
+<hr>
+<p><strong>前两章到此告一段落。</strong> 这两章把「地基（C+复杂度）」和「线性世界（表/栈/队列/串/数组）」打通了。最重要的三块硬骨头是：<strong>指针与链表的「改指针」操作、循环队列判空判满、KMP 的 next 数组</strong>——这三处务必动手画图、手算到熟练。</p>
+<p>读完、自测过关后，下面进入<strong>第三、四章：树与二叉树 + 图</strong>（全课最大的重头）。读的过程中任何卡壳，随时回头复习。</p>
+
+    <nav class="pager">  <a href="01-intro-and-c.html">
+    <span class="label">← 上一章</span>
+    <span class="title">引论与 C 语言基础</span>
+  </a>  <a href="03-tree.html" class="next">
+    <span class="label">下一章 →</span>
+    <span class="title">树与二叉树</span>
+  </a></nav>
+  </article>
+</div>
+
+<footer>
+  <div class="set">
+    <span>数据结构：从指针到算法</span>
+    <span>2026 · ZH-CN</span>
+  </div>
+  <div class="set">
+    <span>Mav</span>
+  </div>
+</footer>
+<div class="search-backdrop" id="search-overlay" role="dialog" aria-modal="true" aria-label="搜索" hidden>
+  <div class="search-modal">
+    <div class="search-input-wrap">
+      <input type="search" class="search-input" placeholder="搜索内容..." aria-label="搜索内容" autocomplete="off">
+      <kbd>ESC</kbd>
+    </div>
+    <div class="search-results" role="listbox" aria-label="搜索结果"></div>
+  </div>
+</div>
+
+<!-- Side Panel -->
+<div class="side-panel" id="side-panel">
+  <div class="side-panel-resize" id="side-panel-resize"></div>
+  <div class="side-panel-header">
+    <div class="side-panel-tabs">
+      <button class="side-panel-tab active" data-mode="sidenote">补充</button>
+      <button class="side-panel-tab" data-mode="notepad">笔记</button>
+    </div>
+    <button class="side-panel-close" aria-label="关闭">×</button>
+  </div>
+  <div class="side-panel-body"></div>
+</div>
+<button class="notepad-fab" id="notepad-fab" aria-label="便利贴">✎</button>
+
+<!-- Mobile TOC -->
+<button class="mtoc-fab" id="mtoc-fab" aria-label="目录">TOC</button>
+<div class="mtoc-drawer" id="mtoc-drawer">
+  <div class="mtoc-content"></div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/bash.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/typescript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/yaml.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/javascript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/json.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/python.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/css.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+<script>mermaid.initialize({startOnLoad:true, theme:'neutral', fontFamily:'Inter, sans-serif'});</script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}]});"></script>
+<script src="../assets/script.js"></script>
+</body>
+</html>

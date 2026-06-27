@@ -26,6 +26,9 @@ const ROOT = __dirname;
 const PROJECTS_SRC = path.resolve(ROOT, '..', 'markdown-backups', 'projects');
 const OUTPUT_BASE = path.resolve(ROOT, '..', 'Mav', 'knowledge', 'projects');
 const BOOKS_DIR = path.resolve(ROOT, '..', 'markdown-backups');
+const KNOWLEDGE_INDEX = path.resolve(ROOT, '..', 'Mav', 'knowledge', 'index.html');
+const PROJECTS_START = '<!-- AUTO:PROJECTS:START -->';
+const PROJECTS_END = '<!-- AUTO:PROJECTS:END -->';
 
 // ============================================================
 // Helpers
@@ -41,7 +44,21 @@ function getAllProjects() {
   return fs.readdirSync(PROJECTS_SRC)
     .filter(f => f.endsWith('.yaml'))
     .map(f => readProjectYaml(path.join(PROJECTS_SRC, f)))
-    .filter(p => p && Array.isArray(p.books) && p.slug);
+    .filter(p => p && Array.isArray(p.books) && p.slug)
+    .sort((a, b) => (a.order ?? Number.MAX_SAFE_INTEGER) - (b.order ?? Number.MAX_SAFE_INTEGER));
+}
+
+function escapeHtml(value) {
+  return String(value ?? '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
+}
+
+function formatReadTime(minutes) {
+  return minutes > 60 ? `${Math.round(minutes / 60)} 小时` : `${minutes} 分钟`;
 }
 
 /**
@@ -97,6 +114,61 @@ function estimateReadTime(books) {
   return total;
 }
 
+function getProjectStats(project) {
+  let chapterCount = 0;
+  for (const book of project.books) {
+    const meta = getBookMeta(book.slug);
+    if (meta && meta.dirName) chapterCount += countChapters(meta.dirName);
+  }
+  return {
+    chapterCount,
+    readTimeMinutes: estimateReadTime(project.books)
+  };
+}
+
+function buildProjectCard(project) {
+  const stats = getProjectStats(project);
+  const dots = project.books.map((book, index) => {
+    const line = index < project.books.length - 1
+      ? '\n          <div class="path-dot-line"></div>'
+      : '';
+    return `          <div class="path-dot-item"></div>${line}`;
+  }).join('\n');
+  const labels = project.books.map(book => {
+    const meta = getBookMeta(book.slug);
+    const label = book.label || (meta ? meta.title : book.slug);
+    return `          <span class="path-dot-label">${escapeHtml(label)}</span>`;
+  }).join('\n');
+
+  return `      <a class="project-card" href="projects/${escapeHtml(project.slug)}/index.html">
+        <h3>${escapeHtml(project.title)}</h3>
+        <p class="project-card-desc">${escapeHtml(project.description)}</p>
+        <div class="path-dots">
+${dots}
+        </div>
+        <div class="path-dots-labels">
+${labels}
+        </div>
+        <div class="project-card-meta">${project.books.length} 本书 · ${stats.chapterCount} 章 · 预计 ${formatReadTime(stats.readTimeMinutes)}</div>
+      </a>`;
+}
+
+function updateKnowledgeIndex(projects) {
+  const indexHtml = fs.readFileSync(KNOWLEDGE_INDEX, 'utf-8');
+  const eol = indexHtml.includes('\r\n') ? '\r\n' : '\n';
+  const start = indexHtml.indexOf(PROJECTS_START);
+  const end = indexHtml.indexOf(PROJECTS_END);
+
+  if (start === -1 || end === -1 || end < start) {
+    throw new Error(`Project markers missing from ${KNOWLEDGE_INDEX}`);
+  }
+
+  const cards = projects.map(buildProjectCard).join('\n\n').replace(/\n/g, eol);
+  const replacement = `${PROJECTS_START}${eol}${cards}${eol}      ${PROJECTS_END}`;
+  const updated = indexHtml.slice(0, start) + replacement + indexHtml.slice(end + PROJECTS_END.length);
+  fs.writeFileSync(KNOWLEDGE_INDEX, updated, 'utf-8');
+}
+
 // ============================================================
 // HTML Generation
 // ============================================================
@@ -128,9 +200,7 @@ function getChaptersMeta(dirName) {
 
 function buildProjectDetailPage(project, booksMeta) {
   const totalTime = estimateReadTime(project.books);
-  const timeDisplay = totalTime > 60
-    ? `${Math.round(totalTime / 60)} 小时`
-    : `${totalTime} 分钟`;
+  const timeDisplay = formatReadTime(totalTime);
 
   const stepsHtml = project.books.map((book, i) => {
     const meta = booksMeta[i];
@@ -269,6 +339,16 @@ ${sidebarHtml}
     </aside>
   </div>
 
+  <section class="project-finish">
+    <span class="eyebrow">PATH COMPLETE</span>
+    <h2>继续整理你的知识地图</h2>
+    <p>完成这条路径后，可以回到知识库选择下一本书，或在图谱中查看这些主题之间的联系。</p>
+    <div class="project-finish-actions">
+      <a class="finish-primary" href="../../index.html">返回知识库</a>
+      <a href="../../graph/index.html">查看知识图谱 →</a>
+    </div>
+  </section>
+
 </main>
 
 <footer>
@@ -348,6 +428,8 @@ function main() {
     'utf-8'
   );
   console.log(`  ✓ manifest.json`);
+  updateKnowledgeIndex(allProjects);
+  console.log(`  ✓ knowledge/index.html project cards`);
   console.log(`\n  Done! Output: ${OUTPUT_BASE}/\n`);
 }
 

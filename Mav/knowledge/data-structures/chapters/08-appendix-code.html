@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>附录：核心代码合订 — 数据结构：从指针到算法</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" id="hljs-light" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+<link rel="stylesheet" id="hljs-dark" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" media="not all">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+</head>
+<body>
+
+<div class="progress-bar" id="progress-bar"></div>
+
+<nav class="topnav" id="topnav">
+  <div class="topnav-inner">
+    <a class="brand" href="../index.html">数据结构：从指针到算法</a>
+    <div class="nav-links">
+      <a href="01-intro-and-c.html">01</a>
+      <a href="02-linear.html">02</a>
+      <a href="03-tree.html">03</a>
+      <a href="04-graph.html">04</a>
+      <a href="05-search-sort.html">05</a>
+      <a href="06-algorithm-design.html">06</a>
+      <a href="07-practice-cheatsheet.html">07</a>
+      <a href="08-appendix-code.html" class="active">08</a>
+      <a href="09-review.html">09</a>
+    </div>
+    <div class="nav-controls">
+      <button class="nav-btn" id="search-btn" aria-label="搜索 (Ctrl+K)">⌘K</button>
+      <button class="nav-btn" id="settings-btn" aria-label="阅读设置">Aa</button>
+      <a class="nav-btn" href="../../index.html" aria-label="返回知识库">← 知识库</a>
+      <a class="nav-btn" href="https://github.com/maverickxone/mav-homepage" target="_blank" rel="noopener" aria-label="GitHub" style="padding: 6px 8px;"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg></a>
+    </div>
+  </div>
+</nav>
+<div class="settings-pop" id="settings-pop">
+  <h5>主题</h5>
+  <div class="row">
+    <button class="seg" data-theme-set="light">明亮</button>
+    <button class="seg" data-theme-set="dark">暗色</button>
+  </div>
+  <h5>字号</h5>
+  <div class="row">
+    <button class="seg" data-size-set="s">小</button>
+    <button class="seg" data-size-set="m">中</button>
+    <button class="seg" data-size-set="l">大</button>
+  </div>
+</div>
+
+<div class="with-sidebar">
+  <aside class="sidebar">
+  <div class="chapter-num">CHAPTER 08</div>
+  <div class="chapter-name">附录：核心代码合订</div>
+  <h4>目录</h4>
+  <ul>
+    <li><a href="#81-公共头与工具函数">8.1 公共头与工具函数</a></li>
+    <li><a href="#82-顺序表-sqlist">8.2 顺序表 SqList</a></li>
+    <li><a href="#83-单链表-linklist带头结点">8.3 单链表 LinkList（带头结点）</a></li>
+    <li><a href="#84-顺序栈-sqstack-括号匹配">8.4 顺序栈 SqStack + 括号匹配</a></li>
+    <li><a href="#85-循环队列-sqqueue">8.5 循环队列 SqQueue</a></li>
+    <li><a href="#86-二叉树-bitree-四种遍历">8.6 二叉树 BiTree + 四种遍历</a></li>
+    <li><a href="#87-二叉搜索树-bst">8.7 二叉搜索树 BST</a></li>
+    <li><a href="#88-kmp-字符串匹配">8.8 KMP 字符串匹配</a></li>
+    <li><a href="#89-七大排序">8.9 七大排序</a></li>
+    <li><a href="#810-主函数把所有-test-串起来">8.10 主函数：把所有 test 串起来</a></li>
+  </ul>
+</aside>
+  <article class="chapter-body">
+    <header class="chapter-head">
+  <div class="chapter-head-meta">
+    <span class="num">CHAPTER 08</span>
+    <span>≈ 25 MIN READ</span>
+  </div>
+  <h1>附录：核心代码合订</h1>
+
+</header>
+    <p>这一章是全书所有核心结构的 <strong>C 代码合订</strong>，每一段都按「定义 + 核心操作 + 一个 <code>test_xxx()</code> 测试」的方式组织，<strong>可以直接复制到一个 <code>.c</code> 文件里编译运行</strong>。</p>
+<pre data-label="bash"><code class="language-bash">gcc 核心代码合订.c -o ds &amp;&amp; ./ds</code></pre>
+<p>学习建议始终是同一句：<strong>先盖住实现，自己照前面章节的讲义敲一遍，再回来和这里对照。</strong> 代码能默写出来，才算真正掌握。</p>
+<h2 id="81-公共头与工具函数">8.1 公共头与工具函数</h2>
+<p>所有模块共用的头文件、元素类型别名和一个打印数组的小工具。后面每段代码都默认它已经在文件顶部。</p>
+<pre data-label="c"><code class="language-c">#include &lt;stdio.h&gt;
+#include &lt;stdlib.h&gt;
+#include &lt;string.h&gt;
+
+typedef int ElemType;
+
+/* 工具: 打印整型数组 */
+void printArr(int a[], int n) {
+    for (int i = 0; i &lt; n; i++) printf("%d ", a[i]);
+    printf("\n");
+}</code></pre>
+<h2 id="82-顺序表-sqlist">8.2 顺序表 SqList</h2>
+<p>定长数组 + <code>length</code> 计数。插入要<strong>从后往前</strong>挪，删除要<strong>从前往后</strong>挪，平均移动约一半元素，所以增删是 O(n)、随机访问是 O(1)。</p>
+<pre data-label="c"><code class="language-c">#define MAXSIZE 100
+typedef struct {
+    ElemType data[MAXSIZE];
+    int length;
+} SqList;
+
+void SqList_init(SqList *L) { L-&gt;length = 0; }
+
+/* 在第 i 个位置(1..length+1)插入 e */
+int SqList_insert(SqList *L, int i, ElemType e) {
+    if (i &lt; 1 || i &gt; L-&gt;length + 1) return 0;
+    if (L-&gt;length &gt;= MAXSIZE) return 0;
+    for (int j = L-&gt;length - 1; j &gt;= i - 1; j--)  /* 从后往前挪 */
+        L-&gt;data[j + 1] = L-&gt;data[j];
+    L-&gt;data[i - 1] = e;
+    L-&gt;length++;
+    return 1;
+}
+
+/* 删除第 i 个元素, 值带回 *e */
+int SqList_delete(SqList *L, int i, ElemType *e) {
+    if (i &lt; 1 || i &gt; L-&gt;length) return 0;
+    *e = L-&gt;data[i - 1];
+    for (int j = i; j &lt; L-&gt;length; j++)            /* 从前往后挪 */
+        L-&gt;data[j - 1] = L-&gt;data[j];
+    L-&gt;length--;
+    return 1;
+}
+
+void test_SqList(void) {
+    printf("=== 1. 顺序表 ===\n");
+    SqList L; SqList_init(&amp;L);
+    for (int i = 1; i &lt;= 5; i++) SqList_insert(&amp;L, i, i * 10); /* 10 20 30 40 50 */
+    printf("初始: "); printArr(L.data, L.length);
+    SqList_insert(&amp;L, 3, 99);  printf("在第3位插99: "); printArr(L.data, L.length);
+    ElemType e;
+    SqList_delete(&amp;L, 1, &amp;e);  printf("删第1个(%d后): ", e); printArr(L.data, L.length);
+    printf("\n");
+}</code></pre>
+<h2 id="83-单链表-linklist带头结点">8.3 单链表 LinkList（带头结点）</h2>
+<p>带头结点能让插入/删除「首元结点」和插入/删除「中间结点」写成同一套代码。注意两个命门：插入是<strong>先接后断</strong>，删除要<strong>记得 <code>free</code></strong>。反转用三指针滚动。</p>
+<pre data-label="c"><code class="language-c">typedef struct LNode {
+    ElemType data;
+    struct LNode *next;
+} LNode, *LinkList;
+
+LinkList List_initHead(void) {                 /* 创建带头结点的空表 */
+    LinkList L = (LinkList)malloc(sizeof(LNode));
+    L-&gt;next = NULL;
+    return L;
+}
+
+void List_insertTail(LinkList L, ElemType e) { /* 尾插一个元素 */
+    LNode *p = L;
+    while (p-&gt;next) p = p-&gt;next;                /* 走到尾 */
+    LNode *s = (LNode *)malloc(sizeof(LNode));
+    s-&gt;data = e; s-&gt;next = NULL;
+    p-&gt;next = s;
+}
+
+/* 在第 i 个位置插入 e (先接后断) */
+int List_insert(LinkList L, int i, ElemType e) {
+    LNode *p = L; int j = 0;
+    while (p &amp;&amp; j &lt; i - 1) { p = p-&gt;next; j++; } /* 找第 i-1 个(前驱) */
+    if (!p) return 0;
+    LNode *s = (LNode *)malloc(sizeof(LNode));
+    s-&gt;data = e;
+    s-&gt;next = p-&gt;next;                           /* 先接 */
+    p-&gt;next = s;                                 /* 后断 */
+    return 1;
+}
+
+/* 删除第 i 个节点, 值带回 *e */
+int List_delete(LinkList L, int i, ElemType *e) {
+    LNode *p = L; int j = 0;
+    while (p &amp;&amp; j &lt; i - 1) { p = p-&gt;next; j++; }  /* 找前驱 */
+    if (!p || !p-&gt;next) return 0;
+    LNode *q = p-&gt;next;                           /* q 是要删的 */
+    *e = q-&gt;data;
+    p-&gt;next = q-&gt;next;                            /* 跳过 q */
+    free(q);                                      /* 释放 */
+    return 1;
+}
+
+/* 反转链表(三指针滚动), 头结点不变 */
+void List_reverse(LinkList L) {
+    LNode *prev = NULL, *cur = L-&gt;next;
+    while (cur) {
+        LNode *next = cur-&gt;next;                  /* 先记住下一个 */
+        cur-&gt;next = prev;                         /* 掉头 */
+        prev = cur; cur = next;                   /* 整体后移 */
+    }
+    L-&gt;next = prev;                               /* 新头 */
+}
+
+void List_print(LinkList L) {
+    for (LNode *p = L-&gt;next; p; p = p-&gt;next) printf("%d ", p-&gt;data);
+    printf("\n");
+}
+
+void test_LinkList(void) {
+    printf("=== 2. 单链表 ===\n");
+    LinkList L = List_initHead();
+    for (int i = 1; i &lt;= 5; i++) List_insertTail(L, i); /* 1 2 3 4 5 */
+    printf("尾插建表: "); List_print(L);
+    List_insert(L, 2, 99); printf("第2位插99: "); List_print(L);
+    ElemType e; List_delete(L, 2, &amp;e); printf("删第2个(%d后): ", e); List_print(L);
+    List_reverse(L); printf("反转后: "); List_print(L);
+    printf("\n");
+}</code></pre>
+<h2 id="84-顺序栈-sqstack-括号匹配">8.4 顺序栈 SqStack + 括号匹配</h2>
+<p><code>top</code> 指向栈顶元素，空栈约定为 <code>-1</code>。括号匹配是栈最经典的应用：左括号入栈，右括号弹栈比对，最后栈空才算全部配对。</p>
+<pre data-label="c"><code class="language-c">typedef struct {
+    ElemType data[MAXSIZE];
+    int top;                 /* top 指向栈顶元素, 空栈 -1 */
+} SqStack;
+
+void Stack_init(SqStack *S) { S-&gt;top = -1; }
+int  Stack_empty(SqStack *S) { return S-&gt;top == -1; }
+int  Stack_push(SqStack *S, ElemType e) {
+    if (S-&gt;top == MAXSIZE - 1) return 0;
+    S-&gt;data[++S-&gt;top] = e; return 1;
+}
+int  Stack_pop(SqStack *S, ElemType *e) {
+    if (S-&gt;top == -1) return 0;
+    *e = S-&gt;data[S-&gt;top--]; return 1;
+}
+
+/* 括号匹配: 字符串里 ()[]{} 是否配对 */
+int bracketMatch(const char *s) {
+    SqStack S; Stack_init(&amp;S);
+    for (int i = 0; s[i]; i++) {
+        char c = s[i];
+        if (c == '(' || c == '[' || c == '{') Stack_push(&amp;S, c);
+        else if (c == ')' || c == ']' || c == '}') {
+            ElemType t;
+            if (!Stack_pop(&amp;S, &amp;t)) return 0;                 /* 没有左括号可配 */
+            if ((c == ')' &amp;&amp; t != '(') ||
+                (c == ']' &amp;&amp; t != '[') ||
+                (c == '}' &amp;&amp; t != '{')) return 0;             /* 类型不匹配 */
+        }
+    }
+    return Stack_empty(&amp;S);                                   /* 最后栈空才全配对 */
+}
+
+void test_Stack(void) {
+    printf("=== 3. 顺序栈 + 括号匹配 ===\n");
+    const char *t1 = "([]{})", *t2 = "([)]";
+    printf("\"%s\" 匹配? %s\n", t1, bracketMatch(t1) ? "是" : "否");
+    printf("\"%s\" 匹配? %s\n", t2, bracketMatch(t2) ? "是" : "否");
+    printf("\n");
+}</code></pre>
+<h2 id="85-循环队列-sqqueue">8.5 循环队列 SqQueue</h2>
+<p>牺牲一个存储单元来区分「空」和「满」：空是 <code>front == rear</code>，满是 <code>(rear + 1) % QSIZE == front</code>。求队列长度的公式 <code>(rear - front + QSIZE) % QSIZE</code> 是必背考点。</p>
+<pre data-label="c"><code class="language-c">#define QSIZE 6
+typedef struct {
+    ElemType data[QSIZE];
+    int front, rear;         /* rear 指向队尾元素的下一个位置 */
+} SqQueue;
+
+void Queue_init(SqQueue *Q) { Q-&gt;front = Q-&gt;rear = 0; }
+int  Queue_empty(SqQueue *Q) { return Q-&gt;front == Q-&gt;rear; }
+int  Queue_full(SqQueue *Q)  { return (Q-&gt;rear + 1) % QSIZE == Q-&gt;front; }
+int  Queue_count(SqQueue *Q) { return (Q-&gt;rear - Q-&gt;front + QSIZE) % QSIZE; }
+
+int Queue_en(SqQueue *Q, ElemType e) {
+    if (Queue_full(Q)) return 0;
+    Q-&gt;data[Q-&gt;rear] = e;
+    Q-&gt;rear = (Q-&gt;rear + 1) % QSIZE;
+    return 1;
+}
+int Queue_de(SqQueue *Q, ElemType *e) {
+    if (Queue_empty(Q)) return 0;
+    *e = Q-&gt;data[Q-&gt;front];
+    Q-&gt;front = (Q-&gt;front + 1) % QSIZE;
+    return 1;
+}
+
+void test_Queue(void) {
+    printf("=== 4. 循环队列 ===\n");
+    SqQueue Q; Queue_init(&amp;Q);
+    for (int i = 1; i &lt;= 5; i++) Queue_en(&amp;Q, i);   /* QSIZE=6, 最多存5个 */
+    printf("入队 1..5, 当前个数=%d, 队满? %s\n", Queue_count(&amp;Q), Queue_full(&amp;Q) ? "是" : "否");
+    ElemType e; Queue_de(&amp;Q, &amp;e); Queue_de(&amp;Q, &amp;e);
+    printf("出队两个后个数=%d\n", Queue_count(&amp;Q));
+    Queue_en(&amp;Q, 6); Queue_en(&amp;Q, 7);               /* 测试绕回 */
+    printf("再入队 6,7(绕回), 个数=%d: ", Queue_count(&amp;Q));
+    while (!Queue_empty(&amp;Q)) { Queue_de(&amp;Q, &amp;e); printf("%d ", e); }
+    printf("\n\n");
+}</code></pre>
+<h2 id="86-二叉树-bitree-四种遍历">8.6 二叉树 BiTree + 四种遍历</h2>
+<p>二叉链表 + 递归。前/中/后序只差一行 <code>printf</code> 的位置；层序要借助一个队列。高度和节点数都是经典的递归写法。</p>
+<pre data-label="c"><code class="language-c">typedef struct BiTNode {
+    ElemType data;
+    struct BiTNode *lchild, *rchild;
+} BiTNode, *BiTree;
+
+BiTNode *newNode(ElemType x) {
+    BiTNode *p = (BiTNode *)malloc(sizeof(BiTNode));
+    p-&gt;data = x; p-&gt;lchild = p-&gt;rchild = NULL;
+    return p;
+}
+
+void preOrder(BiTree T)  { if (T) { printf("%d ", T-&gt;data); preOrder(T-&gt;lchild);  preOrder(T-&gt;rchild);  } }
+void inOrder(BiTree T)   { if (T) { inOrder(T-&gt;lchild);  printf("%d ", T-&gt;data);  inOrder(T-&gt;rchild);   } }
+void postOrder(BiTree T) { if (T) { postOrder(T-&gt;lchild); postOrder(T-&gt;rchild); printf("%d ", T-&gt;data); } }
+
+int treeHeight(BiTree T) {
+    if (!T) return 0;
+    int lh = treeHeight(T-&gt;lchild), rh = treeHeight(T-&gt;rchild);
+    return (lh &gt; rh ? lh : rh) + 1;
+}
+int countNodes(BiTree T) {
+    if (!T) return 0;
+    return countNodes(T-&gt;lchild) + countNodes(T-&gt;rchild) + 1;
+}
+
+/* 层序遍历: 用一个简单的指针队列 */
+void levelOrder(BiTree T) {
+    if (!T) return;
+    BiTNode *q[MAXSIZE]; int front = 0, rear = 0;
+    q[rear++] = T;
+    while (front &lt; rear) {
+        BiTNode *p = q[front++];
+        printf("%d ", p-&gt;data);
+        if (p-&gt;lchild) q[rear++] = p-&gt;lchild;
+        if (p-&gt;rchild) q[rear++] = p-&gt;rchild;
+    }
+}
+
+void test_BiTree(void) {
+    printf("=== 5. 二叉树遍历 ===\n");
+    /*        1
+     *       / \
+     *      2   3
+     *     / \   \
+     *    4   5   6   */
+    BiTree T = newNode(1);
+    T-&gt;lchild = newNode(2); T-&gt;rchild = newNode(3);
+    T-&gt;lchild-&gt;lchild = newNode(4); T-&gt;lchild-&gt;rchild = newNode(5);
+    T-&gt;rchild-&gt;rchild = newNode(6);
+    printf("前序: "); preOrder(T);   printf("\n");
+    printf("中序: "); inOrder(T);    printf("\n");
+    printf("后序: "); postOrder(T);  printf("\n");
+    printf("层序: "); levelOrder(T); printf("\n");
+    printf("高度=%d, 节点数=%d\n\n", treeHeight(T), countNodes(T));
+}</code></pre>
+<h2 id="87-二叉搜索树-bst">8.7 二叉搜索树 BST</h2>
+<p>复用上面的 <code>BiTNode</code>/<code>newNode</code>。中序遍历 BST 必然升序。删除分三种情况，最难的是「左右孩子都在」——用<strong>中序后继</strong>（右子树最小值）替换，再去右子树删掉那个后继。</p>
+<pre data-label="c"><code class="language-c">void BST_insert(BiTree *T, ElemType key) {
+    if (*T == NULL) { *T = newNode(key); return; }
+    if (key &lt; (*T)-&gt;data)      BST_insert(&amp;(*T)-&gt;lchild, key);
+    else if (key &gt; (*T)-&gt;data) BST_insert(&amp;(*T)-&gt;rchild, key);
+    /* 相等则不插 */
+}
+
+BiTNode *BST_search(BiTree T, ElemType key) {
+    while (T &amp;&amp; T-&gt;data != key)
+        T = (key &lt; T-&gt;data) ? T-&gt;lchild : T-&gt;rchild;
+    return T;
+}
+
+/* 删除 key (递归版, 用中序后继替换) */
+BiTree BST_delete(BiTree T, ElemType key) {
+    if (!T) return NULL;
+    if (key &lt; T-&gt;data)      T-&gt;lchild = BST_delete(T-&gt;lchild, key);
+    else if (key &gt; T-&gt;data) T-&gt;rchild = BST_delete(T-&gt;rchild, key);
+    else {                                       /* 找到了 */
+        if (!T-&gt;lchild) { BiTNode *r = T-&gt;rchild; free(T); return r; }   /* 情况1/2 */
+        if (!T-&gt;rchild) { BiTNode *l = T-&gt;lchild; free(T); return l; }
+        BiTNode *succ = T-&gt;rchild;               /* 情况3: 找右子树最小(中序后继) */
+        while (succ-&gt;lchild) succ = succ-&gt;lchild;
+        T-&gt;data = succ-&gt;data;                    /* 值替换 */
+        T-&gt;rchild = BST_delete(T-&gt;rchild, succ-&gt;data); /* 删掉那个后继 */
+    }
+    return T;
+}
+
+void test_BST(void) {
+    printf("=== 6. 二叉搜索树 BST ===\n");
+    BiTree T = NULL;
+    int arr[] = {45, 24, 53, 12, 28, 90};
+    for (int i = 0; i &lt; 6; i++) BST_insert(&amp;T, arr[i]);
+    printf("插入后中序(应升序): "); inOrder(T); printf("\n");
+    printf("查找 28: %s\n", BST_search(T, 28) ? "找到" : "没找到");
+    printf("查找 99: %s\n", BST_search(T, 99) ? "找到" : "没找到");
+    T = BST_delete(T, 45);   /* 删根(两个孩子) */
+    printf("删 45 后中序: "); inOrder(T); printf("\n\n");
+}</code></pre>
+<h2 id="88-kmp-字符串匹配">8.8 KMP 字符串匹配</h2>
+<p>KMP 的精髓是 <code>next</code> 数组：失配时模式串 <code>j</code> 回退、主串 <code>i</code> <strong>永不回退</strong>。<code>getNext</code> 自己和自己做匹配求出 <code>next</code>，这是手算题和代码题都爱考的点。</p>
+<pre data-label="c"><code class="language-c">void getNext(const char *P, int *next) {
+    int m = (int)strlen(P);
+    next[0] = -1;
+    int i = 0, j = -1;
+    while (i &lt; m - 1) {
+        if (j == -1 || P[i] == P[j]) { i++; j++; next[i] = j; }
+        else j = next[j];
+    }
+}
+
+int KMP(const char *S, const char *P) {
+    int n = (int)strlen(S), m = (int)strlen(P);
+    int *next = (int *)malloc(sizeof(int) * m);
+    getNext(P, next);
+    int i = 0, j = 0;
+    while (i &lt; n &amp;&amp; j &lt; m) {
+        if (j == -1 || S[i] == P[j]) { i++; j++; }  /* i 永不回退 */
+        else j = next[j];
+    }
+    free(next);
+    return (j == m) ? i - m : -1;
+}
+
+void test_KMP(void) {
+    printf("=== 7. KMP 匹配 ===\n");
+    const char *S = "ababcabcacbab", *P = "abcac";
+    int next[16]; getNext(P, next);
+    printf("模式串 \"%s\" 的 next: ", P);
+    for (int i = 0; i &lt; (int)strlen(P); i++) printf("%d ", next[i]);
+    printf("\n在 \"%s\" 中匹配 \"%s\", 位置(下标) = %d\n\n", S, P, KMP(S, P));
+}</code></pre>
+<h2 id="89-七大排序">8.9 七大排序</h2>
+<p>直接插入、希尔、冒泡、快排、简单选择、堆排、归并一次性放在一起对照。记住稳定性与复杂度：快排/堆排/希尔/简单选择<strong>不稳定</strong>，平均最快的是快排，最坏 O(n²) 的是快排和冒泡/插入。</p>
+<pre data-label="c"><code class="language-c">void insertSort(int a[], int n) {              /* 直接插入 */
+    for (int i = 1; i &lt; n; i++) {
+        int t = a[i], j = i - 1;
+        while (j &gt;= 0 &amp;&amp; a[j] &gt; t) { a[j + 1] = a[j]; j--; }
+        a[j + 1] = t;
+    }
+}
+
+void shellSort(int a[], int n) {               /* 希尔 */
+    for (int gap = n / 2; gap &gt; 0; gap /= 2)
+        for (int i = gap; i &lt; n; i++) {
+            int t = a[i], j = i - gap;
+            while (j &gt;= 0 &amp;&amp; a[j] &gt; t) { a[j + gap] = a[j]; j -= gap; }
+            a[j + gap] = t;
+        }
+}
+
+void bubbleSort(int a[], int n) {              /* 冒泡 */
+    for (int i = 0; i &lt; n - 1; i++) {
+        int swapped = 0;
+        for (int j = 0; j &lt; n - 1 - i; j++)
+            if (a[j] &gt; a[j + 1]) { int t = a[j]; a[j] = a[j + 1]; a[j + 1] = t; swapped = 1; }
+        if (!swapped) break;
+    }
+}
+
+int partition_(int a[], int low, int high) {   /* 快排一趟划分 */
+    int pivot = a[low];
+    while (low &lt; high) {
+        while (low &lt; high &amp;&amp; a[high] &gt;= pivot) high--;
+        a[low] = a[high];
+        while (low &lt; high &amp;&amp; a[low] &lt;= pivot) low++;
+        a[high] = a[low];
+    }
+    a[low] = pivot;
+    return low;
+}
+void quickSort(int a[], int low, int high) {
+    if (low &lt; high) {
+        int p = partition_(a, low, high);
+        quickSort(a, low, p - 1);
+        quickSort(a, p + 1, high);
+    }
+}
+
+void selectSort(int a[], int n) {              /* 简单选择 */
+    for (int i = 0; i &lt; n - 1; i++) {
+        int mn = i;
+        for (int j = i + 1; j &lt; n; j++) if (a[j] &lt; a[mn]) mn = j;
+        if (mn != i) { int t = a[i]; a[i] = a[mn]; a[mn] = t; }
+    }
+}
+
+void siftDown(int a[], int i, int n) {         /* 堆排: 下沉 */
+    int t = a[i];
+    for (int c = 2 * i + 1; c &lt; n; c = 2 * c + 1) {
+        if (c + 1 &lt; n &amp;&amp; a[c + 1] &gt; a[c]) c++;
+        if (a[c] &lt;= t) break;
+        a[i] = a[c]; i = c;
+    }
+    a[i] = t;
+}
+void heapSort(int a[], int n) {
+    for (int i = n / 2 - 1; i &gt;= 0; i--) siftDown(a, i, n);   /* 建大顶堆 */
+    for (int i = n - 1; i &gt; 0; i--) {
+        int t = a[0]; a[0] = a[i]; a[i] = t;                 /* 堆顶换末尾 */
+        siftDown(a, 0, i);                                   /* 恢复堆 */
+    }
+}
+
+void merge_(int a[], int low, int mid, int high) {  /* 归并: 合并 */
+    int *tmp = (int *)malloc(sizeof(int) * (high - low + 1));
+    int i = low, j = mid + 1, k = 0;
+    while (i &lt;= mid &amp;&amp; j &lt;= high) tmp[k++] = (a[i] &lt;= a[j]) ? a[i++] : a[j++];
+    while (i &lt;= mid)  tmp[k++] = a[i++];
+    while (j &lt;= high) tmp[k++] = a[j++];
+    for (k = 0, i = low; i &lt;= high; i++) a[i] = tmp[k++];
+    free(tmp);
+}
+void mergeSort(int a[], int low, int high) {
+    if (low &lt; high) {
+        int mid = (low + high) / 2;
+        mergeSort(a, low, mid);
+        mergeSort(a, mid + 1, high);
+        merge_(a, low, mid, high);
+    }
+}
+
+void test_sorts(void) {
+    printf("=== 8. 七大排序 (原始: 49 38 65 97 76 13 27) ===\n");
+    int base[] = {49, 38, 65, 97, 76, 13, 27};
+    int n = 7, a[7];
+    #define RUN(name, call) do { memcpy(a, base, sizeof(base)); call; printf("%-8s: ", name); printArr(a, n); } while (0)
+    RUN("直接插入", insertSort(a, n));
+    RUN("希尔",     shellSort(a, n));
+    RUN("冒泡",     bubbleSort(a, n));
+    RUN("快速",     quickSort(a, 0, n - 1));
+    RUN("简单选择", selectSort(a, n));
+    RUN("堆排序",   heapSort(a, n));
+    RUN("归并",     mergeSort(a, 0, n - 1));
+    #undef RUN
+    printf("\n");
+}</code></pre>
+<h2 id="810-主函数把所有-test-串起来">8.10 主函数：把所有 test 串起来</h2>
+<p>把上面所有片段按 8.1 → 8.9 的顺序拼进一个 <code>.c</code> 文件，最后加上这个 <code>main</code>，就能一次跑完全部演示。</p>
+<pre data-label="c"><code class="language-c">int main(void) {
+    test_SqList();
+    test_LinkList();
+    test_Stack();
+    test_Queue();
+    test_BiTree();
+    test_BST();
+    test_KMP();
+    test_sorts();
+    printf("全部测试完成。\n");
+    return 0;
+}</code></pre>
+
+    <nav class="pager">  <a href="07-practice-cheatsheet.html">
+    <span class="label">← 上一章</span>
+    <span class="title">手算专项与考前速查</span>
+  </a>  <a href="09-review.html" class="next">
+    <span class="label">下一章 →</span>
+    <span class="title">附录：考前复盘笔记</span>
+  </a></nav>
+  </article>
+</div>
+
+<footer>
+  <div class="set">
+    <span>数据结构：从指针到算法</span>
+    <span>2026 · ZH-CN</span>
+  </div>
+  <div class="set">
+    <span>Mav</span>
+  </div>
+</footer>
+<div class="search-backdrop" id="search-overlay" role="dialog" aria-modal="true" aria-label="搜索" hidden>
+  <div class="search-modal">
+    <div class="search-input-wrap">
+      <input type="search" class="search-input" placeholder="搜索内容..." aria-label="搜索内容" autocomplete="off">
+      <kbd>ESC</kbd>
+    </div>
+    <div class="search-results" role="listbox" aria-label="搜索结果"></div>
+  </div>
+</div>
+
+<!-- Side Panel -->
+<div class="side-panel" id="side-panel">
+  <div class="side-panel-resize" id="side-panel-resize"></div>
+  <div class="side-panel-header">
+    <div class="side-panel-tabs">
+      <button class="side-panel-tab active" data-mode="sidenote">补充</button>
+      <button class="side-panel-tab" data-mode="notepad">笔记</button>
+    </div>
+    <button class="side-panel-close" aria-label="关闭">×</button>
+  </div>
+  <div class="side-panel-body"></div>
+</div>
+<button class="notepad-fab" id="notepad-fab" aria-label="便利贴">✎</button>
+
+<!-- Mobile TOC -->
+<button class="mtoc-fab" id="mtoc-fab" aria-label="目录">TOC</button>
+<div class="mtoc-drawer" id="mtoc-drawer">
+  <div class="mtoc-content"></div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/bash.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/typescript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/yaml.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/javascript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/json.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/python.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/css.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+<script>mermaid.initialize({startOnLoad:true, theme:'neutral', fontFamily:'Inter, sans-serif'});</script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}]});"></script>
+<script src="../assets/script.js"></script>
+</body>
+</html>

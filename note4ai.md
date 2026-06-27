@@ -219,7 +219,8 @@ node blog-build.js
 | slug | 标题 | 特殊说明 |
 |------|------|----------|
 | claude-code | Claude Code 入门指南 | ⚠️ 纯手写 HTML，白名单 |
-| claude-d2l-to-rnn | 深度学习讲义 | — |
+| data-structures | 数据结构：从指针到算法 | 8 章（含 C 代码附录）；源于 data-s 讲义，原始 md/c 备份在 `markdown-backups/Data-Structures/_source/`，装配脚本 `_source/assemble.py` |
+| claude-d2l-to-rnn | 深度学习讲义 | 旧版合订内容，`catalog: false`，不在知识库首页展示 |
 | d2l-toolbox | 深度学习前置工具箱 | — |
 | d2l-cnn | CNN实战篇 | — |
 | d2l-rnn | RNN实战篇 | — |
@@ -315,7 +316,7 @@ Mav/knowledge/projects/
 
 ### 知识库首页 (index.html)
 
-手动维护，路径 `Mav/knowledge/index.html`。现在有两个 tab：
+路径 `Mav/knowledge/index.html`。现在有两个 tab：
 
 1. **Projects** — 展示 project 卡片（带路径圆点动画）+ 独立阅读区
 2. **全部书籍** — 原始的平铺三列卡片视图
@@ -323,13 +324,15 @@ Mav/knowledge/projects/
 新增 project 后需要：
 1. 在 `markdown-backups/projects/` 创建 YAML
 2. 运行 `node build-projects.js`
-3. 手动在 `Mav/knowledge/index.html` 的 Projects 区域加卡片 HTML
+
+Project 卡片由构建脚本根据 YAML 自动回填；`order` 控制顺序，book 项的 `label` 控制路径短标签。独立阅读和全部书籍卡片仍在首页手动维护。
 
 ### Project 详情页布局
 
 双栏布局（桌面端）：
 - **左侧**：header（PROJECT标签 + 标题 + 描述 + 统计）+ 时间线（书卡片 + 过渡文案）
 - **右侧 sticky sidebar**：前置知识 / 涉及概念 / 读完之后你能
+- **底部**：路径完成提示 + 返回知识库 / 查看知识图谱入口
 
 移动端（< 900px）自动堆叠为单栏。
 
@@ -427,7 +430,7 @@ node build-graph.js
 |------|-----------|
 | 新建知识库书 | `markdown-backups/` 下建文件夹 + `book.yaml` + `.md` |
 | 构建单本书 | `cd md2HTML && node build.js <Book-Name>` |
-| 增加知识库入口卡片 | 编辑 `Mav/knowledge/index.html`（手动） |
+| 增加独立书籍入口卡片 | 编辑 `Mav/knowledge/index.html` 的独立阅读和全部书籍区域 |
 | 新建 Project | `markdown-backups/projects/` 下建 `.yaml`，然后 `node build-projects.js` |
 | 构建 Project | `cd md2HTML && node build-projects.js` |
 | 添加图谱关联 | 编辑 `markdown-backups/projects/graph-edges.yaml`，然后 `node build-graph.js` |

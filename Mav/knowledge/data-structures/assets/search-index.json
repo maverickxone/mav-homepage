@@ -1,0 +1,2732 @@
+{
+  "documents": [
+    {
+      "id": "01-intro-and-c",
+      "title": "引论与 C 语言基础",
+      "chapter": "01",
+      "chapterTitle": "引论与 C 语言基础",
+      "url": "chapters/01-intro-and-c.html",
+      "body": "\n你半年前学到了指针、结构体、结构体函数，现在大概忘了不少。数据结构这门课，  80% 的代码痛苦都来自指针没吃透  。所以我们先花点功夫把这块地基夯实，后面所有链表、树、图的代码才不会一看就懵。这一章你务必读透，它不是复习，是后面一切的钥匙。\n\n   1.1 内存、变量、地址：先建立物理图像\n\n写代码前，脑子里要有一张「内存」的图像。你可以把内存想象成  一条非常长的储物柜走廊  ，每个柜子大小一样（1 字节 = 8 个比特），每个柜子都有一个  唯一的编号  ，这个编号就叫  地址  （address）。\n\n当你写  int x = 10;  的时候，发生了两件事：\n\n1. 系统在走廊里找一块连续的空地（ int  通常占 4 个柜子，即 4 字节），把它「划给」名字  x 。\n2. 往这块地里写进了数字 10。\n\n所以一个变量同时有两个属性：它的  值  （这里是 10），和它的  地址  （它占的那块地的起始编号，比如 0x7ffe1234）。这两者千万别混。日常我们用名字  x  操作值，但底层一切都是靠地址在干活。\n\n   c\nint x = 10;\nprintf \"x 的值是 %d\\n\", x ;      // 取 x 的值    10\nprintf \"x 的地址是 %p\\n\", &x ;   // & 是\"取地址\"运算符    类似 0x7ffe1234\n   \n\n记住这个运算符：<strong  &  读作「取地址」</strong ，放在变量前面，得到这个变量住在哪儿。\n\n   1.2 指针：一个专门用来存「地址」的变量\n\n普通变量存的是值（10、3.14、'A'）。<strong 指针变量存的是「地址」</strong ——也就是别的变量住在哪儿。就这么简单，别被它吓到。\n\n   c\nint x = 10;\nint  p = &x;   // p 是一个指针,它存的是 x 的地址。读作:p 指向 x\n   \n\n int  p  这个写法拆开看： p  是变量名， int    是它的类型，意思是「一个指向 int 的指针」。    在  定义  的时候表示「这是个指针」。\n\n定义好之后，    还有第二个用途——  解引用  （dereference），也就是「顺着这个地址，去把那块地里的值拿出来/改掉」：\n\n   c\nint x = 10;\nint  p = &x;     // p 指向 x\n\nprintf \"%d\\n\",  p ;   //  p 的意思:顺着 p 存的地址走过去,取出那里的值    10\n p = 99;              // 顺着 p 走过去,把那块地的值改成 99\nprintf \"%d\\n\", x ;    // x 现在是 99!因为 p 指向的就是 x 那块地\n   \n\n  这是指针的全部威力所在  ：通过指针  p ，你能间接地修改它指向的那个变量  x ，哪怕你手上只有  p  没有  x  的名字。把这一点想透，后面链表「改指针」的所有操作都顺了。\n\n一句口诀帮你记     和  &  的关系：   &  把值变地址，    把地址变值  ，它们是一对反操作。  &x  等于  x 。\n\n    1.2.1 空指针 NULL\n\n有时一个指针「暂时不指向任何东西」，我们让它等于  NULL （本质是地址 0，表示「无效、空」）。链表的末尾就是用  NULL  来表示「后面没有了」。  永远不要对 NULL 指针解引用  （  p  当  p  是 NULL），程序会直接崩溃——这是初学者最常见的 bug。\n\n   1.3 结构体：把几个相关的数据捆成一个整体\n\n现实里的「一个学生」有学号、姓名、成绩，它们应该绑在一起。结构体（struct）就是干这个的——它让你  自定义一种新的数据类型  ，里面打包若干个字段。\n\n   c\nstruct Student  \n    int   id;        // 学号\n    char  name 20 ;  // 姓名\n    float score;     // 成绩\n ;                   // 注意这个分号,初学者老是漏\n\nstruct Student s;        // 定义一个学生变量 s\ns.id = 1001;             // 用 .  点  访问它的字段\ns.score = 88.5;\n   \n\n    1.3.1 typedef：给类型起个简短的别名（本课大量使用）\n\n每次都写  struct Student  太啰嗦。 typedef  能给类型起别名，让代码清爽。本课所有数据结构都用这个套路定义，你会反复见到：\n\n   c\ntypedef struct"
+    },
+    {
+      "id": "01-intro-and-c-11-内存变量地址先建立物理图像",
+      "title": "1.1 内存、变量、地址：先建立物理图像",
+      "chapter": "01",
+      "chapterTitle": "引论与 C 语言基础",
+      "url": "chapters/01-intro-and-c.html#11-内存变量地址先建立物理图像",
+      "body": ""
+    },
+    {
+      "id": "01-intro-and-c-12-指针一个专门用来存地址的变量",
+      "title": "1.2 指针：一个专门用来存「地址」的变量",
+      "chapter": "01",
+      "chapterTitle": "引论与 C 语言基础",
+      "url": "chapters/01-intro-and-c.html#12-指针一个专门用来存地址的变量",
+      "body": ""
+    },
+    {
+      "id": "01-intro-and-c-121-空指针-null",
+      "title": "1.2.1 空指针 NULL",
+      "chapter": "01",
+      "chapterTitle": "引论与 C 语言基础",
+      "url": "chapters/01-intro-and-c.html#121-空指针-null",
+      "body": ""
+    },
+    {
+      "id": "01-intro-and-c-13-结构体把几个相关的数据捆成一个整体",
+      "title": "1.3 结构体：把几个相关的数据捆成一个整体",
+      "chapter": "01",
+      "chapterTitle": "引论与 C 语言基础",
+      "url": "chapters/01-intro-and-c.html#13-结构体把几个相关的数据捆成一个整体",
+      "body": ""
+    },
+    {
+      "id": "01-intro-and-c-131-typedef给类型起个简短的别名本课大量使用",
+      "title": "1.3.1 typedef：给类型起个简短的别名（本课大量使用）",
+      "chapter": "01",
+      "chapterTitle": "引论与 C 语言基础",
+      "url": "chapters/01-intro-and-c.html#131-typedef给类型起个简短的别名本课大量使用",
+      "body": ""
+    },
+    {
+      "id": "01-intro-and-c-14-结构体指针与-gt链表的命根子",
+      "title": "1.4 结构体指针与 -&gt;（链表的命根子）",
+      "chapter": "01",
+      "chapterTitle": "引论与 C 语言基础",
+      "url": "chapters/01-intro-and-c.html#14-结构体指针与-gt链表的命根子",
+      "body": ""
+    },
+    {
+      "id": "01-intro-and-c-15-动态内存malloc-与-free链表节点从哪来",
+      "title": "1.5 动态内存：malloc 与 free（链表节点从哪来）",
+      "chapter": "01",
+      "chapterTitle": "引论与 C 语言基础",
+      "url": "chapters/01-intro-and-c.html#15-动态内存malloc-与-free链表节点从哪来",
+      "body": ""
+    },
+    {
+      "id": "01-intro-and-c-16-函数传参传值-vs-传址为什么有的改了没用",
+      "title": "1.6 函数传参：传值 vs 传址（为什么有的改了没用）",
+      "chapter": "01",
+      "chapterTitle": "引论与 C 语言基础",
+      "url": "chapters/01-intro-and-c.html#16-函数传参传值-vs-传址为什么有的改了没用",
+      "body": ""
+    },
+    {
+      "id": "01-intro-and-c-17-数组与指针的暧昧关系",
+      "title": "1.7 数组与指针的暧昧关系",
+      "chapter": "01",
+      "chapterTitle": "引论与 C 语言基础",
+      "url": "chapters/01-intro-and-c.html#17-数组与指针的暧昧关系",
+      "body": ""
+    },
+    {
+      "id": "01-intro-and-c-18-c-基础自测",
+      "title": "1.8 C 基础自测",
+      "chapter": "01",
+      "chapterTitle": "引论与 C 语言基础",
+      "url": "chapters/01-intro-and-c.html#18-c-基础自测",
+      "body": ""
+    },
+    {
+      "id": "01-intro-and-c-19-这门课到底在研究什么",
+      "title": "1.9 这门课到底在研究什么",
+      "chapter": "01",
+      "chapterTitle": "引论与 C 语言基础",
+      "url": "chapters/01-intro-and-c.html#19-这门课到底在研究什么",
+      "body": ""
+    },
+    {
+      "id": "01-intro-and-c-110-三个基本概念数据数据元素数据项",
+      "title": "1.10 三个基本概念：数据、数据元素、数据项",
+      "chapter": "01",
+      "chapterTitle": "引论与 C 语言基础",
+      "url": "chapters/01-intro-and-c.html#110-三个基本概念数据数据元素数据项",
+      "body": ""
+    },
+    {
+      "id": "01-intro-and-c-111-两种结构逻辑结构-vs-存储结构全课的总纲",
+      "title": "1.11 两种结构：逻辑结构 vs 存储结构（全课的总纲）",
+      "chapter": "01",
+      "chapterTitle": "引论与 C 语言基础",
+      "url": "chapters/01-intro-and-c.html#111-两种结构逻辑结构-vs-存储结构全课的总纲",
+      "body": ""
+    },
+    {
+      "id": "01-intro-and-c-1111-逻辑结构数据元素之间关系的抽象",
+      "title": "1.11.1 逻辑结构：数据元素之间「关系」的抽象",
+      "chapter": "01",
+      "chapterTitle": "引论与 C 语言基础",
+      "url": "chapters/01-intro-and-c.html#1111-逻辑结构数据元素之间关系的抽象",
+      "body": ""
+    },
+    {
+      "id": "01-intro-and-c-1112-存储结构物理结构逻辑结构在内存里怎么落地",
+      "title": "1.11.2 存储结构（物理结构）：逻辑结构在内存里「怎么落地」",
+      "chapter": "01",
+      "chapterTitle": "引论与 C 语言基础",
+      "url": "chapters/01-intro-and-c.html#1112-存储结构物理结构逻辑结构在内存里怎么落地",
+      "body": ""
+    },
+    {
+      "id": "01-intro-and-c-112-抽象数据类型-adt",
+      "title": "1.12 抽象数据类型 ADT",
+      "chapter": "01",
+      "chapterTitle": "引论与 C 语言基础",
+      "url": "chapters/01-intro-and-c.html#112-抽象数据类型-adt",
+      "body": ""
+    },
+    {
+      "id": "01-intro-and-c-113-算法及其五大特性",
+      "title": "1.13 算法及其五大特性",
+      "chapter": "01",
+      "chapterTitle": "引论与 C 语言基础",
+      "url": "chapters/01-intro-and-c.html#113-算法及其五大特性",
+      "body": ""
+    },
+    {
+      "id": "01-intro-and-c-114-算法分析时间复杂度全课的标尺必考",
+      "title": "1.14 算法分析：时间复杂度（全课的标尺，必考）",
+      "chapter": "01",
+      "chapterTitle": "引论与 C 语言基础",
+      "url": "chapters/01-intro-and-c.html#114-算法分析时间复杂度全课的标尺必考",
+      "body": ""
+    },
+    {
+      "id": "01-intro-and-c-1141-为什么不直接测运行秒数",
+      "title": "1.14.1 为什么不直接测运行秒数",
+      "chapter": "01",
+      "chapterTitle": "引论与 C 语言基础",
+      "url": "chapters/01-intro-and-c.html#1141-为什么不直接测运行秒数",
+      "body": ""
+    },
+    {
+      "id": "01-intro-and-c-1142-核心思想数基本操作执行多少次看它随-n-怎么增长",
+      "title": "1.14.2 核心思想：数「基本操作」执行多少次，看它随 n 怎么增长",
+      "chapter": "01",
+      "chapterTitle": "引论与 C 语言基础",
+      "url": "chapters/01-intro-and-c.html#1142-核心思想数基本操作执行多少次看它随-n-怎么增长",
+      "body": ""
+    },
+    {
+      "id": "01-intro-and-c-1143-大-o-记号",
+      "title": "1.14.3 大 O 记号",
+      "chapter": "01",
+      "chapterTitle": "引论与 C 语言基础",
+      "url": "chapters/01-intro-and-c.html#1143-大-o-记号",
+      "body": ""
+    },
+    {
+      "id": "01-intro-and-c-1144-怎么从代码里数出复杂度实操技巧必须会",
+      "title": "1.14.4 怎么从代码里数出复杂度（实操技巧，必须会）",
+      "chapter": "01",
+      "chapterTitle": "引论与 C 语言基础",
+      "url": "chapters/01-intro-and-c.html#1144-怎么从代码里数出复杂度实操技巧必须会",
+      "body": ""
+    },
+    {
+      "id": "01-intro-and-c-1145-常见复杂度从快到慢背下来这是基本盘",
+      "title": "1.14.5 常见复杂度从快到慢（背下来，这是基本盘）",
+      "chapter": "01",
+      "chapterTitle": "引论与 C 语言基础",
+      "url": "chapters/01-intro-and-c.html#1145-常见复杂度从快到慢背下来这是基本盘",
+      "body": ""
+    },
+    {
+      "id": "01-intro-and-c-1146-最好最坏平均情况高频考点必须分清",
+      "title": "1.14.6 最好、最坏、平均情况（高频考点，必须分清）",
+      "chapter": "01",
+      "chapterTitle": "引论与 C 语言基础",
+      "url": "chapters/01-intro-and-c.html#1146-最好最坏平均情况高频考点必须分清",
+      "body": ""
+    },
+    {
+      "id": "01-intro-and-c-115-算法分析空间复杂度",
+      "title": "1.15 算法分析：空间复杂度",
+      "chapter": "01",
+      "chapterTitle": "引论与 C 语言基础",
+      "url": "chapters/01-intro-and-c.html#115-算法分析空间复杂度",
+      "body": ""
+    },
+    {
+      "id": "01-intro-and-c-116-全课灵魂没有最好的结构只有最合适的",
+      "title": "1.16 全课灵魂：没有最好的结构，只有最合适的",
+      "chapter": "01",
+      "chapterTitle": "引论与 C 语言基础",
+      "url": "chapters/01-intro-and-c.html#116-全课灵魂没有最好的结构只有最合适的",
+      "body": ""
+    },
+    {
+      "id": "01-intro-and-c-117-导论与复杂度自测",
+      "title": "1.17 导论与复杂度自测",
+      "chapter": "01",
+      "chapterTitle": "引论与 C 语言基础",
+      "url": "chapters/01-intro-and-c.html#117-导论与复杂度自测",
+      "body": ""
+    },
+    {
+      "id": "02-linear",
+      "title": "线性表、栈、队列与串数组",
+      "chapter": "02",
+      "chapterTitle": "线性表、栈、队列与串数组",
+      "url": "chapters/02-linear.html",
+      "body": "\n线性表是这门课  第一个正式的数据结构  ，也是后面栈、队列、串的基础。它最简单，但「顺序实现 vs 链式实现」这套对比的思维方式，会在后面每一章重演。务必把这一章当成模板吃透。\n\n   2.1 什么是线性表\n\n  线性表  是 n 个  类型相同  的数据元素排成的  有限有序序列  ，记作  a₁, a₂, ..., aₙ 。\n\n把这个定义拆开理解：\n\n    有限  ：元素个数 n 是有限的（n 叫表的  长度  ；n=0 时叫  空表  ）。\n    有序  ：这里的「序」不是指数值大小排序，而是指  有先后位置关系  ——a₁ 在 a₂ 前面，这个次序是确定的。\n    类型相同  ：所有元素是同一种类型（都是学生，或都是整数）。\n\n线性表的「线性」体现在元素间的关系上：除了第一个元素没有前驱、最后一个元素没有后继，  中间每个元素都恰好有一个直接前驱和一个直接后继  。这就是典型的「1 对 1」线性结构。生活中的例子到处都是：一队排队的人、一串糖葫芦、字母表 A Z。\n\n线性表的基本操作（ADT，理解即可）：初始化、求长度、按位置取元素、按值查找、插入、删除、判空、遍历。下面我们分别用「顺序存储」和「链式存储」把这些操作实现出来——  这正是本章的核心  。\n\n   2.2 顺序表（线性表的顺序存储实现）\n\n    2.2.1 思想\n\n  顺序表  就是用一个  数组  把线性表的元素  挨个连续地  存起来。逻辑上相邻（a₁ 挨着 a₂），物理上也相邻（数组里下标相邻）。这是最朴素、最直接的实现。\n\n    2.2.2 结构定义\n\n   c\n define MAXSIZE 100          // 顺序表最大容量 预先定好 \ntypedef int ElemType;        // 元素类型,本课约定先用 int\n\ntypedef struct  \n    ElemType data MAXSIZE ;  // 存元素的数组,这就是那块\"连续内存\"\n    int length;              // 当前实际有多少个元素 注意:不是数组容量,是实际长度 \n  SqList;                    // SqList = Sequence List 顺序表\n   \n\n这里有个  极其重要、初学者必栽的坑  ： length （表里实际有几个元素）和  MAXSIZE （数组最多能装几个）是两码事。数组开了 100 个格子不代表里面有 100 个元素。 length  才是「这张表现在有几个元素」。\n\n另一个关键约定：教材通常约定  逻辑位序从 1 开始  （第 1 个元素、第 2 个元素……），但  数组下标从 0 开始  。所以「第 i 个元素」存在  data i 1  。这个「位序 i ↔ 下标 i 1」的换算，是顺序表所有代码 bug 的高发区，时刻警惕。\n\n    2.2.3 随机访问为什么是 O 1 \n\n取第 i 个元素，直接  return L.data i 1 ; ，一步到位。底层是  地址 = 首地址 +  i 1  × 每个元素大小 ，一次乘加算出地址直接取，  和表有多长完全无关  。这就是顺序表最大的优点：  随机访问 O 1   。\n\n    2.2.4 插入操作（核心，必考移动次数）\n\n要在第 i 个位置插入一个新元素 e，意味着原来第 i 个及它后面的元素，  都得集体往后挪一格  给新元素腾位子。注意一个反直觉的细节：挪动必须  从后往前  进行，否则会把后面的数据覆盖掉。\n\n   c\n// 在顺序表 L 的第 i 个位置插入元素 e。成功返回 1,失败返回 0。\n// 注意第一个参数是 SqList  L  指针!  ——因为我们要修改 L 的内容 length 会变 ,\n// 必须传地址进来 回顾 0.6 节:想改外面的东西就传地址 \nint ListInsert SqList  L, int i, ElemType e   \n    // 1. 合法性检查\n    if  i < 1    i   L  length + 1       // 插入位置必须在  1, length+1  之间\n        return 0;                         //  可以插在末尾的下一个位置,所以是 length+1 \n    if  L  length  = MAXSIZE             // 表满了,插不下\n        return 0;\n\n    // 2. 从最后一个元素开始,逐个往后挪,直到第 i 个位置\n    //    位序 i 对应下标 i 1;最后一个元素下标是 length 1\n   "
+    },
+    {
+      "id": "02-linear-21-什么是线性表",
+      "title": "2.1 什么是线性表",
+      "chapter": "02",
+      "chapterTitle": "线性表、栈、队列与串数组",
+      "url": "chapters/02-linear.html#21-什么是线性表",
+      "body": ""
+    },
+    {
+      "id": "02-linear-22-顺序表线性表的顺序存储实现",
+      "title": "2.2 顺序表（线性表的顺序存储实现）",
+      "chapter": "02",
+      "chapterTitle": "线性表、栈、队列与串数组",
+      "url": "chapters/02-linear.html#22-顺序表线性表的顺序存储实现",
+      "body": ""
+    },
+    {
+      "id": "02-linear-221-思想",
+      "title": "2.2.1 思想",
+      "chapter": "02",
+      "chapterTitle": "线性表、栈、队列与串数组",
+      "url": "chapters/02-linear.html#221-思想",
+      "body": ""
+    },
+    {
+      "id": "02-linear-222-结构定义",
+      "title": "2.2.2 结构定义",
+      "chapter": "02",
+      "chapterTitle": "线性表、栈、队列与串数组",
+      "url": "chapters/02-linear.html#222-结构定义",
+      "body": ""
+    },
+    {
+      "id": "02-linear-223-随机访问为什么是-o1",
+      "title": "2.2.3 随机访问为什么是 O(1)",
+      "chapter": "02",
+      "chapterTitle": "线性表、栈、队列与串数组",
+      "url": "chapters/02-linear.html#223-随机访问为什么是-o1",
+      "body": ""
+    },
+    {
+      "id": "02-linear-224-插入操作核心必考移动次数",
+      "title": "2.2.4 插入操作（核心，必考移动次数）",
+      "chapter": "02",
+      "chapterTitle": "线性表、栈、队列与串数组",
+      "url": "chapters/02-linear.html#224-插入操作核心必考移动次数",
+      "body": ""
+    },
+    {
+      "id": "02-linear-225-删除操作",
+      "title": "2.2.5 删除操作",
+      "chapter": "02",
+      "chapterTitle": "线性表、栈、队列与串数组",
+      "url": "chapters/02-linear.html#225-删除操作",
+      "body": ""
+    },
+    {
+      "id": "02-linear-226-顺序表小结",
+      "title": "2.2.6 顺序表小结",
+      "chapter": "02",
+      "chapterTitle": "线性表、栈、队列与串数组",
+      "url": "chapters/02-linear.html#226-顺序表小结",
+      "body": ""
+    },
+    {
+      "id": "02-linear-23-单链表线性表的链式存储实现",
+      "title": "2.3 单链表（线性表的链式存储实现）",
+      "chapter": "02",
+      "chapterTitle": "线性表、栈、队列与串数组",
+      "url": "chapters/02-linear.html#23-单链表线性表的链式存储实现",
+      "body": ""
+    },
+    {
+      "id": "02-linear-231-思想用指针把散落的节点串起来",
+      "title": "2.3.1 思想：用指针把散落的节点串起来",
+      "chapter": "02",
+      "chapterTitle": "线性表、栈、队列与串数组",
+      "url": "chapters/02-linear.html#231-思想用指针把散落的节点串起来",
+      "body": ""
+    },
+    {
+      "id": "02-linear-232-节点结构定义",
+      "title": "2.3.2 节点结构定义",
+      "chapter": "02",
+      "chapterTitle": "线性表、栈、队列与串数组",
+      "url": "chapters/02-linear.html#232-节点结构定义",
+      "body": ""
+    },
+    {
+      "id": "02-linear-233-头指针头结点首元结点极易混务必分清",
+      "title": "2.3.3 头指针、头结点、首元结点（极易混，务必分清）",
+      "chapter": "02",
+      "chapterTitle": "线性表、栈、队列与串数组",
+      "url": "chapters/02-linear.html#233-头指针头结点首元结点极易混务必分清",
+      "body": ""
+    },
+    {
+      "id": "02-linear-234-建立链表头插法与尾插法",
+      "title": "2.3.4 建立链表：头插法与尾插法",
+      "chapter": "02",
+      "chapterTitle": "线性表、栈、队列与串数组",
+      "url": "chapters/02-linear.html#234-建立链表头插法与尾插法",
+      "body": ""
+    },
+    {
+      "id": "02-linear-235-按位置查找on链表的软肋",
+      "title": "2.3.5 按位置查找（O(n)，链表的软肋）",
+      "chapter": "02",
+      "chapterTitle": "线性表、栈、队列与串数组",
+      "url": "chapters/02-linear.html#235-按位置查找on链表的软肋",
+      "body": ""
+    },
+    {
+      "id": "02-linear-236-插入操作核心体会改指针",
+      "title": "2.3.6 插入操作（核心，体会「改指针」）",
+      "chapter": "02",
+      "chapterTitle": "线性表、栈、队列与串数组",
+      "url": "chapters/02-linear.html#236-插入操作核心体会改指针",
+      "body": ""
+    },
+    {
+      "id": "02-linear-237-删除操作",
+      "title": "2.3.7 删除操作",
+      "chapter": "02",
+      "chapterTitle": "线性表、栈、队列与串数组",
+      "url": "chapters/02-linear.html#237-删除操作",
+      "body": ""
+    },
+    {
+      "id": "02-linear-238-单链表小结",
+      "title": "2.3.8 单链表小结",
+      "chapter": "02",
+      "chapterTitle": "线性表、栈、队列与串数组",
+      "url": "chapters/02-linear.html#238-单链表小结",
+      "body": ""
+    },
+    {
+      "id": "02-linear-24-循环链表与双链表变体了解-会基本操作",
+      "title": "2.4 循环链表与双链表（变体，了解 + 会基本操作）",
+      "chapter": "02",
+      "chapterTitle": "线性表、栈、队列与串数组",
+      "url": "chapters/02-linear.html#24-循环链表与双链表变体了解-会基本操作",
+      "body": ""
+    },
+    {
+      "id": "02-linear-241-循环链表",
+      "title": "2.4.1 循环链表",
+      "chapter": "02",
+      "chapterTitle": "线性表、栈、队列与串数组",
+      "url": "chapters/02-linear.html#241-循环链表",
+      "body": ""
+    },
+    {
+      "id": "02-linear-242-双链表双向链表",
+      "title": "2.4.2 双链表（双向链表）",
+      "chapter": "02",
+      "chapterTitle": "线性表、栈、队列与串数组",
+      "url": "chapters/02-linear.html#242-双链表双向链表",
+      "body": ""
+    },
+    {
+      "id": "02-linear-243-静态链表了解选择题偶尔考",
+      "title": "2.4.3 静态链表（了解，选择题偶尔考）",
+      "chapter": "02",
+      "chapterTitle": "线性表、栈、队列与串数组",
+      "url": "chapters/02-linear.html#243-静态链表了解选择题偶尔考",
+      "body": ""
+    },
+    {
+      "id": "02-linear-25-顺序表-vs-链表必考对比做成一张表记死",
+      "title": "2.5 顺序表 vs 链表（必考对比，做成一张表记死）",
+      "chapter": "02",
+      "chapterTitle": "线性表、栈、队列与串数组",
+      "url": "chapters/02-linear.html#25-顺序表-vs-链表必考对比做成一张表记死",
+      "body": ""
+    },
+    {
+      "id": "02-linear-26-经典题型这些是后续刷题的高频原型先理解思路",
+      "title": "2.6 经典题型（这些是后续刷题的高频原型，先理解思路）",
+      "chapter": "02",
+      "chapterTitle": "线性表、栈、队列与串数组",
+      "url": "chapters/02-linear.html#26-经典题型这些是后续刷题的高频原型先理解思路",
+      "body": ""
+    },
+    {
+      "id": "02-linear-27-线性表自测",
+      "title": "2.7 线性表自测",
+      "chapter": "02",
+      "chapterTitle": "线性表、栈、队列与串数组",
+      "url": "chapters/02-linear.html#27-线性表自测",
+      "body": ""
+    },
+    {
+      "id": "02-linear-28-栈stack",
+      "title": "2.8 栈（Stack）",
+      "chapter": "02",
+      "chapterTitle": "线性表、栈、队列与串数组",
+      "url": "chapters/02-linear.html#28-栈stack",
+      "body": ""
+    },
+    {
+      "id": "02-linear-281-定义与核心规则-lifo",
+      "title": "2.8.1 定义与核心规则 LIFO",
+      "chapter": "02",
+      "chapterTitle": "线性表、栈、队列与串数组",
+      "url": "chapters/02-linear.html#281-定义与核心规则-lifo",
+      "body": ""
+    },
+    {
+      "id": "02-linear-282-顺序栈用数组实现",
+      "title": "2.8.2 顺序栈（用数组实现）",
+      "chapter": "02",
+      "chapterTitle": "线性表、栈、队列与串数组",
+      "url": "chapters/02-linear.html#282-顺序栈用数组实现",
+      "body": ""
+    },
+    {
+      "id": "02-linear-283-链栈用链表实现",
+      "title": "2.8.3 链栈（用链表实现）",
+      "chapter": "02",
+      "chapterTitle": "线性表、栈、队列与串数组",
+      "url": "chapters/02-linear.html#283-链栈用链表实现",
+      "body": ""
+    },
+    {
+      "id": "02-linear-284-栈的应用高频考点重点理解",
+      "title": "2.8.4 栈的应用（高频考点，重点理解）",
+      "chapter": "02",
+      "chapterTitle": "线性表、栈、队列与串数组",
+      "url": "chapters/02-linear.html#284-栈的应用高频考点重点理解",
+      "body": ""
+    },
+    {
+      "id": "02-linear-29-队列queue",
+      "title": "2.9 队列（Queue）",
+      "chapter": "02",
+      "chapterTitle": "线性表、栈、队列与串数组",
+      "url": "chapters/02-linear.html#29-队列queue",
+      "body": ""
+    },
+    {
+      "id": "02-linear-291-定义与核心规则-fifo",
+      "title": "2.9.1 定义与核心规则 FIFO",
+      "chapter": "02",
+      "chapterTitle": "线性表、栈、队列与串数组",
+      "url": "chapters/02-linear.html#291-定义与核心规则-fifo",
+      "body": ""
+    },
+    {
+      "id": "02-linear-292-队列的顺序实现与假溢出问题",
+      "title": "2.9.2 队列的顺序实现与「假溢出」问题",
+      "chapter": "02",
+      "chapterTitle": "线性表、栈、队列与串数组",
+      "url": "chapters/02-linear.html#292-队列的顺序实现与假溢出问题",
+      "body": ""
+    },
+    {
+      "id": "02-linear-293-循环队列解决假溢出必考",
+      "title": "2.9.3 循环队列（解决假溢出，必考）",
+      "chapter": "02",
+      "chapterTitle": "线性表、栈、队列与串数组",
+      "url": "chapters/02-linear.html#293-循环队列解决假溢出必考",
+      "body": ""
+    },
+    {
+      "id": "02-linear-294-链队列用链表实现",
+      "title": "2.9.4 链队列（用链表实现）",
+      "chapter": "02",
+      "chapterTitle": "线性表、栈、队列与串数组",
+      "url": "chapters/02-linear.html#294-链队列用链表实现",
+      "body": ""
+    },
+    {
+      "id": "02-linear-295-队列的应用与变体",
+      "title": "2.9.5 队列的应用与变体",
+      "chapter": "02",
+      "chapterTitle": "线性表、栈、队列与串数组",
+      "url": "chapters/02-linear.html#295-队列的应用与变体",
+      "body": ""
+    },
+    {
+      "id": "02-linear-210-栈-vs-队列一句话对比",
+      "title": "2.10 栈 vs 队列（一句话对比）",
+      "chapter": "02",
+      "chapterTitle": "线性表、栈、队列与串数组",
+      "url": "chapters/02-linear.html#210-栈-vs-队列一句话对比",
+      "body": ""
+    },
+    {
+      "id": "02-linear-211-栈与队列自测",
+      "title": "2.11 栈与队列自测",
+      "chapter": "02",
+      "chapterTitle": "线性表、栈、队列与串数组",
+      "url": "chapters/02-linear.html#211-栈与队列自测",
+      "body": ""
+    },
+    {
+      "id": "02-linear-212-串string",
+      "title": "2.12 串（String）",
+      "chapter": "02",
+      "chapterTitle": "线性表、栈、队列与串数组",
+      "url": "chapters/02-linear.html#212-串string",
+      "body": ""
+    },
+    {
+      "id": "02-linear-2121-定义",
+      "title": "2.12.1 定义",
+      "chapter": "02",
+      "chapterTitle": "线性表、栈、队列与串数组",
+      "url": "chapters/02-linear.html#2121-定义",
+      "body": ""
+    },
+    {
+      "id": "02-linear-2122-朴素模式匹配bf-算法",
+      "title": "2.12.2 朴素模式匹配（BF 算法）",
+      "chapter": "02",
+      "chapterTitle": "线性表、栈、队列与串数组",
+      "url": "chapters/02-linear.html#2122-朴素模式匹配bf-算法",
+      "body": ""
+    },
+    {
+      "id": "02-linear-2123-kmp-算法必考重点全章最硬",
+      "title": "2.12.3 KMP 算法（必考重点，全章最硬）",
+      "chapter": "02",
+      "chapterTitle": "线性表、栈、队列与串数组",
+      "url": "chapters/02-linear.html#2123-kmp-算法必考重点全章最硬",
+      "body": ""
+    },
+    {
+      "id": "02-linear-213-数组",
+      "title": "2.13 数组",
+      "chapter": "02",
+      "chapterTitle": "线性表、栈、队列与串数组",
+      "url": "chapters/02-linear.html#213-数组",
+      "body": ""
+    },
+    {
+      "id": "02-linear-2131-多维数组的存储与地址计算",
+      "title": "2.13.1 多维数组的存储与地址计算",
+      "chapter": "02",
+      "chapterTitle": "线性表、栈、队列与串数组",
+      "url": "chapters/02-linear.html#2131-多维数组的存储与地址计算",
+      "body": ""
+    },
+    {
+      "id": "02-linear-2132-特殊矩阵的压缩存储",
+      "title": "2.13.2 特殊矩阵的压缩存储",
+      "chapter": "02",
+      "chapterTitle": "线性表、栈、队列与串数组",
+      "url": "chapters/02-linear.html#2132-特殊矩阵的压缩存储",
+      "body": ""
+    },
+    {
+      "id": "02-linear-214-串与数组自测",
+      "title": "2.14 串与数组自测",
+      "chapter": "02",
+      "chapterTitle": "线性表、栈、队列与串数组",
+      "url": "chapters/02-linear.html#214-串与数组自测",
+      "body": ""
+    },
+    {
+      "id": "02-linear-215-本段总自测清单",
+      "title": "2.15 本段总自测清单",
+      "chapter": "02",
+      "chapterTitle": "线性表、栈、队列与串数组",
+      "url": "chapters/02-linear.html#215-本段总自测清单",
+      "body": ""
+    },
+    {
+      "id": "03-tree",
+      "title": "树与二叉树",
+      "chapter": "03",
+      "chapterTitle": "树与二叉树",
+      "url": "chapters/03-tree.html",
+      "body": "\n   3.1 为什么需要树：在「快查」和「快改」之间找平衡\n\n回顾前面线性结构的灵魂矛盾：顺序表查得快（O 1 ）但增删慢（O n ），链表增删快但查得慢（O n ）。有没有一种结构，  查找、插入、删除都能做到不快不慢的 O log n   ，三者兼顾？有，就是  树  。\n\n树之所以能做到这点，靠的是它的  层次分叉结构  。想象你查字典：不是从第一页翻到最后一页（那是线性的 O n ），而是先翻到大概的字母区，再缩小到某几页，再定位——每一步都  排除掉一大批  不可能的选项。树就是把数据组织成这种「层层分叉、每下一层就砍掉一大片」的形状，于是查找路径长度只和「树有多高」有关，而一棵安排得当的树，n 个节点高度只有 log n 左右。这就是树的全部威力来源：<strong 用层次结构把线性的 n 压成对数的 log n。</strong \n\n树同时也是现实世界大量「层次关系」的天然模型：文件系统的目录、公司的组织架构、家谱、书的章节目录、HTML 的标签嵌套——它们都是「一个父亲带多个孩子」的一对多结构。所以树既实用又重要，是这门课最大的考点聚集地。\n\n   3.2 树的基本概念与术语（一堆名词，必须分清）\n\n<strong 树（Tree）</strong  的定义：n（n≥0）个节点组成的有限集合。当 n=0 时是  空树  ；当 n 0 时，有且仅有一个特殊的节点叫<strong 根（root）</strong ，其余节点又可分成若干个互不相交的子集，每个子集本身又是一棵树，称为根的<strong 子树（subtree）</strong 。\n\n注意这个定义是  递归  的——树的子树还是树。这种递归性贯穿整章，树的几乎所有算法都是递归的，因为结构本身就是递归定义的。把这点记牢：<strong 树的问题，优先想递归。</strong \n\n下面这堆术语是后面一切的语言，必须一个个搞清楚。配合想象一棵家谱树来记：\n\n  <strong 节点（Node）</strong ：树里的一个数据元素。\n  <strong 节点的度（Degree）</strong ：这个节点有  几个孩子  （几棵子树）。注意「度」在树里是「孩子数」，别和图里的「度」搞混。\n    树的度  ：整棵树里，所有节点的度的  最大值  。\n  <strong 叶子节点（叶节点 / 终端节点）</strong ：度为 0 的节点，即  没有孩子  的节点。\n  <strong 分支节点（非终端节点）</strong ：度不为 0 的节点（除叶子外都是）。\n  <strong 孩子（Child）/ 双亲（Parent，父节点）</strong ：某节点的子树的根是它的孩子，反过来它是孩子的双亲。<strong 每个节点最多一个双亲（根没有双亲）。</strong \n  <strong 兄弟（Sibling）</strong ：同一个双亲的节点互为兄弟。\n    祖先 / 子孙  ：从根到某节点路径上的所有节点都是它的祖先；反过来，一个节点子树里的所有节点都是它的子孙。\n  <strong 层次（Level）</strong ：根在第 1 层，根的孩子在第 2 层，依次往下。（有的教材根算第 0 层，注意题目约定。本讲义用根=第 1 层。）\n  <strong 节点的深度（Depth）</strong ：从根到该节点的层数（根的深度 1）。\n  <strong 节点的高度（Height）</strong ：从该节点到它最远叶子的层数。\n  <strong 树的高度（深度）</strong ：根的高度，即树的最大层数。\n    有序树 / 无序树  ：如果节点的各孩子从左到右  有次序、不能交换  ，就是有序树；否则无序树。  二叉树是有序树  （左孩子右孩子不能换）。\n  <strong 森林（Forest）</strong ：m（m≥0）棵互不相交的树的集合。  砍掉一棵树的根，它的各棵子树就构成一片森林  ；反过来给森林加一个共同的根就成一棵树。树和森林可以互相转化，这点后面有用。\n\n  学习建议：把上面术语对着一张画出来的树，逐个指认一遍（这是根、这是叶子、这个节点的度是 2、这两个是兄弟、树高是 4……）。术语不熟，后面题目读都读不懂。\n\n   3.3 二叉树：为什么单独拎出来讲\n\n一般的树每个节点孩子数不定（有的 3 个有的 5 个），存储和操作都麻烦。  二叉树  做了一个关键限制：<strong 每个节点最多两个孩子，且明确区分「左孩子」和「右孩子」（有序，不能互换）</strong 。这个限制看似削弱了能力，实则带来巨大好处——结构规整、便于存储、性质丰富、算法简洁。而且后面会看到，  任何普通树/森林都能转换成二叉树  ，所以研究二叉树就够"
+    },
+    {
+      "id": "03-tree-31-为什么需要树在快查和快改之间找平衡",
+      "title": "3.1 为什么需要树：在「快查」和「快改」之间找平衡",
+      "chapter": "03",
+      "chapterTitle": "树与二叉树",
+      "url": "chapters/03-tree.html#31-为什么需要树在快查和快改之间找平衡",
+      "body": ""
+    },
+    {
+      "id": "03-tree-32-树的基本概念与术语一堆名词必须分清",
+      "title": "3.2 树的基本概念与术语（一堆名词，必须分清）",
+      "chapter": "03",
+      "chapterTitle": "树与二叉树",
+      "url": "chapters/03-tree.html#32-树的基本概念与术语一堆名词必须分清",
+      "body": ""
+    },
+    {
+      "id": "03-tree-33-二叉树为什么单独拎出来讲",
+      "title": "3.3 二叉树：为什么单独拎出来讲",
+      "chapter": "03",
+      "chapterTitle": "树与二叉树",
+      "url": "chapters/03-tree.html#33-二叉树为什么单独拎出来讲",
+      "body": ""
+    },
+    {
+      "id": "03-tree-331-二叉树的定义与五种基本形态",
+      "title": "3.3.1 二叉树的定义与五种基本形态",
+      "chapter": "03",
+      "chapterTitle": "树与二叉树",
+      "url": "chapters/03-tree.html#331-二叉树的定义与五种基本形态",
+      "body": ""
+    },
+    {
+      "id": "03-tree-332-两种特殊二叉树必须分清性质题的基础",
+      "title": "3.3.2 两种特殊二叉树（必须分清，性质题的基础）",
+      "chapter": "03",
+      "chapterTitle": "树与二叉树",
+      "url": "chapters/03-tree.html#332-两种特殊二叉树必须分清性质题的基础",
+      "body": ""
+    },
+    {
+      "id": "03-tree-34-二叉树的性质必背高频选择填空",
+      "title": "3.4 二叉树的性质（必背，高频选择/填空）",
+      "chapter": "03",
+      "chapterTitle": "树与二叉树",
+      "url": "chapters/03-tree.html#34-二叉树的性质必背高频选择填空",
+      "body": ""
+    },
+    {
+      "id": "03-tree-341-性质类填空题的标准套路必考照着套",
+      "title": "3.4.1 性质类填空题的标准套路（必考，照着套）",
+      "chapter": "03",
+      "chapterTitle": "树与二叉树",
+      "url": "chapters/03-tree.html#341-性质类填空题的标准套路必考照着套",
+      "body": ""
+    },
+    {
+      "id": "03-tree-35-二叉树的存储结构",
+      "title": "3.5 二叉树的存储结构",
+      "chapter": "03",
+      "chapterTitle": "树与二叉树",
+      "url": "chapters/03-tree.html#35-二叉树的存储结构",
+      "body": ""
+    },
+    {
+      "id": "03-tree-351-顺序存储数组适合完全二叉树",
+      "title": "3.5.1 顺序存储（数组）——适合完全二叉树",
+      "chapter": "03",
+      "chapterTitle": "树与二叉树",
+      "url": "chapters/03-tree.html#351-顺序存储数组适合完全二叉树",
+      "body": ""
+    },
+    {
+      "id": "03-tree-352-链式存储二叉链表通用方案",
+      "title": "3.5.2 链式存储（二叉链表）——通用方案",
+      "chapter": "03",
+      "chapterTitle": "树与二叉树",
+      "url": "chapters/03-tree.html#352-链式存储二叉链表通用方案",
+      "body": ""
+    },
+    {
+      "id": "03-tree-36-二叉树的遍历绝对重点大题常客",
+      "title": "3.6 二叉树的遍历（绝对重点，大题常客）",
+      "chapter": "03",
+      "chapterTitle": "树与二叉树",
+      "url": "chapters/03-tree.html#36-二叉树的遍历绝对重点大题常客",
+      "body": ""
+    },
+    {
+      "id": "03-tree-361-前序中序后序看根在什么时候被访问",
+      "title": "3.6.1 前序、中序、后序（看「根」在什么时候被访问）",
+      "chapter": "03",
+      "chapterTitle": "树与二叉树",
+      "url": "chapters/03-tree.html#361-前序中序后序看根在什么时候被访问",
+      "body": ""
+    },
+    {
+      "id": "03-tree-362-由遍历序列还原二叉树高频大题规律必记",
+      "title": "3.6.2 由遍历序列还原二叉树（高频大题，规律必记）",
+      "chapter": "03",
+      "chapterTitle": "树与二叉树",
+      "url": "chapters/03-tree.html#362-由遍历序列还原二叉树高频大题规律必记",
+      "body": ""
+    },
+    {
+      "id": "03-tree-363-层序遍历用队列重点",
+      "title": "3.6.3 层序遍历（用队列，重点）",
+      "chapter": "03",
+      "chapterTitle": "树与二叉树",
+      "url": "chapters/03-tree.html#363-层序遍历用队列重点",
+      "body": ""
+    },
+    {
+      "id": "03-tree-364-遍历的应用树的算法都是遍历的变体",
+      "title": "3.6.4 遍历的应用：树的算法都是遍历的变体",
+      "chapter": "03",
+      "chapterTitle": "树与二叉树",
+      "url": "chapters/03-tree.html#364-遍历的应用树的算法都是遍历的变体",
+      "body": ""
+    },
+    {
+      "id": "03-tree-365-表达式二叉树中频考点遍历与表达式的桥梁",
+      "title": "3.6.5 表达式二叉树（中频考点，遍历与表达式的桥梁）",
+      "chapter": "03",
+      "chapterTitle": "树与二叉树",
+      "url": "chapters/03-tree.html#365-表达式二叉树中频考点遍历与表达式的桥梁",
+      "body": ""
+    },
+    {
+      "id": "03-tree-366-非递归遍历了解思路",
+      "title": "3.6.6 非递归遍历（了解思路）",
+      "chapter": "03",
+      "chapterTitle": "树与二叉树",
+      "url": "chapters/03-tree.html#366-非递归遍历了解思路",
+      "body": ""
+    },
+    {
+      "id": "03-tree-37-线索二叉树废物利用空指针了解会画",
+      "title": "3.7 线索二叉树（废物利用空指针，了解+会画）",
+      "chapter": "03",
+      "chapterTitle": "树与二叉树",
+      "url": "chapters/03-tree.html#37-线索二叉树废物利用空指针了解会画",
+      "body": ""
+    },
+    {
+      "id": "03-tree-371-动机",
+      "title": "3.7.1 动机",
+      "chapter": "03",
+      "chapterTitle": "树与二叉树",
+      "url": "chapters/03-tree.html#371-动机",
+      "body": ""
+    },
+    {
+      "id": "03-tree-372-做法",
+      "title": "3.7.2 做法",
+      "chapter": "03",
+      "chapterTitle": "树与二叉树",
+      "url": "chapters/03-tree.html#372-做法",
+      "body": ""
+    },
+    {
+      "id": "03-tree-373-具体示例画中序线索二叉树",
+      "title": "3.7.3 具体示例：画中序线索二叉树",
+      "chapter": "03",
+      "chapterTitle": "树与二叉树",
+      "url": "chapters/03-tree.html#373-具体示例画中序线索二叉树",
+      "body": ""
+    },
+    {
+      "id": "03-tree-374-找中序前驱后继的规则会问",
+      "title": "3.7.4 找中序前驱/后继的规则（会问）",
+      "chapter": "03",
+      "chapterTitle": "树与二叉树",
+      "url": "chapters/03-tree.html#374-找中序前驱后继的规则会问",
+      "body": ""
+    },
+    {
+      "id": "03-tree-375-前序-后序线索一句话",
+      "title": "3.7.5 前序 / 后序线索一句话",
+      "chapter": "03",
+      "chapterTitle": "树与二叉树",
+      "url": "chapters/03-tree.html#375-前序-后序线索一句话",
+      "body": ""
+    },
+    {
+      "id": "03-tree-376-好处与考点",
+      "title": "3.7.6 好处与考点",
+      "chapter": "03",
+      "chapterTitle": "树与二叉树",
+      "url": "chapters/03-tree.html#376-好处与考点",
+      "body": ""
+    },
+    {
+      "id": "03-tree-38-二叉搜索树-bst必考重点",
+      "title": "3.8 二叉搜索树 BST（必考重点）",
+      "chapter": "03",
+      "chapterTitle": "树与二叉树",
+      "url": "chapters/03-tree.html#38-二叉搜索树-bst必考重点",
+      "body": ""
+    },
+    {
+      "id": "03-tree-381-定义",
+      "title": "3.8.1 定义",
+      "chapter": "03",
+      "chapterTitle": "树与二叉树",
+      "url": "chapters/03-tree.html#381-定义",
+      "body": ""
+    },
+    {
+      "id": "03-tree-382-查找像二分一样高效",
+      "title": "3.8.2 查找（像二分一样高效）",
+      "chapter": "03",
+      "chapterTitle": "树与二叉树",
+      "url": "chapters/03-tree.html#382-查找像二分一样高效",
+      "body": ""
+    },
+    {
+      "id": "03-tree-383-插入",
+      "title": "3.8.3 插入",
+      "chapter": "03",
+      "chapterTitle": "树与二叉树",
+      "url": "chapters/03-tree.html#383-插入",
+      "body": ""
+    },
+    {
+      "id": "03-tree-384-删除分三种情况必考",
+      "title": "3.8.4 删除（分三种情况，必考！）",
+      "chapter": "03",
+      "chapterTitle": "树与二叉树",
+      "url": "chapters/03-tree.html#384-删除分三种情况必考",
+      "body": ""
+    },
+    {
+      "id": "03-tree-385-bst-的致命弱点退化引出平衡树的动机",
+      "title": "3.8.5 BST 的致命弱点：退化（引出平衡树的动机）",
+      "chapter": "03",
+      "chapterTitle": "树与二叉树",
+      "url": "chapters/03-tree.html#385-bst-的致命弱点退化引出平衡树的动机",
+      "body": ""
+    },
+    {
+      "id": "03-tree-39-平衡二叉树-avl高频旋转必考",
+      "title": "3.9 平衡二叉树 AVL（高频，旋转必考）",
+      "chapter": "03",
+      "chapterTitle": "树与二叉树",
+      "url": "chapters/03-tree.html#39-平衡二叉树-avl高频旋转必考",
+      "body": ""
+    },
+    {
+      "id": "03-tree-391-动机与定义",
+      "title": "3.9.1 动机与定义",
+      "chapter": "03",
+      "chapterTitle": "树与二叉树",
+      "url": "chapters/03-tree.html#391-动机与定义",
+      "body": ""
+    },
+    {
+      "id": "03-tree-392-失衡的四种情况与对应旋转核心考点",
+      "title": "3.9.2 失衡的四种情况与对应旋转（核心考点）",
+      "chapter": "03",
+      "chapterTitle": "树与二叉树",
+      "url": "chapters/03-tree.html#392-失衡的四种情况与对应旋转核心考点",
+      "body": ""
+    },
+    {
+      "id": "03-tree-393-四种旋转的图示",
+      "title": "3.9.3 四种旋转的图示",
+      "chapter": "03",
+      "chapterTitle": "树与二叉树",
+      "url": "chapters/03-tree.html#393-四种旋转的图示",
+      "body": ""
+    },
+    {
+      "id": "03-tree-394-完整插入序列演示必考大题跟着画一遍",
+      "title": "3.9.4 完整插入序列演示（必考大题，跟着画一遍）",
+      "chapter": "03",
+      "chapterTitle": "树与二叉树",
+      "url": "chapters/03-tree.html#394-完整插入序列演示必考大题跟着画一遍",
+      "body": ""
+    },
+    {
+      "id": "03-tree-395-其它平衡多路查找树按大纲了解",
+      "title": "3.9.5 其它平衡/多路查找树（按大纲了解）",
+      "chapter": "03",
+      "chapterTitle": "树与二叉树",
+      "url": "chapters/03-tree.html#395-其它平衡多路查找树按大纲了解",
+      "body": ""
+    },
+    {
+      "id": "03-tree-310-哈夫曼树huffman必考",
+      "title": "3.10 哈夫曼树（Huffman，必考）",
+      "chapter": "03",
+      "chapterTitle": "树与二叉树",
+      "url": "chapters/03-tree.html#310-哈夫曼树huffman必考",
+      "body": ""
+    },
+    {
+      "id": "03-tree-3101-动机让常用的东西路径最短",
+      "title": "3.10.1 动机：让常用的东西「路径最短」",
+      "chapter": "03",
+      "chapterTitle": "树与二叉树",
+      "url": "chapters/03-tree.html#3101-动机让常用的东西路径最短",
+      "body": ""
+    },
+    {
+      "id": "03-tree-3102-构造算法贪心必考会手算",
+      "title": "3.10.2 构造算法（贪心，必考会手算）",
+      "chapter": "03",
+      "chapterTitle": "树与二叉树",
+      "url": "chapters/03-tree.html#3102-构造算法贪心必考会手算",
+      "body": ""
+    },
+    {
+      "id": "03-tree-3103-哈夫曼编码前缀码必考",
+      "title": "3.10.3 哈夫曼编码（前缀码，必考）",
+      "chapter": "03",
+      "chapterTitle": "树与二叉树",
+      "url": "chapters/03-tree.html#3103-哈夫曼编码前缀码必考",
+      "body": ""
+    },
+    {
+      "id": "03-tree-3104-考点总结与易错点",
+      "title": "3.10.4 考点总结与易错点",
+      "chapter": "03",
+      "chapterTitle": "树与二叉树",
+      "url": "chapters/03-tree.html#3104-考点总结与易错点",
+      "body": ""
+    },
+    {
+      "id": "03-tree-311-b-树-b-树数据库相关按大纲了解",
+      "title": "3.11 B 树 / B+ 树（数据库相关，按大纲了解）",
+      "chapter": "03",
+      "chapterTitle": "树与二叉树",
+      "url": "chapters/03-tree.html#311-b-树-b-树数据库相关按大纲了解",
+      "body": ""
+    },
+    {
+      "id": "03-tree-3111-动机",
+      "title": "3.11.1 动机",
+      "chapter": "03",
+      "chapterTitle": "树与二叉树",
+      "url": "chapters/03-tree.html#3111-动机",
+      "body": ""
+    },
+    {
+      "id": "03-tree-3112-要点了解",
+      "title": "3.11.2 要点（了解）",
+      "chapter": "03",
+      "chapterTitle": "树与二叉树",
+      "url": "chapters/03-tree.html#3112-要点了解",
+      "body": ""
+    },
+    {
+      "id": "03-tree-312-堆与优先队列重要连接排序",
+      "title": "3.12 堆与优先队列（重要，连接排序）",
+      "chapter": "03",
+      "chapterTitle": "树与二叉树",
+      "url": "chapters/03-tree.html#312-堆与优先队列重要连接排序",
+      "body": ""
+    },
+    {
+      "id": "03-tree-3121-什么是堆",
+      "title": "3.12.1 什么是堆",
+      "chapter": "03",
+      "chapterTitle": "树与二叉树",
+      "url": "chapters/03-tree.html#3121-什么是堆",
+      "body": ""
+    },
+    {
+      "id": "03-tree-3122-堆为什么用数组存",
+      "title": "3.12.2 堆为什么用数组存",
+      "chapter": "03",
+      "chapterTitle": "树与二叉树",
+      "url": "chapters/03-tree.html#3122-堆为什么用数组存",
+      "body": ""
+    },
+    {
+      "id": "03-tree-3123-两个核心操作上浮与下沉",
+      "title": "3.12.3 两个核心操作：上浮与下沉",
+      "chapter": "03",
+      "chapterTitle": "树与二叉树",
+      "url": "chapters/03-tree.html#3123-两个核心操作上浮与下沉",
+      "body": ""
+    },
+    {
+      "id": "03-tree-3124-建堆与堆排序第5章会再用",
+      "title": "3.12.4 建堆与堆排序（第5章会再用）",
+      "chapter": "03",
+      "chapterTitle": "树与二叉树",
+      "url": "chapters/03-tree.html#3124-建堆与堆排序第5章会再用",
+      "body": ""
+    },
+    {
+      "id": "03-tree-3125-优先队列",
+      "title": "3.12.5 优先队列",
+      "chapter": "03",
+      "chapterTitle": "树与二叉树",
+      "url": "chapters/03-tree.html#3125-优先队列",
+      "body": ""
+    },
+    {
+      "id": "03-tree-313-树森林与二叉树的转换了解",
+      "title": "3.13 树、森林与二叉树的转换（了解）",
+      "chapter": "03",
+      "chapterTitle": "树与二叉树",
+      "url": "chapters/03-tree.html#313-树森林与二叉树的转换了解",
+      "body": ""
+    },
+    {
+      "id": "03-tree-314-并查集union-find图章节会用到",
+      "title": "3.14 并查集（Union-Find，图章节会用到）",
+      "chapter": "03",
+      "chapterTitle": "树与二叉树",
+      "url": "chapters/03-tree.html#314-并查集union-find图章节会用到",
+      "body": ""
+    },
+    {
+      "id": "03-tree-3141-动机",
+      "title": "3.14.1 动机",
+      "chapter": "03",
+      "chapterTitle": "树与二叉树",
+      "url": "chapters/03-tree.html#3141-动机",
+      "body": ""
+    },
+    {
+      "id": "03-tree-3142-两个操作",
+      "title": "3.14.2 两个操作",
+      "chapter": "03",
+      "chapterTitle": "树与二叉树",
+      "url": "chapters/03-tree.html#3142-两个操作",
+      "body": ""
+    },
+    {
+      "id": "03-tree-3143-实现思路",
+      "title": "3.14.3 实现思路",
+      "chapter": "03",
+      "chapterTitle": "树与二叉树",
+      "url": "chapters/03-tree.html#3143-实现思路",
+      "body": ""
+    },
+    {
+      "id": "03-tree-3144-优化让它快到几乎-o1",
+      "title": "3.14.4 优化（让它快到几乎 O(1)）",
+      "chapter": "03",
+      "chapterTitle": "树与二叉树",
+      "url": "chapters/03-tree.html#3144-优化让它快到几乎-o1",
+      "body": ""
+    },
+    {
+      "id": "03-tree-3145-应用",
+      "title": "3.14.5 应用",
+      "chapter": "03",
+      "chapterTitle": "树与二叉树",
+      "url": "chapters/03-tree.html#3145-应用",
+      "body": ""
+    },
+    {
+      "id": "03-tree-315-树与二叉树自测",
+      "title": "3.15 树与二叉树自测",
+      "chapter": "03",
+      "chapterTitle": "树与二叉树",
+      "url": "chapters/03-tree.html#315-树与二叉树自测",
+      "body": ""
+    },
+    {
+      "id": "04-graph",
+      "title": "图",
+      "chapter": "04",
+      "chapterTitle": "图",
+      "url": "chapters/04-graph.html",
+      "body": "\n   4.1 为什么需要图：表达「多对多」的复杂关系\n\n线性结构是 1 对 1（一条队），树是 1 对多（一个爹多个娃），但现实里大量关系是  多对多  ——任意两个事物都可能有联系。城市之间的航线（每个城市都通往多个城市）、社交网络的好友关系、网页之间的超链接、地图上的道路、任务之间的依赖……这些都不是「队」也不是「树」，而是  网  。<strong 图（Graph）</strong  就是描述这种「多对多」关系的数据结构，是这门课  第二大重头  （仅次于树），也是最贴近真实复杂问题的结构。\n\n图比树复杂在哪？树有明确的「根」和「方向」（从上往下），无环、有层次；而图  可能任意两点相连、可能有环、可能没有起点、可能不连通  。所以图的算法（怎么不重复地走遍、怎么找最短路、怎么排先后）都要更小心，这也是它考点密集的原因。\n\n   4.2 基本概念与术语（密集，逐个攻克）\n\n  图 G =  V, E   ：V 是<strong 顶点（Vertex）</strong 的集合，E 是<strong 边（Edge）</strong 的集合。边表示两个顶点之间的关系。\n\n    4.2.1 有向 vs 无向\n\n    无向图  ：边没有方向，  A, B   和   B, A   是同一条边（用圆括号、画成线段）。表示双向/对称关系（如「是朋友」）。\n    有向图  ：边有方向， <A, B   表示从 A 指向 B 的一条  弧  ，和  <B, A   不同（用尖括号、画成带箭头的线）。表示单向关系（如「关注」「先修课」）。A 叫弧尾，B 叫弧头。\n\n    4.2.2 度\n\n  无向图中，顶点的  度  = 和它相连的边数。\n  有向图中分两种：  入度  = 指向它的弧数（箭头进来的），  出度  = 从它出发的弧数（箭头出去的）。度 = 入度 + 出度。\n  重要结论：  所有顶点的度之和 = 边数的 2 倍  （每条边贡献给两个顶点各 1 度）。有向图里，所有入度之和 = 所有出度之和 = 弧数。\n\n    4.2.3 完全图、稠密图、稀疏图\n\n    完全图  ：任意两个顶点之间都有边。n 个顶点的  无向完全图  有  n n 1 /2  条边；  有向完全图  有  n n 1   条弧。\n    稠密图 / 稀疏图  ：边数接近完全图叫稠密，边数远小于完全图叫稀疏。这个区分  直接决定该用邻接矩阵还是邻接表  （见 6.3）。\n\n    4.2.4 路径、连通、环\n\n    路径  ：从一个顶点到另一个顶点经过的顶点序列。  路径长度   = 路径上边的条数（带权图则是权值之和）。\n  <strong 回路（环）</strong ：起点和终点相同的路径。\n    简单路径  ：除起点终点外顶点不重复的路径。\n  <strong 连通（无向图）</strong ：两个顶点之间有路径，就说它们连通。  连通图  ：任意两顶点都连通。  连通分量  ：无向图里  极大的连通子图  （一块块连在一起的部分），不连通的图有多个连通分量。\n  <strong 强连通（有向图）</strong ：任意两顶点 A、B 之间，A 能到 B 且 B 也能到 A。  强连通分量  ：有向图里极大的强连通子图。\n\n    4.2.5 带权图（网）\n\n边上带有数值（叫  权值 weight  ，可表示距离、费用、时间等）的图叫  网  。最小生成树、最短路径都是在网上做的。\n\n    4.2.6 生成树\n\n一个  连通图  的  生成树  ，是包含图中  全部 n 个顶点  、但只用   n−1 条边  且  不成环  的极小连通子图。换句话说，生成树是「用最少的边把所有顶点连起来」。一个图可以有多棵生成树。带权图里  权值之和最小  的生成树，就是<strong 最小生成树（MST）</strong （6.5 节）。\n\n  术语很多，但都不难。建议自己画两个图（一个无向、一个有向带权），把每个术语在图上指认一遍。读不懂题往往是术语没过关。\n\n   4.3 图的存储结构（必考对比：邻接矩阵 vs 邻接表）\n\n图怎么存进计算机？两大主流方法，  它俩的对比是必考点  。\n\n    4.3.1 邻接矩阵（适合稠密图）\n\n用一个   n×n 的二维数组   A 表示。 A i  j   记录顶点 i 和顶点 j 之间的关系：\n\n  无权图： A i  j  = 1  表示 i、j 之间有边， 0  表示没有。\n  带权图（网）： A i  j  = 权值  表示有边及其权，无边则记为一个特殊值（通常 ∞ 表示不可达，对角线 A i  i  记 0）。\n\n特点：\n\n    无向图的邻接矩阵是对称的  （A i  j  = A j  i ，"
+    },
+    {
+      "id": "04-graph-41-为什么需要图表达多对多的复杂关系",
+      "title": "4.1 为什么需要图：表达「多对多」的复杂关系",
+      "chapter": "04",
+      "chapterTitle": "图",
+      "url": "chapters/04-graph.html#41-为什么需要图表达多对多的复杂关系",
+      "body": ""
+    },
+    {
+      "id": "04-graph-42-基本概念与术语密集逐个攻克",
+      "title": "4.2 基本概念与术语（密集，逐个攻克）",
+      "chapter": "04",
+      "chapterTitle": "图",
+      "url": "chapters/04-graph.html#42-基本概念与术语密集逐个攻克",
+      "body": ""
+    },
+    {
+      "id": "04-graph-421-有向-vs-无向",
+      "title": "4.2.1 有向 vs 无向",
+      "chapter": "04",
+      "chapterTitle": "图",
+      "url": "chapters/04-graph.html#421-有向-vs-无向",
+      "body": ""
+    },
+    {
+      "id": "04-graph-422-度",
+      "title": "4.2.2 度",
+      "chapter": "04",
+      "chapterTitle": "图",
+      "url": "chapters/04-graph.html#422-度",
+      "body": ""
+    },
+    {
+      "id": "04-graph-423-完全图稠密图稀疏图",
+      "title": "4.2.3 完全图、稠密图、稀疏图",
+      "chapter": "04",
+      "chapterTitle": "图",
+      "url": "chapters/04-graph.html#423-完全图稠密图稀疏图",
+      "body": ""
+    },
+    {
+      "id": "04-graph-424-路径连通环",
+      "title": "4.2.4 路径、连通、环",
+      "chapter": "04",
+      "chapterTitle": "图",
+      "url": "chapters/04-graph.html#424-路径连通环",
+      "body": ""
+    },
+    {
+      "id": "04-graph-425-带权图网",
+      "title": "4.2.5 带权图（网）",
+      "chapter": "04",
+      "chapterTitle": "图",
+      "url": "chapters/04-graph.html#425-带权图网",
+      "body": ""
+    },
+    {
+      "id": "04-graph-426-生成树",
+      "title": "4.2.6 生成树",
+      "chapter": "04",
+      "chapterTitle": "图",
+      "url": "chapters/04-graph.html#426-生成树",
+      "body": ""
+    },
+    {
+      "id": "04-graph-43-图的存储结构必考对比邻接矩阵-vs-邻接表",
+      "title": "4.3 图的存储结构（必考对比：邻接矩阵 vs 邻接表）",
+      "chapter": "04",
+      "chapterTitle": "图",
+      "url": "chapters/04-graph.html#43-图的存储结构必考对比邻接矩阵-vs-邻接表",
+      "body": ""
+    },
+    {
+      "id": "04-graph-431-邻接矩阵适合稠密图",
+      "title": "4.3.1 邻接矩阵（适合稠密图）",
+      "chapter": "04",
+      "chapterTitle": "图",
+      "url": "chapters/04-graph.html#431-邻接矩阵适合稠密图",
+      "body": ""
+    },
+    {
+      "id": "04-graph-432-邻接表适合稀疏图",
+      "title": "4.3.2 邻接表（适合稀疏图）",
+      "chapter": "04",
+      "chapterTitle": "图",
+      "url": "chapters/04-graph.html#432-邻接表适合稀疏图",
+      "body": ""
+    },
+    {
+      "id": "04-graph-433-对比总结必考做成表",
+      "title": "4.3.3 对比总结（必考，做成表）",
+      "chapter": "04",
+      "chapterTitle": "图",
+      "url": "chapters/04-graph.html#433-对比总结必考做成表",
+      "body": ""
+    },
+    {
+      "id": "04-graph-434-其它存储了解",
+      "title": "4.3.4 其它存储（了解）",
+      "chapter": "04",
+      "chapterTitle": "图",
+      "url": "chapters/04-graph.html#434-其它存储了解",
+      "body": ""
+    },
+    {
+      "id": "04-graph-44-图的遍历dfs-与-bfs核心基础",
+      "title": "4.4 图的遍历（DFS 与 BFS，核心基础）",
+      "chapter": "04",
+      "chapterTitle": "图",
+      "url": "chapters/04-graph.html#44-图的遍历dfs-与-bfs核心基础",
+      "body": ""
+    },
+    {
+      "id": "04-graph-441-深度优先搜索-dfsdepth-first-search",
+      "title": "4.4.1 深度优先搜索 DFS（Depth-First Search）",
+      "chapter": "04",
+      "chapterTitle": "图",
+      "url": "chapters/04-graph.html#441-深度优先搜索-dfsdepth-first-search",
+      "body": ""
+    },
+    {
+      "id": "04-graph-442-广度优先搜索-bfsbreadth-first-search",
+      "title": "4.4.2 广度优先搜索 BFS（Breadth-First Search）",
+      "chapter": "04",
+      "chapterTitle": "图",
+      "url": "chapters/04-graph.html#442-广度优先搜索-bfsbreadth-first-search",
+      "body": ""
+    },
+    {
+      "id": "04-graph-443-dfs-vs-bfs-对比",
+      "title": "4.4.3 DFS vs BFS 对比",
+      "chapter": "04",
+      "chapterTitle": "图",
+      "url": "chapters/04-graph.html#443-dfs-vs-bfs-对比",
+      "body": ""
+    },
+    {
+      "id": "04-graph-444-dfsbfs-遍历序列演示",
+      "title": "4.4.4 DFS/BFS 遍历序列演示",
+      "chapter": "04",
+      "chapterTitle": "图",
+      "url": "chapters/04-graph.html#444-dfsbfs-遍历序列演示",
+      "body": ""
+    },
+    {
+      "id": "04-graph-45-最小生成树-mst必考",
+      "title": "4.5 最小生成树 MST（必考）",
+      "chapter": "04",
+      "chapterTitle": "图",
+      "url": "chapters/04-graph.html#45-最小生成树-mst必考",
+      "body": ""
+    },
+    {
+      "id": "04-graph-451-问题",
+      "title": "4.5.1 问题",
+      "chapter": "04",
+      "chapterTitle": "图",
+      "url": "chapters/04-graph.html#451-问题",
+      "body": ""
+    },
+    {
+      "id": "04-graph-452-prim-算法加点适合稠密图",
+      "title": "4.5.2 Prim 算法（「加点」，适合稠密图）",
+      "chapter": "04",
+      "chapterTitle": "图",
+      "url": "chapters/04-graph.html#452-prim-算法加点适合稠密图",
+      "body": ""
+    },
+    {
+      "id": "04-graph-453-kruskal-算法加边适合稀疏图",
+      "title": "4.5.3 Kruskal 算法（「加边」，适合稀疏图）",
+      "chapter": "04",
+      "chapterTitle": "图",
+      "url": "chapters/04-graph.html#453-kruskal-算法加边适合稀疏图",
+      "body": ""
+    },
+    {
+      "id": "04-graph-454-完整演示同一个图跑-prim-和-kruskal",
+      "title": "4.5.4 完整演示：同一个图跑 Prim 和 Kruskal",
+      "chapter": "04",
+      "chapterTitle": "图",
+      "url": "chapters/04-graph.html#454-完整演示同一个图跑-prim-和-kruskal",
+      "body": ""
+    },
+    {
+      "id": "04-graph-455-对比与记忆",
+      "title": "4.5.5 对比与记忆",
+      "chapter": "04",
+      "chapterTitle": "图",
+      "url": "chapters/04-graph.html#455-对比与记忆",
+      "body": ""
+    },
+    {
+      "id": "04-graph-46-最短路径必考dijkstra-爱考填表",
+      "title": "4.6 最短路径（必考，Dijkstra 爱考填表）",
+      "chapter": "04",
+      "chapterTitle": "图",
+      "url": "chapters/04-graph.html#46-最短路径必考dijkstra-爱考填表",
+      "body": ""
+    },
+    {
+      "id": "04-graph-461-问题",
+      "title": "4.6.1 问题",
+      "chapter": "04",
+      "chapterTitle": "图",
+      "url": "chapters/04-graph.html#461-问题",
+      "body": ""
+    },
+    {
+      "id": "04-graph-462-dijkstra-算法单源最短路最爱考",
+      "title": "4.6.2 Dijkstra 算法（单源最短路，最爱考）",
+      "chapter": "04",
+      "chapterTitle": "图",
+      "url": "chapters/04-graph.html#462-dijkstra-算法单源最短路最爱考",
+      "body": ""
+    },
+    {
+      "id": "04-graph-463-floyd-算法所有点对最短路",
+      "title": "4.6.3 Floyd 算法（所有点对最短路）",
+      "chapter": "04",
+      "chapterTitle": "图",
+      "url": "chapters/04-graph.html#463-floyd-算法所有点对最短路",
+      "body": ""
+    },
+    {
+      "id": "04-graph-464-对比",
+      "title": "4.6.4 对比",
+      "chapter": "04",
+      "chapterTitle": "图",
+      "url": "chapters/04-graph.html#464-对比",
+      "body": ""
+    },
+    {
+      "id": "04-graph-47-拓扑排序与关键路径有向无环图的应用",
+      "title": "4.7 拓扑排序与关键路径（有向无环图的应用）",
+      "chapter": "04",
+      "chapterTitle": "图",
+      "url": "chapters/04-graph.html#47-拓扑排序与关键路径有向无环图的应用",
+      "body": ""
+    },
+    {
+      "id": "04-graph-471-拓扑排序aov-网必考",
+      "title": "4.7.1 拓扑排序（AOV 网，必考）",
+      "chapter": "04",
+      "chapterTitle": "图",
+      "url": "chapters/04-graph.html#471-拓扑排序aov-网必考",
+      "body": ""
+    },
+    {
+      "id": "04-graph-472-关键路径aoe-网必考会算",
+      "title": "4.7.2 关键路径（AOE 网，必考会算）",
+      "chapter": "04",
+      "chapterTitle": "图",
+      "url": "chapters/04-graph.html#472-关键路径aoe-网必考会算",
+      "body": ""
+    },
+    {
+      "id": "04-graph-48-图自测",
+      "title": "4.8 图自测",
+      "chapter": "04",
+      "chapterTitle": "图",
+      "url": "chapters/04-graph.html#48-图自测",
+      "body": ""
+    },
+    {
+      "id": "04-graph-49-本段总自测清单",
+      "title": "4.9 本段总自测清单",
+      "chapter": "04",
+      "chapterTitle": "图",
+      "url": "chapters/04-graph.html#49-本段总自测清单",
+      "body": ""
+    },
+    {
+      "id": "05-search-sort",
+      "title": "查找与排序",
+      "chapter": "05",
+      "chapterTitle": "查找与排序",
+      "url": "chapters/05-search-sort.html",
+      "body": "\n   5.1 查找的基本概念与 ASL\n\n    5.1.1 一组术语\n\n<strong 查找（搜索）</strong  就是在一堆数据里，找出「关键字」等于某个给定值的那个记录。几个术语必须分清：\n\n    查找表  ：被查找的那一堆数据元素的集合。\n  <strong 关键字（key）</strong ：数据元素里用来标识/区分它的那个数据项（比如学生的学号）。能  唯一  标识一个元素的叫  主关键字  ，不能唯一标识（可能重复，如「姓名」）的叫  次关键字  。\n    静态查找表  ：只查、不增删（表是固定的）。顺序查找、二分查找针对它。\n    动态查找表  ：查找的同时可能插入、删除（表会变）。BST、AVL、哈希表针对它。\n\n    5.1.2 ASL——衡量查找快慢的核心指标\n\n衡量一个查找算法好不好，核心指标是 <strong ASL（Average Search Length，平均查找长度）</strong ——  平均要做多少次「关键字比较」才能找到（或确定找不到）一个元素  。注意单位是「比较次数」，不是时间秒数，这样和机器无关，纯粹反映算法本身。ASL 越小越快。这是这一章贯穿始终、必考必算的量。\n\n   \nASL = Σ  Pᵢ × Cᵢ      （i 从 1 到 n）\n其中 Pᵢ 是查找第 i 个元素的概率，Cᵢ 是找到它所需的比较次数。\n通常假设每个元素被查的概率相等，即 Pᵢ = 1/n，于是 ASL =  1/n ·Σ Cᵢ。\n   \n\nASL 必须分两种情况，  考试常分开问，务必都会算  ：\n\n    查找成功的 ASL  ：要找的元素  确实在  表里，平均比较多少次找到它。\n    查找不成功的 ASL  ：要找的元素  不在  表里，平均比较多少次才能  确定它不在  （得一直比到没法再比为止）。\n\n为什么要分开？因为「找到」和「确认找不到」的代价往往不同。比如顺序查找一个不存在的元素，必须把整张表比完才能下结论，代价比平均找到一个存在的元素更大。\n\n   5.2 顺序查找（线性查找）\n\n    5.2.1 思想与代码\n\n最朴素的方法：从头到尾一个个比，直到找到或走完。对存储、对数据是否有序  都没有要求  （无序也行，链式也行），这是它最大的优点。\n\n   c\n// 在数组 a 0..n 1  中顺序查找 key，返回下标，找不到返回  1\nint SeqSearch int a  , int n, int key   \n    for  int i = 0; i < n; i++ \n        if  a i  == key  return i;     // 逐个比较\n    return  1;                          // 走完没找到\n \n   \n\n    5.2.2 哨兵优化\n\n上面循环每次都要判断两件事： i < n （没越界）和  a i  == key （是不是目标）。可以用「哨兵」省掉边界判断：把要找的 key 先放到数组的 0 号位置（或 n 号位置）当  哨兵  ，然后从另一端往回找。这样循环一定会在碰到目标或哨兵时停下，  不需要每次判断越界  ，比较次数省了近一半。教材常用这种带哨兵的版本：\n\n   c\n// 哨兵版：a 0  当哨兵位，实际数据存在 a 1..n \nint SeqSearchGuard int a  , int n, int key   \n    a 0  = key;                 // 在 0 号位放哨兵\n    int i = n;\n    while  a i  != key  i  ;     // 从后往前找，不用判越界——最差也会停在 a 0 =key\n    return i;                    // 返回 0 表示没找到（停在了哨兵处），否则返回下标\n \n   \n\n    5.2.3 ASL 分析（必考）\n\n假设每个元素  等概率  被查（Pᵢ = 1/n）。在上面正向版本里，找第 1 个比 1 次，第 2 个比 2 次……第 n 个比 n 次：\n\n   \n查找成功 ASL =  1 + 2 + ... + n  / n =  n+1 /2 ≈ O n \n查找不成功 ASL = n+1（带哨兵）或 n（不带），都要把全表比完才能确定 → O n \n   \n\n如果各元素的  查找概率不等  ，则应把查找概率大的元素  放在表的前面  ，能减小 ASL（常用的先排到前面，少用的放后面），这是一个常考的优化结论。\n\n  优点  ：简单，对数据无任何要求（无序、链式都行）。  缺点  ：慢，O n 。  适用  ：数据量小、或无序又不值得专门排序时。\n\n"
+    },
+    {
+      "id": "05-search-sort-51-查找的基本概念与-asl",
+      "title": "5.1 查找的基本概念与 ASL",
+      "chapter": "05",
+      "chapterTitle": "查找与排序",
+      "url": "chapters/05-search-sort.html#51-查找的基本概念与-asl",
+      "body": ""
+    },
+    {
+      "id": "05-search-sort-511-一组术语",
+      "title": "5.1.1 一组术语",
+      "chapter": "05",
+      "chapterTitle": "查找与排序",
+      "url": "chapters/05-search-sort.html#511-一组术语",
+      "body": ""
+    },
+    {
+      "id": "05-search-sort-512-asl衡量查找快慢的核心指标",
+      "title": "5.1.2 ASL——衡量查找快慢的核心指标",
+      "chapter": "05",
+      "chapterTitle": "查找与排序",
+      "url": "chapters/05-search-sort.html#512-asl衡量查找快慢的核心指标",
+      "body": ""
+    },
+    {
+      "id": "05-search-sort-52-顺序查找线性查找",
+      "title": "5.2 顺序查找（线性查找）",
+      "chapter": "05",
+      "chapterTitle": "查找与排序",
+      "url": "chapters/05-search-sort.html#52-顺序查找线性查找",
+      "body": ""
+    },
+    {
+      "id": "05-search-sort-521-思想与代码",
+      "title": "5.2.1 思想与代码",
+      "chapter": "05",
+      "chapterTitle": "查找与排序",
+      "url": "chapters/05-search-sort.html#521-思想与代码",
+      "body": ""
+    },
+    {
+      "id": "05-search-sort-522-哨兵优化",
+      "title": "5.2.2 哨兵优化",
+      "chapter": "05",
+      "chapterTitle": "查找与排序",
+      "url": "chapters/05-search-sort.html#522-哨兵优化",
+      "body": ""
+    },
+    {
+      "id": "05-search-sort-523-asl-分析必考",
+      "title": "5.2.3 ASL 分析（必考）",
+      "chapter": "05",
+      "chapterTitle": "查找与排序",
+      "url": "chapters/05-search-sort.html#523-asl-分析必考",
+      "body": ""
+    },
+    {
+      "id": "05-search-sort-53-折半查找二分查找必考",
+      "title": "5.3 折半查找（二分查找，必考）",
+      "chapter": "05",
+      "chapterTitle": "查找与排序",
+      "url": "chapters/05-search-sort.html#53-折半查找二分查找必考",
+      "body": ""
+    },
+    {
+      "id": "05-search-sort-531-大前提与思想",
+      "title": "5.3.1 大前提与思想",
+      "chapter": "05",
+      "chapterTitle": "查找与排序",
+      "url": "chapters/05-search-sort.html#531-大前提与思想",
+      "body": ""
+    },
+    {
+      "id": "05-search-sort-532-判定树必考工具",
+      "title": "5.3.2 判定树（必考工具）",
+      "chapter": "05",
+      "chapterTitle": "查找与排序",
+      "url": "chapters/05-search-sort.html#532-判定树必考工具",
+      "body": ""
+    },
+    {
+      "id": "05-search-sort-533-asl-完整计算示例务必练熟",
+      "title": "5.3.3 ASL 完整计算示例（务必练熟）",
+      "chapter": "05",
+      "chapterTitle": "查找与排序",
+      "url": "chapters/05-search-sort.html#533-asl-完整计算示例务必练熟",
+      "body": ""
+    },
+    {
+      "id": "05-search-sort-54-分块查找索引顺序查找折中方案",
+      "title": "5.4 分块查找（索引顺序查找，折中方案）",
+      "chapter": "05",
+      "chapterTitle": "查找与排序",
+      "url": "chapters/05-search-sort.html#54-分块查找索引顺序查找折中方案",
+      "body": ""
+    },
+    {
+      "id": "05-search-sort-541-思想",
+      "title": "5.4.1 思想",
+      "chapter": "05",
+      "chapterTitle": "查找与排序",
+      "url": "chapters/05-search-sort.html#541-思想",
+      "body": ""
+    },
+    {
+      "id": "05-search-sort-542-asl-与最佳分块",
+      "title": "5.4.2 ASL 与最佳分块",
+      "chapter": "05",
+      "chapterTitle": "查找与排序",
+      "url": "chapters/05-search-sort.html#542-asl-与最佳分块",
+      "body": ""
+    },
+    {
+      "id": "05-search-sort-55-树表查找归纳详见第3章",
+      "title": "5.5 树表查找（归纳，详见第3章）",
+      "chapter": "05",
+      "chapterTitle": "查找与排序",
+      "url": "chapters/05-search-sort.html#55-树表查找归纳详见第3章",
+      "body": ""
+    },
+    {
+      "id": "05-search-sort-56-哈希表散列必考重点加厚",
+      "title": "5.6 哈希表（散列，必考重点，加厚）",
+      "chapter": "05",
+      "chapterTitle": "查找与排序",
+      "url": "chapters/05-search-sort.html#56-哈希表散列必考重点加厚",
+      "body": ""
+    },
+    {
+      "id": "05-search-sort-561-革命性思想不比较直接算地址",
+      "title": "5.6.1 革命性思想：不比较，直接算地址",
+      "chapter": "05",
+      "chapterTitle": "查找与排序",
+      "url": "chapters/05-search-sort.html#561-革命性思想不比较直接算地址",
+      "body": ""
+    },
+    {
+      "id": "05-search-sort-562-哈希函数的构造方法",
+      "title": "5.6.2 哈希函数的构造方法",
+      "chapter": "05",
+      "chapterTitle": "查找与排序",
+      "url": "chapters/05-search-sort.html#562-哈希函数的构造方法",
+      "body": ""
+    },
+    {
+      "id": "05-search-sort-563-冲突及其处理核心考点",
+      "title": "5.6.3 冲突及其处理（核心考点）",
+      "chapter": "05",
+      "chapterTitle": "查找与排序",
+      "url": "chapters/05-search-sort.html#563-冲突及其处理核心考点",
+      "body": ""
+    },
+    {
+      "id": "05-search-sort-564-装填因子与-asl-的关系",
+      "title": "5.6.4 装填因子与 ASL 的关系",
+      "chapter": "05",
+      "chapterTitle": "查找与排序",
+      "url": "chapters/05-search-sort.html#564-装填因子与-asl-的关系",
+      "body": ""
+    },
+    {
+      "id": "05-search-sort-565-asl-计算线性探测完整示例",
+      "title": "5.6.5 ASL 计算——线性探测完整示例",
+      "chapter": "05",
+      "chapterTitle": "查找与排序",
+      "url": "chapters/05-search-sort.html#565-asl-计算线性探测完整示例",
+      "body": ""
+    },
+    {
+      "id": "05-search-sort-566-asl-计算拉链法完整示例",
+      "title": "5.6.6 ASL 计算——拉链法完整示例",
+      "chapter": "05",
+      "chapterTitle": "查找与排序",
+      "url": "chapters/05-search-sort.html#566-asl-计算拉链法完整示例",
+      "body": ""
+    },
+    {
+      "id": "05-search-sort-567-开放定址法的删除问题易忽略的考点",
+      "title": "5.6.7 开放定址法的删除问题（易忽略的考点）",
+      "chapter": "05",
+      "chapterTitle": "查找与排序",
+      "url": "chapters/05-search-sort.html#567-开放定址法的删除问题易忽略的考点",
+      "body": ""
+    },
+    {
+      "id": "05-search-sort-568-哈希表小结",
+      "title": "5.6.8 哈希表小结",
+      "chapter": "05",
+      "chapterTitle": "查找与排序",
+      "url": "chapters/05-search-sort.html#568-哈希表小结",
+      "body": ""
+    },
+    {
+      "id": "05-search-sort-57-各查找方法对比汇总",
+      "title": "5.7 各查找方法对比（汇总）",
+      "chapter": "05",
+      "chapterTitle": "查找与排序",
+      "url": "chapters/05-search-sort.html#57-各查找方法对比汇总",
+      "body": ""
+    },
+    {
+      "id": "05-search-sort-58-查找自测",
+      "title": "5.8 查找自测",
+      "chapter": "05",
+      "chapterTitle": "查找与排序",
+      "url": "chapters/05-search-sort.html#58-查找自测",
+      "body": ""
+    },
+    {
+      "id": "05-search-sort-59-排序的基本概念",
+      "title": "5.9 排序的基本概念",
+      "chapter": "05",
+      "chapterTitle": "查找与排序",
+      "url": "chapters/05-search-sort.html#59-排序的基本概念",
+      "body": ""
+    },
+    {
+      "id": "05-search-sort-510-插入排序类",
+      "title": "5.10 插入排序类",
+      "chapter": "05",
+      "chapterTitle": "查找与排序",
+      "url": "chapters/05-search-sort.html#510-插入排序类",
+      "body": ""
+    },
+    {
+      "id": "05-search-sort-5101-直接插入排序",
+      "title": "5.10.1 直接插入排序",
+      "chapter": "05",
+      "chapterTitle": "查找与排序",
+      "url": "chapters/05-search-sort.html#5101-直接插入排序",
+      "body": ""
+    },
+    {
+      "id": "05-search-sort-5102-折半插入排序",
+      "title": "5.10.2 折半插入排序",
+      "chapter": "05",
+      "chapterTitle": "查找与排序",
+      "url": "chapters/05-search-sort.html#5102-折半插入排序",
+      "body": ""
+    },
+    {
+      "id": "05-search-sort-5103-希尔排序缩小增量排序",
+      "title": "5.10.3 希尔排序（缩小增量排序）",
+      "chapter": "05",
+      "chapterTitle": "查找与排序",
+      "url": "chapters/05-search-sort.html#5103-希尔排序缩小增量排序",
+      "body": ""
+    },
+    {
+      "id": "05-search-sort-511-交换排序类",
+      "title": "5.11 交换排序类",
+      "chapter": "05",
+      "chapterTitle": "查找与排序",
+      "url": "chapters/05-search-sort.html#511-交换排序类",
+      "body": ""
+    },
+    {
+      "id": "05-search-sort-5111-冒泡排序",
+      "title": "5.11.1 冒泡排序",
+      "chapter": "05",
+      "chapterTitle": "查找与排序",
+      "url": "chapters/05-search-sort.html#5111-冒泡排序",
+      "body": ""
+    },
+    {
+      "id": "05-search-sort-5112-快速排序重点中的重点",
+      "title": "5.11.2 快速排序（重点中的重点）",
+      "chapter": "05",
+      "chapterTitle": "查找与排序",
+      "url": "chapters/05-search-sort.html#5112-快速排序重点中的重点",
+      "body": ""
+    },
+    {
+      "id": "05-search-sort-512-选择排序类",
+      "title": "5.12 选择排序类",
+      "chapter": "05",
+      "chapterTitle": "查找与排序",
+      "url": "chapters/05-search-sort.html#512-选择排序类",
+      "body": ""
+    },
+    {
+      "id": "05-search-sort-5121-简单选择排序",
+      "title": "5.12.1 简单选择排序",
+      "chapter": "05",
+      "chapterTitle": "查找与排序",
+      "url": "chapters/05-search-sort.html#5121-简单选择排序",
+      "body": ""
+    },
+    {
+      "id": "05-search-sort-5122-堆排序重点",
+      "title": "5.12.2 堆排序（重点）",
+      "chapter": "05",
+      "chapterTitle": "查找与排序",
+      "url": "chapters/05-search-sort.html#5122-堆排序重点",
+      "body": ""
+    },
+    {
+      "id": "05-search-sort-513-归并排序",
+      "title": "5.13 归并排序",
+      "chapter": "05",
+      "chapterTitle": "查找与排序",
+      "url": "chapters/05-search-sort.html#513-归并排序",
+      "body": ""
+    },
+    {
+      "id": "05-search-sort-514-基数排序分配排序类",
+      "title": "5.14 基数排序（分配排序类）",
+      "chapter": "05",
+      "chapterTitle": "查找与排序",
+      "url": "chapters/05-search-sort.html#514-基数排序分配排序类",
+      "body": ""
+    },
+    {
+      "id": "05-search-sort-515-计数排序非比较了解",
+      "title": "5.15 计数排序（非比较，了解）",
+      "chapter": "05",
+      "chapterTitle": "查找与排序",
+      "url": "chapters/05-search-sort.html#515-计数排序非比较了解",
+      "body": ""
+    },
+    {
+      "id": "05-search-sort-516-排序算法总对比表必背直接考",
+      "title": "5.16 排序算法总对比表（必背，直接考！）",
+      "chapter": "05",
+      "chapterTitle": "查找与排序",
+      "url": "chapters/05-search-sort.html#516-排序算法总对比表必背直接考",
+      "body": ""
+    },
+    {
+      "id": "05-search-sort-5161-记忆技巧口诀结论",
+      "title": "5.16.1 记忆技巧（口诀+结论）",
+      "chapter": "05",
+      "chapterTitle": "查找与排序",
+      "url": "chapters/05-search-sort.html#5161-记忆技巧口诀结论",
+      "body": ""
+    },
+    {
+      "id": "05-search-sort-517-怎么选排序算法考点逻辑",
+      "title": "5.17 怎么选排序算法（考点逻辑）",
+      "chapter": "05",
+      "chapterTitle": "查找与排序",
+      "url": "chapters/05-search-sort.html#517-怎么选排序算法考点逻辑",
+      "body": ""
+    },
+    {
+      "id": "05-search-sort-518-外部排序按大纲了解常考概念",
+      "title": "5.18 外部排序（按大纲了解，常考概念）",
+      "chapter": "05",
+      "chapterTitle": "查找与排序",
+      "url": "chapters/05-search-sort.html#518-外部排序按大纲了解常考概念",
+      "body": ""
+    },
+    {
+      "id": "05-search-sort-5181-基本流程归并排序的思想",
+      "title": "5.18.1 基本流程：归并排序的思想",
+      "chapter": "05",
+      "chapterTitle": "查找与排序",
+      "url": "chapters/05-search-sort.html#5181-基本流程归并排序的思想",
+      "body": ""
+    },
+    {
+      "id": "05-search-sort-5182-关键概念考点",
+      "title": "5.18.2 关键概念（考点）",
+      "chapter": "05",
+      "chapterTitle": "查找与排序",
+      "url": "chapters/05-search-sort.html#5182-关键概念考点",
+      "body": ""
+    },
+    {
+      "id": "05-search-sort-519-排序大题的两类必考题型",
+      "title": "5.19 排序大题的两类必考题型",
+      "chapter": "05",
+      "chapterTitle": "查找与排序",
+      "url": "chapters/05-search-sort.html#519-排序大题的两类必考题型",
+      "body": ""
+    },
+    {
+      "id": "05-search-sort-520-排序自测",
+      "title": "5.20 排序自测",
+      "chapter": "05",
+      "chapterTitle": "查找与排序",
+      "url": "chapters/05-search-sort.html#520-排序自测",
+      "body": ""
+    },
+    {
+      "id": "06-algorithm-design",
+      "title": "算法设计策略",
+      "chapter": "06",
+      "chapterTitle": "算法设计策略",
+      "url": "chapters/06-algorithm-design.html",
+      "body": "\n前八章学的是「具体数据结构 + 它们上面的具体算法」。这一章  升一个维度  ——讲几种  通用的算法设计思想/套路  。它们不是某个具体算法，而是「面对新问题可以套用的解题框架」。掌握后你就有了「自己设计算法」的能力，而非只会背现成的。这是难点和拉分点，但思想本身很优美，理解了就忘不掉。\n\n四大经典策略：  分治、贪心、动态规划、回溯  ，外加  分支限界  。\n\n   6.1 分治法（Divide and Conquer）\n\n    6.1.1 核心思想\n\n<strong 分治 = 分（Divide）+ 治（Conquer）+ 合（Combine）</strong 。把一个  大问题  分解成若干  规模更小、与原问题同类型  的子问题，  递归地  解决，再把子问题的解  合并  成原问题的解。三步：\n\n1.   分  ：把问题划分成几个规模更小的同类子问题。\n2.   治  ：递归求解各子问题（子问题小到一定程度——递归出口——就直接解）。\n3.   合  ：把子问题的解合并成原问题的解。\n\n    6.1.2 适用特征\n\n适合分治的问题通常满足：① 能分解成同类子问题；② 子问题  相互独立  （不重叠——这点和动态规划相反，是区分二者的关键）；③ 子问题的解能合并出原解。\n\n    6.1.3 复杂度分析与主定理（了解）\n\n分治算法的复杂度常用  递推式    T n  = a·T n/b  + f n   表示（把规模 n 的问题分成 a 个 n/b 的子问题，分解+合并花 f n ）。<strong 主定理（Master Theorem）</strong  给出了这类递推的解（了解结论即可）：比较 f n  和 n^ log b a  的大小：\n\n  归并/快排： T n  = 2T n/2  + O n  ，解得   O n log n   （log n 层、每层 O n ）。\n  二分查找： T n  = T n/2  + O 1  ，解得   O log n   。\n  朴素大整数乘法分治： T n  = 4T n/2  + O n   = O n² ，而 Karatsuba 优化成  3T n/2 +O n   = O n^1.58 。\n\n    6.1.4 经典例子\n\n    归并排序、快速排序  （第5章）：分成两半递归排，归并合并 / 快排基准划分。\n    二分查找  （第5章）：每次砍一半，在一半里递归找。\n    快速幂  ：求 aⁿ， aⁿ =  a^ n/2  ² ，把 n 折半，O log n  次乘法（而非 n 次）。\n    最近点对、大整数乘法（Karatsuba）、Strassen 矩阵乘法  。\n\n   6.2 贪心法（Greedy）\n\n    6.2.1 核心思想\n\n  贪心  ：每一步都做  当前看起来最好  的选择（局部最优），不考虑全局、不回头、绝不反悔，寄希望于「步步局部最优」累积出「全局最优」。它  不保证  对所有问题都得到最优解，但对某些有特殊性质的问题能。关键词：<strong 目光短浅、只看眼前、绝不反悔。</strong \n\n    6.2.2 适用条件\n\n贪心能得最优解，问题须具备：\n\n    贪心选择性质  ：每一步的局部最优选择，能导向全局最优（这个性质往往需要证明）。\n    最优子结构  ：原问题的最优解包含子问题的最优解。\n\n判断一个问题能不能贪心通常要证明，比较难。考试常考的是「  认得出哪些经典问题是贪心  」以及「  辨析某问题能不能用贪心  」。\n\n    6.2.3 经典例子（很多在前面见过）\n\n    哈夫曼树  （第3章）：每次合并权值最小的两个——纯贪心。\n    Prim / Kruskal 最小生成树  （第4章）：Prim 每次贪心加「最近的点」，Kruskal 每次贪心选「最小的边」。\n    Dijkstra 最短路  （第4章）：每次贪心确定「当前最近的未确定顶点」。\n    活动选择问题  ：n 个活动各有开始/结束时间，在一个场地里选最多个互不冲突的活动。  贪心策略：每次选「结束时间最早」的活动  ——结束越早，给后面留的时间越多。这个贪心可证最优。\n  <strong 部分背包问题（分数背包）</strong ：物品可切割，背包容量有限，求装入价值最大。  贪心策略：按「单位重量价值」从高到低装，能装多少装多少，最后一个装不下就切一部分  。可证最优。\n\n    6.2.4 贪心的「陷阱」：0 1 背包不能贪心\n\n  0 1 背包  （每个物品要么整个拿、要么不拿，不能切割）就  不能用贪心  ！反例：容量 10，物品 A 重6,值10 、B 重5,值9 、C 重5,值9 。按单位价值贪心先拿 A（单位价"
+    },
+    {
+      "id": "06-algorithm-design-61-分治法divide-and-conquer",
+      "title": "6.1 分治法（Divide and Conquer）",
+      "chapter": "06",
+      "chapterTitle": "算法设计策略",
+      "url": "chapters/06-algorithm-design.html#61-分治法divide-and-conquer",
+      "body": ""
+    },
+    {
+      "id": "06-algorithm-design-611-核心思想",
+      "title": "6.1.1 核心思想",
+      "chapter": "06",
+      "chapterTitle": "算法设计策略",
+      "url": "chapters/06-algorithm-design.html#611-核心思想",
+      "body": ""
+    },
+    {
+      "id": "06-algorithm-design-612-适用特征",
+      "title": "6.1.2 适用特征",
+      "chapter": "06",
+      "chapterTitle": "算法设计策略",
+      "url": "chapters/06-algorithm-design.html#612-适用特征",
+      "body": ""
+    },
+    {
+      "id": "06-algorithm-design-613-复杂度分析与主定理了解",
+      "title": "6.1.3 复杂度分析与主定理（了解）",
+      "chapter": "06",
+      "chapterTitle": "算法设计策略",
+      "url": "chapters/06-algorithm-design.html#613-复杂度分析与主定理了解",
+      "body": ""
+    },
+    {
+      "id": "06-algorithm-design-614-经典例子",
+      "title": "6.1.4 经典例子",
+      "chapter": "06",
+      "chapterTitle": "算法设计策略",
+      "url": "chapters/06-algorithm-design.html#614-经典例子",
+      "body": ""
+    },
+    {
+      "id": "06-algorithm-design-62-贪心法greedy",
+      "title": "6.2 贪心法（Greedy）",
+      "chapter": "06",
+      "chapterTitle": "算法设计策略",
+      "url": "chapters/06-algorithm-design.html#62-贪心法greedy",
+      "body": ""
+    },
+    {
+      "id": "06-algorithm-design-621-核心思想",
+      "title": "6.2.1 核心思想",
+      "chapter": "06",
+      "chapterTitle": "算法设计策略",
+      "url": "chapters/06-algorithm-design.html#621-核心思想",
+      "body": ""
+    },
+    {
+      "id": "06-algorithm-design-622-适用条件",
+      "title": "6.2.2 适用条件",
+      "chapter": "06",
+      "chapterTitle": "算法设计策略",
+      "url": "chapters/06-algorithm-design.html#622-适用条件",
+      "body": ""
+    },
+    {
+      "id": "06-algorithm-design-623-经典例子很多在前面见过",
+      "title": "6.2.3 经典例子（很多在前面见过）",
+      "chapter": "06",
+      "chapterTitle": "算法设计策略",
+      "url": "chapters/06-algorithm-design.html#623-经典例子很多在前面见过",
+      "body": ""
+    },
+    {
+      "id": "06-algorithm-design-624-贪心的陷阱0-1-背包不能贪心",
+      "title": "6.2.4 贪心的「陷阱」：0-1 背包不能贪心",
+      "chapter": "06",
+      "chapterTitle": "算法设计策略",
+      "url": "chapters/06-algorithm-design.html#624-贪心的陷阱0-1-背包不能贪心",
+      "body": ""
+    },
+    {
+      "id": "06-algorithm-design-625-贪心-vs-动态规划",
+      "title": "6.2.5 贪心 vs 动态规划",
+      "chapter": "06",
+      "chapterTitle": "算法设计策略",
+      "url": "chapters/06-algorithm-design.html#625-贪心-vs-动态规划",
+      "body": ""
+    },
+    {
+      "id": "06-algorithm-design-63-动态规划dynamic-programming-dp",
+      "title": "6.3 动态规划（Dynamic Programming, DP）",
+      "chapter": "06",
+      "chapterTitle": "算法设计策略",
+      "url": "chapters/06-algorithm-design.html#63-动态规划dynamic-programming-dp",
+      "body": ""
+    },
+    {
+      "id": "06-algorithm-design-631-核心思想",
+      "title": "6.3.1 核心思想",
+      "chapter": "06",
+      "chapterTitle": "算法设计策略",
+      "url": "chapters/06-algorithm-design.html#631-核心思想",
+      "body": ""
+    },
+    {
+      "id": "06-algorithm-design-632-适用的两个条件重点",
+      "title": "6.3.2 适用的两个条件（重点）",
+      "chapter": "06",
+      "chapterTitle": "算法设计策略",
+      "url": "chapters/06-algorithm-design.html#632-适用的两个条件重点",
+      "body": ""
+    },
+    {
+      "id": "06-algorithm-design-633-解题套路四步",
+      "title": "6.3.3 解题套路（四步）",
+      "chapter": "06",
+      "chapterTitle": "算法设计策略",
+      "url": "chapters/06-algorithm-design.html#633-解题套路四步",
+      "body": ""
+    },
+    {
+      "id": "06-algorithm-design-634-例子一斐波那契理解重叠子问题记忆",
+      "title": "6.3.4 例子一：斐波那契（理解「重叠子问题+记忆」）",
+      "chapter": "06",
+      "chapterTitle": "算法设计策略",
+      "url": "chapters/06-algorithm-design.html#634-例子一斐波那契理解重叠子问题记忆",
+      "body": ""
+    },
+    {
+      "id": "06-algorithm-design-635-例子二0-1-背包必考带数字推导",
+      "title": "6.3.5 例子二：0-1 背包（必考，带数字推导）",
+      "chapter": "06",
+      "chapterTitle": "算法设计策略",
+      "url": "chapters/06-algorithm-design.html#635-例子二0-1-背包必考带数字推导",
+      "body": ""
+    },
+    {
+      "id": "06-algorithm-design-636-例子三最长公共子序列-lcs常考",
+      "title": "6.3.6 例子三：最长公共子序列 LCS（常考）",
+      "chapter": "06",
+      "chapterTitle": "算法设计策略",
+      "url": "chapters/06-algorithm-design.html#636-例子三最长公共子序列-lcs常考",
+      "body": ""
+    },
+    {
+      "id": "06-algorithm-design-637-其它经典-dp",
+      "title": "6.3.7 其它经典 DP",
+      "chapter": "06",
+      "chapterTitle": "算法设计策略",
+      "url": "chapters/06-algorithm-design.html#637-其它经典-dp",
+      "body": ""
+    },
+    {
+      "id": "06-algorithm-design-638-分治-vs-动态规划必考辨析",
+      "title": "6.3.8 分治 vs 动态规划（必考辨析）",
+      "chapter": "06",
+      "chapterTitle": "算法设计策略",
+      "url": "chapters/06-algorithm-design.html#638-分治-vs-动态规划必考辨析",
+      "body": ""
+    },
+    {
+      "id": "06-algorithm-design-64-回溯法backtracking",
+      "title": "6.4 回溯法（Backtracking）",
+      "chapter": "06",
+      "chapterTitle": "算法设计策略",
+      "url": "chapters/06-algorithm-design.html#64-回溯法backtracking",
+      "body": ""
+    },
+    {
+      "id": "06-algorithm-design-641-核心思想",
+      "title": "6.4.1 核心思想",
+      "chapter": "06",
+      "chapterTitle": "算法设计策略",
+      "url": "chapters/06-algorithm-design.html#641-核心思想",
+      "body": ""
+    },
+    {
+      "id": "06-algorithm-design-642-通用框架",
+      "title": "6.4.2 通用框架",
+      "chapter": "06",
+      "chapterTitle": "算法设计策略",
+      "url": "chapters/06-algorithm-design.html#642-通用框架",
+      "body": ""
+    },
+    {
+      "id": "06-algorithm-design-643-经典例子n-皇后完整推演",
+      "title": "6.4.3 经典例子：N 皇后完整推演",
+      "chapter": "06",
+      "chapterTitle": "算法设计策略",
+      "url": "chapters/06-algorithm-design.html#643-经典例子n-皇后完整推演",
+      "body": ""
+    },
+    {
+      "id": "06-algorithm-design-644-其它经典例子与考点",
+      "title": "6.4.4 其它经典例子与考点",
+      "chapter": "06",
+      "chapterTitle": "算法设计策略",
+      "url": "chapters/06-algorithm-design.html#644-其它经典例子与考点",
+      "body": ""
+    },
+    {
+      "id": "06-algorithm-design-65-分支限界法了解按大纲",
+      "title": "6.5 分支限界法（了解，按大纲）",
+      "chapter": "06",
+      "chapterTitle": "算法设计策略",
+      "url": "chapters/06-algorithm-design.html#65-分支限界法了解按大纲",
+      "body": ""
+    },
+    {
+      "id": "06-algorithm-design-66-四大策略对比总览高频辨析",
+      "title": "6.6 四大策略对比总览（高频辨析）",
+      "chapter": "06",
+      "chapterTitle": "算法设计策略",
+      "url": "chapters/06-algorithm-design.html#66-四大策略对比总览高频辨析",
+      "body": ""
+    },
+    {
+      "id": "06-algorithm-design-67-算法策略自测",
+      "title": "6.7 算法策略自测",
+      "chapter": "06",
+      "chapterTitle": "算法设计策略",
+      "url": "chapters/06-algorithm-design.html#67-算法策略自测",
+      "body": ""
+    },
+    {
+      "id": "06-algorithm-design-68-本段总自测清单",
+      "title": "6.8 本段总自测清单",
+      "chapter": "06",
+      "chapterTitle": "算法设计策略",
+      "url": "chapters/06-algorithm-design.html#68-本段总自测清单",
+      "body": ""
+    },
+    {
+      "id": "06-algorithm-design-69-全课总览九章一张图",
+      "title": "6.9 全课总览：九章一张图",
+      "chapter": "06",
+      "chapterTitle": "算法设计策略",
+      "url": "chapters/06-algorithm-design.html#69-全课总览九章一张图",
+      "body": ""
+    },
+    {
+      "id": "07-practice-cheatsheet",
+      "title": "手算专项与考前速查",
+      "chapter": "07",
+      "chapterTitle": "手算专项与考前速查",
+      "url": "chapters/07-practice-cheatsheet.html",
+      "body": "\n  这本练习册专攻「机械送分题」——KMP、还原树、BST/AVL、哈夫曼、Dijkstra、哈希 ASL、排序模拟、DP 表。这些题  会就一定全对、不会就丢大块  ，靠的是手熟，不是灵感。\n \n    用法  ：每题先  盖住「详解」自己动手做  （一定要动笔，不要光看），做完再对答案。错了别只改答案，要回去看错在哪一步。每类至少独立做对 2 题，才算过关。\n\n   \n\n   7.1 时间复杂度分析\n\n    7.1.1 题 1.1\n写出下列代码段的时间复杂度：\n   c\n a  for i=0;i<n;i++  for j=0;j<n;j++  x++;\n b  for i=0;i<n;i++  for j=0;j<i;j++  x++;\n c  i=1; while i<n  i=i 2;\n d  for i=0;i<n;i++  for j=1;j<n;j=j 2  x++;\n   \n\n  详解  ：\n   a  外 n 次、内 n 次 →   O n²   。\n   b  内层执行 0+1+2+...+ n−1  = n n−1 /2 次 →   O n²   。（虽然是「半个三角」，但仍是平方级，系数 1/2 被忽略）\n   c  i 翻倍：1,2,4,...,n，翻 log₂n 次 →   O log n   。\n   d  外 n 次，内层 j 翻倍是 log n 次 → n × log n =   O n log n   。\n\n    7.1.2 题 1.2\n T n  = 100n² + 50000n + 9999 ，写出大 O，并说明 n 多大时 n² 项才「占主导」。\n\n  详解  ：  O n²   （只保留最高阶、去系数）。当 n 较大时 100n² 压倒 50000n——令 100n²   50000n 得 n   500，即 n 超过约 500 后二次项主导。  这说明大 O 描述的是「足够大的 n」时的趋势，小 n 时系数和低阶项可能更重要  ，但分析复杂度只看趋势。\n\n    7.1.3 题 1.3\n顺序查找长度为 n 的表，写出成功查找的最好、最坏、平均比较次数。\n\n  详解  ：最好   1  （第一个就是）；最坏   n  （最后一个或不存在）；平均（等概率）=  1+2+...+n /n =    n+1 /2  。三者数量级：最好 O 1 、最坏与平均都是 O n 。\n\n   \n\n   7.2 KMP 求 next 数组\n\n  约定：next j  = 模式串 P 0..j−1  这段的「最长相等前后缀」的长度，next 0  = −1（哨兵）。  不同教材定义略有差异  （有的从 1 计、有的用 nextval），但「最长相等前后缀」这个本质不变。下面用这个常见定义。\n\n    7.2.1 题 2.1\n求 P =  a b a b c  的 next 数组。\n\n  详解  ：逐位算 P 0..j−1  的最长相等前后缀长度。\n\n  j   P j    考察的前缀 P 0..j 1    最长相等前后缀   next j   \n                     \n  0   a   （空）   —   −1（约定） \n  1   b   \"a\"   单字符，无   0  \n  2   a   \"ab\"   无相等前后缀   0  \n  3   b   \"aba\"   前缀\"a\"=后缀\"a\"，长 1   1  \n  4   c   \"abab\"   前缀\"ab\"=后缀\"ab\"，长 2   2  \n\n  next =  −1, 0, 0, 1, 2   。\n\n    7.2.2 题 2.2\n求 P =  a a a a b  的 next 数组。\n\n  详解  ：\n\n  j   P 0..j 1    最长相等前后缀   next j   \n                 \n  0   （空）   —   −1  \n  1   \"a\"   无   0  \n  2   \"aa\"   \"a\"，长 1   1  \n  3   \"aaa\"   \"aa\"，长 2   2  \n  4   \"aaaa\"   \"aaa\"，长 3   3  \n\n  next =  −1, 0, 1, 2, 3   。（全相同字符时 next 递增，体现「失配能往前借很多」）\n\n    7.2.3 题 2.3\n求 P =  a b a a b c a c  的 next 数组。\n\n  详解  ：\n\n  j   P 0..j 1    最长相等前后缀   next j   \n                 \n  0   （空）   —   −1  \n  1   \"a\"   无   0  \n  2   \"a"
+    },
+    {
+      "id": "07-practice-cheatsheet-71-时间复杂度分析",
+      "title": "7.1 时间复杂度分析",
+      "chapter": "07",
+      "chapterTitle": "手算专项与考前速查",
+      "url": "chapters/07-practice-cheatsheet.html#71-时间复杂度分析",
+      "body": ""
+    },
+    {
+      "id": "07-practice-cheatsheet-711-题-11",
+      "title": "7.1.1 题 1.1",
+      "chapter": "07",
+      "chapterTitle": "手算专项与考前速查",
+      "url": "chapters/07-practice-cheatsheet.html#711-题-11",
+      "body": ""
+    },
+    {
+      "id": "07-practice-cheatsheet-712-题-12",
+      "title": "7.1.2 题 1.2",
+      "chapter": "07",
+      "chapterTitle": "手算专项与考前速查",
+      "url": "chapters/07-practice-cheatsheet.html#712-题-12",
+      "body": ""
+    },
+    {
+      "id": "07-practice-cheatsheet-713-题-13",
+      "title": "7.1.3 题 1.3",
+      "chapter": "07",
+      "chapterTitle": "手算专项与考前速查",
+      "url": "chapters/07-practice-cheatsheet.html#713-题-13",
+      "body": ""
+    },
+    {
+      "id": "07-practice-cheatsheet-72-kmp-求-next-数组",
+      "title": "7.2 KMP 求 next 数组",
+      "chapter": "07",
+      "chapterTitle": "手算专项与考前速查",
+      "url": "chapters/07-practice-cheatsheet.html#72-kmp-求-next-数组",
+      "body": ""
+    },
+    {
+      "id": "07-practice-cheatsheet-721-题-21",
+      "title": "7.2.1 题 2.1",
+      "chapter": "07",
+      "chapterTitle": "手算专项与考前速查",
+      "url": "chapters/07-practice-cheatsheet.html#721-题-21",
+      "body": ""
+    },
+    {
+      "id": "07-practice-cheatsheet-722-题-22",
+      "title": "7.2.2 题 2.2",
+      "chapter": "07",
+      "chapterTitle": "手算专项与考前速查",
+      "url": "chapters/07-practice-cheatsheet.html#722-题-22",
+      "body": ""
+    },
+    {
+      "id": "07-practice-cheatsheet-723-题-23",
+      "title": "7.2.3 题 2.3",
+      "chapter": "07",
+      "chapterTitle": "手算专项与考前速查",
+      "url": "chapters/07-practice-cheatsheet.html#723-题-23",
+      "body": ""
+    },
+    {
+      "id": "07-practice-cheatsheet-73-二叉树性质计算",
+      "title": "7.3 二叉树性质计算",
+      "chapter": "07",
+      "chapterTitle": "手算专项与考前速查",
+      "url": "chapters/07-practice-cheatsheet.html#73-二叉树性质计算",
+      "body": ""
+    },
+    {
+      "id": "07-practice-cheatsheet-731-题-31",
+      "title": "7.3.1 题 3.1",
+      "chapter": "07",
+      "chapterTitle": "手算专项与考前速查",
+      "url": "chapters/07-practice-cheatsheet.html#731-题-31",
+      "body": ""
+    },
+    {
+      "id": "07-practice-cheatsheet-732-题-32",
+      "title": "7.3.2 题 3.2",
+      "chapter": "07",
+      "chapterTitle": "手算专项与考前速查",
+      "url": "chapters/07-practice-cheatsheet.html#732-题-32",
+      "body": ""
+    },
+    {
+      "id": "07-practice-cheatsheet-733-题-33",
+      "title": "7.3.3 题 3.3",
+      "chapter": "07",
+      "chapterTitle": "手算专项与考前速查",
+      "url": "chapters/07-practice-cheatsheet.html#733-题-33",
+      "body": ""
+    },
+    {
+      "id": "07-practice-cheatsheet-74-遍历与还原",
+      "title": "7.4 遍历与还原",
+      "chapter": "07",
+      "chapterTitle": "手算专项与考前速查",
+      "url": "chapters/07-practice-cheatsheet.html#74-遍历与还原",
+      "body": ""
+    },
+    {
+      "id": "07-practice-cheatsheet-741-题-41",
+      "title": "7.4.1 题 4.1",
+      "chapter": "07",
+      "chapterTitle": "手算专项与考前速查",
+      "url": "chapters/07-practice-cheatsheet.html#741-题-41",
+      "body": ""
+    },
+    {
+      "id": "07-practice-cheatsheet-742-题-42",
+      "title": "7.4.2 题 4.2",
+      "chapter": "07",
+      "chapterTitle": "手算专项与考前速查",
+      "url": "chapters/07-practice-cheatsheet.html#742-题-42",
+      "body": ""
+    },
+    {
+      "id": "07-practice-cheatsheet-743-题-43",
+      "title": "7.4.3 题 4.3",
+      "chapter": "07",
+      "chapterTitle": "手算专项与考前速查",
+      "url": "chapters/07-practice-cheatsheet.html#743-题-43",
+      "body": ""
+    },
+    {
+      "id": "07-practice-cheatsheet-75-二叉搜索树-bst",
+      "title": "7.5 二叉搜索树 BST",
+      "chapter": "07",
+      "chapterTitle": "手算专项与考前速查",
+      "url": "chapters/07-practice-cheatsheet.html#75-二叉搜索树-bst",
+      "body": ""
+    },
+    {
+      "id": "07-practice-cheatsheet-751-题-51",
+      "title": "7.5.1 题 5.1",
+      "chapter": "07",
+      "chapterTitle": "手算专项与考前速查",
+      "url": "chapters/07-practice-cheatsheet.html#751-题-51",
+      "body": ""
+    },
+    {
+      "id": "07-practice-cheatsheet-752-题-52",
+      "title": "7.5.2 题 5.2",
+      "chapter": "07",
+      "chapterTitle": "手算专项与考前速查",
+      "url": "chapters/07-practice-cheatsheet.html#752-题-52",
+      "body": ""
+    },
+    {
+      "id": "07-practice-cheatsheet-76-avl-平衡二叉树",
+      "title": "7.6 AVL 平衡二叉树",
+      "chapter": "07",
+      "chapterTitle": "手算专项与考前速查",
+      "url": "chapters/07-practice-cheatsheet.html#76-avl-平衡二叉树",
+      "body": ""
+    },
+    {
+      "id": "07-practice-cheatsheet-761-题-61",
+      "title": "7.6.1 题 6.1",
+      "chapter": "07",
+      "chapterTitle": "手算专项与考前速查",
+      "url": "chapters/07-practice-cheatsheet.html#761-题-61",
+      "body": ""
+    },
+    {
+      "id": "07-practice-cheatsheet-762-题-62",
+      "title": "7.6.2 题 6.2",
+      "chapter": "07",
+      "chapterTitle": "手算专项与考前速查",
+      "url": "chapters/07-practice-cheatsheet.html#762-题-62",
+      "body": ""
+    },
+    {
+      "id": "07-practice-cheatsheet-77-哈夫曼树-wpl-编码",
+      "title": "7.7 哈夫曼树 + WPL + 编码",
+      "chapter": "07",
+      "chapterTitle": "手算专项与考前速查",
+      "url": "chapters/07-practice-cheatsheet.html#77-哈夫曼树-wpl-编码",
+      "body": ""
+    },
+    {
+      "id": "07-practice-cheatsheet-771-题-71",
+      "title": "7.7.1 题 7.1",
+      "chapter": "07",
+      "chapterTitle": "手算专项与考前速查",
+      "url": "chapters/07-practice-cheatsheet.html#771-题-71",
+      "body": ""
+    },
+    {
+      "id": "07-practice-cheatsheet-772-题-72",
+      "title": "7.7.2 题 7.2",
+      "chapter": "07",
+      "chapterTitle": "手算专项与考前速查",
+      "url": "chapters/07-practice-cheatsheet.html#772-题-72",
+      "body": ""
+    },
+    {
+      "id": "07-practice-cheatsheet-78-图算法dfsbfsmstdijkstra拓扑",
+      "title": "7.8 图算法（DFS/BFS、MST、Dijkstra、拓扑）",
+      "chapter": "07",
+      "chapterTitle": "手算专项与考前速查",
+      "url": "chapters/07-practice-cheatsheet.html#78-图算法dfsbfsmstdijkstra拓扑",
+      "body": ""
+    },
+    {
+      "id": "07-practice-cheatsheet-781-题-81dfsbfs-序列",
+      "title": "7.8.1 题 8.1（DFS/BFS 序列）",
+      "chapter": "07",
+      "chapterTitle": "手算专项与考前速查",
+      "url": "chapters/07-practice-cheatsheet.html#781-题-81dfsbfs-序列",
+      "body": ""
+    },
+    {
+      "id": "07-practice-cheatsheet-782-题-82kruskal",
+      "title": "7.8.2 题 8.2（Kruskal）",
+      "chapter": "07",
+      "chapterTitle": "手算专项与考前速查",
+      "url": "chapters/07-practice-cheatsheet.html#782-题-82kruskal",
+      "body": ""
+    },
+    {
+      "id": "07-practice-cheatsheet-783-题-83dijkstra-填表",
+      "title": "7.8.3 题 8.3（Dijkstra 填表）",
+      "chapter": "07",
+      "chapterTitle": "手算专项与考前速查",
+      "url": "chapters/07-practice-cheatsheet.html#783-题-83dijkstra-填表",
+      "body": ""
+    },
+    {
+      "id": "07-practice-cheatsheet-784-题-84拓扑排序",
+      "title": "7.8.4 题 8.4（拓扑排序）",
+      "chapter": "07",
+      "chapterTitle": "手算专项与考前速查",
+      "url": "chapters/07-practice-cheatsheet.html#784-题-84拓扑排序",
+      "body": ""
+    },
+    {
+      "id": "07-practice-cheatsheet-79-二分查找判定树-asl",
+      "title": "7.9 二分查找判定树 + ASL",
+      "chapter": "07",
+      "chapterTitle": "手算专项与考前速查",
+      "url": "chapters/07-practice-cheatsheet.html#79-二分查找判定树-asl",
+      "body": ""
+    },
+    {
+      "id": "07-practice-cheatsheet-791-题-91",
+      "title": "7.9.1 题 9.1",
+      "chapter": "07",
+      "chapterTitle": "手算专项与考前速查",
+      "url": "chapters/07-practice-cheatsheet.html#791-题-91",
+      "body": ""
+    },
+    {
+      "id": "07-practice-cheatsheet-792-题-92",
+      "title": "7.9.2 题 9.2",
+      "chapter": "07",
+      "chapterTitle": "手算专项与考前速查",
+      "url": "chapters/07-practice-cheatsheet.html#792-题-92",
+      "body": ""
+    },
+    {
+      "id": "07-practice-cheatsheet-710-哈希表-asl两种冲突处理",
+      "title": "7.10 哈希表 ASL（两种冲突处理）",
+      "chapter": "07",
+      "chapterTitle": "手算专项与考前速查",
+      "url": "chapters/07-practice-cheatsheet.html#710-哈希表-asl两种冲突处理",
+      "body": ""
+    },
+    {
+      "id": "07-practice-cheatsheet-7101-题-101线性探测",
+      "title": "7.10.1 题 10.1（线性探测）",
+      "chapter": "07",
+      "chapterTitle": "手算专项与考前速查",
+      "url": "chapters/07-practice-cheatsheet.html#7101-题-101线性探测",
+      "body": ""
+    },
+    {
+      "id": "07-practice-cheatsheet-7102-题-102拉链法",
+      "title": "7.10.2 题 10.2（拉链法）",
+      "chapter": "07",
+      "chapterTitle": "手算专项与考前速查",
+      "url": "chapters/07-practice-cheatsheet.html#7102-题-102拉链法",
+      "body": ""
+    },
+    {
+      "id": "07-practice-cheatsheet-711-排序过程模拟",
+      "title": "7.11 排序过程模拟",
+      "chapter": "07",
+      "chapterTitle": "手算专项与考前速查",
+      "url": "chapters/07-practice-cheatsheet.html#711-排序过程模拟",
+      "body": ""
+    },
+    {
+      "id": "07-practice-cheatsheet-7111-题-111直接插入写每趟",
+      "title": "7.11.1 题 11.1（直接插入，写每趟）",
+      "chapter": "07",
+      "chapterTitle": "手算专项与考前速查",
+      "url": "chapters/07-practice-cheatsheet.html#7111-题-111直接插入写每趟",
+      "body": ""
+    },
+    {
+      "id": "07-practice-cheatsheet-7112-题-112冒泡写每趟大数往后冒",
+      "title": "7.11.2 题 11.2（冒泡，写每趟，大数往后冒）",
+      "chapter": "07",
+      "chapterTitle": "手算专项与考前速查",
+      "url": "chapters/07-practice-cheatsheet.html#7112-题-112冒泡写每趟大数往后冒",
+      "body": ""
+    },
+    {
+      "id": "07-practice-cheatsheet-7113-题-113快速排序写第一趟-partition基准首元素-49",
+      "title": "7.11.3 题 11.3（快速排序，写第一趟 partition，基准=首元素 49）",
+      "chapter": "07",
+      "chapterTitle": "手算专项与考前速查",
+      "url": "chapters/07-practice-cheatsheet.html#7113-题-113快速排序写第一趟-partition基准首元素-49",
+      "body": ""
+    },
+    {
+      "id": "07-practice-cheatsheet-7114-题-114希尔排序增量-531",
+      "title": "7.11.4 题 11.4（希尔排序，增量 5,3,1）",
+      "chapter": "07",
+      "chapterTitle": "手算专项与考前速查",
+      "url": "chapters/07-practice-cheatsheet.html#7114-题-114希尔排序增量-531",
+      "body": ""
+    },
+    {
+      "id": "07-practice-cheatsheet-7115-题-115堆排序建大顶堆",
+      "title": "7.11.5 题 11.5（堆排序，建大顶堆）",
+      "chapter": "07",
+      "chapterTitle": "手算专项与考前速查",
+      "url": "chapters/07-practice-cheatsheet.html#7115-题-115堆排序建大顶堆",
+      "body": ""
+    },
+    {
+      "id": "07-practice-cheatsheet-7116-题-116归并写每趟",
+      "title": "7.11.6 题 11.6（归并，写每趟）",
+      "chapter": "07",
+      "chapterTitle": "手算专项与考前速查",
+      "url": "chapters/07-practice-cheatsheet.html#7116-题-116归并写每趟",
+      "body": ""
+    },
+    {
+      "id": "07-practice-cheatsheet-712-动态规划0-1-背包",
+      "title": "7.12 动态规划（0-1 背包）",
+      "chapter": "07",
+      "chapterTitle": "手算专项与考前速查",
+      "url": "chapters/07-practice-cheatsheet.html#712-动态规划0-1-背包",
+      "body": ""
+    },
+    {
+      "id": "07-practice-cheatsheet-7121-题-121",
+      "title": "7.12.1 题 12.1",
+      "chapter": "07",
+      "chapterTitle": "手算专项与考前速查",
+      "url": "chapters/07-practice-cheatsheet.html#7121-题-121",
+      "body": ""
+    },
+    {
+      "id": "07-practice-cheatsheet-713-过关自检",
+      "title": "7.13 过关自检",
+      "chapter": "07",
+      "chapterTitle": "手算专项与考前速查",
+      "url": "chapters/07-practice-cheatsheet.html#713-过关自检",
+      "body": ""
+    },
+    {
+      "id": "07-practice-cheatsheet-714-复杂度",
+      "title": "7.14 复杂度",
+      "chapter": "07",
+      "chapterTitle": "手算专项与考前速查",
+      "url": "chapters/07-practice-cheatsheet.html#714-复杂度",
+      "body": ""
+    },
+    {
+      "id": "07-practice-cheatsheet-715-线性结构",
+      "title": "7.15 线性结构",
+      "chapter": "07",
+      "chapterTitle": "手算专项与考前速查",
+      "url": "chapters/07-practice-cheatsheet.html#715-线性结构",
+      "body": ""
+    },
+    {
+      "id": "07-practice-cheatsheet-716-串-kmp",
+      "title": "7.16 串 · KMP",
+      "chapter": "07",
+      "chapterTitle": "手算专项与考前速查",
+      "url": "chapters/07-practice-cheatsheet.html#716-串-kmp",
+      "body": ""
+    },
+    {
+      "id": "07-practice-cheatsheet-717-二叉树性质必背",
+      "title": "7.17 二叉树性质（必背）",
+      "chapter": "07",
+      "chapterTitle": "手算专项与考前速查",
+      "url": "chapters/07-practice-cheatsheet.html#717-二叉树性质必背",
+      "body": ""
+    },
+    {
+      "id": "07-practice-cheatsheet-718-树表-平衡",
+      "title": "7.18 树表 · 平衡",
+      "chapter": "07",
+      "chapterTitle": "手算专项与考前速查",
+      "url": "chapters/07-practice-cheatsheet.html#718-树表-平衡",
+      "body": ""
+    },
+    {
+      "id": "07-practice-cheatsheet-719-图",
+      "title": "7.19 图",
+      "chapter": "07",
+      "chapterTitle": "手算专项与考前速查",
+      "url": "chapters/07-practice-cheatsheet.html#719-图",
+      "body": ""
+    },
+    {
+      "id": "07-practice-cheatsheet-720-查找",
+      "title": "7.20 查找",
+      "chapter": "07",
+      "chapterTitle": "手算专项与考前速查",
+      "url": "chapters/07-practice-cheatsheet.html#720-查找",
+      "body": ""
+    },
+    {
+      "id": "07-practice-cheatsheet-721-排序总表背死",
+      "title": "7.21 排序总表（背死）",
+      "chapter": "07",
+      "chapterTitle": "手算专项与考前速查",
+      "url": "chapters/07-practice-cheatsheet.html#721-排序总表背死",
+      "body": ""
+    },
+    {
+      "id": "07-practice-cheatsheet-722-算法设计策略",
+      "title": "7.22 算法设计策略",
+      "chapter": "07",
+      "chapterTitle": "手算专项与考前速查",
+      "url": "chapters/07-practice-cheatsheet.html#722-算法设计策略",
+      "body": ""
+    },
+    {
+      "id": "07-practice-cheatsheet-723-全课一句话灵魂",
+      "title": "7.23 全课一句话灵魂",
+      "chapter": "07",
+      "chapterTitle": "手算专项与考前速查",
+      "url": "chapters/07-practice-cheatsheet.html#723-全课一句话灵魂",
+      "body": ""
+    },
+    {
+      "id": "08-appendix-code",
+      "title": "附录：核心代码合订",
+      "chapter": "08",
+      "chapterTitle": "附录：核心代码合订",
+      "url": "chapters/08-appendix-code.html",
+      "body": "\n这一章是全书所有核心结构的   C 代码合订  ，每一段都按「定义 + 核心操作 + 一个  test xxx    测试」的方式组织，  可以直接复制到一个  .c  文件里编译运行  。\n\n   bash\ngcc 核心代码合订.c  o ds && ./ds\n   \n\n学习建议始终是同一句：  先盖住实现，自己照前面章节的讲义敲一遍，再回来和这里对照。   代码能默写出来，才算真正掌握。\n\n   8.1 公共头与工具函数\n\n所有模块共用的头文件、元素类型别名和一个打印数组的小工具。后面每段代码都默认它已经在文件顶部。\n\n   c\n include <stdio.h \n include <stdlib.h \n include <string.h \n\ntypedef int ElemType;\n\n/  工具: 打印整型数组  /\nvoid printArr int a  , int n   \n    for  int i = 0; i < n; i++  printf \"%d \", a i  ;\n    printf \"\\n\" ;\n \n   \n\n   8.2 顺序表 SqList\n\n定长数组 +  length  计数。插入要  从后往前  挪，删除要  从前往后  挪，平均移动约一半元素，所以增删是 O n 、随机访问是 O 1 。\n\n   c\n define MAXSIZE 100\ntypedef struct  \n    ElemType data MAXSIZE ;\n    int length;\n  SqList;\n\nvoid SqList init SqList  L    L  length = 0;  \n\n/  在第 i 个位置 1..length+1 插入 e  /\nint SqList insert SqList  L, int i, ElemType e   \n    if  i < 1    i   L  length + 1  return 0;\n    if  L  length  = MAXSIZE  return 0;\n    for  int j = L  length   1; j  = i   1; j     /  从后往前挪  /\n        L  data j + 1  = L  data j ;\n    L  data i   1  = e;\n    L  length++;\n    return 1;\n \n\n/  删除第 i 个元素, 值带回  e  /\nint SqList delete SqList  L, int i, ElemType  e   \n    if  i < 1    i   L  length  return 0;\n     e = L  data i   1 ;\n    for  int j = i; j < L  length; j++             /  从前往后挪  /\n        L  data j   1  = L  data j ;\n    L  length  ;\n    return 1;\n \n\nvoid test SqList void   \n    printf \"=== 1. 顺序表 ===\\n\" ;\n    SqList L; SqList init &L ;\n    for  int i = 1; i <= 5; i++  SqList insert &L, i, i   10 ; /  10 20 30 40 50  /\n    printf \"初始: \" ; printArr L.data, L.length ;\n    SqList insert &L, 3, 99 ;  printf \"在第3位插99: \" ; printArr L.data, L.length ;\n    ElemType e;\n    SqList delete &L, 1, &e ;  printf \"删第1个 %d后 : \", e ; printArr L.data, L.length ;\n    printf \"\\n\" ;\n \n   \n\n   8.3 单链表 LinkList（带头结点）\n\n带头结点能让插入/删除「首元结点」和插入/删除「中间结点」写成同一套代码。注意两个命门：插入是  先接后断  ，删除要  记得  free   。反转用三指针滚动。\n\n   c\ntypedef struct LNode  \n    ElemType data;\n    struct LNode  next;\n  LNode,  LinkList;\n\nLinkList List initHead void                   "
+    },
+    {
+      "id": "08-appendix-code-81-公共头与工具函数",
+      "title": "8.1 公共头与工具函数",
+      "chapter": "08",
+      "chapterTitle": "附录：核心代码合订",
+      "url": "chapters/08-appendix-code.html#81-公共头与工具函数",
+      "body": ""
+    },
+    {
+      "id": "08-appendix-code-82-顺序表-sqlist",
+      "title": "8.2 顺序表 SqList",
+      "chapter": "08",
+      "chapterTitle": "附录：核心代码合订",
+      "url": "chapters/08-appendix-code.html#82-顺序表-sqlist",
+      "body": ""
+    },
+    {
+      "id": "08-appendix-code-83-单链表-linklist带头结点",
+      "title": "8.3 单链表 LinkList（带头结点）",
+      "chapter": "08",
+      "chapterTitle": "附录：核心代码合订",
+      "url": "chapters/08-appendix-code.html#83-单链表-linklist带头结点",
+      "body": ""
+    },
+    {
+      "id": "08-appendix-code-84-顺序栈-sqstack-括号匹配",
+      "title": "8.4 顺序栈 SqStack + 括号匹配",
+      "chapter": "08",
+      "chapterTitle": "附录：核心代码合订",
+      "url": "chapters/08-appendix-code.html#84-顺序栈-sqstack-括号匹配",
+      "body": ""
+    },
+    {
+      "id": "08-appendix-code-85-循环队列-sqqueue",
+      "title": "8.5 循环队列 SqQueue",
+      "chapter": "08",
+      "chapterTitle": "附录：核心代码合订",
+      "url": "chapters/08-appendix-code.html#85-循环队列-sqqueue",
+      "body": ""
+    },
+    {
+      "id": "08-appendix-code-86-二叉树-bitree-四种遍历",
+      "title": "8.6 二叉树 BiTree + 四种遍历",
+      "chapter": "08",
+      "chapterTitle": "附录：核心代码合订",
+      "url": "chapters/08-appendix-code.html#86-二叉树-bitree-四种遍历",
+      "body": ""
+    },
+    {
+      "id": "08-appendix-code-87-二叉搜索树-bst",
+      "title": "8.7 二叉搜索树 BST",
+      "chapter": "08",
+      "chapterTitle": "附录：核心代码合订",
+      "url": "chapters/08-appendix-code.html#87-二叉搜索树-bst",
+      "body": ""
+    },
+    {
+      "id": "08-appendix-code-88-kmp-字符串匹配",
+      "title": "8.8 KMP 字符串匹配",
+      "chapter": "08",
+      "chapterTitle": "附录：核心代码合订",
+      "url": "chapters/08-appendix-code.html#88-kmp-字符串匹配",
+      "body": ""
+    },
+    {
+      "id": "08-appendix-code-89-七大排序",
+      "title": "8.9 七大排序",
+      "chapter": "08",
+      "chapterTitle": "附录：核心代码合订",
+      "url": "chapters/08-appendix-code.html#89-七大排序",
+      "body": ""
+    },
+    {
+      "id": "08-appendix-code-810-主函数把所有-test-串起来",
+      "title": "8.10 主函数：把所有 test 串起来",
+      "chapter": "08",
+      "chapterTitle": "附录：核心代码合订",
+      "url": "chapters/08-appendix-code.html#810-主函数把所有-test-串起来",
+      "body": ""
+    },
+    {
+      "id": "09-review",
+      "title": "附录：考前复盘笔记",
+      "chapter": "09",
+      "chapterTitle": "附录：考前复盘笔记",
+      "url": "chapters/09-review.html",
+      "body": "\n这一章是我  考前最后一晚自己手写的复盘笔记  ，口吻随意、密度很高——先把八章知识点按章快速过一遍，再记下刷题时反复踩的易错点，然后是几段「不能调库时得默写出来」的算法模板，最后一套带答案的模拟题自测。和前面正文的系统讲解相比，这里更像「考前临门一脚」的速记。\n\n   9.1 知识点回顾（按章速过）\n\n    9.1.1 数据结构基础知识\n\nmalloc是手动在堆上申请分配内存，存活时间是全局的，直到在其他地方free。\n注意malloc直接返回指针。\n\n逻辑结构：集合，线性，树形，图状\n存储结构：顺序（数组），链式（链表指针），索引（目录），散列（哈希表）\n\n时间复杂度 O n \n空间复杂度，如果原地就是O 1 ，额外开了一个一样大的则是O n \n\n    9.1.2 线性表\n\n一对一线性结构， a₁, a₂, ..., aₙ \n\n顺序表（线性表的顺序实现），即为数组：\n  查找的时间复杂度是O 1 \n  移动，删除的时间复杂度是O n \n\n单链表（线性表的链式实现），即为链表：\n  查找的时间复杂度是O n \n  移动，删除的时间复杂度是O 1 ，注意删除还需要free节点\n\n循环链表：把单链表最后一个节点的 next 由 NULL 改为指向头结点，整条链就首尾相连成一个环。\n\n双链表：存两个指针（next和piror），前后都可以走\n\n    9.1.3 栈与队列\n\n栈：后进先出，一般用数组实现，核心是push, pop, top这三个操作\n应用：括号匹配\n前后缀表达式和中缀表达式的转换（画二叉树，用前中后序遍历）\n后缀表达式求值（用一个栈）：从左到右扫描——遇到操作数就入栈；遇到运算符，就弹出栈顶两个操作数做运算，结果再压回栈。扫描结束栈里剩的唯一一个数就是答案。\n\n队列：先进先出，数组实现则需要“循环队列”，防止假溢出，链表实现则不需要。\n\n\n    9.1.4 串和数组\n\n串，就是字符串，如何匹配字符串是一个核心问题\nKMP算法\n\n稀疏矩阵：\n  三元组：每个非零元素记成一个三元组   行, 列, 值  ，把所有非零元素的三元组存进一个数组\n  十字链表：用链表把每行、每列的非零元素分别串起来\n\n    9.1.5 树与二叉树\n\n看到树，就想到递归\n\n节点的度：有几个孩子\n\n完全二叉树：不需要满，但中间不能有空缺\n\n  叶子节点数 n₀ = 度为 2 的节点数 n₂ + 1，即  n₀ = n₂ + 1   \n\n二叉树怎么存储？完全二叉树可以用数组，一般二叉树用二叉链表（也就是一堆节点用指针连接）\n\n二叉树怎么遍历？\n  DFS：前中后序（递归），注意前/后+中可以还原，前+后不可以\n  BFS：逐层遍历（队列）\n\n线索二叉树：对于很稀疏的二叉树，把空着的指针废物利用，左指针为空就指向该节点的中序前驱，如果右指针为空，就指向中序后继。再加两个ltag和rtag区分（0说明是真实的孩子，1说明是线索），方便遍历。\n\n二叉搜索树/二叉排序树（BST）：左子树 < 根 < 右子树\n查找就是二分查找了，插入也类似，\n删除麻烦点：\n  没有孩子：直接删\n  有一个孩子，顶替上来\n  有两个孩子：用中序前继/后继（左右子树）\n\n平衡二叉树（AVL）：\n防止BST退化，在BST基础上进行的约束\nAVL最小高度N h ？\nN h  = N h 1  + N h 2  + 1        （左子树高 h 1、右子树高 h 2，再加根自己）\n边界：N 0  = 0（空树）, N 1  = 1, N 2  = 2\nAVL失衡处理办法：\n1. 从插入点往上，找到第一个失衡的节点A\n2. 匹配四种类型做响应操作\n\t  LL：右旋，A的左孩子上位，LR挂到A左边\n\t  RR：左旋，A的右孩子上位，RL接到A右边\n\t  LR：先对L左旋，再对A右旋（让LR上位，L还是L，A变成R）\n\t  RL：先对R右旋，再对A左旋（让RL上位，R还是R，A变成L）\n响应本质是让AVL不管怎么插入，始终在满足BST基础下平衡\n\n哈夫曼树：编码最短的构造\n注意每次是从所有里面选两个拼接，包括已有的树，不要一条路走到底。\n编码即左0右1, WPL是编码完之后的总位数\n注意哈夫曼树不一定唯一（相等权值）但WPL一定唯一且最小\n\n堆：一种特殊的完全二叉树，满足节点和孩子之间的大小关系。\n移动删除都是“上浮和下沉”\n\n树转二叉树：左孩子右兄弟\n\n\n    9.1.6 图\n\n怎么存储图？邻接矩阵/邻接表\n邻接矩阵的第i行第j列是 i    j\n无向图的邻接矩阵对称\n邻接多重表：无向图用，只存一次\n\n怎么遍历图？DFS，BFS。\n\n生成树：用最少的边联通所有顶点的方式，在带权图里面，权值最小的生成树就是最小生成树（MST）\n两种算法：\n  Prim：把顶点分成「已在树"
+    },
+    {
+      "id": "09-review-91-知识点回顾按章速过",
+      "title": "9.1 知识点回顾（按章速过）",
+      "chapter": "09",
+      "chapterTitle": "附录：考前复盘笔记",
+      "url": "chapters/09-review.html#91-知识点回顾按章速过",
+      "body": ""
+    },
+    {
+      "id": "09-review-911-数据结构基础知识",
+      "title": "9.1.1 数据结构基础知识",
+      "chapter": "09",
+      "chapterTitle": "附录：考前复盘笔记",
+      "url": "chapters/09-review.html#911-数据结构基础知识",
+      "body": ""
+    },
+    {
+      "id": "09-review-912-线性表",
+      "title": "9.1.2 线性表",
+      "chapter": "09",
+      "chapterTitle": "附录：考前复盘笔记",
+      "url": "chapters/09-review.html#912-线性表",
+      "body": ""
+    },
+    {
+      "id": "09-review-913-栈与队列",
+      "title": "9.1.3 栈与队列",
+      "chapter": "09",
+      "chapterTitle": "附录：考前复盘笔记",
+      "url": "chapters/09-review.html#913-栈与队列",
+      "body": ""
+    },
+    {
+      "id": "09-review-914-串和数组",
+      "title": "9.1.4 串和数组",
+      "chapter": "09",
+      "chapterTitle": "附录：考前复盘笔记",
+      "url": "chapters/09-review.html#914-串和数组",
+      "body": ""
+    },
+    {
+      "id": "09-review-915-树与二叉树",
+      "title": "9.1.5 树与二叉树",
+      "chapter": "09",
+      "chapterTitle": "附录：考前复盘笔记",
+      "url": "chapters/09-review.html#915-树与二叉树",
+      "body": ""
+    },
+    {
+      "id": "09-review-916-图",
+      "title": "9.1.6 图",
+      "chapter": "09",
+      "chapterTitle": "附录：考前复盘笔记",
+      "url": "chapters/09-review.html#916-图",
+      "body": ""
+    },
+    {
+      "id": "09-review-917-查找表",
+      "title": "9.1.7 查找表",
+      "chapter": "09",
+      "chapterTitle": "附录：考前复盘笔记",
+      "url": "chapters/09-review.html#917-查找表",
+      "body": ""
+    },
+    {
+      "id": "09-review-918-排序",
+      "title": "9.1.8 排序",
+      "chapter": "09",
+      "chapterTitle": "附录：考前复盘笔记",
+      "url": "chapters/09-review.html#918-排序",
+      "body": ""
+    },
+    {
+      "id": "09-review-92-刷题小结易错点速记",
+      "title": "9.2 刷题小结（易错点速记）",
+      "chapter": "09",
+      "chapterTitle": "附录：考前复盘笔记",
+      "url": "chapters/09-review.html#92-刷题小结易错点速记",
+      "body": ""
+    },
+    {
+      "id": "09-review-93-考前突击手写算法模板不能调-stl-时手写",
+      "title": "9.3 考前突击：手写算法模板（不能调 STL 时手写）",
+      "chapter": "09",
+      "chapterTitle": "附录：考前复盘笔记",
+      "url": "chapters/09-review.html#93-考前突击手写算法模板不能调-stl-时手写",
+      "body": ""
+    },
+    {
+      "id": "09-review-931-栈数组实现",
+      "title": "9.3.1 栈（数组实现）",
+      "chapter": "09",
+      "chapterTitle": "附录：考前复盘笔记",
+      "url": "chapters/09-review.html#931-栈数组实现",
+      "body": ""
+    },
+    {
+      "id": "09-review-932-循环队列数组实现牺牲一个单元判满",
+      "title": "9.3.2 循环队列（数组实现，牺牲一个单元判满）",
+      "chapter": "09",
+      "chapterTitle": "附录：考前复盘笔记",
+      "url": "chapters/09-review.html#932-循环队列数组实现牺牲一个单元判满",
+      "body": ""
+    },
+    {
+      "id": "09-review-933-快速排序partition-递归",
+      "title": "9.3.3 快速排序（partition + 递归）",
+      "chapter": "09",
+      "chapterTitle": "附录：考前复盘笔记",
+      "url": "chapters/09-review.html#933-快速排序partition-递归",
+      "body": ""
+    },
+    {
+      "id": "09-review-934-归并排序merge-两个有序段",
+      "title": "9.3.4 归并排序（merge 两个有序段）",
+      "chapter": "09",
+      "chapterTitle": "附录：考前复盘笔记",
+      "url": "chapters/09-review.html#934-归并排序merge-两个有序段",
+      "body": ""
+    },
+    {
+      "id": "09-review-935-dijkstra伪代码单源最短路不能有负权边",
+      "title": "9.3.5 Dijkstra（伪代码，单源最短路，不能有负权边）",
+      "chapter": "09",
+      "chapterTitle": "附录：考前复盘笔记",
+      "url": "chapters/09-review.html#935-dijkstra伪代码单源最短路不能有负权边",
+      "body": ""
+    },
+    {
+      "id": "09-review-936-哈希表要点asl-计算",
+      "title": "9.3.6 哈希表要点（ASL 计算）",
+      "chapter": "09",
+      "chapterTitle": "附录：考前复盘笔记",
+      "url": "chapters/09-review.html#936-哈希表要点asl-计算",
+      "body": ""
+    },
+    {
+      "id": "09-review-94-模拟练习题含答案",
+      "title": "9.4 模拟练习题（含答案）",
+      "chapter": "09",
+      "chapterTitle": "附录：考前复盘笔记",
+      "url": "chapters/09-review.html#94-模拟练习题含答案",
+      "body": ""
+    },
+    {
+      "id": "09-review-941-选择-填空复杂度-概念",
+      "title": "9.4.1 选择 / 填空（复杂度 + 概念）",
+      "chapter": "09",
+      "chapterTitle": "附录：考前复盘笔记",
+      "url": "chapters/09-review.html#941-选择-填空复杂度-概念",
+      "body": ""
+    },
+    {
+      "id": "09-review-942-简答",
+      "title": "9.4.2 简答",
+      "chapter": "09",
+      "chapterTitle": "附录：考前复盘笔记",
+      "url": "chapters/09-review.html#942-简答",
+      "body": ""
+    },
+    {
+      "id": "09-review-943-写中间结果",
+      "title": "9.4.3 写中间结果",
+      "chapter": "09",
+      "chapterTitle": "附录：考前复盘笔记",
+      "url": "chapters/09-review.html#943-写中间结果",
+      "body": ""
+    },
+    {
+      "id": "09-review-944-算法实现写代码",
+      "title": "9.4.4 算法实现（写代码）",
+      "chapter": "09",
+      "chapterTitle": "附录：考前复盘笔记",
+      "url": "chapters/09-review.html#944-算法实现写代码",
+      "body": ""
+    },
+    {
+      "id": "09-review-945-算法设计思路型写不出代码就写文字得步骤分",
+      "title": "9.4.5 算法设计（思路型，写不出代码就写文字得步骤分）",
+      "chapter": "09",
+      "chapterTitle": "附录：考前复盘笔记",
+      "url": "chapters/09-review.html#945-算法设计思路型写不出代码就写文字得步骤分",
+      "body": ""
+    }
+  ]
+}

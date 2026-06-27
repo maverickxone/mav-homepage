@@ -225,16 +225,16 @@ function buildChapterPage(book, chapter, chaptersMeta, currentIndex, headings, c
   const searchOverlay = generateSearchOverlay();
 
   return template
-    .replace(/\{\{book_title\}\}/g, book.title)
-    .replace(/\{\{chapter_title\}\}/g, chapter.frontmatter.title || 'Untitled')
-    .replace('{{nav}}', nav)
-    .replace('{{settings_pop}}', settingsPop)
-    .replace('{{sidebar}}', sidebar)
-    .replace('{{chapter_head}}', chapterHead)
-    .replace('{{content}}', contentHtml)
-    .replace('{{pager}}', pager)
-    .replace('{{footer}}', footer)
-    .replace('{{search_overlay}}', searchOverlay);
+    .replace(/\{\{book_title\}\}/g, () => book.title)
+    .replace(/\{\{chapter_title\}\}/g, () => chapter.frontmatter.title || 'Untitled')
+    .replace('{{nav}}', () => nav)
+    .replace('{{settings_pop}}', () => settingsPop)
+    .replace('{{sidebar}}', () => sidebar)
+    .replace('{{chapter_head}}', () => chapterHead)
+    .replace('{{content}}', () => contentHtml)
+    .replace('{{pager}}', () => pager)
+    .replace('{{footer}}', () => footer)
+    .replace('{{search_overlay}}', () => searchOverlay);
 }
 
 /**
@@ -250,14 +250,14 @@ function buildIndexPage(book, chaptersMeta) {
   const searchOverlay = generateSearchOverlay();
 
   return template
-    .replace(/\{\{title\}\}/g, book.title)
-    .replace(/\{\{description\}\}/g, book.description || '')
-    .replace(/\{\{author\}\}/g, book.author || '')
-    .replace('{{nav}}', nav)
-    .replace('{{settings_pop}}', settingsPop)
-    .replace('{{chapters_grid}}', chaptersGrid)
-    .replace('{{footer}}', footer)
-    .replace('{{search_overlay}}', searchOverlay);
+    .replace(/\{\{title\}\}/g, () => book.title)
+    .replace(/\{\{description\}\}/g, () => book.description || '')
+    .replace(/\{\{author\}\}/g, () => book.author || '')
+    .replace('{{nav}}', () => nav)
+    .replace('{{settings_pop}}', () => settingsPop)
+    .replace('{{chapters_grid}}', () => chaptersGrid)
+    .replace('{{footer}}', () => footer)
+    .replace('{{search_overlay}}', () => searchOverlay);
 }
 
 /**

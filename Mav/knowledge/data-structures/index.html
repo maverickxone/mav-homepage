@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>数据结构：从指针到算法</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/style.css">
+<link rel="stylesheet" id="hljs-light" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+<link rel="stylesheet" id="hljs-dark" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" media="not all">
+</head>
+<body>
+
+<div class="progress-bar" id="progress-bar"></div>
+
+<nav class="topnav" id="topnav">
+  <div class="topnav-inner">
+    <a class="brand" href="index.html">数据结构：从指针到算法</a>
+    <div class="nav-links">
+      <a href="chapters/01-intro-and-c.html">01</a>
+      <a href="chapters/02-linear.html">02</a>
+      <a href="chapters/03-tree.html">03</a>
+      <a href="chapters/04-graph.html">04</a>
+      <a href="chapters/05-search-sort.html">05</a>
+      <a href="chapters/06-algorithm-design.html">06</a>
+      <a href="chapters/07-practice-cheatsheet.html">07</a>
+      <a href="chapters/08-appendix-code.html">08</a>
+      <a href="chapters/09-review.html">09</a>
+    </div>
+    <div class="nav-controls">
+      <button class="nav-btn" id="search-btn" aria-label="搜索 (Ctrl+K)">⌘K</button>
+      <button class="nav-btn" id="settings-btn" aria-label="阅读设置">Aa</button>
+      <a class="nav-btn" href="../index.html" aria-label="返回知识库">← 知识库</a>
+      <a class="nav-btn" href="https://github.com/maverickxone/mav-homepage" target="_blank" rel="noopener" aria-label="GitHub" style="padding: 6px 8px;"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg></a>
+    </div>
+  </div>
+</nav>
+<div class="settings-pop" id="settings-pop">
+  <h5>主题</h5>
+  <div class="row">
+    <button class="seg" data-theme-set="light">明亮</button>
+    <button class="seg" data-theme-set="dark">暗色</button>
+  </div>
+  <h5>字号</h5>
+  <div class="row">
+    <button class="seg" data-size-set="s">小</button>
+    <button class="seg" data-size-set="m">中</button>
+    <button class="seg" data-size-set="l">大</button>
+  </div>
+</div>
+
+<main class="cover">
+  <section class="cover-hero">
+    <div class="cover-title-block">
+      <h1>数据结构：从指针到算法</h1>
+    </div>
+    <div class="cover-lede-row">
+      <div>
+        <p class="cover-lede">面向期末与考研的一份数据结构讲义。从 C 语言指针地基讲起，一路过线性表、栈队列、树、图、查找排序到算法设计策略，配手算专项、考前速查与可编译的核心代码合订。</p>
+      </div>
+      <div>
+        <div class="num">Mav</div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="toc-grid">
+      <a class="toc-card" href="chapters/01-intro-and-c.html">
+        <div class="num"><strong>01</strong><span>CH. 01</span></div>
+        <div>
+          <h3>引论与 C 语言基础</h3>
+          <p>数据结构的地基：先夯实 C 的指针、结构体与动态内存，再讲清逻辑结构/存储结构、ADT 与时间空间复杂度分析。</p>
+        </div>
+        <div class="read"><span>开始阅读</span><span>→</span></div>
+      </a>
+      <a class="toc-card" href="chapters/02-linear.html">
+        <div class="num"><strong>02</strong><span>CH. 02</span></div>
+        <div>
+          <h3>线性表、栈、队列与串数组</h3>
+          <p>全部线性结构一网打尽：顺序表与链表、栈与队列（含循环队列）、串与 KMP、数组与压缩存储。</p>
+        </div>
+        <div class="read"><span>开始阅读</span><span>→</span></div>
+      </a>
+      <a class="toc-card" href="chapters/03-tree.html">
+        <div class="num"><strong>03</strong><span>CH. 03</span></div>
+        <div>
+          <h3>树与二叉树</h3>
+          <p>全课最大重头之一：二叉树性质与遍历、线索二叉树、树与森林、哈夫曼树与并查集。</p>
+        </div>
+        <div class="read"><span>开始阅读</span><span>→</span></div>
+      </a>
+      <a class="toc-card" href="chapters/04-graph.html">
+        <div class="num"><strong>04</strong><span>CH. 04</span></div>
+        <div>
+          <h3>图</h3>
+          <p>图的存储与遍历（DFS/BFS）、最小生成树、最短路径、拓扑排序与关键路径。</p>
+        </div>
+        <div class="read"><span>开始阅读</span><span>→</span></div>
+      </a>
+      <a class="toc-card" href="chapters/05-search-sort.html">
+        <div class="num"><strong>05</strong><span>CH. 05</span></div>
+        <div>
+          <h3>查找与排序</h3>
+          <p>查找表（顺序/折半/分块、BST/AVL/B 树、哈希）与七大内部排序的思想、复杂度与稳定性。</p>
+        </div>
+        <div class="read"><span>开始阅读</span><span>→</span></div>
+      </a>
+      <a class="toc-card" href="chapters/06-algorithm-design.html">
+        <div class="num"><strong>06</strong><span>CH. 06</span></div>
+        <div>
+          <h3>算法设计策略</h3>
+          <p>分治、贪心、动态规划、回溯等通用算法设计思想，以及典型题型套路。</p>
+        </div>
+        <div class="read"><span>开始阅读</span><span>→</span></div>
+      </a>
+      <a class="toc-card" href="chapters/07-practice-cheatsheet.html">
+        <div class="num"><strong>07</strong><span>CH. 07</span></div>
+        <div>
+          <h3>手算专项与考前速查</h3>
+          <p>考前冲刺：十二类高频手算题带详细解答，外加一页式考前必背速查表。</p>
+        </div>
+        <div class="read"><span>开始阅读</span><span>→</span></div>
+      </a>
+      <a class="toc-card" href="chapters/08-appendix-code.html">
+        <div class="num"><strong>08</strong><span>CH. 08</span></div>
+        <div>
+          <h3>附录：核心代码合订</h3>
+          <p>一份可直接编译运行的 C 代码合订：顺序表、单链表、栈、循环队列、二叉树、BST、KMP、七大排序，每段都配一个 test 函数。</p>
+        </div>
+        <div class="read"><span>开始阅读</span><span>→</span></div>
+      </a>
+      <a class="toc-card" href="chapters/09-review.html">
+        <div class="num"><strong>09</strong><span>CH. 09</span></div>
+        <div>
+          <h3>附录：考前复盘笔记</h3>
+          <p>考前一晚的手写复盘：八章知识点速过、刷题易错点、可手写的算法模板，外加一套带答案的模拟题。</p>
+        </div>
+        <div class="read"><span>开始阅读</span><span>→</span></div>
+      </a>
+</div>
+  </section>
+</main>
+
+<footer>
+  <div class="set">
+    <span>数据结构：从指针到算法</span>
+    <span>2026 · ZH-CN</span>
+  </div>
+  <div class="set">
+    <span>Mav</span>
+  </div>
+</footer>
+<div class="search-backdrop" id="search-overlay" role="dialog" aria-modal="true" aria-label="搜索" hidden>
+  <div class="search-modal">
+    <div class="search-input-wrap">
+      <input type="search" class="search-input" placeholder="搜索内容..." aria-label="搜索内容" autocomplete="off">
+      <kbd>ESC</kbd>
+    </div>
+    <div class="search-results" role="listbox" aria-label="搜索结果"></div>
+  </div>
+</div>
+
+<script src="assets/script.js"></script>
+</body>
+</html>

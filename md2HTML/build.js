@@ -29,6 +29,15 @@ const lock = require('./lib/lock');
 const ROOT = __dirname;
 const BOOKS_DIR = path.resolve(ROOT, '..', 'markdown-backups');
 const OUTPUT_BASE = path.resolve(ROOT, '..', 'Mav', 'knowledge');
+const KNOWLEDGE_INDEX = path.join(OUTPUT_BASE, 'index.html');
+
+function warnIfBookHasNoEntry(slug, book) {
+  if (book.catalog === false || !fs.existsSync(KNOWLEDGE_INDEX)) return;
+  const indexHtml = fs.readFileSync(KNOWLEDGE_INDEX, 'utf-8');
+  if (!indexHtml.includes(`href="${slug}/index.html"`)) {
+    console.warn(`  ⚠ No knowledge homepage entry for '${slug}'.`);
+  }
+}
 
 // ============================================================
 // Argument parsing
@@ -207,6 +216,7 @@ function buildBook(bookDir, bookName, force) {
 
   console.log(`\n  Done! Built: ${builtCount}, Skipped: ${skippedCount}`);
   console.log(`  Output: ${outputDir}/\n`);
+  warnIfBookHasNoEntry(slug, book);
 }
 
 // ============================================================
@@ -279,6 +289,7 @@ function buildIndex(bookDir, bookName, force) {
 
   console.log(`  ✓ index.html`);
   console.log(`  Output: ${outputDir}/index.html\n`);
+  warnIfBookHasNoEntry(slug, book);
 }
 
 // ============================================================

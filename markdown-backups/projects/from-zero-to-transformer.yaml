@@ -1,16 +1,22 @@
 title: "从零开始学 Transformer"
 slug: from-zero-to-transformer
+order: 1
 description: "从数学直觉到 Transformer 架构——每个算法从零手写一遍，再用框架跑一遍"
 books:
   - slug: ai-math-foundations
+    label: "Math"
     role: "数学底座：线代、微积分、概率、优化"
   - slug: ai-deep-learning-core
+    label: "MLP"
     role: "MLP：感知机、反向传播、写一个 mini 框架"
   - slug: ai-computer-vision
+    label: "CNN"
     role: "CNN：卷积、经典架构、图像分类"
   - slug: ai-nlp-foundations
+    label: "NLP"
     role: "RNN：词嵌入、序列模型、注意力机制"
   - slug: ai-transformers
+    label: "Transformer"
     role: "Transformer：Self-Attention → BERT → GPT"
 transitions:
   - "向量运算和梯度是后面所有网络的语言。会了这些，就能开始搭第一个神经元。"

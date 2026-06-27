@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>附录：考前复盘笔记 — 数据结构：从指针到算法</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" id="hljs-light" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+<link rel="stylesheet" id="hljs-dark" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" media="not all">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+</head>
+<body>
+
+<div class="progress-bar" id="progress-bar"></div>
+
+<nav class="topnav" id="topnav">
+  <div class="topnav-inner">
+    <a class="brand" href="../index.html">数据结构：从指针到算法</a>
+    <div class="nav-links">
+      <a href="01-intro-and-c.html">01</a>
+      <a href="02-linear.html">02</a>
+      <a href="03-tree.html">03</a>
+      <a href="04-graph.html">04</a>
+      <a href="05-search-sort.html">05</a>
+      <a href="06-algorithm-design.html">06</a>
+      <a href="07-practice-cheatsheet.html">07</a>
+      <a href="08-appendix-code.html">08</a>
+      <a href="09-review.html" class="active">09</a>
+    </div>
+    <div class="nav-controls">
+      <button class="nav-btn" id="search-btn" aria-label="搜索 (Ctrl+K)">⌘K</button>
+      <button class="nav-btn" id="settings-btn" aria-label="阅读设置">Aa</button>
+      <a class="nav-btn" href="../../index.html" aria-label="返回知识库">← 知识库</a>
+      <a class="nav-btn" href="https://github.com/maverickxone/mav-homepage" target="_blank" rel="noopener" aria-label="GitHub" style="padding: 6px 8px;"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg></a>
+    </div>
+  </div>
+</nav>
+<div class="settings-pop" id="settings-pop">
+  <h5>主题</h5>
+  <div class="row">
+    <button class="seg" data-theme-set="light">明亮</button>
+    <button class="seg" data-theme-set="dark">暗色</button>
+  </div>
+  <h5>字号</h5>
+  <div class="row">
+    <button class="seg" data-size-set="s">小</button>
+    <button class="seg" data-size-set="m">中</button>
+    <button class="seg" data-size-set="l">大</button>
+  </div>
+</div>
+
+<div class="with-sidebar">
+  <aside class="sidebar">
+  <div class="chapter-num">CHAPTER 09</div>
+  <div class="chapter-name">附录：考前复盘笔记</div>
+  <h4>目录</h4>
+  <ul>
+    <li><a href="#91-知识点回顾按章速过">9.1 知识点回顾（按章速过）</a></li>
+    <li><a href="#92-刷题小结易错点速记">9.2 刷题小结（易错点速记）</a></li>
+    <li><a href="#93-考前突击手写算法模板不能调-stl-时手写">9.3 考前突击：手写算法模板（不能调 STL 时手写）</a></li>
+    <li><a href="#94-模拟练习题含答案">9.4 模拟练习题（含答案）</a></li>
+  </ul>
+</aside>
+  <article class="chapter-body">
+    <header class="chapter-head">
+  <div class="chapter-head-meta">
+    <span class="num">CHAPTER 09</span>
+    <span>≈ 17 MIN READ</span>
+  </div>
+  <h1>附录：考前复盘笔记</h1>
+
+</header>
+    <p>这一章是我<strong>考前最后一晚自己手写的复盘笔记</strong>，口吻随意、密度很高——先把八章知识点按章快速过一遍，再记下刷题时反复踩的易错点，然后是几段「不能调库时得默写出来」的算法模板，最后一套带答案的模拟题自测。和前面正文的系统讲解相比，这里更像「考前临门一脚」的速记。</p>
+<h2 id="91-知识点回顾按章速过">9.1 知识点回顾（按章速过）</h2>
+<h3 id="911-数据结构基础知识">9.1.1 数据结构基础知识</h3>
+<p>malloc是手动在堆上申请分配内存，存活时间是全局的，直到在其他地方free。
+注意malloc直接返回指针。</p>
+<p>逻辑结构：集合，线性，树形，图状
+存储结构：顺序（数组），链式（链表指针），索引（目录），散列（哈希表）</p>
+<p>时间复杂度 O(n)
+空间复杂度，如果原地就是O(1)，额外开了一个一样大的则是O(n)</p>
+<h3 id="912-线性表">9.1.2 线性表</h3>
+<p>一对一线性结构，(a₁, a₂, ..., aₙ)</p>
+<p>顺序表（线性表的顺序实现），即为数组：</p>
+<ul>
+<li>查找的时间复杂度是O(1)</li>
+<li>移动，删除的时间复杂度是O(n)</li>
+</ul>
+<p>单链表（线性表的链式实现），即为链表：</p>
+<ul>
+<li>查找的时间复杂度是O(n)</li>
+<li>移动，删除的时间复杂度是O(1)，注意删除还需要free节点</li>
+</ul>
+<p>循环链表：把单链表最后一个节点的 next 由 NULL 改为指向头结点，整条链就首尾相连成一个环。</p>
+<p>双链表：存两个指针（next和piror），前后都可以走</p>
+<h3 id="913-栈与队列">9.1.3 栈与队列</h3>
+<p>栈：后进先出，一般用数组实现，核心是push, pop, top这三个操作
+应用：括号匹配
+前后缀表达式和中缀表达式的转换（画二叉树，用前中后序遍历）
+后缀表达式求值（用一个栈）：从左到右扫描——遇到操作数就入栈；遇到运算符，就弹出栈顶两个操作数做运算，结果再压回栈。扫描结束栈里剩的唯一一个数就是答案。</p>
+<p>队列：先进先出，数组实现则需要“循环队列”，防止假溢出，链表实现则不需要。</p>
+<h3 id="914-串和数组">9.1.4 串和数组</h3>
+<p>串，就是字符串，如何匹配字符串是一个核心问题
+KMP算法</p>
+<p>稀疏矩阵：</p>
+<ul>
+<li>三元组：每个非零元素记成一个三元组 <code>(行, 列, 值)</code>，把所有非零元素的三元组存进一个数组</li>
+<li>十字链表：用链表把每行、每列的非零元素分别串起来</li>
+</ul>
+<h3 id="915-树与二叉树">9.1.5 树与二叉树</h3>
+<p>看到树，就想到递归</p>
+<p>节点的度：有几个孩子</p>
+<p>完全二叉树：不需要满，但中间不能有空缺</p>
+<p><strong>叶子节点数 n₀ = 度为 2 的节点数 n₂ + 1，即 <code>n₀ = n₂ + 1</code></strong></p>
+<p>二叉树怎么存储？完全二叉树可以用数组，一般二叉树用二叉链表（也就是一堆节点用指针连接）</p>
+<p>二叉树怎么遍历？</p>
+<ul>
+<li>DFS：前中后序（递归），注意前/后+中可以还原，前+后不可以</li>
+<li>BFS：逐层遍历（队列）</li>
+</ul>
+<p>线索二叉树：对于很稀疏的二叉树，把空着的指针废物利用，左指针为空就指向该节点的中序前驱，如果右指针为空，就指向中序后继。再加两个ltag和rtag区分（0说明是真实的孩子，1说明是线索），方便遍历。</p>
+<p>二叉搜索树/二叉排序树（BST）：左子树 &lt; 根 &lt; 右子树
+查找就是二分查找了，插入也类似，
+删除麻烦点：</p>
+<ul>
+<li>没有孩子：直接删</li>
+<li>有一个孩子，顶替上来</li>
+<li>有两个孩子：用中序前继/后继（左右子树）</li>
+</ul>
+<p>平衡二叉树（AVL）：
+防止BST退化，在BST基础上进行的约束
+AVL最小高度N(h)？
+N(h) = N(h-1) + N(h-2) + 1        （左子树高 h-1、右子树高 h-2，再加根自己）
+边界：N(0) = 0（空树）, N(1) = 1, N(2) = 2
+AVL失衡处理办法：</p>
+<ol>
+<li>从插入点往上，找到第一个失衡的节点A</li>
+<li>匹配四种类型做响应操作<ul>
+<li>LL：右旋，A的左孩子上位，LR挂到A左边</li>
+<li>RR：左旋，A的右孩子上位，RL接到A右边</li>
+<li>LR：先对L左旋，再对A右旋（让LR上位，L还是L，A变成R）</li>
+<li>RL：先对R右旋，再对A左旋（让RL上位，R还是R，A变成L）
+响应本质是让AVL不管怎么插入，始终在满足BST基础下平衡</li>
+</ul>
+</li>
+</ol>
+<p>哈夫曼树：编码最短的构造
+注意每次是从所有里面选两个拼接，包括已有的树，不要一条路走到底。
+编码即左0右1, WPL是编码完之后的总位数
+注意哈夫曼树不一定唯一（相等权值）但WPL一定唯一且最小</p>
+<p>堆：一种特殊的完全二叉树，满足节点和孩子之间的大小关系。
+移动删除都是“上浮和下沉”</p>
+<p>树转二叉树：左孩子右兄弟</p>
+<h3 id="916-图">9.1.6 图</h3>
+<p>怎么存储图？邻接矩阵/邻接表
+邻接矩阵的第i行第j列是 i -&gt; j
+无向图的邻接矩阵对称
+邻接多重表：无向图用，只存一次</p>
+<p>怎么遍历图？DFS，BFS。</p>
+<p>生成树：用最少的边联通所有顶点的方式，在带权图里面，权值最小的生成树就是最小生成树（MST）
+两种算法：</p>
+<ul>
+<li>Prim：把顶点分成「已在树里的」和「还没进树的」，在所有「一端在树里、一端在树外」的边中，选权值最小的那条，拉入树内，适合稠密图。</li>
+<li>Kruskal：把所有边按权值从小到大排序，然后从最小的边开始一条条考察：如果加入这条边不会形成环，就加入；会成环就跳过，直到选够 n−1 条边为止，适合稀疏图。</li>
+</ul>
+<p>最短路径：</p>
+<ul>
+<li>Dijkstra：从一个节点出发，每次确定当前所能触及的最短的路径，加入visited数组中，继续迭代下一次（不能有负权边），堆优化是缩短了“找到最小路径”的方式，原先是遍历，现在用堆优化就快很多。</li>
+<li>Floyd：用邻接矩阵 <code>A[i][j]</code> 存当前 i 到 j 的最短距离。然后枚举每一个顶点 k 作为「中转站」，看「i 经过 k 到 j」是不是比「i 直接到 j」更短，更短就更新。三重循环，外层是中转点 k，内层是所有点对 (i, j)。</li>
+</ul>
+<p>拓扑排序：Kahn算法和DFS，注意结果一般不唯一</p>
+<h3 id="917-查找表">9.1.7 查找表</h3>
+<p>ASL，平均查找长度</p>
+<p>顺序查找：最慢，O(n)
+二分查找：必须有序，O(log n)
+分块查找：最佳分块是O(√n)
+树表查找：BST一般O(log n)，可能退化O(n)，AVL始终O(log n)
+哈希表：空间换时间，O(1)</p>
+<h3 id="918-排序">9.1.8 排序</h3>
+<p>稳定性：若两个元素关键字<strong>相等</strong>，排序后它们的<strong>相对前后位置不变</strong>，就叫<strong>稳定</strong>；若可能被交换顺序，就<strong>不稳定</strong>。</p>
+<p>直接插入排序：<strong>O(n²)</strong>
+折半插入排序：<strong>O(n²)</strong>，比较次数变成O(n log n)
+希尔排序：gap，最后再插入排序，平均<strong>O(n^1.3)</strong>，第一个突破O(n²)的排序
+冒泡排序：<strong>O(n²)</strong>
+快速排序：递归，取基准，双指针，平均 <strong>O(n log n)</strong>，但<strong>最坏 O(n²)</strong>（当数列基本有序、基准每次都取到最小/最大值时退化）。空间 O(log n)（递归栈）。
+选择排序：<strong>O(n²)</strong>
+堆排序：建堆 <strong>O(n)</strong>，之后 n−1 次下沉每次 O(log n)，整体 <strong>O(n log n)</strong>，且<strong>最好/平均/最坏都是 O(n log n)</strong>（性能稳定，无退化）
+归并排序：递归，对半分到极致，之后逐渐合并，分 log n 层、每层合并共 O(n)，<strong>最好/平均/最坏都是 O(n log n)</strong></p>
+<h2 id="92-刷题小结易错点速记">9.2 刷题小结（易错点速记）</h2>
+<p>后缀表达式（前中后序遍历）</p>
+<p>稀疏矩阵存储（三元组表，十字链表）</p>
+<p>三元组表并不创新，只是用三个东西记位置，适合压缩，但查找的适合还是需要遍历，插入删除都不方便，牵一发而动全身。 </p>
+<p>十字链表就只需要改指针，方便很多，本质就是用链表而不是矩阵的形式存储，这样可以“跳过”太多空位置，一次性直接指向下一个有信息的元素，当然还是有行和列的概念。 </p>
+<p>注意先序/前序 的“前”是指 根</p>
+<p>二叉树里面节点的“度”指的是孩子数</p>
+<p>哈希冲突里面的处理方法：</p>
+<ul>
+<li><p>开放定址法的线性探测：冲突了直接往后走</p>
+</li>
+<li><p>开放定址法的二次探测：冲突了用平方左右跳</p>
+</li>
+<li><p>链地址法：每个位置挂一个链表，冲突了就往后挂</p>
+</li>
+</ul>
+<p>任意一颗二叉树，用前序/中序/后序遍历并不改变叶子节点的相对次序关系</p>
+<p>归并排序不管数列情况，基本上都是O(n·logn)</p>
+<p>关键字序列：折半查找时比较过的元素，按顺序列出来就行</p>
+<p>哈夫曼树要记得不是直接走到底，而是每次取最小的两个叠加。</p>
+<p>ASL是平均查找长度，分母的n是指一共要找多少个元素。</p>
+<p>哈希表：</p>
+<ul>
+<li><p>直接计算就能找到：1次</p>
+</li>
+<li><p>直接计算发现不是：按照具体探测方式定位，用几次找到算几次</p>
+</li>
+</ul>
+<p>邻接表的形式是一系列链表，但其实是并列的，如0——2——1——4，其实指的是0分别指向2,1,4，他们是并列而非前后关系，用链表只是为了存储方便。</p>
+<p>拓扑序列：每次弹出入度为0的节点，如果结束发现并没有遍历所有节点，说明有环。</p>
+<p>拓扑序列通常不唯一。</p>
+<p>拓扑排序是一种针对有向图的线性排序方式，核心是该排序严格符合所有有向边的先后顺序。主要有两种实现方式：</p>
+<p>BFS（Kahn算法）：初始情况下找到一个入度为0的节点，压入栈，消除所有它发出的边，之后弹出并打印，弹出后下一步把所有入度为0的节点都压入，按照顺序（邻接矩阵行顺序）依次弹出并打印，同样，每次弹出一个节点后消除所有它发出的边，有入度为0就压入，之后继续栈内下一个，直到结束。</p>
+<p>DFS：对每个节点做DFS，在递归<strong>返回时</strong>把节点压入栈（即所有后继都处理完才入栈），全部完成后把栈<strong>逆序输出</strong>，就是拓扑序。若DFS中遇到正在访问的节点说明有环。</p>
+<p>顺序存储方式（数组）不止可以用来存线性结构，完全二叉树也可以</p>
+<h2 id="93-考前突击手写算法模板不能调-stl-时手写">9.3 考前突击：手写算法模板（不能调 STL 时手写）</h2>
+<h3 id="931-栈数组实现">9.3.1 栈（数组实现）</h3>
+<pre data-label="c"><code class="language-c">typedef struct {
+    int data[MAXSIZE];
+    int top;          // 栈顶下标，初始 -1
+} Stack;
+
+void init(Stack *s){ s-&gt;top = -1; }
+int isEmpty(Stack *s){ return s-&gt;top == -1; }
+int isFull(Stack *s){ return s-&gt;top == MAXSIZE - 1; }
+int push(Stack *s, int x){
+    if(isFull(s)) return 0;
+    s-&gt;data[++s-&gt;top] = x; return 1;
+}
+int pop(Stack *s, int *x){
+    if(isEmpty(s)) return 0;
+    *x = s-&gt;data[s-&gt;top--]; return 1;
+}</code></pre>
+<h3 id="932-循环队列数组实现牺牲一个单元判满">9.3.2 循环队列（数组实现，牺牲一个单元判满）</h3>
+<pre data-label="c"><code class="language-c">typedef struct {
+    int data[MAXSIZE];
+    int front, rear;  // 初始都为 0
+} Queue;
+
+void init(Queue *q){ q-&gt;front = q-&gt;rear = 0; }
+int isEmpty(Queue *q){ return q-&gt;front == q-&gt;rear; }
+int isFull(Queue *q){ return (q-&gt;rear + 1) % MAXSIZE == q-&gt;front; }
+int enqueue(Queue *q, int x){          // 入队
+    if(isFull(q)) return 0;
+    q-&gt;data[q-&gt;rear] = x;
+    q-&gt;rear = (q-&gt;rear + 1) % MAXSIZE; return 1;
+}
+int dequeue(Queue *q, int *x){         // 出队
+    if(isEmpty(q)) return 0;
+    *x = q-&gt;data[q-&gt;front];
+    q-&gt;front = (q-&gt;front + 1) % MAXSIZE; return 1;
+}
+// 队列长度 = (rear - front + MAXSIZE) % MAXSIZE</code></pre>
+<h3 id="933-快速排序partition-递归">9.3.3 快速排序（partition + 递归）</h3>
+<pre data-label="c"><code class="language-c">int partition(int a[], int low, int high){
+    int pivot = a[low];                // 取基准
+    while(low &lt; high){
+        while(low &lt; high &amp;&amp; a[high] &gt;= pivot) high--;
+        a[low] = a[high];
+        while(low &lt; high &amp;&amp; a[low] &lt;= pivot) low++;
+        a[high] = a[low];
+    }
+    a[low] = pivot;                    // 基准归位
+    return low;
+}
+void quickSort(int a[], int low, int high){
+    if(low &lt; high){
+        int p = partition(a, low, high);
+        quickSort(a, low, p - 1);
+        quickSort(a, p + 1, high);
+    }
+}</code></pre>
+<h3 id="934-归并排序merge-两个有序段">9.3.4 归并排序（merge 两个有序段）</h3>
+<pre data-label="c"><code class="language-c">void merge(int a[], int tmp[], int l, int mid, int r){
+    int i = l, j = mid + 1, k = l;
+    while(i &lt;= mid &amp;&amp; j &lt;= r)
+        tmp[k++] = (a[i] &lt;= a[j]) ? a[i++] : a[j++];  // &lt;= 保证稳定
+    while(i &lt;= mid) tmp[k++] = a[i++];
+    while(j &lt;= r)   tmp[k++] = a[j++];
+    for(k = l; k &lt;= r; k++) a[k] = tmp[k];
+}
+void mergeSort(int a[], int tmp[], int l, int r){
+    if(l &lt; r){
+        int mid = (l + r) / 2;
+        mergeSort(a, tmp, l, mid);
+        mergeSort(a, tmp, mid + 1, r);
+        merge(a, tmp, l, mid, r);
+    }
+}</code></pre>
+<h3 id="935-dijkstra伪代码单源最短路不能有负权边">9.3.5 Dijkstra（伪代码，单源最短路，不能有负权边）</h3>
+<pre><code>dist[s] = 0, 其余 dist[] = ∞
+visited[] = false
+重复 n 次：
+    在所有 visited=false 的点中，选 dist 最小的 u
+    visited[u] = true
+    对 u 的每个邻居 v：           // 松弛
+        if !visited[v] &amp;&amp; dist[u] + w(u,v) &lt; dist[v]:
+            dist[v] = dist[u] + w(u,v)
+// 堆优化：用小根堆代替"线性扫描找最小 u"，O((V+E)logV)</code></pre>
+<h3 id="936-哈希表要点asl-计算">9.3.6 哈希表要点（ASL 计算）</h3>
+<ul>
+<li>装填因子 α = 表中元素数 / 表长，α 越大冲突越多。</li>
+<li>ASL_成功 = 找到每个已存在元素的比较次数之和 / 元素个数。</li>
+<li>ASL_失败 = 对每个哈希地址，从该位置探测到第一个空位的比较次数之和 / 哈希地址数(模数)。</li>
+<li>线性探测：(h+i) % m；二次探测：(h ± i²) % m；链地址法：挂链表，ASL_失败按链长算。</li>
+</ul>
+<h2 id="94-模拟练习题含答案">9.4 模拟练习题（含答案）</h2>
+<h3 id="941-选择-填空复杂度-概念">9.4.1 选择 / 填空（复杂度 + 概念）</h3>
+<h4 id="1-一棵完全二叉树有-1000-个节点叶子节点有多少个">1. 一棵完全二叉树有 1000 个节点，叶子节点有多少个？</h4>
+<p><strong>答案</strong>：n₀=n₂+1，n=n₀+n₁+n₂。完全二叉树 n₁=0或1。n=1000偶数→n₁=1。1000=n₀+1+(n₀−1)→<strong>n₀=500</strong>。</p>
+<h4 id="2-含-n-个单元的循环队列最多能存多少元素">2. 含 n 个单元的循环队列，最多能存多少元素？</h4>
+<p><strong>答案</strong>：牺牲一个单元判满，<strong>MAXSIZE−1</strong>。</p>
+<h4 id="3-最坏情况时间复杂度为-on-log-n-的排序a快排-b堆排序-c冒泡-d直接插入">3. 最坏情况时间复杂度为 O(n log n) 的排序：A.快排 B.堆排序 C.冒泡 D.直接插入</h4>
+<p><strong>答案</strong>：<strong>B 堆排序</strong>（快排最坏 O(n²)；归并也满足但不在选项）。</p>
+<h4 id="4-哈希表装填因子-越大会怎样">4. 哈希表装填因子 α 越大会怎样？</h4>
+<p><strong>答案</strong>：空间利用率高，但<strong>冲突概率大、ASL 变长</strong>。</p>
+<h4 id="5-邻接表存-n-顶点-e-边的无向图边结点总数">5. 邻接表存 n 顶点 e 边的<strong>无向图</strong>，边结点总数？</h4>
+<p><strong>答案</strong>：<strong>2e</strong>（每条边存两次）；有向图为 e。</p>
+<h3 id="942-简答">9.4.2 简答</h3>
+<h4 id="6-快排为何不稳定归并为何稳定">6. 快排为何不稳定，归并为何稳定？</h4>
+<p><strong>答案</strong>：快排：partition 时基准与远处元素交换，相等元素相对位置可能颠倒→不稳定。归并：merge 时 <code>a[i]&lt;=a[j]</code> 取左段，相等优先取前段→稳定。</p>
+<h4 id="7-prim-与-kruskal-各适合什么图">7. Prim 与 Kruskal 各适合什么图？</h4>
+<p><strong>答案</strong>：Prim 按顶点扩展，复杂度与顶点相关，适合<strong>稠密图</strong>；Kruskal 按边排序，与边数相关，适合<strong>稀疏图</strong>。</p>
+<h3 id="943-写中间结果">9.4.3 写中间结果</h3>
+<h4 id="8-49386597761327-快排第一趟基准取首元素49结果">8. <code>[49,38,65,97,76,13,27]</code> 快排第一趟（基准取首元素49）结果？</h4>
+<p><strong>答案</strong>：基准49归位，左&lt;49右&gt;49：<code>[27,38,13,49,76,97,65]</code>。</p>
+<h4 id="9-关键字-19142316820842755111079m13hkk13线性探测">9. 关键字 <code>{19,14,23,1,68,20,84,27,55,11,10,79}</code>，m=13，H(k)=k%13，线性探测。</h4>
+<p><strong>答案</strong>：逐个填：19→6；14→1；23→10；1→1冲突→2；68→3；20→7；84→6冲突→8；27→1,2,3冲突→4；55→3冲突→9；11→11；10→10冲突→11冲突→12；79→1起冲突一路探测到空位（下标0）。
+ASL_成功 = 各元素比较次数之和 / 12（考场把表画出来逐个数比较次数）。</p>
+<h4 id="10-先序-abdecfg中序-dbeafcg求后序">10. 先序 <code>ABDECFG</code>，中序 <code>DBEAFCG</code>，求后序。</h4>
+<p><strong>答案</strong>：根A；左子树(先序DBE/中序DBE)，右子树(先序CFG/中序FCG)。B左D右E，C左F右G。
+后序：<strong>DEBFGCA</strong>。</p>
+<h3 id="944-算法实现写代码">9.4.4 算法实现（写代码）</h3>
+<h4 id="11-用栈判断-括号匹配">11. 用栈判断 <code>()[]{}</code> 括号匹配。</h4>
+<p><strong>答案（代码）</strong>：</p>
+<pre data-label="c"><code class="language-c">int match(char *s){
+    Stack st; init(&amp;st); int x;
+    for(int i=0; s[i]; i++){
+        char c = s[i];
+        if(c=='('||c=='['||c=='{') push(&amp;st, c);
+        else{
+            if(pop(&amp;st,&amp;x)==0) return 0;           // 栈空，右括号多
+            if((c==')'&amp;&amp;x!='(')||(c==']'&amp;&amp;x!='[')||(c=='}'&amp;&amp;x!='{'))
+                return 0;
+        }
+    }
+    return isEmpty(&amp;st);                            // 栈空才匹配
+}</code></pre>
+<h4 id="12-后缀表达式求值步骤">12. 后缀表达式求值步骤。</h4>
+<p><strong>答案</strong>：从左扫描：操作数入栈；遇运算符弹出两个（先弹的是右操作数）运算后压回；扫描完栈顶即答案。</p>
+<h3 id="945-算法设计思路型写不出代码就写文字得步骤分">9.4.5 算法设计（思路型，写不出代码就写文字得步骤分）</h3>
+<h4 id="13-判断无向图是否连通">13. 判断无向图是否连通。</h4>
+<p><strong>答案</strong>：从任一顶点 DFS/BFS，统计访问到的顶点数；== n 则连通，否则不连通。</p>
+<h4 id="14-求二叉树高度">14. 求二叉树高度。</h4>
+<p><strong>答案（代码）</strong>：</p>
+<pre data-label="c"><code class="language-c">int height(Node *t){
+    if(!t) return 0;
+    int l = height(t-&gt;left), r = height(t-&gt;right);
+    return (l &gt; r ? l : r) + 1;
+}</code></pre>
+<blockquote><p>看到树就想递归。</p>
+</blockquote>
+
+    <nav class="pager">  <a href="08-appendix-code.html">
+    <span class="label">← 上一章</span>
+    <span class="title">附录：核心代码合订</span>
+  </a>  <a class="disabled next"><span class="label">下一章 →</span><span class="title"></span></a></nav>
+  </article>
+</div>
+
+<footer>
+  <div class="set">
+    <span>数据结构：从指针到算法</span>
+    <span>2026 · ZH-CN</span>
+  </div>
+  <div class="set">
+    <span>Mav</span>
+  </div>
+</footer>
+<div class="search-backdrop" id="search-overlay" role="dialog" aria-modal="true" aria-label="搜索" hidden>
+  <div class="search-modal">
+    <div class="search-input-wrap">
+      <input type="search" class="search-input" placeholder="搜索内容..." aria-label="搜索内容" autocomplete="off">
+      <kbd>ESC</kbd>
+    </div>
+    <div class="search-results" role="listbox" aria-label="搜索结果"></div>
+  </div>
+</div>
+
+<!-- Side Panel -->
+<div class="side-panel" id="side-panel">
+  <div class="side-panel-resize" id="side-panel-resize"></div>
+  <div class="side-panel-header">
+    <div class="side-panel-tabs">
+      <button class="side-panel-tab active" data-mode="sidenote">补充</button>
+      <button class="side-panel-tab" data-mode="notepad">笔记</button>
+    </div>
+    <button class="side-panel-close" aria-label="关闭">×</button>
+  </div>
+  <div class="side-panel-body"></div>
+</div>
+<button class="notepad-fab" id="notepad-fab" aria-label="便利贴">✎</button>
+
+<!-- Mobile TOC -->
+<button class="mtoc-fab" id="mtoc-fab" aria-label="目录">TOC</button>
+<div class="mtoc-drawer" id="mtoc-drawer">
+  <div class="mtoc-content"></div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/bash.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/typescript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/yaml.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/javascript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/json.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/python.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/css.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+<script>mermaid.initialize({startOnLoad:true, theme:'neutral', fontFamily:'Inter, sans-serif'});</script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}]});"></script>
+<script src="../assets/script.js"></script>
+</body>
+</html>

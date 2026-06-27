@@ -1,0 +1,1050 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>手算专项与考前速查 — 数据结构：从指针到算法</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" id="hljs-light" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+<link rel="stylesheet" id="hljs-dark" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" media="not all">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+</head>
+<body>
+
+<div class="progress-bar" id="progress-bar"></div>
+
+<nav class="topnav" id="topnav">
+  <div class="topnav-inner">
+    <a class="brand" href="../index.html">数据结构：从指针到算法</a>
+    <div class="nav-links">
+      <a href="01-intro-and-c.html">01</a>
+      <a href="02-linear.html">02</a>
+      <a href="03-tree.html">03</a>
+      <a href="04-graph.html">04</a>
+      <a href="05-search-sort.html">05</a>
+      <a href="06-algorithm-design.html">06</a>
+      <a href="07-practice-cheatsheet.html" class="active">07</a>
+      <a href="08-appendix-code.html">08</a>
+      <a href="09-review.html">09</a>
+    </div>
+    <div class="nav-controls">
+      <button class="nav-btn" id="search-btn" aria-label="搜索 (Ctrl+K)">⌘K</button>
+      <button class="nav-btn" id="settings-btn" aria-label="阅读设置">Aa</button>
+      <a class="nav-btn" href="../../index.html" aria-label="返回知识库">← 知识库</a>
+      <a class="nav-btn" href="https://github.com/maverickxone/mav-homepage" target="_blank" rel="noopener" aria-label="GitHub" style="padding: 6px 8px;"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg></a>
+    </div>
+  </div>
+</nav>
+<div class="settings-pop" id="settings-pop">
+  <h5>主题</h5>
+  <div class="row">
+    <button class="seg" data-theme-set="light">明亮</button>
+    <button class="seg" data-theme-set="dark">暗色</button>
+  </div>
+  <h5>字号</h5>
+  <div class="row">
+    <button class="seg" data-size-set="s">小</button>
+    <button class="seg" data-size-set="m">中</button>
+    <button class="seg" data-size-set="l">大</button>
+  </div>
+</div>
+
+<div class="with-sidebar">
+  <aside class="sidebar">
+  <div class="chapter-num">CHAPTER 07</div>
+  <div class="chapter-name">手算专项与考前速查</div>
+  <h4>目录</h4>
+  <ul>
+    <li><a href="#71-时间复杂度分析">7.1 时间复杂度分析</a></li>
+    <li><a href="#72-kmp-求-next-数组">7.2 KMP 求 next 数组</a></li>
+    <li><a href="#73-二叉树性质计算">7.3 二叉树性质计算</a></li>
+    <li><a href="#74-遍历与还原">7.4 遍历与还原</a></li>
+    <li><a href="#75-二叉搜索树-bst">7.5 二叉搜索树 BST</a></li>
+    <li><a href="#76-avl-平衡二叉树">7.6 AVL 平衡二叉树</a></li>
+    <li><a href="#77-哈夫曼树-wpl-编码">7.7 哈夫曼树 + WPL + 编码</a></li>
+    <li><a href="#78-图算法dfsbfsmstdijkstra拓扑">7.8 图算法（DFS/BFS、MST、Dijkstra、拓扑）</a></li>
+    <li><a href="#79-二分查找判定树-asl">7.9 二分查找判定树 + ASL</a></li>
+    <li><a href="#710-哈希表-asl两种冲突处理">7.10 哈希表 ASL（两种冲突处理）</a></li>
+    <li><a href="#711-排序过程模拟">7.11 排序过程模拟</a></li>
+    <li><a href="#712-动态规划0-1-背包">7.12 动态规划（0-1 背包）</a></li>
+    <li><a href="#713-过关自检">7.13 过关自检</a></li>
+    <li><a href="#714-复杂度">7.14 复杂度</a></li>
+    <li><a href="#715-线性结构">7.15 线性结构</a></li>
+    <li><a href="#716-串-kmp">7.16 串 · KMP</a></li>
+    <li><a href="#717-二叉树性质必背">7.17 二叉树性质（必背）</a></li>
+    <li><a href="#718-树表-平衡">7.18 树表 · 平衡</a></li>
+    <li><a href="#719-图">7.19 图</a></li>
+    <li><a href="#720-查找">7.20 查找</a></li>
+    <li><a href="#721-排序总表背死">7.21 排序总表（背死）</a></li>
+    <li><a href="#722-算法设计策略">7.22 算法设计策略</a></li>
+    <li><a href="#723-全课一句话灵魂">7.23 全课一句话灵魂</a></li>
+  </ul>
+</aside>
+  <article class="chapter-body">
+    <header class="chapter-head">
+  <div class="chapter-head-meta">
+    <span class="num">CHAPTER 07</span>
+    <span>≈ 31 MIN READ</span>
+  </div>
+  <h1>手算专项与考前速查</h1>
+
+</header>
+    <blockquote><p>这本练习册专攻「机械送分题」——KMP、还原树、BST/AVL、哈夫曼、Dijkstra、哈希 ASL、排序模拟、DP 表。这些题<strong>会就一定全对、不会就丢大块</strong>，靠的是手熟，不是灵感。</p>
+<p><strong>用法</strong>：每题先<strong>盖住「详解」自己动手做</strong>（一定要动笔，不要光看），做完再对答案。错了别只改答案，要回去看错在哪一步。每类至少独立做对 2 题，才算过关。</p>
+</blockquote>
+<hr>
+<h2 id="71-时间复杂度分析">7.1 时间复杂度分析</h2>
+<h3 id="711-题-11">7.1.1 题 1.1</h3>
+<p>写出下列代码段的时间复杂度：</p>
+<pre data-label="c"><code class="language-c">(a) for(i=0;i&lt;n;i++) for(j=0;j&lt;n;j++) x++;
+(b) for(i=0;i&lt;n;i++) for(j=0;j&lt;i;j++) x++;
+(c) i=1; while(i&lt;n) i=i*2;
+(d) for(i=0;i&lt;n;i++) for(j=1;j&lt;n;j=j*2) x++;</code></pre>
+<p><strong>详解</strong>：</p>
+<ul>
+<li>(a) 外 n 次、内 n 次 → <strong>O(n²)</strong>。</li>
+<li>(b) 内层执行 0+1+2+...+(n−1) = n(n−1)/2 次 → <strong>O(n²)</strong>。（虽然是「半个三角」，但仍是平方级，系数 1/2 被忽略）</li>
+<li>(c) i 翻倍：1,2,4,...,n，翻 log₂n 次 → <strong>O(log n)</strong>。</li>
+<li>(d) 外 n 次，内层 j 翻倍是 log n 次 → n × log n = <strong>O(n log n)</strong>。</li>
+</ul>
+<h3 id="712-题-12">7.1.2 题 1.2</h3>
+<p><code>T(n) = 100n² + 50000n + 9999</code>，写出大 O，并说明 n 多大时 n² 项才「占主导」。</p>
+<p><strong>详解</strong>：<strong>O(n²)</strong>（只保留最高阶、去系数）。当 n 较大时 100n² 压倒 50000n——令 100n² &gt; 50000n 得 n &gt; 500，即 n 超过约 500 后二次项主导。<strong>这说明大 O 描述的是「足够大的 n」时的趋势，小 n 时系数和低阶项可能更重要</strong>，但分析复杂度只看趋势。</p>
+<h3 id="713-题-13">7.1.3 题 1.3</h3>
+<p>顺序查找长度为 n 的表，写出成功查找的最好、最坏、平均比较次数。</p>
+<p><strong>详解</strong>：最好 <strong>1</strong>（第一个就是）；最坏 <strong>n</strong>（最后一个或不存在）；平均（等概率）= (1+2+...+n)/n = <strong>(n+1)/2</strong>。三者数量级：最好 O(1)、最坏与平均都是 O(n)。</p>
+<hr>
+<h2 id="72-kmp-求-next-数组">7.2 KMP 求 next 数组</h2>
+<blockquote><p>约定：next[j] = 模式串 P[0..j−1] 这段的「最长相等前后缀」的长度，next[0] = −1（哨兵）。<strong>不同教材定义略有差异</strong>（有的从 1 计、有的用 nextval），但「最长相等前后缀」这个本质不变。下面用这个常见定义。</p>
+</blockquote>
+<h3 id="721-题-21">7.2.1 题 2.1</h3>
+<p>求 P = <code>a b a b c</code> 的 next 数组。</p>
+<p><strong>详解</strong>：逐位算 P[0..j−1] 的最长相等前后缀长度。</p>
+<div class="table-wrap"><table><thead><tr>
+<th>j</th>
+<th>P[j]</th>
+<th>考察的前缀 P[0..j-1]</th>
+<th>最长相等前后缀</th>
+<th>next[j]</th>
+</tr>
+</thead><tbody><tr>
+<td>0</td>
+<td>a</td>
+<td>（空）</td>
+<td>—</td>
+<td>−1（约定）</td>
+</tr>
+<tr>
+<td>1</td>
+<td>b</td>
+<td>&quot;a&quot;</td>
+<td>单字符，无</td>
+<td>0</td>
+</tr>
+<tr>
+<td>2</td>
+<td>a</td>
+<td>&quot;ab&quot;</td>
+<td>无相等前后缀</td>
+<td>0</td>
+</tr>
+<tr>
+<td>3</td>
+<td>b</td>
+<td>&quot;aba&quot;</td>
+<td>前缀&quot;a&quot;=后缀&quot;a&quot;，长 1</td>
+<td>1</td>
+</tr>
+<tr>
+<td>4</td>
+<td>c</td>
+<td>&quot;abab&quot;</td>
+<td>前缀&quot;ab&quot;=后缀&quot;ab&quot;，长 2</td>
+<td>2</td>
+</tr>
+</tbody></table></div>
+<p><strong>next = [−1, 0, 0, 1, 2]</strong>。</p>
+<h3 id="722-题-22">7.2.2 题 2.2</h3>
+<p>求 P = <code>a a a a b</code> 的 next 数组。</p>
+<p><strong>详解</strong>：</p>
+<div class="table-wrap"><table><thead><tr>
+<th>j</th>
+<th>P[0..j-1]</th>
+<th>最长相等前后缀</th>
+<th>next[j]</th>
+</tr>
+</thead><tbody><tr>
+<td>0</td>
+<td>（空）</td>
+<td>—</td>
+<td>−1</td>
+</tr>
+<tr>
+<td>1</td>
+<td>&quot;a&quot;</td>
+<td>无</td>
+<td>0</td>
+</tr>
+<tr>
+<td>2</td>
+<td>&quot;aa&quot;</td>
+<td>&quot;a&quot;，长 1</td>
+<td>1</td>
+</tr>
+<tr>
+<td>3</td>
+<td>&quot;aaa&quot;</td>
+<td>&quot;aa&quot;，长 2</td>
+<td>2</td>
+</tr>
+<tr>
+<td>4</td>
+<td>&quot;aaaa&quot;</td>
+<td>&quot;aaa&quot;，长 3</td>
+<td>3</td>
+</tr>
+</tbody></table></div>
+<p><strong>next = [−1, 0, 1, 2, 3]</strong>。（全相同字符时 next 递增，体现「失配能往前借很多」）</p>
+<h3 id="723-题-23">7.2.3 题 2.3</h3>
+<p>求 P = <code>a b a a b c a c</code> 的 next 数组。</p>
+<p><strong>详解</strong>：</p>
+<div class="table-wrap"><table><thead><tr>
+<th>j</th>
+<th>P[0..j-1]</th>
+<th>最长相等前后缀</th>
+<th>next[j]</th>
+</tr>
+</thead><tbody><tr>
+<td>0</td>
+<td>（空）</td>
+<td>—</td>
+<td>−1</td>
+</tr>
+<tr>
+<td>1</td>
+<td>&quot;a&quot;</td>
+<td>无</td>
+<td>0</td>
+</tr>
+<tr>
+<td>2</td>
+<td>&quot;ab&quot;</td>
+<td>无</td>
+<td>0</td>
+</tr>
+<tr>
+<td>3</td>
+<td>&quot;aba&quot;</td>
+<td>&quot;a&quot;，长 1</td>
+<td>1</td>
+</tr>
+<tr>
+<td>4</td>
+<td>&quot;abaa&quot;</td>
+<td>&quot;a&quot;，长 1</td>
+<td>1</td>
+</tr>
+<tr>
+<td>5</td>
+<td>&quot;abaab&quot;</td>
+<td>&quot;ab&quot;，长 2</td>
+<td>2</td>
+</tr>
+<tr>
+<td>6</td>
+<td>&quot;abaabc&quot;</td>
+<td>无</td>
+<td>0</td>
+</tr>
+<tr>
+<td>7</td>
+<td>&quot;abaabca&quot;</td>
+<td>&quot;a&quot;，长 1</td>
+<td>1</td>
+</tr>
+</tbody></table></div>
+<p><strong>next = [−1, 0, 0, 1, 1, 2, 0, 1]</strong>。</p>
+<blockquote><p>关键看 j=5：&quot;abaab&quot; 开头 &quot;ab&quot; 和结尾 &quot;ab&quot; 相等，长 2。j=6 加了 c，&quot;abaabc&quot; 没有相等前后缀，跌回 0。</p>
+</blockquote>
+<hr>
+<h2 id="73-二叉树性质计算">7.3 二叉树性质计算</h2>
+<h3 id="731-题-31">7.3.1 题 3.1</h3>
+<p>一棵二叉树有 20 个度为 2 的节点、10 个度为 1 的节点，问叶子有多少个？总节点数多少？</p>
+<p><strong>详解</strong>：用性质 n₀ = n₂ + 1 → <strong>n₀ = 20 + 1 = 21</strong> 个叶子。总数 n = n₀ + n₁ + n₂ = 21 + 10 + 20 = <strong>51</strong>。</p>
+<h3 id="732-题-32">7.3.2 题 3.2</h3>
+<p>一棵完全二叉树有 1000 个节点，问：① 高度多少？② 叶子节点多少个？③ 度为 1 的节点有几个？</p>
+<p><strong>详解</strong>：
+① 高度 = ⌊log₂1000⌋ + 1 = ⌊9.96⌋ + 1 = 9 + 1 = <strong>10</strong>。
+③ 完全二叉树里<strong>度为 1 的节点最多 1 个</strong>（且只能是有左孩子无右孩子）。1000 是偶数 → 最后一个节点（编号 1000）是左孩子，它的父亲（编号 500）只有左孩子无右孩子 → <strong>n₁ = 1</strong>。
+② 由 n₀ = n₂ + 1 且 n = n₀+n₁+n₂：1000 = n₀ + 1 + (n₀−1) = 2n₀ → <strong>n₀ = 500</strong> 个叶子。（n₂ = 499）</p>
+<h3 id="733-题-33">7.3.3 题 3.3</h3>
+<p>高度为 5 的二叉树，最多有多少个节点？最少呢？</p>
+<p><strong>详解</strong>：最多 = 满二叉树 = 2⁵ − 1 = <strong>31</strong>。最少 = 每层只有 1 个节点（退化成链）= <strong>5</strong>。</p>
+<hr>
+<h2 id="74-遍历与还原">7.4 遍历与还原</h2>
+<h3 id="741-题-41">7.4.1 题 4.1</h3>
+<p>已知二叉树：</p>
+<pre><code>        A
+       / \
+      B   C
+     /   / \
+    D   E   F
+     \
+      G</code></pre>
+<p>写出前序、中序、后序、层序遍历。</p>
+<p><strong>详解</strong>：</p>
+<ul>
+<li>前序（根左右）：A B D G C E F → <strong>A B D G C E F</strong></li>
+<li>中序（左根右）：D 的左空、D、D 的右 G → DG，再 B；A；C 子树中序 E C F。合：<strong>D G B A E C F</strong></li>
+<li>后序（左右根）：G D B（B 子树）、E F C（C 子树）、A。合：<strong>G D B E F C A</strong></li>
+<li>层序：<strong>A B C D E F G</strong></li>
+</ul>
+<h3 id="742-题-42">7.4.2 题 4.2</h3>
+<p>已知前序 = <code>A B D E C F G</code>，中序 = <code>D B E A C F G</code>，还原二叉树并写出后序。</p>
+<p><strong>详解</strong>：</p>
+<ul>
+<li>前序首 A → 根。中序里 A 左边 <code>D B E</code>（左子树），右边 <code>C F G</code>（右子树）。</li>
+<li><strong>左子树</strong>：前序 <code>B D E</code>，中序 <code>D B E</code>。前序首 B → 根；中序 B 左边 D、右边 E → B 有左孩子 D、右孩子 E。</li>
+<li><strong>右子树</strong>：前序 <code>C F G</code>，中序 <code>C F G</code>。前序首 C → 根；中序 C 左边空、右边 <code>F G</code> → C 无左孩子，右子树前序 <code>F G</code>/中序 <code>F G</code> → 根 F，F 右孩子 G。</li>
+</ul>
+<p>还原的树：</p>
+<pre><code>        A
+       / \
+      B   C
+     / \   \
+    D   E   F
+             \
+              G</code></pre>
+<p>后序（左右根）：D E B G F C A → <strong>D E B G F C A</strong>。</p>
+<h3 id="743-题-43">7.4.3 题 4.3</h3>
+<p>已知后序 = <code>D E B F C A</code>，中序 = <code>D B E A C F</code>，还原并写出前序。</p>
+<p><strong>详解</strong>：</p>
+<ul>
+<li>后序<strong>末尾</strong> A → 根。中序 A 左 <code>D B E</code>（左子树）、右 <code>C F</code>（右子树）。</li>
+<li>左子树：后序 <code>D E B</code>（在后序里取前 3 个）、中序 <code>D B E</code>。后序末 B → 根；中序 B 左 D、右 E。</li>
+<li>右子树：后序 <code>F C</code>、中序 <code>C F</code>。后序末 C → 根；中序 C 左空、右 F → C 右孩子 F。</li>
+</ul>
+<p>树：</p>
+<pre><code>      A
+     / \
+    B   C
+   / \   \
+  D   E   F</code></pre>
+<p>前序（根左右）：<strong>A B D E C F</strong>。</p>
+<hr>
+<h2 id="75-二叉搜索树-bst">7.5 二叉搜索树 BST</h2>
+<h3 id="751-题-51">7.5.1 题 5.1</h3>
+<p>依次插入 <code>45, 24, 53, 12, 28, 90</code> 建 BST，画出结果，并写出中序遍历验证有序。</p>
+<p><strong>详解</strong>：</p>
+<pre><code>插45: 45
+插24: 24&lt;45 → 左
+插53: 53&gt;45 → 右
+插12: 12&lt;45→左,12&lt;24→左
+插28: 28&lt;45→左,28&gt;24→右
+插90: 90&gt;45→右,90&gt;53→右
+        45
+       /  \
+      24    53
+     / \      \
+    12  28     90</code></pre>
+<p>中序（左根右）：<strong>12 24 28 45 53 90</strong>，升序 ✓。</p>
+<h3 id="752-题-52">7.5.2 题 5.2</h3>
+<p>在题 5.1 的树上，分别删除 12（叶子）、53（一个孩子）、45（两个孩子，根），各画出删除后的树。</p>
+<p><strong>详解</strong>：</p>
+<ul>
+<li><strong>删 12（叶子）</strong>：直接摘掉，24 的左指针置空。</li>
+<li><strong>删 53（只有右孩子 90）</strong>：让 90 顶替 53 的位置（接到 45 右边）。</li>
+<li><strong>删 45（两个孩子，根）</strong>：找中序后继 = 右子树最小 = 53（53 无左孩子）。把 53 复制到根，再删原 53（它只有右孩子 90，让 90 顶上）。</li>
+</ul>
+<pre><code>删45后:   53
+         /  \
+        24    90
+       / \
+      12  28</code></pre>
+<blockquote><p>也可用中序前驱（左子树最大 = 28）替换，得到另一棵合法 BST，根为 28。</p>
+</blockquote>
+<hr>
+<h2 id="76-avl-平衡二叉树">7.6 AVL 平衡二叉树</h2>
+<h3 id="761-题-61">7.6.1 题 6.1</h3>
+<p>依次插入 <code>16, 3, 7, 11, 9, 26, 18, 14, 15</code>，画出最终 AVL 树（标出每次旋转）。</p>
+<p><strong>详解</strong>（只列触发旋转的关键步）：</p>
+<ul>
+<li>插 16, 3：<code>16</code> 左挂 <code>3</code>，平衡。</li>
+<li>插 7：3 的右来 7 → 16 失衡(BF=2)，<strong>LR 型</strong>（左孩子3的右子树）→ 先对 3 左旋、再对 16 右旋 → 孙子 7 上位：<pre><code>    7
+   / \
+  3   16</code></pre>
+</li>
+<li>插 11：11&gt;7→右，11&lt;16→左 → 挂在 16 左。平衡。</li>
+<li>插 9：9&gt;7→右,9&lt;16→左,9&lt;11→左 → 挂 11 左。检查：7 的 BF... 此时 16 失衡(BF=2)，<strong>LL 型</strong>？路径是 16←11←9 即 16 的左孩子 11 的左子树 → LL → 对 16 右旋，11 上位：<pre><code>      7
+     / \
+    3   11
+       /  \
+      9    16</code></pre>
+</li>
+<li>插 26：26&gt;7→右,26&gt;11→右,26&gt;16→右 → 挂 16 右。平衡。</li>
+<li>插 18：18&gt;7,18&gt;11,18&gt;16→右,18&lt;26→左 → 挂 26 左。平衡。</li>
+<li>插 14：14&gt;7,14&gt;11,14&lt;16→左 → 挂 16 左。平衡。</li>
+<li>插 15：15&gt;7,15&gt;11,15&lt;16→左,15&gt;14→右 → 挂 14 右。检查 → 16 失衡，<strong>LR 型</strong>（16 左孩子 14 的右子树 15）→ 先 14 左旋、再 16 右旋，15 上位。</li>
+</ul>
+<p>最终（一种标准答案）：</p>
+<pre><code>            11
+          /    \
+         7      16
+        / \    /  \
+       3   9  14   26
+               \   /
+               15 18</code></pre>
+<blockquote><p>此题旋转多、易错，<strong>强烈建议自己从头独立画一遍</strong>。重点是每插一个都从插入点往上查 BF，第一个 ±2 处定旋转类型。</p>
+</blockquote>
+<h3 id="762-题-62">7.6.2 题 6.2</h3>
+<p>判断下列插入序列各触发什么旋转：(a) 1,2,3  (b) 3,2,1  (c) 1,3,2  (d) 3,1,2</p>
+<p><strong>详解</strong>：</p>
+<ul>
+<li>(a) 1,2,3：1→右挂2→右挂3，根1失衡 BF=−2，<strong>RR 型 → 左旋</strong>。</li>
+<li>(b) 3,2,1：根3失衡 BF=2，<strong>LL 型 → 右旋</strong>。</li>
+<li>(c) 1,3,2：1右挂3、3左挂2，根1失衡，路径 1→右→左，<strong>RL 型 → 先右旋再左旋</strong>。</li>
+<li>(d) 3,1,2：3左挂1、1右挂2，根3失衡，路径 3→左→右，<strong>LR 型 → 先左旋再右旋</strong>。<blockquote><p>这四个最小例子把四种旋转各覆盖一次，记死它们能秒判类型。</p>
+</blockquote>
+</li>
+</ul>
+<hr>
+<h2 id="77-哈夫曼树-wpl-编码">7.7 哈夫曼树 + WPL + 编码</h2>
+<h3 id="771-题-71">7.7.1 题 7.1</h3>
+<p>权值 {5, 29, 7, 8, 14, 23, 3, 11}，构造哈夫曼树，求 WPL。</p>
+<p><strong>详解</strong>：每次取最小两个合并：</p>
+<ul>
+<li>3,5 → 8。 集合 {7,8,8,11,14,23,29}</li>
+<li>7,8 → 15。 集合 {8,11,14,15,23,29}（注意这个 8 是原来的 8）</li>
+<li>8,11 → 19。 集合 {14,15,19,23,29}</li>
+<li>14,15 → 29。 集合 {19,23,29,29}</li>
+<li>19,23 → 42。 集合 {29,29,42}</li>
+<li>29,29 → 58。 集合 {42,58}</li>
+<li>42,58 → 100。 结束。</li>
+</ul>
+<p>WPL = 各叶子权 × 路径长之和。更快的算法：<strong>WPL = 所有「合并产生的新节点权值」之和</strong>（每次合并的和会被它的所有后代各计一次）。
+WPL = 8 + 15 + 19 + 29 + 42 + 58 + 100 = <strong>271</strong>。</p>
+<blockquote><p>记住这个技巧：<strong>WPL = 全部内部节点（合并新节点）权值之和</strong>，比逐叶子算路径长快且不易错。</p>
+</blockquote>
+<h3 id="772-题-72">7.7.2 题 7.2</h3>
+<p>字符频率 A:5, B:2, C:1, D:1，构造哈夫曼树，写出各字符编码和 WPL。</p>
+<p><strong>详解</strong>：</p>
+<ul>
+<li>取最小 1(C),1(D) → 2。 {2(B),2,5(A)}</li>
+<li>取 2(B),2 → 4。 {4,5(A)}</li>
+<li>取 4,5(A) → 9。 结束。</li>
+</ul>
+<pre><code>        9
+      0/ \1
+      A   4
+     (5) 0/ \1
+         B   2
+        (2)0/ \1
+           C   D
+          (1) (1)</code></pre>
+<p>编码：<strong>A=0, B=10, C=110, D=111</strong>。
+WPL = 5×1 + 2×2 + 1×3 + 1×3 = 5+4+3+3 = <strong>15</strong>（= 内部节点和 2+4+9 = 15 ✓）。</p>
+<hr>
+<h2 id="78-图算法dfsbfsmstdijkstra拓扑">7.8 图算法（DFS/BFS、MST、Dijkstra、拓扑）</h2>
+<h3 id="781-题-81dfsbfs-序列">7.8.1 题 8.1（DFS/BFS 序列）</h3>
+<p>无向图，邻接关系：1-{2,3}, 2-{1,4,5}, 3-{1,6}, 4-{2}, 5-{2,6}, 6-{3,5}。从 1 出发，按编号小优先，写出 DFS 和 BFS 序列。</p>
+<p><strong>详解</strong>：</p>
+<ul>
+<li>DFS：1→2→4（回退）→5→6→3（回退完）= <strong>1 2 4 5 6 3</strong></li>
+<li>BFS：1 | 2 3 | 4 5 6 = <strong>1 2 3 4 5 6</strong></li>
+</ul>
+<h3 id="782-题-82kruskal">7.8.2 题 8.2（Kruskal）</h3>
+<p>无向带权图，边：(1,2)=1, (1,3)=3, (2,3)=2, (2,4)=5, (3,4)=4。用 Kruskal 求 MST 及总权。</p>
+<p><strong>详解</strong>：边升序：(1,2)1, (2,3)2, (1,3)3, (3,4)4, (2,4)5。</p>
+<ul>
+<li>(1,2)1：选。{1,2}</li>
+<li>(2,3)2：选。{1,2,3}</li>
+<li>(1,3)3：1、3 已连通 → <strong>弃</strong>（成环）</li>
+<li>(3,4)4：选。{1,2,3,4}，已选 3 条边（n−1=3）完成。
+MST 边：(1,2)(2,3)(3,4)，总权 = 1+2+4 = <strong>7</strong>。</li>
+</ul>
+<h3 id="783-题-83dijkstra-填表">7.8.3 题 8.3（Dijkstra 填表）</h3>
+<p>有向带权图，源点 1：1→2=4, 1→3=2, 3→2=1, 3→4=5, 2→4=3, 4→5=2, 2→5=7。求 1 到各点最短距离。</p>
+<p><strong>详解</strong>：</p>
+<div class="table-wrap"><table><thead><tr>
+<th>轮</th>
+<th>确定点</th>
+<th>d2</th>
+<th>d3</th>
+<th>d4</th>
+<th>d5</th>
+</tr>
+</thead><tbody><tr>
+<td>初始</td>
+<td>1(=0)</td>
+<td>4</td>
+<td>2</td>
+<td>∞</td>
+<td>∞</td>
+</tr>
+<tr>
+<td>1</td>
+<td><strong>3</strong>(=2)</td>
+<td><strong>3</strong>(经3:2+1)</td>
+<td>✓</td>
+<td><strong>7</strong>(2+5)</td>
+<td>∞</td>
+</tr>
+<tr>
+<td>2</td>
+<td><strong>2</strong>(=3)</td>
+<td>✓</td>
+<td>✓</td>
+<td><strong>6</strong>(经2:3+3&lt;7)</td>
+<td><strong>10</strong>(3+7)</td>
+</tr>
+<tr>
+<td>3</td>
+<td><strong>4</strong>(=6)</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+<td><strong>8</strong>(经4:6+2&lt;10)</td>
+</tr>
+<tr>
+<td>4</td>
+<td><strong>5</strong>(=8)</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+</tr>
+</tbody></table></div>
+<p>最短距离：1→2=<strong>3</strong>，1→3=<strong>2</strong>，1→4=<strong>6</strong>，1→5=<strong>8</strong>。</p>
+<h3 id="784-题-84拓扑排序">7.8.4 题 8.4（拓扑排序）</h3>
+<p>有向图：A→B, A→C, B→D, C→D, D→E。写出所有可能的拓扑序列。</p>
+<p><strong>详解</strong>：入度 A:0 B:1 C:1 D:2 E:1。</p>
+<ul>
+<li>输出 A → B,C 入度变 0。</li>
+<li>B、C 顺序自由 → 然后 D（两个前驱都完成）→ E。
+合法序列：<strong>A B C D E</strong> 和 <strong>A C B D E</strong>（两个）。</li>
+</ul>
+<hr>
+<h2 id="79-二分查找判定树-asl">7.9 二分查找判定树 + ASL</h2>
+<h3 id="791-题-91">7.9.1 题 9.1</h3>
+<p>有序表长 n=10，画二分判定树，求成功 ASL。</p>
+<p><strong>详解</strong>：下标 1~10，mid=⌊(low+high)/2⌋。</p>
+<ul>
+<li>[1,10] mid=5（第1层）</li>
+<li>左[1,4] mid=2（第2层）；[1,1] mid=1（第3层）；[3,4] mid=3（第3层），4 是 3 的右孩子（第4层）</li>
+<li>右[6,10] mid=8（第2层）；[6,7] mid=6（第3层），7（第4层）；[9,10] mid=9（第3层），10（第4层）</li>
+</ul>
+<p>层数统计：第1层 1 个(5)，第2层 2 个(2,8)，第3层 4 个(1,3,6,9)，第4层 3 个(4,7,10)。
+成功 ASL = (1×1 + 2×2 + 3×4 + 4×3)/10 = (1+4+12+12)/10 = 29/10 = <strong>2.9</strong>。</p>
+<h3 id="792-题-92">7.9.2 题 9.2</h3>
+<p>n=7 的二分判定树成功 ASL。</p>
+<p><strong>详解</strong>：[1,7]mid=4；左[1,3]mid=2（1,3为孩子）；右[5,7]mid=6（5,7为孩子）。
+层数：第1层 1 个(4)，第2层 2 个(2,6)，第3层 4 个(1,3,5,7)。
+ASL = (1×1+2×2+3×4)/7 = (1+4+12)/7 = 17/7 ≈ <strong>2.43</strong>。（n=7 是满判定树，很整齐）</p>
+<hr>
+<h2 id="710-哈希表-asl两种冲突处理">7.10 哈希表 ASL（两种冲突处理）</h2>
+<h3 id="7101-题-101线性探测">7.10.1 题 10.1（线性探测）</h3>
+<p>关键字 {7, 8, 30, 11, 18, 9, 14}，表长 m=11，H(k)=k%11，线性探测。画表，求成功 ASL。</p>
+<p><strong>详解</strong>：算地址 k%11：7→7, 8→8, 30→8, 11→0, 18→7, 9→9, 14→3。
+依次放：</p>
+<div class="table-wrap"><table><thead><tr>
+<th>k</th>
+<th>起始</th>
+<th>落位过程</th>
+<th>比较次数</th>
+</tr>
+</thead><tbody><tr>
+<td>7</td>
+<td>7</td>
+<td>7空，放</td>
+<td>1</td>
+</tr>
+<tr>
+<td>8</td>
+<td>8</td>
+<td>8空，放</td>
+<td>1</td>
+</tr>
+<tr>
+<td>30</td>
+<td>8</td>
+<td>8占→9空，放</td>
+<td>2</td>
+</tr>
+<tr>
+<td>11</td>
+<td>0</td>
+<td>0空，放</td>
+<td>1</td>
+</tr>
+<tr>
+<td>18</td>
+<td>7</td>
+<td>7占→8占→9占→10空，放</td>
+<td>4</td>
+</tr>
+<tr>
+<td>9</td>
+<td>9</td>
+<td>9占→10占→0占→1空，放</td>
+<td>4</td>
+</tr>
+<tr>
+<td>14</td>
+<td>3</td>
+<td>3空，放</td>
+<td>1</td>
+</tr>
+</tbody></table></div>
+<p>成功 ASL = (1+1+2+1+4+4+1)/7 = 14/7 = <strong>2</strong>。</p>
+<h3 id="7102-题-102拉链法">7.10.2 题 10.2（拉链法）</h3>
+<p>同样的 {7,8,30,11,18,9,14}，H=k%11，拉链法（尾插）。求成功 ASL 和不成功 ASL。</p>
+<p><strong>详解</strong>：按地址归类（k%11）：</p>
+<ul>
+<li>地址0：11（比较1）</li>
+<li>地址3：14（比较1）</li>
+<li>地址7：7, 18（比较1,2）</li>
+<li>地址8：8, 30（比较1,2）</li>
+<li>地址9：9（比较1）</li>
+</ul>
+<p>成功 ASL = (1 + 1 + (1+2) + (1+2) + 1)/7 = 9/7 ≈ <strong>1.29</strong>。
+不成功 ASL（对地址 0~10 共 11 个，每个 = 该链长度）：地址0长1、3长1、7长2、8长2、9长1，其余 6 个长 0。
+不成功 ASL = (1+1+2+2+1)/11 = 7/11 ≈ <strong>0.64</strong>。</p>
+<blockquote><p>对比题 10.1 的线性探测（成功 ASL=2），拉链法明显更优（1.29），因为没有堆积。</p>
+</blockquote>
+<hr>
+<h2 id="711-排序过程模拟">7.11 排序过程模拟</h2>
+<blockquote><p>统一用待排序列 <code>49 38 65 97 76 13 27</code>（除特别说明）。</p>
+</blockquote>
+<h3 id="7111-题-111直接插入写每趟">7.11.1 题 11.1（直接插入，写每趟）</h3>
+<p><strong>详解</strong>（[ ]为有序区）：</p>
+<pre><code>[49] 38 65 97 76 13 27
+[38 49] 65 97 76 13 27
+[38 49 65] 97 76 13 27
+[38 49 65 97] 76 13 27
+[38 49 65 76 97] 13 27
+[13 38 49 65 76 97] 27
+[13 27 38 49 65 76 97]</code></pre>
+<h3 id="7112-题-112冒泡写每趟大数往后冒">7.11.2 题 11.2（冒泡，写每趟，大数往后冒）</h3>
+<p><strong>详解</strong>：</p>
+<pre><code>初始:  49 38 65 97 76 13 27
+第1趟: 38 49 65 76 13 27 |97
+第2趟: 38 49 65 13 27 |76 97
+第3趟: 38 49 13 27 |65 76 97
+第4趟: 38 13 27 |49 65 76 97
+第5趟: 13 27 |38 49 65 76 97
+第6趟: 13 |27 ...（无交换，结束）</code></pre>
+<h3 id="7113-题-113快速排序写第一趟-partition基准首元素-49">7.11.3 题 11.3（快速排序，写第一趟 partition，基准=首元素 49）</h3>
+<p><strong>详解</strong>：pivot=49，low/high 双指针填坑：</p>
+<pre><code>49 38 65 97 76 13 27   low=0,high=6
+右找&lt;49: 27 → 填左: 27 38 65 97 76 13 _
+左找&gt;49: 65 → 填右: 27 38 _ 97 76 13 65
+右找&lt;49: 13 → 填左: 27 38 13 97 76 _ 65
+左找&gt;49: 97 → 填右: 27 38 13 _ 76 97 65
+指针相遇,基准归位: 27 38 13 [49] 76 97 65</code></pre>
+<p>第一趟结果：<strong>27 38 13 49 76 97 65</strong>（49 左边都 &lt;49，右边都 &gt;49）。</p>
+<h3 id="7114-题-114希尔排序增量-531">7.11.4 题 11.4（希尔排序，增量 5,3,1）</h3>
+<p>对 <code>49 38 65 97 76 13 27 49* 55 04</code>（10 个数，49* 是第二个49）做希尔，写出每个增量后的序列。</p>
+<p><strong>详解</strong>：</p>
+<ul>
+<li><strong>gap=5</strong>：分 5 组（下标 0,5 | 1,6 | 2,7 | 3,8 | 4,9）：
+组(49,13)→13,49；(38,27)→27,38；(65,49*)→49*,65；(97,55)→55,97；(76,04)→04,76
+结果：<code>13 27 49* 55 04 49 38 65 97 76</code></li>
+<li><strong>gap=3</strong>：分 3 组（0,3,6,9 | 1,4,7 | 2,5,8）：
+组(13,55,38,76)→13,38,55,76；(27,04,65)→04,27,65；(49*,49,97)→49*,49,97
+结果：<code>13 04 49* 38 27 49 55 65 97 76</code></li>
+<li><strong>gap=1</strong>：对上面做一次直接插入 → <code>04 13 27 38 49* 49 55 65 76 97</code>。</li>
+</ul>
+<h3 id="7115-题-115堆排序建大顶堆">7.11.5 题 11.5（堆排序，建大顶堆）</h3>
+<p>对 <code>49 38 65 97 76 13 27</code> 建大顶堆，写出建堆后的数组。</p>
+<p><strong>详解</strong>：完全二叉树，从最后非叶 i=2（下标，值65）开始下沉（下标从0：左孩2i+1）：</p>
+<ul>
+<li>i=2(65)：孩子13(下标5)、27(下标6)，都&lt;65，不动。</li>
+<li>i=1(38)：孩子97(下标3)、76(下标4)，97最大&gt;38 → 换 → <code>49 97 65 38 76 13 27</code>，38 下沉到下标3无孩子，停。</li>
+<li>i=0(49)：孩子97(下标1)、65(下标2)，97最大&gt;49 → 换 → <code>97 49 65 38 76 13 27</code>；49 下沉到下标1，孩子38(下标3)、76(下标4)，76&gt;49 → 换 → <code>97 76 65 38 49 13 27</code>。
+建堆结果：<strong>97 76 65 38 49 13 27</strong>（对应大顶堆，堆顶 97 最大）。</li>
+</ul>
+<h3 id="7116-题-116归并写每趟">7.11.6 题 11.6（归并，写每趟）</h3>
+<p><strong>详解</strong>（自底向上，相邻段两两合并）：</p>
+<pre><code>初始(7个,看成7个长1的有序段): [49][38][65][97][76][13][27]
+一趟(长2): [38 49][65 97][13 76][27]
+二趟(长4): [38 49 65 97][13 27 76]
+三趟(长8): [13 27 38 49 65 76 97]</code></pre>
+<hr>
+<h2 id="712-动态规划0-1-背包">7.12 动态规划（0-1 背包）</h2>
+<h3 id="7121-题-121">7.12.1 题 12.1</h3>
+<p>物品（重,值）：A(2,3) B(3,4) C(4,5) D(5,6)，背包容量 W=8。填 dp 表求最大价值，并指出选了哪些物品。</p>
+<p><strong>详解</strong>：dp[i][j] = 前 i 个物品、容量 j 的最大价值。转移：j≥wᵢ 时 dp[i][j]=max(dp[i−1][j], dp[i−1][j−wᵢ]+vᵢ)，否则 dp[i][j]=dp[i−1][j]。</p>
+<div class="table-wrap"><table><thead><tr>
+<th>i\j</th>
+<th>0</th>
+<th>1</th>
+<th>2</th>
+<th>3</th>
+<th>4</th>
+<th>5</th>
+<th>6</th>
+<th>7</th>
+<th>8</th>
+</tr>
+</thead><tbody><tr>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+</tr>
+<tr>
+<td>A(2,3)</td>
+<td>0</td>
+<td>0</td>
+<td>3</td>
+<td>3</td>
+<td>3</td>
+<td>3</td>
+<td>3</td>
+<td>3</td>
+<td>3</td>
+</tr>
+<tr>
+<td>B(3,4)</td>
+<td>0</td>
+<td>0</td>
+<td>3</td>
+<td>4</td>
+<td>4</td>
+<td>7</td>
+<td>7</td>
+<td>7</td>
+<td>7</td>
+</tr>
+<tr>
+<td>C(4,5)</td>
+<td>0</td>
+<td>0</td>
+<td>3</td>
+<td>4</td>
+<td>5</td>
+<td>7</td>
+<td>8</td>
+<td>9</td>
+<td>9</td>
+</tr>
+<tr>
+<td>D(5,6)</td>
+<td>0</td>
+<td>0</td>
+<td>3</td>
+<td>4</td>
+<td>5</td>
+<td>7</td>
+<td>8</td>
+<td>9</td>
+<td><strong>10</strong></td>
+</tr>
+</tbody></table></div>
+<p>最大价值 <strong>dp[4][8] = 10</strong>。
+<strong>回溯选了谁</strong>：dp[4][8]=10 ≠ dp[3][8]=9，说明<strong>选了 D</strong>（值6），剩容量 8−5=3 看 dp[3][3]=4；dp[3][3]=4=dp[2][3]，说明<strong>没选 C</strong>；dp[2][3]=4≠dp[1][3]=3，<strong>选了 B</strong>（值4），剩 3−3=0；dp[1][0]=0 结束。
+所以选 <strong>B + D</strong>，重 3+5=8，值 4+6=10 ✓。</p>
+<hr>
+<h2 id="713-过关自检">7.13 过关自检</h2>
+<p>把下面每类都能独立做对至少 2 题，这部分考试就稳了：</p>
+<ul>
+<li><input disabled="" type="checkbox"> 时间复杂度（含 log、嵌套、半三角）</li>
+<li><input disabled="" type="checkbox"> KMP next 数组（含全相同、含回跌）</li>
+<li><input disabled="" type="checkbox"> 二叉树性质（n₀=n₂+1、完全树叶子/n₁）</li>
+<li><input disabled="" type="checkbox"> 遍历 + 前序中序/后序中序还原树</li>
+<li><input disabled="" type="checkbox"> BST 插入 + 三种删除</li>
+<li><input disabled="" type="checkbox"> AVL 四种旋转 + 长序列插入</li>
+<li><input disabled="" type="checkbox"> 哈夫曼构造 + WPL（用内部节点和速算）+ 编码</li>
+<li><input disabled="" type="checkbox"> DFS/BFS 序列、Kruskal/Prim、Dijkstra 填表、拓扑序列</li>
+<li><input disabled="" type="checkbox"> 二分判定树成功 ASL</li>
+<li><input disabled="" type="checkbox"> 哈希 ASL（线性探测 + 拉链，成功 + 不成功）</li>
+<li><input disabled="" type="checkbox"> 排序每趟模拟（插入/冒泡/快排一趟/希尔/堆建堆/归并）</li>
+<li><input disabled="" type="checkbox"> 0-1 背包 dp 表 + 回溯选物品</li>
+</ul>
+<blockquote><p>错题别只改答案——回到对应讲义小节重读原理，想通「为什么」，下次才不会再错。</p>
+</blockquote>
+<hr>
+<blockquote><p><strong>以下是一页式「考前必背速查表」</strong>——把上面练熟之后，考前最后一遍快速扫过即可。</p>
+</blockquote>
+<blockquote><p>这一页是<strong>纯结论的浓缩</strong>，原理见三段讲义。能把这页默写出来，基本盘就稳了。</p>
+</blockquote>
+<hr>
+<h2 id="714-复杂度">7.14 复杂度</h2>
+<p><strong>从快到慢（背死）</strong></p>
+<pre><code>O(1) &lt; O(log n) &lt; O(n) &lt; O(n log n) &lt; O(n²) &lt; O(n³) &lt; O(2ⁿ) &lt; O(n!)</code></pre>
+<p><strong>怎么数</strong>：单层循环 O(n)；双层嵌套 O(n²)；循环变量翻倍/折半 O(log n)；分两半递归再合并 O(n log n)。
+<strong>顺序查找</strong>：最好 O(1)、最坏 O(n)、平均 (n+1)/2。
+<strong>递归空间</strong>：算递归栈深度。</p>
+<hr>
+<h2 id="715-线性结构">7.15 线性结构</h2>
+<p><strong>顺序表</strong>：随机访问 O(1)；插入平均移动 <strong>n/2</strong>、删除平均 <strong>(n−1)/2</strong>，均 O(n)。
+<strong>链表</strong>：按位查找 O(n)；已知位置增删 O(1)。插入「先接后断」：<code>s-&gt;next=p-&gt;next; p-&gt;next=s;</code>。删除记得 <code>free</code>。
+<strong>头指针/头结点/首元结点</strong>：头结点不存数据、让首位置不用特判。</p>
+<p><strong>循环队列三公式</strong>（牺牲一个单元）：</p>
+<pre><code>判空: front == rear
+判满: (rear+1) % MAXSIZE == front
+个数: (rear - front + MAXSIZE) % MAXSIZE</code></pre>
+<p><strong>顺序栈</strong>：top=-1 空，top=MAXSIZE-1 满；入栈先 ++top 再放。
+<strong>栈→递归/表达式求值；队列→BFS/层序。</strong></p>
+<p><strong>后缀表达式求值</strong>：数字入栈，运算符弹两个算完压回（先弹的是右操作数）。</p>
+<hr>
+<h2 id="716-串-kmp">7.16 串 · KMP</h2>
+<p>朴素匹配 O(n×m)；<strong>KMP O(n+m)</strong>，失配时 <strong>i 不回退</strong>、<code>j = next[j]</code>。
+<strong>next[j] = P[0..j−1] 的最长相等前后缀长度</strong>（next[0]=−1）。
+（各教材定义有差异，以课本为准，本质不变）</p>
+<hr>
+<h2 id="717-二叉树性质必背">7.17 二叉树性质（必背）</h2>
+<ol>
+<li>第 i 层最多 <strong>2^(i−1)</strong> 个节点。</li>
+<li>高度 k 最多 <strong>2^k − 1</strong> 个节点（满二叉树）。</li>
+<li><strong>n₀ = n₂ + 1</strong>（叶子 = 度2节点 + 1）★高频。</li>
+<li>n 个节点完全二叉树高度 = <strong>⌊log₂n⌋ + 1</strong>。</li>
+<li>完全二叉树编号 i：左孩子 <strong>2i</strong>、右孩子 <strong>2i+1</strong>、双亲 <strong>⌊i/2⌋</strong>。</li>
+</ol>
+<p><strong>二叉链表</strong>：n 个节点有 <strong>n+1 个空指针</strong>（→线索二叉树）。</p>
+<p><strong>遍历</strong>：前序=根左右、中序=左根右、后序=左右根、层序用<strong>队列</strong>。
+<strong>还原</strong>：前序+中序 ✓、后序+中序 ✓、<strong>前序+后序 ✗</strong>（必须有中序）。
+<strong>BST 中序 = 升序序列</strong>★。
+求高度：<code>max(左,右)+1</code>；节点数：<code>左+右+1</code>。</p>
+<hr>
+<h2 id="718-树表-平衡">7.18 树表 · 平衡</h2>
+<p><strong>BST</strong>：左&lt;根&lt;右；查找/插入/删除平均 O(log n)，<strong>最坏退化成链 O(n)</strong>。
+<strong>BST 删除三情况</strong>：①叶子直接删 ②一个孩子顶上 ③两个孩子用中序后继(右子树最小)/前驱(左子树最大)替换。</p>
+<p><strong>AVL</strong>：平衡因子(左高−右高)∈{−1,0,+1}。四种旋转：</p>
+<pre><code>LL → 右旋(单)        RR → 左旋(单)
+LR → 先左旋再右旋(双)  RL → 先右旋再左旋(双)</code></pre>
+<p>口诀：单旋儿子上位、双旋孙子上位。最小例子：1,2,3→RR；3,2,1→LL；1,3,2→RL；3,1,2→LR。</p>
+<p><strong>哈夫曼</strong>：每次合并最小两个；<strong>WPL = 全部内部节点权值之和</strong>（速算）；左0右1得编码；<strong>前缀码</strong>保证解码无歧义。</p>
+<p><strong>堆</strong>：完全二叉树，大顶堆根最大；数组存(2i+1/2i+2/⌊(i-1)/2⌋)；建堆 <strong>O(n)</strong>，插入/删除 O(log n)。</p>
+<p><strong>并查集</strong>：Find 找根、Union 合并；路径压缩+按秩≈O(1)；用于判连通、Kruskal 判环。</p>
+<p><strong>B/B+ 树</strong>：多路平衡、矮胖减少磁盘 IO；B+ 数据全在叶子且叶子成链（数据库索引）。</p>
+<hr>
+<h2 id="719-图">7.19 图</h2>
+<p><strong>存储</strong>：邻接矩阵 O(n²)、稠密图、判相连 O(1)、无向对称；邻接表 O(n+e)、稀疏图、遍历邻居快。
+<strong>遍历</strong>：<strong>DFS 栈/递归、BFS 队列</strong>；都要 <code>visited[]</code> 防环；邻接表 O(n+e)、矩阵 O(n²)。BFS 求<strong>无权图最短路</strong>。
+<strong>MST</strong>：<strong>Prim 加点(稠密 O(n²))、Kruskal 加边(稀疏 O(e log e)，并查集判环)</strong>；总权唯一、树可能不唯一。
+<strong>最短路</strong>：</p>
+<ul>
+<li><strong>Dijkstra</strong>：单源、<strong>不能负权</strong>、贪心、O(n²)；填表=每轮选未定中最小→确定→松弛邻居。</li>
+<li><strong>Floyd</strong>：全源、可负权(无负环)、DP、O(n³)；<strong>k 必须在最外层</strong>。</li>
+</ul>
+<p><strong>拓扑排序</strong>(AOV)：反复输出入度0的点、删出边；输出数&lt;总数→<strong>有环</strong>；<strong>结果不唯一</strong>。
+<strong>关键路径</strong>(AOE)：<strong>最长路 = 最短工期</strong>；e==l 的活动是关键活动(不能拖)。</p>
+<hr>
+<h2 id="720-查找">7.20 查找</h2>
+<p><strong>二分</strong>：前提<strong>有序+顺序存储</strong>；O(log n)；判定树高 ⌊log₂n⌋+1；成功 ASL = Σ(层数)/n。
+<strong>分块</strong>：块间有序块内无序；最佳块 √n、ASL O(√n)。
+<strong>哈希</strong>：<code>H(k)=k%p</code>(p 取≤表长最大质数)；不比较直接算地址平均 O(1)。</p>
+<ul>
+<li>冲突：开放定址(线性探测有<strong>堆积</strong>、二次探测)、<strong>拉链法</strong>(最常用，无堆积、删除方便)。</li>
+<li>装填因子 α=n/m；<strong>ASL 只与 α 有关，与 n 无关</strong>。</li>
+<li>成功 ASL=Σ各元素比较次数/元素数；不成功 ASL=各哈希地址数到第一个空位(线性)或链长(拉链)的平均。</li>
+<li>开放定址删除要用<strong>懒删除标记</strong>。</li>
+</ul>
+<hr>
+<h2 id="721-排序总表背死">7.21 排序总表（背死）</h2>
+<div class="table-wrap"><table><thead><tr>
+<th>算法</th>
+<th>最好</th>
+<th>平均</th>
+<th>最坏</th>
+<th>空间</th>
+<th>稳定</th>
+</tr>
+</thead><tbody><tr>
+<td>直接插入</td>
+<td>O(n)</td>
+<td>O(n²)</td>
+<td>O(n²)</td>
+<td>O(1)</td>
+<td>✓</td>
+</tr>
+<tr>
+<td>折半插入</td>
+<td>O(n)</td>
+<td>O(n²)</td>
+<td>O(n²)</td>
+<td>O(1)</td>
+<td>✓</td>
+</tr>
+<tr>
+<td>希尔</td>
+<td>—</td>
+<td>O(n^1.3)</td>
+<td>O(n²)</td>
+<td>O(1)</td>
+<td>✗</td>
+</tr>
+<tr>
+<td>冒泡</td>
+<td>O(n)</td>
+<td>O(n²)</td>
+<td>O(n²)</td>
+<td>O(1)</td>
+<td>✓</td>
+</tr>
+<tr>
+<td><strong>快速</strong></td>
+<td>O(nlogn)</td>
+<td>O(nlogn)</td>
+<td><strong>O(n²)</strong></td>
+<td>O(logn)</td>
+<td>✗</td>
+</tr>
+<tr>
+<td>简单选择</td>
+<td>O(n²)</td>
+<td>O(n²)</td>
+<td>O(n²)</td>
+<td>O(1)</td>
+<td>✗</td>
+</tr>
+<tr>
+<td><strong>堆排</strong></td>
+<td>O(nlogn)</td>
+<td>O(nlogn)</td>
+<td>O(nlogn)</td>
+<td>O(1)</td>
+<td>✗</td>
+</tr>
+<tr>
+<td><strong>归并</strong></td>
+<td>O(nlogn)</td>
+<td>O(nlogn)</td>
+<td>O(nlogn)</td>
+<td><strong>O(n)</strong></td>
+<td>✓</td>
+</tr>
+<tr>
+<td>基数</td>
+<td>O(d(n+r))</td>
+<td>O(d(n+r))</td>
+<td>O(d(n+r))</td>
+<td>O(r)</td>
+<td>✓</td>
+</tr>
+</tbody></table></div>
+<p><strong>口诀</strong>：不稳定的「<strong>快选堆希</strong>」；平均 nlogn 的「<strong>快堆归</strong>」；最坏退化 O(n²) 只有<strong>快排</strong>；空间例外：快排 O(logn)、归并 O(n)。
+<strong>一趟特征</strong>：冒泡→最大归位末尾；快排→基准归位左小右大；选择→最小到最前；堆→建堆/堆顶换末尾。</p>
+<p><strong>外部排序</strong>：基于归并；k 路归并减少趟数(趟数=⌈log_k 段数⌉)→减 IO；败者树加速选最小；最佳归并树用哈夫曼思想。</p>
+<hr>
+<h2 id="722-算法设计策略">7.22 算法设计策略</h2>
+<div class="table-wrap"><table><thead><tr>
+<th>策略</th>
+<th>核心</th>
+<th>关键</th>
+<th>例子</th>
+</tr>
+</thead><tbody><tr>
+<td>分治</td>
+<td>分→治→合</td>
+<td>子问题<strong>独立</strong></td>
+<td>归并/快排/二分/快速幂</td>
+</tr>
+<tr>
+<td>贪心</td>
+<td>每步局部最优</td>
+<td>需贪心选择性质</td>
+<td>哈夫曼/Prim/Kruskal/Dijkstra/分数背包</td>
+</tr>
+<tr>
+<td>动态规划</td>
+<td>存重叠子问题解</td>
+<td>重叠+最优子结构</td>
+<td>0-1背包/LCS/斐波那契/Floyd</td>
+</tr>
+<tr>
+<td>回溯</td>
+<td>DFS+剪枝+撤销</td>
+<td>解空间树穷举</td>
+<td>N皇后/全排列/迷宫</td>
+</tr>
+<tr>
+<td>分支限界</td>
+<td>BFS/优先级+界限</td>
+<td>求最优解</td>
+<td>0-1背包最优/TSP</td>
+</tr>
+</tbody></table></div>
+<p><strong>辨析</strong>：分治vs DP=子问题独立vs重叠；<strong>分数背包用贪心、0-1背包用 DP</strong>；回溯 DFS 求所有解、分支限界 BFS 求最优解。
+<strong>DP 四步</strong>：定义状态→转移方程→边界→计算顺序。
+<strong>0-1 背包转移</strong>：<code>dp[i][j] = max(dp[i-1][j], dp[i-1][j-wᵢ]+vᵢ)</code>。</p>
+<hr>
+<h2 id="723-全课一句话灵魂">7.23 全课一句话灵魂</h2>
+<blockquote><p><strong>没有最好的结构，只有最合适的。每个设计都是在「时间 vs 空间」「访问快 vs 增删快」之间做权衡。</strong>
+每学一个结构就问：它牺牲了什么、换来了什么？</p>
+</blockquote>
+
+    <nav class="pager">  <a href="06-algorithm-design.html">
+    <span class="label">← 上一章</span>
+    <span class="title">算法设计策略</span>
+  </a>  <a href="08-appendix-code.html" class="next">
+    <span class="label">下一章 →</span>
+    <span class="title">附录：核心代码合订</span>
+  </a></nav>
+  </article>
+</div>
+
+<footer>
+  <div class="set">
+    <span>数据结构：从指针到算法</span>
+    <span>2026 · ZH-CN</span>
+  </div>
+  <div class="set">
+    <span>Mav</span>
+  </div>
+</footer>
+<div class="search-backdrop" id="search-overlay" role="dialog" aria-modal="true" aria-label="搜索" hidden>
+  <div class="search-modal">
+    <div class="search-input-wrap">
+      <input type="search" class="search-input" placeholder="搜索内容..." aria-label="搜索内容" autocomplete="off">
+      <kbd>ESC</kbd>
+    </div>
+    <div class="search-results" role="listbox" aria-label="搜索结果"></div>
+  </div>
+</div>
+
+<!-- Side Panel -->
+<div class="side-panel" id="side-panel">
+  <div class="side-panel-resize" id="side-panel-resize"></div>
+  <div class="side-panel-header">
+    <div class="side-panel-tabs">
+      <button class="side-panel-tab active" data-mode="sidenote">补充</button>
+      <button class="side-panel-tab" data-mode="notepad">笔记</button>
+    </div>
+    <button class="side-panel-close" aria-label="关闭">×</button>
+  </div>
+  <div class="side-panel-body"></div>
+</div>
+<button class="notepad-fab" id="notepad-fab" aria-label="便利贴">✎</button>
+
+<!-- Mobile TOC -->
+<button class="mtoc-fab" id="mtoc-fab" aria-label="目录">TOC</button>
+<div class="mtoc-drawer" id="mtoc-drawer">
+  <div class="mtoc-content"></div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/bash.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/typescript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/yaml.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/javascript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/json.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/python.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/css.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+<script>mermaid.initialize({startOnLoad:true, theme:'neutral', fontFamily:'Inter, sans-serif'});</script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}]});"></script>
+<script src="../assets/script.js"></script>
+</body>
+</html>

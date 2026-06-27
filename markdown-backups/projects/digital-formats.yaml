@@ -1,12 +1,16 @@
 title: "数字世界的底层格式"
 slug: digital-formats
+order: 4
 description: "文件、视频、网页——你每天接触的数字内容，底层到底长什么样"
 books:
   - slug: pdf-explained
+    label: "PDF"
     role: "文档：PDF 这个你天天用的格式，内部结构出乎意料"
   - slug: video-screen
+    label: "视频"
     role: "媒体：像素、编解码器、HDR 的技术全景"
   - slug: browser-war
+    label: "浏览器"
     role: "渲染：浏览器怎么把代码变成你看到的页面"
 transitions:
   - "PDF 是静态文档的终极格式，但现代内容越来越多是动态的——视频。从像素的物理呈现到编解码的数学压缩，逻辑是一脉相承的。"

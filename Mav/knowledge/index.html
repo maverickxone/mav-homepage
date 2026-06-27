@@ -42,9 +42,7 @@
   <div class="view-projects" id="view-projects">
 
     <div class="projects-list">
-
-      <!-- Project: 计算机是怎么工作的 -->
-      <!-- Project: 从零开始学 Transformer -->
+      <!-- AUTO:PROJECTS:START -->
       <a class="project-card" href="projects/from-zero-to-transformer/index.html">
         <h3>从零开始学 Transformer</h3>
         <p class="project-card-desc">从数学直觉到 Transformer 架构——每个算法从零手写一遍，再用框架跑一遍</p>
@@ -59,21 +57,16 @@
           <div class="path-dot-line"></div>
           <div class="path-dot-item"></div>
         </div>
-        <div style="display:flex;align-items:flex-start;margin-bottom:var(--space-3);">
-          <span style="width:8px;flex:0 0 8px;display:flex;justify-content:center;overflow:visible;white-space:nowrap;font-family:var(--mono);font-size:10px;letter-spacing:0.02em;color:var(--muted);">Math</span>
-          <span style="flex:1;"></span>
-          <span style="width:8px;flex:0 0 8px;display:flex;justify-content:center;overflow:visible;white-space:nowrap;font-family:var(--mono);font-size:10px;letter-spacing:0.02em;color:var(--muted);">MLP</span>
-          <span style="flex:1;"></span>
-          <span style="width:8px;flex:0 0 8px;display:flex;justify-content:center;overflow:visible;white-space:nowrap;font-family:var(--mono);font-size:10px;letter-spacing:0.02em;color:var(--muted);">CNN</span>
-          <span style="flex:1;"></span>
-          <span style="width:8px;flex:0 0 8px;display:flex;justify-content:center;overflow:visible;white-space:nowrap;font-family:var(--mono);font-size:10px;letter-spacing:0.02em;color:var(--muted);">NLP</span>
-          <span style="flex:1;"></span>
-          <span style="width:8px;flex:0 0 8px;display:flex;justify-content:center;overflow:visible;white-space:nowrap;font-family:var(--mono);font-size:10px;letter-spacing:0.02em;color:var(--muted);">Transformer</span>
+        <div class="path-dots-labels">
+          <span class="path-dot-label">Math</span>
+          <span class="path-dot-label">MLP</span>
+          <span class="path-dot-label">CNN</span>
+          <span class="path-dot-label">NLP</span>
+          <span class="path-dot-label">Transformer</span>
         </div>
-        <div class="project-card-meta">5 本书 · 40 章 · 预计 40 小时</div>
+        <div class="project-card-meta">5 本书 · 40 章 · 预计 50 小时</div>
       </a>
 
-      <!-- Project: 计算机是怎么工作的 -->
       <a class="project-card" href="projects/how-computer-works/index.html">
         <h3>计算机是怎么工作的</h3>
         <p class="project-card-desc">从晶体管到浏览器，一路向上——理解你每天用的这台机器</p>
@@ -89,10 +82,9 @@
           <span class="path-dot-label">服务器</span>
           <span class="path-dot-label">浏览器</span>
         </div>
-        <div class="project-card-meta">3 本书 · 预计 3 小时</div>
+        <div class="project-card-meta">3 本书 · 21 章 · 预计 10 小时</div>
       </a>
 
-      <!-- Project: 深度学习从零到能读论文 -->
       <a class="project-card" href="projects/deep-learning-path/index.html">
         <h3>深度学习从零到能读论文</h3>
         <p class="project-card-desc">从 PyTorch 张量运算到 Transformer，一步步建立动手能力</p>
@@ -108,10 +100,9 @@
           <span class="path-dot-label">CNN</span>
           <span class="path-dot-label">RNN</span>
         </div>
-        <div class="project-card-meta">3 本书 · 预计 4 小时</div>
+        <div class="project-card-meta">3 本书 · 21 章 · 预计 7 小时</div>
       </a>
 
-      <!-- Project: 数字世界的底层格式 -->
       <a class="project-card" href="projects/digital-formats/index.html">
         <h3>数字世界的底层格式</h3>
         <p class="project-card-desc">文件、视频、网页——你每天接触的数字内容，底层到底长什么样</p>
@@ -127,15 +118,27 @@
           <span class="path-dot-label">视频</span>
           <span class="path-dot-label">浏览器</span>
         </div>
-        <div class="project-card-meta">3 本书 · 预计 3 小时</div>
+        <div class="project-card-meta">3 本书 · 22 章 · 预计 8 小时</div>
       </a>
-
+      <!-- AUTO:PROJECTS:END -->
     </div>
 
     <!-- Standalone books (not in any project) -->
     <div class="standalone-section">
       <div class="section-label">独立阅读</div>
       <div class="knowledge-grid">
+
+        <a class="knowledge-card" href="data-structures/index.html">
+          <span class="tag">课内 · 数据结构</span>
+          <h3>数据结构：从指针到算法</h3>
+          <p>从 C 指针地基到线性表、树、图、查找排序与算法策略，配手算专项、考前速查和核心代码。</p>
+        </a>
+
+        <a class="knowledge-card" href="thermodynamics/index.html">
+          <span class="tag">课内 · 物理</span>
+          <h3>热学速通</h3>
+          <p>六章梳理热力学定律、熵、统计分布、输运过程与相变。</p>
+        </a>
 
         <a class="knowledge-card" href="claude-code/index.html">
           <span class="tag">课外 · 工具</span>
@@ -182,6 +185,18 @@
   <div class="view-all hidden" id="view-all">
 
     <div class="knowledge-grid">
+
+      <a class="knowledge-card" href="data-structures/index.html">
+        <span class="tag">课内 · 数据结构</span>
+        <h3>数据结构：从指针到算法</h3>
+        <p>面向期末与考研的数据结构讲义——从 C 指针地基到线性表、树、图、查找排序与算法策略，配手算专项、考前速查和可直接编译的核心代码合订。</p>
+      </a>
+
+      <a class="knowledge-card" href="thermodynamics/index.html">
+        <span class="tag">课内 · 物理</span>
+        <h3>热学速通</h3>
+        <p>面向科大大一学生的热学速通讲义。六章，从热力学定律到统计分布，概念清晰、公式到位。</p>
+      </a>
 
       <a class="knowledge-card" href="ai-math-foundations/index.html">
         <span class="tag">课内 · AI</span>
