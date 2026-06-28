@@ -1967,13 +1967,14 @@ kbd {
   transform: translateX(2px);
 }
 [data-style="azure"] .sidebar li a.active {
-  background: var(--accent);
-  color: var(--accent-ink);
+  background: var(--accent-soft);
+  color: var(--accent);
   font-weight: var(--weight-medium);
-  box-shadow: var(--style-shadow-sm);
+  border-left: 3px solid var(--accent);
+  padding-left: 9px;
 }
 [data-style="azure"] .sidebar li a.active::before {
-  color: var(--accent-ink);
+  color: var(--accent);
 }
 
 /* Warm: warm bg, accent-dot marker for active item, soft hover */
@@ -1981,9 +1982,11 @@ kbd {
   background: var(--bg-soft);
   border-right-color: var(--line);
 }
+[data-style="warm"] .sidebar li {
+  position: relative;
+}
 [data-style="warm"] .sidebar li a {
   padding: var(--style-sidebar-gap) 0;
-  position: relative;
   transition: color 0.15s ease;
 }
 [data-style="warm"] .sidebar li a:hover {
@@ -1995,10 +1998,10 @@ kbd {
 [data-style="warm"] .sidebar li a.active::before {
   color: var(--accent);
 }
-[data-style="warm"] .sidebar li a.active::after {
+[data-style="warm"] .sidebar li:has(a.active)::before {
   content: "";
   position: absolute;
-  left: -12px;
+  left: -14px;
   top: 50%;
   transform: translateY(-50%);
   width: 6px;
@@ -3141,11 +3144,12 @@ kbd {
 
 /* Dark mode: Azure sidebar active override */
 [data-style="azure"][data-theme="dark"] .sidebar li a.active {
-  background: var(--accent);
-  color: var(--accent-ink);
+  background: var(--accent-soft);
+  color: var(--accent);
+  border-left-color: var(--accent);
 }
 [data-style="azure"][data-theme="dark"] .sidebar li a.active::before {
-  color: var(--accent-ink);
+  color: var(--accent);
 }
 
 /* Dark mode: ensure nav active pills work */

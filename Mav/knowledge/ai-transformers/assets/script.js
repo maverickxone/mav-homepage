@@ -673,9 +673,6 @@
     }
   })();
 
-})();
-
-
   // ---------- 11. Side Panel (Sidenote + Notepad) ----------
   (function () {
     const panel = document.getElementById('side-panel');
@@ -982,3 +979,5 @@
     });
 
   })();
+
+})();
