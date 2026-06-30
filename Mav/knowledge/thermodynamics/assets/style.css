@@ -421,6 +421,14 @@ pre::selection {
   width: 100%;
   counter-reset: section;
 }
+.chapter-body img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  margin: var(--space-5) auto;
+  border-radius: 4px;
+  border: 1px solid var(--line);
+}
 article { display: block; }
 
 /* ============================================================

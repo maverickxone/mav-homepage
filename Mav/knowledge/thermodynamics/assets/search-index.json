@@ -6,494 +6,78 @@
       "chapter": "01",
       "chapterTitle": "热学基础与温度",
       "url": "chapters/01-basics-temperature.html",
-      "body": "\r\n   1.1 热学研究什么\r\n\r\n你已经学过力学——研究物体在力的作用下如何运动。但力学处理的对象通常是\"一个质点\"或\"一个刚体\"。热学完全不同：它面对的是  由天文数字量级的微观粒子组成的宏观物体  。\r\n\r\n一摩尔气体包含 $6.022 \\times 10^ 23 $ 个分子。你不可能写出每个分子的运动方程（那是 $10^ 23 $ 个耦合微分方程）。热学的核心问题就是：  不追踪每一个粒子，能不能找到描述整体行为的规律？  \r\n\r\n答案是肯定的——正因为粒子数巨大，统计规律变得异常精确。\r\n\r\n    什么是热现象\r\n\r\n热现象是一切和物体冷热状态相关的宏观现象，包括但不限于：\r\n\r\n  热胀冷缩（几何性质随温度变化）\r\n  相变（冰→水→气）\r\n  导热（热量从高温处流向低温处）\r\n  电阻随温度变化\r\n  磁性随温度变化（居里温度以上铁磁体失去磁性）\r\n\r\n这些现象的  微观本质  都是同一件事：大量粒子的无规则热运动。温度高→粒子动得猛→宏观上体现出各种热效应。\r\n\r\n    两条研究路线\r\n\r\n热学有两条互补的路线：\r\n\r\n  路线   视角   方法论   代表内容  \r\n                                   \r\n  热力学（Thermodynamics）   宏观   从实验事实出发，建立普适定律，不问微观细节   第一定律、第二定律、熵、自由能  \r\n  统计物理（Statistical Physics）   微观   从大量粒子的力学规律出发，用概率统计推导宏观量   Maxwell 分布、能量均分、玻尔兹曼关系  \r\n\r\n两条路线是互补的：\r\n  热力学告诉你\"是什么\"（规律是什么），不告诉你\"为什么\"\r\n  统计物理告诉你\"为什么\"（微观机制），但推导依赖模型假设\r\n\r\n这门课前三章走宏观路线（热力学），第 4 5 章走微观路线（分子动理论），第 6 章两者结合。\r\n\r\n\r\n    学习方法提示\r\n\r\n课件里强调了几点，值得重复：\r\n\r\n1.   基本概念要精确  ：温度、内能、熵、功——每一个词都有严格定义，不能靠日常直觉\r\n2.   定律要理解透  ：不只是记公式，要知道适用条件和物理含义\r\n3.   宏观与微观双视角  ：同一个量（如压强、温度），既有宏观定义也有微观解释\r\n4.   抓主要矛盾  ：热力学建立模型时会做理想化（理想气体、准静态过程），先搞清理想情况，再考虑修正\r\n\r\n   \r\n\r\n   1.2 热力学系统与外界\r\n\r\n    为什么需要\"系统\"的概念\r\n\r\n在力学里你画受力分析图，第一步就是选取研究对象。热学也一样——你必须先明确  你在研究什么  。\r\n\r\n  系统  （system）：被你选定的研究对象。\r\n  外界  （surroundings）：系统以外的一切。\r\n  边界  （boundary）：系统和外界的分界面。\r\n\r\n边界可以是实际的物理壁（比如气缸壁），也可以是你假想画出的一个面。关键是一旦选定了系统，你就要追踪：跨越边界的能量交换（功和热）、跨越边界的物质交换。\r\n\r\n    系统的分类\r\n\r\n按照边界允许什么穿过来分：\r\n\r\n  类型   物质能否穿越   能量能否穿越   典型例子  \r\n        :   : :   :        \r\n  开放系统（open）   ✓   ✓   敞口烧杯、正在呼吸的人  \r\n  封闭系统（closed）   ✗   ✓   密封气缸（可做功、可传热）  \r\n  孤立系统（isolated）   ✗   ✗   理想保温瓶、整个宇宙  \r\n\r\n\r\n  这门课 90% 的时间在讨论封闭系统  ——一定量的气体被封在容器里，可以和外界交换能量（做功或传热），但分子进不来也出不去。\r\n\r\n    边界的性质\r\n\r\n边界本身也有分类，常见的：\r\n\r\n    刚性壁   vs   可动壁  ：刚性壁不允许体积变化（不做功）；可动壁（如活塞）允许系统做膨胀功\r\n    绝热壁   vs   导热壁  ：绝热壁不允许热量传递；导热壁允许热交换\r\n    半透膜  ：只允许特定分子通过（化学中的渗透平衡用到，本课程不涉及）\r\n\r\n一个实用的判断：看到\"绝热\"两个字→系统不吸热不放热（$Q = 0$）；看到\"刚性容器\"→系统不做膨胀功（$W = 0$）。\r\n\r\n   \r\n\r\n   1.3 状态参量\r\n\r\n    什么是状态参量\r\n\r\n描述系统宏观状态的物理量叫  状态参量  （state variables 或 state functions）。\r\n\r\n常见的状态参量：\r\n\r\n  参量   符号   含义   单位  \r\n                             \r\n  压强 "
+      "body": "\n   1.1 热学的根本问题：从 10²³ 个分子里捞出规律\n\n   !考试权重  本节为概念理解，选择题偶尔涉及\"热力学 vs 统计物理\"的区分，不直接出计算。\n\n你在力学里习惯的对象，是一个质点、一根杆、一个刚体——顶多几个、十几个自由度，写下牛顿方程就能精确求解。热学一上来就把你推到一个完全不同的尺度：它面对的是  由天文数字量级的微观粒子组成的宏观物体  。一摩尔气体里有 $6.022\\times10^ 23 $ 个分子，你要是想老老实实给每个分子写运动方程，就得同时解 $10^ 23 $ 个互相耦合的微分方程——这不是难，这是根本不可能。\n\n于是热学的根本问题就浮出水面：  能不能不去追踪每一个粒子，却仍然找到描述整体行为的规律？   答案不仅是肯定的，而且有点反直觉地美妙——正因为粒子数大到离谱，统计规律反而变得异常精确。单个分子撞向哪里、跑多快完全是随机的，但 $10^ 23 $ 个分子的平均行为却稳定得可以写成简洁的方程。这就像你预测不了某一个人明天买不买可乐，却能相当准地预测一座千万人口城市明天的可乐销量。\n\n围绕这个问题，物理学发展出两条互补的路线：\n\n    热力学  ：站在宏观视角，干脆不问微观细节，直接从大量实验事实出发，提炼出像第一定律、第二定律、熵这样的普适规律；它告诉你\"是什么\"，却不解释\"为什么\"。\n    统计物理  （这门课里主要体现为分子动理论）：从大量粒子的力学规律出发，用概率统计把宏观量一个个推导出来；它能回答\"为什么\"，但推导依赖具体的微观模型假设。\n\n这门课的前三章主要走宏观的热力学路线，第四、五章转入微观的分子动理论，第六章再把两者合到一起。本章正是整个旅程的起点——我们要先把描述系统的语言（系统、状态、平衡、温度）一件件备齐，再搭起理想气体状态方程这块地基，最后第一次把宏观与微观对接起来。\n\n顺便说一句什么叫\"热现象\"。它泛指一切与物体冷热状态相关的宏观现象：热胀冷缩、相变（冰→水→气）、导热、电阻随温度变化、铁磁体在居里温度以上失去磁性……表面上五花八门，微观本质却是同一件事——  大量粒子的无规则热运动  。温度高，分子动得猛，宏观上就表现出种种热效应。抓住这条主线，后面纷繁的公式才不会散成一地。\n\n   要点 \n \n    热学对象是 $\\sim10^ 23 $ 个粒子的宏观体系；粒子数极大，反而让  统计规律异常精确  。\n    两条互补路线：  热力学  （宏观、实验出发、答\"是什么\"）与  统计物理/分子动理论  （微观、模型出发、答\"为什么\"）。\n    一切热现象的微观本质 = 大量粒子的无规则热运动。\n\n   \n\n   1.2 系统、外界与边界：先圈定研究对象\n\n   !考试权重  选择/判断题常考系统分类（开放/封闭/孤立）。理解\"绝热→Q=0\"\"刚性→W=0\"对后续计算题至关重要。\n\n力学里做受力分析，第一步永远是\"取研究对象\"。热学一模一样：你必须先明确  你到底在研究什么  ，否则后面谈能量进出、谈平衡都无从谈起。被你选定的研究对象叫  系统  ，系统以外的一切叫  外界  ，两者的分界面叫  边界  。边界可以是真实的物理壁（气缸壁），也可以是你想象着画出来的一个面；关键在于一旦选定系统，你就要紧盯着两件事——跨越边界的能量交换（功和热），以及跨越边界的物质交换。\n\n按照边界允许什么穿过，系统分成三类，这个分类会贯穿全课：\n\n  类型   物质交换   能量交换   例子  \n                                   \n    开放系统     ✓   ✓   敞口烧杯、正在呼吸的人  \n    封闭系统     ✗   ✓   密封气缸（本课主角）  \n    孤立系统     ✗   ✗   理想保温瓶、整个宇宙  \n\n这门课九成的时间都在讨论封闭系统——一定量的气体被封在容器里，能和外界换能量，但分子数固定不变。\n\n! 三类系统对比  ../assets/images/01 01.png \n\n这里有一个初学者常忽略、却很能体现理解深度的问题：  封闭系统物质不进出，能量却能穿过边界，它到底是怎么穿过去的？   答案是——靠的根本不是粒子穿墙，而是  力的作用  跨越接触面。做功时，气体分子撞击活塞，活塞受力移动，力乘位移就是功；没有任何分子穿过活塞，但分子的动能通过接触力传给了外界——就像你推墙，手没穿过墙，能量却传了过去。传热时，气体分子撞击导热壁，使壁内原子振动加剧，振动像多米诺骨牌一样沿壁接力传到外侧，外侧分子于是获得能量；全程每个原子都没离开原位。一句话：封闭系统的边界挡得住\"有质量的粒子\"，却挡不住\"力的作用\"和\"场的传播\"——而这恰恰正是能量传递的两种方式。把这一点想透，第二章的功与热就不再是抽象符"
     },
     {
-      "id": "01-basics-temperature-11-热学研究什么",
-      "title": "1.1 热学研究什么",
+      "id": "01-basics-temperature-11-热学的根本问题从-10-个分子里捞出规律",
+      "title": "1.1 热学的根本问题：从 10²³ 个分子里捞出规律",
       "chapter": "01",
       "chapterTitle": "热学基础与温度",
-      "url": "chapters/01-basics-temperature.html#11-热学研究什么",
+      "url": "chapters/01-basics-temperature.html#11-热学的根本问题从-10-个分子里捞出规律",
       "body": ""
     },
     {
-      "id": "01-basics-temperature-什么是热现象",
-      "title": "什么是热现象",
+      "id": "01-basics-temperature-12-系统外界与边界先圈定研究对象",
+      "title": "1.2 系统、外界与边界：先圈定研究对象",
       "chapter": "01",
       "chapterTitle": "热学基础与温度",
-      "url": "chapters/01-basics-temperature.html#什么是热现象",
+      "url": "chapters/01-basics-temperature.html#12-系统外界与边界先圈定研究对象",
       "body": ""
     },
     {
-      "id": "01-basics-temperature-两条研究路线",
-      "title": "两条研究路线",
+      "id": "01-basics-temperature-13-状态参量用什么量来描述一个系统",
+      "title": "1.3 状态参量：用什么量来描述一个系统",
       "chapter": "01",
       "chapterTitle": "热学基础与温度",
-      "url": "chapters/01-basics-temperature.html#两条研究路线",
+      "url": "chapters/01-basics-temperature.html#13-状态参量用什么量来描述一个系统",
       "body": ""
     },
     {
-      "id": "01-basics-temperature-学习方法提示",
-      "title": "学习方法提示",
+      "id": "01-basics-temperature-14-平衡态与准静态过程让quot变化quot也能被描述",
+      "title": "1.4 平衡态与准静态过程：让&quot;变化&quot;也能被描述",
       "chapter": "01",
       "chapterTitle": "热学基础与温度",
-      "url": "chapters/01-basics-temperature.html#学习方法提示",
+      "url": "chapters/01-basics-temperature.html#14-平衡态与准静态过程让quot变化quot也能被描述",
       "body": ""
     },
     {
-      "id": "01-basics-temperature-12-热力学系统与外界",
-      "title": "1.2 热力学系统与外界",
+      "id": "01-basics-temperature-15-温度与第零定律给quot冷热quot一个严格的定义",
+      "title": "1.5 温度与第零定律：给&quot;冷热&quot;一个严格的定义",
       "chapter": "01",
       "chapterTitle": "热学基础与温度",
-      "url": "chapters/01-basics-temperature.html#12-热力学系统与外界",
+      "url": "chapters/01-basics-temperature.html#15-温度与第零定律给quot冷热quot一个严格的定义",
       "body": ""
     },
     {
-      "id": "01-basics-temperature-为什么需要quot系统quot的概念",
-      "title": "为什么需要&quot;系统&quot;的概念",
+      "id": "01-basics-temperature-16-温标怎么给温度配上一把可靠的尺子",
+      "title": "1.6 温标：怎么给温度配上一把可靠的尺子",
       "chapter": "01",
       "chapterTitle": "热学基础与温度",
-      "url": "chapters/01-basics-temperature.html#为什么需要quot系统quot的概念",
+      "url": "chapters/01-basics-temperature.html#16-温标怎么给温度配上一把可靠的尺子",
       "body": ""
     },
     {
-      "id": "01-basics-temperature-系统的分类",
-      "title": "系统的分类",
+      "id": "01-basics-temperature-17-理想气体状态方程全章的地基",
+      "title": "1.7 理想气体状态方程：全章的地基",
       "chapter": "01",
       "chapterTitle": "热学基础与温度",
-      "url": "chapters/01-basics-temperature.html#系统的分类",
+      "url": "chapters/01-basics-temperature.html#17-理想气体状态方程全章的地基",
       "body": ""
     },
     {
-      "id": "01-basics-temperature-边界的性质",
-      "title": "边界的性质",
+      "id": "01-basics-temperature-等价形式必须全记住",
+      "title": "等价形式（必须全记住）",
       "chapter": "01",
       "chapterTitle": "热学基础与温度",
-      "url": "chapters/01-basics-temperature.html#边界的性质",
+      "url": "chapters/01-basics-temperature.html#等价形式必须全记住",
       "body": ""
     },
     {
-      "id": "01-basics-temperature-13-状态参量",
-      "title": "1.3 状态参量",
+      "id": "01-basics-temperature-quot理想quot意味着什么",
+      "title": "&quot;理想&quot;意味着什么",
       "chapter": "01",
       "chapterTitle": "热学基础与温度",
-      "url": "chapters/01-basics-temperature.html#13-状态参量",
-      "body": ""
-    },
-    {
-      "id": "01-basics-temperature-什么是状态参量",
-      "title": "什么是状态参量",
-      "chapter": "01",
-      "chapterTitle": "热学基础与温度",
-      "url": "chapters/01-basics-temperature.html#什么是状态参量",
-      "body": ""
-    },
-    {
-      "id": "01-basics-temperature-广延量与强度量",
-      "title": "广延量与强度量",
-      "chapter": "01",
-      "chapterTitle": "热学基础与温度",
-      "url": "chapters/01-basics-temperature.html#广延量与强度量",
-      "body": ""
-    },
-    {
-      "id": "01-basics-temperature-自由度与状态方程",
-      "title": "自由度与状态方程",
-      "chapter": "01",
-      "chapterTitle": "热学基础与温度",
-      "url": "chapters/01-basics-temperature.html#自由度与状态方程",
-      "body": ""
-    },
-    {
-      "id": "01-basics-temperature-14-平衡态与准静态过程",
-      "title": "1.4 平衡态与准静态过程",
-      "chapter": "01",
-      "chapterTitle": "热学基础与温度",
-      "url": "chapters/01-basics-temperature.html#14-平衡态与准静态过程",
-      "body": ""
-    },
-    {
-      "id": "01-basics-temperature-平衡态的定义",
-      "title": "平衡态的定义",
-      "chapter": "01",
-      "chapterTitle": "热学基础与温度",
-      "url": "chapters/01-basics-temperature.html#平衡态的定义",
-      "body": ""
-    },
-    {
-      "id": "01-basics-temperature-平衡态-稳态",
-      "title": "平衡态 ≠ 稳态",
-      "chapter": "01",
-      "chapterTitle": "热学基础与温度",
-      "url": "chapters/01-basics-temperature.html#平衡态-稳态",
-      "body": ""
-    },
-    {
-      "id": "01-basics-temperature-平衡态的种类",
-      "title": "平衡态的种类",
-      "chapter": "01",
-      "chapterTitle": "热学基础与温度",
-      "url": "chapters/01-basics-temperature.html#平衡态的种类",
-      "body": ""
-    },
-    {
-      "id": "01-basics-temperature-为什么状态参量只在平衡态有意义",
-      "title": "为什么状态参量只在平衡态有意义",
-      "chapter": "01",
-      "chapterTitle": "热学基础与温度",
-      "url": "chapters/01-basics-temperature.html#为什么状态参量只在平衡态有意义",
-      "body": ""
-    },
-    {
-      "id": "01-basics-temperature-准静态过程",
-      "title": "准静态过程",
-      "chapter": "01",
-      "chapterTitle": "热学基础与温度",
-      "url": "chapters/01-basics-temperature.html#准静态过程",
-      "body": ""
-    },
-    {
-      "id": "01-basics-temperature-准静态的判据",
-      "title": "准静态的判据",
-      "chapter": "01",
-      "chapterTitle": "热学基础与温度",
-      "url": "chapters/01-basics-temperature.html#准静态的判据",
-      "body": ""
-    },
-    {
-      "id": "01-basics-temperature-15-温度与热平衡",
-      "title": "1.5 温度与热平衡",
-      "chapter": "01",
-      "chapterTitle": "热学基础与温度",
-      "url": "chapters/01-basics-temperature.html#15-温度与热平衡",
-      "body": ""
-    },
-    {
-      "id": "01-basics-temperature-温度为什么需要严格定义",
-      "title": "温度为什么需要严格定义",
-      "chapter": "01",
-      "chapterTitle": "热学基础与温度",
-      "url": "chapters/01-basics-temperature.html#温度为什么需要严格定义",
-      "body": ""
-    },
-    {
-      "id": "01-basics-temperature-热力学第零定律",
-      "title": "热力学第零定律",
-      "chapter": "01",
-      "chapterTitle": "热学基础与温度",
-      "url": "chapters/01-basics-temperature.html#热力学第零定律",
-      "body": ""
-    },
-    {
-      "id": "01-basics-temperature-为什么叫quot第零定律quot",
-      "title": "为什么叫&quot;第零定律&quot;",
-      "chapter": "01",
-      "chapterTitle": "热学基础与温度",
-      "url": "chapters/01-basics-temperature.html#为什么叫quot第零定律quot",
-      "body": ""
-    },
-    {
-      "id": "01-basics-temperature-热平衡的操作意义",
-      "title": "热平衡的操作意义",
-      "chapter": "01",
-      "chapterTitle": "热学基础与温度",
-      "url": "chapters/01-basics-temperature.html#热平衡的操作意义",
-      "body": ""
-    },
-    {
-      "id": "01-basics-temperature-16-温标",
-      "title": "1.6 温标",
-      "chapter": "01",
-      "chapterTitle": "热学基础与温度",
-      "url": "chapters/01-basics-temperature.html#16-温标",
-      "body": ""
-    },
-    {
-      "id": "01-basics-temperature-经验温标的构造",
-      "title": "经验温标的构造",
-      "chapter": "01",
-      "chapterTitle": "热学基础与温度",
-      "url": "chapters/01-basics-temperature.html#经验温标的构造",
-      "body": ""
-    },
-    {
-      "id": "01-basics-temperature-经验温标的问题",
-      "title": "经验温标的问题",
-      "chapter": "01",
-      "chapterTitle": "热学基础与温度",
-      "url": "chapters/01-basics-temperature.html#经验温标的问题",
-      "body": ""
-    },
-    {
-      "id": "01-basics-temperature-理想气体温标",
-      "title": "理想气体温标",
-      "chapter": "01",
-      "chapterTitle": "热学基础与温度",
-      "url": "chapters/01-basics-temperature.html#理想气体温标",
-      "body": ""
-    },
-    {
-      "id": "01-basics-temperature-为什么用三相点而不是冰点沸点",
-      "title": "为什么用三相点而不是冰点/沸点",
-      "chapter": "01",
-      "chapterTitle": "热学基础与温度",
-      "url": "chapters/01-basics-temperature.html#为什么用三相点而不是冰点沸点",
-      "body": ""
-    },
-    {
-      "id": "01-basics-temperature-热力学温标开尔文温标",
-      "title": "热力学温标（开尔文温标）",
-      "chapter": "01",
-      "chapterTitle": "热学基础与温度",
-      "url": "chapters/01-basics-temperature.html#热力学温标开尔文温标",
-      "body": ""
-    },
-    {
-      "id": "01-basics-temperature-摄氏度与开尔文",
-      "title": "摄氏度与开尔文",
-      "chapter": "01",
-      "chapterTitle": "热学基础与温度",
-      "url": "chapters/01-basics-temperature.html#摄氏度与开尔文",
-      "body": ""
-    },
-    {
-      "id": "01-basics-temperature-绝对零度",
-      "title": "绝对零度",
-      "chapter": "01",
-      "chapterTitle": "热学基础与温度",
-      "url": "chapters/01-basics-temperature.html#绝对零度",
-      "body": ""
-    },
-    {
-      "id": "01-basics-temperature-17-理想气体状态方程",
-      "title": "1.7 理想气体状态方程",
-      "chapter": "01",
-      "chapterTitle": "热学基础与温度",
-      "url": "chapters/01-basics-temperature.html#17-理想气体状态方程",
-      "body": ""
-    },
-    {
-      "id": "01-basics-temperature-历史三个实验定律",
-      "title": "历史：三个实验定律",
-      "chapter": "01",
-      "chapterTitle": "热学基础与温度",
-      "url": "chapters/01-basics-temperature.html#历史三个实验定律",
-      "body": ""
-    },
-    {
-      "id": "01-basics-temperature-统一理想气体状态方程",
-      "title": "统一：理想气体状态方程",
-      "chapter": "01",
-      "chapterTitle": "热学基础与温度",
-      "url": "chapters/01-basics-temperature.html#统一理想气体状态方程",
-      "body": ""
-    },
-    {
-      "id": "01-basics-temperature-等价形式",
-      "title": "等价形式",
-      "chapter": "01",
-      "chapterTitle": "热学基础与温度",
-      "url": "chapters/01-basics-temperature.html#等价形式",
-      "body": ""
-    },
-    {
-      "id": "01-basics-temperature-quot理想quot意味着什么模型假设",
-      "title": "&quot;理想&quot;意味着什么——模型假设",
-      "chapter": "01",
-      "chapterTitle": "热学基础与温度",
-      "url": "chapters/01-basics-temperature.html#quot理想quot意味着什么模型假设",
-      "body": ""
-    },
-    {
-      "id": "01-basics-temperature-理想气体的内能性质",
-      "title": "理想气体的内能性质",
-      "chapter": "01",
-      "chapterTitle": "热学基础与温度",
-      "url": "chapters/01-basics-temperature.html#理想气体的内能性质",
-      "body": ""
-    },
-    {
-      "id": "01-basics-temperature-道尔顿分压定律",
-      "title": "道尔顿分压定律",
-      "chapter": "01",
-      "chapterTitle": "热学基础与温度",
-      "url": "chapters/01-basics-temperature.html#道尔顿分压定律",
-      "body": ""
-    },
-    {
-      "id": "01-basics-temperature-应用举例大气压与海拔",
-      "title": "应用举例：大气压与海拔",
-      "chapter": "01",
-      "chapterTitle": "热学基础与温度",
-      "url": "chapters/01-basics-temperature.html#应用举例大气压与海拔",
-      "body": ""
-    },
-    {
-      "id": "01-basics-temperature-18-压强的微观解释",
-      "title": "1.8 压强的微观解释",
-      "chapter": "01",
-      "chapterTitle": "热学基础与温度",
-      "url": "chapters/01-basics-temperature.html#18-压强的微观解释",
-      "body": ""
-    },
-    {
-      "id": "01-basics-temperature-模型假设",
-      "title": "模型假设",
-      "chapter": "01",
-      "chapterTitle": "热学基础与温度",
-      "url": "chapters/01-basics-temperature.html#模型假设",
-      "body": ""
-    },
-    {
-      "id": "01-basics-temperature-推导",
-      "title": "推导",
-      "chapter": "01",
-      "chapterTitle": "热学基础与温度",
-      "url": "chapters/01-basics-temperature.html#推导",
-      "body": ""
-    },
-    {
-      "id": "01-basics-temperature-各向同性条件",
-      "title": "各向同性条件",
-      "chapter": "01",
-      "chapterTitle": "热学基础与温度",
-      "url": "chapters/01-basics-temperature.html#各向同性条件",
-      "body": ""
-    },
-    {
-      "id": "01-basics-temperature-用平均动能表示",
-      "title": "用平均动能表示",
-      "chapter": "01",
-      "chapterTitle": "热学基础与温度",
-      "url": "chapters/01-basics-temperature.html#用平均动能表示",
-      "body": ""
-    },
-    {
-      "id": "01-basics-temperature-公式解读",
-      "title": "公式解读",
-      "chapter": "01",
-      "chapterTitle": "热学基础与温度",
-      "url": "chapters/01-basics-temperature.html#公式解读",
-      "body": ""
-    },
-    {
-      "id": "01-basics-temperature-19-温度的微观意义",
-      "title": "1.9 温度的微观意义",
-      "chapter": "01",
-      "chapterTitle": "热学基础与温度",
-      "url": "chapters/01-basics-temperature.html#19-温度的微观意义",
-      "body": ""
-    },
-    {
-      "id": "01-basics-temperature-从压强公式到温度",
-      "title": "从压强公式到温度",
-      "chapter": "01",
-      "chapterTitle": "热学基础与温度",
-      "url": "chapters/01-basics-temperature.html#从压强公式到温度",
-      "body": ""
-    },
-    {
-      "id": "01-basics-temperature-这个公式在说什么",
-      "title": "这个公式在说什么",
-      "chapter": "01",
-      "chapterTitle": "热学基础与温度",
-      "url": "chapters/01-basics-temperature.html#这个公式在说什么",
-      "body": ""
-    },
-    {
-      "id": "01-basics-temperature-方均根速率",
-      "title": "方均根速率",
-      "chapter": "01",
-      "chapterTitle": "热学基础与温度",
-      "url": "chapters/01-basics-temperature.html#方均根速率",
-      "body": ""
-    },
-    {
-      "id": "01-basics-temperature-温度与分子种类无关",
-      "title": "温度与分子种类无关",
-      "chapter": "01",
-      "chapterTitle": "热学基础与温度",
-      "url": "chapters/01-basics-temperature.html#温度与分子种类无关",
-      "body": ""
-    },
-    {
-      "id": "01-basics-temperature-温度的适用范围",
-      "title": "温度的适用范围",
-      "chapter": "01",
-      "chapterTitle": "热学基础与温度",
-      "url": "chapters/01-basics-temperature.html#温度的适用范围",
-      "body": ""
-    },
-    {
-      "id": "01-basics-temperature-110-p-v-图与等温线",
-      "title": "1.10 p-V 图与等温线",
-      "chapter": "01",
-      "chapterTitle": "热学基础与温度",
-      "url": "chapters/01-basics-temperature.html#110-p-v-图与等温线",
-      "body": ""
-    },
-    {
-      "id": "01-basics-temperature-p-v-图",
-      "title": "$p$-$V$ 图",
-      "chapter": "01",
-      "chapterTitle": "热学基础与温度",
-      "url": "chapters/01-basics-temperature.html#p-v-图",
-      "body": ""
-    },
-    {
-      "id": "01-basics-temperature-等温线",
-      "title": "等温线",
-      "chapter": "01",
-      "chapterTitle": "热学基础与温度",
-      "url": "chapters/01-basics-temperature.html#等温线",
-      "body": ""
-    },
-    {
-      "id": "01-basics-temperature-等压线和等容线",
-      "title": "等压线和等容线",
-      "chapter": "01",
-      "chapterTitle": "热学基础与温度",
-      "url": "chapters/01-basics-temperature.html#等压线和等容线",
-      "body": ""
-    },
-    {
-      "id": "01-basics-temperature-111-实际气体与范德瓦尔斯方程预览",
-      "title": "1.11 实际气体与范德瓦尔斯方程（预览）",
-      "chapter": "01",
-      "chapterTitle": "热学基础与温度",
-      "url": "chapters/01-basics-temperature.html#111-实际气体与范德瓦尔斯方程预览",
-      "body": ""
-    },
-    {
-      "id": "01-basics-temperature-偏差的来源",
-      "title": "偏差的来源",
-      "chapter": "01",
-      "chapterTitle": "热学基础与温度",
-      "url": "chapters/01-basics-temperature.html#偏差的来源",
-      "body": ""
-    },
-    {
-      "id": "01-basics-temperature-范德瓦尔斯方程",
-      "title": "范德瓦尔斯方程",
-      "chapter": "01",
-      "chapterTitle": "热学基础与温度",
-      "url": "chapters/01-basics-temperature.html#范德瓦尔斯方程",
-      "body": ""
-    },
-    {
-      "id": "01-basics-temperature-112-本章公式总结",
-      "title": "1.12 本章公式总结",
-      "chapter": "01",
-      "chapterTitle": "热学基础与温度",
-      "url": "chapters/01-basics-temperature.html#112-本章公式总结",
-      "body": ""
-    },
-    {
-      "id": "01-basics-temperature-理想气体状态方程族",
-      "title": "理想气体状态方程族",
-      "chapter": "01",
-      "chapterTitle": "热学基础与温度",
-      "url": "chapters/01-basics-temperature.html#理想气体状态方程族",
+      "url": "chapters/01-basics-temperature.html#quot理想quot意味着什么",
       "body": ""
     },
     {
@@ -513,19 +97,43 @@
       "body": ""
     },
     {
-      "id": "01-basics-temperature-压强的微观表达",
-      "title": "压强的微观表达",
+      "id": "01-basics-temperature-18-压强的微观解释分子一下下撞出来的力",
+      "title": "1.8 压强的微观解释：分子一下下撞出来的力",
       "chapter": "01",
       "chapterTitle": "热学基础与温度",
-      "url": "chapters/01-basics-temperature.html#压强的微观表达",
+      "url": "chapters/01-basics-temperature.html#18-压强的微观解释分子一下下撞出来的力",
       "body": ""
     },
     {
-      "id": "01-basics-temperature-温度的微观意义",
-      "title": "温度的微观意义",
+      "id": "01-basics-temperature-推导思路",
+      "title": "推导思路",
       "chapter": "01",
       "chapterTitle": "热学基础与温度",
-      "url": "chapters/01-basics-temperature.html#温度的微观意义",
+      "url": "chapters/01-basics-temperature.html#推导思路",
+      "body": ""
+    },
+    {
+      "id": "01-basics-temperature-物理图像",
+      "title": "物理图像",
+      "chapter": "01",
+      "chapterTitle": "热学基础与温度",
+      "url": "chapters/01-basics-temperature.html#物理图像",
+      "body": ""
+    },
+    {
+      "id": "01-basics-temperature--真题实战2024-问答题第-1-题",
+      "title": "🎯 真题实战：2024 问答题第 1 题",
+      "chapter": "01",
+      "chapterTitle": "热学基础与温度",
+      "url": "chapters/01-basics-temperature.html#-真题实战2024-问答题第-1-题",
+      "body": ""
+    },
+    {
+      "id": "01-basics-temperature-19-温度的微观意义原来温度是动能的尺度",
+      "title": "1.9 温度的微观意义：原来温度是动能的尺度",
+      "chapter": "01",
+      "chapterTitle": "热学基础与温度",
+      "url": "chapters/01-basics-temperature.html#19-温度的微观意义原来温度是动能的尺度",
       "body": ""
     },
     {
@@ -537,67 +145,139 @@
       "body": ""
     },
     {
-      "id": "01-basics-temperature-重要常数",
-      "title": "重要常数",
+      "id": "01-basics-temperature-重要推论平均平动动能与质量无关",
+      "title": "重要推论：平均平动动能与质量无关",
       "chapter": "01",
       "chapterTitle": "热学基础与温度",
-      "url": "chapters/01-basics-temperature.html#重要常数",
+      "url": "chapters/01-basics-temperature.html#重要推论平均平动动能与质量无关",
       "body": ""
     },
     {
-      "id": "01-basics-temperature-113-概念辨析",
-      "title": "1.13 概念辨析",
+      "id": "01-basics-temperature-110-分子碰撞频率与平均自由程",
+      "title": "1.10 分子碰撞频率与平均自由程",
       "chapter": "01",
       "chapterTitle": "热学基础与温度",
-      "url": "chapters/01-basics-temperature.html#113-概念辨析",
+      "url": "chapters/01-basics-temperature.html#110-分子碰撞频率与平均自由程",
       "body": ""
     },
     {
-      "id": "01-basics-temperature-q温度高的物体一定比温度低的物体quot含有更多热量quot吗",
-      "title": "Q：温度高的物体一定比温度低的物体&quot;含有更多热量&quot;吗？",
+      "id": "01-basics-temperature-平均碰撞频率-math_block_152",
+      "title": "平均碰撞频率 $\\bar Z$",
       "chapter": "01",
       "chapterTitle": "热学基础与温度",
-      "url": "chapters/01-basics-temperature.html#q温度高的物体一定比温度低的物体quot含有更多热量quot吗",
+      "url": "chapters/01-basics-temperature.html#平均碰撞频率-math_block_152",
       "body": ""
     },
     {
-      "id": "01-basics-temperature-q分子速度都等于-v_rms-吗",
-      "title": "Q：分子速度都等于 $v_{rms}$ 吗？",
+      "id": "01-basics-temperature-平均自由程-math_block_160",
+      "title": "平均自由程 $\\bar\\lambda$",
       "chapter": "01",
       "chapterTitle": "热学基础与温度",
-      "url": "chapters/01-basics-temperature.html#q分子速度都等于-v_rms-吗",
+      "url": "chapters/01-basics-temperature.html#平均自由程-math_block_160",
       "body": ""
     },
     {
-      "id": "01-basics-temperature-q温度为-0c-时分子是否停止运动",
-      "title": "Q：温度为 0°C 时分子是否停止运动？",
+      "id": "01-basics-temperature-用理想气体状态方程改写",
+      "title": "用理想气体状态方程改写",
       "chapter": "01",
       "chapterTitle": "热学基础与温度",
-      "url": "chapters/01-basics-temperature.html#q温度为-0c-时分子是否停止运动",
+      "url": "chapters/01-basics-temperature.html#用理想气体状态方程改写",
       "body": ""
     },
     {
-      "id": "01-basics-temperature-q理想气体状态方程适用于液体和固体吗",
-      "title": "Q：理想气体状态方程适用于液体和固体吗？",
+      "id": "01-basics-temperature--真题实战2024-选择题第-1-题",
+      "title": "🎯 真题实战：2024 选择题第 1 题",
       "chapter": "01",
       "chapterTitle": "热学基础与温度",
-      "url": "chapters/01-basics-temperature.html#q理想气体状态方程适用于液体和固体吗",
+      "url": "chapters/01-basics-temperature.html#-真题实战2024-选择题第-1-题",
       "body": ""
     },
     {
-      "id": "01-basics-temperature-qquot准静态quot是quot可逆quot吗",
-      "title": "Q：&quot;准静态&quot;是&quot;可逆&quot;吗？",
+      "id": "01-basics-temperature-数量级感受",
+      "title": "数量级感受",
       "chapter": "01",
       "chapterTitle": "热学基础与温度",
-      "url": "chapters/01-basics-temperature.html#qquot准静态quot是quot可逆quot吗",
+      "url": "chapters/01-basics-temperature.html#数量级感受",
       "body": ""
     },
     {
-      "id": "01-basics-temperature-114-本章小结",
-      "title": "1.14 本章小结",
+      "id": "01-basics-temperature-111-p-v-图与等温线把过程画出来",
+      "title": "1.11 p-V 图与等温线：把过程画出来",
       "chapter": "01",
       "chapterTitle": "热学基础与温度",
-      "url": "chapters/01-basics-temperature.html#114-本章小结",
+      "url": "chapters/01-basics-temperature.html#111-p-v-图与等温线把过程画出来",
+      "body": ""
+    },
+    {
+      "id": "01-basics-temperature-112-实际气体一瞥范德瓦尔斯方程",
+      "title": "1.12 实际气体一瞥：范德瓦尔斯方程",
+      "chapter": "01",
+      "chapterTitle": "热学基础与温度",
+      "url": "chapters/01-basics-temperature.html#112-实际气体一瞥范德瓦尔斯方程",
+      "body": ""
+    },
+    {
+      "id": "01-basics-temperature-113-例题精讲与真题实战",
+      "title": "1.13 例题精讲与真题实战",
+      "chapter": "01",
+      "chapterTitle": "热学基础与温度",
+      "url": "chapters/01-basics-temperature.html#113-例题精讲与真题实战",
+      "body": ""
+    },
+    {
+      "id": "01-basics-temperature-例题-1状态方程与密度形式",
+      "title": "例题 1：状态方程与密度形式",
+      "chapter": "01",
+      "chapterTitle": "热学基础与温度",
+      "url": "chapters/01-basics-temperature.html#例题-1状态方程与密度形式",
+      "body": ""
+    },
+    {
+      "id": "01-basics-temperature-例题-2方均根速率与平均平动动能",
+      "title": "例题 2：方均根速率与平均平动动能",
+      "chapter": "01",
+      "chapterTitle": "热学基础与温度",
+      "url": "chapters/01-basics-temperature.html#例题-2方均根速率与平均平动动能",
+      "body": ""
+    },
+    {
+      "id": "01-basics-temperature-例题-3道尔顿分压混合气体",
+      "title": "例题 3：道尔顿分压（混合气体）",
+      "chapter": "01",
+      "chapterTitle": "热学基础与温度",
+      "url": "chapters/01-basics-temperature.html#例题-3道尔顿分压混合气体",
+      "body": ""
+    },
+    {
+      "id": "01-basics-temperature--真题-42024-计算第-1-题两容器混合",
+      "title": "🎯 真题 4：2024 计算第 1 题（两容器混合）",
+      "chapter": "01",
+      "chapterTitle": "热学基础与温度",
+      "url": "chapters/01-basics-temperature.html#-真题-42024-计算第-1-题两容器混合",
+      "body": ""
+    },
+    {
+      "id": "01-basics-temperature-114-概念辨析",
+      "title": "1.14 概念辨析",
+      "chapter": "01",
+      "chapterTitle": "热学基础与温度",
+      "url": "chapters/01-basics-temperature.html#114-概念辨析",
+      "body": ""
+    },
+    {
+      "id": "01-basics-temperature-115-公式速查卡",
+      "title": "1.15 公式速查卡",
+      "chapter": "01",
+      "chapterTitle": "热学基础与温度",
+      "url": "chapters/01-basics-temperature.html#115-公式速查卡",
+      "body": ""
+    },
+    {
+      "id": "01-basics-temperature-116-本章小结",
+      "title": "1.16 本章小结",
+      "chapter": "01",
+      "chapterTitle": "热学基础与温度",
+      "url": "chapters/01-basics-temperature.html#116-本章小结",
       "body": ""
     },
     {
@@ -606,206 +286,70 @@
       "chapter": "02",
       "chapterTitle": "热力学第一定律",
       "url": "chapters/02-first-law.html",
-      "body": "\r\n   2.1 能量守恒的热力学版本\r\n\r\n力学里你已经见过能量守恒——动能和势能的转化。热力学第一定律本质上也是能量守恒，但它把\"热\"纳入了能量的范畴。\r\n\r\n历史上，人们曾经认为\"热\"是一种物质（热质说）。直到焦耳用实验证明：做功可以产生等量的热，热和功可以互相转化——它们是同一种东西（能量）的不同传递方式。\r\n\r\n第一定律的地位：它告诉你能量从哪来、到哪去，是所有热力学计算的基础。\r\n\r\n   \r\n\r\n   2.2 内能\r\n\r\n    定义\r\n\r\n系统的  内能   $U$ 是系统内部所有微观形式能量的总和，包括：\r\n\r\n  分子的平动动能\r\n  分子的转动动能\r\n  分子的振动动能\r\n  分子间相互作用的势能\r\n\r\n内能  不包括  ：\r\n  系统整体的动能（比如装在火车上的气瓶，火车运动的动能不算）\r\n  系统整体的势能（比如气瓶放在高处，重力势能不算）\r\n\r\n    内能是状态量\r\n\r\n内能只取决于系统当前的状态，和系统怎么到达这个状态无关。\r\n\r\n对理想气体，由于分子间没有相互作用力（无势能），内能只由分子动能决定，而动能由温度决定，因此：\r\n\r\n$$U = U T  \\quad \\text （理想气体） $$\r\n\r\n这是焦耳实验的结论——理想气体自由膨胀后温度不变，说明内能和体积无关。\r\n\r\n对于实际气体，$U = U T, V $，因为分子间距（和体积有关）会影响势能。\r\n\r\n    理想气体内能的具体表达\r\n\r\n第 4 章会详细推导，这里先给结论。对 $n$ mol 理想气体：\r\n\r\n$$U = nC VT$$\r\n\r\n其中 $C V$ 是定容摩尔热容（下面 2.6 节详细讨论）。对于单原子理想气体 $C V = \\frac 3  2 R$，所以 $U = \\frac 3  2 nRT$。\r\n\r\n内能的变化量：\r\n\r\n$$\\Delta U = nC V \\Delta T = nC V T 2   T 1 $$\r\n\r\n  这个公式对理想气体的任何过程都成立  （不仅是等容过程），因为理想气体内能只是 $T$ 的函数。\r\n\r\n\r\n   \r\n\r\n   2.3 功\r\n\r\n    功是过程量\r\n\r\n在力学中，功 = 力 × 位移。在热力学中，系统做的功取决于  过程怎么走  ，不仅仅取决于初态和末态。\r\n\r\n打个比方：从合肥到北京，坐火车和坐飞机，起点终点一样，但消耗的燃油量不同。功就像\"路上消耗的燃油\"——是过程量，不是状态量。\r\n\r\n    体积功的推导\r\n\r\n考虑一个气缸 活塞系统。活塞面积 $A$，气体压强 $p$。\r\n\r\n气体膨胀时推动活塞移动 $dx$：\r\n  气体对活塞的力：$F = pA$\r\n  活塞移动 $dx$\r\n  气体做的微小功：$\\text đ W = F \\cdot dx = pA \\cdot dx = p \\, dV$\r\n\r\n其中 $dV = A \\cdot dx$ 是体积的微小增量。\r\n\r\n整个过程的总功：\r\n\r\n$$\\boxed W = \\int  V 1 ^ V 2  p \\, dV $$\r\n\r\n  符号约定  ：本课程中 $W$ 表示  系统对外界做的功  。气体膨胀（$dV   0$）→ $W   0$（系统对外做功）；气体被压缩（$dV < 0$）→ $W < 0$（外界对系统做功）。\r\n\r\n注意：有些教材用相反的符号约定（$W$ 定义为外界对系统做的功）。做题时务必确认教材/试卷的约定。\r\n\r\n    功的几何意义\r\n\r\n在 p V 图上，$W = \\int p \\, dV$ 就是  过程曲线下方的面积  。\r\n\r\n这直接说明了为什么功是过程量——从同一个初态到同一个末态，走不同的路径（不同的 p V 曲线），曲线下方的面积不同，功就不同。\r\n\r\n    功的计算前提\r\n\r\n$W = \\int p \\, dV$ 有一个重要前提：  过程必须是准静态的  。\r\n\r\n为什么？因为只有准静态过程中，系统的压强 $p$ 在每一瞬间都有确定值（平衡态），积分才有意义。\r\n\r\n对于非准静态过程（比如自由膨胀），气体内部压强不均匀，你没法用一个 $p$ 来做积分。这时候需要用其他方法（比如直接从第一定律和状态量变化来推算）。\r\n\r\n   \r\n\r\n   2.4 热量\r\n\r\n    定义\r\n\r\n  热量   $Q$ 是由于温度差而在系统和外界之间传递的能量。\r\n\r\n关键：\r\n  热量是能量传递的  方式  ，不是系统\"拥有\"的东西\r\n  热量是  过程量  ，不是状态量——不能说\"系统含有多少热量\"\r\n  符号约定：$Q   0$ 表示系统吸热，$Q < 0$ 表示系统放热\r\n\r\n    传热的三种机制\r\n\r\n1.   热传导  ：通过物质内部分子的碰撞接力传递能量（需要介质，需要温度梯度）"
+      "body": "\n   2.1 第一定律：把\"热\"请进能量守恒\n\n   !考试权重  第一定律本身是所有计算题的基础框架，不会单独出题，但每一道计算题都在用它。\n\n力学里你早就见过能量守恒——动能和势能你来我往，总量不变。热力学第一定律本质上还是能量守恒，但它做了一件历史性的事：  把\"热\"也正式纳入了能量的账本  。\n\n这件事在今天看来理所当然，在历史上却经历了一场观念革命。很长一段时间里，人们相信\"热\"是一种会流动的物质，叫\"热质\"。直到焦耳用一系列精巧实验证明：搅拌、摩擦这些  做功  的方式，可以产生与之严格成定量比例的  热  ——热和功能够互相转化，它们根本就是同一种东西（能量）的不同传递方式。\n\n第一定律在整门课里的地位，是所有热力学计算的总账房：它告诉你能量从哪来、到哪去。本章的任务很明确——先把账本上的三个科目（内能、功、热）一个个定义清楚，再写下它们之间的守恒关系，最后把这条关系套到等容、等压、等温、绝热四种标准过程上，把每种过程的功、热、内能变化都算个明明白白。\n\n   要点 \n \n    第一定律 =   把热纳入能量守恒  ；焦耳实验证明功与热可定量互换。\n    本章主线：定义内能/功/热 → 写出守恒关系 → 套到四种标准过程上算 $W,Q,\\Delta U$。\n\n   \n\n   2.2 内能：系统\"自带\"的那份能量\n\n   !考试权重  ★★★ \"$\\Delta U = nC  V,m \\Delta T$ 对理想气体任何过程都成立\" 是全章最核心的一句话，计算题必用。\n\n系统的  内能   $U$ 是它内部一切微观能量的总和——分子的平动动能、转动动能、振动动能，以及分子间相互作用的势能，全算在内。内能  不包括  系统作为整体的动能和势能。\n\n内能最关键的性质是它  只取决于系统当前的状态  ——它是个不折不扣的  状态量  。对理想气体，由于分子间没有相互作用、没有势能，内能全部来自分子动能，而动能只由温度决定，于是\n\n$$U=U T \\quad\\text （理想气体，内能只是温度的函数） $$\n\n具体写出来，对 $n$ mol 理想气体 $U=nC  V,m T$，内能的变化量：\n\n$$\\boxed \\Delta U=nC  V,m \\Delta T \\quad\\text （理想气体，任何过程都成立！）  $$\n\n请把这个式子高亮——它  对理想气体的任何过程都成立  ，不只是等容过程。无论你走等压、等温、绝热还是任意路径，只要知道初末温度之差，就能算出 $\\Delta U$。\n\n   要点 \n \n      内能   $U$ = 系统内部一切微观能量之和；是  状态量  。\n    理想气体 $U=U T $ 只随温度，$U=nC  V,m T$。\n    $\\boxed \\Delta U=nC  V,m \\Delta T $ 对理想气体  任何过程  都成立。\n\n   \n\n   2.3 功：过程量，等于 p V 曲线下的面积\n\n   !考试权重  ★★★ 功的计算是每年必考的计算题核心，等温功 $nRT\\ln V 2/V 1 $ 必须秒写。\n\n取一个气缸 活塞系统，气体膨胀推动活塞，气体对活塞做的微小功 $\\text đ W=p\\,dV$。整个过程累加：\n\n$$\\boxed W=\\int  V 1 ^ V 2 p\\,dV $$\n\n  符号约定  （本课）：$W 0$ 表示系统对外做功（膨胀）；$W<0$ 表示外界对系统做功（压缩）。\n\n在 $p$ $V$ 图上，$W=\\int p\\,dV$ 就是  过程曲线下方的面积  ——这正是功为过程量的几何解释：同一初末态，不同路径 → 不同面积 → 不同的功。\n\n  前提  ：$W=\\int p\\,dV$ 要求过程  准静态  （系统时刻有确定压强）。对自由膨胀（向真空膨胀），外界压强为零，$W=0$。\n\n   要点 \n \n    体积功 $W=\\int p\\,dV$ = $p$ $V$ 图上  曲线下方的面积  。\n    功是  过程量  ；准静态才能用此公式。\n    自由膨胀（向真空）：$W=0$。\n\n   \n\n   2.4 热量与第一定律方程\n\n   !考试权重  ★★ 第一定律方程 $Q=\\Delta U+W$ 本身简单，关键是搞清哪些量为零。\n\n  热量   $Q$ 是由于温度差而在系统与外界之间传递的能量——是过程量，不是系统\"拥有\"的东西。$Q 0$ 吸热，$Q<0$ 放热。\n\n功是  有组织  的能量传递（力×位移，宏观有序），热是  无组织  的能量传递（分子碰撞接力，需温差驱动）。这个差别是第二定律的伏笔。\n\n    第一定律方程\n\n$$\\boxed Q=\\Delta U+W $$\n\n微分形式：$\\text đ Q=dU+p\\,dV$。"
     },
     {
-      "id": "02-first-law-21-能量守恒的热力学版本",
-      "title": "2.1 能量守恒的热力学版本",
+      "id": "02-first-law-21-第一定律把quot热quot请进能量守恒",
+      "title": "2.1 第一定律：把&quot;热&quot;请进能量守恒",
       "chapter": "02",
       "chapterTitle": "热力学第一定律",
-      "url": "chapters/02-first-law.html#21-能量守恒的热力学版本",
+      "url": "chapters/02-first-law.html#21-第一定律把quot热quot请进能量守恒",
       "body": ""
     },
     {
-      "id": "02-first-law-22-内能",
-      "title": "2.2 内能",
+      "id": "02-first-law-22-内能系统quot自带quot的那份能量",
+      "title": "2.2 内能：系统&quot;自带&quot;的那份能量",
       "chapter": "02",
       "chapterTitle": "热力学第一定律",
-      "url": "chapters/02-first-law.html#22-内能",
+      "url": "chapters/02-first-law.html#22-内能系统quot自带quot的那份能量",
       "body": ""
     },
     {
-      "id": "02-first-law-定义",
-      "title": "定义",
+      "id": "02-first-law-23-功过程量等于-p-v-曲线下的面积",
+      "title": "2.3 功：过程量，等于 p-V 曲线下的面积",
       "chapter": "02",
       "chapterTitle": "热力学第一定律",
-      "url": "chapters/02-first-law.html#定义",
+      "url": "chapters/02-first-law.html#23-功过程量等于-p-v-曲线下的面积",
       "body": ""
     },
     {
-      "id": "02-first-law-内能是状态量",
-      "title": "内能是状态量",
+      "id": "02-first-law-24-热量与第一定律方程",
+      "title": "2.4 热量与第一定律方程",
       "chapter": "02",
       "chapterTitle": "热力学第一定律",
-      "url": "chapters/02-first-law.html#内能是状态量",
+      "url": "chapters/02-first-law.html#24-热量与第一定律方程",
       "body": ""
     },
     {
-      "id": "02-first-law-理想气体内能的具体表达",
-      "title": "理想气体内能的具体表达",
+      "id": "02-first-law-第一定律方程",
+      "title": "第一定律方程",
       "chapter": "02",
       "chapterTitle": "热力学第一定律",
-      "url": "chapters/02-first-law.html#理想气体内能的具体表达",
+      "url": "chapters/02-first-law.html#第一定律方程",
       "body": ""
     },
     {
-      "id": "02-first-law-23-功",
-      "title": "2.3 功",
+      "id": "02-first-law-25-热容焓与-mayer-关系",
+      "title": "2.5 热容、焓与 Mayer 关系",
       "chapter": "02",
       "chapterTitle": "热力学第一定律",
-      "url": "chapters/02-first-law.html#23-功",
+      "url": "chapters/02-first-law.html#25-热容焓与-mayer-关系",
       "body": ""
     },
     {
-      "id": "02-first-law-功是过程量",
-      "title": "功是过程量",
+      "id": "02-first-law-热容",
+      "title": "热容",
       "chapter": "02",
       "chapterTitle": "热力学第一定律",
-      "url": "chapters/02-first-law.html#功是过程量",
+      "url": "chapters/02-first-law.html#热容",
       "body": ""
     },
     {
-      "id": "02-first-law-体积功的推导",
-      "title": "体积功的推导",
+      "id": "02-first-law-mayer-关系",
+      "title": "Mayer 关系",
       "chapter": "02",
       "chapterTitle": "热力学第一定律",
-      "url": "chapters/02-first-law.html#体积功的推导",
-      "body": ""
-    },
-    {
-      "id": "02-first-law-功的几何意义",
-      "title": "功的几何意义",
-      "chapter": "02",
-      "chapterTitle": "热力学第一定律",
-      "url": "chapters/02-first-law.html#功的几何意义",
-      "body": ""
-    },
-    {
-      "id": "02-first-law-功的计算前提",
-      "title": "功的计算前提",
-      "chapter": "02",
-      "chapterTitle": "热力学第一定律",
-      "url": "chapters/02-first-law.html#功的计算前提",
-      "body": ""
-    },
-    {
-      "id": "02-first-law-24-热量",
-      "title": "2.4 热量",
-      "chapter": "02",
-      "chapterTitle": "热力学第一定律",
-      "url": "chapters/02-first-law.html#24-热量",
-      "body": ""
-    },
-    {
-      "id": "02-first-law-定义",
-      "title": "定义",
-      "chapter": "02",
-      "chapterTitle": "热力学第一定律",
-      "url": "chapters/02-first-law.html#定义",
-      "body": ""
-    },
-    {
-      "id": "02-first-law-传热的三种机制",
-      "title": "传热的三种机制",
-      "chapter": "02",
-      "chapterTitle": "热力学第一定律",
-      "url": "chapters/02-first-law.html#传热的三种机制",
-      "body": ""
-    },
-    {
-      "id": "02-first-law-热量与功的本质区别",
-      "title": "热量与功的本质区别",
-      "chapter": "02",
-      "chapterTitle": "热力学第一定律",
-      "url": "chapters/02-first-law.html#热量与功的本质区别",
-      "body": ""
-    },
-    {
-      "id": "02-first-law-25-热力学第一定律",
-      "title": "2.5 热力学第一定律",
-      "chapter": "02",
-      "chapterTitle": "热力学第一定律",
-      "url": "chapters/02-first-law.html#25-热力学第一定律",
-      "body": ""
-    },
-    {
-      "id": "02-first-law-表述",
-      "title": "表述",
-      "chapter": "02",
-      "chapterTitle": "热力学第一定律",
-      "url": "chapters/02-first-law.html#表述",
-      "body": ""
-    },
-    {
-      "id": "02-first-law-物理含义",
-      "title": "物理含义",
-      "chapter": "02",
-      "chapterTitle": "热力学第一定律",
-      "url": "chapters/02-first-law.html#物理含义",
-      "body": ""
-    },
-    {
-      "id": "02-first-law-各种情况",
-      "title": "各种情况",
-      "chapter": "02",
-      "chapterTitle": "热力学第一定律",
-      "url": "chapters/02-first-law.html#各种情况",
-      "body": ""
-    },
-    {
-      "id": "02-first-law-第一定律对孤立系统",
-      "title": "第一定律对孤立系统",
-      "chapter": "02",
-      "chapterTitle": "热力学第一定律",
-      "url": "chapters/02-first-law.html#第一定律对孤立系统",
-      "body": ""
-    },
-    {
-      "id": "02-first-law-26-热容",
-      "title": "2.6 热容",
-      "chapter": "02",
-      "chapterTitle": "热力学第一定律",
-      "url": "chapters/02-first-law.html#26-热容",
-      "body": ""
-    },
-    {
-      "id": "02-first-law-为什么需要热容",
-      "title": "为什么需要热容",
-      "chapter": "02",
-      "chapterTitle": "热力学第一定律",
-      "url": "chapters/02-first-law.html#为什么需要热容",
-      "body": ""
-    },
-    {
-      "id": "02-first-law-定义",
-      "title": "定义",
-      "chapter": "02",
-      "chapterTitle": "热力学第一定律",
-      "url": "chapters/02-first-law.html#定义",
-      "body": ""
-    },
-    {
-      "id": "02-first-law-定容热容-c_v",
-      "title": "定容热容 $C_V$",
-      "chapter": "02",
-      "chapterTitle": "热力学第一定律",
-      "url": "chapters/02-first-law.html#定容热容-c_v",
-      "body": ""
-    },
-    {
-      "id": "02-first-law-定压热容-c_p",
-      "title": "定压热容 $C_p$",
-      "chapter": "02",
-      "chapterTitle": "热力学第一定律",
-      "url": "chapters/02-first-law.html#定压热容-c_p",
-      "body": ""
-    },
-    {
-      "id": "02-first-law-mayer-关系的物理含义",
-      "title": "Mayer 关系的物理含义",
-      "chapter": "02",
-      "chapterTitle": "热力学第一定律",
-      "url": "chapters/02-first-law.html#mayer-关系的物理含义",
+      "url": "chapters/02-first-law.html#mayer-关系",
       "body": ""
     },
     {
@@ -817,315 +361,35 @@
       "body": ""
     },
     {
-      "id": "02-first-law-27-等容过程",
-      "title": "2.7 等容过程",
+      "id": "02-first-law-焓",
+      "title": "焓",
       "chapter": "02",
       "chapterTitle": "热力学第一定律",
-      "url": "chapters/02-first-law.html#27-等容过程",
+      "url": "chapters/02-first-law.html#焓",
       "body": ""
     },
     {
-      "id": "02-first-law-特征",
-      "title": "特征",
+      "id": "02-first-law-26-四种过程计算",
+      "title": "2.6 四种过程计算",
       "chapter": "02",
       "chapterTitle": "热力学第一定律",
-      "url": "chapters/02-first-law.html#特征",
+      "url": "chapters/02-first-law.html#26-四种过程计算",
       "body": ""
     },
     {
-      "id": "02-first-law-第一定律",
-      "title": "第一定律",
+      "id": "02-first-law-等容过程",
+      "title": "等容过程",
       "chapter": "02",
       "chapterTitle": "热力学第一定律",
-      "url": "chapters/02-first-law.html#第一定律",
+      "url": "chapters/02-first-law.html#等容过程",
       "body": ""
     },
     {
-      "id": "02-first-law-压强变化",
-      "title": "压强变化",
+      "id": "02-first-law-等压过程",
+      "title": "等压过程",
       "chapter": "02",
       "chapterTitle": "热力学第一定律",
-      "url": "chapters/02-first-law.html#压强变化",
-      "body": ""
-    },
-    {
-      "id": "02-first-law-28-等压过程",
-      "title": "2.8 等压过程",
-      "chapter": "02",
-      "chapterTitle": "热力学第一定律",
-      "url": "chapters/02-first-law.html#28-等压过程",
-      "body": ""
-    },
-    {
-      "id": "02-first-law-特征",
-      "title": "特征",
-      "chapter": "02",
-      "chapterTitle": "热力学第一定律",
-      "url": "chapters/02-first-law.html#特征",
-      "body": ""
-    },
-    {
-      "id": "02-first-law-第一定律",
-      "title": "第一定律",
-      "chapter": "02",
-      "chapterTitle": "热力学第一定律",
-      "url": "chapters/02-first-law.html#第一定律",
-      "body": ""
-    },
-    {
-      "id": "02-first-law-体积变化",
-      "title": "体积变化",
-      "chapter": "02",
-      "chapterTitle": "热力学第一定律",
-      "url": "chapters/02-first-law.html#体积变化",
-      "body": ""
-    },
-    {
-      "id": "02-first-law-29-等温过程",
-      "title": "2.9 等温过程",
-      "chapter": "02",
-      "chapterTitle": "热力学第一定律",
-      "url": "chapters/02-first-law.html#29-等温过程",
-      "body": ""
-    },
-    {
-      "id": "02-first-law-特征",
-      "title": "特征",
-      "chapter": "02",
-      "chapterTitle": "热力学第一定律",
-      "url": "chapters/02-first-law.html#特征",
-      "body": ""
-    },
-    {
-      "id": "02-first-law-第一定律",
-      "title": "第一定律",
-      "chapter": "02",
-      "chapterTitle": "热力学第一定律",
-      "url": "chapters/02-first-law.html#第一定律",
-      "body": ""
-    },
-    {
-      "id": "02-first-law-功的计算",
-      "title": "功的计算",
-      "chapter": "02",
-      "chapterTitle": "热力学第一定律",
-      "url": "chapters/02-first-law.html#功的计算",
-      "body": ""
-    },
-    {
-      "id": "02-first-law-物理图像",
-      "title": "物理图像",
-      "chapter": "02",
-      "chapterTitle": "热力学第一定律",
-      "url": "chapters/02-first-law.html#物理图像",
-      "body": ""
-    },
-    {
-      "id": "02-first-law-210-绝热过程",
-      "title": "2.10 绝热过程",
-      "chapter": "02",
-      "chapterTitle": "热力学第一定律",
-      "url": "chapters/02-first-law.html#210-绝热过程",
-      "body": ""
-    },
-    {
-      "id": "02-first-law-特征",
-      "title": "特征",
-      "chapter": "02",
-      "chapterTitle": "热力学第一定律",
-      "url": "chapters/02-first-law.html#特征",
-      "body": ""
-    },
-    {
-      "id": "02-first-law-绝热过程方程泊松公式的推导",
-      "title": "绝热过程方程（泊松公式）的推导",
-      "chapter": "02",
-      "chapterTitle": "热力学第一定律",
-      "url": "chapters/02-first-law.html#绝热过程方程泊松公式的推导",
-      "body": ""
-    },
-    {
-      "id": "02-first-law-等价形式",
-      "title": "等价形式",
-      "chapter": "02",
-      "chapterTitle": "热力学第一定律",
-      "url": "chapters/02-first-law.html#等价形式",
-      "body": ""
-    },
-    {
-      "id": "02-first-law-绝热过程的功",
-      "title": "绝热过程的功",
-      "chapter": "02",
-      "chapterTitle": "热力学第一定律",
-      "url": "chapters/02-first-law.html#绝热过程的功",
-      "body": ""
-    },
-    {
-      "id": "02-first-law-绝热线-vs-等温线",
-      "title": "绝热线 vs 等温线",
-      "chapter": "02",
-      "chapterTitle": "热力学第一定律",
-      "url": "chapters/02-first-law.html#绝热线-vs-等温线",
-      "body": ""
-    },
-    {
-      "id": "02-first-law-211-多方过程",
-      "title": "2.11 多方过程",
-      "chapter": "02",
-      "chapterTitle": "热力学第一定律",
-      "url": "chapters/02-first-law.html#211-多方过程",
-      "body": ""
-    },
-    {
-      "id": "02-first-law-定义",
-      "title": "定义",
-      "chapter": "02",
-      "chapterTitle": "热力学第一定律",
-      "url": "chapters/02-first-law.html#定义",
-      "body": ""
-    },
-    {
-      "id": "02-first-law-212-焦耳实验与理想气体内能",
-      "title": "2.12 焦耳实验与理想气体内能",
-      "chapter": "02",
-      "chapterTitle": "热力学第一定律",
-      "url": "chapters/02-first-law.html#212-焦耳实验与理想气体内能",
-      "body": ""
-    },
-    {
-      "id": "02-first-law-实验设计",
-      "title": "实验设计",
-      "chapter": "02",
-      "chapterTitle": "热力学第一定律",
-      "url": "chapters/02-first-law.html#实验设计",
-      "body": ""
-    },
-    {
-      "id": "02-first-law-推论",
-      "title": "推论",
-      "chapter": "02",
-      "chapterTitle": "热力学第一定律",
-      "url": "chapters/02-first-law.html#推论",
-      "body": ""
-    },
-    {
-      "id": "02-first-law-更精确的实验",
-      "title": "更精确的实验",
-      "chapter": "02",
-      "chapterTitle": "热力学第一定律",
-      "url": "chapters/02-first-law.html#更精确的实验",
-      "body": ""
-    },
-    {
-      "id": "02-first-law-213-四种过程的对比总结",
-      "title": "2.13 四种过程的对比总结",
-      "chapter": "02",
-      "chapterTitle": "热力学第一定律",
-      "url": "chapters/02-first-law.html#213-四种过程的对比总结",
-      "body": ""
-    },
-    {
-      "id": "02-first-law-214-循环过程简介",
-      "title": "2.14 循环过程简介",
-      "chapter": "02",
-      "chapterTitle": "热力学第一定律",
-      "url": "chapters/02-first-law.html#214-循环过程简介",
-      "body": ""
-    },
-    {
-      "id": "02-first-law-什么是循环过程",
-      "title": "什么是循环过程",
-      "chapter": "02",
-      "chapterTitle": "热力学第一定律",
-      "url": "chapters/02-first-law.html#什么是循环过程",
-      "body": ""
-    },
-    {
-      "id": "02-first-law-循环功的几何意义",
-      "title": "循环功的几何意义",
-      "chapter": "02",
-      "chapterTitle": "热力学第一定律",
-      "url": "chapters/02-first-law.html#循环功的几何意义",
-      "body": ""
-    },
-    {
-      "id": "02-first-law-热机效率",
-      "title": "热机效率",
-      "chapter": "02",
-      "chapterTitle": "热力学第一定律",
-      "url": "chapters/02-first-law.html#热机效率",
-      "body": ""
-    },
-    {
-      "id": "02-first-law-215-概念辨析",
-      "title": "2.15 概念辨析",
-      "chapter": "02",
-      "chapterTitle": "热力学第一定律",
-      "url": "chapters/02-first-law.html#215-概念辨析",
-      "body": ""
-    },
-    {
-      "id": "02-first-law-q绝热自由膨胀中气体做了功吗",
-      "title": "Q：绝热自由膨胀中气体做了功吗？",
-      "chapter": "02",
-      "chapterTitle": "热力学第一定律",
-      "url": "chapters/02-first-law.html#q绝热自由膨胀中气体做了功吗",
-      "body": ""
-    },
-    {
-      "id": "02-first-law-qdelta-u-nc_vmdelta-t-只在等容过程中成立吗",
-      "title": "Q：$\\Delta U = nC_{V,m}\\Delta T$ 只在等容过程中成立吗？",
-      "chapter": "02",
-      "chapterTitle": "热力学第一定律",
-      "url": "chapters/02-first-law.html#qdelta-u-nc_vmdelta-t-只在等容过程中成立吗",
-      "body": ""
-    },
-    {
-      "id": "02-first-law-q等温过程中气体温度不变为什么还能吸热",
-      "title": "Q：等温过程中气体温度不变，为什么还能吸热？",
-      "chapter": "02",
-      "chapterTitle": "热力学第一定律",
-      "url": "chapters/02-first-law.html#q等温过程中气体温度不变为什么还能吸热",
-      "body": ""
-    },
-    {
-      "id": "02-first-law-q为什么绝热膨胀温度会下降",
-      "title": "Q：为什么绝热膨胀温度会下降？",
-      "chapter": "02",
-      "chapterTitle": "热力学第一定律",
-      "url": "chapters/02-first-law.html#q为什么绝热膨胀温度会下降",
-      "body": ""
-    },
-    {
-      "id": "02-first-law-216-本章公式总结",
-      "title": "2.16 本章公式总结",
-      "chapter": "02",
-      "chapterTitle": "热力学第一定律",
-      "url": "chapters/02-first-law.html#216-本章公式总结",
-      "body": ""
-    },
-    {
-      "id": "02-first-law-第一定律",
-      "title": "第一定律",
-      "chapter": "02",
-      "chapterTitle": "热力学第一定律",
-      "url": "chapters/02-first-law.html#第一定律",
-      "body": ""
-    },
-    {
-      "id": "02-first-law-功",
-      "title": "功",
-      "chapter": "02",
-      "chapterTitle": "热力学第一定律",
-      "url": "chapters/02-first-law.html#功",
-      "body": ""
-    },
-    {
-      "id": "02-first-law-mayer-关系",
-      "title": "Mayer 关系",
-      "chapter": "02",
-      "chapterTitle": "热力学第一定律",
-      "url": "chapters/02-first-law.html#mayer-关系",
+      "url": "chapters/02-first-law.html#等压过程",
       "body": ""
     },
     {
@@ -1145,6 +409,54 @@
       "body": ""
     },
     {
+      "id": "02-first-law--真题实战2024-计算第-2-题",
+      "title": "🎯 真题实战：2024 计算第 2 题",
+      "chapter": "02",
+      "chapterTitle": "热力学第一定律",
+      "url": "chapters/02-first-law.html#-真题实战2024-计算第-2-题",
+      "body": ""
+    },
+    {
+      "id": "02-first-law-27-多方过程",
+      "title": "2.7 多方过程",
+      "chapter": "02",
+      "chapterTitle": "热力学第一定律",
+      "url": "chapters/02-first-law.html#27-多方过程",
+      "body": ""
+    },
+    {
+      "id": "02-first-law-多方过程的功",
+      "title": "多方过程的功",
+      "chapter": "02",
+      "chapterTitle": "热力学第一定律",
+      "url": "chapters/02-first-law.html#多方过程的功",
+      "body": ""
+    },
+    {
+      "id": "02-first-law-多方热容",
+      "title": "多方热容",
+      "chapter": "02",
+      "chapterTitle": "热力学第一定律",
+      "url": "chapters/02-first-law.html#多方热容",
+      "body": ""
+    },
+    {
+      "id": "02-first-law-28-循环过程与热机效率",
+      "title": "2.8 循环过程与热机效率",
+      "chapter": "02",
+      "chapterTitle": "热力学第一定律",
+      "url": "chapters/02-first-law.html#28-循环过程与热机效率",
+      "body": ""
+    },
+    {
+      "id": "02-first-law-循环过程",
+      "title": "循环过程",
+      "chapter": "02",
+      "chapterTitle": "热力学第一定律",
+      "url": "chapters/02-first-law.html#循环过程",
+      "body": ""
+    },
+    {
       "id": "02-first-law-热机效率",
       "title": "热机效率",
       "chapter": "02",
@@ -1153,11 +465,131 @@
       "body": ""
     },
     {
-      "id": "02-first-law-217-本章小结",
-      "title": "2.17 本章小结",
+      "id": "02-first-law-制冷系数",
+      "title": "制冷系数",
       "chapter": "02",
       "chapterTitle": "热力学第一定律",
-      "url": "chapters/02-first-law.html#217-本章小结",
+      "url": "chapters/02-first-law.html#制冷系数",
+      "body": ""
+    },
+    {
+      "id": "02-first-law--真题实战2024-计算第-3-题节选思路",
+      "title": "🎯 真题实战：2024 计算第 3 题（节选思路）",
+      "chapter": "02",
+      "chapterTitle": "热力学第一定律",
+      "url": "chapters/02-first-law.html#-真题实战2024-计算第-3-题节选思路",
+      "body": ""
+    },
+    {
+      "id": "02-first-law-29-焦耳实验与自由膨胀",
+      "title": "2.9 焦耳实验与自由膨胀",
+      "chapter": "02",
+      "chapterTitle": "热力学第一定律",
+      "url": "chapters/02-first-law.html#29-焦耳实验与自由膨胀",
+      "body": ""
+    },
+    {
+      "id": "02-first-law-焦耳自由膨胀",
+      "title": "焦耳自由膨胀",
+      "chapter": "02",
+      "chapterTitle": "热力学第一定律",
+      "url": "chapters/02-first-law.html#焦耳自由膨胀",
+      "body": ""
+    },
+    {
+      "id": "02-first-law-范氏气体的自由膨胀2024-压轴题核心",
+      "title": "范氏气体的自由膨胀（2024 压轴题核心）",
+      "chapter": "02",
+      "chapterTitle": "热力学第一定律",
+      "url": "chapters/02-first-law.html#范氏气体的自由膨胀2024-压轴题核心",
+      "body": ""
+    },
+    {
+      "id": "02-first-law-210-焦耳-汤姆孙效应节流过程",
+      "title": "2.10 焦耳-汤姆孙效应（节流过程）",
+      "chapter": "02",
+      "chapterTitle": "热力学第一定律",
+      "url": "chapters/02-first-law.html#210-焦耳-汤姆孙效应节流过程",
+      "body": ""
+    },
+    {
+      "id": "02-first-law-什么是节流",
+      "title": "什么是节流",
+      "chapter": "02",
+      "chapterTitle": "热力学第一定律",
+      "url": "chapters/02-first-law.html#什么是节流",
+      "body": ""
+    },
+    {
+      "id": "02-first-law-焓守恒",
+      "title": "焓守恒",
+      "chapter": "02",
+      "chapterTitle": "热力学第一定律",
+      "url": "chapters/02-first-law.html#焓守恒",
+      "body": ""
+    },
+    {
+      "id": "02-first-law-211-例题精讲",
+      "title": "2.11 例题精讲",
+      "chapter": "02",
+      "chapterTitle": "热力学第一定律",
+      "url": "chapters/02-first-law.html#211-例题精讲",
+      "body": ""
+    },
+    {
+      "id": "02-first-law-例题-1等压过程的-math_block_190math_block_191math_block_192",
+      "title": "例题 1：等压过程的 $W$、$Q$、$\\Delta U$",
+      "chapter": "02",
+      "chapterTitle": "热力学第一定律",
+      "url": "chapters/02-first-law.html#例题-1等压过程的-math_block_190math_block_191math_block_192",
+      "body": ""
+    },
+    {
+      "id": "02-first-law-例题-2等温膨胀",
+      "title": "例题 2：等温膨胀",
+      "chapter": "02",
+      "chapterTitle": "热力学第一定律",
+      "url": "chapters/02-first-law.html#例题-2等温膨胀",
+      "body": ""
+    },
+    {
+      "id": "02-first-law-例题-3绝热压缩",
+      "title": "例题 3：绝热压缩",
+      "chapter": "02",
+      "chapterTitle": "热力学第一定律",
+      "url": "chapters/02-first-law.html#例题-3绝热压缩",
+      "body": ""
+    },
+    {
+      "id": "02-first-law-例题-4矩形循环效率",
+      "title": "例题 4：矩形循环效率",
+      "chapter": "02",
+      "chapterTitle": "热力学第一定律",
+      "url": "chapters/02-first-law.html#例题-4矩形循环效率",
+      "body": ""
+    },
+    {
+      "id": "02-first-law-212-概念辨析",
+      "title": "2.12 概念辨析",
+      "chapter": "02",
+      "chapterTitle": "热力学第一定律",
+      "url": "chapters/02-first-law.html#212-概念辨析",
+      "body": ""
+    },
+    {
+      "id": "02-first-law-213-公式速查卡",
+      "title": "2.13 公式速查卡",
+      "chapter": "02",
+      "chapterTitle": "热力学第一定律",
+      "url": "chapters/02-first-law.html#213-公式速查卡",
+      "body": ""
+    },
+    {
+      "id": "02-first-law-214-本章小结",
+      "title": "2.14 本章小结",
+      "chapter": "02",
+      "chapterTitle": "热力学第一定律",
+      "url": "chapters/02-first-law.html#214-本章小结",
       "body": ""
     },
     {
@@ -1166,86 +598,54 @@
       "chapter": "03",
       "chapterTitle": "热力学第二定律与熵",
       "url": "chapters/03-second-law-entropy.html",
-      "body": "\r\n   3.1 第一定律的不足\r\n\r\n第一定律告诉你能量守恒——但它没有告诉你  方向  。\r\n\r\n举个例子：一块冰放在热水里，冰融化、水变凉——能量从热水流向冰，总能量守恒。反过来呢？水自发冷却、冰自发变更冷——能量从冰流向水——这也不违反能量守恒。但这件事  从来不会自发发生  。\r\n\r\n第一定律允许的过程中，只有一部分能够自发进行。需要一条新的定律来区分\"能发生\"和\"不能发生\"——这就是第二定律。\r\n\r\n   \r\n\r\n   3.2 可逆过程与不可逆过程\r\n\r\n    不可逆过程\r\n\r\n所谓  不可逆过程  ：过程发生后，系统和外界不可能同时完全恢复原状。\r\n\r\n典型例子：\r\n  热量从高温物体自发流向低温物体\r\n  气体向真空自由膨胀\r\n  有摩擦的机械运动\r\n  电流通过电阻产生焦耳热\r\n  不同气体的自发混合\r\n\r\n这些过程有一个共同特征：它们都有一个  自发方向  ——热不会自发从冷处跑到热处，气体不会自发收缩到容器的一角。\r\n\r\n    可逆过程\r\n\r\n  可逆过程  ：过程发生后，系统和外界可以同时完全恢复原状，不留下任何痕迹。\r\n\r\n可逆过程的两个条件：\r\n1. 过程是  准静态的  （系统时刻处于平衡态）\r\n2. 没有  耗散  （没有摩擦、电阻生热等不可逆因素）\r\n\r\n可逆过程是一种理想极限。所有实际过程都是不可逆的（至少有微小的温度梯度、压强差或摩擦）。\r\n\r\n    为什么关心可逆过程\r\n\r\n因为对于给定的初末态：\r\n  可逆过程是  效率最高  的过程\r\n  可逆热机是效率最大的热机（卡诺定理）\r\n  可逆过程给出了热力学的理论上限\r\n\r\n\r\n   \r\n\r\n   3.3 卡诺循环\r\n\r\n    设计思路\r\n\r\n卡诺循环是热力学中最重要的理想循环。卡诺（1824）问了一个问题：  热机的效率有没有上限？最高能到多少？  \r\n\r\n他设计了一种理想热机——只在两个恒温热源之间工作，且所有过程都可逆。这就是卡诺热机。\r\n\r\n    四个步骤\r\n\r\n卡诺循环由四步组成（以理想气体为工质）：\r\n\r\n  ① 等温膨胀  （$T 1$，高温）：\r\n  气体与高温热源接触，缓慢膨胀\r\n  从高温热源吸热 $Q 1$\r\n  温度不变，内能不变\r\n  $Q 1 = W 1 = nRT 1\\ln V 2/V 1 $\r\n\r\n  ② 绝热膨胀  （$T 1 \\to T 2$）：\r\n  断开热源，气体继续膨胀\r\n  不吸热不放热\r\n  温度从 $T 1$ 降到 $T 2$\r\n  $T 1 V 2^ \\gamma 1  = T 2 V 3^ \\gamma 1 $\r\n\r\n  ③ 等温压缩  （$T 2$，低温）：\r\n  气体与低温热源接触，缓慢压缩\r\n  向低温热源放热 $Q 2$\r\n  $Q 2 = nRT 2\\ln V 3/V 4 $（放出的热量）\r\n\r\n  ④ 绝热压缩  （$T 2 \\to T 1$）：\r\n  断开热源，继续压缩\r\n  温度从 $T 2$ 升回 $T 1$\r\n  回到初态\r\n\r\n    卡诺循环效率\r\n\r\n净功 $W = Q 1   Q 2$（回到初态，内能变化为零）。\r\n\r\n效率：\r\n\r\n$$\\eta C = \\frac W  Q 1  = 1   \\frac Q 2  Q 1 $$\r\n\r\n利用绝热过程的关系 $T 1V 2^ \\gamma 1  = T 2V 3^ \\gamma 1 $ 和 $T 1V 1^ \\gamma 1  = T 2V 4^ \\gamma 1 $，可以证明 $V 2/V 1 = V 3/V 4$，因此：\r\n\r\n$$\\frac Q 2  Q 1  = \\frac nRT 2\\ln V 3/V 4   nRT 1\\ln V 2/V 1   = \\frac T 2  T 1 $$\r\n\r\n最终：\r\n\r\n$$\\boxed \\eta C = 1   \\frac T 2  T 1  $$\r\n\r\n    关键结论\r\n\r\n  效率只取决于两个热源的温度，和工质（什么气体）无关\r\n  $T 1$ 越高或 $T 2$ 越低，效率越高\r\n  $\\eta < 1$（除非 $T 2 = 0$ K，但绝对零度不可达）\r\n  不可能制造效率为 100% 的热机\r\n\r\n    卡诺定理\r\n\r\n  卡诺定理  （两部分）：\r\n\r\n1. 在相同的高温热源 $T 1$ 和低温热源 $T 2$ 之间工作的所有热机中，  可逆热机的效率最高  。\r\n2. 所有在 $T 1$ 和 $T 2$ 之间工作的可逆热机效率相同，等于 $1   T 2/T 1$。\r\n\r\n即：对任意热机：\r\n\r\n$$\\eta \\leq \\eta C = 1   \\frac T 2  T 1 $$\r\n\r\n等号在可逆（卡诺）热机时取到。\r\n\r\n\r\n   \r\n"
+      "body": "\n   3.1 一个第一定律回答不了的问题\n\n   !考试权重  概念理解，不直接出计算，但理解\"方向性\"是本章所有公式的动机。\n\n上一章的第一定律是一条强有力的守恒律：能量既不会凭空产生，也不会凭空消失，它只是在内能、功、热之间换来换去。但是当你真正拿它去描述世界时，会发现它有一个尴尬的沉默之处——  它从不告诉你过程往哪个方向走  。\n\n举一个再普通不过的例子。把一块冰丢进一杯热水里，过一会儿，冰化了，水也凉了。热量从热水流向了冰，能量总账分文不差，第一定律很满意。可是你有没有想过，反过来的剧本同样满足能量守恒：热水自己变得更烫，冰自己冻得更结实，热量从冰倒流回水里——账还是平的，第一定律照样挑不出毛病。然而这件事你这辈子都不会见到。再比如，一杯水里搅起的漩涡会慢慢平息、连同那点搅拌的机械能一起变成微不可察的温升；但你绝不会看到一杯静止的温水忽然自己转起漩涡、把热量重新收集成宏观运动。\n\n这些\"不会发生\"的剧本有一个共同点：它们都不违反能量守恒，却  违反了自然的某种方向感  。第一定律像一个只会查账的会计，账平就放行；可现实世界里，大量账平的过程其实根本不可能自发上演。于是热力学需要第二条独立的定律，专门回答\"在所有能量守恒的过程里，到底哪些能自发发生、哪些不能\"。这就是本章的主角——  热力学第二定律  ，以及为描述这种方向性而诞生的全新物理量——  熵  。\n\n   要点 \n \n      第一定律管\"量\"不管\"方向\"  ：能量守恒成立，并不代表过程能自发发生。\n    大量满足能量守恒的过程（热量倒流、温水自发生成漩涡）现实中从不上演。\n      第二定律  是独立的\"方向定律\"；  熵  是为刻画这种方向性而生的新态函数。\n\n   \n\n   3.2 可逆与不可逆：过程会不会留下\"痕迹\"\n\n   !考试权重  ★★ 选择题高频。2024 选择第 3 题就考了\"可逆一定准静态、准静态不一定可逆、有摩擦一定不可逆\"。\n\n既然第二定律是关于方向的，我们就得先有一套语言来谈论\"方向\"。这套语言的核心，是把一切过程分成两类：  可逆的  和  不可逆的  。\n\n什么叫不可逆？设想任何一个过程发生完之后，你想把系统  和  外界一起恢复到一模一样的初始状态，且不在宇宙别处留下任何改变。如果做不到，这个过程就是不可逆的。热量从高温自发流向低温、气体冲进真空、摩擦把机械能磨成热、电流在电阻里发热、两种气体自发混到一起——无一例外都是不可逆的。它们的共同特征，正是  有一个天然的自发方向  ：热只肯从热往冷走，气体只肯往空处扩散，从不肯自己倒回去。每一个这样的过程，都在世界上留下了一道擦不掉的痕迹。\n\n可逆过程则是另一个极端：它进行得如此理想，以至于事后系统和外界都能精确复原，仿佛什么都没发生过。要做到这一点，它必须同时满足两个苛刻条件。其一是  准静态  ——过程必须无限缓慢，让系统每一刻都停留在平衡态上。其二是  无耗散  ——不能有摩擦、黏性、电阻发热这类把有序能量悄悄变成无序热量的环节。一旦有耗散，哪怕过程再慢，也无法原路返回。\n\n必须强调，可逆过程在现实中并不存在，它是一种理想极限——就像力学里没有摩擦的斜面。那我们为什么还要费心研究一个不存在的东西？因为它划出了  理论的上限  。对于给定的初末状态，可逆的走法效率最高、浪费最少；任何真实的不可逆过程，效率都只会更差。卡诺正是抓住了这个极限，才问出了那个改变热力学的问题。\n\n    2024 选择第 3 题回顾  ：\"可逆热力学过程一定是准静态过程\"✓；\"准静态过程一定是可逆过程\"✗（有摩擦的准静态不可逆）；\"凡有摩擦的过程一定是不可逆过程\"✓。\n\n   要点 \n \n      不可逆过程  ：系统+外界无法同时完全复原；都有自发方向。\n      可逆过程   = 准静态（无限慢）  且   无耗散（无摩擦/黏性）。现实不存在，是效率的理论上限。\n    可逆 ⊂ 准静态；有摩擦 → 一定不可逆。\n\n   \n\n   3.3 卡诺循环：效率究竟有没有上限\n\n   !考试权重  ★★★ 卡诺效率 $\\eta=1 T 2/T 1$ 是全课最重要的公式之一。2024 选择第 2 题直接考了\"面积变大但效率不变\"。\n\n1824 年，年轻的工程师卡诺盯着当时轰鸣的蒸汽机，问了一个看似工程、实则触及物理根基的问题：  热机的效率有没有一个不可逾越的上限？如果有，它由什么决定？  \n\n他构造了一台  理想化到极致的热机  ：只和两个恒温热源打交道（高温 $T 1$、低温 $T 2$），全部四个步骤都可逆。以理想气体为工质，卡诺循环分四步：\n\n  第一步，等温膨胀（$T 1$）  。气体贴着高温热源，极缓慢地膨胀。膨胀要对外做功，本该降温，但热源不断补热，温度纹丝不动。这一步气体从高温"
     },
     {
-      "id": "03-second-law-entropy-31-第一定律的不足",
-      "title": "3.1 第一定律的不足",
+      "id": "03-second-law-entropy-31-一个第一定律回答不了的问题",
+      "title": "3.1 一个第一定律回答不了的问题",
       "chapter": "03",
       "chapterTitle": "热力学第二定律与熵",
-      "url": "chapters/03-second-law-entropy.html#31-第一定律的不足",
+      "url": "chapters/03-second-law-entropy.html#31-一个第一定律回答不了的问题",
       "body": ""
     },
     {
-      "id": "03-second-law-entropy-32-可逆过程与不可逆过程",
-      "title": "3.2 可逆过程与不可逆过程",
+      "id": "03-second-law-entropy-32-可逆与不可逆过程会不会留下quot痕迹quot",
+      "title": "3.2 可逆与不可逆：过程会不会留下&quot;痕迹&quot;",
       "chapter": "03",
       "chapterTitle": "热力学第二定律与熵",
-      "url": "chapters/03-second-law-entropy.html#32-可逆过程与不可逆过程",
+      "url": "chapters/03-second-law-entropy.html#32-可逆与不可逆过程会不会留下quot痕迹quot",
       "body": ""
     },
     {
-      "id": "03-second-law-entropy-不可逆过程",
-      "title": "不可逆过程",
+      "id": "03-second-law-entropy-33-卡诺循环效率究竟有没有上限",
+      "title": "3.3 卡诺循环：效率究竟有没有上限",
       "chapter": "03",
       "chapterTitle": "热力学第二定律与熵",
-      "url": "chapters/03-second-law-entropy.html#不可逆过程",
+      "url": "chapters/03-second-law-entropy.html#33-卡诺循环效率究竟有没有上限",
       "body": ""
     },
     {
-      "id": "03-second-law-entropy-可逆过程",
-      "title": "可逆过程",
+      "id": "03-second-law-entropy-效率只和温度有关",
+      "title": "效率：只和温度有关",
       "chapter": "03",
       "chapterTitle": "热力学第二定律与熵",
-      "url": "chapters/03-second-law-entropy.html#可逆过程",
+      "url": "chapters/03-second-law-entropy.html#效率只和温度有关",
       "body": ""
     },
     {
-      "id": "03-second-law-entropy-为什么关心可逆过程",
-      "title": "为什么关心可逆过程",
+      "id": "03-second-law-entropy--真题2024-选择第-2-题",
+      "title": "🎯 真题：2024 选择第 2 题",
       "chapter": "03",
       "chapterTitle": "热力学第二定律与熵",
-      "url": "chapters/03-second-law-entropy.html#为什么关心可逆过程",
+      "url": "chapters/03-second-law-entropy.html#-真题2024-选择第-2-题",
       "body": ""
     },
     {
-      "id": "03-second-law-entropy-33-卡诺循环",
-      "title": "3.3 卡诺循环",
+      "id": "03-second-law-entropy-逆循环制冷机与热泵",
+      "title": "逆循环：制冷机与热泵",
       "chapter": "03",
       "chapterTitle": "热力学第二定律与熵",
-      "url": "chapters/03-second-law-entropy.html#33-卡诺循环",
-      "body": ""
-    },
-    {
-      "id": "03-second-law-entropy-设计思路",
-      "title": "设计思路",
-      "chapter": "03",
-      "chapterTitle": "热力学第二定律与熵",
-      "url": "chapters/03-second-law-entropy.html#设计思路",
-      "body": ""
-    },
-    {
-      "id": "03-second-law-entropy-四个步骤",
-      "title": "四个步骤",
-      "chapter": "03",
-      "chapterTitle": "热力学第二定律与熵",
-      "url": "chapters/03-second-law-entropy.html#四个步骤",
-      "body": ""
-    },
-    {
-      "id": "03-second-law-entropy-卡诺循环效率",
-      "title": "卡诺循环效率",
-      "chapter": "03",
-      "chapterTitle": "热力学第二定律与熵",
-      "url": "chapters/03-second-law-entropy.html#卡诺循环效率",
-      "body": ""
-    },
-    {
-      "id": "03-second-law-entropy-关键结论",
-      "title": "关键结论",
-      "chapter": "03",
-      "chapterTitle": "热力学第二定律与熵",
-      "url": "chapters/03-second-law-entropy.html#关键结论",
+      "url": "chapters/03-second-law-entropy.html#逆循环制冷机与热泵",
       "body": ""
     },
     {
@@ -1257,315 +657,19 @@
       "body": ""
     },
     {
-      "id": "03-second-law-entropy-34-热力学第二定律",
-      "title": "3.4 热力学第二定律",
+      "id": "03-second-law-entropy-34-第二定律的两种表述",
+      "title": "3.4 第二定律的两种表述",
       "chapter": "03",
       "chapterTitle": "热力学第二定律与熵",
-      "url": "chapters/03-second-law-entropy.html#34-热力学第二定律",
+      "url": "chapters/03-second-law-entropy.html#34-第二定律的两种表述",
       "body": ""
     },
     {
-      "id": "03-second-law-entropy-两种等价表述",
-      "title": "两种等价表述",
+      "id": "03-second-law-entropy-35-克劳修斯不等式与熵的诞生",
+      "title": "3.5 克劳修斯不等式与熵的诞生",
       "chapter": "03",
       "chapterTitle": "热力学第二定律与熵",
-      "url": "chapters/03-second-law-entropy.html#两种等价表述",
-      "body": ""
-    },
-    {
-      "id": "03-second-law-entropy-两种表述的等价性",
-      "title": "两种表述的等价性",
-      "chapter": "03",
-      "chapterTitle": "热力学第二定律与熵",
-      "url": "chapters/03-second-law-entropy.html#两种表述的等价性",
-      "body": ""
-    },
-    {
-      "id": "03-second-law-entropy-第二定律的本质",
-      "title": "第二定律的本质",
-      "chapter": "03",
-      "chapterTitle": "热力学第二定律与熵",
-      "url": "chapters/03-second-law-entropy.html#第二定律的本质",
-      "body": ""
-    },
-    {
-      "id": "03-second-law-entropy-35-克劳修斯不等式",
-      "title": "3.5 克劳修斯不等式",
-      "chapter": "03",
-      "chapterTitle": "热力学第二定律与熵",
-      "url": "chapters/03-second-law-entropy.html#35-克劳修斯不等式",
-      "body": ""
-    },
-    {
-      "id": "03-second-law-entropy-推导思路",
-      "title": "推导思路",
-      "chapter": "03",
-      "chapterTitle": "热力学第二定律与熵",
-      "url": "chapters/03-second-law-entropy.html#推导思路",
-      "body": ""
-    },
-    {
-      "id": "03-second-law-entropy-含义",
-      "title": "含义",
-      "chapter": "03",
-      "chapterTitle": "热力学第二定律与熵",
-      "url": "chapters/03-second-law-entropy.html#含义",
-      "body": ""
-    },
-    {
-      "id": "03-second-law-entropy-36-熵的定义",
-      "title": "3.6 熵的定义",
-      "chapter": "03",
-      "chapterTitle": "热力学第二定律与熵",
-      "url": "chapters/03-second-law-entropy.html#36-熵的定义",
-      "body": ""
-    },
-    {
-      "id": "03-second-law-entropy-从克劳修斯不等式到熵",
-      "title": "从克劳修斯不等式到熵",
-      "chapter": "03",
-      "chapterTitle": "热力学第二定律与熵",
-      "url": "chapters/03-second-law-entropy.html#从克劳修斯不等式到熵",
-      "body": ""
-    },
-    {
-      "id": "03-second-law-entropy-关键理解",
-      "title": "关键理解",
-      "chapter": "03",
-      "chapterTitle": "热力学第二定律与熵",
-      "url": "chapters/03-second-law-entropy.html#关键理解",
-      "body": ""
-    },
-    {
-      "id": "03-second-law-entropy-37-熵变的计算",
-      "title": "3.7 熵变的计算",
-      "chapter": "03",
-      "chapterTitle": "热力学第二定律与熵",
-      "url": "chapters/03-second-law-entropy.html#37-熵变的计算",
-      "body": ""
-    },
-    {
-      "id": "03-second-law-entropy-计算策略",
-      "title": "计算策略",
-      "chapter": "03",
-      "chapterTitle": "热力学第二定律与熵",
-      "url": "chapters/03-second-law-entropy.html#计算策略",
-      "body": ""
-    },
-    {
-      "id": "03-second-law-entropy-理想气体的熵变公式",
-      "title": "理想气体的熵变公式",
-      "chapter": "03",
-      "chapterTitle": "热力学第二定律与熵",
-      "url": "chapters/03-second-law-entropy.html#理想气体的熵变公式",
-      "body": ""
-    },
-    {
-      "id": "03-second-law-entropy-特殊过程的熵变",
-      "title": "特殊过程的熵变",
-      "chapter": "03",
-      "chapterTitle": "热力学第二定律与熵",
-      "url": "chapters/03-second-law-entropy.html#特殊过程的熵变",
-      "body": ""
-    },
-    {
-      "id": "03-second-law-entropy-例题思路自由膨胀的熵变",
-      "title": "例题思路：自由膨胀的熵变",
-      "chapter": "03",
-      "chapterTitle": "热力学第二定律与熵",
-      "url": "chapters/03-second-law-entropy.html#例题思路自由膨胀的熵变",
-      "body": ""
-    },
-    {
-      "id": "03-second-law-entropy-38-熵增原理",
-      "title": "3.8 熵增原理",
-      "chapter": "03",
-      "chapterTitle": "热力学第二定律与熵",
-      "url": "chapters/03-second-law-entropy.html#38-熵增原理",
-      "body": ""
-    },
-    {
-      "id": "03-second-law-entropy-表述",
-      "title": "表述",
-      "chapter": "03",
-      "chapterTitle": "热力学第二定律与熵",
-      "url": "chapters/03-second-law-entropy.html#表述",
-      "body": ""
-    },
-    {
-      "id": "03-second-law-entropy-推导",
-      "title": "推导",
-      "chapter": "03",
-      "chapterTitle": "热力学第二定律与熵",
-      "url": "chapters/03-second-law-entropy.html#推导",
-      "body": ""
-    },
-    {
-      "id": "03-second-law-entropy-非孤立系统怎么办",
-      "title": "非孤立系统怎么办",
-      "chapter": "03",
-      "chapterTitle": "热力学第二定律与熵",
-      "url": "chapters/03-second-law-entropy.html#非孤立系统怎么办",
-      "body": ""
-    },
-    {
-      "id": "03-second-law-entropy-熵的统计意义预览",
-      "title": "熵的统计意义（预览）",
-      "chapter": "03",
-      "chapterTitle": "热力学第二定律与熵",
-      "url": "chapters/03-second-law-entropy.html#熵的统计意义预览",
-      "body": ""
-    },
-    {
-      "id": "03-second-law-entropy-39-熵变计算的更多例子",
-      "title": "3.9 熵变计算的更多例子",
-      "chapter": "03",
-      "chapterTitle": "热力学第二定律与熵",
-      "url": "chapters/03-second-law-entropy.html#39-熵变计算的更多例子",
-      "body": ""
-    },
-    {
-      "id": "03-second-law-entropy-两物体接触达到热平衡",
-      "title": "两物体接触达到热平衡",
-      "chapter": "03",
-      "chapterTitle": "热力学第二定律与熵",
-      "url": "chapters/03-second-law-entropy.html#两物体接触达到热平衡",
-      "body": ""
-    },
-    {
-      "id": "03-second-law-entropy-理想气体的不可逆等压膨胀",
-      "title": "理想气体的不可逆等压膨胀",
-      "chapter": "03",
-      "chapterTitle": "热力学第二定律与熵",
-      "url": "chapters/03-second-law-entropy.html#理想气体的不可逆等压膨胀",
-      "body": ""
-    },
-    {
-      "id": "03-second-law-entropy-310-t-s-图",
-      "title": "3.10 T-S 图",
-      "chapter": "03",
-      "chapterTitle": "热力学第二定律与熵",
-      "url": "chapters/03-second-law-entropy.html#310-t-s-图",
-      "body": ""
-    },
-    {
-      "id": "03-second-law-entropy-引入",
-      "title": "引入",
-      "chapter": "03",
-      "chapterTitle": "热力学第二定律与熵",
-      "url": "chapters/03-second-law-entropy.html#引入",
-      "body": ""
-    },
-    {
-      "id": "03-second-law-entropy-热量的几何意义",
-      "title": "热量的几何意义",
-      "chapter": "03",
-      "chapterTitle": "热力学第二定律与熵",
-      "url": "chapters/03-second-law-entropy.html#热量的几何意义",
-      "body": ""
-    },
-    {
-      "id": "03-second-law-entropy-卡诺循环在-t-s-图上",
-      "title": "卡诺循环在 T-S 图上",
-      "chapter": "03",
-      "chapterTitle": "热力学第二定律与熵",
-      "url": "chapters/03-second-law-entropy.html#卡诺循环在-t-s-图上",
-      "body": ""
-    },
-    {
-      "id": "03-second-law-entropy-311-自由能简介",
-      "title": "3.11 自由能简介",
-      "chapter": "03",
-      "chapterTitle": "热力学第二定律与熵",
-      "url": "chapters/03-second-law-entropy.html#311-自由能简介",
-      "body": ""
-    },
-    {
-      "id": "03-second-law-entropy-动机",
-      "title": "动机",
-      "chapter": "03",
-      "chapterTitle": "热力学第二定律与熵",
-      "url": "chapters/03-second-law-entropy.html#动机",
-      "body": ""
-    },
-    {
-      "id": "03-second-law-entropy-亥姆霍兹自由能-f",
-      "title": "亥姆霍兹自由能 $F$",
-      "chapter": "03",
-      "chapterTitle": "热力学第二定律与熵",
-      "url": "chapters/03-second-law-entropy.html#亥姆霍兹自由能-f",
-      "body": ""
-    },
-    {
-      "id": "03-second-law-entropy-吉布斯自由能-g",
-      "title": "吉布斯自由能 $G$",
-      "chapter": "03",
-      "chapterTitle": "热力学第二定律与熵",
-      "url": "chapters/03-second-law-entropy.html#吉布斯自由能-g",
-      "body": ""
-    },
-    {
-      "id": "03-second-law-entropy-本课程中的位置",
-      "title": "本课程中的位置",
-      "chapter": "03",
-      "chapterTitle": "热力学第二定律与熵",
-      "url": "chapters/03-second-law-entropy.html#本课程中的位置",
-      "body": ""
-    },
-    {
-      "id": "03-second-law-entropy-312-概念辨析",
-      "title": "3.12 概念辨析",
-      "chapter": "03",
-      "chapterTitle": "热力学第二定律与熵",
-      "url": "chapters/03-second-law-entropy.html#312-概念辨析",
-      "body": ""
-    },
-    {
-      "id": "03-second-law-entropy-q熵是quot混乱度quot吗",
-      "title": "Q：熵是&quot;混乱度&quot;吗？",
-      "chapter": "03",
-      "chapterTitle": "热力学第二定律与熵",
-      "url": "chapters/03-second-law-entropy.html#q熵是quot混乱度quot吗",
-      "body": ""
-    },
-    {
-      "id": "03-second-law-entropy-q可逆绝热-等熵那不可逆绝热呢",
-      "title": "Q：可逆绝热 = 等熵。那不可逆绝热呢？",
-      "chapter": "03",
-      "chapterTitle": "热力学第二定律与熵",
-      "url": "chapters/03-second-law-entropy.html#q可逆绝热-等熵那不可逆绝热呢",
-      "body": ""
-    },
-    {
-      "id": "03-second-law-entropy-q效率为什么不能到-100",
-      "title": "Q：效率为什么不能到 100%？",
-      "chapter": "03",
-      "chapterTitle": "热力学第二定律与熵",
-      "url": "chapters/03-second-law-entropy.html#q效率为什么不能到-100",
-      "body": ""
-    },
-    {
-      "id": "03-second-law-entropy-q空调制冷违反第二定律吗",
-      "title": "Q：空调制冷违反第二定律吗？",
-      "chapter": "03",
-      "chapterTitle": "热力学第二定律与熵",
-      "url": "chapters/03-second-law-entropy.html#q空调制冷违反第二定律吗",
-      "body": ""
-    },
-    {
-      "id": "03-second-law-entropy-313-本章公式总结",
-      "title": "3.13 本章公式总结",
-      "chapter": "03",
-      "chapterTitle": "热力学第二定律与熵",
-      "url": "chapters/03-second-law-entropy.html#313-本章公式总结",
-      "body": ""
-    },
-    {
-      "id": "03-second-law-entropy-卡诺效率",
-      "title": "卡诺效率",
-      "chapter": "03",
-      "chapterTitle": "热力学第二定律与熵",
-      "url": "chapters/03-second-law-entropy.html#卡诺效率",
+      "url": "chapters/03-second-law-entropy.html#35-克劳修斯不等式与熵的诞生",
       "body": ""
     },
     {
@@ -1577,35 +681,179 @@
       "body": ""
     },
     {
-      "id": "03-second-law-entropy-熵的定义",
-      "title": "熵的定义",
+      "id": "03-second-law-entropy-熵的诞生",
+      "title": "熵的诞生",
       "chapter": "03",
       "chapterTitle": "热力学第二定律与熵",
-      "url": "chapters/03-second-law-entropy.html#熵的定义",
+      "url": "chapters/03-second-law-entropy.html#熵的诞生",
       "body": ""
     },
     {
-      "id": "03-second-law-entropy-理想气体熵变",
-      "title": "理想气体熵变",
+      "id": "03-second-law-entropy-最关键的方法论不可逆过程怎么算熵变",
+      "title": "最关键的方法论：不可逆过程怎么算熵变",
       "chapter": "03",
       "chapterTitle": "热力学第二定律与熵",
-      "url": "chapters/03-second-law-entropy.html#理想气体熵变",
+      "url": "chapters/03-second-law-entropy.html#最关键的方法论不可逆过程怎么算熵变",
       "body": ""
     },
     {
-      "id": "03-second-law-entropy-熵增原理",
-      "title": "熵增原理",
+      "id": "03-second-law-entropy-36-理想气体熵变公式",
+      "title": "3.6 理想气体熵变公式",
       "chapter": "03",
       "chapterTitle": "热力学第二定律与熵",
-      "url": "chapters/03-second-law-entropy.html#熵增原理",
+      "url": "chapters/03-second-law-entropy.html#36-理想气体熵变公式",
       "body": ""
     },
     {
-      "id": "03-second-law-entropy-自由能",
-      "title": "自由能",
+      "id": "03-second-law-entropy-等价形式",
+      "title": "等价形式",
       "chapter": "03",
       "chapterTitle": "热力学第二定律与熵",
-      "url": "chapters/03-second-law-entropy.html#自由能",
+      "url": "chapters/03-second-law-entropy.html#等价形式",
+      "body": ""
+    },
+    {
+      "id": "03-second-law-entropy-特殊过程退化",
+      "title": "特殊过程退化",
+      "chapter": "03",
+      "chapterTitle": "热力学第二定律与熵",
+      "url": "chapters/03-second-law-entropy.html#特殊过程退化",
+      "body": ""
+    },
+    {
+      "id": "03-second-law-entropy-其他常用熵变",
+      "title": "其他常用熵变",
+      "chapter": "03",
+      "chapterTitle": "热力学第二定律与熵",
+      "url": "chapters/03-second-law-entropy.html#其他常用熵变",
+      "body": ""
+    },
+    {
+      "id": "03-second-law-entropy-示范自由膨胀的熵变",
+      "title": "示范：自由膨胀的熵变",
+      "chapter": "03",
+      "chapterTitle": "热力学第二定律与熵",
+      "url": "chapters/03-second-law-entropy.html#示范自由膨胀的熵变",
+      "body": ""
+    },
+    {
+      "id": "03-second-law-entropy-37-熵增原理与时间之箭",
+      "title": "3.7 熵增原理与时间之箭",
+      "chapter": "03",
+      "chapterTitle": "热力学第二定律与熵",
+      "url": "chapters/03-second-law-entropy.html#37-熵增原理与时间之箭",
+      "body": ""
+    },
+    {
+      "id": "03-second-law-entropy-微观解释",
+      "title": "微观解释",
+      "chapter": "03",
+      "chapterTitle": "热力学第二定律与熵",
+      "url": "chapters/03-second-law-entropy.html#微观解释",
+      "body": ""
+    },
+    {
+      "id": "03-second-law-entropy-38-t-s-图与卡诺循环的矩形",
+      "title": "3.8 T-S 图与卡诺循环的矩形",
+      "chapter": "03",
+      "chapterTitle": "热力学第二定律与熵",
+      "url": "chapters/03-second-law-entropy.html#38-t-s-图与卡诺循环的矩形",
+      "body": ""
+    },
+    {
+      "id": "03-second-law-entropy-39-从第二定律推导pvt-系统的内能与-cp-cv",
+      "title": "3.9 从第二定律推导：PVT 系统的内能与 Cp-Cv",
+      "chapter": "03",
+      "chapterTitle": "热力学第二定律与熵",
+      "url": "chapters/03-second-law-entropy.html#39-从第二定律推导pvt-系统的内能与-cp-cv",
+      "body": ""
+    },
+    {
+      "id": "03-second-law-entropy-内能的体积依赖",
+      "title": "内能的体积依赖",
+      "chapter": "03",
+      "chapterTitle": "热力学第二定律与熵",
+      "url": "chapters/03-second-law-entropy.html#内能的体积依赖",
+      "body": ""
+    },
+    {
+      "id": "03-second-law-entropy-cp-cv-的一般表达",
+      "title": "Cp-Cv 的一般表达",
+      "chapter": "03",
+      "chapterTitle": "热力学第二定律与熵",
+      "url": "chapters/03-second-law-entropy.html#cp-cv-的一般表达",
+      "body": ""
+    },
+    {
+      "id": "03-second-law-entropy-310-例题精讲与真题实战",
+      "title": "3.10 例题精讲与真题实战",
+      "chapter": "03",
+      "chapterTitle": "热力学第二定律与熵",
+      "url": "chapters/03-second-law-entropy.html#310-例题精讲与真题实战",
+      "body": ""
+    },
+    {
+      "id": "03-second-law-entropy-例题-1卡诺热机与制冷机",
+      "title": "例题 1：卡诺热机与制冷机",
+      "chapter": "03",
+      "chapterTitle": "热力学第二定律与熵",
+      "url": "chapters/03-second-law-entropy.html#例题-1卡诺热机与制冷机",
+      "body": ""
+    },
+    {
+      "id": "03-second-law-entropy-例题-2自由膨胀不可逆vs-等温可逆膨胀对比",
+      "title": "例题 2：自由膨胀（不可逆）vs 等温可逆膨胀——对比",
+      "chapter": "03",
+      "chapterTitle": "热力学第二定律与熵",
+      "url": "chapters/03-second-law-entropy.html#例题-2自由膨胀不可逆vs-等温可逆膨胀对比",
+      "body": ""
+    },
+    {
+      "id": "03-second-law-entropy-例题-3两物体热接触",
+      "title": "例题 3：两物体热接触",
+      "chapter": "03",
+      "chapterTitle": "热力学第二定律与熵",
+      "url": "chapters/03-second-law-entropy.html#例题-3两物体热接触",
+      "body": ""
+    },
+    {
+      "id": "03-second-law-entropy--真题实战2024-计算第-3-题15-分",
+      "title": "🎯 真题实战：2024 计算第 3 题（15 分）",
+      "chapter": "03",
+      "chapterTitle": "热力学第二定律与熵",
+      "url": "chapters/03-second-law-entropy.html#-真题实战2024-计算第-3-题15-分",
+      "body": ""
+    },
+    {
+      "id": "03-second-law-entropy--真题实战2024-计算第-5-题16-分",
+      "title": "🎯 真题实战：2024 计算第 5 题（16 分）",
+      "chapter": "03",
+      "chapterTitle": "热力学第二定律与熵",
+      "url": "chapters/03-second-law-entropy.html#-真题实战2024-计算第-5-题16-分",
+      "body": ""
+    },
+    {
+      "id": "03-second-law-entropy-311-自由能简介",
+      "title": "3.11 自由能简介",
+      "chapter": "03",
+      "chapterTitle": "热力学第二定律与熵",
+      "url": "chapters/03-second-law-entropy.html#311-自由能简介",
+      "body": ""
+    },
+    {
+      "id": "03-second-law-entropy-312-概念辨析",
+      "title": "3.12 概念辨析",
+      "chapter": "03",
+      "chapterTitle": "热力学第二定律与熵",
+      "url": "chapters/03-second-law-entropy.html#312-概念辨析",
+      "body": ""
+    },
+    {
+      "id": "03-second-law-entropy-313-公式速查卡",
+      "title": "3.13 公式速查卡",
+      "chapter": "03",
+      "chapterTitle": "热力学第二定律与熵",
+      "url": "chapters/03-second-law-entropy.html#313-公式速查卡",
       "body": ""
     },
     {
@@ -1622,302 +870,86 @@
       "chapter": "04",
       "chapterTitle": "Maxwell-Boltzmann 分布",
       "url": "chapters/04-maxwell-distribution.html",
-      "body": "\r\n   4.1 为什么需要统计分布\r\n\r\n第 1 章推导压强时我们用到了 $\\overline v^2 $——分子速率的平方平均值。但分子速率并不是全部相同的——在平衡态下，有的分子快有的慢。\r\n\r\n一个自然的问题：  速率的分布是什么样的？有多少比例的分子速率在某个范围内？  \r\n\r\n这就是 Maxwell 速率分布律要回答的问题。\r\n\r\n    统计方法的必要性\r\n\r\n$10^ 23 $ 个分子，每个有不同的速度。你不可能追踪每一个。但统计规律告诉我们：虽然单个分子的行为不确定，但  大量分子的集体行为是确定的  。\r\n\r\n类比：你不知道教室里某个同学的身高，但如果有 1000 个同学，身高的分布一定接近正态分布——你可以精确预测\"身高在 170 175 cm 之间的人占多少百分比\"。\r\n\r\n   \r\n\r\n   4.2 速率分布函数\r\n\r\n    定义\r\n\r\n设系统中有 $N$ 个分子。定义  速率分布函数   $f v $：\r\n\r\n$$f v \\,dv = \\text 速率在   v \\sim v+dv \\text  范围内的分子占总分子数的比例 $$\r\n\r\n即：\r\n\r\n$$dN = Nf v \\,dv$$\r\n\r\n$f v $ 的物理意义：  单位速率间隔内分子出现的概率密度  。\r\n\r\n    归一化条件\r\n\r\n所有分子的速率必须在 $0$ 到 $\\infty$ 之间：\r\n\r\n$$\\int 0^ \\infty  f v \\,dv = 1$$\r\n\r\n    用分布函数计算平均值\r\n\r\n一旦知道 $f v $，任何速率相关的平均值都可以算：\r\n\r\n$$\\overline v  = \\int 0^ \\infty  v \\cdot f v \\,dv$$\r\n\r\n$$\\overline v^2  = \\int 0^ \\infty  v^2 \\cdot f v \\,dv$$\r\n\r\n$$\\overline g v   = \\int 0^ \\infty  g v  \\cdot f v \\,dv$$\r\n\r\n   \r\n\r\n   4.3 Maxwell 速率分布律\r\n\r\n    公式\r\n\r\nMaxwell（1860）从统计力学的基本原理出发，推导出平衡态理想气体的速率分布函数：\r\n\r\n$$\\boxed f v  = 4\\pi \\left \\frac m  2\\pi kT \\right ^ 3/2  v^2 \\exp\\left  \\frac mv^2  2kT \\right  $$\r\n\r\n其中 $m$ 是单个分子的质量，$T$ 是温度，$k$ 是玻尔兹曼常数。\r\n\r\n\r\n    公式拆解\r\n\r\n这个公式看起来吓人，但每一部分都有物理含义：\r\n\r\n  部分   来源   含义  \r\n                      \r\n  $4\\pi v^2$   速度空间中半径为 $v$ 的球壳面积   从三维速度分布到一维速率分布的\"体积因子\"  \r\n  $\\left \\frac m  2\\pi kT \\right ^ 3/2 $   归一化常数   保证 $\\int 0^\\infty f v \\,dv = 1$  \r\n  $\\exp\\left  \\frac mv^2  2kT \\right $   玻尔兹曼因子   能量越高（$v$ 越大），概率越低  \r\n\r\n$f v $ 的形状是两个因素的竞争：\r\n  $v^2$ 使得低速端 $f v  \\to 0$（因为低速的\"状态空间\"小）\r\n  $e^  mv^2/ 2kT  $ 使得高速端 $f v  \\to 0$（因为高能量不容易获得）\r\n  中间某处取极大值——这就是  最概然速率  \r\n\r\n    推导思路（速度分布→速率分布）\r\n\r\n完整推导需要统计力学，这里给出关键思路：\r\n\r\n  第一步  ：假设三个方向独立。$v x$、$v y$、$v z$ 的分布互相独立：\r\n\r\n$$g v x, v y, v z  = g x v x  \\cdot g y v y  \\cdot g z v z $$\r\n\r\n  第二步  ：各向同性。分布只能取决于速率 $v = \\sqrt v x^2 + v y^2 + v z^2 $，而不能偏好某个方向。\r\n\r\n结合这两个条件（独立性 + 各向同性），可以证明唯一满足的形式是高斯分布：\r\n\r\n$$g x v x  = \\left \\frac m  2\\pi kT \\right ^ 1/2  \\exp\\left  \\frac mv x^2  2kT \\right $$\r\n\r\n这是 $v x$ 的分布——正态分布，均值为零，方差为 $kT/m$。\r\n\r\n  第三步  ：三维速度分布：\r\n\r\n$$g v x, v y, v z  = \\left \\frac m  2\\"
+      "body": "\n   4.1 为什么要谈\"分布\"：从一个数到一条曲线\n\n   !考试权重  ★★★ 本章是计算大题的重灾区。2024 第 4 题（15 分）考了非 Maxwell 分布（电子气 $f v =Av^2$）的归一化、特征速率、平均速率计算。掌握\"分布函数→归一化→求平均\"这套操作是关键。\n\n第一章推导压强时，我们用过一个量——分子速率的平方平均值 $\\overline v^2 $，并由它得到了温度的微观意义。可那时我们悄悄回避了一个问题：分子的速率  并不是都一样的  。在平衡态下，有的分子快得惊人，有的慢得几乎不动，绝大多数则不快不慢。于是一个自然而然、也更深刻的问题浮出水面：  这些速率到底是怎么分布的？速率落在某个范围内的分子占多大比例？   回答这个问题的，就是本章的主角——Maxwell 速率分布律。\n\n你可能会担心：$10^ 23 $ 个分子各有各的速度，根本追踪不过来，谈何\"分布\"？但这恰恰又是大数的恩赐。单个分子下一刻多快完全随机，可海量分子的速率分布却稳定得可以写成一条精确的曲线。这就像你说不准教室里某一个同学多高，但只要人数足够多，\"身高在 170–175 cm 之间的人占百分之几\"却是一个确定且可预测的数。统计的力量，正在于把无数个体的不确定，汇成整体的确定。这一章我们就要把这条\"速率的身高分布曲线\"找出来，学会从它读出各种平均量，并由此打开统计物理一把极重要的钥匙——能量均分定理。\n\n   要点 \n \n    平衡态下分子速率  有快有慢  ，服从一个确定的  分布  ，不是单一值。\n    大数效应：单个分子随机，但海量分子的速率分布稳定可预测。\n    本章目标：求出 Maxwell 速率分布 → 读出特征速率与平均量 → 引出能量均分定理。\n\n   \n\n   4.2 速率分布函数：f v  到底是什么意思\n\n要描述分布，先得给它一个数学载体——  速率分布函数   $f v $。设系统有 $N$ 个分子，$f v $ 的定义是：速率落在 $v$ 到 $v+dv$ 这个小区间内的分子，占总分子数的比例为 $f v \\,dv$。换句话说，这个区间里的分子数 $dN=Nf v \\,dv$。所以 $f v $ 的物理意义是  单位速率间隔内分子出现的概率密度  ——它本身不是比例，要乘上一段区间宽度 $dv$ 才是比例。这个\"概率密度\"的身份，是后面一切计算的基础，务必分清 $f v $ 和 $f v \\,dv$ 的区别。\n\n既然每个分子的速率都落在 $0$ 到 $\\infty$ 之间某处，把所有区间的比例加起来必须等于 1，这就是  归一化条件   $\\int 0^\\infty f v \\,dv=1$。而一旦掌握了 $f v $，任何与速率有关的平均量都能用积分一网打尽：平均速率 $\\overline v=\\int 0^\\infty v\\,f v \\,dv$，速率平方的平均 $\\overline v^2 =\\int 0^\\infty v^2 f v \\,dv$，更一般地，任意函数 $g v $ 的平均值就是 $\\overline g v  =\\int 0^\\infty g v \\,f v \\,dv$。这种\"用分布函数加权求平均\"的套路，是统计物理最核心的操作，本章会反复使用。\n\n   要点 \n \n      速率分布函数   $f v $：速率在 $ v,v+dv $ 内的分子比例 $=f v \\,dv$，即 $dN=Nf v \\,dv$。\n    $f v $ 是  概率密度  （要乘 $dv$ 才是比例）。  归一化   $\\int 0^\\infty f v \\,dv=1$。\n    求平均值的通法：$\\overline g v  =\\int 0^\\infty g v f v \\,dv$。\n\n   \n\n   4.3 Maxwell 速率分布律：长什么样，又从哪来\n\n   !考试权重  ★★ 公式本身不需要从头推导（不会让你在考场上重推），但必须能写出来、能用它做积分。碰壁数公式 $\\Gamma=\\frac 1  4 n\\bar v$ 也是本章高频考点。\n\nMaxwell 在 1860 年从统计力学的基本原理出发，给出了平衡态理想气体的速率分布函数：\n\n$$\\boxed f v =4\\pi\\left \\frac m  2\\pi kT \\right ^ 3/2 v^2\\exp\\left  \\frac mv^2  2kT \\right  ,$$\n\n其中 $m$ 是单个分子质量，$T$ 是温度，$k$ 是玻尔兹曼常数。这个公式初看吓人，但只要把它拆成三块，每一块的物理含义都很清楚。中间的 $\\left m/2\\pi kT\\right ^ 3/2 $ 是个归一化常数，唯一作用是保证全部比例加起来等于 1。真正决"
     },
     {
-      "id": "04-maxwell-distribution-41-为什么需要统计分布",
-      "title": "4.1 为什么需要统计分布",
+      "id": "04-maxwell-distribution-41-为什么要谈quot分布quot从一个数到一条曲线",
+      "title": "4.1 为什么要谈&quot;分布&quot;：从一个数到一条曲线",
       "chapter": "04",
       "chapterTitle": "Maxwell-Boltzmann 分布",
-      "url": "chapters/04-maxwell-distribution.html#41-为什么需要统计分布",
+      "url": "chapters/04-maxwell-distribution.html#41-为什么要谈quot分布quot从一个数到一条曲线",
       "body": ""
     },
     {
-      "id": "04-maxwell-distribution-统计方法的必要性",
-      "title": "统计方法的必要性",
+      "id": "04-maxwell-distribution-42-速率分布函数fv-到底是什么意思",
+      "title": "4.2 速率分布函数：f(v) 到底是什么意思",
       "chapter": "04",
       "chapterTitle": "Maxwell-Boltzmann 分布",
-      "url": "chapters/04-maxwell-distribution.html#统计方法的必要性",
+      "url": "chapters/04-maxwell-distribution.html#42-速率分布函数fv-到底是什么意思",
       "body": ""
     },
     {
-      "id": "04-maxwell-distribution-42-速率分布函数",
-      "title": "4.2 速率分布函数",
+      "id": "04-maxwell-distribution-43-maxwell-速率分布律长什么样又从哪来",
+      "title": "4.3 Maxwell 速率分布律：长什么样，又从哪来",
       "chapter": "04",
       "chapterTitle": "Maxwell-Boltzmann 分布",
-      "url": "chapters/04-maxwell-distribution.html#42-速率分布函数",
+      "url": "chapters/04-maxwell-distribution.html#43-maxwell-速率分布律长什么样又从哪来",
       "body": ""
     },
     {
-      "id": "04-maxwell-distribution-定义",
-      "title": "定义",
+      "id": "04-maxwell-distribution-44-三个特征速率v-lt-v-lt-v_rms",
+      "title": "4.4 三个特征速率：vₚ &lt; v̄ &lt; v_rms",
       "chapter": "04",
       "chapterTitle": "Maxwell-Boltzmann 分布",
-      "url": "chapters/04-maxwell-distribution.html#定义",
+      "url": "chapters/04-maxwell-distribution.html#44-三个特征速率v-lt-v-lt-v_rms",
       "body": ""
     },
     {
-      "id": "04-maxwell-distribution-归一化条件",
-      "title": "归一化条件",
+      "id": "04-maxwell-distribution-45-高斯积分把特征速率算出来",
+      "title": "4.5 高斯积分：把特征速率算出来",
       "chapter": "04",
       "chapterTitle": "Maxwell-Boltzmann 分布",
-      "url": "chapters/04-maxwell-distribution.html#归一化条件",
+      "url": "chapters/04-maxwell-distribution.html#45-高斯积分把特征速率算出来",
       "body": ""
     },
     {
-      "id": "04-maxwell-distribution-用分布函数计算平均值",
-      "title": "用分布函数计算平均值",
+      "id": "04-maxwell-distribution-46-温度与质量分布曲线怎么变",
+      "title": "4.6 温度与质量：分布曲线怎么变",
       "chapter": "04",
       "chapterTitle": "Maxwell-Boltzmann 分布",
-      "url": "chapters/04-maxwell-distribution.html#用分布函数计算平均值",
+      "url": "chapters/04-maxwell-distribution.html#46-温度与质量分布曲线怎么变",
       "body": ""
     },
     {
-      "id": "04-maxwell-distribution-43-maxwell-速率分布律",
-      "title": "4.3 Maxwell 速率分布律",
+      "id": "04-maxwell-distribution-47-能量均分定理每个quot平方项quot分到-kt",
+      "title": "4.7 能量均分定理：每个&quot;平方项&quot;分到 ½kT",
       "chapter": "04",
       "chapterTitle": "Maxwell-Boltzmann 分布",
-      "url": "chapters/04-maxwell-distribution.html#43-maxwell-速率分布律",
+      "url": "chapters/04-maxwell-distribution.html#47-能量均分定理每个quot平方项quot分到-kt",
       "body": ""
     },
     {
-      "id": "04-maxwell-distribution-公式",
-      "title": "公式",
+      "id": "04-maxwell-distribution-48-能量均分为什么是-kt一段简短证明",
+      "title": "4.8 能量均分为什么是 ½kT：一段简短证明",
       "chapter": "04",
       "chapterTitle": "Maxwell-Boltzmann 分布",
-      "url": "chapters/04-maxwell-distribution.html#公式",
+      "url": "chapters/04-maxwell-distribution.html#48-能量均分为什么是-kt一段简短证明",
       "body": ""
     },
     {
-      "id": "04-maxwell-distribution-公式拆解",
-      "title": "公式拆解",
+      "id": "04-maxwell-distribution-49-能量均分的局限热容为什么会quot掉下去quot",
+      "title": "4.9 能量均分的局限：热容为什么会&quot;掉下去&quot;",
       "chapter": "04",
       "chapterTitle": "Maxwell-Boltzmann 分布",
-      "url": "chapters/04-maxwell-distribution.html#公式拆解",
+      "url": "chapters/04-maxwell-distribution.html#49-能量均分的局限热容为什么会quot掉下去quot",
       "body": ""
     },
     {
-      "id": "04-maxwell-distribution-推导思路速度分布速率分布",
-      "title": "推导思路（速度分布→速率分布）",
+      "id": "04-maxwell-distribution-410-玻尔兹曼因子比速率分布更普遍的东西",
+      "title": "4.10 玻尔兹曼因子：比速率分布更普遍的东西",
       "chapter": "04",
       "chapterTitle": "Maxwell-Boltzmann 分布",
-      "url": "chapters/04-maxwell-distribution.html#推导思路速度分布速率分布",
-      "body": ""
-    },
-    {
-      "id": "04-maxwell-distribution-44-三个特征速率",
-      "title": "4.4 三个特征速率",
-      "chapter": "04",
-      "chapterTitle": "Maxwell-Boltzmann 分布",
-      "url": "chapters/04-maxwell-distribution.html#44-三个特征速率",
-      "body": ""
-    },
-    {
-      "id": "04-maxwell-distribution-最概然速率-v_pmost-probable-speed",
-      "title": "最概然速率 $v_p$（most probable speed）",
-      "chapter": "04",
-      "chapterTitle": "Maxwell-Boltzmann 分布",
-      "url": "chapters/04-maxwell-distribution.html#最概然速率-v_pmost-probable-speed",
-      "body": ""
-    },
-    {
-      "id": "04-maxwell-distribution-平均速率-overlinevmean-speed",
-      "title": "平均速率 $\\overline{v}$（mean speed）",
-      "chapter": "04",
-      "chapterTitle": "Maxwell-Boltzmann 分布",
-      "url": "chapters/04-maxwell-distribution.html#平均速率-overlinevmean-speed",
-      "body": ""
-    },
-    {
-      "id": "04-maxwell-distribution-方均根速率-v_rmsroot-mean-square-speed",
-      "title": "方均根速率 $v_{rms}$（root-mean-square speed）",
-      "chapter": "04",
-      "chapterTitle": "Maxwell-Boltzmann 分布",
-      "url": "chapters/04-maxwell-distribution.html#方均根速率-v_rmsroot-mean-square-speed",
-      "body": ""
-    },
-    {
-      "id": "04-maxwell-distribution-三者的比较",
-      "title": "三者的比较",
-      "chapter": "04",
-      "chapterTitle": "Maxwell-Boltzmann 分布",
-      "url": "chapters/04-maxwell-distribution.html#三者的比较",
-      "body": ""
-    },
-    {
-      "id": "04-maxwell-distribution-数值举例",
-      "title": "数值举例",
-      "chapter": "04",
-      "chapterTitle": "Maxwell-Boltzmann 分布",
-      "url": "chapters/04-maxwell-distribution.html#数值举例",
-      "body": ""
-    },
-    {
-      "id": "04-maxwell-distribution-45-高斯积分与特征速率的计算",
-      "title": "4.5 高斯积分与特征速率的计算",
-      "chapter": "04",
-      "chapterTitle": "Maxwell-Boltzmann 分布",
-      "url": "chapters/04-maxwell-distribution.html#45-高斯积分与特征速率的计算",
-      "body": ""
-    },
-    {
-      "id": "04-maxwell-distribution-基本高斯积分",
-      "title": "基本高斯积分",
-      "chapter": "04",
-      "chapterTitle": "Maxwell-Boltzmann 分布",
-      "url": "chapters/04-maxwell-distribution.html#基本高斯积分",
-      "body": ""
-    },
-    {
-      "id": "04-maxwell-distribution-含-xn-的高斯积分",
-      "title": "含 $x^n$ 的高斯积分",
-      "chapter": "04",
-      "chapterTitle": "Maxwell-Boltzmann 分布",
-      "url": "chapters/04-maxwell-distribution.html#含-xn-的高斯积分",
-      "body": ""
-    },
-    {
-      "id": "04-maxwell-distribution-计算-overlinev-的过程",
-      "title": "计算 $\\overline{v}$ 的过程",
-      "chapter": "04",
-      "chapterTitle": "Maxwell-Boltzmann 分布",
-      "url": "chapters/04-maxwell-distribution.html#计算-overlinev-的过程",
-      "body": ""
-    },
-    {
-      "id": "04-maxwell-distribution-计算-v_p-的过程",
-      "title": "计算 $v_p$ 的过程",
-      "chapter": "04",
-      "chapterTitle": "Maxwell-Boltzmann 分布",
-      "url": "chapters/04-maxwell-distribution.html#计算-v_p-的过程",
-      "body": ""
-    },
-    {
-      "id": "04-maxwell-distribution-46-温度对分布的影响",
-      "title": "4.6 温度对分布的影响",
-      "chapter": "04",
-      "chapterTitle": "Maxwell-Boltzmann 分布",
-      "url": "chapters/04-maxwell-distribution.html#46-温度对分布的影响",
-      "body": ""
-    },
-    {
-      "id": "04-maxwell-distribution-分子质量的影响",
-      "title": "分子质量的影响",
-      "chapter": "04",
-      "chapterTitle": "Maxwell-Boltzmann 分布",
-      "url": "chapters/04-maxwell-distribution.html#分子质量的影响",
-      "body": ""
-    },
-    {
-      "id": "04-maxwell-distribution-47-能量均分定理",
-      "title": "4.7 能量均分定理",
-      "chapter": "04",
-      "chapterTitle": "Maxwell-Boltzmann 分布",
-      "url": "chapters/04-maxwell-distribution.html#47-能量均分定理",
-      "body": ""
-    },
-    {
-      "id": "04-maxwell-distribution-自由度的概念",
-      "title": "自由度的概念",
-      "chapter": "04",
-      "chapterTitle": "Maxwell-Boltzmann 分布",
-      "url": "chapters/04-maxwell-distribution.html#自由度的概念",
-      "body": ""
-    },
-    {
-      "id": "04-maxwell-distribution-能量均分定理的表述",
-      "title": "能量均分定理的表述",
-      "chapter": "04",
-      "chapterTitle": "Maxwell-Boltzmann 分布",
-      "url": "chapters/04-maxwell-distribution.html#能量均分定理的表述",
-      "body": ""
-    },
-    {
-      "id": "04-maxwell-distribution-单个分子的平均能量",
-      "title": "单个分子的平均能量",
-      "chapter": "04",
-      "chapterTitle": "Maxwell-Boltzmann 分布",
-      "url": "chapters/04-maxwell-distribution.html#单个分子的平均能量",
-      "body": ""
-    },
-    {
-      "id": "04-maxwell-distribution-理想气体的内能",
-      "title": "理想气体的内能",
-      "chapter": "04",
-      "chapterTitle": "Maxwell-Boltzmann 分布",
-      "url": "chapters/04-maxwell-distribution.html#理想气体的内能",
-      "body": ""
-    },
-    {
-      "id": "04-maxwell-distribution-定容摩尔热容",
-      "title": "定容摩尔热容",
-      "chapter": "04",
-      "chapterTitle": "Maxwell-Boltzmann 分布",
-      "url": "chapters/04-maxwell-distribution.html#定容摩尔热容",
-      "body": ""
-    },
-    {
-      "id": "04-maxwell-distribution-数值验证",
-      "title": "数值验证",
-      "chapter": "04",
-      "chapterTitle": "Maxwell-Boltzmann 分布",
-      "url": "chapters/04-maxwell-distribution.html#数值验证",
-      "body": ""
-    },
-    {
-      "id": "04-maxwell-distribution-48-能量均分定理的证明思路",
-      "title": "4.8 能量均分定理的证明思路",
-      "chapter": "04",
-      "chapterTitle": "Maxwell-Boltzmann 分布",
-      "url": "chapters/04-maxwell-distribution.html#48-能量均分定理的证明思路",
-      "body": ""
-    },
-    {
-      "id": "04-maxwell-distribution-49-能量均分定理的局限",
-      "title": "4.9 能量均分定理的局限",
-      "chapter": "04",
-      "chapterTitle": "Maxwell-Boltzmann 分布",
-      "url": "chapters/04-maxwell-distribution.html#49-能量均分定理的局限",
-      "body": ""
-    },
-    {
-      "id": "04-maxwell-distribution-经典理论的困难",
-      "title": "经典理论的困难",
-      "chapter": "04",
-      "chapterTitle": "Maxwell-Boltzmann 分布",
-      "url": "chapters/04-maxwell-distribution.html#经典理论的困难",
-      "body": ""
-    },
-    {
-      "id": "04-maxwell-distribution-量子效应的解释",
-      "title": "量子效应的解释",
-      "chapter": "04",
-      "chapterTitle": "Maxwell-Boltzmann 分布",
-      "url": "chapters/04-maxwell-distribution.html#量子效应的解释",
-      "body": ""
-    },
-    {
-      "id": "04-maxwell-distribution-410-boltzmann-分布能量分布",
-      "title": "4.10 Boltzmann 分布（能量分布）",
-      "chapter": "04",
-      "chapterTitle": "Maxwell-Boltzmann 分布",
-      "url": "chapters/04-maxwell-distribution.html#410-boltzmann-分布能量分布",
-      "body": ""
-    },
-    {
-      "id": "04-maxwell-distribution-速率分布-能量分布",
-      "title": "速率分布 → 能量分布",
-      "chapter": "04",
-      "chapterTitle": "Maxwell-Boltzmann 分布",
-      "url": "chapters/04-maxwell-distribution.html#速率分布-能量分布",
-      "body": ""
-    },
-    {
-      "id": "04-maxwell-distribution-boltzmann-因子",
-      "title": "Boltzmann 因子",
-      "chapter": "04",
-      "chapterTitle": "Maxwell-Boltzmann 分布",
-      "url": "chapters/04-maxwell-distribution.html#boltzmann-因子",
+      "url": "chapters/04-maxwell-distribution.html#410-玻尔兹曼因子比速率分布更普遍的东西",
       "body": ""
     },
     {
@@ -1929,107 +961,91 @@
       "body": ""
     },
     {
-      "id": "04-maxwell-distribution-stern-实验1920",
-      "title": "Stern 实验（1920）",
+      "id": "04-maxwell-distribution-412-碰壁数与泄流",
+      "title": "4.12 碰壁数与泄流",
       "chapter": "04",
       "chapterTitle": "Maxwell-Boltzmann 分布",
-      "url": "chapters/04-maxwell-distribution.html#stern-实验1920",
+      "url": "chapters/04-maxwell-distribution.html#412-碰壁数与泄流",
       "body": ""
     },
     {
-      "id": "04-maxwell-distribution-zartman-ko-实验1930s",
-      "title": "Zartman-Ko 实验（1930s）",
+      "id": "04-maxwell-distribution-碰壁数",
+      "title": "碰壁数",
       "chapter": "04",
       "chapterTitle": "Maxwell-Boltzmann 分布",
-      "url": "chapters/04-maxwell-distribution.html#zartman-ko-实验1930s",
+      "url": "chapters/04-maxwell-distribution.html#碰壁数",
       "body": ""
     },
     {
-      "id": "04-maxwell-distribution-412-概念辨析",
-      "title": "4.12 概念辨析",
+      "id": "04-maxwell-distribution-泄流",
+      "title": "泄流",
       "chapter": "04",
       "chapterTitle": "Maxwell-Boltzmann 分布",
-      "url": "chapters/04-maxwell-distribution.html#412-概念辨析",
+      "url": "chapters/04-maxwell-distribution.html#泄流",
       "body": ""
     },
     {
-      "id": "04-maxwell-distribution-q温度相同时轻分子和重分子的速率分布相同吗",
-      "title": "Q：温度相同时，轻分子和重分子的速率分布相同吗？",
+      "id": "04-maxwell-distribution-413-例题精讲与真题实战",
+      "title": "4.13 例题精讲与真题实战",
       "chapter": "04",
       "chapterTitle": "Maxwell-Boltzmann 分布",
-      "url": "chapters/04-maxwell-distribution.html#q温度相同时轻分子和重分子的速率分布相同吗",
+      "url": "chapters/04-maxwell-distribution.html#413-例题精讲与真题实战",
       "body": ""
     },
     {
-      "id": "04-maxwell-distribution-q某个分子的速率能超过-v_rms-吗",
-      "title": "Q：某个分子的速率能超过 $v_{rms}$ 吗？",
+      "id": "04-maxwell-distribution-例题-1三个特征速率",
+      "title": "例题 1：三个特征速率",
       "chapter": "04",
       "chapterTitle": "Maxwell-Boltzmann 分布",
-      "url": "chapters/04-maxwell-distribution.html#q某个分子的速率能超过-v_rms-吗",
+      "url": "chapters/04-maxwell-distribution.html#例题-1三个特征速率",
       "body": ""
     },
     {
-      "id": "04-maxwell-distribution-q气体达到平衡后每个分子的速率不变吗",
-      "title": "Q：气体达到平衡后，每个分子的速率不变吗？",
+      "id": "04-maxwell-distribution-例题-2能量均分求内能与热容",
+      "title": "例题 2：能量均分求内能与热容",
       "chapter": "04",
       "chapterTitle": "Maxwell-Boltzmann 分布",
-      "url": "chapters/04-maxwell-distribution.html#q气体达到平衡后每个分子的速率不变吗",
+      "url": "chapters/04-maxwell-distribution.html#例题-2能量均分求内能与热容",
       "body": ""
     },
     {
-      "id": "04-maxwell-distribution-q能量均分定理中quot平方项quot的要求有多严格",
-      "title": "Q：能量均分定理中&quot;平方项&quot;的要求有多严格？",
+      "id": "04-maxwell-distribution-例题-3最概然速率与温度的关系",
+      "title": "例题 3：最概然速率与温度的关系",
       "chapter": "04",
       "chapterTitle": "Maxwell-Boltzmann 分布",
-      "url": "chapters/04-maxwell-distribution.html#q能量均分定理中quot平方项quot的要求有多严格",
+      "url": "chapters/04-maxwell-distribution.html#例题-3最概然速率与温度的关系",
       "body": ""
     },
     {
-      "id": "04-maxwell-distribution-413-本章公式总结",
-      "title": "4.13 本章公式总结",
+      "id": "04-maxwell-distribution--真题实战2024-计算第-4-题15-分",
+      "title": "🎯 真题实战：2024 计算第 4 题（15 分）",
       "chapter": "04",
       "chapterTitle": "Maxwell-Boltzmann 分布",
-      "url": "chapters/04-maxwell-distribution.html#413-本章公式总结",
+      "url": "chapters/04-maxwell-distribution.html#-真题实战2024-计算第-4-题15-分",
       "body": ""
     },
     {
-      "id": "04-maxwell-distribution-maxwell-速率分布",
-      "title": "Maxwell 速率分布",
+      "id": "04-maxwell-distribution-413-概念辨析",
+      "title": "4.13 概念辨析",
       "chapter": "04",
       "chapterTitle": "Maxwell-Boltzmann 分布",
-      "url": "chapters/04-maxwell-distribution.html#maxwell-速率分布",
+      "url": "chapters/04-maxwell-distribution.html#413-概念辨析",
       "body": ""
     },
     {
-      "id": "04-maxwell-distribution-三个特征速率",
-      "title": "三个特征速率",
+      "id": "04-maxwell-distribution-414-公式速查卡",
+      "title": "4.14 公式速查卡",
       "chapter": "04",
       "chapterTitle": "Maxwell-Boltzmann 分布",
-      "url": "chapters/04-maxwell-distribution.html#三个特征速率",
+      "url": "chapters/04-maxwell-distribution.html#414-公式速查卡",
       "body": ""
     },
     {
-      "id": "04-maxwell-distribution-能量均分定理",
-      "title": "能量均分定理",
+      "id": "04-maxwell-distribution-415-本章小结",
+      "title": "4.15 本章小结",
       "chapter": "04",
       "chapterTitle": "Maxwell-Boltzmann 分布",
-      "url": "chapters/04-maxwell-distribution.html#能量均分定理",
-      "body": ""
-    },
-    {
-      "id": "04-maxwell-distribution-boltzmann-因子",
-      "title": "Boltzmann 因子",
-      "chapter": "04",
-      "chapterTitle": "Maxwell-Boltzmann 分布",
-      "url": "chapters/04-maxwell-distribution.html#boltzmann-因子",
-      "body": ""
-    },
-    {
-      "id": "04-maxwell-distribution-414-本章小结",
-      "title": "4.14 本章小结",
-      "chapter": "04",
-      "chapterTitle": "Maxwell-Boltzmann 分布",
-      "url": "chapters/04-maxwell-distribution.html#414-本章小结",
+      "url": "chapters/04-maxwell-distribution.html#415-本章小结",
       "body": ""
     },
     {
@@ -2038,358 +1054,134 @@
       "chapter": "05",
       "chapterTitle": "气体输运过程",
       "url": "chapters/05-transport.html",
-      "body": "\r\n   5.1 从平衡态到非平衡态\r\n\r\n前面四章讨论的都是平衡态（或准静态过程）。但现实中，很多重要现象恰恰发生在  非平衡  条件下：\r\n\r\n  一杯热咖啡慢慢变凉（温度不均匀→热传导）\r\n  一滴墨水在水中扩散（浓度不均匀→扩散）\r\n  流动的气体有黏性（速度不均匀→内摩擦）\r\n\r\n这些都是  输运过程  ——某种物理量（能量、动量、质量）从一处被\"运输\"到另一处。\r\n\r\n输运过程的共同特征：  存在某种不均匀性（梯度），驱动物理量的定向传输。  \r\n\r\n  输运过程   被输运的量   驱动力（梯度）   宏观定律  \r\n                                                   \r\n  热传导   能量（热量）   温度梯度 $dT/dz$   傅里叶定律  \r\n  黏性（内摩擦）   动量   速度梯度 $du/dz$   牛顿黏性定律  \r\n  扩散   质量（粒子数）   浓度梯度 $dn/dz$   菲克定律  \r\n\r\n这三种现象看起来很不同，但在分子动理论中，它们有  统一的微观机制  ：分子的热运动在不均匀环境中的\"搬运\"效应。\r\n\r\n   \r\n\r\n   5.2 平均自由程\r\n\r\n    为什么需要平均自由程\r\n\r\n如果分子永远不碰撞，一杯热水里的\"热分子\"会直接飞到杯壁——热传导应该瞬间完成。但实际上热传导很慢。为什么？\r\n\r\n因为分子不断和其他分子碰撞，每次碰撞后方向随机改变。分子走的是\"醉汉的路\"（随机游走），而不是直线。每两次碰撞之间分子飞行的平均距离，就是  平均自由程  。\r\n\r\n    定义\r\n\r\n  平均自由程   $\\bar \\lambda $：一个分子在相邻两次碰撞之间飞行的平均距离。\r\n\r\n  平均碰撞频率   $\\bar Z $：一个分子单位时间内与其他分子碰撞的平均次数。\r\n\r\n两者的关系：\r\n\r\n$$\\bar \\lambda  = \\frac \\overline v   \\bar Z  $$\r\n\r\n（平均速率 ÷ 单位时间碰撞次数 = 两次碰撞之间的平均路程）\r\n\r\n    平均自由程的推导\r\n\r\n把分子看作直径为 $d$ 的硬球。一个分子在运动过程中，会和以它为中心、半径为 $d$ 的圆柱体（横截面积 $\\sigma = \\pi d^2$，称为碰撞截面）内的所有分子碰撞。\r\n\r\n在时间 $\\Delta t$ 内，分子走过路程 $\\overline v \\Delta t$，\"扫过\"的体积为 $\\sigma \\cdot \\overline v \\Delta t$。这个体积内的分子数即为碰撞次数：\r\n\r\n$$\\bar Z  \\cdot \\Delta t = n \\cdot \\sigma \\cdot \\overline v  \\cdot \\Delta t$$\r\n\r\n但这里有一个问题：其他分子也在运动。更精确的计算需要用  相对速率   $\\overline v  rel   = \\sqrt 2 \\,\\overline v $：\r\n\r\n$$\\bar Z  = \\sqrt 2 \\, n\\sigma\\overline v  = \\sqrt 2 \\,\\pi d^2 n \\overline v $$\r\n\r\n平均自由程：\r\n\r\n$$\\boxed \\bar \\lambda  = \\frac \\overline v   \\bar Z   = \\frac 1  \\sqrt 2 \\,\\pi d^2 n  $$\r\n\r\n\r\n    公式解读\r\n\r\n$$\\bar \\lambda  = \\frac 1  \\sqrt 2 \\,\\pi d^2 n $$\r\n\r\n  分子越大（$d$ 大）→ 碰撞截面大 → 自由程短\r\n  分子数密度越大（$n$ 大，即气压高）→ 周围分子多 → 自由程短\r\n  和温度无关（在 $n$ 固定时）；但如果压强固定（$n = p/ kT $），则 $\\bar \\lambda  \\propto T$\r\n\r\n    用压强表示\r\n\r\n利用 $n = p/ kT $：\r\n\r\n$$\\bar \\lambda  = \\frac kT  \\sqrt 2 \\,\\pi d^2 p $$\r\n\r\n    数值感受\r\n\r\n常温常压下空气（$d \\approx 3.7 \\times 10^  10 $ m，$n \\approx 2.5 \\times 10^ 25 $ m$^  3 $）：\r\n\r\n$$\\bar \\lambda  \\approx \\frac 1  1.414 \\times 3.14 \\times  3.7\\times10^  10  ^2 \\times 2.5\\times10^ 25   \\approx 6.6 \\times 10^  8  \\text  m "
+      "body": "\n   5.1 离开平衡态：输运过程登场\n\n   !考试权重  ★ 输运过程在热学B考试中占比不大（约 10%），2024 问答第 2 题考了\"扩散与热传导的相似性与区别\"。主要掌握三种输运的宏观定律和微观输运系数的表达式。\n\n前面整整四章，我们的舞台都搭在平衡态（或准静态过程）上——系统内部处处均匀，温度、压强、浓度都没有差别。可现实世界恰恰相反，到处都是不均匀：一杯热咖啡慢慢变凉（温度不均匀），一滴墨水在清水里散开（浓度不均匀），流动的气体层与层之间还有内摩擦（速度不均匀）。这些过程有一个共同的名字——  输运过程  ，因为它们的本质都是某种物理量从一处被\"运输\"到另一处。\n\n把这三类现象并排看，会发现它们结构惊人地一致：每一种都由某个量的  空间不均匀性（梯度）  驱动，把对应的物理量从多的地方搬到少的地方，并各自服从一条宏观定律。热传导由温度梯度 $dT/dz$ 驱动，搬运的是能量（热量），服从傅里叶定律；黏性（内摩擦）由速度梯度 $du/dz$ 驱动，搬运的是动量，服从牛顿黏性定律；扩散由浓度梯度 $dn/dz$ 驱动，搬运的是质量（粒子数），服从菲克定律。它们表面上风马牛不相及——一个关乎冷热、一个关乎黏滞、一个关乎气味弥散——但在分子动理论看来，三者共用同一套微观机制：  分子的无规则热运动，在不均匀的环境里产生了定向的\"搬运\"效应  。本章的任务，就是把这套统一机制讲清楚，并算出三个输运系数。而要理解搬运，先得搞清楚一个关键尺度——分子在两次碰撞之间能跑多远。\n\n   要点 \n \n    离开平衡态，  梯度  （不均匀性）驱动  输运过程  ：物理量从多处搬向少处。\n    三种输运：热传导（温度梯度→搬能量，傅里叶）、黏性（速度梯度→搬动量，牛顿）、扩散（浓度梯度→搬粒子，菲克）。\n    三者共用同一微观机制：分子热运动在不均匀场中的  净搬运  。\n\n   \n\n   5.2 平均自由程：分子能\"记住\"多远的信息\n\n如果分子之间从不碰撞，一杯热水里的\"热分子\"会径直飞到杯壁，热传导该是瞬间完成的事。可现实里热传导慢得很，为什么？因为分子走的根本不是直线，而是\"醉汉的路\"——它不停撞上别的分子，每撞一次方向就随机一变。两次碰撞之间它飞过的平均距离，就叫  平均自由程   $\\bar\\lambda$；相应地，单位时间内一个分子与别人碰撞的平均次数叫  平均碰撞频率   $\\bar Z$，二者关系是 $\\bar\\lambda=\\bar v/\\bar Z$（平均速率除以单位时间碰撞次数）。\n\n要把 $\\bar\\lambda$ 算出来，把分子看成直径 $d$ 的硬球。一个分子运动时，会和所有中心落在以它运动方向为轴、半径为 $d$ 的圆柱体内的分子相撞——这个圆柱的横截面 $\\sigma=\\pi d^2$ 称为  碰撞截面  。\n\n! 碰撞截面与平均自由程  ../assets/images/05 01.png \n\n在 $\\Delta t$ 时间内分子走过 $\\bar v\\Delta t$，扫过的体积是 $\\sigma\\bar v\\Delta t$，里面的分子数就是碰撞次数。但要小心：其他分子也在动，严谨计算要用  相对速率   $\\overline v  rel  =\\sqrt2\\,\\bar v$，于是 $\\bar Z=\\sqrt2\\,n\\sigma\\bar v=\\sqrt2\\,\\pi d^2 n\\bar v$，平均自由程\n\n$$\\boxed \\bar\\lambda=\\frac \\bar v  \\bar Z =\\frac 1  \\sqrt2\\,\\pi d^2 n  .$$\n\n这个公式很会\"说话\"：分子越大（$d$ 大）碰撞截面越大、自由程越短；分子数密度越大（气压越高）周围分子越挤、自由程越短；在 $n$ 固定时它与温度无关，但若压强固定（$n=p/kT$），则 $\\bar\\lambda\\propto T$。用压强表示就是 $\\bar\\lambda=kT/ \\sqrt2\\,\\pi d^2 p $。代入常温常压空气（$d\\approx3.7\\times10^  10 $ m，$n\\approx2.5\\times10^ 25 $ m⁻³）算一下，$\\bar\\lambda\\approx66$ nm，而碰撞频率 $\\bar Z=\\bar v/\\bar\\lambda\\approx470/ 6.6\\times10^  8  \\approx7\\times10^9$ 次/秒——每秒七十亿次碰撞！这就是为什么气体宏观上看起来是连续流体：碰撞如此频繁，任何不平衡都会在极短时间内被抹平。最后一个有用的概念是   Knudsen 数   $Kn=\\bar\\lambda/L$（$L$ 是容器特征尺寸）：$Kn\\ll1$（常压）时分子碰撞频"
     },
     {
-      "id": "05-transport-51-从平衡态到非平衡态",
-      "title": "5.1 从平衡态到非平衡态",
+      "id": "05-transport-51-离开平衡态输运过程登场",
+      "title": "5.1 离开平衡态：输运过程登场",
       "chapter": "05",
       "chapterTitle": "气体输运过程",
-      "url": "chapters/05-transport.html#51-从平衡态到非平衡态",
+      "url": "chapters/05-transport.html#51-离开平衡态输运过程登场",
       "body": ""
     },
     {
-      "id": "05-transport-52-平均自由程",
-      "title": "5.2 平均自由程",
+      "id": "05-transport-52-平均自由程分子能quot记住quot多远的信息",
+      "title": "5.2 平均自由程：分子能&quot;记住&quot;多远的信息",
       "chapter": "05",
       "chapterTitle": "气体输运过程",
-      "url": "chapters/05-transport.html#52-平均自由程",
+      "url": "chapters/05-transport.html#52-平均自由程分子能quot记住quot多远的信息",
       "body": ""
     },
     {
-      "id": "05-transport-为什么需要平均自由程",
-      "title": "为什么需要平均自由程",
+      "id": "05-transport-53-输运的统一图像",
+      "title": "5.3 输运的统一图像",
       "chapter": "05",
       "chapterTitle": "气体输运过程",
-      "url": "chapters/05-transport.html#为什么需要平均自由程",
+      "url": "chapters/05-transport.html#53-输运的统一图像",
       "body": ""
     },
     {
-      "id": "05-transport-定义",
-      "title": "定义",
+      "id": "05-transport-54-黏性搬运动量",
+      "title": "5.4 黏性：搬运动量",
       "chapter": "05",
       "chapterTitle": "气体输运过程",
-      "url": "chapters/05-transport.html#定义",
+      "url": "chapters/05-transport.html#54-黏性搬运动量",
       "body": ""
     },
     {
-      "id": "05-transport-平均自由程的推导",
-      "title": "平均自由程的推导",
+      "id": "05-transport-55-热传导搬运能量",
+      "title": "5.5 热传导：搬运能量",
       "chapter": "05",
       "chapterTitle": "气体输运过程",
-      "url": "chapters/05-transport.html#平均自由程的推导",
+      "url": "chapters/05-transport.html#55-热传导搬运能量",
       "body": ""
     },
     {
-      "id": "05-transport-公式解读",
-      "title": "公式解读",
+      "id": "05-transport-56-扩散搬运粒子",
+      "title": "5.6 扩散：搬运粒子",
       "chapter": "05",
       "chapterTitle": "气体输运过程",
-      "url": "chapters/05-transport.html#公式解读",
+      "url": "chapters/05-transport.html#56-扩散搬运粒子",
       "body": ""
     },
     {
-      "id": "05-transport-用压强表示",
-      "title": "用压强表示",
+      "id": "05-transport-57-三种输运系数对比",
+      "title": "5.7 三种输运系数对比",
       "chapter": "05",
       "chapterTitle": "气体输运过程",
-      "url": "chapters/05-transport.html#用压强表示",
+      "url": "chapters/05-transport.html#57-三种输运系数对比",
       "body": ""
     },
     {
-      "id": "05-transport-数值感受",
-      "title": "数值感受",
+      "id": "05-transport-58-布朗运动分子存在的铁证",
+      "title": "5.8 布朗运动：分子存在的铁证",
       "chapter": "05",
       "chapterTitle": "气体输运过程",
-      "url": "chapters/05-transport.html#数值感受",
+      "url": "chapters/05-transport.html#58-布朗运动分子存在的铁证",
       "body": ""
     },
     {
-      "id": "05-transport-knudsen-数",
-      "title": "Knudsen 数",
+      "id": "05-transport-59-例题精讲",
+      "title": "5.9 例题精讲",
       "chapter": "05",
       "chapterTitle": "气体输运过程",
-      "url": "chapters/05-transport.html#knudsen-数",
+      "url": "chapters/05-transport.html#59-例题精讲",
       "body": ""
     },
     {
-      "id": "05-transport-53-输运过程的统一图像",
-      "title": "5.3 输运过程的统一图像",
+      "id": "05-transport-例题-1平均自由程与碰撞频率",
+      "title": "例题 1：平均自由程与碰撞频率",
       "chapter": "05",
       "chapterTitle": "气体输运过程",
-      "url": "chapters/05-transport.html#53-输运过程的统一图像",
+      "url": "chapters/05-transport.html#例题-1平均自由程与碰撞频率",
       "body": ""
     },
     {
-      "id": "05-transport-54-黏性内摩擦",
-      "title": "5.4 黏性（内摩擦）",
+      "id": "05-transport-例题-2输运系数的温度与压强依赖",
+      "title": "例题 2：输运系数的温度与压强依赖",
       "chapter": "05",
       "chapterTitle": "气体输运过程",
-      "url": "chapters/05-transport.html#54-黏性内摩擦",
+      "url": "chapters/05-transport.html#例题-2输运系数的温度与压强依赖",
       "body": ""
     },
     {
-      "id": "05-transport-现象",
-      "title": "现象",
+      "id": "05-transport-例题-3布朗运动的均方位移",
+      "title": "例题 3：布朗运动的均方位移",
       "chapter": "05",
       "chapterTitle": "气体输运过程",
-      "url": "chapters/05-transport.html#现象",
+      "url": "chapters/05-transport.html#例题-3布朗运动的均方位移",
       "body": ""
     },
     {
-      "id": "05-transport-牛顿黏性定律",
-      "title": "牛顿黏性定律",
+      "id": "05-transport--真题2024-问答第-2-题",
+      "title": "🎯 真题：2024 问答第 2 题",
       "chapter": "05",
       "chapterTitle": "气体输运过程",
-      "url": "chapters/05-transport.html#牛顿黏性定律",
+      "url": "chapters/05-transport.html#-真题2024-问答第-2-题",
       "body": ""
     },
     {
-      "id": "05-transport-微观推导",
-      "title": "微观推导",
+      "id": "05-transport-510-概念辨析",
+      "title": "5.10 概念辨析",
       "chapter": "05",
       "chapterTitle": "气体输运过程",
-      "url": "chapters/05-transport.html#微观推导",
+      "url": "chapters/05-transport.html#510-概念辨析",
       "body": ""
     },
     {
-      "id": "05-transport-黏性系数的性质",
-      "title": "黏性系数的性质",
+      "id": "05-transport-511-公式速查卡",
+      "title": "5.11 公式速查卡",
       "chapter": "05",
       "chapterTitle": "气体输运过程",
-      "url": "chapters/05-transport.html#黏性系数的性质",
+      "url": "chapters/05-transport.html#511-公式速查卡",
       "body": ""
     },
     {
-      "id": "05-transport-55-热传导",
-      "title": "5.5 热传导",
+      "id": "05-transport-512-本章小结",
+      "title": "5.12 本章小结",
       "chapter": "05",
       "chapterTitle": "气体输运过程",
-      "url": "chapters/05-transport.html#55-热传导",
-      "body": ""
-    },
-    {
-      "id": "05-transport-现象",
-      "title": "现象",
-      "chapter": "05",
-      "chapterTitle": "气体输运过程",
-      "url": "chapters/05-transport.html#现象",
-      "body": ""
-    },
-    {
-      "id": "05-transport-傅里叶定律",
-      "title": "傅里叶定律",
-      "chapter": "05",
-      "chapterTitle": "气体输运过程",
-      "url": "chapters/05-transport.html#傅里叶定律",
-      "body": ""
-    },
-    {
-      "id": "05-transport-微观推导",
-      "title": "微观推导",
-      "chapter": "05",
-      "chapterTitle": "气体输运过程",
-      "url": "chapters/05-transport.html#微观推导",
-      "body": ""
-    },
-    {
-      "id": "05-transport-热导率与黏性系数的关系",
-      "title": "热导率与黏性系数的关系",
-      "chapter": "05",
-      "chapterTitle": "气体输运过程",
-      "url": "chapters/05-transport.html#热导率与黏性系数的关系",
-      "body": ""
-    },
-    {
-      "id": "05-transport-热导率的性质",
-      "title": "热导率的性质",
-      "chapter": "05",
-      "chapterTitle": "气体输运过程",
-      "url": "chapters/05-transport.html#热导率的性质",
-      "body": ""
-    },
-    {
-      "id": "05-transport-56-扩散",
-      "title": "5.6 扩散",
-      "chapter": "05",
-      "chapterTitle": "气体输运过程",
-      "url": "chapters/05-transport.html#56-扩散",
-      "body": ""
-    },
-    {
-      "id": "05-transport-现象",
-      "title": "现象",
-      "chapter": "05",
-      "chapterTitle": "气体输运过程",
-      "url": "chapters/05-transport.html#现象",
-      "body": ""
-    },
-    {
-      "id": "05-transport-菲克定律fick39s-law",
-      "title": "菲克定律（Fick&#39;s Law）",
-      "chapter": "05",
-      "chapterTitle": "气体输运过程",
-      "url": "chapters/05-transport.html#菲克定律fick39s-law",
-      "body": ""
-    },
-    {
-      "id": "05-transport-微观推导",
-      "title": "微观推导",
-      "chapter": "05",
-      "chapterTitle": "气体输运过程",
-      "url": "chapters/05-transport.html#微观推导",
-      "body": ""
-    },
-    {
-      "id": "05-transport-扩散系数的性质",
-      "title": "扩散系数的性质",
-      "chapter": "05",
-      "chapterTitle": "气体输运过程",
-      "url": "chapters/05-transport.html#扩散系数的性质",
-      "body": ""
-    },
-    {
-      "id": "05-transport-57-三种输运系数的比较",
-      "title": "5.7 三种输运系数的比较",
-      "chapter": "05",
-      "chapterTitle": "气体输运过程",
-      "url": "chapters/05-transport.html#57-三种输运系数的比较",
-      "body": ""
-    },
-    {
-      "id": "05-transport-58-布朗运动",
-      "title": "5.8 布朗运动",
-      "chapter": "05",
-      "chapterTitle": "气体输运过程",
-      "url": "chapters/05-transport.html#58-布朗运动",
-      "body": ""
-    },
-    {
-      "id": "05-transport-现象",
-      "title": "现象",
-      "chapter": "05",
-      "chapterTitle": "气体输运过程",
-      "url": "chapters/05-transport.html#现象",
-      "body": ""
-    },
-    {
-      "id": "05-transport-机制",
-      "title": "机制",
-      "chapter": "05",
-      "chapterTitle": "气体输运过程",
-      "url": "chapters/05-transport.html#机制",
-      "body": ""
-    },
-    {
-      "id": "05-transport-爱因斯坦关系1905",
-      "title": "爱因斯坦关系（1905）",
-      "chapter": "05",
-      "chapterTitle": "气体输运过程",
-      "url": "chapters/05-transport.html#爱因斯坦关系1905",
-      "body": ""
-    },
-    {
-      "id": "05-transport-历史意义",
-      "title": "历史意义",
-      "chapter": "05",
-      "chapterTitle": "气体输运过程",
-      "url": "chapters/05-transport.html#历史意义",
-      "body": ""
-    },
-    {
-      "id": "05-transport-59-概念辨析",
-      "title": "5.9 概念辨析",
-      "chapter": "05",
-      "chapterTitle": "气体输运过程",
-      "url": "chapters/05-transport.html#59-概念辨析",
-      "body": ""
-    },
-    {
-      "id": "05-transport-q为什么黏性系数不随压强变化",
-      "title": "Q：为什么黏性系数不随压强变化？",
-      "chapter": "05",
-      "chapterTitle": "气体输运过程",
-      "url": "chapters/05-transport.html#q为什么黏性系数不随压强变化",
-      "body": ""
-    },
-    {
-      "id": "05-transport-q为什么高温下气体黏度增大而液体黏度减小",
-      "title": "Q：为什么高温下气体黏度增大而液体黏度减小？",
-      "chapter": "05",
-      "chapterTitle": "气体输运过程",
-      "url": "chapters/05-transport.html#q为什么高温下气体黏度增大而液体黏度减小",
-      "body": ""
-    },
-    {
-      "id": "05-transport-q扩散为什么比声速慢那么多",
-      "title": "Q：扩散为什么比声速慢那么多？",
-      "chapter": "05",
-      "chapterTitle": "气体输运过程",
-      "url": "chapters/05-transport.html#q扩散为什么比声速慢那么多",
-      "body": ""
-    },
-    {
-      "id": "05-transport-510-本章公式总结",
-      "title": "5.10 本章公式总结",
-      "chapter": "05",
-      "chapterTitle": "气体输运过程",
-      "url": "chapters/05-transport.html#510-本章公式总结",
-      "body": ""
-    },
-    {
-      "id": "05-transport-平均自由程",
-      "title": "平均自由程",
-      "chapter": "05",
-      "chapterTitle": "气体输运过程",
-      "url": "chapters/05-transport.html#平均自由程",
-      "body": ""
-    },
-    {
-      "id": "05-transport-碰撞频率",
-      "title": "碰撞频率",
-      "chapter": "05",
-      "chapterTitle": "气体输运过程",
-      "url": "chapters/05-transport.html#碰撞频率",
-      "body": ""
-    },
-    {
-      "id": "05-transport-黏性系数",
-      "title": "黏性系数",
-      "chapter": "05",
-      "chapterTitle": "气体输运过程",
-      "url": "chapters/05-transport.html#黏性系数",
-      "body": ""
-    },
-    {
-      "id": "05-transport-热导率",
-      "title": "热导率",
-      "chapter": "05",
-      "chapterTitle": "气体输运过程",
-      "url": "chapters/05-transport.html#热导率",
-      "body": ""
-    },
-    {
-      "id": "05-transport-扩散系数",
-      "title": "扩散系数",
-      "chapter": "05",
-      "chapterTitle": "气体输运过程",
-      "url": "chapters/05-transport.html#扩散系数",
-      "body": ""
-    },
-    {
-      "id": "05-transport-爱因斯坦关系",
-      "title": "爱因斯坦关系",
-      "chapter": "05",
-      "chapterTitle": "气体输运过程",
-      "url": "chapters/05-transport.html#爱因斯坦关系",
-      "body": ""
-    },
-    {
-      "id": "05-transport-511-本章小结",
-      "title": "5.11 本章小结",
-      "chapter": "05",
-      "chapterTitle": "气体输运过程",
-      "url": "chapters/05-transport.html#511-本章小结",
+      "url": "chapters/05-transport.html#512-本章小结",
       "body": ""
     },
     {
@@ -2398,102 +1190,30 @@
       "chapter": "06",
       "chapterTitle": "固体、液体与相变",
       "url": "chapters/06-phase-transition.html",
-      "body": "\r\n   6.1 超越理想气体\r\n\r\n前五章的主角是理想气体——分子间无相互作用、分子无体积。这个模型在常温常压下表现优秀，但它无法解释：\r\n\r\n  为什么气体在低温高压下会变成液体？\r\n  为什么存在一个临界温度，超过它气体无论如何加压都不会液化？\r\n  固体为什么有确定的形状？\r\n\r\n要回答这些问题，必须把分子间的相互作用纳入考虑。\r\n\r\n   \r\n\r\n   6.2 分子间作用力\r\n\r\n    力的特征\r\n\r\n两个中性分子之间的相互作用力有一个典型的形状：\r\n\r\n    远距离  （$r   r 0$）：吸引力，$F < 0$（分子间存在 van der Waals 吸引力）\r\n    极近距离  （$r < r 0$）：强烈排斥力，$F   0$（电子云重叠，Pauli 排斥）\r\n    平衡距离   $r 0$：$F = 0$，势能取极小值\r\n\r\n    势能\r\n\r\n对应的势能曲线（Lennard Jones 势）：\r\n\r\n$$U r  = 4\\varepsilon\\left \\left \\frac \\sigma  r \\right ^ 12    \\left \\frac \\sigma  r \\right ^6\\right $$\r\n\r\n  $\\varepsilon$：势阱深度（ $10^  21 $ J 量级，即  0.01 eV）\r\n  $\\sigma$：势能为零时的距离（ $10^  10 $ m 量级）\r\n  $r^  12 $ 项：短程排斥\r\n  $r^  6 $ 项：长程吸引（van der Waals 力）\r\n\r\n    三态的微观理解\r\n\r\n  状态   分子间距   $kT$ vs $\\varepsilon$   分子运动特征  \r\n                   :   :        \r\n  气态   远大于 $r 0$   $kT \\gg \\varepsilon$   自由飞行，偶尔碰撞  \r\n  液态   约 $r 0$   $kT \\sim \\varepsilon$   在势阱中振动但可以缓慢移动  \r\n  固态   约 $r 0$   $kT \\ll \\varepsilon$   在势阱底部小幅振动，位置固定  \r\n\r\n温度升高 = $kT$ 增大 = 分子有足够动能挣脱势阱 → 从固态到液态到气态。\r\n\r\n   \r\n\r\n   6.3 范德瓦尔斯方程\r\n\r\n    从理想气体到实际气体\r\n\r\n理想气体方程 $pV = nRT$ 做了两个不合理的假设。范德瓦尔斯（1873）对这两个假设做了修正：\r\n\r\n  修正一：分子有体积  \r\n\r\n$N$ 个分子各自占据一定体积。有效的可运动空间不是 $V$，而是 $V   nb$，其中 $b$ 是 1 mol 气体分子自身\"排斥体积\"（约为分子实际体积的 4 倍）。\r\n\r\n  修正二：分子间有吸引力  \r\n\r\n靠近器壁的分子被内部分子向内吸引，撞壁的冲量减小。这使得实际压强比理想情况低。减少量和分子密度的平方成正比（因为吸引是两两之间的）：\r\n\r\n$$\\Delta p =  \\frac a  V m^2 $$\r\n\r\n    范德瓦尔斯方程\r\n\r\n综合两处修正：\r\n\r\n$$\\boxed \\left p + \\frac a  V m^2 \\right  V m   b  = RT $$\r\n\r\n其中 $V m = V/n$ 是摩尔体积，$a$ 和 $b$ 是与气体种类有关的经验常数。\r\n\r\n对 $n$ mol 气体：\r\n\r\n$$\\left p + \\frac n^2a  V^2 \\right  V   nb  = nRT$$\r\n\r\n\r\n    $a$ 和 $b$ 的物理含义\r\n\r\n  参数   物理含义   量级  \r\n                          \r\n  $a$   描述分子间吸引力的强度    0.1 1 Pa·m⁶/mol²  \r\n  $b$   描述分子自身的排斥体积    $10^  5 $ m³/mol  \r\n\r\n$a$ 大 → 分子间吸引力强 → 更容易液化\r\n$b$ 大 → 分子体积大\r\n\r\n    范德瓦尔斯等温线\r\n\r\n把范德瓦尔斯方程改写为 $p$ 关于 $V m$ 的函数：\r\n\r\n$$p = \\frac RT  V m   b    \\frac a  V m^2 $$\r\n\r\n在 p V 图上画等温线（固定 $T$ 时 $p$ vs $V m$ 的曲线），会发现：\r\n\r\n    高温  （$T   T c$）：等温线形状类似理想气体（单调递减），只是有些变形\r\n    低温  （$T < T c$）：等温线出现一段\"S 形\"振荡——先降后升再降\r\n\r\nS 形区域在物理上对应  气液共存区  。实际上在这个区域"
+      "body": "\n   6.1 理想气体的尽头\n\n   !考试权重  ★★ 本章在热学B考试中占约 15 20%。2024 问答第 3 题考了肥皂泡（表面张力），2024 第 5 题的范氏气体也属于本章范畴。克拉珀龙方程和表面张力是计算重点。\n\n前五章，理想气体一直是当之无愧的主角——它简单、好算，在常温常压下表现优异。可这个模型有它走不到的地方，而那些地方恰恰是真实世界最有趣的部分。理想气体解释不了：为什么气体在低温高压下会凝结成液体？为什么存在一个临界温度，超过它无论怎么加压气体都不肯液化？固体又为什么能保持确定的形状，不像气体那样四处弥散？\n\n这些问题理想气体统统答不上来，原因只有一个——它把分子间的相互作用一笔勾销了。理想气体的两条假设（分子是质点、分子间无相互作用）在常温常压下无伤大雅，可一旦温度降低、分子挨得够近，被忽略的那点吸引力就开始主宰一切：它把分子拉到一起凝成液体、冻成固体。所以这最后一章要做的，就是把分子间作用力请回舞台，看看由此打开的真实物质世界——范德瓦尔斯方程、相变、相图、克拉珀龙方程，一路到固体热容和液体表面张力。这一章也是全课的合流：前面分头铺设的宏观热力学与微观分子图像，将在这里交汇。\n\n   要点 \n \n    理想气体解释不了液化、临界点、固体有定形——根源在于它  忽略了分子间作用力  。\n    低温、分子靠近时，被忽略的吸引力开始主宰，凝成液体/固体。\n    本章把分子间作用力请回来，打开真实物质世界，也是宏观与微观的合流。\n\n   \n\n   6.2 分子间作用力：近排斥、远吸引\n\n一切要从两个中性分子之间的作用力说起，它有一个非常典型的形状。在较远处（$r r 0$）分子间是吸引力（$F<0$，这就是 van der Waals 吸引）；在极近处（$r<r 0$）则是强烈的排斥力（$F 0$，源于电子云重叠时的 Pauli 排斥）；在某个平衡距离 $r 0$ 处，吸引与排斥恰好平衡，$F=0$，势能取极小值。把这个力对应的势能画出来，常用   Lennard Jones 势   来描述 $U r =4\\varepsilon  \\sigma/r ^ 12   \\sigma/r ^6 $，其中 $\\varepsilon$ 是势阱深度（约 $10^  21 $ J，即  0.01 eV），$\\sigma$ 是势能为零处的距离（约 $10^  10 $ m）；那个 $r^  12 $ 项管短程排斥，$r^  6 $ 项管长程吸引。\n\n! Lennard Jones 势能曲线  ../assets/images/06 01.png \n\n这条势能曲线，是理解物质三态的钥匙。决定物态的，是热运动能量 $kT$ 与势阱深度 $\\varepsilon$ 的较量。气态时分子间距远大于 $r 0$，$kT\\gg\\varepsilon$，分子有足够动能挣脱势阱、自由飞行、偶尔碰撞；液态时分子间距约为 $r 0$，$kT\\sim\\varepsilon$，分子被困在势阱里振动，却仍能缓慢挪动位置；固态时分子间距也约 $r 0$，但 $kT\\ll\\varepsilon$，分子只能在势阱底部小幅振动、位置基本固定。于是\"加热\"这件事，在微观上就是增大 $kT$、让分子一步步挣脱势阱的束缚——从固到液到气，正是 $kT$ 逐渐压倒 $\\varepsilon$ 的过程。\n\n   要点 \n \n    分子间作用力：  近排斥  （电子云重叠/Pauli）、  远吸引  （van der Waals）、平衡距离 $r 0$ 处 $F=0$、势能最低。\n      Lennard Jones 势   $U r =4\\varepsilon  \\sigma/r ^ 12   \\sigma/r ^6 $：$r^  12 $ 排斥、$r^  6 $ 吸引。\n    物态由 $kT$ 与势阱深度 $\\varepsilon$ 较量决定：$kT\\gg\\varepsilon$ 气、$\\sim\\varepsilon$ 液、$\\ll\\varepsilon$ 固。\n\n   \n\n   6.3 范德瓦尔斯方程：给理想气体打两个补丁\n\n把分子间作用力纳入考虑，最经典的成果就是范德瓦尔斯方程（1873）。它没有推倒重来，而是对理想气体方程那两条不合理的假设各打一个补丁。  补丁一，分子有体积  ：$N$ 个分子各占一定空间，真正能自由运动的体积不是 $V$，而是 $V nb$，其中 $b$ 是 1 mol 分子的\"排斥体积\"（约为分子实际体积的 4 倍）。  补丁二，分子间有吸引力  ：靠近器壁的分子被内部分子往回拽，撞壁冲量减小，使实际压强比理想值偏低，减少量正比于分子密度的平方（因为吸引是两两之间的），即 $\\Delta p= a/V m^2$。两个补丁合起来，"
     },
     {
-      "id": "06-phase-transition-61-超越理想气体",
-      "title": "6.1 超越理想气体",
+      "id": "06-phase-transition-61-理想气体的尽头",
+      "title": "6.1 理想气体的尽头",
       "chapter": "06",
       "chapterTitle": "固体、液体与相变",
-      "url": "chapters/06-phase-transition.html#61-超越理想气体",
+      "url": "chapters/06-phase-transition.html#61-理想气体的尽头",
       "body": ""
     },
     {
-      "id": "06-phase-transition-62-分子间作用力",
-      "title": "6.2 分子间作用力",
+      "id": "06-phase-transition-62-分子间作用力近排斥远吸引",
+      "title": "6.2 分子间作用力：近排斥、远吸引",
       "chapter": "06",
       "chapterTitle": "固体、液体与相变",
-      "url": "chapters/06-phase-transition.html#62-分子间作用力",
+      "url": "chapters/06-phase-transition.html#62-分子间作用力近排斥远吸引",
       "body": ""
     },
     {
-      "id": "06-phase-transition-力的特征",
-      "title": "力的特征",
+      "id": "06-phase-transition-63-范德瓦尔斯方程给理想气体打两个补丁",
+      "title": "6.3 范德瓦尔斯方程：给理想气体打两个补丁",
       "chapter": "06",
       "chapterTitle": "固体、液体与相变",
-      "url": "chapters/06-phase-transition.html#力的特征",
-      "body": ""
-    },
-    {
-      "id": "06-phase-transition-势能",
-      "title": "势能",
-      "chapter": "06",
-      "chapterTitle": "固体、液体与相变",
-      "url": "chapters/06-phase-transition.html#势能",
-      "body": ""
-    },
-    {
-      "id": "06-phase-transition-三态的微观理解",
-      "title": "三态的微观理解",
-      "chapter": "06",
-      "chapterTitle": "固体、液体与相变",
-      "url": "chapters/06-phase-transition.html#三态的微观理解",
-      "body": ""
-    },
-    {
-      "id": "06-phase-transition-63-范德瓦尔斯方程",
-      "title": "6.3 范德瓦尔斯方程",
-      "chapter": "06",
-      "chapterTitle": "固体、液体与相变",
-      "url": "chapters/06-phase-transition.html#63-范德瓦尔斯方程",
-      "body": ""
-    },
-    {
-      "id": "06-phase-transition-从理想气体到实际气体",
-      "title": "从理想气体到实际气体",
-      "chapter": "06",
-      "chapterTitle": "固体、液体与相变",
-      "url": "chapters/06-phase-transition.html#从理想气体到实际气体",
-      "body": ""
-    },
-    {
-      "id": "06-phase-transition-范德瓦尔斯方程",
-      "title": "范德瓦尔斯方程",
-      "chapter": "06",
-      "chapterTitle": "固体、液体与相变",
-      "url": "chapters/06-phase-transition.html#范德瓦尔斯方程",
-      "body": ""
-    },
-    {
-      "id": "06-phase-transition-a-和-b-的物理含义",
-      "title": "$a$ 和 $b$ 的物理含义",
-      "chapter": "06",
-      "chapterTitle": "固体、液体与相变",
-      "url": "chapters/06-phase-transition.html#a-和-b-的物理含义",
-      "body": ""
-    },
-    {
-      "id": "06-phase-transition-范德瓦尔斯等温线",
-      "title": "范德瓦尔斯等温线",
-      "chapter": "06",
-      "chapterTitle": "固体、液体与相变",
-      "url": "chapters/06-phase-transition.html#范德瓦尔斯等温线",
-      "body": ""
-    },
-    {
-      "id": "06-phase-transition-临界点",
-      "title": "临界点",
-      "chapter": "06",
-      "chapterTitle": "固体、液体与相变",
-      "url": "chapters/06-phase-transition.html#临界点",
-      "body": ""
-    },
-    {
-      "id": "06-phase-transition-对应态定律",
-      "title": "对应态定律",
-      "chapter": "06",
-      "chapterTitle": "固体、液体与相变",
-      "url": "chapters/06-phase-transition.html#对应态定律",
+      "url": "chapters/06-phase-transition.html#63-范德瓦尔斯方程给理想气体打两个补丁",
       "body": ""
     },
     {
@@ -2505,131 +1225,27 @@
       "body": ""
     },
     {
-      "id": "06-phase-transition-基本概念",
-      "title": "基本概念",
+      "id": "06-phase-transition-65-相图物质在哪个相一张图说清",
+      "title": "6.5 相图：物质在哪个相，一张图说清",
       "chapter": "06",
       "chapterTitle": "固体、液体与相变",
-      "url": "chapters/06-phase-transition.html#基本概念",
+      "url": "chapters/06-phase-transition.html#65-相图物质在哪个相一张图说清",
       "body": ""
     },
     {
-      "id": "06-phase-transition-相变的特征",
-      "title": "相变的特征",
+      "id": "06-phase-transition-66-克拉珀龙方程相平衡曲线有多陡",
+      "title": "6.6 克拉珀龙方程：相平衡曲线有多陡",
       "chapter": "06",
       "chapterTitle": "固体、液体与相变",
-      "url": "chapters/06-phase-transition.html#相变的特征",
+      "url": "chapters/06-phase-transition.html#66-克拉珀龙方程相平衡曲线有多陡",
       "body": ""
     },
     {
-      "id": "06-phase-transition-潜热",
-      "title": "潜热",
+      "id": "06-phase-transition-67-固体的热性质dulong-petit-与它的失效",
+      "title": "6.7 固体的热性质：Dulong-Petit 与它的失效",
       "chapter": "06",
       "chapterTitle": "固体、液体与相变",
-      "url": "chapters/06-phase-transition.html#潜热",
-      "body": ""
-    },
-    {
-      "id": "06-phase-transition-65-相图",
-      "title": "6.5 相图",
-      "chapter": "06",
-      "chapterTitle": "固体、液体与相变",
-      "url": "chapters/06-phase-transition.html#65-相图",
-      "body": ""
-    },
-    {
-      "id": "06-phase-transition-p-t-相图",
-      "title": "p-T 相图",
-      "chapter": "06",
-      "chapterTitle": "固体、液体与相变",
-      "url": "chapters/06-phase-transition.html#p-t-相图",
-      "body": ""
-    },
-    {
-      "id": "06-phase-transition-水的相图特殊性",
-      "title": "水的相图特殊性",
-      "chapter": "06",
-      "chapterTitle": "固体、液体与相变",
-      "url": "chapters/06-phase-transition.html#水的相图特殊性",
-      "body": ""
-    },
-    {
-      "id": "06-phase-transition-p-v-相图与-maxwell-构造",
-      "title": "p-V 相图与 Maxwell 构造",
-      "chapter": "06",
-      "chapterTitle": "固体、液体与相变",
-      "url": "chapters/06-phase-transition.html#p-v-相图与-maxwell-构造",
-      "body": ""
-    },
-    {
-      "id": "06-phase-transition-66-克拉珀龙方程",
-      "title": "6.6 克拉珀龙方程",
-      "chapter": "06",
-      "chapterTitle": "固体、液体与相变",
-      "url": "chapters/06-phase-transition.html#66-克拉珀龙方程",
-      "body": ""
-    },
-    {
-      "id": "06-phase-transition-动机",
-      "title": "动机",
-      "chapter": "06",
-      "chapterTitle": "固体、液体与相变",
-      "url": "chapters/06-phase-transition.html#动机",
-      "body": ""
-    },
-    {
-      "id": "06-phase-transition-推导",
-      "title": "推导",
-      "chapter": "06",
-      "chapterTitle": "固体、液体与相变",
-      "url": "chapters/06-phase-transition.html#推导",
-      "body": ""
-    },
-    {
-      "id": "06-phase-transition-物理含义",
-      "title": "物理含义",
-      "chapter": "06",
-      "chapterTitle": "固体、液体与相变",
-      "url": "chapters/06-phase-transition.html#物理含义",
-      "body": ""
-    },
-    {
-      "id": "06-phase-transition-克拉珀龙-克劳修斯方程",
-      "title": "克拉珀龙-克劳修斯方程",
-      "chapter": "06",
-      "chapterTitle": "固体、液体与相变",
-      "url": "chapters/06-phase-transition.html#克拉珀龙-克劳修斯方程",
-      "body": ""
-    },
-    {
-      "id": "06-phase-transition-应用举例",
-      "title": "应用举例",
-      "chapter": "06",
-      "chapterTitle": "固体、液体与相变",
-      "url": "chapters/06-phase-transition.html#应用举例",
-      "body": ""
-    },
-    {
-      "id": "06-phase-transition-67-固体的热性质",
-      "title": "6.7 固体的热性质",
-      "chapter": "06",
-      "chapterTitle": "固体、液体与相变",
-      "url": "chapters/06-phase-transition.html#67-固体的热性质",
-      "body": ""
-    },
-    {
-      "id": "06-phase-transition-固体的热容dulong-petit-定律",
-      "title": "固体的热容——Dulong-Petit 定律",
-      "chapter": "06",
-      "chapterTitle": "固体、液体与相变",
-      "url": "chapters/06-phase-transition.html#固体的热容dulong-petit-定律",
-      "body": ""
-    },
-    {
-      "id": "06-phase-transition-低温偏离",
-      "title": "低温偏离",
-      "chapter": "06",
-      "chapterTitle": "固体、液体与相变",
-      "url": "chapters/06-phase-transition.html#低温偏离",
+      "url": "chapters/06-phase-transition.html#67-固体的热性质dulong-petit-与它的失效",
       "body": ""
     },
     {
@@ -2641,131 +1257,67 @@
       "body": ""
     },
     {
-      "id": "06-phase-transition-现象",
-      "title": "现象",
+      "id": "06-phase-transition-69-例题精讲",
+      "title": "6.9 例题精讲",
       "chapter": "06",
       "chapterTitle": "固体、液体与相变",
-      "url": "chapters/06-phase-transition.html#现象",
+      "url": "chapters/06-phase-transition.html#69-例题精讲",
       "body": ""
     },
     {
-      "id": "06-phase-transition-表面张力系数",
-      "title": "表面张力系数",
+      "id": "06-phase-transition-例题-1克劳修斯-克拉珀龙方程算蒸气压",
+      "title": "例题 1：克劳修斯-克拉珀龙方程算蒸气压",
       "chapter": "06",
       "chapterTitle": "固体、液体与相变",
-      "url": "chapters/06-phase-transition.html#表面张力系数",
+      "url": "chapters/06-phase-transition.html#例题-1克劳修斯-克拉珀龙方程算蒸气压",
       "body": ""
     },
     {
-      "id": "06-phase-transition-附加压强",
-      "title": "附加压强",
+      "id": "06-phase-transition-例题-2临界参量",
+      "title": "例题 2：临界参量",
       "chapter": "06",
       "chapterTitle": "固体、液体与相变",
-      "url": "chapters/06-phase-transition.html#附加压强",
+      "url": "chapters/06-phase-transition.html#例题-2临界参量",
       "body": ""
     },
     {
-      "id": "06-phase-transition-69-概念辨析",
-      "title": "6.9 概念辨析",
+      "id": "06-phase-transition-例题-3拉普拉斯附加压强",
+      "title": "例题 3：拉普拉斯附加压强",
       "chapter": "06",
       "chapterTitle": "固体、液体与相变",
-      "url": "chapters/06-phase-transition.html#69-概念辨析",
+      "url": "chapters/06-phase-transition.html#例题-3拉普拉斯附加压强",
       "body": ""
     },
     {
-      "id": "06-phase-transition-q临界温度以上为什么不能液化",
-      "title": "Q：临界温度以上为什么不能液化？",
+      "id": "06-phase-transition--真题2024-问答第-3-题",
+      "title": "🎯 真题：2024 问答第 3 题",
       "chapter": "06",
       "chapterTitle": "固体、液体与相变",
-      "url": "chapters/06-phase-transition.html#q临界温度以上为什么不能液化",
+      "url": "chapters/06-phase-transition.html#-真题2024-问答第-3-题",
       "body": ""
     },
     {
-      "id": "06-phase-transition-q水的三相点和冰点一样吗",
-      "title": "Q：水的三相点和冰点一样吗？",
+      "id": "06-phase-transition-610-概念辨析",
+      "title": "6.10 概念辨析",
       "chapter": "06",
       "chapterTitle": "固体、液体与相变",
-      "url": "chapters/06-phase-transition.html#q水的三相点和冰点一样吗",
+      "url": "chapters/06-phase-transition.html#610-概念辨析",
       "body": ""
     },
     {
-      "id": "06-phase-transition-q沸腾和蒸发的区别",
-      "title": "Q：沸腾和蒸发的区别？",
+      "id": "06-phase-transition-611-公式速查卡",
+      "title": "6.11 公式速查卡",
       "chapter": "06",
       "chapterTitle": "固体、液体与相变",
-      "url": "chapters/06-phase-transition.html#q沸腾和蒸发的区别",
+      "url": "chapters/06-phase-transition.html#611-公式速查卡",
       "body": ""
     },
     {
-      "id": "06-phase-transition-q范德瓦尔斯方程准确吗",
-      "title": "Q：范德瓦尔斯方程准确吗？",
+      "id": "06-phase-transition-612-本章小结与全课回望",
+      "title": "6.12 本章小结与全课回望",
       "chapter": "06",
       "chapterTitle": "固体、液体与相变",
-      "url": "chapters/06-phase-transition.html#q范德瓦尔斯方程准确吗",
-      "body": ""
-    },
-    {
-      "id": "06-phase-transition-610-本章公式总结",
-      "title": "6.10 本章公式总结",
-      "chapter": "06",
-      "chapterTitle": "固体、液体与相变",
-      "url": "chapters/06-phase-transition.html#610-本章公式总结",
-      "body": ""
-    },
-    {
-      "id": "06-phase-transition-范德瓦尔斯方程",
-      "title": "范德瓦尔斯方程",
-      "chapter": "06",
-      "chapterTitle": "固体、液体与相变",
-      "url": "chapters/06-phase-transition.html#范德瓦尔斯方程",
-      "body": ""
-    },
-    {
-      "id": "06-phase-transition-临界参量",
-      "title": "临界参量",
-      "chapter": "06",
-      "chapterTitle": "固体、液体与相变",
-      "url": "chapters/06-phase-transition.html#临界参量",
-      "body": ""
-    },
-    {
-      "id": "06-phase-transition-克拉珀龙方程",
-      "title": "克拉珀龙方程",
-      "chapter": "06",
-      "chapterTitle": "固体、液体与相变",
-      "url": "chapters/06-phase-transition.html#克拉珀龙方程",
-      "body": ""
-    },
-    {
-      "id": "06-phase-transition-克拉珀龙-克劳修斯方程",
-      "title": "克拉珀龙-克劳修斯方程",
-      "chapter": "06",
-      "chapterTitle": "固体、液体与相变",
-      "url": "chapters/06-phase-transition.html#克拉珀龙-克劳修斯方程",
-      "body": ""
-    },
-    {
-      "id": "06-phase-transition-拉普拉斯公式",
-      "title": "拉普拉斯公式",
-      "chapter": "06",
-      "chapterTitle": "固体、液体与相变",
-      "url": "chapters/06-phase-transition.html#拉普拉斯公式",
-      "body": ""
-    },
-    {
-      "id": "06-phase-transition-dulong-petit",
-      "title": "Dulong-Petit",
-      "chapter": "06",
-      "chapterTitle": "固体、液体与相变",
-      "url": "chapters/06-phase-transition.html#dulong-petit",
-      "body": ""
-    },
-    {
-      "id": "06-phase-transition-611-本章小结",
-      "title": "6.11 本章小结",
-      "chapter": "06",
-      "chapterTitle": "固体、液体与相变",
-      "url": "chapters/06-phase-transition.html#611-本章小结",
+      "url": "chapters/06-phase-transition.html#612-本章小结与全课回望",
       "body": ""
     }
   ]

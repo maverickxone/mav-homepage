@@ -1,6 +1,6 @@
 # note4ai.md
 
-> 最后更新：2026.05.27 01:00
+> 最后更新：2026.06.28
 
 本文件面向接手本项目的 AI agent，不是给人类线性阅读的文档。目标是让你读完之后对项目结构、构建系统、约束规则了如指掌。
 
@@ -69,7 +69,8 @@ mav-homepage/
 │       └── lock.js              ← 白名单管理
 ├── server/                      ← 后端（评论/点赞 API，SQLite）
 ├── Others/                      ← 杂项草稿
-└── .kiro/steering/rules.md      ← AI 工作规则（gitignored）
+└── .kiro/steering/              ← AI 工作规则（gitignored）
+    └── command-timeout.md      ← macOS PTY 超时处理规则
 ```
 
 ---
@@ -199,7 +200,7 @@ node blog-build.js
 - 构建：Node.js（marked + gray-matter + js-yaml）
 - 搜索：MiniSearch（客户端全文搜索，search-index.json）
 - 代码高亮：highlight.js（CDN）
-- 数学公式：KaTeX（CDN，仅 euv-lithography 启用，在 script.js 动态加载）
+- 数学公式：KaTeX（CDN，euv-lithography 和 thermodynamics 启用）
 - 后端：Express + SQLite（server/ 目录，评论和点赞）
 - 部署：Ubuntu + Nginx，通过 GitHub 同步
 
@@ -207,10 +208,10 @@ node blog-build.js
 
 ## 执行环境
 
-- OS：Windows + WSL (Ubuntu)
-- Git/Shell 命令通过 WSL 执行（Windows 端有 ownership 问题）
-- 项目路径：`/home/mav/mav-homepage`（WSL 内）
-- 服务器端自行确定
+- OS：macOS (darwin)
+- Shell：zsh
+- 项目路径：`/Users/mav/Projects/mav-homepage`
+- 服务器端：Ubuntu + Nginx，GitHub webhook 自动同步
 
 ---
 
@@ -218,23 +219,29 @@ node blog-build.js
 
 | slug | 标题 | 特殊说明 |
 |------|------|----------|
-| claude-code | Claude Code 入门指南 | ⚠️ 纯手写 HTML，白名单 |
-| data-structures | 数据结构：从指针到算法 | 8 章（含 C 代码附录）；源于 data-s 讲义，原始 md/c 备份在 `markdown-backups/Data-Structures/_source/`，装配脚本 `_source/assemble.py` |
+| ai-math-foundations | AI 数学基础 | 8 章；assets 锁定（含 quiz/mermaid） |
+| ai-deep-learning-core | AI 深度学习核心 | 13 章；assets 锁定，六种风格主题最完整的版本 |
+| ai-computer-vision | AI 计算机视觉 | 5 章；assets 锁定 |
+| ai-nlp-foundations | AI 自然语言处理基础 | 7 章；assets 锁定 |
+| ai-transformers | AI Transformer 深度剖析 | 7 章；assets 锁定 |
+| d2l-toolbox | 深度学习前置工具箱 | 7 章 |
+| d2l-cnn | CNN实战篇 | 6 章 |
+| d2l-rnn | RNN实战篇 | 8 章 |
 | claude-d2l-to-rnn | 深度学习讲义 | 旧版合订内容，`catalog: false`，不在知识库首页展示 |
-| d2l-toolbox | 深度学习前置工具箱 | — |
-| d2l-cnn | CNN实战篇 | — |
-| d2l-rnn | RNN实战篇 | — |
-| money-bank | 银行体系与货币系统 | — |
-| bite-to-byte-硬件篇 | 电脑怎么工作的 | — |
-| blockchain-crypto | 区块链与加密货币 | — |
-| rust-book | Rust | — |
-| git-guide | Git 概念与实操 | — |
-| server-frontend-backend | 服务器与前后端 | 多章锁定 |
-| video-screen | 视频与屏幕技术 | — |
-| browser-war | 浏览器：从战争到垄断 | 多章锁定，有前端定制 |
-| euv-lithography | EUV 光刻机 | 全章锁定，assets 锁定，有图片系统和 KaTeX |
-| pdf-explained | PDF：最熟悉的陌生人 | — |
-| thermodynamics | 热力学 | — |
+| math-analysis | 数学分析讲义 | 6 章（第 8-13 章，下册内容）；script.js 锁定 |
+| data-structures | 数据结构：从指针到算法 | 9 章；源于 data-s 讲义，原始 md/c 备份在 `markdown-backups/Data-Structures/_source/`，装配脚本 `_source/assemble.py` |
+| thermodynamics | 热学速通 | 6 章；有 `_figures/*.py` 生成图片（PNG），含 2024 真题实战，KaTeX 数学公式；script.js 锁定 |
+| money-bank | 银行体系与货币系统 | 8 章 |
+| bite-to-byte-硬件篇 | 电脑怎么工作的 | 8 章 |
+| blockchain-crypto | 区块链与加密货币 | 5 章 |
+| rust-book | Rust | 7 章 |
+| git-guide | Git 概念与实操 | 5 章 |
+| server-frontend-backend | 服务器与前后端 | 5 章；多章锁定 |
+| video-screen | 视频与屏幕技术 | 5 章 |
+| browser-war | 浏览器：从战争到垄断 | 8 章；多章锁定，有前端定制 |
+| euv-lithography | EUV 光刻机 | 7 章；全章锁定，assets 锁定，有图片系统和 KaTeX |
+| pdf-explained | PDF：最熟悉的陌生人 | 9 章；部分章节锁定 |
+| claude-code | Claude Code 入门指南 | ⚠️ 纯手写 HTML，无 Markdown 源码 |
 
 ---
 
@@ -300,8 +307,9 @@ node build-projects.js <slug>       # 构建单个 project
 
 ```
 Mav/knowledge/projects/
-├── manifest.json                   ← 所有 project 的元数据（首页消费）
-├── how-computer-works/index.html   ← 详情页
+├── manifest.json                          ← 所有 project 的元数据（首页消费）
+├── from-zero-to-transformer/index.html    ← 详情页
+├── how-computer-works/index.html          ← 详情页
 ├── deep-learning-path/index.html
 └── digital-formats/index.html
 ```
@@ -310,6 +318,7 @@ Mav/knowledge/projects/
 
 | slug | 标题 | 包含书籍 |
 |------|------|----------|
+| from-zero-to-transformer | 从零开始学 Transformer | 数学基础 → DL核心 → CV → NLP → Transformers |
 | how-computer-works | 计算机是怎么工作的 | 硬件篇 → 服务器 → 浏览器 |
 | deep-learning-path | 深度学习从零到能读论文 | 工具箱 → CNN → RNN |
 | digital-formats | 数字世界的底层格式 | PDF → 视频 → 浏览器 |
@@ -410,8 +419,8 @@ node build-graph.js
 
 ### 当前状态
 
-- 15 本书（节点）
-- 98 章（节点）
+- 21 本书（节点）
+- ~120 章（节点）
 - 36 条手动标注的跨章关联（边）
 
 ### 已尝试但放弃的方案
