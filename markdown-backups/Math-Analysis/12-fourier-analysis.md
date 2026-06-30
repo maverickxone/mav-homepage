@@ -5,6 +5,11 @@ readTime: 85
 description: "Fourier 级数、平方平均收敛、收敛性定理与 Fourier 变换。"
 ---
 
+> 📋 **本章期末速查**
+> - 必考（每年 1-2 题，15-20 分）：Fourier 展开（含半区间展开）+ Parseval 等式求数项级数和
+> - 常考：幂级数求和函数、Dirichlet 积分应用
+> - 了解：Fourier 变换的基本性质、复数形式
+
 前面各章把函数在**空间区域**上积分；本章换一条思路——把「足够好的」函数写成**三角函数（或复指数）的叠加**，在频率域里分析信号与周期现象。Fourier 级数处理周期函数；平方平均收敛给出 $L^2$ 意义下「最佳逼近」；Dirichlet 定理回答何时级数在每一点收敛；Fourier 积分与变换把周期推广到全直线，是偏微分方程、信号处理、量子力学的共同语言。
 
 **本章主线**：正交性 $\Rightarrow$ 系数公式 $\Rightarrow$ 级数展开 $\Rightarrow$ 三种收敛（一致 / 逐点 / 平方平均）$\Rightarrow$ 非周期情形的 Fourier 变换。计算题要分清：周期延拓方式、奇偶性、半区间展开类型；理论题要分清：$L^2$ 收敛条件最宽，Dirichlet 条件保证逐点收敛到 $\tfrac12[f_++f_-]$。
@@ -12,6 +17,8 @@ description: "Fourier 级数、平方平均收敛、收敛性定理与 Fourier �
 ---
 
 ## 12.1 Fourier 级数
+
+> 🔴 **考试重要度：极高** | 展开 + 求和函数 + 利用展开求数项级数，每年必考
 
 ### 12.1.1 三角函数系的正交性
 
@@ -178,6 +185,8 @@ $$x\sim\sum_{n\neq 0}\frac{i(-1)^n}{n}e^{inx}=2\sum_{n=1}^{\infty}\frac{(-1)^{n+
 
 ## 12.2 平方平均收敛
 
+> 🔴 **考试重要度：极高** | Parseval 等式求 $\sum 1/n^2$, $\sum 1/n^4$, $\sum 1/(2n-1)^k$ 是标准大题
+
 ### 12.2.1 $L^2$ 内积与正交投影
 
 设 $f,g\in L^2[-\pi,\pi]$（平方可积），内积
@@ -242,6 +251,8 @@ $$\frac{1}{\pi}\int_{-\pi}^{\pi}x^2\,dx=\frac{2\pi^2}{3}=\sum_{n=1}^{\infty}\fra
 
 ## 12.3 收敛性定理
 
+> 🟡 **考试重要度：中等** | Dirichlet 定理的应用（判断间断点收敛值）常作为展开题的一部分
+
 ### 12.3.1 Dirichlet 定理（陈述与证明思路）
 
 **Dirichlet 条件**：$f$ 在 $[-\pi,\pi]$ 上分段光滑（分段 $C^1$，有限个第一类间断点），作 $2\pi$ 周期延拓。
@@ -291,6 +302,8 @@ $$\frac{f(x_0+)+f(x_0-)}{2}.$$
 ---
 
 ## 12.4 Fourier 积分与 Fourier 变换
+
+> 🟢 **考试重要度：了解** | 期末偶尔考 Dirichlet 积分 $\int_0^\infty \frac{\sin x}{x}dx=\pi/2$ 的应用
 
 ### 12.4.1 从周期到非周期
 
@@ -362,18 +375,62 @@ $$\hat{f}(\omega)=\sqrt{2\pi}\,e^{-\omega^2/2},$$
 
 ---
 
-## 本章综合习题（选）
+## 本章综合习题（真题精选）
 
-**12.1** 求 $f(x)=|x|$（$-\pi<x<\pi$）的 Fourier 级数（周期 $2\pi$），并讨论在 $x=0,\pm\pi$ 处的收敛值。（$f$ 为偶函数，仅余弦项。）
+**[2025-三]** 将 $f(x)=x$ 在 $[0,\pi]$ 上展开为余弦级数，并计算 $\displaystyle\sum_{n=1}^{\infty}\frac{1}{(2n-1)^2}$，$\displaystyle\sum_{n=1}^{\infty}\frac{1}{(2n-1)^4}$，以及 $\displaystyle\sum_{n=1}^{\infty}\frac{\sin(2n-1)x}{(2n-1)^3}$。
 
-**12.2** 将 $f(x)=1$（$0<x<\pi$）在 $[0,\pi]$ 上分别作**余弦展开**与**正弦展开**，写出级数并求和函数（在 $(0,\pi)$ 内）。
+解析要点：偶延拓得 $a_0=\pi$，$a_n=\frac{2}{\pi}\cdot\frac{(-1)^n-1}{n^2}$（仅奇数项非零）。由 Dirichlet 定理：
+$$x=\frac{\pi}{2}-\frac{4}{\pi}\sum_{k=1}^{\infty}\frac{\cos(2k-1)x}{(2k-1)^2},\quad x\in[0,\pi].$$
 
-**12.3** 设 $f(x)=x^2$（$-\pi\le x\le\pi$），周期延拓。求 Fourier 级数，并用 Parseval 等式计算 $\displaystyle\sum_{n=1}^{\infty}\frac{1}{n^2}$。
+取 $x=0$：$\sum\frac{1}{(2k-1)^2}=\frac{\pi^2}{8}$。用 Parseval：$\sum\frac{1}{(2k-1)^4}=\frac{\pi^4}{96}$。对级数在 $[0,x]$ 逐项积分得 $\sum\frac{\sin(2n-1)x}{(2n-1)^3}=\frac{\pi}{8}(x-\frac{x^2}{\pi})$。
 
-**12.4** 证明：若 $f\in L^2[-\pi,\pi]$ 且 $a_n=b_n=0$ 对所有 $n\ge1$，则 $f(x)=\dfrac{a_0}{2}$ 几乎处处成立（提示：$S_N(f)\to f$ 于 $L^2$，部分和为零）。
+---
 
-**12.5** 求 $\mathcal{F}[f]$，其中 $f(x)=e^{-\alpha|x|}$（$\alpha>0$）。验证 Parseval 等式 $\displaystyle\int_{-\infty}^{\infty}|f|^2=\frac{1}{2\pi}\int_{-\infty}^{\infty}|\hat{f}|^2$。
+**[2024-一(1)]** 将 $f(x)=1-\frac{x}{\pi}$（$0\le x\le\pi$）展为正弦级数并求和函数 $S(x)$，计算 $S(-3)$ 和 $S(12)$。
 
-**提示概要**：12.1 注意 $|x|$ 为偶函数；12.2 正弦展开在 $(0,\pi)$ 内和为 $1$，余弦展开和为 $1$ 但延拓不同；12.3 见例 12.3'；12.4 用 $L^2$ 完备性与正交系；12.5 化为 $\dfrac{2\alpha}{\alpha^2+\omega^2}$，左侧积分为 $\dfrac{2}{\alpha}$，右侧用 $\int_{-\infty}^{\infty}(\alpha^2+\omega^2)^{-2}\,d\omega=\dfrac{\pi}{\alpha^3}$。
+解析要点：奇延拓后以 $2\pi$ 为周期。$b_n=\frac{2}{\pi}\int_0^\pi(1-\frac{x}{\pi})\sin nx\,dx=\frac{2}{n\pi}$（所有 $n$）。正弦级数：$f(x)=\frac{2}{\pi}\sum_{n=1}^\infty\frac{\sin nx}{n}$。$S(x)$ 在间断点取平均值。$S(-3)=S(3)=\frac{\pi-3}{\pi}$；$S(12)=S(12-4\pi)=1-\frac{12-4\pi}{\pi}=\frac{12-3\pi}{\pi}$... 需要判断 $12-4\pi$ 落在哪个区间。
 
-（详解可在后续修订中补入。）
+---
+
+**[2024-二]** 将 $f(x)$ 展为正弦级数（系数为 $\frac{\sin n}{n^2}$），利用 Parseval 证明 $\displaystyle\sum_{n=1}^{\infty}\frac{\sin^2 n}{n^4}=\frac{(\pi-1)^2}{6}$。
+
+---
+
+**[2023-三]** 设 $f(x)$ 以 $2\pi$ 为周期，且 $f(x)=\begin{cases}\pi-x,&0\le x\le\pi,\\\pi+x,&-\pi\le x<0.\end{cases}$ 求 Fourier 级数并计算 $\displaystyle\sum_{n=1}^{\infty}\frac{(-1)^{n-1}}{(2n-1)^3}$ 和 $\displaystyle\sum_{n=1}^{\infty}\frac{1}{(2n-1)^4}$。
+
+解析要点：$f$ 为偶函数，$a_n=\frac{4}{\pi(2n-1)^2}$（仅奇数项）。对级数在 $[0,\pi/2]$ 上积分得 $\sum\frac{(-1)^{n-1}}{(2n-1)^3}=\frac{\pi^3}{32}$；Parseval 得 $\sum\frac{1}{(2n-1)^4}=\frac{\pi^4}{96}$。
+
+---
+
+**[2022-二]** $f(x)=\cos^2 x-\sin^2 x+\frac{1}{3}\sin 2x$（$x\in[-\pi,\pi]$）求 Fourier 级数。
+
+解析要点：化简 $f(x)=\cos 2x+\frac{1}{3}\sin 2x$，本身已是有限三角和，故 $a_2=1$，$b_2=\frac{1}{3}$，其余系数为 $0$。
+
+---
+
+**[2022-四]** 将 $f(x)=\begin{cases}1,&|x|<1,\\0,&1\le|x|\le\pi,\end{cases}$ 展为 Fourier 级数（周期 $2\pi$），由此求 $\displaystyle\sum_{n=1}^{\infty}\frac{\sin n}{n}$ 和 $\displaystyle\sum_{n=1}^{\infty}\frac{\sin^2 n}{n^2}$。
+
+解析要点：$f$ 偶，$a_0=\frac{2}{\pi}$，$a_n=\frac{2\sin n}{n\pi}$。取 $x=0$（连续点）：$1=\frac{1}{\pi}+\frac{2}{\pi}\sum\frac{\sin n}{n}$，得 $\sum\frac{\sin n}{n}=\frac{\pi-1}{2}$。Parseval：$\sum\frac{\sin^2 n}{n^2}=\frac{\pi-1}{2}$。
+
+---
+
+**[2021-六]** 将 $f(x)=\frac{\pi}{2}-x$（$x\in[0,\pi]$）展为正弦级数，由此求 $\displaystyle\sum_{n=1}^{\infty}\frac{1}{(2n-1)^2}$ 和 $\displaystyle\sum_{n=1}^{\infty}\frac{1}{n^4}$。
+
+解析要点：$b_n=\frac{2}{n\pi}[1-(-1)^n]+\frac{2(-1)^{n+1}}{n}$... 最终利用 Parseval 得 $\sum\frac{1}{n^4}=\frac{\pi^4}{90}$。
+
+---
+
+**[2023-四] (Dirichlet 积分应用)** 利用 $\int_0^{+\infty}\frac{\sin x}{x}\,dx=\frac\pi2$ 计算 $\int_0^{+\infty}\frac{\sin(ax)\sin(bx)}{x^2}\,dx$（$0<a<b$）。
+
+解析要点：令 $f(t)=\int_0^\infty\frac{\sin(at)\sin(bx)}{x^2}\,dx$，对 $t$ 求导得 $f'(t)=\int_0^\infty\frac{\cos(at)\sin(bx)}{x}\,dx$，利用积化和差化为 Dirichlet 积分之和 $f'(t)=\pi/2$，结合 $f(0)=0$ 得 $f(a)=\frac{\pi a}{2}$。
+
+---
+
+**备考提示**：
+- 展开时**先判断奇偶**，可省一半计算
+- Parseval 求数项级数：先展开得系数 → 写出 Parseval 等式 → 解出目标级数
+- 逐项积分：对已知级数在 $[0,x]$ 积分可得新级数的和函数
+- Dirichlet 定理：间断点收敛到左右极限的平均值
+- $\sum\frac{1}{(2n-1)^2}=\frac{\pi^2}{8}$，$\sum\frac{1}{n^2}=\frac{\pi^2}{6}$，$\sum\frac{1}{(2n-1)^4}=\frac{\pi^4}{96}$，$\sum\frac{1}{n^4}=\frac{\pi^4}{90}$ — 这四个结果反复出现
+
+

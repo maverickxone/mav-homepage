@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>反向传播与训练优化 — 人工智能与数学原理</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" id="hljs-light" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+<link rel="stylesheet" id="hljs-dark" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" media="not all">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+</head>
+<body>
+
+<div class="progress-bar" id="progress-bar"></div>
+
+<nav class="topnav" id="topnav">
+  <div class="topnav-inner">
+    <a class="brand" href="../index.html">人工智能与数学原理</a>
+    <div class="nav-links">
+      <a href="01-ml-math-foundations.html">01</a>
+      <a href="02-linear-logistic-regression.html">02</a>
+      <a href="03-neural-networks-cnn.html">03</a>
+      <a href="04-backpropagation.html" class="active">04</a>
+      <a href="05-graph-neural-networks.html">05</a>
+      <a href="06-transformer.html">06</a>
+      <a href="07-ssl-lm-rl.html">07</a>
+    </div>
+    <div class="nav-controls">
+      <button class="nav-btn" id="search-btn" aria-label="搜索 (Ctrl+K)">⌘K</button>
+      <button class="nav-btn" id="settings-btn" aria-label="阅读设置">Aa</button>
+      <a class="nav-btn" href="../../index.html" aria-label="返回知识库">← 知识库</a>
+      <a class="nav-btn" href="https://github.com/maverickxone/mav-homepage" target="_blank" rel="noopener" aria-label="GitHub" style="padding: 6px 8px;"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg></a>
+    </div>
+  </div>
+</nav>
+<div class="settings-pop" id="settings-pop">
+  <h5>主题</h5>
+  <div class="row">
+    <button class="seg" data-theme-set="light">明亮</button>
+    <button class="seg" data-theme-set="dark">暗色</button>
+  </div>
+  <h5>字号</h5>
+  <div class="row">
+    <button class="seg" data-size-set="s">小</button>
+    <button class="seg" data-size-set="m">中</button>
+    <button class="seg" data-size-set="l">大</button>
+  </div>
+</div>
+
+<div class="with-sidebar">
+  <aside class="sidebar">
+  <div class="chapter-num">CHAPTER 04</div>
+  <div class="chapter-name">反向传播与训练优化</div>
+  <h4>目录</h4>
+  <ul>
+    <li><a href="#本章导读">本章导读</a></li>
+    <li><a href="#链式法则反向传播的数学基础">链式法则——反向传播的数学基础</a></li>
+    <li><a href="#反向传播算法">反向传播算法</a></li>
+    <li><a href="#bp-完整手算示例">BP 完整手算示例</a></li>
+    <li><a href="#卷积层与池化层的反向传播">卷积层与池化层的反向传播</a></li>
+    <li><a href="#运算量分析">运算量分析</a></li>
+    <li><a href="#梯度消失与梯度爆炸">梯度消失与梯度爆炸</a></li>
+    <li><a href="#激活函数详解">激活函数详解</a></li>
+    <li><a href="#残差连接residual-connection">残差连接（Residual Connection）</a></li>
+    <li><a href="#归一化方法">归一化方法</a></li>
+    <li><a href="#参数初始化">参数初始化</a></li>
+    <li><a href="#训练优化技巧">训练优化技巧</a></li>
+  </ul>
+</aside>
+  <article class="chapter-body">
+    <header class="chapter-head">
+  <div class="chapter-head-meta">
+    <span class="num">CHAPTER 04</span>
+    <span>≈ 50 MIN READ</span>
+  </div>
+  <h1>反向传播与训练优化</h1>
+
+</header>
+    <h2 id="本章导读">本章导读</h2>
+<p>前一章我们搭建了神经网络的&quot;骨架&quot;——知道网络长什么样、前向传播怎么算。但还有一个核心问题没解决：<strong>怎么找到那些好的权重？</strong></p>
+<p>答案是<strong>反向传播（Backpropagation, BP）算法</strong>。它是训练神经网络的基石——通过链式法则系统地计算损失对每个参数的梯度，然后用梯度下降更新参数。</p>
+<p>本章首先从数学上严格推导链式法则，然后一步步推导 BP 公式，用具体数值做一次完整手算，最后讨论深层网络训练中遇到的问题（梯度消失/爆炸）和对应的解决方案（激活函数、残差连接、归一化、参数初始化）。</p>
+<hr>
+<h2 id="链式法则反向传播的数学基础">链式法则——反向传播的数学基础</h2>
+<h3 id="为什么需要链式法则">为什么需要链式法则</h3>
+<p>一个深度神经网络本质上是<strong>复合函数</strong>：</p>
+<p>$$L = L(f_L(f_{L-1}(\cdots f_2(f_1(\boldsymbol{x}; \boldsymbol{W}^{(1)}); \boldsymbol{W}^{(2)}) \cdots); \boldsymbol{W}^{(L)}))$$</p>
+<p>我们想求 $\frac{\partial L}{\partial \boldsymbol{W}^{(l)}}$——损失对第 $l$ 层参数的梯度。这些参数深埋在层层嵌套的函数里，直接求导不现实。链式法则让我们能把这个复杂求导<strong>拆成一连串简单的局部导数的乘积</strong>。</p>
+<h3 id="一元链式法则">一元链式法则</h3>
+<p>若 $y = f(u)$，$u = g(x)$，则：</p>
+<p>$$\frac{dy}{dx} = \frac{dy}{du} \cdot \frac{du}{dx}$$</p>
+<p><strong>直觉</strong>：$x$ 的微小变化 $\Delta x$ 先影响 $u$（变化了 $\frac{du}{dx}\Delta x$），然后 $u$ 的变化再影响 $y$（变化了 $\frac{dy}{du} \cdot \frac{du}{dx}\Delta x$）。</p>
+<p><strong>三层嵌套</strong>：若 $y = f(g(h(x)))$：</p>
+<p>$$\frac{dy}{dx} = f'(g(h(x))) \cdot g'(h(x)) \cdot h'(x)$$</p>
+<h3 id="多元链式法则">多元链式法则</h3>
+<p>若 $z = f(x, y)$，而 $x = x(t)$，$y = y(t)$，则：</p>
+<p>$$\frac{dz}{dt} = \frac{\partial f}{\partial x}\frac{dx}{dt} + \frac{\partial f}{\partial y}\frac{dy}{dt}$$</p>
+<p><strong>推广</strong>：若 $z = f(u_1, u_2, \ldots, u_n)$，而每个 $u_i = u_i(t)$：</p>
+<p>$$\frac{dz}{dt} = \sum_{i=1}^n \frac{\partial f}{\partial u_i}\frac{du_i}{dt}$$</p>
+<p><strong>核心原则</strong>：当一个变量通过<strong>多条路径</strong>影响最终结果时，各路径上的偏导数相加。</p>
+<h3 id="向量-标量链式法则">向量-标量链式法则</h3>
+<p>若损失 $L$ 是标量，中间变量 $\boldsymbol{z} = [z_1, \ldots, z_n]^T$ 是向量，$\boldsymbol{z} = g(\boldsymbol{w})$，则：</p>
+<p>$$\frac{\partial L}{\partial w_i} = \sum_{j=1}^n \frac{\partial L}{\partial z_j} \frac{\partial z_j}{\partial w_i}$$</p>
+<p>写成向量形式：$\frac{\partial L}{\partial \boldsymbol{w}} = \left(\frac{\partial \boldsymbol{z}}{\partial \boldsymbol{w}}\right)^T \frac{\partial L}{\partial \boldsymbol{z}}$</p>
+<h3 id="实例两层网络的链式法则">实例：两层网络的链式法则</h3>
+<p>设网络：$\boldsymbol{z}^{(1)} = \boldsymbol{W}^{(1)}\boldsymbol{x}$，$\boldsymbol{h} = \sigma(\boldsymbol{z}^{(1)})$，$z^{(2)} = \boldsymbol{w}^{(2)T}\boldsymbol{h}$，$L = \frac{1}{2}(y - z^{(2)})^2$</p>
+<p>求 $\frac{\partial L}{\partial \boldsymbol{W}^{(1)}}$：</p>
+<p>$$\frac{\partial L}{\partial \boldsymbol{W}^{(1)}} = \frac{\partial L}{\partial z^{(2)}} \cdot \frac{\partial z^{(2)}}{\partial \boldsymbol{h}} \cdot \frac{\partial \boldsymbol{h}}{\partial \boldsymbol{z}^{(1)}} \cdot \frac{\partial \boldsymbol{z}^{(1)}}{\partial \boldsymbol{W}^{(1)}}$$</p>
+<p>每一项都是容易计算的局部导数。这就是 BP 的核心思想。</p>
+<hr>
+<h2 id="反向传播算法">反向传播算法</h2>
+<h3 id="符号约定">符号约定</h3>
+<p>对于一个 $L$ 层前馈网络：</p>
+<div class="table-wrap"><table><thead><tr>
+<th>符号</th>
+<th>含义</th>
+</tr>
+</thead><tbody><tr>
+<td>$\boldsymbol{h}^{(0)} = \boldsymbol{x}$</td>
+<td>网络输入</td>
+</tr>
+<tr>
+<td>$\boldsymbol{z}^{(l)} = \boldsymbol{W}^{(l)}\boldsymbol{h}^{(l-1)} + \boldsymbol{b}^{(l)}$</td>
+<td>第 $l$ 层的加权输入（线性变换结果）</td>
+</tr>
+<tr>
+<td>$\boldsymbol{h}^{(l)} = f(\boldsymbol{z}^{(l)})$</td>
+<td>第 $l$ 层的激活输出</td>
+</tr>
+<tr>
+<td>$\boldsymbol{W}^{(l)} \in \mathbb{R}^{n_l \times n_{l-1}}$</td>
+<td>第 $l$ 层权重矩阵</td>
+</tr>
+<tr>
+<td>$L$</td>
+<td>损失函数（标量）</td>
+</tr>
+</tbody></table></div>
+<h3 id="误差项delta的定义">误差项（Delta）的定义</h3>
+<p><strong>核心概念</strong>：定义第 $l$ 层的误差项为损失对该层<strong>加权输入</strong>的偏导：</p>
+<p>$$\boldsymbol{\delta}^{(l)} \triangleq \frac{\partial L}{\partial \boldsymbol{z}^{(l)}} \in \mathbb{R}^{n_l}$$</p>
+<p><strong>为什么用 $\boldsymbol{z}^{(l)}$ 而不用 $\boldsymbol{h}^{(l)}$？</strong> 因为 $\boldsymbol{z}^{(l)}$ 直接连接了权重（$\boldsymbol{z}^{(l)} = \boldsymbol{W}^{(l)}\boldsymbol{h}^{(l-1)} + \boldsymbol{b}^{(l)}$），有了 $\boldsymbol{\delta}^{(l)}$ 就能立刻算出权重梯度。</p>
+<h3 id="第一步输出层的误差">第一步：输出层的误差</h3>
+<p>对于最后一层（第 $L$ 层），直接用损失函数对 $\boldsymbol{z}^{(L)}$ 求导。</p>
+<p><strong>均方误差 + 恒等激活</strong>（输出层无激活函数）：</p>
+<p>$$L = \frac{1}{2}(y - h^{(L)})^2 = \frac{1}{2}(y - z^{(L)})^2$$</p>
+<p>$$\delta^{(L)} = \frac{\partial L}{\partial z^{(L)}} = -(y - z^{(L)}) = \hat{y} - y$$</p>
+<p><strong>均方误差 + Sigmoid 激活</strong>：</p>
+<p>$$h^{(L)} = \sigma(z^{(L)})$$</p>
+<p>$$\delta^{(L)} = \frac{\partial L}{\partial z^{(L)}} = \frac{\partial L}{\partial h^{(L)}} \cdot \frac{\partial h^{(L)}}{\partial z^{(L)}} = -(y - h^{(L)}) \cdot \sigma'(z^{(L)})$$</p>
+<p>由于 $\sigma'(z) = \sigma(z)(1-\sigma(z)) = h^{(L)}(1-h^{(L)})$：</p>
+<p>$$\delta^{(L)} = (h^{(L)} - y) \cdot h^{(L)}(1 - h^{(L)})$$</p>
+<h3 id="第二步误差逐层回传">第二步：误差逐层回传</h3>
+<p><strong>从第 $l+1$ 层到第 $l$ 层</strong>：</p>
+<p>$$\boldsymbol{\delta}^{(l)} = \left[(\boldsymbol{W}^{(l+1)})^T \boldsymbol{\delta}^{(l+1)}\right] \odot f'(\boldsymbol{z}^{(l)})$$</p>
+<p><strong>逐步推导</strong>：</p>
+<p>$z_j^{(l)}$ 通过 $h_j^{(l)} = f(z_j^{(l)})$ 影响下一层所有的 $z_k^{(l+1)} = \sum_j W_{kj}^{(l+1)} h_j^{(l)} + b_k^{(l+1)}$。</p>
+<p>由多元链式法则：
+$$\delta_j^{(l)} = \frac{\partial L}{\partial z_j^{(l)}} = \sum_k \frac{\partial L}{\partial z_k^{(l+1)}} \cdot \frac{\partial z_k^{(l+1)}}{\partial h_j^{(l)}} \cdot \frac{\partial h_j^{(l)}}{\partial z_j^{(l)}}$$</p>
+<p>$$= \sum_k \delta_k^{(l+1)} \cdot W_{kj}^{(l+1)} \cdot f'(z_j^{(l)})$$</p>
+<p>$$= \left[\sum_k W_{kj}^{(l+1)} \delta_k^{(l+1)}\right] \cdot f'(z_j^{(l)})$$</p>
+<p>向量化：$\boldsymbol{\delta}^{(l)} = [(\boldsymbol{W}^{(l+1)})^T \boldsymbol{\delta}^{(l+1)}] \odot f'(\boldsymbol{z}^{(l)})$</p>
+<p>$\odot$ 是<strong>逐元素乘法</strong>（Hadamard product）。</p>
+<p><strong>直觉</strong>：第 $l$ 层的误差 = 下一层的误差通过权重矩阵&quot;反向投影&quot;回来，再乘上本层激活函数的导数。</p>
+<h3 id="第三步计算梯度">第三步：计算梯度</h3>
+<p>有了误差项，权重和偏置的梯度可以直接写出：</p>
+<p>$$\frac{\partial L}{\partial \boldsymbol{W}^{(l)}} = \boldsymbol{\delta}^{(l)} (\boldsymbol{h}^{(l-1)})^T$$</p>
+<p>$$\frac{\partial L}{\partial \boldsymbol{b}^{(l)}} = \boldsymbol{\delta}^{(l)}$$</p>
+<p><strong>直觉</strong>：权重梯度 = 本层的误差 × 上一层输出的转置。这很合理——如果上一层输出大而且本层误差大，那连接这两者的权重就需要大幅调整。</p>
+<h3 id="第四步参数更新">第四步：参数更新</h3>
+<p>$$\boldsymbol{W}^{(l)} \leftarrow \boldsymbol{W}^{(l)} - \eta \frac{\partial L}{\partial \boldsymbol{W}^{(l)}}$$</p>
+<p>$$\boldsymbol{b}^{(l)} \leftarrow \boldsymbol{b}^{(l)} - \eta \frac{\partial L}{\partial \boldsymbol{b}^{(l)}}$$</p>
+<h3 id="bp-算法完整流程">BP 算法完整流程</h3>
+<pre><code>输入：训练样本 (x, y)，当前参数 W, b
+输出：各层梯度
+
+1. 前向传播：逐层计算 z^(l), h^(l)，直到输出 h^(L) 和损失 L
+2. 计算输出层误差：δ^(L) = ∂L/∂z^(L)
+3. 反向传播误差：for l = L-1, L-2, ..., 1:
+       δ^(l) = [(W^(l+1))^T δ^(l+1)] ⊙ f'(z^(l))
+4. 计算梯度：∂L/∂W^(l) = δ^(l) (h^(l-1))^T
+5. 更新参数：W^(l) -= η · ∂L/∂W^(l)</code></pre>
+<hr>
+<h2 id="bp-完整手算示例">BP 完整手算示例</h2>
+<h3 id="网络设定">网络设定</h3>
+<p>一个极简网络：2 个输入 → 2 个隐藏节点（ReLU）→ 1 个输出（ReLU）</p>
+<ul>
+<li>输入：$x_1 = 1$，$x_2 = 1.5$</li>
+<li>目标：$y = 0.5$</li>
+<li>学习率：$\eta = 1$</li>
+<li>损失函数：$L = \frac{1}{2}(y - \hat{y})^2$</li>
+<li>激活函数：ReLU，即 $f(z) = \max(0, z)$，$f'(z) = \begin{cases} 1, & z > 0 \\ 0, & z \le 0\end{cases}$</li>
+</ul>
+<p>权重：</p>
+<ul>
+<li>输入→隐藏：$w_{11}=0.6, w_{12}=0.2$（连接到隐藏节点1），$w_{21}=0.1, w_{22}=0.7$（连接到隐藏节点2）</li>
+<li>隐藏→输出：$w_{13}=0.5, w_{23}=0.8$</li>
+</ul>
+<h3 id="前向传播">前向传播</h3>
+<p><strong>隐藏层</strong>：
+$$z_1 = w_{11} x_1 + w_{12} x_2 = 0.6 \times 1 + 0.2 \times 1.5 = 0.9$$
+$$z_2 = w_{21} x_1 + w_{22} x_2 = 0.1 \times 1 + 0.7 \times 1.5 = 1.15$$
+$$h_1 = \text{ReLU}(0.9) = 0.9$$
+$$h_2 = \text{ReLU}(1.15) = 1.15$$</p>
+<p><strong>输出层</strong>：
+$$z_3 = w_{13} h_1 + w_{23} h_2 = 0.5 \times 0.9 + 0.8 \times 1.15 = 0.45 + 0.92 = 1.37$$
+$$\hat{y} = \text{ReLU}(1.37) = 1.37$$</p>
+<p><strong>损失</strong>：
+$$L = \frac{1}{2}(0.5 - 1.37)^2 = \frac{1}{2}(0.87)^2 = 0.3785$$</p>
+<h3 id="反向传播">反向传播</h3>
+<p><strong>输出层误差</strong>（MSE + ReLU）：
+$$\delta_3 = -(y - \hat{y}) \cdot \text{ReLU}'(z_3) = -(0.5 - 1.37) \times 1 = 0.87$$</p>
+<p>（因为 $z_3 = 1.37 > 0$，所以 $\text{ReLU}'(z_3) = 1$）</p>
+<p><strong>输出层权重梯度</strong>：
+$$\frac{\partial L}{\partial w_{13}} = \delta_3 \cdot h_1 = 0.87 \times 0.9 = 0.783$$
+$$\frac{\partial L}{\partial w_{23}} = \delta_3 \cdot h_2 = 0.87 \times 1.15 = 1.0005$$</p>
+<p><strong>隐藏层误差</strong>（反向传播公式）：
+$$\delta_1 = w_{13} \cdot \delta_3 \cdot \text{ReLU}'(z_1) = 0.5 \times 0.87 \times 1 = 0.435$$
+$$\delta_2 = w_{23} \cdot \delta_3 \cdot \text{ReLU}'(z_2) = 0.8 \times 0.87 \times 1 = 0.696$$</p>
+<p><strong>隐藏层权重梯度</strong>：
+$$\frac{\partial L}{\partial w_{11}} = \delta_1 \cdot x_1 = 0.435 \times 1 = 0.435$$
+$$\frac{\partial L}{\partial w_{12}} = \delta_1 \cdot x_2 = 0.435 \times 1.5 = 0.6525$$
+$$\frac{\partial L}{\partial w_{21}} = \delta_2 \cdot x_1 = 0.696 \times 1 = 0.696$$
+$$\frac{\partial L}{\partial w_{22}} = \delta_2 \cdot x_2 = 0.696 \times 1.5 = 1.044$$</p>
+<h3 id="参数更新">参数更新</h3>
+<p>$$w_{13}' = 0.5 - 1 \times 0.783 = -0.283$$
+$$w_{23}' = 0.8 - 1 \times 1.0005 = -0.2005$$
+$$w_{11}' = 0.6 - 1 \times 0.435 = 0.165$$
+$$w_{12}' = 0.2 - 1 \times 0.6525 = -0.4525$$
+$$w_{21}' = 0.1 - 1 \times 0.696 = -0.596$$
+$$w_{22}' = 0.7 - 1 \times 1.044 = -0.344$$</p>
+<h3 id="验证更新后的损失是否下降">验证：更新后的损失是否下降</h3>
+<p>用新权重重新前向传播：</p>
+<p>$$z_1' = 0.165 \times 1 + (-0.4525) \times 1.5 = 0.165 - 0.679 = -0.514$$
+$$h_1' = \text{ReLU}(-0.514) = 0$$</p>
+<p>$$z_2' = -0.596 \times 1 + (-0.344) \times 1.5 = -0.596 - 0.516 = -1.112$$
+$$h_2' = \text{ReLU}(-1.112) = 0$$</p>
+<p>$$z_3' = -0.283 \times 0 + (-0.2005) \times 0 = 0$$
+$$\hat{y}' = \text{ReLU}(0) = 0$$</p>
+<p>$$L' = \frac{1}{2}(0.5 - 0)^2 = 0.125$$</p>
+<p>$0.125 < 0.3785$：损失确实下降了。（但学习率太大导致矫枉过正——所有隐藏节点都&quot;死&quot;了。实际中需要更小的学习率。）</p>
+<hr>
+<h2 id="卷积层与池化层的反向传播">卷积层与池化层的反向传播</h2>
+<h3 id="池化层的反向传播">池化层的反向传播</h3>
+<p>池化层没有可学习参数，但仍然需要将梯度传递给前面的层。</p>
+<p><strong>Max Pooling</strong>：</p>
+<p>前向传播时，记录了哪个位置是最大值。反向传播时，梯度<strong>只传给那个最大值的位置</strong>，其余位置梯度为 0。</p>
+<p>例如 $2\times2$ 窗口 $\begin{pmatrix} 1 & 3 \\ 2 & 4\end{pmatrix}$，最大值在右下角。若该输出位置的梯度为 $\delta$，则传回的梯度为 $\begin{pmatrix} 0 & 0 \\ 0 & \delta\end{pmatrix}$。</p>
+<p><strong>Average Pooling</strong>：</p>
+<p>梯度<strong>平均分配</strong>给窗口内所有位置。</p>
+<p>同样的 $2\times2$ 窗口，传回的梯度为 $\begin{pmatrix} \delta/4 & \delta/4 \\ \delta/4 & \delta/4\end{pmatrix}$。</p>
+<h3 id="卷积层的反向传播">卷积层的反向传播</h3>
+<p>设第 $l$ 层是卷积层，核大小 $k\times k$，输入特征图 $\boldsymbol{X}$，输出特征图 $\boldsymbol{Y}$：</p>
+<p>前向：$Y_{i,j} = \sum_{m=0}^{k-1}\sum_{n=0}^{k-1} W_{m,n} \cdot X_{i+m, j+n}$</p>
+<p><strong>对权重的梯度</strong>：</p>
+<p>$$\frac{\partial L}{\partial W_{m,n}} = \sum_{i,j} \delta_{i,j}^{(l+1)} \cdot X_{i+m, j+n}$$</p>
+<p>即用下一层的误差图对输入做<strong>互相关</strong>。</p>
+<p><strong>对输入的梯度（误差回传）</strong>：</p>
+<p>$$\delta_{i,j}^{(l)} = \sum_{m,n} W_{m,n} \cdot \delta_{i-m, j-n}^{(l+1)} \cdot f'(z_{i,j}^{(l)})$$</p>
+<p>这等价于用<strong>旋转 180° 的卷积核</strong>对误差图做卷积——本质是转置卷积（反卷积）。</p>
+<hr>
+<h2 id="运算量分析">运算量分析</h2>
+<p>对于 $L$ 层、每层 $n$ 个神经元的全连接网络：</p>
+<h3 id="前向传播">前向传播</h3>
+<ul>
+<li>每层：计算 $\boldsymbol{z}^{(l)} = \boldsymbol{W}^{(l)}\boldsymbol{h}^{(l-1)}$ 需要 $n^2$ 次乘法（矩阵×向量）</li>
+<li>每层加法：$n^2 + n$ 次（矩阵乘法的加法 + 偏置）</li>
+<li>激活函数：$n$ 次评估</li>
+<li>整个网络前向传播：$Ln^2$ 次乘法</li>
+</ul>
+<h3 id="反向传播">反向传播</h3>
+<p>每层需要：</p>
+<ol>
+<li>误差回传：$(\boldsymbol{W}^{(l+1)})^T \boldsymbol{\delta}^{(l+1)}$ — $n^2$ 次乘法</li>
+<li>逐元素乘激活导数 $f'(\boldsymbol{z}^{(l)})$ — $n$ 次乘法（Sigmoid：$n$ 次；ReLU：0 次或 $n$ 次比较）</li>
+<li>计算权重梯度 $\boldsymbol{\delta}^{(l)}(\boldsymbol{h}^{(l-1)})^T$ — $n^2$ 次乘法</li>
+<li>更新权重：$n^2$ 次乘法（$\eta \cdot$ 梯度）</li>
+</ol>
+<p>合计每层：约 $2n^2 + 3n$ 次乘法</p>
+<p>整个网络：$L(2n^2 + 3n) \approx 2Ln^2$ 次乘法</p>
+<p><strong>结论</strong>：反向传播的计算量约为前向传播的 <strong>2 倍</strong>（忽略低阶项）。</p>
+<hr>
+<h2 id="梯度消失与梯度爆炸">梯度消失与梯度爆炸</h2>
+<h3 id="问题根源">问题根源</h3>
+<p>从 BP 公式看，第 1 层的误差需要经过所有中间层传回：</p>
+<p>$$\boldsymbol{\delta}^{(1)} = \left[\prod_{l=1}^{L-1} (\boldsymbol{W}^{(l+1)})^T \text{diag}(f'(\boldsymbol{z}^{(l)}))\right] \boldsymbol{\delta}^{(L)}$$</p>
+<p>这个连乘项决定了梯度的行为：</p>
+<h3 id="梯度消失">梯度消失</h3>
+<p>如果 $|f'(z)| < 1$（Sigmoid 最大 0.25）且权重不够大：</p>
+<p>$$\prod_{l=1}^{L-1} |f'(z^{(l)})| \approx 0.25^{L-1}$$</p>
+<p>当 $L = 10$ 时：$0.25^9 \approx 3.8 \times 10^{-6}$</p>
+<p>前面层几乎收不到有效的梯度信号，参数无法更新。</p>
+<p><strong>后果</strong>：浅层参数几乎不动，只有靠近输出的几层在学习——深层网络退化为浅层网络。</p>
+<h3 id="梯度爆炸">梯度爆炸</h3>
+<p>如果 $\|(\boldsymbol{W}^{(l)})^T\| > 1$ 且 $|f'| \ge 1$：</p>
+<p>连乘后梯度指数级增长，参数更新巨大，模型发散。</p>
+<p><strong>后果</strong>：损失突然跳到 NaN，训练崩溃。</p>
+<h3 id="退化问题degradation">退化问题（Degradation）</h3>
+<p>即使没有明显的梯度消失，深层网络也可能比浅层网络<strong>训练误差更高</strong>（注意不是过拟合——连训练都做不好）。</p>
+<p>理论上深层网络至少可以学到&quot;恒等映射 + 前几层的解&quot;，不应该比浅层差。但实际优化困难导致找不到这个解。</p>
+<p>→ 残差连接正是为解决此问题而提出。</p>
+<hr>
+<h2 id="激活函数详解">激活函数详解</h2>
+<h3 id="sigmoid">Sigmoid</h3>
+<p>$$\sigma(z) = \frac{1}{1+e^{-z}}$$</p>
+<p>$$\sigma'(z) = \sigma(z)(1-\sigma(z))$$</p>
+<ul>
+<li>值域：$(0, 1)$</li>
+<li>最大导数：$\sigma'(0) = 0.25$</li>
+<li><strong>致命缺陷</strong>：导数恒 $\le 0.25$，深层网络梯度消失；输出非零中心，梯度更新效率低。</li>
+<li><strong>现代用途</strong>：仅用于输出层（二分类概率），中间层几乎不用。</li>
+</ul>
+<h3 id="tanh">Tanh</h3>
+<p>$$\tanh(z) = \frac{e^z - e^{-z}}{e^z + e^{-z}} = 2\sigma(2z) - 1$$</p>
+<p>$$\tanh'(z) = 1 - \tanh^2(z)$$</p>
+<ul>
+<li>值域：$(-1, 1)$，零中心</li>
+<li>最大导数：$\tanh'(0) = 1$</li>
+<li>比 Sigmoid 好（零中心 + 更大的导数），但仍有饱和区（$|z|$ 大时导数→0）</li>
+</ul>
+<h3 id="relurectified-linear-unit">ReLU（Rectified Linear Unit）</h3>
+<p>$$\text{ReLU}(z) = \max(0, z) = \begin{cases} z, & z > 0 \\ 0, & z \le 0 \end{cases}$$</p>
+<p>$$\text{ReLU}'(z) = \begin{cases} 1, & z > 0 \\ 0, & z \le 0 \end{cases}$$</p>
+<p>优势：</p>
+<ul>
+<li>正区间梯度恒为 1——<strong>不会梯度消失</strong></li>
+<li>计算极简（一次比较）</li>
+<li>稀疏激活（部分节点输出 0）</li>
+</ul>
+<p>问题：</p>
+<ul>
+<li><strong>Dead ReLU</strong>：如果某节点的输入在训练过程中永远为负（可能因为大的负偏置或不好的初始化），它永远输出 0，梯度也永远为 0——这个神经元&quot;死了&quot;，再也学不到东西。</li>
+</ul>
+<h3 id="leaky-relu">Leaky ReLU</h3>
+<p>$$\text{LReLU}(z) = \begin{cases} z, & z > 0 \\ \alpha z, & z \le 0 \end{cases}$$</p>
+<p>$\alpha$ 是一个小常数（通常 0.01）。负区间有小梯度 $\alpha$，避免 Dead ReLU。</p>
+<h3 id="preluparametric-relu">PReLU（Parametric ReLU）</h3>
+<p>和 Leaky ReLU 形式相同，但 $\alpha$ 是<strong>可学习参数</strong>：</p>
+<p>$$\text{PReLU}(z) = \begin{cases} z, & z > 0 \\ \alpha z, & z \le 0 \end{cases}, \quad \alpha \in (0, 1) \text{ 可学习}$$</p>
+<h3 id="eluexponential-linear-unit">ELU（Exponential Linear Unit）</h3>
+<p>$$\text{ELU}(z) = \begin{cases} z, & z > 0 \\ \alpha(e^z - 1), & z \le 0 \end{cases}$$</p>
+<ul>
+<li>负区间平滑且有负值输出（推动均值接近 0）</li>
+<li>饱和到 $-\alpha$（对噪声鲁棒）</li>
+<li>计算量比 ReLU 大（需要 exp）</li>
+</ul>
+<h3 id="对比总结">对比总结</h3>
+<div class="table-wrap"><table><thead><tr>
+<th>激活函数</th>
+<th>正区间导数</th>
+<th>负区间导数</th>
+<th>梯度消失？</th>
+<th>Dead Neuron？</th>
+</tr>
+</thead><tbody><tr>
+<td>Sigmoid</td>
+<td>$\le 0.25$</td>
+<td>$\le 0.25$</td>
+<td>严重</td>
+<td>否</td>
+</tr>
+<tr>
+<td>Tanh</td>
+<td>$\le 1$</td>
+<td>$\le 1$</td>
+<td>中等</td>
+<td>否</td>
+</tr>
+<tr>
+<td>ReLU</td>
+<td>1</td>
+<td>0</td>
+<td>无</td>
+<td>是</td>
+</tr>
+<tr>
+<td>Leaky ReLU</td>
+<td>1</td>
+<td>$\alpha$</td>
+<td>无</td>
+<td>否</td>
+</tr>
+<tr>
+<td>PReLU</td>
+<td>1</td>
+<td>学习的 $\alpha$</td>
+<td>无</td>
+<td>否</td>
+</tr>
+<tr>
+<td>ELU</td>
+<td>1</td>
+<td>$\alpha e^z$</td>
+<td>无</td>
+<td>否</td>
+</tr>
+</tbody></table></div>
+<hr>
+<h2 id="残差连接residual-connection">残差连接（Residual Connection）</h2>
+<h3 id="核心公式">核心公式</h3>
+<p>$$\boldsymbol{y} = F(\boldsymbol{x}; \boldsymbol{W}) + \boldsymbol{x}$$</p>
+<p>网络不直接学习目标映射 $H(\boldsymbol{x})$，而是学<strong>残差</strong> $F(\boldsymbol{x}) = H(\boldsymbol{x}) - \boldsymbol{x}$。</p>
+<h3 id="为什么解决退化">为什么解决退化</h3>
+<p>如果某一层最优的行为是&quot;什么都不做&quot;（恒等映射），则 $F(\boldsymbol{x}) = 0$ 即可——让网络学&quot;零函数&quot;远比学&quot;恒等函数&quot;容易（将权重推向零就行）。</p>
+<h3 id="梯度流分析">梯度流分析</h3>
+<p>$$\frac{\partial \boldsymbol{y}}{\partial \boldsymbol{x}} = \frac{\partial F}{\partial \boldsymbol{x}} + \boldsymbol{I}$$</p>
+<p>$$\frac{\partial L}{\partial \boldsymbol{x}} = \frac{\partial L}{\partial \boldsymbol{y}} \cdot \left(\frac{\partial F}{\partial \boldsymbol{x}} + \boldsymbol{I}\right) = \frac{\partial L}{\partial \boldsymbol{y}} \cdot \frac{\partial F}{\partial \boldsymbol{x}} + \frac{\partial L}{\partial \boldsymbol{y}}$$</p>
+<p>右边第二项 $\frac{\partial L}{\partial \boldsymbol{y}}$ 是一条<strong>直通的梯度通路</strong>（gradient highway）：无论 $F$ 的梯度多小，梯度都能通过跳跃连接直接流向前面的层。</p>
+<p>这就是为什么 ResNet 可以训练 100+ 层而不退化。</p>
+<h3 id="维度匹配">维度匹配</h3>
+<p>当 $F(\boldsymbol{x})$ 和 $\boldsymbol{x}$ 的维度不同时（比如通道数改变了），需要用一个线性投影对齐：</p>
+<p>$$\boldsymbol{y} = F(\boldsymbol{x}) + \boldsymbol{W}_s \boldsymbol{x}$$</p>
+<hr>
+<h2 id="归一化方法">归一化方法</h2>
+<h3 id="为什么需要归一化">为什么需要归一化</h3>
+<p>深层网络中，每层输入的分布会随着前面层参数的更新而不断变化——<strong>内部协变量偏移（Internal Covariate Shift）</strong>。后面的层需要不断适应新的输入分布，训练困难。</p>
+<p>归一化的作用：稳定每层的输入分布，使训练更稳定、允许更大学习率。</p>
+<h3 id="batch-normalization-bn">Batch Normalization (BN)</h3>
+<p><strong>统计维度</strong>：对一个 mini-batch 中<strong>同一特征/通道</strong>的所有样本统计均值和方差。</p>
+<p>设 mini-batch 中第 $k$ 个特征的值为 $\{z_1^{(k)}, z_2^{(k)}, \ldots, z_B^{(k)}\}$：</p>
+<p>$$\mu_B^{(k)} = \frac{1}{B}\sum_{i=1}^B z_i^{(k)}$$</p>
+<p>$$(\sigma_B^{(k)})^2 = \frac{1}{B}\sum_{i=1}^B (z_i^{(k)} - \mu_B^{(k)})^2$$</p>
+<p>$$\hat{z}_i^{(k)} = \frac{z_i^{(k)} - \mu_B^{(k)}}{\sqrt{(\sigma_B^{(k)})^2 + \epsilon}}$$</p>
+<p>$$y_i^{(k)} = \gamma^{(k)} \hat{z}_i^{(k)} + \beta^{(k)}$$</p>
+<ul>
+<li>$\gamma, \beta$ 是<strong>可学习参数</strong>（让网络在需要时恢复原始分布）</li>
+<li>$\epsilon$ 防止除零（通常 $10^{-5}$）</li>
+</ul>
+<p><strong>推理时</strong>：不再有 mini-batch，使用训练过程中累积的移动平均（running mean/variance）。</p>
+<p><strong>BN 的位置</strong>：通常放在线性变换之后、激活函数之前：$z \to \text{BN}(z) \to f(\cdot)$</p>
+<h3 id="layer-normalization-ln">Layer Normalization (LN)</h3>
+<p><strong>统计维度</strong>：对<strong>单个样本的所有特征</strong>统计均值和方差（不跨 batch）。</p>
+<p>设某个样本的特征向量 $\boldsymbol{z} = [z_1, z_2, \ldots, z_d]$：</p>
+<p>$$\mu = \frac{1}{d}\sum_{j=1}^d z_j, \quad \sigma^2 = \frac{1}{d}\sum_{j=1}^d (z_j - \mu)^2$$</p>
+<p>$$\hat{z}_j = \frac{z_j - \mu}{\sqrt{\sigma^2 + \epsilon}}, \quad y_j = \gamma_j \hat{z}_j + \beta_j$$</p>
+<h3 id="bn-vs-ln-对比">BN vs LN 对比</h3>
+<div class="table-wrap"><table><thead><tr>
+<th></th>
+<th>Batch Norm</th>
+<th>Layer Norm</th>
+</tr>
+</thead><tbody><tr>
+<td>归一化维度</td>
+<td>跨样本（batch 维度）</td>
+<td>跨特征（feature 维度）</td>
+</tr>
+<tr>
+<td>依赖 batch size</td>
+<td>✓（batch 太小统计不准）</td>
+<td>✗</td>
+</tr>
+<tr>
+<td>适用结构</td>
+<td>CNN（固定大小输入）</td>
+<td>RNN、Transformer（变长序列）</td>
+</tr>
+<tr>
+<td>推理行为</td>
+<td>用训练的移动平均</td>
+<td>当场计算（和训练一致）</td>
+</tr>
+<tr>
+<td>在 Transformer 中</td>
+<td>不用</td>
+<td><strong>标配</strong></td>
+</tr>
+</tbody></table></div>
+<p><strong>为什么 Transformer 用 LN 不用 BN？</strong></p>
+<ol>
+<li>序列长度不固定，不同 batch 内同一位置没有统计意义</li>
+<li>训练时 batch size 可能很小（LLM），BN 统计不准</li>
+<li>推理时需要确定行为，LN 不依赖训练统计量</li>
+</ol>
+<h3 id="instance-normalization-in">Instance Normalization (IN)</h3>
+<p>对<strong>单个样本的单个通道</strong>归一化。每个通道独立做均值-方差归一化。</p>
+<p>主要用于风格迁移（去除图像的特定风格信息）。</p>
+<h3 id="group-normalization-gn">Group Normalization (GN)</h3>
+<p>将通道分为 $G$ 组，每组内做 LN。是 BN 和 IN 的折中：</p>
+<ul>
+<li>$G=1$：退化为 LN</li>
+<li>$G=$ 通道数：退化为 IN</li>
+</ul>
+<p>适用于 batch size 很小的场景（如检测/分割中大图只能放 1-2 张）。</p>
+<h3 id="dytdynamic-tanh">DyT（Dynamic Tanh）</h3>
+<p>$$\text{DyT}(\boldsymbol{x}) = \gamma \cdot \tanh(\alpha \boldsymbol{x}) + \beta$$</p>
+<p>其中 $\alpha, \gamma, \beta$ 可学习。一种无需统计量的轻量归一化替代方案。</p>
+<hr>
+<h2 id="参数初始化">参数初始化</h2>
+<h3 id="为什么初始化很重要">为什么初始化很重要</h3>
+<p>网络训练的起点由初始化决定。不好的初始化可能导致：</p>
+<ol>
+<li>梯度消失/爆炸（从第一步就开始）</li>
+<li>对称性无法打破</li>
+</ol>
+<h3 id="全零初始化的问题">全零初始化的问题</h3>
+<p>如果所有权重初始化为 0（或相同的值）：</p>
+<ul>
+<li>同一层所有神经元的输出相同</li>
+<li>反向传播时所有神经元的梯度相同</li>
+<li>参数更新相同</li>
+<li><strong>对称性永远无法打破</strong>——等价于只有一个神经元</li>
+</ul>
+<p>结论：必须用<strong>随机初始化</strong>打破对称性。</p>
+<h3 id="随机初始化的方差选择">随机初始化的方差选择</h3>
+<p>太大：激活值饱和 → 梯度消失（Sigmoid/Tanh）或爆炸
+太小：信号逐层衰减 → 前面几层无法有效传递信息</p>
+<p><strong>目标</strong>：让每层输出的方差保持稳定——既不爆炸也不消失。</p>
+<h3 id="xavier-初始化glorot-2010">Xavier 初始化（Glorot, 2010）</h3>
+<p><strong>适用激活函数</strong>：Sigmoid、Tanh（近似线性区间 $f(z) \approx z$）</p>
+<p><strong>推导思路</strong>：</p>
+<p>设第 $l$ 层有 $n_{in}$ 个输入，$n_{out}$ 个输出。前向传播中：</p>
+<p>$$z_j = \sum_{i=1}^{n_{in}} w_{ji} h_i$$</p>
+<p>假设 $w$ 和 $h$ 独立、零均值：
+$$\text{Var}(z_j) = n_{in} \cdot \text{Var}(w) \cdot \text{Var}(h)$$</p>
+<p>要保持 $\text{Var}(z) = \text{Var}(h)$（前向方差不变），需要：
+$$\text{Var}(w) = \frac{1}{n_{in}}$$</p>
+<p>类似地，考虑反向传播中梯度的方差不变，需要 $\text{Var}(w) = \frac{1}{n_{out}}$。</p>
+<p>折中取两者的调和：</p>
+<p>$$\text{Var}(w) = \frac{2}{n_{in} + n_{out}}$$</p>
+<p><strong>高斯形式</strong>：$W \sim \mathcal{N}\left(0, \frac{2}{n_{in} + n_{out}}\right)$</p>
+<p><strong>均匀形式</strong>：$W \sim U\left[-\sqrt{\frac{6}{n_{in}+n_{out}}}, \sqrt{\frac{6}{n_{in}+n_{out}}}\right]$</p>
+<p>（均匀分布 $U[-a, a]$ 的方差为 $a^2/3$，令 $a^2/3 = \frac{2}{n_{in}+n_{out}}$ 得 $a = \sqrt{\frac{6}{n_{in}+n_{out}}}$）</p>
+<h3 id="he-初始化kaiming-2015">He 初始化（Kaiming, 2015）</h3>
+<p><strong>适用激活函数</strong>：ReLU 及其变体</p>
+<p><strong>为什么 Xavier 不够？</strong> ReLU 将约一半的值置零，输出方差减半：</p>
+<p>$$\text{Var}(h) = \text{Var}(\text{ReLU}(z)) \approx \frac{1}{2}\text{Var}(z)$$</p>
+<p>（因为 $P(z > 0) \approx 1/2$，负半部分输出为 0）</p>
+<p>所以需要把方差乘 2 来补偿：</p>
+<p>$$\text{Var}(w) = \frac{2}{n_{in}}$$</p>
+<p><strong>高斯形式</strong>：$W \sim \mathcal{N}\left(0, \frac{2}{n_{in}}\right)$</p>
+<h3 id="prelu-情形下的-he-初始化">PReLU 情形下的 He 初始化</h3>
+<p>对于 PReLU，负半轴输出为 $\alpha z$（$\alpha \in (0,1)$），不是完全为零：</p>
+<p>$$\text{Var}(h) = \text{Var}(\text{PReLU}(z)) = \frac{1+\alpha^2}{2}\text{Var}(z)$$</p>
+<p>所以：</p>
+<p>$$\text{Var}(w) = \frac{2}{(1+\alpha^2) \cdot n_{in}}$$</p>
+<ul>
+<li>当 $\alpha = 0$（标准 ReLU）：$\text{Var}(w) = 2/n_{in}$（标准 He）</li>
+<li>当 $\alpha = 1$（恒等）：$\text{Var}(w) = 1/n_{in}$（Xavier 的前向形式）</li>
+</ul>
+<hr>
+<h2 id="训练优化技巧">训练优化技巧</h2>
+<h3 id="mini-batch-sgd">Mini-batch SGD</h3>
+<p>实际训练几乎都用 mini-batch SGD——每次用 $B$ 个样本估计梯度：</p>
+<p>$$\boldsymbol{w}_{t+1} = \boldsymbol{w}_t - \frac{\eta}{B}\sum_{i \in \mathcal{B}_t} \nabla_{\boldsymbol{w}} L_i$$</p>
+<p><strong>Batch size 的影响</strong>：</p>
+<ul>
+<li>太小（如 1）：梯度噪声大，训练震荡，但泛化可能更好</li>
+<li>太大（如 10000）：梯度估计准确，但每步计算慢，且容易陷入尖锐极小值（泛化差）</li>
+<li>常用：32 ~ 512</li>
+</ul>
+<h3 id="学习率调度">学习率调度</h3>
+<div class="table-wrap"><table><thead><tr>
+<th>策略</th>
+<th>描述</th>
+</tr>
+</thead><tbody><tr>
+<td>固定学习率</td>
+<td>简单但可能不收敛或收敛慢</td>
+</tr>
+<tr>
+<td>Step Decay</td>
+<td>每过若干 epoch 乘以 0.1</td>
+</tr>
+<tr>
+<td>Cosine Annealing</td>
+<td>按余弦曲线从大到小</td>
+</tr>
+<tr>
+<td>Warmup</td>
+<td>开始几个 epoch 从小学习率线性增大，再衰减</td>
+</tr>
+</tbody></table></div>
+<h3 id="dropout">Dropout</h3>
+<p>训练时，随机将一部分神经元的输出<strong>置零</strong>（丢弃概率 $p$，如 0.5）。</p>
+<p><strong>效果</strong>：</p>
+<ul>
+<li>防止神经元&quot;共适应&quot;（co-adaptation）——每个神经元必须独立有用</li>
+<li>等价于训练大量子网络的集成（ensemble）</li>
+<li>推理时不 dropout，但将权重乘以 $(1-p)$（或训练时用 inverted dropout 除以 $(1-p)$）</li>
+</ul>
+<h3 id="提前终止early-stopping">提前终止（Early Stopping）</h3>
+<p>监控验证集损失。当验证损失不再下降（甚至开始上升）时停止训练。</p>
+<p><strong>为什么有效</strong>：训练初期模型学到通用模式（泛化好），后期开始记忆训练集细节（过拟合）。在两者之间找到平衡点。</p>
+<h3 id="数据增强data-augmentation">数据增强（Data Augmentation）</h3>
+<p>通过对训练数据做变换（旋转、翻转、裁剪、颜色抖动等）增加有效训练样本量，减少过拟合。</p>
+<h3 id="权重衰减weight-decay">权重衰减（Weight Decay）</h3>
+<p>等价于 L2 正则化——在梯度更新时额外减去权重本身的一个比例：</p>
+<p>$$\boldsymbol{w} \leftarrow (1 - \eta\lambda)\boldsymbol{w} - \eta \nabla L$$</p>
+<p>让权重倾向于小值，模型更平滑。</p>
+
+    <nav class="pager">  <a href="03-neural-networks-cnn.html">
+    <span class="label">← 上一章</span>
+    <span class="title">前馈神经网络与卷积神经网络</span>
+  </a>  <a href="05-graph-neural-networks.html" class="next">
+    <span class="label">下一章 →</span>
+    <span class="title">图神经网络</span>
+  </a></nav>
+  </article>
+</div>
+
+<footer>
+  <div class="set">
+    <span>人工智能与数学原理</span>
+    <span>2026 · ZH-CN</span>
+  </div>
+  <div class="set">
+    <span>Mav</span>
+  </div>
+</footer>
+<div class="search-backdrop" id="search-overlay" role="dialog" aria-modal="true" aria-label="搜索" hidden>
+  <div class="search-modal">
+    <div class="search-input-wrap">
+      <input type="search" class="search-input" placeholder="搜索内容..." aria-label="搜索内容" autocomplete="off">
+      <kbd>ESC</kbd>
+    </div>
+    <div class="search-results" role="listbox" aria-label="搜索结果"></div>
+  </div>
+</div>
+
+<!-- Side Panel -->
+<div class="side-panel" id="side-panel">
+  <div class="side-panel-resize" id="side-panel-resize"></div>
+  <div class="side-panel-header">
+    <div class="side-panel-tabs">
+      <button class="side-panel-tab active" data-mode="sidenote">补充</button>
+      <button class="side-panel-tab" data-mode="notepad">笔记</button>
+    </div>
+    <button class="side-panel-close" aria-label="关闭">×</button>
+  </div>
+  <div class="side-panel-body"></div>
+</div>
+<button class="notepad-fab" id="notepad-fab" aria-label="便利贴">✎</button>
+
+<!-- Mobile TOC -->
+<button class="mtoc-fab" id="mtoc-fab" aria-label="目录">TOC</button>
+<div class="mtoc-drawer" id="mtoc-drawer">
+  <div class="mtoc-content"></div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/bash.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/typescript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/yaml.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/javascript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/json.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/python.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/css.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+<script>mermaid.initialize({startOnLoad:true, theme:'neutral', fontFamily:'Inter, sans-serif'});</script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}]});"></script>
+<script src="../assets/script.js"></script>
+</body>
+</html>

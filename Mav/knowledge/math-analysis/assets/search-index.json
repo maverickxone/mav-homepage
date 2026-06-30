@@ -6,7 +6,7 @@
       "chapter": "01",
       "chapterTitle": "第 8 章 空间解析几何",
       "url": "chapters/08-analytic-geometry.html",
-      "body": "\r\n多元微积分研究的是定义在 $\\mathbb R ^2$、$\\mathbb R ^3$ 乃至 $\\mathbb R ^n$ 上的函数：曲面 $z=f x,y $ 的切平面、等值面 $F x,y,z =c$ 的法向量、重积分的积分域 $\\Omega\\subset\\mathbb R ^3$……这些对象都离不开  空间中的位置与方向  。平面几何用 $ x,y $ 与直线方程 $ax+by+c=0$ 已经够用；进入三维后，「垂直」要用法向量表达，「旋转」要用叉积刻画，「体积」与「是否共面」则落到混合积。\r\n\r\n本章建立  空间解析几何  的语言：用坐标与方程描述点、线、面与常见曲面，用向量代数统一距离、夹角与投影。内容按四节展开——§8.1 向量代数，§8.2 平面与直线，§8.3 距离与夹角，§8.4 二次曲面与坐标变换——为第 9～11 章（多元微分、重积分、曲线曲面积分）提供几何基础。\r\n\r\n   \r\n\r\n   8.1 向量代数\r\n\r\n    8.1.1 向量与坐标表示\r\n\r\n  向量  是有大小又有方向的量，记作 $\\mathbf a ,\\mathbf b $ 或 $\\overrightarrow AB $。与起点无关的向量称为  自由向量  ；模（长度）记 $ \\mathbf a  $。零向量 $\\mathbf 0 $ 模为 $0$，方向不规定。\r\n\r\n在直角坐标系 $Oxyz$ 中，取单位向量 $\\mathbf i ,\\mathbf j ,\\mathbf k $ 分别沿 $x,y,z$ 轴正向，则\r\n$$\\mathbf a =a 1\\mathbf i +a 2\\mathbf j +a 3\\mathbf k = a 1,a 2,a 3 ,$$\r\n其中 $a 1,a 2,a 3$ 是 $\\mathbf a $ 在三个轴上的  坐标  。模长\r\n$$ \\mathbf a  =\\sqrt a 1^2+a 2^2+a 3^2 .$$\r\n  单位向量   $\\mathbf e =\\mathbf a / \\mathbf a  $（$\\mathbf a \\neq\\mathbf 0 $）给出 $\\mathbf a $ 的方向。\r\n\r\n  运算  ：设 $\\mathbf a = a 1,a 2,a 3 $，$\\mathbf b = b 1,b 2,b 3 $，$\\lambda\\in\\mathbb R $。\r\n    加法  ：$\\mathbf a +\\mathbf b = a 1+b 1,a 2+b 2,a 3+b 3 $（平行四边形法则）。\r\n    数乘  ：$\\lambda\\mathbf a = \\lambda a 1,\\lambda a 2,\\lambda a 3 $；$\\lambda 0$ 同向，$\\lambda<0$ 反向。\r\n    减法  ：$\\mathbf a  \\mathbf b =\\mathbf a +  \\mathbf b  $。\r\n\r\n  线性运算律  （与 $\\mathbb R ^3$ 中分量逐点运算一致）：加法交换律、结合律；数乘与加法分配律；$1\\cdot\\mathbf a =\\mathbf a $，$0\\cdot\\mathbf a =\\mathbf 0 $。这些保证向量代数与几何直观（平移、伸缩）相互对应。\r\n\r\n若 $\\mathbf a \\neq\\mathbf 0 $，则 $\\mathbf a $ 的方向可由  方向角   $\\alpha,\\beta,\\gamma$（与 $x,y,z$ 轴正向的夹角）描述，方向余弦\r\n$$\\cos\\alpha=\\frac a 1   \\mathbf a   ,\\quad \\cos\\beta=\\frac a 2   \\mathbf a   ,\\quad \\cos\\gamma=\\frac a 3   \\mathbf a   $$\r\n满足 $\\cos^2\\alpha+\\cos^2\\beta+\\cos^2\\gamma=1$。\r\n\r\n:::callout 向量与点的区别\r\n点 $P x,y,z $ 是空间中的  位置  ；向量 $\\overrightarrow OP = x,y,z $ 描述从原点到 $P$ 的  位移  。运算上常把点与它的位置向量等同，但概念上「点」用于几何对象，「向量」用于代数运算与物理量（力、速度、法向量等）。\r\n:::\r\n\r\n    8.1.2 数量积（点积）\r\n\r\n  定义  ：$\\mathbf a \\cdot\\mathbf b = \\mathbf a   \\mathbf b  \\cos\\theta$，其中 $\\theta\\in 0,\\pi $ 是 $\\mathbf a $ 与 $\\mathbf b $ 的夹角。坐标形式\r\n$$\\mathbf a \\c"
+      "body": "\r\n  📋   本章期末速查  \r\n    了解（本章几乎不单独出题，但向量叉积、法向量是后续积分题的工具）\r\n    重点掌握：叉积计算（行列式形式）、平面法向量、参数方程\r\n\r\n多元微积分研究的是定义在 $\\mathbb R ^2$、$\\mathbb R ^3$ 乃至 $\\mathbb R ^n$ 上的函数：曲面 $z=f x,y $ 的切平面、等值面 $F x,y,z =c$ 的法向量、重积分的积分域 $\\Omega\\subset\\mathbb R ^3$……这些对象都离不开  空间中的位置与方向  。平面几何用 $ x,y $ 与直线方程 $ax+by+c=0$ 已经够用；进入三维后，「垂直」要用法向量表达，「旋转」要用叉积刻画，「体积」与「是否共面」则落到混合积。\r\n\r\n本章建立  空间解析几何  的语言：用坐标与方程描述点、线、面与常见曲面，用向量代数统一距离、夹角与投影。内容按四节展开——§8.1 向量代数，§8.2 平面与直线，§8.3 距离与夹角，§8.4 二次曲面与坐标变换——为第 9～11 章（多元微分、重积分、曲线曲面积分）提供几何基础。\r\n\r\n   \r\n\r\n   8.1 向量代数\r\n\r\n    8.1.1 向量与坐标表示\r\n\r\n  向量  是有大小又有方向的量，记作 $\\mathbf a ,\\mathbf b $ 或 $\\overrightarrow AB $。与起点无关的向量称为  自由向量  ；模（长度）记 $ \\mathbf a  $。零向量 $\\mathbf 0 $ 模为 $0$，方向不规定。\r\n\r\n在直角坐标系 $Oxyz$ 中，取单位向量 $\\mathbf i ,\\mathbf j ,\\mathbf k $ 分别沿 $x,y,z$ 轴正向，则\r\n$$\\mathbf a =a 1\\mathbf i +a 2\\mathbf j +a 3\\mathbf k = a 1,a 2,a 3 ,$$\r\n其中 $a 1,a 2,a 3$ 是 $\\mathbf a $ 在三个轴上的  坐标  。模长\r\n$$ \\mathbf a  =\\sqrt a 1^2+a 2^2+a 3^2 .$$\r\n  单位向量   $\\mathbf e =\\mathbf a / \\mathbf a  $（$\\mathbf a \\neq\\mathbf 0 $）给出 $\\mathbf a $ 的方向。\r\n\r\n  运算  ：设 $\\mathbf a = a 1,a 2,a 3 $，$\\mathbf b = b 1,b 2,b 3 $，$\\lambda\\in\\mathbb R $。\r\n    加法  ：$\\mathbf a +\\mathbf b = a 1+b 1,a 2+b 2,a 3+b 3 $（平行四边形法则）。\r\n    数乘  ：$\\lambda\\mathbf a = \\lambda a 1,\\lambda a 2,\\lambda a 3 $；$\\lambda 0$ 同向，$\\lambda<0$ 反向。\r\n    减法  ：$\\mathbf a  \\mathbf b =\\mathbf a +  \\mathbf b  $。\r\n\r\n  线性运算律  （与 $\\mathbb R ^3$ 中分量逐点运算一致）：加法交换律、结合律；数乘与加法分配律；$1\\cdot\\mathbf a =\\mathbf a $，$0\\cdot\\mathbf a =\\mathbf 0 $。这些保证向量代数与几何直观（平移、伸缩）相互对应。\r\n\r\n若 $\\mathbf a \\neq\\mathbf 0 $，则 $\\mathbf a $ 的方向可由  方向角   $\\alpha,\\beta,\\gamma$（与 $x,y,z$ 轴正向的夹角）描述，方向余弦\r\n$$\\cos\\alpha=\\frac a 1   \\mathbf a   ,\\quad \\cos\\beta=\\frac a 2   \\mathbf a   ,\\quad \\cos\\gamma=\\frac a 3   \\mathbf a   $$\r\n满足 $\\cos^2\\alpha+\\cos^2\\beta+\\cos^2\\gamma=1$。\r\n\r\n:::callout 向量与点的区别\r\n点 $P x,y,z $ 是空间中的  位置  ；向量 $\\overrightarrow OP = x,y,z $ 描述从原点到 $P$ 的  位移  。运算上常把点与它的位置向量等同，但概念上「点」用于几何对象，「向量」用于代数运算与物理量（力、速度、法向量等）。\r\n:::\r\n\r\n    8.1.2 数量积（点积）\r\n\r\n  定义  ：$\\mathbf a \\cdot\\mathbf b = \\mathbf a   \\mathbf b"
     },
     {
       "id": "08-analytic-geometry-81-向量代数",
@@ -158,7 +158,7 @@
       "chapter": "02",
       "chapterTitle": "第 9 章 多变量函数的微分学",
       "url": "chapters/09-multivariable-differentiation.html",
-      "body": "\r\n单变量微积分回答的是：一条曲线 $y=f x $ 在某点变化多快、逼近多好。进入多元，对象变成 $z=f x,y $ 乃至 $\\mathbf F :\\mathbb R ^n\\to\\mathbb R ^m$，几何图像从曲线变成曲面、从切线变成切平面，极限与连续也不再是「左右两个方向」那么简单——  路径  可以无穷多条。本章的任务，是把这套语言严格建立起来，并一直推到 Taylor 公式、条件极值，以及向量分析里梯度、散度、旋度的统一表述。\r\n\r\n   \r\n\r\n   9.1 多变量函数及其连续性\r\n\r\n    9.1.1 平面上的点集\r\n\r\n在讨论 $f x,y $ 之前，得先约定  定义域  通常是什么：平面 $\\mathbb R ^2$ 上的某个点集 $D$。教材与习题里反复出现的几类概念如下。\r\n\r\n  内点  ：若 $P 0\\in D$，且存在以 $P 0$ 为圆心、半径 $r 0$ 的开圆盘 $U P 0,r $ 完全落在 $D$ 内，则 $P 0$ 是 $D$ 的  内点  。直观地说，内点周围有一圈「安全区」仍在 $D$ 里。\r\n\r\n  聚点（极限点）  ：$P 0$ 是 $D$ 的聚点，若 $U P 0,r \\cap D\\neq\\varnothing$ 对任意 $r 0$ 成立——也就是说，$P 0$ 附近无论多近，总能找到 $D$ 中的别的点。聚点可以属于 $D$，也可以不属于（边界上的外点也可以是聚点）。\r\n\r\n  开集  ：每个点都是内点。  闭集  ：补集为开集；等价地，包含其全部聚点。  有界集  ：存在 $R 0$ 使 $D\\subset U O,R $。\r\n\r\n   要点 \r\n \r\n      内点  ：周围有一圈开圆盘仍在集合内；  聚点  ：任意近处都有集合中的点。\r\n      开集   = 全是内点；  闭集   = 含尽所有聚点（或补集开）。\r\n    讨论极限 $\\lim   x,y \\to P 0  f x,y $ 时，$P 0$ 必须是定义域 $D$ 的  聚点  ，否则极限无意义。\r\n\r\n:::callout 为何要先讲点集\r\n多元极限写 $\\lim   x,y \\to  x 0,y 0   f x,y $ 时，$ x,y $ 只能沿 $D$ 中的路径趋近 $ x 0,y 0 $。边界点、孤立点、开集与闭集的区别，直接决定「哪些路径被允许」。这不是形式主义，而是后面「沿不同路径极限不同 ⇒ 极限不存在」的逻辑前提。\r\n:::\r\n\r\n    9.1.2 多变量函数\r\n\r\n  二元函数  ：给定 $D\\subset\\mathbb R ^2$，若对每个 $ x,y \\in D$ 有唯一实数 $z$ 与之对应，则 $z=f x,y $ 是 $D$ 上的二元函数。$n$ 元函数 $u=f x 1,\\ldots,x n $ 同理。\r\n\r\n  定义域   $D f$ 与  值域   $f D $ 的概念与一元相同。几何上，$z=f x,y $ 的图像是三维空间中的  曲面   $S=\\  x,y,f x,y  : x,y \\in D\\ $。\r\n\r\n  等值线（等高线）  ：方程 $f x,y =c$（$c$ 常数）在 $xy$ 平面上给出一条或一族曲线；不同 $c$ 对应不同「高度」，好比地形图。求梯度时，等值线与梯度方向垂直。\r\n\r\n  例 9.1   函数 $f x,y =x^2+y^2$ 的定义域为全体 $\\mathbb R ^2$，值域 $ 0,+\\infty $。等值线 $x^2+y^2=c$（$c 0$）是同心圆；$c=0$ 退化为原点。\r\n\r\n    9.1.3 多变量函数的极限\r\n\r\n设 $f$ 在 $D$ 上有定义，$P 0= x 0,y 0 $ 是 $D$ 的聚点。\r\n\r\n  定义（$\\varepsilon$ $\\delta$ 语言）  ：若存在常数 $A$，使得对任意 $\\varepsilon 0$，存在 $\\delta 0$，当 $ x,y \\in D$ 且 $0<\\sqrt  x x 0 ^2+ y y 0 ^2 <\\delta$ 时，有\r\n$$ f x,y  A <\\varepsilon,$$\r\n则称 $f$ 在 $P 0$ 处极限为 $A$，记 $\\displaystyle\\lim   x,y \\to  x 0,y 0   f x,y =A$，或 $\\lim\\limits  \\substack x\\to x 0\\\\ y\\to y 0   f x,y =A$。\r\n\r\n与一元本质差异：  $ x,y $ 趋近 $ x 0,y 0 $ 的路径无穷多  （沿直线、抛物线、螺旋线……）。一元极限存在等价于左极限等于右极限；多元没有「只有两个方向」，因此：\r\n\r\n  若  "
+      "body": "\r\n  📋   本章期末速查  \r\n    中等（偶尔 1 小题，6 10 分）：复合函数求导（链式法则）、F'' x  类含参积分求导\r\n    了解：多元极限路径法、隐函数定理、条件极值（Lagrange 乘子）\r\n    工具性：梯度、散度、旋度的定义在第 11 章积分定理中大量使用\r\n\r\n单变量微积分回答的是：一条曲线 $y=f x $ 在某点变化多快、逼近多好。进入多元，对象变成 $z=f x,y $ 乃至 $\\mathbf F :\\mathbb R ^n\\to\\mathbb R ^m$，几何图像从曲线变成曲面、从切线变成切平面，极限与连续也不再是「左右两个方向」那么简单——  路径  可以无穷多条。本章的任务，是把这套语言严格建立起来，并一直推到 Taylor 公式、条件极值，以及向量分析里梯度、散度、旋度的统一表述。\r\n\r\n   \r\n\r\n   9.1 多变量函数及其连续性\r\n\r\n    9.1.1 平面上的点集\r\n\r\n在讨论 $f x,y $ 之前，得先约定  定义域  通常是什么：平面 $\\mathbb R ^2$ 上的某个点集 $D$。教材与习题里反复出现的几类概念如下。\r\n\r\n  内点  ：若 $P 0\\in D$，且存在以 $P 0$ 为圆心、半径 $r 0$ 的开圆盘 $U P 0,r $ 完全落在 $D$ 内，则 $P 0$ 是 $D$ 的  内点  。直观地说，内点周围有一圈「安全区」仍在 $D$ 里。\r\n\r\n  聚点（极限点）  ：$P 0$ 是 $D$ 的聚点，若 $U P 0,r \\cap D\\neq\\varnothing$ 对任意 $r 0$ 成立——也就是说，$P 0$ 附近无论多近，总能找到 $D$ 中的别的点。聚点可以属于 $D$，也可以不属于（边界上的外点也可以是聚点）。\r\n\r\n  开集  ：每个点都是内点。  闭集  ：补集为开集；等价地，包含其全部聚点。  有界集  ：存在 $R 0$ 使 $D\\subset U O,R $。\r\n\r\n   要点 \r\n \r\n      内点  ：周围有一圈开圆盘仍在集合内；  聚点  ：任意近处都有集合中的点。\r\n      开集   = 全是内点；  闭集   = 含尽所有聚点（或补集开）。\r\n    讨论极限 $\\lim   x,y \\to P 0  f x,y $ 时，$P 0$ 必须是定义域 $D$ 的  聚点  ，否则极限无意义。\r\n\r\n:::callout 为何要先讲点集\r\n多元极限写 $\\lim   x,y \\to  x 0,y 0   f x,y $ 时，$ x,y $ 只能沿 $D$ 中的路径趋近 $ x 0,y 0 $。边界点、孤立点、开集与闭集的区别，直接决定「哪些路径被允许」。这不是形式主义，而是后面「沿不同路径极限不同 ⇒ 极限不存在」的逻辑前提。\r\n:::\r\n\r\n    9.1.2 多变量函数\r\n\r\n  二元函数  ：给定 $D\\subset\\mathbb R ^2$，若对每个 $ x,y \\in D$ 有唯一实数 $z$ 与之对应，则 $z=f x,y $ 是 $D$ 上的二元函数。$n$ 元函数 $u=f x 1,\\ldots,x n $ 同理。\r\n\r\n  定义域   $D f$ 与  值域   $f D $ 的概念与一元相同。几何上，$z=f x,y $ 的图像是三维空间中的  曲面   $S=\\  x,y,f x,y  : x,y \\in D\\ $。\r\n\r\n  等值线（等高线）  ：方程 $f x,y =c$（$c$ 常数）在 $xy$ 平面上给出一条或一族曲线；不同 $c$ 对应不同「高度」，好比地形图。求梯度时，等值线与梯度方向垂直。\r\n\r\n  例 9.1   函数 $f x,y =x^2+y^2$ 的定义域为全体 $\\mathbb R ^2$，值域 $ 0,+\\infty $。等值线 $x^2+y^2=c$（$c 0$）是同心圆；$c=0$ 退化为原点。\r\n\r\n    9.1.3 多变量函数的极限\r\n\r\n设 $f$ 在 $D$ 上有定义，$P 0= x 0,y 0 $ 是 $D$ 的聚点。\r\n\r\n  定义（$\\varepsilon$ $\\delta$ 语言）  ：若存在常数 $A$，使得对任意 $\\varepsilon 0$，存在 $\\delta 0$，当 $ x,y \\in D$ 且 $0<\\sqrt  x x 0 ^2+ y y 0 ^2 <\\delta$ 时，有\r\n$$ f x,y  A <\\varepsilon,$$\r\n则称 $f$ 在 $P 0$ 处极限为 $A$，记 $\\displaystyle\\lim   x,y \\to  x 0,y 0   f x,y =A$，或 $\\lim\\limits"
     },
     {
       "id": "09-multivariable-differentiation-91-多变量函数及其连续性",
@@ -422,7 +422,7 @@
       "chapter": "03",
       "chapterTitle": "第 10 章 多变量函数的积分",
       "url": "chapters/10-multivariable-integration.html",
-      "body": "\r\n第 9 章建立了多元函数的微分语言；本章转向  积分  ：在平面区域、空间体上累积「密度」「高度」等信息。单变量定积分 $\\int a^b f x \\,dx$ 是「细条面积之和」的极限；二重、三重积分把这一思想推广到 $xy$ 平面与 $\\mathbb R ^3$ 中的有界闭区域。换元公式与 Jacobian 行列式是计算的核心；Fubini 定理把重积分化为逐次定积分。掌握本章，才能进入第 11 章曲线、曲面积分以及 Gauss、Stokes 定理。\r\n\r\n   \r\n\r\n   10.1 二重积分\r\n\r\n    10.1.1 用分割和极限定义平面图形的面积\r\n\r\n设 $D\\subset\\mathbb R ^2$ 为有界闭区域。用曲线网把 $D$ 分成 $n$ 个小闭区域 $\\Delta D 1,\\ldots,\\Delta D n$，记 $\\Delta\\sigma i$ 为 $\\Delta D i$ 的面积，$\\ \\Delta\\ $ 为所有小区域  直径  的上确界。\r\n\r\n  定义（平面图形面积）  ：若存在常数 $S$，使得对任意 $\\varepsilon 0$，存在 $\\delta 0$，当 $\\ \\Delta\\ <\\delta$ 时，对任意选点 $ \\xi i,\\eta i \\in\\Delta D i$，和式\r\n$$\\sum  i=1 ^n \\Delta\\sigma i$$\r\n与 $S$ 之差的绝对值小于 $\\varepsilon$，则称 $D$ 的  面积为   $S$，记 $S D $ 或 $ D $。\r\n\r\n可求长曲线围成的  简单闭区域  （边界分段光滑、无自交）面积存在。这一「分割—近似—取极限」的框架，与定积分定义完全平行。\r\n\r\n  曲边梯形面积  ：若 $D=\\  x,y :a\\le x\\le b,\\ \\varphi 1 x \\le y\\le\\varphi 2 x \\ $，$\\varphi i$ 连续，则 $ D =\\int a^b \\varphi 2 x  \\varphi 1 x  \\,dx$——这正是「先竖切再求和」的几何版，与后面 X 型区域上的 $\\iint D 1\\,dx\\,dy$ 一致。\r\n\r\n  例 10.1   矩形 $D= a,b \\times c,d $ 的面积。均匀分割为 $m\\times n$ 个小矩形，每个面积 $\\Delta x i\\Delta y j$，总和为\r\n$$\\sum  i,j \\Delta x i\\Delta y j= b a  d c ,$$\r\n故 $ D = b a  d c $。\r\n\r\n   要点 \r\n \r\n    面积 = 分割后小区域面积之和的  极限  ，与选点无关（在可积条件下）。\r\n    简单闭区域（分段光滑边界）面积可定义；为二重积分提供几何基础。\r\n\r\n    10.1.2 二重积分概念\r\n\r\n设 $f x,y $ 在有界闭区域 $D$ 上有界。作分割 $\\Delta$，在每个 $\\Delta D i$ 上取 $ \\xi i,\\eta i $，作  黎曼和  \r\n$$\\sum  i=1 ^n f \\xi i,\\eta i \\,\\Delta\\sigma i.$$\r\n若存在常数 $I$，使得对任意 $\\varepsilon 0$，存在 $\\delta 0$，当 $\\ \\Delta\\ <\\delta$ 时，对任意选点，上述和与 $I$ 之差的绝对值小于 $\\varepsilon$，则称 $f$ 在 $D$ 上  可积  ，$I$ 为 $f$ 在 $D$ 上的  二重积分  ，记\r\n$$\\iint D f x,y \\,d\\sigma=\\iint D f x,y \\,dx\\,dy=I.$$\r\n\r\n  几何意义  ：若 $f x,y \\ge 0$，积分值等于以 $D$ 为底、曲面 $z=f x,y $ 为顶的  曲顶柱体体积  。\r\n\r\n  可积充分条件  ：\r\n  $f$ 在 $D$ 上  连续   ⇒ 可积；\r\n  $f$ 在 $D$ 上  有界  ，且不连续点集面积为零 ⇒ 可积（例如 bounded 且仅在有限条曲线上不连续）。\r\n\r\n  性质  （设 $f,g$ 在 $D$ 上可积）：\r\n\r\n1.   线性性  ：$\\iint D \\alpha f+\\beta g =\\alpha\\iint D f+\\beta\\iint D g$。\r\n2.   区域可加性  ：若 $D=D 1\\cup D 2$，$D 1\\cap D 2$ 面积为零，则 $\\iint D f=\\iint  D 1 f+\\iint  D 2 f$。\r\n3.   保序性  ：若在 $D$ 上 $f\\le g$，则 $\\iint D f\\le\\iint D g$。\r\n4.   估值 "
+      "body": "\r\n  📋   本章期末速查  \r\n    中等（每年 0 1 题，常配合曲面积分出现）：极坐标/柱坐标/球坐标换元、体积计算\r\n    了解：二重积分交换积分次序、Fubini 定理、n 重积分\r\n    工具性：重积分是 Gauss 定理右端的计算载体\r\n\r\n第 9 章建立了多元函数的微分语言；本章转向  积分  ：在平面区域、空间体上累积「密度」「高度」等信息。单变量定积分 $\\int a^b f x \\,dx$ 是「细条面积之和」的极限；二重、三重积分把这一思想推广到 $xy$ 平面与 $\\mathbb R ^3$ 中的有界闭区域。换元公式与 Jacobian 行列式是计算的核心；Fubini 定理把重积分化为逐次定积分。掌握本章，才能进入第 11 章曲线、曲面积分以及 Gauss、Stokes 定理。\r\n\r\n   \r\n\r\n   10.1 二重积分\r\n\r\n    10.1.1 用分割和极限定义平面图形的面积\r\n\r\n设 $D\\subset\\mathbb R ^2$ 为有界闭区域。用曲线网把 $D$ 分成 $n$ 个小闭区域 $\\Delta D 1,\\ldots,\\Delta D n$，记 $\\Delta\\sigma i$ 为 $\\Delta D i$ 的面积，$\\ \\Delta\\ $ 为所有小区域  直径  的上确界。\r\n\r\n  定义（平面图形面积）  ：若存在常数 $S$，使得对任意 $\\varepsilon 0$，存在 $\\delta 0$，当 $\\ \\Delta\\ <\\delta$ 时，对任意选点 $ \\xi i,\\eta i \\in\\Delta D i$，和式\r\n$$\\sum  i=1 ^n \\Delta\\sigma i$$\r\n与 $S$ 之差的绝对值小于 $\\varepsilon$，则称 $D$ 的  面积为   $S$，记 $S D $ 或 $ D $。\r\n\r\n可求长曲线围成的  简单闭区域  （边界分段光滑、无自交）面积存在。这一「分割—近似—取极限」的框架，与定积分定义完全平行。\r\n\r\n  曲边梯形面积  ：若 $D=\\  x,y :a\\le x\\le b,\\ \\varphi 1 x \\le y\\le\\varphi 2 x \\ $，$\\varphi i$ 连续，则 $ D =\\int a^b \\varphi 2 x  \\varphi 1 x  \\,dx$——这正是「先竖切再求和」的几何版，与后面 X 型区域上的 $\\iint D 1\\,dx\\,dy$ 一致。\r\n\r\n  例 10.1   矩形 $D= a,b \\times c,d $ 的面积。均匀分割为 $m\\times n$ 个小矩形，每个面积 $\\Delta x i\\Delta y j$，总和为\r\n$$\\sum  i,j \\Delta x i\\Delta y j= b a  d c ,$$\r\n故 $ D = b a  d c $。\r\n\r\n   要点 \r\n \r\n    面积 = 分割后小区域面积之和的  极限  ，与选点无关（在可积条件下）。\r\n    简单闭区域（分段光滑边界）面积可定义；为二重积分提供几何基础。\r\n\r\n    10.1.2 二重积分概念\r\n\r\n设 $f x,y $ 在有界闭区域 $D$ 上有界。作分割 $\\Delta$，在每个 $\\Delta D i$ 上取 $ \\xi i,\\eta i $，作  黎曼和  \r\n$$\\sum  i=1 ^n f \\xi i,\\eta i \\,\\Delta\\sigma i.$$\r\n若存在常数 $I$，使得对任意 $\\varepsilon 0$，存在 $\\delta 0$，当 $\\ \\Delta\\ <\\delta$ 时，对任意选点，上述和与 $I$ 之差的绝对值小于 $\\varepsilon$，则称 $f$ 在 $D$ 上  可积  ，$I$ 为 $f$ 在 $D$ 上的  二重积分  ，记\r\n$$\\iint D f x,y \\,d\\sigma=\\iint D f x,y \\,dx\\,dy=I.$$\r\n\r\n  几何意义  ：若 $f x,y \\ge 0$，积分值等于以 $D$ 为底、曲面 $z=f x,y $ 为顶的  曲顶柱体体积  。\r\n\r\n  可积充分条件  ：\r\n  $f$ 在 $D$ 上  连续   ⇒ 可积；\r\n  $f$ 在 $D$ 上  有界  ，且不连续点集面积为零 ⇒ 可积（例如 bounded 且仅在有限条曲线上不连续）。\r\n\r\n  性质  （设 $f,g$ 在 $D$ 上可积）：\r\n\r\n1.   线性性  ：$\\iint D \\alpha f+\\beta g =\\alpha\\iint D f+\\beta\\iint D g$。\r\n2.   区域可加性  ：若 $D=D 1\\cup "
     },
     {
       "id": "10-multivariable-integration-101-二重积分",
@@ -534,7 +534,7 @@
       "chapter": "04",
       "chapterTitle": "第 11 章 曲线积分和曲面积分",
       "url": "chapters/11-line-surface-integrals.html",
-      "body": "\r\n第 10 章把二重、三重积分建立在平面、空间区域上；本章把积分「挂」到  曲线  和  曲面  上——前者回答沿路径做功、环流，后者回答通过曲面的通量、曲面的质量。Green、Gauss、Stokes 三条定理把「边界上的积分」与「内部（或更高维区域）上的积分」联系起来，是向量分析的核心，也是期末计算大题的主线。\r\n\r\n   \r\n\r\n   11.1 数量场在曲线上的积分\r\n\r\n    11.1.1 基本概念\r\n\r\n设 $L$ 为 $xy$ 平面（或空间）中的  光滑曲线  ，$f$ 在 $L$ 上有定义。  第一类曲线积分  （对弧长的积分）：\r\n$$\\int L f\\,ds=\\int \\alpha^\\beta f\\big x t ,y t ,z t \\big \\,\\sqrt x'^2+y'^2+z'^2 \\,dt.$$\r\n若 $L$ 有参数 $\\mathbf r  t = x t ,y t ,z t  $，$t\\in \\alpha,\\beta $，则 $ds= \\mathbf r ' t  \\,dt$。\r\n\r\n  物理意义  ：若 $f$ 是线密度，则 $\\int L f\\,ds$ 是曲线 $L$ 的总质量。\r\n\r\n  性质  ：与参数选取无关（弧长不变）；对曲线可加（分段光滑时）。\r\n\r\n  平面曲线   $y=y x $：$ds=\\sqrt 1+ y' ^2 \\,dx$。\r\n\r\n    11.1.2 数量场在曲线上的积分的计算\r\n\r\n  步骤  ：\r\n1. 写出 $L$ 的参数方程或显式方程；\r\n2. 计算 $ds$；\r\n3. 化为关于参数（或 $x$）的定积分。\r\n\r\n  例 11.1   计算 $\\displaystyle\\int L  x+y \\,ds$，$L$ 为从 $ 0,0 $ 到 $ 1,1 $ 的直线段。\r\n参数 $x=t,\\ y=t,\\ t\\in 0,1 $，$ds=\\sqrt2\\,dt$，\r\n$$\\int 0^1 2t\\cdot\\sqrt2\\,dt=\\sqrt2.$$\r\n\r\n  例 11.2   计算 $\\displaystyle\\int L x^2\\,ds$，$L$ 为圆 $x^2+y^2=R^2$ 第一象限弧。\r\n参数 $x=R\\cos t,\\ y=R\\sin t,\\ t\\in 0,\\pi/2 $，$ds=R\\,dt$，\r\n$$\\int 0^ \\pi/2  R^2\\cos^2 t\\cdot R\\,dt=R^3\\int 0^ \\pi/2 \\cos^2 t\\,dt=\\frac \\pi R^3  4 .$$\r\n\r\n  对称性  ：若 $L$ 关于坐标轴或原点对称，$f$ 为奇函数，可化简积分（类似重积分对称性）。\r\n\r\n   要点 \r\n \r\n      第一类曲线积分   $\\int L f\\,ds$：对  弧长  ，  无方向  。\r\n    核心公式：$ds= \\mathbf r ' t  \\,dt$。\r\n    物理：线密度 ⇒ 总质量。\r\n\r\n   \r\n\r\n   11.2 数量场在曲面上的积分\r\n\r\n    11.2.1 曲面的面积\r\n\r\n  参数曲面   $\\mathbf r  u,v $，面积元素\r\n$$dS= \\mathbf r  u\\times\\mathbf r  v \\,du\\,dv.$$\r\n  隐式曲面   $F x,y,z =0$，若 $F z\\neq 0$，则\r\n$$dS=\\frac \\sqrt F x^2+F y^2+F z^2    F z  \\,dx\\,dy$$\r\n（在 $xy$ 投影上积分时）。\r\n\r\n  例 11.3   球面 $x^2+y^2+z^2=R^2$ 的面积。参数化得 $dS=R^2\\sin\\varphi\\,d\\varphi\\,d\\theta$，\r\n$$S=\\int 0^ 2\\pi \\int 0^\\pi R^2\\sin\\varphi\\,d\\varphi\\,d\\theta=4\\pi R^2.$$\r\n\r\n    11.2.2 数量场在曲面上的积分的计算\r\n\r\n  第一类曲面积分  ：\r\n$$\\iint S f\\,dS=\\iint D f\\big \\mathbf r  u,v \\big \\, \\mathbf r  u\\times\\mathbf r  v \\,du\\,dv.$$\r\n若 $S$ 为 $z=z x,y $，$ x,y \\in D  xy $，则\r\n$$dS=\\sqrt 1+z x^2+z y^2 \\,dx\\,dy,\\qquad \\iint S f\\,dS=\\iint  D  xy   f\\big x,y,z x,y \\big \\sqrt 1+z x^2+z y^2 \\,dx\\,dy.$$\r\n\r\n  例 11.4   $\\displaystyle\\ii"
+      "body": "\r\n  📋   本章期末速查  \r\n    必考（每年 2 3 题，30 40 分）：Gauss 定理计算通量（补面法）、Stokes 定理空间环量、Green 定理（含挖洞法）\r\n    常考：保守场判定 + 势函数求解、第一类曲线/曲面积分参数化计算\r\n    了解：微分形式的统一表述、向量势\r\n\r\n第 10 章把二重、三重积分建立在平面、空间区域上；本章把积分「挂」到  曲线  和  曲面  上——前者回答沿路径做功、环流，后者回答通过曲面的通量、曲面的质量。Green、Gauss、Stokes 三条定理把「边界上的积分」与「内部（或更高维区域）上的积分」联系起来，是向量分析的核心，也是期末计算大题的主线。\r\n\r\n   \r\n\r\n   11.1 数量场在曲线上的积分\r\n\r\n  🟡   考试重要度：中等     常作为小题或大题的一部分出现，分值 6 10 分\r\n\r\n    11.1.1 基本概念\r\n\r\n设 $L$ 为 $xy$ 平面（或空间）中的  光滑曲线  ，$f$ 在 $L$ 上有定义。  第一类曲线积分  （对弧长的积分）：\r\n$$\\int L f\\,ds=\\int \\alpha^\\beta f\\big x t ,y t ,z t \\big \\,\\sqrt x'^2+y'^2+z'^2 \\,dt.$$\r\n若 $L$ 有参数 $\\mathbf r  t = x t ,y t ,z t  $，$t\\in \\alpha,\\beta $，则 $ds= \\mathbf r ' t  \\,dt$。\r\n\r\n  物理意义  ：若 $f$ 是线密度，则 $\\int L f\\,ds$ 是曲线 $L$ 的总质量。\r\n\r\n  性质  ：与参数选取无关（弧长不变）；对曲线可加（分段光滑时）。\r\n\r\n  平面曲线   $y=y x $：$ds=\\sqrt 1+ y' ^2 \\,dx$。\r\n\r\n    11.1.2 数量场在曲线上的积分的计算\r\n\r\n  步骤  ：\r\n1. 写出 $L$ 的参数方程或显式方程；\r\n2. 计算 $ds$；\r\n3. 化为关于参数（或 $x$）的定积分。\r\n\r\n  例 11.1   计算 $\\displaystyle\\int L  x+y \\,ds$，$L$ 为从 $ 0,0 $ 到 $ 1,1 $ 的直线段。\r\n参数 $x=t,\\ y=t,\\ t\\in 0,1 $，$ds=\\sqrt2\\,dt$，\r\n$$\\int 0^1 2t\\cdot\\sqrt2\\,dt=\\sqrt2.$$\r\n\r\n  例 11.2   计算 $\\displaystyle\\int L x^2\\,ds$，$L$ 为圆 $x^2+y^2=R^2$ 第一象限弧。\r\n参数 $x=R\\cos t,\\ y=R\\sin t,\\ t\\in 0,\\pi/2 $，$ds=R\\,dt$，\r\n$$\\int 0^ \\pi/2  R^2\\cos^2 t\\cdot R\\,dt=R^3\\int 0^ \\pi/2 \\cos^2 t\\,dt=\\frac \\pi R^3  4 .$$\r\n\r\n  对称性  ：若 $L$ 关于坐标轴或原点对称，$f$ 为奇函数，可化简积分（类似重积分对称性）。\r\n\r\n  例 11.3    2024 T2  计算曲线积分 $\\displaystyle I=\\int L \\sqrt y \\,ds$，其中 $L$ 为摆线 $x=t \\sin t,\\ y=1 \\cos t$，$0\\le t\\le\\pi$。\r\n\r\n解：$x' t =1 \\cos t$，$y' t =\\sin t$，故\r\n$$ds=\\sqrt  1 \\cos t ^2+\\sin^2 t \\,dt=\\sqrt 2 2\\cos t \\,dt=2\\sin\\frac t  2 \\,dt.$$\r\n又 $\\sqrt y =\\sqrt 1 \\cos t =\\sqrt 2 \\sin\\frac t  2 $，故\r\n$$I=\\int 0^\\pi \\sqrt 2 \\sin\\frac t  2 \\cdot 2\\sin\\frac t  2 \\,dt=2\\sqrt 2 \\int 0^\\pi\\sin^2\\frac t  2 \\,dt=2\\sqrt 2 \\cdot\\frac \\pi  2 =\\sqrt 2 \\pi.$$\r\n\r\n   要点 \r\n \r\n      第一类曲线积分   $\\int L f\\,ds$：对  弧长  ，  无方向  。\r\n    核心公式：$ds= \\mathbf r ' t  \\,dt$。\r\n    摆线是常见载体：$ds=2\\sin t/2 \\,dt$，$\\sqrt y =\\sqrt 2 \\sin t/2 $，记住这组。\r\n\r\n   \r\n\r\n   11.2 数量场在曲面上的积分\r\n\r\n  🟡   考试"
     },
     {
       "id": "11-line-surface-integrals-111-数量场在曲线上的积分",
@@ -585,11 +585,11 @@
       "body": ""
     },
     {
-      "id": "11-line-surface-integrals-113-向量场在曲线上的积分",
-      "title": "11.3 向量场在曲线上的积分",
+      "id": "11-line-surface-integrals-113-向量场在曲线上的积分与-green-定理",
+      "title": "11.3 向量场在曲线上的积分与 Green 定理",
       "chapter": "04",
       "chapterTitle": "第 11 章 曲线积分和曲面积分",
-      "url": "chapters/11-line-surface-integrals.html#113-向量场在曲线上的积分",
+      "url": "chapters/11-line-surface-integrals.html#113-向量场在曲线上的积分与-green-定理",
       "body": ""
     },
     {
@@ -614,6 +614,14 @@
       "chapter": "04",
       "chapterTitle": "第 11 章 曲线积分和曲面积分",
       "url": "chapters/11-line-surface-integrals.html#1133-green-定理",
+      "body": ""
+    },
+    {
+      "id": "11-line-surface-integrals-1134-green-定理在非单连通域上的应用挖洞法",
+      "title": "11.3.4 Green 定理在非单连通域上的应用（挖洞法）",
+      "chapter": "04",
+      "chapterTitle": "第 11 章 曲线积分和曲面积分",
+      "url": "chapters/11-line-surface-integrals.html#1134-green-定理在非单连通域上的应用挖洞法",
       "body": ""
     },
     {
@@ -657,11 +665,27 @@
       "body": ""
     },
     {
-      "id": "11-line-surface-integrals-1152-stokes-定理",
-      "title": "11.5.2 Stokes 定理",
+      "id": "11-line-surface-integrals-1152-gauss-定理的补面法",
+      "title": "11.5.2 Gauss 定理的补面法",
       "chapter": "04",
       "chapterTitle": "第 11 章 曲线积分和曲面积分",
-      "url": "chapters/11-line-surface-integrals.html#1152-stokes-定理",
+      "url": "chapters/11-line-surface-integrals.html#1152-gauss-定理的补面法",
+      "body": ""
+    },
+    {
+      "id": "11-line-surface-integrals-1153-stokes-定理",
+      "title": "11.5.3 Stokes 定理",
+      "chapter": "04",
+      "chapterTitle": "第 11 章 曲线积分和曲面积分",
+      "url": "chapters/11-line-surface-integrals.html#1153-stokes-定理",
+      "body": ""
+    },
+    {
+      "id": "11-line-surface-integrals-1154-三大定理对比与选择策略",
+      "title": "11.5.4 三大定理对比与选择策略",
+      "chapter": "04",
+      "chapterTitle": "第 11 章 曲线积分和曲面积分",
+      "url": "chapters/11-line-surface-integrals.html#1154-三大定理对比与选择策略",
       "body": ""
     },
     {
@@ -689,11 +713,19 @@
       "body": ""
     },
     {
-      "id": "11-line-surface-integrals-1172-无源场与向量势",
-      "title": "11.7.2 无源场与向量势",
+      "id": "11-line-surface-integrals-1172-求势函数的方法",
+      "title": "11.7.2 求势函数的方法",
       "chapter": "04",
       "chapterTitle": "第 11 章 曲线积分和曲面积分",
-      "url": "chapters/11-line-surface-integrals.html#1172-无源场与向量势",
+      "url": "chapters/11-line-surface-integrals.html#1172-求势函数的方法",
+      "body": ""
+    },
+    {
+      "id": "11-line-surface-integrals-1173-非单连通域的反例",
+      "title": "11.7.3 非单连通域的反例",
+      "chapter": "04",
+      "chapterTitle": "第 11 章 曲线积分和曲面积分",
+      "url": "chapters/11-line-surface-integrals.html#1173-非单连通域的反例",
       "body": ""
     },
     {
@@ -721,11 +753,11 @@
       "body": ""
     },
     {
-      "id": "11-line-surface-integrals-本章综合习题选",
-      "title": "本章综合习题（选）",
+      "id": "11-line-surface-integrals-本章综合习题真题精选",
+      "title": "本章综合习题（真题精选）",
       "chapter": "04",
       "chapterTitle": "第 11 章 曲线积分和曲面积分",
-      "url": "chapters/11-line-surface-integrals.html#本章综合习题选",
+      "url": "chapters/11-line-surface-integrals.html#本章综合习题真题精选",
       "body": ""
     },
     {
@@ -734,7 +766,7 @@
       "chapter": "05",
       "chapterTitle": "第 12 章 Fourier 分析",
       "url": "chapters/12-fourier-analysis.html",
-      "body": "\r\n前面各章把函数在  空间区域  上积分；本章换一条思路——把「足够好的」函数写成  三角函数（或复指数）的叠加  ，在频率域里分析信号与周期现象。Fourier 级数处理周期函数；平方平均收敛给出 $L^2$ 意义下「最佳逼近」；Dirichlet 定理回答何时级数在每一点收敛；Fourier 积分与变换把周期推广到全直线，是偏微分方程、信号处理、量子力学的共同语言。\r\n\r\n  本章主线  ：正交性 $\\Rightarrow$ 系数公式 $\\Rightarrow$ 级数展开 $\\Rightarrow$ 三种收敛（一致 / 逐点 / 平方平均）$\\Rightarrow$ 非周期情形的 Fourier 变换。计算题要分清：周期延拓方式、奇偶性、半区间展开类型；理论题要分清：$L^2$ 收敛条件最宽，Dirichlet 条件保证逐点收敛到 $\\tfrac12 f ++f   $。\r\n\r\n   \r\n\r\n   12.1 Fourier 级数\r\n\r\n    12.1.1 三角函数系的正交性\r\n\r\n在区间 $  \\pi,\\pi $ 上，考虑函数系\r\n$$1,\\ \\cos x,\\ \\cos 2x,\\ \\ldots,\\ \\cos nx,\\ \\ldots;\\qquad \\sin x,\\ \\sin 2x,\\ \\ldots,\\ \\sin nx,\\ \\ldots.$$\r\n对任意 $m,n\\in\\mathbb N $（$m,n\\ge 1$），有\r\n$$\\int   \\pi ^ \\pi \\cos mx\\,\\cos nx\\,dx=\r\n\\begin cases \r\n\\pi, & m=n,\\\\\r\n0, & m\\neq n,\r\n\\end cases \\qquad\r\n\\int   \\pi ^ \\pi \\sin mx\\,\\sin nx\\,dx=\r\n\\begin cases \r\n\\pi, & m=n,\\\\\r\n0, & m\\neq n,\r\n\\end cases $$\r\n$$\\int   \\pi ^ \\pi \\sin mx\\,\\cos nx\\,dx=0,\\qquad\r\n\\int   \\pi ^ \\pi \\cos nx\\,dx=0,\\ \\int   \\pi ^ \\pi \\sin nx\\,dx=0.$$\r\n此外 $\\displaystyle\\int   \\pi ^ \\pi 1\\cdot 1\\,dx=2\\pi$。\r\n\r\n  验证一例  ：$m\\neq n$ 时，\r\n$$\\int   \\pi ^ \\pi \\cos mx\\cos nx\\,dx=\\frac12\\int   \\pi ^ \\pi \\big \\cos m+n x+\\cos m n x\\big \\,dx=0,$$\r\n因 $m\\pm n\\neq 0$，$\\cos kx$ 在完整周期上积分为零。$m=n$ 时 $\\cos^2 nx=\\tfrac12 1+\\cos 2nx $，得 $\\pi$。$\\sin mx\\cos nx$ 可写成 $\\tfrac12 \\sin m+n x+\\sin m n x $，两项在 $  \\pi,\\pi $ 上亦为零。\r\n\r\n  内积与正交  ：对平方可积函数 $f,g$，定义\r\n$$\\langle f,g\\rangle=\\frac 1  \\pi \\int   \\pi ^ \\pi  f x g x \\,dx.$$\r\n则上述系在加权意义下两两正交；$\\ \\cos nx\\   n\\ge0 $、$\\ \\sin nx\\   n\\ge1 $ 各自构成正交系（$\\cos 0=1$ 单独计）。\r\n\r\n:::callout 正交性的计算技巧\r\n利用 $\\cos mx\\cos nx=\\tfrac12 \\cos m+n x+\\cos m n x $ 等积化和差，把乘积化为单项三角函数在完整周期上的积分。$\\int   \\pi ^ \\pi \\cos kx\\,dx=0$（$k\\neq0$）来自「正负半周抵消」；$\\int   \\pi ^ \\pi \\cos^2 kx\\,dx=\\pi$ 可用倍角公式 $\\cos^2 kx=\\tfrac12 1+\\cos 2kx $。\r\n\r\n  归一化写法  ：令 $\\phi 0=1/\\sqrt2$，$\\phi n=\\cos nx$，$\\psi n=\\sin nx$（$n\\ge1$），则 $\\langle\\phi m,\\phi n\\rangle=\\delta  mn $，$\\langle\\psi m,\\psi n\\rangle=\\delta  mn $，$\\langle\\phi m,\\psi n\\rangle=0$。Fourier 系数可写 $a n/\\sqrt2=\\langle f,\\phi n\\rangle$（$n\\ge0$），$b n=\\langle f,\\psi n\\rangle$，与有限维"
+      "body": "\r\n  📋   本章期末速查  \r\n    必考（每年 1 2 题，15 20 分）：Fourier 展开（含半区间展开）+ Parseval 等式求数项级数和\r\n    常考：幂级数求和函数、Dirichlet 积分应用\r\n    了解：Fourier 变换的基本性质、复数形式\r\n\r\n前面各章把函数在  空间区域  上积分；本章换一条思路——把「足够好的」函数写成  三角函数（或复指数）的叠加  ，在频率域里分析信号与周期现象。Fourier 级数处理周期函数；平方平均收敛给出 $L^2$ 意义下「最佳逼近」；Dirichlet 定理回答何时级数在每一点收敛；Fourier 积分与变换把周期推广到全直线，是偏微分方程、信号处理、量子力学的共同语言。\r\n\r\n  本章主线  ：正交性 $\\Rightarrow$ 系数公式 $\\Rightarrow$ 级数展开 $\\Rightarrow$ 三种收敛（一致 / 逐点 / 平方平均）$\\Rightarrow$ 非周期情形的 Fourier 变换。计算题要分清：周期延拓方式、奇偶性、半区间展开类型；理论题要分清：$L^2$ 收敛条件最宽，Dirichlet 条件保证逐点收敛到 $\\tfrac12 f ++f   $。\r\n\r\n   \r\n\r\n   12.1 Fourier 级数\r\n\r\n  🔴   考试重要度：极高     展开 + 求和函数 + 利用展开求数项级数，每年必考\r\n\r\n    12.1.1 三角函数系的正交性\r\n\r\n在区间 $  \\pi,\\pi $ 上，考虑函数系\r\n$$1,\\ \\cos x,\\ \\cos 2x,\\ \\ldots,\\ \\cos nx,\\ \\ldots;\\qquad \\sin x,\\ \\sin 2x,\\ \\ldots,\\ \\sin nx,\\ \\ldots.$$\r\n对任意 $m,n\\in\\mathbb N $（$m,n\\ge 1$），有\r\n$$\\int   \\pi ^ \\pi \\cos mx\\,\\cos nx\\,dx=\r\n\\begin cases \r\n\\pi, & m=n,\\\\\r\n0, & m\\neq n,\r\n\\end cases \\qquad\r\n\\int   \\pi ^ \\pi \\sin mx\\,\\sin nx\\,dx=\r\n\\begin cases \r\n\\pi, & m=n,\\\\\r\n0, & m\\neq n,\r\n\\end cases $$\r\n$$\\int   \\pi ^ \\pi \\sin mx\\,\\cos nx\\,dx=0,\\qquad\r\n\\int   \\pi ^ \\pi \\cos nx\\,dx=0,\\ \\int   \\pi ^ \\pi \\sin nx\\,dx=0.$$\r\n此外 $\\displaystyle\\int   \\pi ^ \\pi 1\\cdot 1\\,dx=2\\pi$。\r\n\r\n  验证一例  ：$m\\neq n$ 时，\r\n$$\\int   \\pi ^ \\pi \\cos mx\\cos nx\\,dx=\\frac12\\int   \\pi ^ \\pi \\big \\cos m+n x+\\cos m n x\\big \\,dx=0,$$\r\n因 $m\\pm n\\neq 0$，$\\cos kx$ 在完整周期上积分为零。$m=n$ 时 $\\cos^2 nx=\\tfrac12 1+\\cos 2nx $，得 $\\pi$。$\\sin mx\\cos nx$ 可写成 $\\tfrac12 \\sin m+n x+\\sin m n x $，两项在 $  \\pi,\\pi $ 上亦为零。\r\n\r\n  内积与正交  ：对平方可积函数 $f,g$，定义\r\n$$\\langle f,g\\rangle=\\frac 1  \\pi \\int   \\pi ^ \\pi  f x g x \\,dx.$$\r\n则上述系在加权意义下两两正交；$\\ \\cos nx\\   n\\ge0 $、$\\ \\sin nx\\   n\\ge1 $ 各自构成正交系（$\\cos 0=1$ 单独计）。\r\n\r\n:::callout 正交性的计算技巧\r\n利用 $\\cos mx\\cos nx=\\tfrac12 \\cos m+n x+\\cos m n x $ 等积化和差，把乘积化为单项三角函数在完整周期上的积分。$\\int   \\pi ^ \\pi \\cos kx\\,dx=0$（$k\\neq0$）来自「正负半周抵消」；$\\int   \\pi ^ \\pi \\cos^2 kx\\,dx=\\pi$ 可用倍角公式 $\\cos^2 kx=\\tfrac12 1+\\cos 2kx $。\r\n\r\n  归一化写法  ：令 $\\phi 0=1/\\sqrt2$，$\\phi n=\\cos nx$，$\\psi n=\\sin nx$（$n\\ge1$），则 $\\langle\\phi m,\\"
     },
     {
       "id": "12-fourier-analysis-121-fourier-级数",
@@ -785,11 +817,11 @@
       "body": ""
     },
     {
-      "id": "12-fourier-analysis-1221-math_block_257-内积与正交投影",
+      "id": "12-fourier-analysis-1221-math_block_261-内积与正交投影",
       "title": "12.2.1 $L^2$ 内积与正交投影",
       "chapter": "05",
       "chapterTitle": "第 12 章 Fourier 分析",
-      "url": "chapters/12-fourier-analysis.html#1221-math_block_257-内积与正交投影",
+      "url": "chapters/12-fourier-analysis.html#1221-math_block_261-内积与正交投影",
       "body": ""
     },
     {
@@ -857,11 +889,11 @@
       "body": ""
     },
     {
-      "id": "12-fourier-analysis-本章综合习题选",
-      "title": "本章综合习题（选）",
+      "id": "12-fourier-analysis-本章综合习题真题精选",
+      "title": "本章综合习题（真题精选）",
       "chapter": "05",
       "chapterTitle": "第 12 章 Fourier 分析",
-      "url": "chapters/12-fourier-analysis.html#本章综合习题选",
+      "url": "chapters/12-fourier-analysis.html#本章综合习题真题精选",
       "body": ""
     },
     {
@@ -870,7 +902,7 @@
       "chapter": "06",
       "chapterTitle": "第 13 章 反常积分和含参变量的积分",
       "url": "chapters/13-improper-parameter-integrals.html",
-      "body": "\r\n前面各章的定积分、重积分都建立在  有限区间  与  有界被积函数  上。当积分区间无界，或被积函数在区间内无界时，Riemann 和不再直接适用，需要引入  反常积分  （广义积分）并重新讨论敛散性。进一步，若被积函数还依赖参数 $t$，则积分值本身成为 $t$ 的函数——  含参变量的积分  ——其连续性、可微性、可积性不能简单「在积分号下求导/换序」，而需  一致收敛  等条件保证。本章末引入 Euler 的 $\\Gamma$ 函数与 $B$ 函数，它们是连接分析、概率与特殊函数的经典桥梁。\r\n\r\n  学习路线建议  ：\r\n1. 先掌握 §13.1 的判敛法（比较法 + $p$ 积分），这是后面一切含参反常积分的基础；\r\n2. §13.3 的 Leibniz 法则在有限区间上可直接用，与一元微积分一致；\r\n3. §13.4 的一致收敛是本章难点，务必区分「逐点收敛」与「一致收敛」；\r\n4. §13.5 的 $\\Gamma$、$B$ 函数作为计算工具熟记，余元公式 $\\Gamma s \\Gamma 1 s =\\pi/\\sin \\pi s $ 可暂不证。\r\n\r\n   \r\n\r\n   13.1 反常积分\r\n\r\n    13.1.1 无穷区间上的反常积分\r\n\r\n设 $f$ 在 $ a,+\\infty $ 上定义，且对任意 $A a$，$\\displaystyle\\int a^A f x \\,dx$ 存在（常义 Riemann 积分）。定义\r\n$$F A =\\int a^A f x \\,dx.$$\r\n若极限 $\\displaystyle\\lim  A\\to+\\infty  F A =I$ 存在且有限，则称反常积分 $\\displaystyle\\int a^ +\\infty  f x \\,dx$   收敛  ，其值为 $I$；否则称  发散  。类似定义 $\\displaystyle\\int   \\infty ^b f x \\,dx$ 与 $\\displaystyle\\int   \\infty ^ +\\infty  f x \\,dx$（后者拆成两段，  两段都收敛  才收敛）。\r\n\r\n  例 13.1   $\\displaystyle\\int 1^ +\\infty  \\frac 1  x^2 \\,dx=\\lim  A\\to+\\infty \\int 1^A x^  2 \\,dx=\\lim  A\\to+\\infty \\Big 1 \\frac 1  A \\Big =1$，收敛。\r\n\r\n  例 13.2   $\\displaystyle\\int 1^ +\\infty  \\frac 1  x \\,dx=\\lim  A\\to+\\infty \\ln A=+\\infty$，发散。\r\n\r\n  Cauchy 收敛准则  ：$\\displaystyle\\int a^ +\\infty  f x \\,dx$ 收敛 ⇔ 对任意 $\\varepsilon 0$，存在 $A 0$，当 $A',A'' A 0$ 时有 $\\big \\int  A' ^ A''  f x \\,dx\\big <\\varepsilon$。证明与数列 Cauchy 准则相同：令 $F A =\\int a^A f$，则反常积分收敛 ⇔ $\\ F A \\ $ 收敛 ⇔ $\\ F A \\ $ 为 Cauchy 列。\r\n\r\n  绝对收敛  ：若 $\\displaystyle\\int a^ +\\infty   f x  \\,dx$ 收敛，则称 $\\displaystyle\\int a^ +\\infty  f x \\,dx$   绝对收敛  。绝对收敛 ⇒ 收敛（用 Cauchy 准则与三角不等式）。反之不成立：$\\displaystyle\\int 1^ +\\infty \\frac \\sin x  x \\,dx$ 收敛但 $\\int 1^ +\\infty  \\sin x /x\\,dx$ 发散（条件收敛）。\r\n\r\n    13.1.2 无界函数的反常积分\r\n\r\n设 $f$ 在 $ a,b $ 上定义，在 $x=a$ 附近无界（  瑕点  在左端）。若对 $\\varepsilon\\in 0,b a $，$\\displaystyle\\int  a+\\varepsilon ^b f x \\,dx$ 存在，且\r\n$$\\lim  \\varepsilon\\to 0^+ \\int  a+\\varepsilon ^b f x \\,dx=I$$\r\n存在有限，则称 $\\displaystyle\\int a^b f x \\,dx$ 收敛，值为 $I$。瑕点在内部或右端时定义类似；多个瑕点需分段讨论。\r\n\r\n  例 13.3   $\\displaystyle\\int 0^1 \\frac 1  \\sqrt x  \\,dx=\\li"
+      "body": "\r\n  📋   本章期末速查  \r\n    必考（每年 2 3 题，20 30 分）：含参积分求导（Leibniz 法则 + 一致收敛验证）、Γ/B 函数计算、一致收敛判别\r\n    常考：反常积分收敛性讨论、Dirichlet 积分应用、余元公式\r\n    了解：反常重积分、含参积分换序条件\r\n\r\n前面各章的定积分、重积分都建立在  有限区间  与  有界被积函数  上。当积分区间无界，或被积函数在区间内无界时，Riemann 和不再直接适用，需要引入  反常积分  （广义积分）并重新讨论敛散性。进一步，若被积函数还依赖参数 $t$，则积分值本身成为 $t$ 的函数——  含参变量的积分  ——其连续性、可微性、可积性不能简单「在积分号下求导/换序」，而需  一致收敛  等条件保证。本章末引入 Euler 的 $\\Gamma$ 函数与 $B$ 函数，它们是连接分析、概率与特殊函数的经典桥梁。\r\n\r\n  学习路线建议  ：\r\n1. 先掌握 §13.1 的判敛法（比较法 + $p$ 积分），这是后面一切含参反常积分的基础；\r\n2. §13.3 的 Leibniz 法则在有限区间上可直接用，与一元微积分一致；\r\n3. §13.4 的一致收敛是本章难点，务必区分「逐点收敛」与「一致收敛」；\r\n4. §13.5 的 $\\Gamma$、$B$ 函数作为计算工具熟记，余元公式 $\\Gamma s \\Gamma 1 s =\\pi/\\sin \\pi s $ 可暂不证。\r\n\r\n   \r\n\r\n   13.1 反常积分\r\n\r\n  🟡   考试重要度：中等     判敛法作为含参积分的基础工具出现，偶尔独立出小题\r\n\r\n    13.1.1 无穷区间上的反常积分\r\n\r\n设 $f$ 在 $ a,+\\infty $ 上定义，且对任意 $A a$，$\\displaystyle\\int a^A f x \\,dx$ 存在（常义 Riemann 积分）。定义\r\n$$F A =\\int a^A f x \\,dx.$$\r\n若极限 $\\displaystyle\\lim  A\\to+\\infty  F A =I$ 存在且有限，则称反常积分 $\\displaystyle\\int a^ +\\infty  f x \\,dx$   收敛  ，其值为 $I$；否则称  发散  。类似定义 $\\displaystyle\\int   \\infty ^b f x \\,dx$ 与 $\\displaystyle\\int   \\infty ^ +\\infty  f x \\,dx$（后者拆成两段，  两段都收敛  才收敛）。\r\n\r\n  例 13.1   $\\displaystyle\\int 1^ +\\infty  \\frac 1  x^2 \\,dx=\\lim  A\\to+\\infty \\int 1^A x^  2 \\,dx=\\lim  A\\to+\\infty \\Big 1 \\frac 1  A \\Big =1$，收敛。\r\n\r\n  例 13.2   $\\displaystyle\\int 1^ +\\infty  \\frac 1  x \\,dx=\\lim  A\\to+\\infty \\ln A=+\\infty$，发散。\r\n\r\n  Cauchy 收敛准则  ：$\\displaystyle\\int a^ +\\infty  f x \\,dx$ 收敛 ⇔ 对任意 $\\varepsilon 0$，存在 $A 0$，当 $A',A'' A 0$ 时有 $\\big \\int  A' ^ A''  f x \\,dx\\big <\\varepsilon$。证明与数列 Cauchy 准则相同：令 $F A =\\int a^A f$，则反常积分收敛 ⇔ $\\ F A \\ $ 收敛 ⇔ $\\ F A \\ $ 为 Cauchy 列。\r\n\r\n  绝对收敛  ：若 $\\displaystyle\\int a^ +\\infty   f x  \\,dx$ 收敛，则称 $\\displaystyle\\int a^ +\\infty  f x \\,dx$   绝对收敛  。绝对收敛 ⇒ 收敛（用 Cauchy 准则与三角不等式）。反之不成立：$\\displaystyle\\int 1^ +\\infty \\frac \\sin x  x \\,dx$ 收敛但 $\\int 1^ +\\infty  \\sin x /x\\,dx$ 发散（条件收敛）。\r\n\r\n    13.1.2 无界函数的反常积分\r\n\r\n设 $f$ 在 $ a,b $ 上定义，在 $x=a$ 附近无界（  瑕点  在左端）。若对 $\\varepsilon\\in 0,b a $，$\\displaystyle\\int  a+\\varepsilon ^b f x \\,dx$ 存在，且\r\n$$\\li"
     },
     {
       "id": "13-improper-parameter-integrals-131-反常积分",
@@ -897,11 +929,11 @@
       "body": ""
     },
     {
-      "id": "13-improper-parameter-integrals-1313-比较判别法与-math_block_83-积分",
+      "id": "13-improper-parameter-integrals-1313-比较判别法与-math_block_89-积分",
       "title": "13.1.3 比较判别法与 $p$-积分",
       "chapter": "06",
       "chapterTitle": "第 13 章 反常积分和含参变量的积分",
-      "url": "chapters/13-improper-parameter-integrals.html#1313-比较判别法与-math_block_83-积分",
+      "url": "chapters/13-improper-parameter-integrals.html#1313-比较判别法与-math_block_89-积分",
       "body": ""
     },
     {
@@ -1001,19 +1033,19 @@
       "body": ""
     },
     {
-      "id": "13-improper-parameter-integrals-135-math_block_378-函数与-math_block_379-函数",
+      "id": "13-improper-parameter-integrals-135-math_block_384-函数与-math_block_385-函数",
       "title": "13.5 $\\Gamma$ 函数与 $B$ 函数",
       "chapter": "06",
       "chapterTitle": "第 13 章 反常积分和含参变量的积分",
-      "url": "chapters/13-improper-parameter-integrals.html#135-math_block_378-函数与-math_block_379-函数",
+      "url": "chapters/13-improper-parameter-integrals.html#135-math_block_384-函数与-math_block_385-函数",
       "body": ""
     },
     {
-      "id": "13-improper-parameter-integrals-1351-math_block_380-函数",
+      "id": "13-improper-parameter-integrals-1351-math_block_386-函数",
       "title": "13.5.1 $\\Gamma$ 函数",
       "chapter": "06",
       "chapterTitle": "第 13 章 反常积分和含参变量的积分",
-      "url": "chapters/13-improper-parameter-integrals.html#1351-math_block_380-函数",
+      "url": "chapters/13-improper-parameter-integrals.html#1351-math_block_386-函数",
       "body": ""
     },
     {
@@ -1025,11 +1057,11 @@
       "body": ""
     },
     {
-      "id": "13-improper-parameter-integrals-1353-math_block_425-函数",
+      "id": "13-improper-parameter-integrals-1353-math_block_431-函数",
       "title": "13.5.3 $B$ 函数",
       "chapter": "06",
       "chapterTitle": "第 13 章 反常积分和含参变量的积分",
-      "url": "chapters/13-improper-parameter-integrals.html#1353-math_block_425-函数",
+      "url": "chapters/13-improper-parameter-integrals.html#1353-math_block_431-函数",
       "body": ""
     },
     {
@@ -1041,11 +1073,11 @@
       "body": ""
     },
     {
-      "id": "13-improper-parameter-integrals-本章综合习题选",
-      "title": "本章综合习题（选）",
+      "id": "13-improper-parameter-integrals-本章综合习题真题精选",
+      "title": "本章综合习题（真题精选）",
       "chapter": "06",
       "chapterTitle": "第 13 章 反常积分和含参变量的积分",
-      "url": "chapters/13-improper-parameter-integrals.html#本章综合习题选",
+      "url": "chapters/13-improper-parameter-integrals.html#本章综合习题真题精选",
       "body": ""
     }
   ]

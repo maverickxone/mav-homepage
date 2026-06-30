@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Transformer — 人工智能与数学原理</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" id="hljs-light" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+<link rel="stylesheet" id="hljs-dark" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" media="not all">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+</head>
+<body>
+
+<div class="progress-bar" id="progress-bar"></div>
+
+<nav class="topnav" id="topnav">
+  <div class="topnav-inner">
+    <a class="brand" href="../index.html">人工智能与数学原理</a>
+    <div class="nav-links">
+      <a href="01-ml-math-foundations.html">01</a>
+      <a href="02-linear-logistic-regression.html">02</a>
+      <a href="03-neural-networks-cnn.html">03</a>
+      <a href="04-backpropagation.html">04</a>
+      <a href="05-graph-neural-networks.html">05</a>
+      <a href="06-transformer.html" class="active">06</a>
+      <a href="07-ssl-lm-rl.html">07</a>
+    </div>
+    <div class="nav-controls">
+      <button class="nav-btn" id="search-btn" aria-label="搜索 (Ctrl+K)">⌘K</button>
+      <button class="nav-btn" id="settings-btn" aria-label="阅读设置">Aa</button>
+      <a class="nav-btn" href="../../index.html" aria-label="返回知识库">← 知识库</a>
+      <a class="nav-btn" href="https://github.com/maverickxone/mav-homepage" target="_blank" rel="noopener" aria-label="GitHub" style="padding: 6px 8px;"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg></a>
+    </div>
+  </div>
+</nav>
+<div class="settings-pop" id="settings-pop">
+  <h5>主题</h5>
+  <div class="row">
+    <button class="seg" data-theme-set="light">明亮</button>
+    <button class="seg" data-theme-set="dark">暗色</button>
+  </div>
+  <h5>字号</h5>
+  <div class="row">
+    <button class="seg" data-size-set="s">小</button>
+    <button class="seg" data-size-set="m">中</button>
+    <button class="seg" data-size-set="l">大</button>
+  </div>
+</div>
+
+<div class="with-sidebar">
+  <aside class="sidebar">
+  <div class="chapter-num">CHAPTER 06</div>
+  <div class="chapter-name">Transformer</div>
+  <h4>目录</h4>
+  <ul>
+    <li><a href="#本章导读">本章导读</a></li>
+    <li><a href="#rnn-的困境">RNN 的困境</a></li>
+    <li><a href="#注意力机制attention">注意力机制（Attention）</a></li>
+    <li><a href="#自注意力self-attention">自注意力（Self-Attention）</a></li>
+    <li><a href="#手算自注意力完整示例">手算自注意力完整示例</a></li>
+    <li><a href="#多头注意力multi-head-attention">多头注意力（Multi-Head Attention）</a></li>
+    <li><a href="#transformer-完整架构">Transformer 完整架构</a></li>
+    <li><a href="#掩码机制masking">掩码机制（Masking）</a></li>
+    <li><a href="#transformer-应用架构">Transformer 应用架构</a></li>
+    <li><a href="#本章计算要点速查">本章计算要点速查</a></li>
+    <li><a href="#注意力的计算复杂度">注意力的计算复杂度</a></li>
+    <li><a href="#transformer-与-cnnrnn-的对比">Transformer 与 CNN、RNN 的对比</a></li>
+    <li><a href="#完整的单层编码器前向传播">完整的单层编码器前向传播</a></li>
+    <li><a href="#为什么-transformer-能统一-nlp-和-cv">为什么 Transformer 能统一 NLP 和 CV</a></li>
+  </ul>
+</aside>
+  <article class="chapter-body">
+    <header class="chapter-head">
+  <div class="chapter-head-meta">
+    <span class="num">CHAPTER 06</span>
+    <span>≈ 55 MIN READ</span>
+  </div>
+  <h1>Transformer</h1>
+
+</header>
+    <h2 id="本章导读">本章导读</h2>
+<p>Transformer 是当代深度学习最核心的架构——GPT、BERT、Vision Transformer、扩散模型的骨架都是它。它用<strong>注意力机制</strong>完全替代了 RNN 的循环结构，实现了并行计算和对长距离依赖的直接建模。</p>
+<p>本章从&quot;为什么需要注意力&quot;开始，完整推导自注意力的数学，手算一个完整的自注意力示例，详解多头注意力的参数量计算，最后拆解整个 Transformer 的编码器-解码器架构。</p>
+<hr>
+<h2 id="rnn-的困境">RNN 的困境</h2>
+<h3 id="rnn-基本结构回顾">RNN 基本结构回顾</h3>
+<p>RNN 按时间步顺序处理序列，每步的隐状态依赖上一步：</p>
+<p>$$\boldsymbol{h}_t = f(\boldsymbol{W}_h \boldsymbol{h}_{t-1} + \boldsymbol{W}_x \boldsymbol{x}_t + \boldsymbol{b})$$</p>
+<p>输入 $\boldsymbol{x}_1, \boldsymbol{x}_2, \ldots, \boldsymbol{x}_T$ 被逐步&quot;压缩&quot;到最终的隐状态 $\boldsymbol{h}_T$。</p>
+<h3 id="rnn-的三大问题">RNN 的三大问题</h3>
+<p><strong>1. 长距离依赖困难</strong></p>
+<p>信息只能通过隐状态逐步传递。位置 1 的信息要到达位置 100，必须经过 99 步传递——每步都会衰减（梯度消失）。</p>
+<p>数学上：$\frac{\partial \boldsymbol{h}_T}{\partial \boldsymbol{h}_1} = \prod_{t=1}^{T-1} \frac{\partial \boldsymbol{h}_{t+1}}{\partial \boldsymbol{h}_t}$</p>
+<p>这个连乘项在 $T$ 很大时要么消失要么爆炸。</p>
+<p><strong>2. 无法并行计算</strong></p>
+<p>$\boldsymbol{h}_t$ 必须等 $\boldsymbol{h}_{t-1}$ 算完才能算——天然的顺序依赖。在 GPU 上无法并行，序列越长训练越慢。</p>
+<p><strong>3. 信息瓶颈</strong></p>
+<p>整个输入序列被压缩到一个固定维度的向量 $\boldsymbol{h}_T$。对于长序列，这个向量不可能携带所有信息——必然有信息损失。</p>
+<h3 id="lstm-的部分缓解">LSTM 的部分缓解</h3>
+<p>LSTM 通过<strong>记忆单元</strong> $\boldsymbol{c}_t$ 和<strong>门控机制</strong>缓解梯度消失：</p>
+<ul>
+<li><strong>遗忘门</strong> $\boldsymbol{f}_t = \sigma(\boldsymbol{W}_f[\boldsymbol{h}_{t-1}, \boldsymbol{x}_t])$：决定丢弃多少旧记忆</li>
+<li><strong>输入门</strong> $\boldsymbol{i}_t = \sigma(\boldsymbol{W}_i[\boldsymbol{h}_{t-1}, \boldsymbol{x}_t])$：决定写入多少新信息</li>
+<li><strong>记忆更新</strong> $\boldsymbol{c}_t = \boldsymbol{f}_t \odot \boldsymbol{c}_{t-1} + \boldsymbol{i}_t \odot \tilde{\boldsymbol{c}}_t$</li>
+<li><strong>输出门</strong> $\boldsymbol{o}_t = \sigma(\boldsymbol{W}_o[\boldsymbol{h}_{t-1}, \boldsymbol{x}_t])$：决定输出多少记忆</li>
+<li><strong>隐状态</strong> $\boldsymbol{h}_t = \boldsymbol{o}_t \odot \tanh(\boldsymbol{c}_t)$</li>
+</ul>
+<p>关键：记忆单元 $\boldsymbol{c}_t$ 有一条&quot;高速公路&quot;——乘以接近 1 的遗忘门可以让信息无损传递很远。</p>
+<p>但 LSTM <strong>仍然无法并行</strong>，只是&quot;不那么容易忘&quot;而已。</p>
+<h3 id="注意力的动机">注意力的动机</h3>
+<p><strong>能不能让每个位置直接&quot;看到&quot;序列中任意其他位置？</strong> 不需要逐步传递，直接建立任意两点之间的连接——这就是注意力机制。</p>
+<hr>
+<h2 id="注意力机制attention">注意力机制（Attention）</h2>
+<h3 id="基本框架">基本框架</h3>
+<p>注意力可以理解为一种<strong>可微的查字典</strong>操作：</p>
+<ul>
+<li><strong>Query（查询）</strong>：我在找什么</li>
+<li><strong>Key（键）</strong>：每个候选有什么&quot;标签&quot;</li>
+<li><strong>Value（值）</strong>：每个候选的实际内容</li>
+</ul>
+<p>给定 query $\boldsymbol{q}$，和 $n$ 个键值对 $\{(\boldsymbol{k}_i, \boldsymbol{v}_i)\}_{i=1}^n$：</p>
+<ol>
+<li>计算 query 和每个 key 的<strong>匹配度</strong>（打分）</li>
+<li>将打分归一化为<strong>权重</strong>（概率分布）</li>
+<li>用权重对 value 做<strong>加权求和</strong></li>
+</ol>
+<p>$$\text{Output} = \sum_{i=1}^n \alpha_i \boldsymbol{v}_i, \quad \text{其中 } \alpha_i = \frac{\text{score}(\boldsymbol{q}, \boldsymbol{k}_i)}{\sum_j \text{score}(\boldsymbol{q}, \boldsymbol{k}_j)}$$</p>
+<h3 id="前馈注意力additive-bahdanau-attention">前馈注意力（Additive / Bahdanau Attention）</h3>
+<p>打分函数：
+$$e_i = \boldsymbol{w}^T \tanh(\boldsymbol{W}_q \boldsymbol{q} + \boldsymbol{W}_k \boldsymbol{k}_i)$$</p>
+<p>归一化：
+$$\alpha_i = \text{softmax}(e_i) = \frac{\exp(e_i)}{\sum_{j=1}^n \exp(e_j)}$$</p>
+<p>输出：
+$$\text{Attention}(\boldsymbol{q}) = \sum_{i=1}^n \alpha_i \boldsymbol{v}_i$$</p>
+<p><strong>缺点</strong>：打分函数包含可学习参数和 tanh，计算量较大。</p>
+<h3 id="点积注意力dot-product-attention">点积注意力（Dot-Product Attention）</h3>
+<p>$$e_i = \boldsymbol{q}^T \boldsymbol{k}_i$$</p>
+<p>直接用内积衡量相似度——计算简单、可用矩阵乘法批量计算。</p>
+<hr>
+<h2 id="自注意力self-attention">自注意力（Self-Attention）</h2>
+<h3 id="核心思想">核心思想</h3>
+<p>在前馈注意力中，query 来自一个地方，key/value 来自另一个地方。</p>
+<p>在<strong>自注意力</strong>中，query、key、value <strong>全部来自同一个输入序列</strong>——让序列中每个位置都能&quot;看到&quot;其他所有位置。</p>
+<h3 id="qkv-投影">QKV 投影</h3>
+<p>给定输入序列 $\boldsymbol{X} \in \mathbb{R}^{n \times d}$（$n$ 个 token，每个 $d$ 维）：</p>
+<p>通过三个独立的线性投影，从同一个输入中生成 Q、K、V：</p>
+<p>$$\boldsymbol{Q} = \boldsymbol{X}\boldsymbol{W}_Q \in \mathbb{R}^{n \times d_k}$$
+$$\boldsymbol{K} = \boldsymbol{X}\boldsymbol{W}_K \in \mathbb{R}^{n \times d_k}$$
+$$\boldsymbol{V} = \boldsymbol{X}\boldsymbol{W}_V \in \mathbb{R}^{n \times d_v}$$</p>
+<p>其中 $\boldsymbol{W}_Q, \boldsymbol{W}_K \in \mathbb{R}^{d \times d_k}$，$\boldsymbol{W}_V \in \mathbb{R}^{d \times d_v}$。</p>
+<p><strong>为什么要分别投影？</strong> 直接用 $\boldsymbol{X}$ 同时当 Q/K/V 表达力不够。投影让网络学会&quot;用什么视角去查询&quot;（Q）、&quot;怎么被查询&quot;（K）、&quot;查到后返回什么信息&quot;（V）——三个不同的角色。</p>
+<h3 id="缩放点积注意力scaled-dot-product-attention">缩放点积注意力（Scaled Dot-Product Attention）</h3>
+<p>$$\text{Attention}(\boldsymbol{Q}, \boldsymbol{K}, \boldsymbol{V}) = \text{softmax}\left(\frac{\boldsymbol{Q}\boldsymbol{K}^T}{\sqrt{d_k}}\right)\boldsymbol{V}$$</p>
+<p><strong>分步拆解</strong>：</p>
+<p><strong>Step 1：计算打分矩阵</strong></p>
+<p>$$\boldsymbol{S} = \boldsymbol{Q}\boldsymbol{K}^T \in \mathbb{R}^{n \times n}$$</p>
+<p>$S_{ij} = \boldsymbol{q}_i^T \boldsymbol{k}_j$：位置 $i$ 对位置 $j$ 的&quot;关注度&quot;。</p>
+<p><strong>Step 2：缩放</strong></p>
+<p>$$\boldsymbol{S}' = \frac{\boldsymbol{S}}{\sqrt{d_k}}$$</p>
+<p><strong>Step 3：Softmax 归一化（按行）</strong></p>
+<p>$$A_{ij} = \frac{\exp(S'_{ij})}{\sum_{k=1}^n \exp(S'_{ik})}$$</p>
+<p>$\boldsymbol{A} \in \mathbb{R}^{n \times n}$ 的每一行是一个概率分布，表示该位置对各位置的注意力权重。</p>
+<p><strong>Step 4：加权聚合 Value</strong></p>
+<p>$$\boldsymbol{Z} = \boldsymbol{A}\boldsymbol{V} \in \mathbb{R}^{n \times d_v}$$</p>
+<p>$\boldsymbol{z}_i = \sum_j A_{ij} \boldsymbol{v}_j$：位置 $i$ 的输出是所有 value 的加权组合。</p>
+<h3 id="为什么除以-math_block_62">为什么除以 $\sqrt{d_k}$</h3>
+<p><strong>问题</strong>：当 $d_k$ 很大时，点积 $\boldsymbol{q}^T\boldsymbol{k}$ 的方差也很大。</p>
+<p><strong>分析</strong>：假设 $q_i, k_i$ 独立、均值 0、方差 1：
+$$\text{Var}(\boldsymbol{q}^T\boldsymbol{k}) = \text{Var}\left(\sum_{i=1}^{d_k} q_i k_i\right) = \sum_{i=1}^{d_k} \text{Var}(q_i k_i) = d_k$$</p>
+<p>当 $d_k = 64$ 时，方差为 64，标准差为 8。这意味着点积值可能很大或很小。</p>
+<p>大的点积值输入 softmax 后：</p>
+<ul>
+<li>softmax 接近 one-hot（几乎所有注意力集中在一个位置）</li>
+<li>softmax 梯度趋近于 0（饱和区）→ <strong>训练困难</strong></li>
+</ul>
+<p>除以 $\sqrt{d_k}$ 后方差变为 1，softmax 输入在合理范围内。</p>
+<hr>
+<h2 id="手算自注意力完整示例">手算自注意力完整示例</h2>
+<h3 id="输入">输入</h3>
+<p>4 个 token，每个 2 维（$n=4$，$d=2$）：</p>
+<p>$$\boldsymbol{X} = \begin{pmatrix} 1 & 0 \\ 0 & 1 \\ 1 & 1 \\ 0 & 0 \end{pmatrix}$$</p>
+<p>投影矩阵设为单位阵 $\boldsymbol{W}_Q = \boldsymbol{W}_K = \boldsymbol{W}_V = \boldsymbol{I}_{2\times2}$（简化），所以 $d_k = d_v = 2$。</p>
+<h3 id="step-1计算-q-k-v">Step 1：计算 Q, K, V</h3>
+<p>$$\boldsymbol{Q} = \boldsymbol{K} = \boldsymbol{V} = \boldsymbol{X} = \begin{pmatrix} 1 & 0 \\ 0 & 1 \\ 1 & 1 \\ 0 & 0 \end{pmatrix}$$</p>
+<h3 id="step-2打分矩阵">Step 2：打分矩阵</h3>
+<p>$$\boldsymbol{S} = \boldsymbol{Q}\boldsymbol{K}^T = \begin{pmatrix} 1 & 0 \\ 0 & 1 \\ 1 & 1 \\ 0 & 0 \end{pmatrix}\begin{pmatrix} 1 & 0 & 1 & 0 \\ 0 & 1 & 1 & 0 \end{pmatrix} = \begin{pmatrix} 1 & 0 & 1 & 0 \\ 0 & 1 & 1 & 0 \\ 1 & 1 & 2 & 0 \\ 0 & 0 & 0 & 0 \end{pmatrix}$$</p>
+<p>解读：</p>
+<ul>
+<li>位置 1（向量 $[1,0]$）和位置 3（$[1,1]$）的点积为 1——因为方向部分对齐</li>
+<li>位置 3 和自己的点积为 2——最大（自己最像自己）</li>
+<li>位置 4（零向量）和所有人点积都是 0</li>
+</ul>
+<h3 id="step-3缩放">Step 3：缩放</h3>
+<p>$$\boldsymbol{S}' = \frac{\boldsymbol{S}}{\sqrt{d_k}} = \frac{\boldsymbol{S}}{\sqrt{2}} = \begin{pmatrix} 0.707 & 0 & 0.707 & 0 \\ 0 & 0.707 & 0.707 & 0 \\ 0.707 & 0.707 & 1.414 & 0 \\ 0 & 0 & 0 & 0 \end{pmatrix}$$</p>
+<h3 id="step-4softmax按行">Step 4：Softmax（按行）</h3>
+<p><strong>第 1 行</strong>：$[0.707, 0, 0.707, 0]$</p>
+<p>分母 $D = e^{0.707} + e^0 + e^{0.707} + e^0 = 2.028 + 1 + 2.028 + 1 = 6.056$</p>
+<p>$$\alpha = [2.028/6.056,\; 1/6.056,\; 2.028/6.056,\; 1/6.056] \approx [0.335, 0.165, 0.335, 0.165]$$</p>
+<p><strong>第 4 行</strong>：$[0, 0, 0, 0]$</p>
+<p>所有相同 → 均匀分布：$[0.25, 0.25, 0.25, 0.25]$</p>
+<p><strong>第 3 行</strong>：$[0.707, 0.707, 1.414, 0]$</p>
+<p>$e^{0.707} \approx 2.028$，$e^{1.414} \approx 4.113$，$e^0 = 1$</p>
+<p>分母 $= 2.028 + 2.028 + 4.113 + 1 = 9.169$</p>
+<p>$$\alpha_3 \approx [0.221, 0.221, 0.449, 0.109]$$</p>
+<h3 id="step-5加权聚合">Step 5：加权聚合</h3>
+<p>$$\boldsymbol{z}_4 = 0.25 \cdot [1,0] + 0.25 \cdot [0,1] + 0.25 \cdot [1,1] + 0.25 \cdot [0,0] = [0.5, 0.5]$$</p>
+<p>位置 4（原本是零向量）通过注意力获得了其他位置信息的平均！</p>
+<p>$$\boldsymbol{z}_3 \approx 0.221[1,0] + 0.221[0,1] + 0.449[1,1] + 0.109[0,0] = [0.670, 0.670]$$</p>
+<p>位置 3 主要关注自己（权重 0.449），因为自己的 Q 和 K 最匹配。</p>
+<hr>
+<h2 id="多头注意力multi-head-attention">多头注意力（Multi-Head Attention）</h2>
+<h3 id="动机">动机</h3>
+<p>单个注意力头只能学习一种注意力模式。但语言中的关系是多样的——一个词可能同时需要：</p>
+<ul>
+<li>关注语法上的主语（一种模式）</li>
+<li>关注语义上的同义词（另一种模式）</li>
+<li>关注位置上的邻近词（又一种模式）</li>
+</ul>
+<p>多头注意力让模型在<strong>不同子空间</strong>中并行学习多种注意力模式。</p>
+<h3 id="公式">公式</h3>
+<p>$$\text{MultiHead}(\boldsymbol{Q}, \boldsymbol{K}, \boldsymbol{V}) = \text{Concat}(\text{head}_1, \ldots, \text{head}_h)\boldsymbol{W}_O$$</p>
+<p>每个头独立做自注意力：
+$$\text{head}_i = \text{Attention}(\boldsymbol{X}\boldsymbol{W}_Q^{(i)}, \boldsymbol{X}\boldsymbol{W}_K^{(i)}, \boldsymbol{X}\boldsymbol{W}_V^{(i)})$$</p>
+<p>每个头的投影矩阵维度较小：$\boldsymbol{W}_Q^{(i)}, \boldsymbol{W}_K^{(i)} \in \mathbb{R}^{d \times d_k}$，$\boldsymbol{W}_V^{(i)} \in \mathbb{R}^{d \times d_v}$。</p>
+<p>通常设 $d_k = d_v = d/h$（总维度均分给各头），这样拼接后维度回到 $hd_v = d$。</p>
+<p>最后通过输出投影 $\boldsymbol{W}_O \in \mathbb{R}^{d \times d}$ 做线性变换。</p>
+<h3 id="参数量计算">参数量计算</h3>
+<p><strong>标准配置</strong>：$d = 512$，$h = 8$，$d_k = d_v = 512/8 = 64$</p>
+<p><strong>每个头</strong>：</p>
+<ul>
+<li>$\boldsymbol{W}_Q^{(i)} \in \mathbb{R}^{512 \times 64}$：$512 \times 64 = 32{,}768$ 参数</li>
+<li>$\boldsymbol{W}_K^{(i)} \in \mathbb{R}^{512 \times 64}$：$32{,}768$ 参数</li>
+<li>$\boldsymbol{W}_V^{(i)} \in \mathbb{R}^{512 \times 64}$：$32{,}768$ 参数</li>
+<li>每头 QKV 小计：$3 \times 32{,}768 = 98{,}304$</li>
+</ul>
+<p><strong>8 个头的 QKV 总参数</strong>：$8 \times 98{,}304 = 786{,}432$</p>
+<p><strong>输出投影</strong> $\boldsymbol{W}_O \in \mathbb{R}^{512 \times 512}$：$262{,}144$</p>
+<p><strong>多头注意力层总参数</strong>：$786{,}432 + 262{,}144 = 1{,}048{,}576 = 4d^2 = 4 \times 512^2$</p>
+<h3 id="关键结论头数不影响总参数量">关键结论：头数不影响总参数量</h3>
+<p>总参数 = $h \times 3 \times d \times (d/h) + d \times d = 3d^2 + d^2 = 4d^2$</p>
+<p>与 $h$ 无关！增加头数只是重新分配了每个头的维度：</p>
+<ul>
+<li>$h=8$，每头 $d_k=64$</li>
+<li>$h=16$，每头 $d_k=32$</li>
+</ul>
+<p><strong>改变的是</strong>：子空间数量 vs 每个子空间的维度（表达力 vs 多样性的权衡）</p>
+<p><strong>增加头数的利弊</strong>：</p>
+<ul>
+<li>更多头 → 学到更多种注意力模式 → 可能捕获更丰富的依赖关系</li>
+<li>每头维度更小 → 单个头的表达力下降 → 可能出现冗余头</li>
+<li>极端情况（$h=d$，每头 1 维）：每个头只能做标量注意力，表达力很弱</li>
+</ul>
+<hr>
+<h2 id="transformer-完整架构">Transformer 完整架构</h2>
+<h3 id="整体结构">整体结构</h3>
+<p>原始 Transformer（Vaswani et al., 2017）是 <strong>Encoder-Decoder</strong> 结构：</p>
+<pre><code>输入序列 → [Encoder × N 层] → 编码表示
+                                    ↓
+目标序列 → [Decoder × N 层] → 输出概率 → 生成下一个 token</code></pre>
+<p>原始论文 $N = 6$。</p>
+<h3 id="编码器encoder">编码器（Encoder）</h3>
+<p>每一层编码器包含<strong>两个子层</strong>：</p>
+<pre><code>输入
+ ↓
+[Multi-Head Self-Attention]
+ ↓
+[Add &amp; LayerNorm]  ← 残差连接 + 层归一化
+ ↓
+[Feed-Forward Network (FFN)]
+ ↓
+[Add &amp; LayerNorm]  ← 残差连接 + 层归一化
+ ↓
+输出</code></pre>
+<p>数学形式：
+$$\boldsymbol{H}' = \text{LayerNorm}(\boldsymbol{H} + \text{MultiHead}(\boldsymbol{H}, \boldsymbol{H}, \boldsymbol{H}))$$
+$$\boldsymbol{H}^{\text{out}} = \text{LayerNorm}(\boldsymbol{H}' + \text{FFN}(\boldsymbol{H}'))$$</p>
+<p>编码器的自注意力是<strong>全连接的</strong>——每个位置可以看到所有其他位置。</p>
+<h3 id="解码器decoder">解码器（Decoder）</h3>
+<p>每一层解码器包含<strong>三个子层</strong>：</p>
+<pre><code>输入（已生成的 token）
+ ↓
+[Masked Multi-Head Self-Attention]  ← 只能看到当前及之前
+ ↓
+[Add &amp; LayerNorm]
+ ↓
+[Cross-Attention]  ← Q 来自解码器，K/V 来自编码器
+ ↓
+[Add &amp; LayerNorm]
+ ↓
+[FFN]
+ ↓
+[Add &amp; LayerNorm]
+ ↓
+输出</code></pre>
+<p><strong>掩码自注意力</strong>：防止&quot;偷看&quot;未来的 token</p>
+<p><strong>交叉注意力（Cross-Attention）</strong>：</p>
+<ul>
+<li>Query 来自解码器（当前正在生成的表示）</li>
+<li>Key 和 Value 来自编码器输出（源序列的完整表示）</li>
+<li>让解码器在生成时能&quot;查阅&quot;源序列的所有信息</li>
+</ul>
+<h3 id="嵌入层">嵌入层</h3>
+<h4 id="token-embedding">Token Embedding</h4>
+<p>将离散的 token ID 映射为 $d$ 维连续向量：</p>
+<p>$$\text{Embed}(t) = \boldsymbol{E}[t] \in \mathbb{R}^d, \quad \boldsymbol{E} \in \mathbb{R}^{|V| \times d}$$</p>
+<p>$|V|$ 是词汇表大小。这是一个查表操作（one-hot × 嵌入矩阵）。</p>
+<h4 id="位置编码positional-encoding">位置编码（Positional Encoding）</h4>
+<p>自注意力对输入的位置<strong>完全不敏感</strong>——打乱 token 顺序，输出不变（置换等变性）。但语言是有顺序的！</p>
+<p>解决：给输入加上位置信息。原始 Transformer 使用正弦余弦位置编码：</p>
+<p>$$PE_{(pos, 2i)} = \sin\left(\frac{pos}{10000^{2i/d}}\right)$$
+$$PE_{(pos, 2i+1)} = \cos\left(\frac{pos}{10000^{2i/d}}\right)$$</p>
+<p>其中 $pos$ 是位置索引（0, 1, 2, ...），$i$ 是维度索引（0, 1, ..., $d/2-1$）。</p>
+<p><strong>为什么用正弦/余弦？</strong></p>
+<ol>
+<li>有界：值在 $[-1, 1]$ 之间</li>
+<li>不同位置的编码不同</li>
+<li>可以表示相对位置：$PE_{pos+k}$ 可以写成 $PE_{pos}$ 的线性变换（旋转矩阵）</li>
+<li>可泛化到训练时未见过的更长序列</li>
+</ol>
+<p>最终输入 = Token Embedding + Positional Encoding。</p>
+<h3 id="前馈网络ffn">前馈网络（FFN）</h3>
+<p>$$\text{FFN}(\boldsymbol{x}) = \text{ReLU}(\boldsymbol{x}\boldsymbol{W}_1 + \boldsymbol{b}_1)\boldsymbol{W}_2 + \boldsymbol{b}_2$$</p>
+<p>结构：线性升维 → ReLU → 线性降维</p>
+<p>维度：$d \to d_f \to d$，通常 $d_f = 4d$。</p>
+<p><strong>参数量</strong>（$d=512$，$d_f=2048$）：</p>
+<ul>
+<li>$\boldsymbol{W}_1 \in \mathbb{R}^{512 \times 2048}$：$1{,}048{,}576$</li>
+<li>$\boldsymbol{b}_1 \in \mathbb{R}^{2048}$：$2{,}048$</li>
+<li>$\boldsymbol{W}_2 \in \mathbb{R}^{2048 \times 512}$：$1{,}048{,}576$</li>
+<li>$\boldsymbol{b}_2 \in \mathbb{R}^{512}$：$512$</li>
+<li><strong>总计</strong>：$2{,}099{,}712 \approx 2.1M$</li>
+</ul>
+<h3 id="ffn-的作用">FFN 的作用</h3>
+<div class="table-wrap"><table><thead><tr>
+<th>组件</th>
+<th>功能</th>
+<th>比喻</th>
+</tr>
+</thead><tbody><tr>
+<td>Multi-Head Attention</td>
+<td><strong>Token mixing</strong>：不同位置交换信息</td>
+<td>&quot;开会讨论&quot;</td>
+</tr>
+<tr>
+<td>FFN</td>
+<td><strong>Channel mixing</strong>：每个位置独立做特征变换</td>
+<td>&quot;独立思考&quot;</td>
+</tr>
+</tbody></table></div>
+<p><strong>为什么需要 FFN？</strong></p>
+<p>注意力只做了位置间的线性混合。如果没有 FFN，模型对每个位置的表示只是其他位置表示的加权平均——缺乏逐位置的非线性特征变换能力。</p>
+<p>FFN 先升维到 $4d$（增加特征空间），经过 ReLU（引入非线性），再降维回 $d$（压缩回原始维度）。每个位置独立做这个操作。</p>
+<p><strong>去掉 FFN 的后果</strong>：</p>
+<ol>
+<li>模型表达力不足</li>
+<li>只有线性混合能力，无法学习复杂特征</li>
+<li>深层表示更新能力变弱</li>
+<li>实际任务性能显著下降</li>
+</ol>
+<h3 id="add-amp-layernorm">Add &amp; LayerNorm</h3>
+<p><strong>残差连接（Add）</strong>：
+$$\boldsymbol{y} = \text{SubLayer}(\boldsymbol{x}) + \boldsymbol{x}$$</p>
+<p>作用：梯度直通（上一章已详细讲过）。</p>
+<p><strong>层归一化（LayerNorm）</strong>：
+对每个 token 的 $d$ 维特征向量归一化（均值 0、方差 1），然后用可学习的 $\gamma, \beta$ 缩放和偏移。</p>
+<p>为什么用 LN 而不是 BN：</p>
+<ul>
+<li>序列长度可变（不同 batch 中同一位置没有统计意义）</li>
+<li>Batch size 可能很小</li>
+<li>推理时行为和训练一致</li>
+</ul>
+<hr>
+<h2 id="掩码机制masking">掩码机制（Masking）</h2>
+<h3 id="padding-mask">Padding Mask</h3>
+<p>不同序列长度不同，短的需要 padding。Padding 位置不应该参与注意力计算。</p>
+<p>做法：将 padding 位置的打分设为 $-\infty$，softmax 后变为 0——这些位置不贡献任何信息。</p>
+<h3 id="causal-mask因果掩码解码器用">Causal Mask（因果掩码，解码器用）</h3>
+<p>在自回归生成中，位置 $t$ 不能看到 $t+1, t+2, \ldots$（未来的 token 还没生成）。</p>
+<p>掩码矩阵（上三角为 $-\infty$）：</p>
+<p>$$\text{Mask}_{ij} = \begin{cases} 0, & j \le i \text{（可以看）} \\ -\infty, & j > i \text{（不能看）} \end{cases}$$</p>
+<p>加在打分矩阵上：$\boldsymbol{S}' = \boldsymbol{S} + \text{Mask}$</p>
+<p>softmax 后，每行只有前 $i$ 个位置有非零权重——自然实现了&quot;只看过去&quot;。</p>
+<hr>
+<h2 id="transformer-应用架构">Transformer 应用架构</h2>
+<h3 id="三种变体">三种变体</h3>
+<div class="table-wrap"><table><thead><tr>
+<th>架构</th>
+<th>使用部分</th>
+<th>注意力类型</th>
+<th>代表模型</th>
+<th>适用任务</th>
+</tr>
+</thead><tbody><tr>
+<td>Encoder-only</td>
+<td>只用编码器</td>
+<td>双向</td>
+<td>BERT</td>
+<td>理解（分类、NER）</td>
+</tr>
+<tr>
+<td>Decoder-only</td>
+<td>只用解码器</td>
+<td>因果（单向）</td>
+<td>GPT</td>
+<td>生成（续写、对话）</td>
+</tr>
+<tr>
+<td>Encoder-Decoder</td>
+<td>完整结构</td>
+<td>双向 + 因果 + 交叉</td>
+<td>T5, BART</td>
+<td>序列到序列（翻译、摘要）</td>
+</tr>
+</tbody></table></div>
+<h3 id="token-与-bpe">Token 与 BPE</h3>
+<p><strong>Token</strong>：模型处理文本的最小单位。不一定是&quot;词&quot;。</p>
+<p><strong>BPE（Byte Pair Encoding）</strong>——数据驱动的分词：</p>
+<ol>
+<li>初始化：词汇表 = 所有单字符</li>
+<li>统计所有相邻 token 对的频率</li>
+<li>合并频率最高的 pair 为新 token</li>
+<li>重复直到达到目标词汇量</li>
+</ol>
+<p><strong>示例</strong>：<code>&quot;lowest&quot;</code> → <code>[&quot;l&quot;, &quot;o&quot;, &quot;w&quot;, &quot;e&quot;, &quot;s&quot;, &quot;t&quot;]</code> → 合并高频 pair <code>&quot;es&quot;</code> → <code>[&quot;l&quot;, &quot;o&quot;, &quot;w&quot;, &quot;es&quot;, &quot;t&quot;]</code> → ...</p>
+<p><strong>优势</strong>：</p>
+<ul>
+<li>常见词保持完整（&quot;the&quot; → 一个 token）</li>
+<li>罕见词拆成子词（&quot;unhappiness&quot; → &quot;un&quot; + &quot;happiness&quot;）</li>
+<li>完全消除了未登录词（OOV）问题</li>
+</ul>
+<hr>
+<h2 id="本章计算要点速查">本章计算要点速查</h2>
+<div class="table-wrap"><table><thead><tr>
+<th>量</th>
+<th>公式/值</th>
+</tr>
+</thead><tbody><tr>
+<td>注意力输出</td>
+<td>$\text{softmax}(\boldsymbol{QK}^T/\sqrt{d_k})\boldsymbol{V}$</td>
+</tr>
+<tr>
+<td>缩放因子</td>
+<td>$\sqrt{d_k}$（使方差归一）</td>
+</tr>
+<tr>
+<td>多头注意力参数量</td>
+<td>$4d^2$（与头数无关）</td>
+</tr>
+<tr>
+<td>FFN 参数量</td>
+<td>$\approx 2 \times d \times d_f + d_f + d \approx 8d^2 + 3d$（当 $d_f = 4d$）</td>
+</tr>
+<tr>
+<td>单层编码器参数</td>
+<td>$\approx 4d^2 + 8d^2 = 12d^2$（注意力 + FFN）</td>
+</tr>
+<tr>
+<td>6 层编码器总参数</td>
+<td>$\approx 72d^2 \approx 72 \times 512^2 \approx 19M$</td>
+</tr>
+</tbody></table></div>
+<hr>
+<h2 id="注意力的计算复杂度">注意力的计算复杂度</h2>
+<h3 id="时间复杂度">时间复杂度</h3>
+<p>缩放点积注意力对序列长度 $n$、维度 $d$：</p>
+<ol>
+<li>$\boldsymbol{Q}\boldsymbol{K}^T$：两个 $n \times d$ 矩阵相乘 → $O(n^2 d)$</li>
+<li>Softmax：每行 $n$ 个元素，共 $n$ 行 → $O(n^2)$</li>
+<li>$\boldsymbol{A}\boldsymbol{V}$：$n \times n$ 乘 $n \times d$ → $O(n^2 d)$</li>
+</ol>
+<p><strong>总时间复杂度</strong>：$O(n^2 d)$</p>
+<p><strong>对比 RNN</strong>：$O(nd^2)$</p>
+<p>当 $n < d$ 时（短序列，如几百个 token），Transformer 更快。
+当 $n > d$ 时（超长序列），$n^2$ 项主导，注意力计算成为瓶颈。</p>
+<h3 id="空间复杂度">空间复杂度</h3>
+<p>需要存储 $n \times n$ 的注意力权重矩阵：$O(n^2)$</p>
+<p>这是 Transformer 处理长序列的主要限制。</p>
+<hr>
+<h2 id="transformer-与-cnnrnn-的对比">Transformer 与 CNN、RNN 的对比</h2>
+<div class="table-wrap"><table><thead><tr>
+<th>特性</th>
+<th>RNN</th>
+<th>CNN</th>
+<th>Transformer</th>
+</tr>
+</thead><tbody><tr>
+<td>长距离依赖</td>
+<td>困难（梯度消失）</td>
+<td>需要很多层</td>
+<td><strong>直接连接</strong>（一步）</td>
+</tr>
+<tr>
+<td>并行计算</td>
+<td>✗（顺序）</td>
+<td>✓</td>
+<td><strong>✓</strong></td>
+</tr>
+<tr>
+<td>每层计算量</td>
+<td>$O(nd^2)$</td>
+<td>$O(nkd^2)$</td>
+<td>$O(n^2d)$</td>
+</tr>
+<tr>
+<td>最长路径</td>
+<td>$O(n)$</td>
+<td>$O(n/k)$</td>
+<td><strong>$O(1)$</strong></td>
+</tr>
+<tr>
+<td>归纳偏置</td>
+<td>时间局部性</td>
+<td>空间局部性</td>
+<td><strong>无</strong>（完全靠数据学）</td>
+</tr>
+</tbody></table></div>
+<p>&quot;最长路径&quot;指信息从序列一端到另一端需要经过的最少层数。Transformer 中任意两个位置通过一层注意力就直接连接——这是它处理长距离依赖的根本优势。</p>
+<p>代价是缺乏归纳偏置——需要更多数据才能学好，但在大数据时代这不再是瓶颈。</p>
+<hr>
+<h2 id="完整的单层编码器前向传播">完整的单层编码器前向传播</h2>
+<p>设输入 $\boldsymbol{X} \in \mathbb{R}^{n \times d}$，走完一层编码器的完整流程：</p>
+<pre><code>1. Q = XW_Q,  K = XW_K,  V = XW_V         (线性投影)
+2. S = QK^T / sqrt(d_k)                     (打分+缩放)
+3. A = softmax(S, dim=-1)                    (归一化)
+4. Z = AV                                    (聚合)
+   对 h 个头各做一次，拼接后乘 W_O
+5. X' = LayerNorm(X + Z)                     (残差+归一化)
+6. F = ReLU(X'W_1 + b_1)W_2 + b_2           (FFN)
+7. X_out = LayerNorm(X' + F)                 (残差+归一化)</code></pre>
+<p>输出 $\boldsymbol{X}_{\text{out}} \in \mathbb{R}^{n \times d}$，形状和输入完全相同——可以直接堆叠多层。</p>
+<hr>
+<h2 id="为什么-transformer-能统一-nlp-和-cv">为什么 Transformer 能统一 NLP 和 CV</h2>
+<ol>
+<li><strong>通用性</strong>：注意力机制不假设输入的拓扑结构（不像 CNN 假设网格、RNN 假设序列）</li>
+<li><strong>可扩展性</strong>：参数和计算量随层数/宽度线性增长，适合大规模训练</li>
+<li><strong>表达力</strong>：万能近似+大规模参数+大数据 = 强大的建模能力</li>
+<li><strong>适配性</strong>：图像切成 patch = &quot;视觉 token&quot;，直接用同一套架构</li>
+</ol>
+<p>这让 Transformer 成为了当代 AI 的&quot;通用计算引擎&quot;。</p>
+
+    <nav class="pager">  <a href="05-graph-neural-networks.html">
+    <span class="label">← 上一章</span>
+    <span class="title">图神经网络</span>
+  </a>  <a href="07-ssl-lm-rl.html" class="next">
+    <span class="label">下一章 →</span>
+    <span class="title">自监督学习、语言模型与强化学习</span>
+  </a></nav>
+  </article>
+</div>
+
+<footer>
+  <div class="set">
+    <span>人工智能与数学原理</span>
+    <span>2026 · ZH-CN</span>
+  </div>
+  <div class="set">
+    <span>Mav</span>
+  </div>
+</footer>
+<div class="search-backdrop" id="search-overlay" role="dialog" aria-modal="true" aria-label="搜索" hidden>
+  <div class="search-modal">
+    <div class="search-input-wrap">
+      <input type="search" class="search-input" placeholder="搜索内容..." aria-label="搜索内容" autocomplete="off">
+      <kbd>ESC</kbd>
+    </div>
+    <div class="search-results" role="listbox" aria-label="搜索结果"></div>
+  </div>
+</div>
+
+<!-- Side Panel -->
+<div class="side-panel" id="side-panel">
+  <div class="side-panel-resize" id="side-panel-resize"></div>
+  <div class="side-panel-header">
+    <div class="side-panel-tabs">
+      <button class="side-panel-tab active" data-mode="sidenote">补充</button>
+      <button class="side-panel-tab" data-mode="notepad">笔记</button>
+    </div>
+    <button class="side-panel-close" aria-label="关闭">×</button>
+  </div>
+  <div class="side-panel-body"></div>
+</div>
+<button class="notepad-fab" id="notepad-fab" aria-label="便利贴">✎</button>
+
+<!-- Mobile TOC -->
+<button class="mtoc-fab" id="mtoc-fab" aria-label="目录">TOC</button>
+<div class="mtoc-drawer" id="mtoc-drawer">
+  <div class="mtoc-content"></div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/bash.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/typescript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/yaml.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/javascript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/json.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/python.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/css.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+<script>mermaid.initialize({startOnLoad:true, theme:'neutral', fontFamily:'Inter, sans-serif'});</script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}]});"></script>
+<script src="../assets/script.js"></script>
+</body>
+</html>

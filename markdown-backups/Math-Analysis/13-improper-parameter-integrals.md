@@ -1,9 +1,14 @@
 ---
 title: "第 13 章 反常积分和含参变量的积分"
 chapter: 6
-readTime: 85
+readTime: 90
 description: "反常积分敛散、含参积分、一致收敛与 Euler 积分（Γ、B 函数）。"
 ---
+
+> 📋 **本章期末速查**
+> - 必考（每年 2-3 题，20-30 分）：含参积分求导（Leibniz 法则 + 一致收敛验证）、Γ/B 函数计算、一致收敛判别
+> - 常考：反常积分收敛性讨论、Dirichlet 积分应用、余元公式
+> - 了解：反常重积分、含参积分换序条件
 
 前面各章的定积分、重积分都建立在**有限区间**与**有界被积函数**上。当积分区间无界，或被积函数在区间内无界时，Riemann 和不再直接适用，需要引入**反常积分**（广义积分）并重新讨论敛散性。进一步，若被积函数还依赖参数 $t$，则积分值本身成为 $t$ 的函数——**含参变量的积分**——其连续性、可微性、可积性不能简单「在积分号下求导/换序」，而需**一致收敛**等条件保证。本章末引入 Euler 的 $\Gamma$ 函数与 $B$ 函数，它们是连接分析、概率与特殊函数的经典桥梁。
 
@@ -16,6 +21,8 @@ description: "反常积分敛散、含参积分、一致收敛与 Euler 积分�
 ---
 
 ## 13.1 反常积分
+
+> 🟡 **考试重要度：中等** | 判敛法作为含参积分的基础工具出现，偶尔独立出小题
 
 ### 13.1.1 无穷区间上的反常积分
 
@@ -146,6 +153,8 @@ $$\iint_D f=\lim_{\varepsilon\to 0}\iint_{D\setminus D_\varepsilon} f\,dx\,dy.$$
 
 ## 13.3 含参变量的积分
 
+> 🔴 **考试重要度：极高** | 积分号下求导（Leibniz 法则）几乎每年一道大题
+
 ### 13.3.1 定义与连续性
 
 设 $f(x,t)$ 在矩形 $[a,b]\times[\alpha,\beta]$ 上定义。对每个 $t\in[\alpha,\beta]$，若 $\displaystyle\int_a^b f(x,t)\,dx$ 存在，则
@@ -197,6 +206,8 @@ $$F'(a)=\int_0^{\pi/2}\frac{-x\sin x}{(\cos x+a\sin x)^2}\,dx,$$
 ---
 
 ## 13.4 含参变量的反常积分
+
+> 🔴 **考试重要度：极高** | 一致收敛判别 + 积分下求导，年年必考大题（10-15 分）
 
 ### 13.4.1 一致收敛
 
@@ -266,6 +277,8 @@ $$\int_{-\infty}^{+\infty}(-x^2)e^{-tx^2}\,dx=-\frac{d}{dt}\sqrt{\frac{\pi}{t}}=
 ---
 
 ## 13.5 $\Gamma$ 函数与 $B$ 函数
+
+> 🔴 **考试重要度：极高** | Γ/B 函数作为速算工具年年出现，余元公式也常考
 
 ### 13.5.1 $\Gamma$ 函数
 
@@ -358,26 +371,98 @@ Euler 积分（§13.5）
 
 ---
 
-## 本章综合习题（选）
+## 本章综合习题（真题精选）
 
-**13.1** 讨论下列反常积分的敛散性，若收敛则求值：
-(a) $\displaystyle\int_0^{+\infty} \frac{1}{1+x^4}\,dx$（见例 13.6'）；
-(b) $\displaystyle\int_0^1 \frac{\ln x}{\sqrt{1-x}}\,dx$（提示：换元 $x=\sin^2\theta$ 化为 $4\int_0^{\pi/2}\ln(\sin\theta)\,d\theta$，或化为 $B$ 函数）。
+**[2024-七]** 计算 $\displaystyle I=\int_0^{+\infty}\frac{dx}{1+x^4}$。
 
-**13.2** 证明：若 $f\in C[0,+\infty)$ 且 $\displaystyle\int_0^{+\infty} f(x)\,dx$ 收敛，则未必有 $\displaystyle\lim_{x\to+\infty} f(x)=0$。
+解析：令 $t=x^4$，$dx=\frac{1}{4}t^{-3/4}dt$，则
+$$I=\frac14\int_0^{+\infty}\frac{t^{-3/4}}{1+t}\,dt=\frac14 B\Big(\frac14,\frac34\Big)=\frac14\cdot\frac{\Gamma(1/4)\Gamma(3/4)}{\Gamma(1)}=\frac14\cdot\frac{\pi}{\sin(\pi/4)}=\frac{\pi}{2\sqrt2}.$$
 
-*提示*：构造「尖峰」序列 $f_n(x)=n$ 在 $[n,n+1/n^2]$ 上、否则为 $0$，令 $f=\sum f_n$ 适当缩放；或 $f(x)=\sin(x^2)$。若额外假设 $f$ **单调**且积分收敛，证明 $f(x)\to 0$（反证：若 $f(x)\ge\varepsilon>0$ 无穷多次，则 $\int f$ 发散）。
+---
 
-**13.3** 设 $F(t)=\displaystyle\int_0^{+\infty} e^{-tx}\frac{\sin x}{x}\,dx$（$t>0$）。证明 $F$ 在 $(0,+\infty)$ 上可导并求 $F'(t)$。
+**[2022-Ô]** 证明 $\displaystyle I(\alpha)=\int_0^{+\infty}\frac{\ln(1+\alpha^2 x^2)}{1+x^2}\,dx$ 收敛（$\alpha>0$），并计算 $I(2)$。
 
-*提示*：形式求导 $\int_0^\infty e^{-tx}\sin x\,dx=\dfrac{1}{1+t^2}$；用 M-判别法验证 $\int_0^\infty f_t(x,t)\,dx$ 关于 $t\in[\delta,\infty)$ 一致收敛。
+解析要点：
+1. 收敛性：$\ln(1+\alpha^2 x^2)/(1+x^2)\sim \frac{\ln(\alpha^2 x^2)}{x^2}$ 在 $\infty$ 处，被 $C/x^{3/2}$ 控制，收敛。
+2. 对 $\alpha>0$ 求导：$I'(\alpha)=\int_0^{+\infty}\frac{2\alpha x^2}{(1+\alpha^2 x^2)(1+x^2)}\,dx$。
+3. 部分分式分解后求解：$I'(\alpha)=\frac{\pi}{1+\alpha}$（$\alpha>0$，$\alpha\neq 1$ 和 $\alpha=1$ 分别计算）。
+4. 由 $I(0)=0$，得 $I(\alpha)=\pi\ln(1+\alpha)$。故 $I(2)=\pi\ln 3$。
 
-**13.4** 用 $\Gamma$ 函数表示 $\displaystyle\int_0^{+\infty} x^{2n}e^{-x^2}\,dx$（$n\in\mathbb{N}$），并计算 $n=1$ 时的值。
+---
 
-*答案*：$\dfrac12\Gamma(n+\tfrac12)$；$n=1$ 时为 $\dfrac{\sqrt\pi}{4}$。
+**[2024-Ô]** 设 $\displaystyle\varphi(t)=\int_0^{+\infty}\frac{\ln(1+tx)}{1+x^2}\,dx$（$t>0$）。
 
-**13.5** 证明 $B(p,q)=2\displaystyle\int_0^{\pi/2}\sin^{2p-1}\theta\,\cos^{2q-1}\theta\,d\theta$，并由此计算 $\displaystyle\int_0^{\pi/2}\sin^4\theta\,\cos^4\theta\,d\theta$。
+(1) 证明对任意 $T>0$，$\varphi(t)$ 在 $(0,T]$ 上一致收敛。
+(2) 证明 $\varphi(1/t)=\varphi(t)-\frac\pi2\ln t$。
 
-*提示*：$p=q=5/2$ 时 $B(5/2,5/2)=\dfrac{\Gamma(5/2)^2}{\Gamma(5)}=\dfrac{3\pi}{128}$；或直接 $2\int_0^{\pi/2}\sin^4\theta\cos^4\theta\,d\theta$。
+解析要点：
+(1) $0<\frac{\ln(1+tx)}{1+x^2}\le\frac{T\sqrt{x}}{1+x^2}$（因 $\ln(1+u)\le\sqrt{u}$ 对 $u$ 大时成立），$\int_0^\infty\frac{\sqrt x}{1+x^2}\,dx$ 收敛，M-判别法得一致收敛。
+(2) 换元 $x=1/u$：$\varphi(1/t)=\int_0^\infty\frac{\ln(1+u/t)-\ln u}{1+u^2}\,du=\varphi(t)-\frac\pi2\ln t$（因 $\int_0^\infty\frac{\ln u}{1+u^2}\,du=0$）。
 
-（详解可在后续修订中补入。）
+---
+
+**[2021-一]** 设 $\displaystyle I(u)=\int_{\sin u}^{\cos u}e^{x^2-xu}\,dx$，求 $I'(u)$。
+
+解析：Leibniz 公式（变上下限 + 被积函数含参数 $u$）：
+$$I'(u)=-e^{\cos^2 u-u\cos u}\sin u - e^{\sin^2 u-u\sin u}\cos u + \int_{\sin u}^{\cos u}(-x)e^{x^2-xu}\,dx.$$
+
+---
+
+**[2023-六]** 设 $\displaystyle\varphi(t)=\int_0^{+\infty}\frac{\ln(1+tx)}{x(x+1)}\,dx$（$t\ge 0$）。
+
+(1) 证明 $\varphi(t)$ 在 $(0,+\infty)$ 上有连续的导函数。
+(2) 计算 $\varphi(1)$。
+
+解析要点：
+(1) $\frac{\partial f}{\partial t}=\frac{1}{(x+1)(1+tx)}$，对 $t\in[\alpha,\beta]\subset(0,\infty)$：$\frac{1}{(x+1)(1+tx)}\le\frac{1}{(x+1)(1+\alpha x)}$，后者在 $[0,\infty)$ 上可积，M-判别法得一致收敛。
+(2) $\varphi'(t)=\int_0^\infty\frac{dx}{(x+1)(1+tx)}=\frac{\ln t}{t-1}$（$t>0,t\neq 1$），$\varphi'(1)=1$。由 $\varphi(0)=0$：
+$$\varphi(1)=\int_0^1\frac{\ln t}{t-1}\,dt=-\int_0^1\frac{\ln(1-x)}{x}\,dx=\sum_{n=1}^\infty\frac{1}{n^2}=\frac{\pi^2}{6}.$$
+
+---
+
+**[2024-四(2)]** 讨论 $\displaystyle\int_1^{+\infty}\frac{e^{\sin x}\cos x}{x^p}\Big(1+\frac1x\Big)^x\,dx$ 的绝对收敛和条件收敛，确定参数 $p$ 的范围。
+
+解析要点：
+- $p>1$ 时绝对收敛（$(1+1/x)^x\le e$ 有界，$|e^{\sin x}\cos x|\le 3e$，被 $\frac{C}{x^p}$ 控制）。
+- $0\le p\le 1$ 时条件收敛：$\frac{1}{x^p}(1+1/x)^x$ 单调趋 0，$\int_1^A e^{\sin x}\cos x\,dx=e^{\sin A}-e^{\sin 1}$ 有界，Dirichlet 判别法得条件收敛。绝对值 $\frac{e^{\sin x}\cos x}{x^p}\ge\frac{2\cos^2 x}{ex^p}=\frac{1+\cos 2x}{ex^p}$ 中 $\int\frac{1}{x^p}$ 发散，故不绝对收敛。
+
+---
+
+**[2025-二]** 计算 $\displaystyle\lim_{n\to\infty}\int_0^1\frac{1}{\sqrt[n]{1-x^n}}\,dx$。
+
+解析：换元 $t=x^n$，$dx=\frac{1}{n}t^{1/n-1}\,dt$：
+$$\int_0^1\frac{1}{\sqrt[n]{1-x^n}}\,dx=\frac{1}{n}\int_0^1 t^{1/n-1}(1-t)^{-1/n}\,dt=\frac{1}{n}B\Big(\frac1n,1-\frac1n\Big)=\frac{1}{n}\cdot\frac{\Gamma(1/n)\Gamma(1-1/n)}{\Gamma(1)}.$$
+由余元公式 $\Gamma(1/n)\Gamma(1-1/n)=\frac{\pi}{\sin(\pi/n)}$，故
+$$=\frac{1}{n}\cdot\frac{\pi}{\sin(\pi/n)}\to\frac{\pi}{\pi}=1\quad(n\to\infty).$$
+
+---
+
+**[2021-七]** 确定 $\displaystyle\varphi(\alpha)=\int_0^{+\infty}\frac{x^\alpha}{1+x^2}\,dx$ 的收敛参数范围，计算 $\varphi(\alpha)$。
+
+解析：$x\to 0^+$ 时 $x^\alpha/(1+x^2)\sim x^\alpha$，需 $\alpha>-1$；$x\to+\infty$ 时 $\sim x^{\alpha-2}$，需 $\alpha-2<-1$ 即 $\alpha<1$。故 $-1<\alpha<1$ 时收敛。
+
+换元 $x^2=u$：$\varphi(\alpha)=\frac12\int_0^\infty\frac{u^{(\alpha-1)/2}}{1+u}\,du=\frac12 B\Big(\frac{\alpha+1}{2},\frac{1-\alpha}{2}\Big)=\frac12\Gamma\Big(\frac{\alpha+1}{2}\Big)\Gamma\Big(\frac{1-\alpha}{2}\Big)=\frac{\pi}{2\cos(\alpha\pi/2)}$。
+
+---
+
+**[2025-l]** 设 $\displaystyle\psi(\alpha)=\int_1^{+\infty}\frac{\arctan(\alpha x)}{x^2\sqrt{x^2-1}}\,dx$（$\alpha\ge 0$）。
+
+(1) 证明对每个固定 $\alpha\ge 0$，积分收敛。
+(2) 证明含参积分 $\int_1^\infty\frac{\partial f}{\partial\alpha}\,dx$ 关于 $\alpha\ge 0$ 一致收敛。
+(3) 计算 $\psi(\alpha)$。
+
+解析要点：
+(1) $x\to 1^+$：$\frac{\arctan\alpha}{(x^2-1)^{1/2}}\sim\frac{C}{\sqrt{x-1}}$，$p=1/2<1$ 收敛。$x\to\infty$：$\sim\frac{\pi/2}{x^3}$，收敛。
+(2) $\frac{\partial f}{\partial\alpha}=\frac{1}{x\sqrt{x^2-1}(1+\alpha^2 x^2)}\le\frac{1}{x\sqrt{x^2-1}}$，后者在 $[1,\infty)$ 上可积。
+(3) $\psi'(\alpha)=\int_1^\infty\frac{dx}{x\sqrt{x^2-1}(1+\alpha^2 x^2)}$。令 $x=\sec\theta$，$t=\tan\theta$：
+$$\psi'(\alpha)=\int_0^\infty\frac{dt}{1+\alpha^2(1+t^2)}=\frac{\pi}{2}\Big(1-\frac{\alpha}{\sqrt{1+\alpha^2}}\Big).$$
+由 $\psi(0)=0$：$\psi(\alpha)=\frac\pi2(\alpha+1-\sqrt{1+\alpha^2})$。
+
+---
+
+**备考提示**：
+- **含参积分大题的标准框架**：① 验证一致收敛（M-判别法/Dirichlet/Abel）→ ② 积分号下求导 → ③ 求解常微分方程或直接积分 → ④ 利用初始条件 $F(0)$ 确定常数
+- **Γ/B 函数常用公式**：$\Gamma(n+1)=n!$，$\Gamma(1/2)=\sqrt\pi$，余元公式 $\Gamma(s)\Gamma(1-s)=\pi/\sin(\pi s)$，$B(p,q)=\Gamma(p)\Gamma(q)/\Gamma(p+q)$
+- **常见换元**：$x^n=t$ 将 $\int_0^1$ 或 $\int_0^\infty$ 化为 B/Γ 函数；$x=\tan\theta$ 处理 $1+x^2$ 型
+
+

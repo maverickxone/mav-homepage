@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>图神经网络 — 人工智能与数学原理</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" id="hljs-light" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+<link rel="stylesheet" id="hljs-dark" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" media="not all">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+</head>
+<body>
+
+<div class="progress-bar" id="progress-bar"></div>
+
+<nav class="topnav" id="topnav">
+  <div class="topnav-inner">
+    <a class="brand" href="../index.html">人工智能与数学原理</a>
+    <div class="nav-links">
+      <a href="01-ml-math-foundations.html">01</a>
+      <a href="02-linear-logistic-regression.html">02</a>
+      <a href="03-neural-networks-cnn.html">03</a>
+      <a href="04-backpropagation.html">04</a>
+      <a href="05-graph-neural-networks.html" class="active">05</a>
+      <a href="06-transformer.html">06</a>
+      <a href="07-ssl-lm-rl.html">07</a>
+    </div>
+    <div class="nav-controls">
+      <button class="nav-btn" id="search-btn" aria-label="搜索 (Ctrl+K)">⌘K</button>
+      <button class="nav-btn" id="settings-btn" aria-label="阅读设置">Aa</button>
+      <a class="nav-btn" href="../../index.html" aria-label="返回知识库">← 知识库</a>
+      <a class="nav-btn" href="https://github.com/maverickxone/mav-homepage" target="_blank" rel="noopener" aria-label="GitHub" style="padding: 6px 8px;"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg></a>
+    </div>
+  </div>
+</nav>
+<div class="settings-pop" id="settings-pop">
+  <h5>主题</h5>
+  <div class="row">
+    <button class="seg" data-theme-set="light">明亮</button>
+    <button class="seg" data-theme-set="dark">暗色</button>
+  </div>
+  <h5>字号</h5>
+  <div class="row">
+    <button class="seg" data-size-set="s">小</button>
+    <button class="seg" data-size-set="m">中</button>
+    <button class="seg" data-size-set="l">大</button>
+  </div>
+</div>
+
+<div class="with-sidebar">
+  <aside class="sidebar">
+  <div class="chapter-num">CHAPTER 05</div>
+  <div class="chapter-name">图神经网络</div>
+  <h4>目录</h4>
+  <ul>
+    <li><a href="#本章导读">本章导读</a></li>
+    <li><a href="#图的数学定义">图的数学定义</a></li>
+    <li><a href="#邻接矩阵adjacency-matrix">邻接矩阵（Adjacency Matrix）</a></li>
+    <li><a href="#度矩阵degree-matrix">度矩阵（Degree Matrix）</a></li>
+    <li><a href="#拉普拉斯矩阵laplacian-matrix">拉普拉斯矩阵（Laplacian Matrix）</a></li>
+    <li><a href="#随机游走random-walk">随机游走（Random Walk）</a></li>
+    <li><a href="#图表征学习">图表征学习</a></li>
+    <li><a href="#图神经网络的核心消息传递">图神经网络的核心：消息传递</a></li>
+    <li><a href="#gcngraph-convolutional-network">GCN（Graph Convolutional Network）</a></li>
+    <li><a href="#gatgraph-attention-network">GAT（Graph Attention Network）</a></li>
+    <li><a href="#graphsage">GraphSAGE</a></li>
+    <li><a href="#三者对比">三者对比</a></li>
+    <li><a href="#gnn-与随机游走的深层联系">GNN 与随机游走的深层联系</a></li>
+    <li><a href="#异构图heterogeneous-graph">异构图（Heterogeneous Graph）</a></li>
+    <li><a href="#过平滑问题oversmoothing">过平滑问题（Oversmoothing）</a></li>
+    <li><a href="#图卷积的谱域视角补充理解">图卷积的谱域视角（补充理解）</a></li>
+    <li><a href="#完整计算示例邻接矩阵到-gcn-前向">完整计算示例：邻接矩阵到 GCN 前向</a></li>
+    <li><a href="#本章要点回顾">本章要点回顾</a></li>
+  </ul>
+</aside>
+  <article class="chapter-body">
+    <header class="chapter-head">
+  <div class="chapter-head-meta">
+    <span class="num">CHAPTER 05</span>
+    <span>≈ 45 MIN READ</span>
+  </div>
+  <h1>图神经网络</h1>
+
+</header>
+    <h2 id="本章导读">本章导读</h2>
+<p>前面几章处理的数据都有规则的结构——向量（表格数据）、网格（图像）、序列（文本）。但现实中有大量数据是<strong>图结构</strong>的：社交网络、分子结构、引用网络、知识图谱……</p>
+<p>图的核心挑战：节点数量不固定、邻居数量不固定、没有天然的&quot;顺序&quot;——传统的 CNN 和 RNN 都用不了。</p>
+<p>图神经网络（GNN）的核心思想：<strong>让每个节点通过&quot;聚合邻居信息&quot;来更新自己的表示</strong>。本章从图的数学基础开始，一步步搭建到 GCN、GAT、GraphSAGE。</p>
+<hr>
+<h2 id="图的数学定义">图的数学定义</h2>
+<h3 id="基本定义">基本定义</h3>
+<p><strong>图（Graph）</strong>：一个有序对 $G = (V, E)$</p>
+<ul>
+<li><strong>节点集（Vertex Set）</strong>：$V = \{v_1, v_2, \ldots, v_n\}$，共 $n$ 个节点</li>
+<li><strong>边集（Edge Set）</strong>：$E \subseteq V \times V$，连接节点对的集合</li>
+</ul>
+<p><strong>无向图</strong>：边没有方向。若 $(v_i, v_j) \in E$，则 $(v_j, v_i) \in E$。</p>
+<p><strong>有向图</strong>：边有方向。$(v_i, v_j)$ 和 $(v_j, v_i)$ 是两条不同的边。</p>
+<p><strong>邻居（Neighbors）</strong>：节点 $v$ 直接连接的所有节点构成其邻居集：
+$$\mathcal{N}(v) = \{u \in V \mid (v, u) \in E\}$$</p>
+<p><strong>度（Degree）</strong>：节点 $v$ 的度数是它的边数：$\deg(v) = |\mathcal{N}(v)|$</p>
+<h3 id="图的存储方式">图的存储方式</h3>
+<p><strong>邻接表</strong>：对每个节点存储一个链表，记录它的所有邻居。空间 $O(|V| + |E|)$。</p>
+<p><strong>邻接矩阵</strong>：一个 $n \times n$ 的矩阵。空间 $O(n^2)$，适合稠密图或需要矩阵运算的场景。</p>
+<hr>
+<h2 id="邻接矩阵adjacency-matrix">邻接矩阵（Adjacency Matrix）</h2>
+<h3 id="定义">定义</h3>
+<p>给定图 $G = (V, E)$，$|V| = n$，邻接矩阵 $\boldsymbol{A} \in \{0, 1\}^{n \times n}$：</p>
+<p>$$A_{ij} = \begin{cases} 1, & (v_i, v_j) \in E \\ 0, & \text{otherwise} \end{cases}$$</p>
+<p><strong>性质</strong>：</p>
+<ul>
+<li>对于无向图：$\boldsymbol{A}$ 是对称的，$A_{ij} = A_{ji}$</li>
+<li>对角线为 0（无自环时）：$A_{ii} = 0$</li>
+<li>第 $i$ 行的和 = 节点 $i$ 的度数：$\sum_j A_{ij} = \deg(v_i)$</li>
+</ul>
+<h3 id="示例">示例</h3>
+<p>考虑以下 4 节点的无向图：</p>
+<pre><code>  1 --- 2
+  |   / |
+  |  /  |
+  3     4</code></pre>
+<p>边集：$\{(1,2), (1,3), (2,3), (2,4)\}$</p>
+<p>邻接矩阵：
+$$\boldsymbol{A} = \begin{pmatrix} 0 & 1 & 1 & 0 \\ 1 & 0 & 1 & 1 \\ 1 & 1 & 0 & 0 \\ 0 & 1 & 0 & 0 \end{pmatrix}$$</p>
+<p>验证：</p>
+<ul>
+<li>节点 1 的邻居是 2、3 → 第 1 行中 $A_{12}=1, A_{13}=1$，度数为 2 ✓</li>
+<li>节点 2 的邻居是 1、3、4 → 第 2 行中 $A_{21}=A_{23}=A_{24}=1$，度数为 3 ✓</li>
+<li>节点 4 只连接 2 → 度数为 1 ✓</li>
+</ul>
+<h3 id="邻接矩阵的代数含义">邻接矩阵的代数含义</h3>
+<p>$\boldsymbol{A}^k$ 的第 $(i,j)$ 元素 = 从节点 $i$ 到节点 $j$ 经过恰好 $k$ 步的路径数。</p>
+<p>例如 $\boldsymbol{A}^2$ 的对角线 = 各节点的度数（走两步回到自己 = 选一条边出去再回来）。</p>
+<hr>
+<h2 id="度矩阵degree-matrix">度矩阵（Degree Matrix）</h2>
+<h3 id="定义">定义</h3>
+<p>度矩阵 $\boldsymbol{D} \in \mathbb{R}^{n \times n}$ 是对角矩阵：</p>
+<p>$$D_{ii} = \deg(v_i) = \sum_{j=1}^n A_{ij}$$</p>
+<p>非对角元素全为 0。</p>
+<h3 id="示例">示例</h3>
+<p>对于上面的图：</p>
+<p>$$\boldsymbol{D} = \begin{pmatrix} 2 & 0 & 0 & 0 \\ 0 & 3 & 0 & 0 \\ 0 & 0 & 2 & 0 \\ 0 & 0 & 0 & 1 \end{pmatrix}$$</p>
+<h3 id="度矩阵的逆">度矩阵的逆</h3>
+<p>$$\boldsymbol{D}^{-1} = \begin{pmatrix} 1/2 & 0 & 0 & 0 \\ 0 & 1/3 & 0 & 0 \\ 0 & 0 & 1/2 & 0 \\ 0 & 0 & 0 & 1 \end{pmatrix}$$</p>
+<p>$\boldsymbol{D}^{-1}\boldsymbol{A}$ 的第 $(i,j)$ 元素 = $A_{ij}/\deg(v_i)$，即从节点 $i$ 等概率走到某个邻居 $j$ 的概率。</p>
+<hr>
+<h2 id="拉普拉斯矩阵laplacian-matrix">拉普拉斯矩阵（Laplacian Matrix）</h2>
+<h3 id="定义">定义</h3>
+<p>$$\boldsymbol{L} = \boldsymbol{D} - \boldsymbol{A}$$</p>
+<h3 id="显式形式">显式形式</h3>
+<p>$$L_{ij} = \begin{cases} \deg(v_i), & i = j \\ -1, & (v_i, v_j) \in E \\ 0, & \text{otherwise} \end{cases}$$</p>
+<h3 id="示例">示例</h3>
+<p>$$\boldsymbol{L} = \boldsymbol{D} - \boldsymbol{A} = \begin{pmatrix} 2 & -1 & -1 & 0 \\ -1 & 3 & -1 & -1 \\ -1 & -1 & 2 & 0 \\ 0 & -1 & 0 & 1 \end{pmatrix}$$</p>
+<h3 id="性质">性质</h3>
+<ol>
+<li><strong>对称半正定</strong>：所有特征值 $\ge 0$</li>
+<li><strong>每行和为零</strong>：$\sum_j L_{ij} = D_{ii} - \sum_j A_{ij} = 0$</li>
+<li><strong>最小特征值为 0</strong>：对应的特征向量是全 1 向量 $\boldsymbol{1}$</li>
+<li><strong>零特征值的重数 = 图的连通分量数</strong></li>
+<li><strong>二次型意义</strong>：$\boldsymbol{x}^T\boldsymbol{L}\boldsymbol{x} = \frac{1}{2}\sum_{(i,j)\in E}(x_i - x_j)^2$<ul>
+<li>这衡量了信号 $\boldsymbol{x}$ 在图上的&quot;平滑度&quot;——相邻节点差异越大，值越大</li>
+</ul>
+</li>
+</ol>
+<h3 id="归一化拉普拉斯矩阵">归一化拉普拉斯矩阵</h3>
+<p><strong>对称归一化</strong>：</p>
+<p>$$\boldsymbol{L}_{\text{sym}} = \boldsymbol{D}^{-1/2}\boldsymbol{L}\boldsymbol{D}^{-1/2} = \boldsymbol{I} - \boldsymbol{D}^{-1/2}\boldsymbol{A}\boldsymbol{D}^{-1/2}$$</p>
+<p>其中 $\boldsymbol{D}^{-1/2}$ 是对角矩阵，每个对角元素取 $-1/2$ 次方：$(D^{-1/2})_{ii} = 1/\sqrt{\deg(v_i)}$</p>
+<p><strong>意义</strong>：将邻接矩阵按两端节点的度数做归一化。度大的节点贡献被压低，避免高度节点主导聚合。</p>
+<h3 id="手算归一化拉普拉斯">手算归一化拉普拉斯</h3>
+<p>$$\boldsymbol{D}^{-1/2} = \begin{pmatrix} 1/\sqrt{2} & 0 & 0 & 0 \\ 0 & 1/\sqrt{3} & 0 & 0 \\ 0 & 0 & 1/\sqrt{2} & 0 \\ 0 & 0 & 0 & 1 \end{pmatrix}$$</p>
+<p>$$\boldsymbol{D}^{-1/2}\boldsymbol{A}\boldsymbol{D}^{-1/2} = \text{第 }(i,j)\text{ 元素} = \frac{A_{ij}}{\sqrt{\deg(i)\cdot\deg(j)}}$$</p>
+<p>例如位置 $(1,2)$：$\frac{1}{\sqrt{2\cdot3}} = \frac{1}{\sqrt{6}} \approx 0.408$</p>
+<hr>
+<h2 id="随机游走random-walk">随机游走（Random Walk）</h2>
+<h3 id="转移矩阵">转移矩阵</h3>
+<p><strong>定义</strong>：随机游走转移矩阵 $\boldsymbol{P}$ 描述了从每个节点等概率走到某个邻居的概率：</p>
+<p>$$\boldsymbol{P} = \boldsymbol{D}^{-1}\boldsymbol{A}$$</p>
+<p>第 $(i,j)$ 个元素 $P_{ij} = A_{ij}/\deg(v_i)$ = 从 $i$ 走到 $j$ 的概率。</p>
+<p><strong>性质</strong>：</p>
+<ul>
+<li>每行和为 1（行随机矩阵）：$\sum_j P_{ij} = 1$</li>
+<li>非负：$P_{ij} \ge 0$</li>
+</ul>
+<h3 id="示例">示例</h3>
+<p>$$\boldsymbol{P} = \boldsymbol{D}^{-1}\boldsymbol{A} = \begin{pmatrix} 0 & 1/2 & 1/2 & 0 \\ 1/3 & 0 & 1/3 & 1/3 \\ 1/2 & 1/2 & 0 & 0 \\ 0 & 1 & 0 & 0 \end{pmatrix}$$</p>
+<p>含义：从节点 1 出发，有 1/2 概率走到 2，1/2 概率走到 3。从节点 4 出发，必然走到 2（唯一邻居）。</p>
+<h3 id="多步游走">多步游走</h3>
+<p>设初始分布 $\boldsymbol{r}_0$（行向量，表示游走者在各节点上的概率），则经过 $t$ 步后的分布：</p>
+<p>$$\boldsymbol{r}_t = \boldsymbol{r}_0 \boldsymbol{P}^t$$</p>
+<p><strong>示例</strong>：初始在节点 3，即 $\boldsymbol{r}_0 = [0, 0, 1, 0]$</p>
+<p>$$\boldsymbol{r}_1 = \boldsymbol{r}_0 \boldsymbol{P} = [1/2, 1/2, 0, 0]$$</p>
+<p>（从节点 3 走一步，等概率到节点 1 或 2）</p>
+<p>经过足够多步，概率分布趋于<strong>稳态分布</strong> $\boldsymbol{\pi}$，满足 $\boldsymbol{\pi} = \boldsymbol{\pi}\boldsymbol{P}$。</p>
+<h3 id="稳态分布与图结构的关系">稳态分布与图结构的关系</h3>
+<p>对于连通无向图，稳态分布为：
+$$\pi_i = \frac{\deg(v_i)}{2|E|}$$</p>
+<p><strong>结论</strong>：度数越大的节点，在稳态分布中被访问的概率越高。游走者&quot;倾向于停留在连接多的节点&quot;。</p>
+<p>上例中：$2|E| = 8$，所以 $\boldsymbol{\pi} = [2/8, 3/8, 2/8, 1/8] = [0.25, 0.375, 0.25, 0.125]$</p>
+<hr>
+<h2 id="图表征学习">图表征学习</h2>
+<h3 id="任务层级">任务层级</h3>
+<div class="table-wrap"><table><thead><tr>
+<th>层级</th>
+<th>目标</th>
+<th>典型任务</th>
+<th>示例</th>
+</tr>
+</thead><tbody><tr>
+<td>Node-level</td>
+<td>为每个节点学向量</td>
+<td>节点分类</td>
+<td>预测用户是否为机器人</td>
+</tr>
+<tr>
+<td>Edge-level</td>
+<td>预测节点对之间的关系</td>
+<td>链接预测</td>
+<td>推荐好友</td>
+</tr>
+<tr>
+<td>Graph-level</td>
+<td>为整个图学一个向量</td>
+<td>图分类</td>
+<td>判断分子是否有毒性</td>
+</tr>
+</tbody></table></div>
+<h3 id="节点嵌入的目标">节点嵌入的目标</h3>
+<p>学习映射 $f: V \to \mathbb{R}^d$，使得在图中&quot;相似&quot;的节点在嵌入空间中也接近：</p>
+<p>$$\text{图中 } u \approx v \implies f(u)^T f(v) \text{ 大}$$</p>
+<p>&quot;相似&quot;的定义方式决定了不同的方法——可以是邻居关系、随机游走中的共现频率、结构角色等。</p>
+<hr>
+<h2 id="图神经网络的核心消息传递">图神经网络的核心：消息传递</h2>
+<h3 id="核心思想">核心思想</h3>
+<p><strong>一个节点的表示应该由它的邻域决定。</strong></p>
+<p>GNN 的每一层执行两步：</p>
+<ol>
+<li><strong>消息（Message）</strong>：收集邻居节点的信息</li>
+<li><strong>聚合（Aggregate）</strong>：将邻居信息汇总，和自身信息结合，更新节点表示</li>
+</ol>
+<p>经过 $K$ 层之后，每个节点的表示融合了 $K$ 跳邻居的信息。</p>
+<h3 id="通用公式">通用公式</h3>
+<p><strong>消息聚合</strong>：
+$$\boldsymbol{m}_v^{(l)} = \text{AGG}^{(l)}\left(\left\{\boldsymbol{h}_u^{(l-1)} \mid u \in \mathcal{N}(v)\right\}\right)$$</p>
+<p><strong>节点更新</strong>：
+$$\boldsymbol{h}_v^{(l)} = \text{UPD}^{(l)}\left(\boldsymbol{h}_v^{(l-1)},\; \boldsymbol{m}_v^{(l)}\right)$$</p>
+<p>其中：</p>
+<ul>
+<li>$\boldsymbol{h}_v^{(0)}$ 是节点 $v$ 的初始特征</li>
+<li>$\text{AGG}$：聚合函数——对邻居集合做某种&quot;汇总&quot;（必须是置换不变的，因为邻居无序）</li>
+<li>$\text{UPD}$：更新函数——通常是线性变换 + 非线性激活</li>
+</ul>
+<h3 id="为什么必须置换不变">为什么必须置换不变？</h3>
+<p>图中节点没有天然顺序。对邻居 $\{u_1, u_2, u_3\}$ 的任何排列都应该得到相同的聚合结果。所以 AGG 必须是<strong>集合函数</strong>（set function）。</p>
+<p>常见的置换不变操作：求和 $\sum$、平均 mean、最大值 max、注意力加权 $\sum \alpha_i \boldsymbol{h}_i$。</p>
+<hr>
+<h2 id="gcngraph-convolutional-network">GCN（Graph Convolutional Network）</h2>
+<h3 id="公式">公式</h3>
+<p>$$\boldsymbol{H}^{(l+1)} = \sigma\left(\tilde{\boldsymbol{D}}^{-1/2} \tilde{\boldsymbol{A}} \tilde{\boldsymbol{D}}^{-1/2} \boldsymbol{H}^{(l)} \boldsymbol{W}^{(l)}\right)$$</p>
+<p>其中：</p>
+<ul>
+<li>$\tilde{\boldsymbol{A}} = \boldsymbol{A} + \boldsymbol{I}$：加了自环的邻接矩阵（让每个节点也聚合自己的信息）</li>
+<li>$\tilde{\boldsymbol{D}}$：$\tilde{\boldsymbol{A}}$ 对应的度矩阵，$\tilde{D}_{ii} = \sum_j \tilde{A}_{ij} = \deg(v_i) + 1$</li>
+<li>$\boldsymbol{H}^{(l)} \in \mathbb{R}^{n \times d_l}$：第 $l$ 层所有节点的特征矩阵</li>
+<li>$\boldsymbol{W}^{(l)} \in \mathbb{R}^{d_l \times d_{l+1}}$：可学习参数</li>
+</ul>
+<h3 id="逐节点理解">逐节点理解</h3>
+<p>对于单个节点 $v$：</p>
+<p>$$\boldsymbol{h}_v^{(l+1)} = \sigma\left(\sum_{u \in \mathcal{N}(v) \cup \{v\}} \frac{1}{\sqrt{\tilde{d}_v \cdot \tilde{d}_u}} \boldsymbol{h}_u^{(l)} \boldsymbol{W}^{(l)}\right)$$</p>
+<p>直觉：将邻居（含自己）的特征加权求和，权重由两端节点的度数决定。度越大的节点，每次贡献的权重越小。</p>
+<h3 id="gcn-的特点">GCN 的特点</h3>
+<ul>
+<li>权重<strong>全局固定</strong>（由图结构决定），不需要学习</li>
+<li>所有节点<strong>共享参数</strong> $\boldsymbol{W}^{(l)}$（类比 CNN 的参数共享）</li>
+<li>计算高效：可以用稀疏矩阵乘法实现</li>
+<li><strong>转导式学习</strong>（transductive）：对固定图有效，新节点加入需要重新训练</li>
+</ul>
+<hr>
+<h2 id="gatgraph-attention-network">GAT（Graph Attention Network）</h2>
+<h3 id="动机">动机</h3>
+<p>GCN 中邻居的权重完全由图结构决定（度数归一化）。但不同邻居的重要性可能不同——<strong>应该让模型自己学习每个邻居的权重</strong>。</p>
+<h3 id="注意力系数计算">注意力系数计算</h3>
+<p>对节点 $i$ 和它的邻居 $j$：</p>
+<p><strong>Step 1</strong>：线性投影
+$$\boldsymbol{z}_i = \boldsymbol{W}\boldsymbol{h}_i, \quad \boldsymbol{z}_j = \boldsymbol{W}\boldsymbol{h}_j$$</p>
+<p><strong>Step 2</strong>：计算注意力打分（拼接 + LeakyReLU）
+$$e_{ij} = \text{LeakyReLU}\left(\boldsymbol{a}^T [\boldsymbol{z}_i \| \boldsymbol{z}_j]\right)$$</p>
+<p>其中 $\|$ 表示向量拼接，$\boldsymbol{a}$ 是可学习的注意力向量。</p>
+<p><strong>Step 3</strong>：归一化（在邻居间做 softmax）
+$$\alpha_{ij} = \text{softmax}_j(e_{ij}) = \frac{\exp(e_{ij})}{\sum_{k \in \mathcal{N}(i)} \exp(e_{ik})}$$</p>
+<p><strong>Step 4</strong>：加权聚合
+$$\boldsymbol{h}_i' = \sigma\left(\sum_{j \in \mathcal{N}(i)} \alpha_{ij} \boldsymbol{z}_j\right)$$</p>
+<h3 id="多头注意力">多头注意力</h3>
+<p>类似 Transformer，使用 $K$ 个独立的注意力头，结果拼接或取平均：</p>
+<p><strong>拼接</strong>（中间层）：
+$$\boldsymbol{h}_i' = \|_{k=1}^K \sigma\left(\sum_{j \in \mathcal{N}(i)} \alpha_{ij}^{(k)} \boldsymbol{W}^{(k)}\boldsymbol{h}_j\right)$$</p>
+<p><strong>平均</strong>（最后一层）：
+$$\boldsymbol{h}_i' = \sigma\left(\frac{1}{K}\sum_{k=1}^K \sum_{j \in \mathcal{N}(i)} \alpha_{ij}^{(k)} \boldsymbol{W}^{(k)}\boldsymbol{h}_j\right)$$</p>
+<h3 id="gat-的特点">GAT 的特点</h3>
+<ul>
+<li>权重<strong>自适应学习</strong>——不同邻居贡献不同权重</li>
+<li>不需要知道全图结构（只看局部邻居）</li>
+<li>注意力系数提供<strong>可解释性</strong>（哪些邻居最重要）</li>
+<li>计算量比 GCN 大（需要计算注意力分数）</li>
+</ul>
+<hr>
+<h2 id="graphsage">GraphSAGE</h2>
+<h3 id="动机">动机</h3>
+<p>GCN 和 GAT 都是**转导式（transductive）<strong>的——对固定图训练好后，新节点加入需要重新训练。GraphSAGE 是</strong>归纳式（inductive）**的——可以对未见过的新节点直接生成表示。</p>
+<h3 id="核心做法">核心做法</h3>
+<ol>
+<li><strong>采样</strong>：不使用全部邻居，而是随机采样固定数量的邻居（如 10 个）</li>
+<li><strong>聚合</strong>：对采样到的邻居用可选的聚合器</li>
+<li><strong>拼接</strong>：将自身特征和聚合结果拼接，再做线性变换</li>
+</ol>
+<p>$$\boldsymbol{h}_{\mathcal{N}(v)}^{(l)} = \text{AGGREGATE}^{(l)}\left(\left\{\boldsymbol{h}_u^{(l-1)} \mid u \in \text{SAMPLE}(\mathcal{N}(v), S)\right\}\right)$$</p>
+<p>$$\boldsymbol{h}_v^{(l)} = \sigma\left(\boldsymbol{W}^{(l)} \cdot [\boldsymbol{h}_v^{(l-1)} \| \boldsymbol{h}_{\mathcal{N}(v)}^{(l)}]\right)$$</p>
+<h3 id="聚合器选择">聚合器选择</h3>
+<div class="table-wrap"><table><thead><tr>
+<th>聚合器</th>
+<th>操作</th>
+<th>特点</th>
+</tr>
+</thead><tbody><tr>
+<td>Mean</td>
+<td>$\frac{1}{|\mathcal{S}|}\sum_{u \in \mathcal{S}} \boldsymbol{h}_u$</td>
+<td>简单高效</td>
+</tr>
+<tr>
+<td>Max</td>
+<td>$\max_{u \in \mathcal{S}} \boldsymbol{h}_u$（逐元素）</td>
+<td>捕捉显著特征</td>
+</tr>
+<tr>
+<td>LSTM</td>
+<td>将邻居序列输入 LSTM</td>
+<td>表达力强但引入顺序假设</td>
+</tr>
+</tbody></table></div>
+<h3 id="graphsage-的特点">GraphSAGE 的特点</h3>
+<ul>
+<li><strong>归纳式</strong>：学到的是&quot;如何聚合&quot;的函数，对新节点直接可用</li>
+<li><strong>可扩展</strong>：通过邻居采样控制计算量</li>
+<li>适合大规模图和动态图</li>
+</ul>
+<hr>
+<h2 id="三者对比">三者对比</h2>
+<div class="table-wrap"><table><thead><tr>
+<th></th>
+<th>GCN</th>
+<th>GAT</th>
+<th>GraphSAGE</th>
+</tr>
+</thead><tbody><tr>
+<td>邻居权重</td>
+<td>固定（归一化度数）</td>
+<td>学习（注意力）</td>
+<td>固定（均值/最大等）</td>
+</tr>
+<tr>
+<td>使用全部邻居</td>
+<td>✓</td>
+<td>✓</td>
+<td>✗（采样固定数量）</td>
+</tr>
+<tr>
+<td>归纳/转导</td>
+<td>转导</td>
+<td>转导</td>
+<td><strong>归纳</strong></td>
+</tr>
+<tr>
+<td>处理新节点</td>
+<td>需重训</td>
+<td>需重训</td>
+<td><strong>直接推断</strong></td>
+</tr>
+<tr>
+<td>参数共享方式</td>
+<td>全图共享 $\boldsymbol{W}$</td>
+<td>全图共享 $\boldsymbol{W}, \boldsymbol{a}$</td>
+<td>全图共享 $\boldsymbol{W}$ + 聚合器</td>
+</tr>
+<tr>
+<td>计算复杂度</td>
+<td>低（稀疏矩阵乘）</td>
+<td>中等</td>
+<td>可控（采样）</td>
+</tr>
+<tr>
+<td>可解释性</td>
+<td>低</td>
+<td>高（注意力分数）</td>
+<td>中</td>
+</tr>
+</tbody></table></div>
+<hr>
+<h2 id="gnn-与随机游走的深层联系">GNN 与随机游走的深层联系</h2>
+<h3 id="简单均值-gnn-随机游走">简单均值 GNN = 随机游走</h3>
+<p>考虑最简的 GNN——只做均值聚合，不加线性变换和非线性：</p>
+<p>$$\boldsymbol{h}_v^{(l+1)} = \frac{1}{|\mathcal{N}(v)|}\sum_{u \in \mathcal{N}(v)} \boldsymbol{h}_u^{(l)}$$</p>
+<p>矩阵形式：
+$$\boldsymbol{H}^{(l+1)} = \boldsymbol{D}^{-1}\boldsymbol{A} \cdot \boldsymbol{H}^{(l)} = \boldsymbol{P} \cdot \boldsymbol{H}^{(l)}$$</p>
+<p>这就是随机游走转移矩阵 $\boldsymbol{P}$ 作用在特征矩阵上！</p>
+<p><strong>结论</strong>：一层简单均值 GNN = 一步随机游走。$K$ 层 GNN = $K$ 步随机游走。</p>
+<h3 id="加入残差连接">加入残差连接</h3>
+<p>$$\boldsymbol{h}_v^{(l+1)} = \frac{1}{2}\boldsymbol{h}_v^{(l)} + \frac{1}{2}\cdot\frac{1}{|\mathcal{N}(v)|}\sum_{u \in \mathcal{N}(v)} \boldsymbol{h}_u^{(l)}$$</p>
+<p>矩阵形式：
+$$\boldsymbol{H}^{(l+1)} = \frac{1}{2}\boldsymbol{I} \cdot \boldsymbol{H}^{(l)} + \frac{1}{2}\boldsymbol{P} \cdot \boldsymbol{H}^{(l)} = \left(\frac{1}{2}\boldsymbol{I} + \frac{1}{2}\boldsymbol{D}^{-1}\boldsymbol{A}\right)\boldsymbol{H}^{(l)}$$</p>
+<p>等价的转移矩阵：$\boldsymbol{P}' = \frac{1}{2}\boldsymbol{I} + \frac{1}{2}\boldsymbol{D}^{-1}\boldsymbol{A}$</p>
+<p>直觉：游走者有 1/2 概率留在原地（自环），1/2 概率走到邻居。这让信息扩散更温和，缓解 oversmoothing。</p>
+<hr>
+<h2 id="异构图heterogeneous-graph">异构图（Heterogeneous Graph）</h2>
+<h3 id="定义">定义</h3>
+<p>普通图中所有节点和边都是同一类型。<strong>异构图</strong>中存在多种类型的节点和/或边：</p>
+<p>$$G = (V, E, \tau_V, \tau_E)$$</p>
+<ul>
+<li>$\tau_V: V \to \mathcal{T}_V$：节点类型映射</li>
+<li>$\tau_E: E \to \mathcal{T}_E$：边类型映射</li>
+</ul>
+<h3 id="示例">示例</h3>
+<p>学术网络：</p>
+<ul>
+<li>节点类型：作者、论文、期刊</li>
+<li>边类型：作者-写-论文、论文-发表于-期刊、论文-引用-论文</li>
+</ul>
+<h3 id="处理方式">处理方式</h3>
+<p>对不同类型的关系使用不同的参数：</p>
+<p>$$\boldsymbol{h}_v^{(l+1)} = \sigma\left(\sum_{r \in \mathcal{R}} \sum_{u \in \mathcal{N}_r(v)} \frac{1}{|\mathcal{N}_r(v)|}\boldsymbol{W}_r^{(l)}\boldsymbol{h}_u^{(l)}\right)$$</p>
+<p>每种关系 $r$ 有独立的权重矩阵 $\boldsymbol{W}_r$。</p>
+<hr>
+<h2 id="过平滑问题oversmoothing">过平滑问题（Oversmoothing）</h2>
+<h3 id="现象">现象</h3>
+<p>随着 GNN 层数增加，所有节点的表示趋于相同——信息过度扩散。</p>
+<h3 id="原因">原因</h3>
+<p>每一层都做邻域聚合 = 信息向四周扩散。$K$ 层后每个节点接收了 $K$ 跳范围内所有节点的信息。当 $K$ 足够大时，所有节点都获得了几乎相同的全图信息。</p>
+<h3 id="缓解方法">缓解方法</h3>
+<ul>
+<li>控制层数（2-3 层通常最优）</li>
+<li>残差连接</li>
+<li>DropEdge（随机丢边）</li>
+<li>JK-Net（跳跃连接，保留各层信息）</li>
+</ul>
+<hr>
+<h2 id="图卷积的谱域视角补充理解">图卷积的谱域视角（补充理解）</h2>
+<h3 id="图上的quot频率quot">图上的&quot;频率&quot;</h3>
+<p>在传统信号处理中，傅里叶变换将信号分解为不同频率的正弦波。类似地，图拉普拉斯矩阵的<strong>特征向量</strong>构成了图上的&quot;频率基&quot;。</p>
+<p>拉普拉斯矩阵的特征分解：$\boldsymbol{L} = \boldsymbol{U}\boldsymbol{\Lambda}\boldsymbol{U}^T$</p>
+<ul>
+<li>$\boldsymbol{U}$：特征向量矩阵（图上的&quot;傅里叶基&quot;）</li>
+<li>$\boldsymbol{\Lambda}$：特征值对角矩阵（对应&quot;频率&quot;——特征值越大，信号在相邻节点间变化越剧烈）</li>
+</ul>
+<h3 id="图傅里叶变换">图傅里叶变换</h3>
+<p>信号 $\boldsymbol{x} \in \mathbb{R}^n$ 在图上的傅里叶变换：
+$$\hat{\boldsymbol{x}} = \boldsymbol{U}^T \boldsymbol{x}$$</p>
+<p>逆变换：$\boldsymbol{x} = \boldsymbol{U}\hat{\boldsymbol{x}}$</p>
+<h3 id="gcn-的谱域解释">GCN 的谱域解释</h3>
+<p>GCN 中的 $\tilde{\boldsymbol{D}}^{-1/2}\tilde{\boldsymbol{A}}\tilde{\boldsymbol{D}}^{-1/2}$ 本质上是归一化邻接矩阵——它在谱域中充当<strong>低通滤波器</strong>：</p>
+<ul>
+<li>保留低频分量（相邻节点值相近 → 平滑信号）</li>
+<li>抑制高频分量（相邻节点值差异大 → 噪声）</li>
+</ul>
+<p>这解释了为什么 GCN 有效——它平滑了节点特征，让邻近节点的表示趋于一致，同类节点更容易被分到一起。</p>
+<p>也解释了 oversmoothing——过度的低通滤波让所有信号变成了&quot;直流分量&quot;（全图一个值）。</p>
+<hr>
+<h2 id="完整计算示例邻接矩阵到-gcn-前向">完整计算示例：邻接矩阵到 GCN 前向</h2>
+<h3 id="题设">题设</h3>
+<p>4 节点图，边集 $\{(1,2),(1,3),(2,3),(2,4)\}$。每个节点有 2 维特征：</p>
+<p>$$\boldsymbol{H}^{(0)} = \begin{pmatrix} 1 & 0 \\ 0 & 1 \\ 1 & 1 \\ 0 & 0 \end{pmatrix}$$</p>
+<h3 id="step-1加自环">Step 1：加自环</h3>
+<p>$$\tilde{\boldsymbol{A}} = \boldsymbol{A} + \boldsymbol{I} = \begin{pmatrix} 1 & 1 & 1 & 0 \\ 1 & 1 & 1 & 1 \\ 1 & 1 & 1 & 0 \\ 0 & 1 & 0 & 1 \end{pmatrix}$$</p>
+<h3 id="step-2计算度矩阵">Step 2：计算度矩阵</h3>
+<p>$\tilde{D}_{11} = 3, \tilde{D}_{22} = 4, \tilde{D}_{33} = 3, \tilde{D}_{44} = 2$</p>
+<p>$$\tilde{\boldsymbol{D}}^{-1/2} = \text{diag}(1/\sqrt{3}, 1/\sqrt{4}, 1/\sqrt{3}, 1/\sqrt{2})$$</p>
+<h3 id="step-3归一化">Step 3：归一化</h3>
+<p>$$\hat{\boldsymbol{A}} = \tilde{\boldsymbol{D}}^{-1/2}\tilde{\boldsymbol{A}}\tilde{\boldsymbol{D}}^{-1/2}$$</p>
+<p>位置 $(1,1)$：$\tilde{A}_{11}/(\sqrt{3}\cdot\sqrt{3}) = 1/3$</p>
+<p>位置 $(1,2)$：$\tilde{A}_{12}/(\sqrt{3}\cdot\sqrt{4}) = 1/\sqrt{12} \approx 0.289$</p>
+<p>位置 $(2,4)$：$\tilde{A}_{24}/(\sqrt{4}\cdot\sqrt{2}) = 1/\sqrt{8} \approx 0.354$</p>
+<h3 id="step-4设简单权重">Step 4：设简单权重</h3>
+<p>令 $\boldsymbol{W}^{(0)} = \boldsymbol{I}_{2\times2}$（恒等，简化演示），激活函数 ReLU：</p>
+<p>$$\boldsymbol{H}^{(1)} = \text{ReLU}(\hat{\boldsymbol{A}} \cdot \boldsymbol{H}^{(0)} \cdot \boldsymbol{I}) = \text{ReLU}(\hat{\boldsymbol{A}} \cdot \boldsymbol{H}^{(0)})$$</p>
+<p>结果：每个节点的新特征 = 它和邻居（含自己）的特征的归一化加权和。节点 4 原本特征为 $(0,0)$，经过聚合后会获得来自节点 2 的信息变为非零值。</p>
+<p>这就是 GNN 的力量——<strong>没有特征的节点也能通过邻居获得有意义的表示</strong>。</p>
+<hr>
+<h2 id="本章要点回顾">本章要点回顾</h2>
+<ol>
+<li><strong>图的三大矩阵</strong>：邻接矩阵 $\boldsymbol{A}$、度矩阵 $\boldsymbol{D}$、拉普拉斯矩阵 $\boldsymbol{L} = \boldsymbol{D} - \boldsymbol{A}$</li>
+<li><strong>随机游走</strong>：$\boldsymbol{P} = \boldsymbol{D}^{-1}\boldsymbol{A}$，稳态分布与度数正相关</li>
+<li><strong>GNN 核心</strong>：消息传递 + 邻域聚合，置换不变</li>
+<li><strong>GCN</strong>：固定归一化权重，$\tilde{\boldsymbol{D}}^{-1/2}\tilde{\boldsymbol{A}}\tilde{\boldsymbol{D}}^{-1/2}$</li>
+<li><strong>GAT</strong>：注意力学习权重，可解释</li>
+<li><strong>GraphSAGE</strong>：采样 + 归纳式，可处理新节点</li>
+<li><strong>GNN ≈ 多步随机游走</strong>（简化情形下等价）</li>
+</ol>
+
+    <nav class="pager">  <a href="04-backpropagation.html">
+    <span class="label">← 上一章</span>
+    <span class="title">反向传播与训练优化</span>
+  </a>  <a href="06-transformer.html" class="next">
+    <span class="label">下一章 →</span>
+    <span class="title">Transformer</span>
+  </a></nav>
+  </article>
+</div>
+
+<footer>
+  <div class="set">
+    <span>人工智能与数学原理</span>
+    <span>2026 · ZH-CN</span>
+  </div>
+  <div class="set">
+    <span>Mav</span>
+  </div>
+</footer>
+<div class="search-backdrop" id="search-overlay" role="dialog" aria-modal="true" aria-label="搜索" hidden>
+  <div class="search-modal">
+    <div class="search-input-wrap">
+      <input type="search" class="search-input" placeholder="搜索内容..." aria-label="搜索内容" autocomplete="off">
+      <kbd>ESC</kbd>
+    </div>
+    <div class="search-results" role="listbox" aria-label="搜索结果"></div>
+  </div>
+</div>
+
+<!-- Side Panel -->
+<div class="side-panel" id="side-panel">
+  <div class="side-panel-resize" id="side-panel-resize"></div>
+  <div class="side-panel-header">
+    <div class="side-panel-tabs">
+      <button class="side-panel-tab active" data-mode="sidenote">补充</button>
+      <button class="side-panel-tab" data-mode="notepad">笔记</button>
+    </div>
+    <button class="side-panel-close" aria-label="关闭">×</button>
+  </div>
+  <div class="side-panel-body"></div>
+</div>
+<button class="notepad-fab" id="notepad-fab" aria-label="便利贴">✎</button>
+
+<!-- Mobile TOC -->
+<button class="mtoc-fab" id="mtoc-fab" aria-label="目录">TOC</button>
+<div class="mtoc-drawer" id="mtoc-drawer">
+  <div class="mtoc-content"></div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/bash.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/typescript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/yaml.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/javascript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/json.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/python.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/css.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+<script>mermaid.initialize({startOnLoad:true, theme:'neutral', fontFamily:'Inter, sans-serif'});</script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}]});"></script>
+<script src="../assets/script.js"></script>
+</body>
+</html>

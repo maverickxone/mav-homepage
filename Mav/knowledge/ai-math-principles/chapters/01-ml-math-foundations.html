@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>机器学习基础与数学准备 — 人工智能与数学原理</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" id="hljs-light" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+<link rel="stylesheet" id="hljs-dark" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" media="not all">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+</head>
+<body>
+
+<div class="progress-bar" id="progress-bar"></div>
+
+<nav class="topnav" id="topnav">
+  <div class="topnav-inner">
+    <a class="brand" href="../index.html">人工智能与数学原理</a>
+    <div class="nav-links">
+      <a href="01-ml-math-foundations.html" class="active">01</a>
+      <a href="02-linear-logistic-regression.html">02</a>
+      <a href="03-neural-networks-cnn.html">03</a>
+      <a href="04-backpropagation.html">04</a>
+      <a href="05-graph-neural-networks.html">05</a>
+      <a href="06-transformer.html">06</a>
+      <a href="07-ssl-lm-rl.html">07</a>
+    </div>
+    <div class="nav-controls">
+      <button class="nav-btn" id="search-btn" aria-label="搜索 (Ctrl+K)">⌘K</button>
+      <button class="nav-btn" id="settings-btn" aria-label="阅读设置">Aa</button>
+      <a class="nav-btn" href="../../index.html" aria-label="返回知识库">← 知识库</a>
+      <a class="nav-btn" href="https://github.com/maverickxone/mav-homepage" target="_blank" rel="noopener" aria-label="GitHub" style="padding: 6px 8px;"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg></a>
+    </div>
+  </div>
+</nav>
+<div class="settings-pop" id="settings-pop">
+  <h5>主题</h5>
+  <div class="row">
+    <button class="seg" data-theme-set="light">明亮</button>
+    <button class="seg" data-theme-set="dark">暗色</button>
+  </div>
+  <h5>字号</h5>
+  <div class="row">
+    <button class="seg" data-size-set="s">小</button>
+    <button class="seg" data-size-set="m">中</button>
+    <button class="seg" data-size-set="l">大</button>
+  </div>
+</div>
+
+<div class="with-sidebar">
+  <aside class="sidebar">
+  <div class="chapter-num">CHAPTER 01</div>
+  <div class="chapter-name">机器学习基础与数学准备</div>
+  <h4>目录</h4>
+  <ul>
+    <li><a href="#为什么需要数学">为什么需要数学</a></li>
+    <li><a href="#概率论基础">概率论基础</a></li>
+    <li><a href="#几个关键的概率分布">几个关键的概率分布</a></li>
+    <li><a href="#条件概率与贝叶斯定理">条件概率与贝叶斯定理</a></li>
+    <li><a href="#似然函数与最大似然估计">似然函数与最大似然估计</a></li>
+    <li><a href="#mle-与损失函数的联系">MLE 与损失函数的联系</a></li>
+    <li><a href="#机器学习的基本框架">机器学习的基本框架</a></li>
+    <li><a href="#分类问题的评估指标">分类问题的评估指标</a></li>
+    <li><a href="#线性代数速查">线性代数速查</a></li>
+    <li><a href="#特征工程">特征工程</a></li>
+  </ul>
+</aside>
+  <article class="chapter-body">
+    <header class="chapter-head">
+  <div class="chapter-head-meta">
+    <span class="num">CHAPTER 01</span>
+    <span>≈ 45 MIN READ</span>
+  </div>
+  <h1>机器学习基础与数学准备</h1>
+
+</header>
+    <h2 id="为什么需要数学">为什么需要数学</h2>
+<p>机器学习的本质是：给定数据，找到一个函数，让这个函数能对未见过的数据做出好的预测。</p>
+<p>这句话里的每一步都需要数学：</p>
+<ul>
+<li>&quot;给定数据&quot;——数据有噪声，我们需要<strong>概率论</strong>来描述不确定性</li>
+<li>&quot;找到一个函数&quot;——需要<strong>线性代数</strong>来表示和变换高维数据</li>
+<li>&quot;好的预测&quot;——需要<strong>优化理论</strong>来定义什么是&quot;好&quot;并找到最优解</li>
+</ul>
+<p>本章从最基础的概率论开始，逐步搭建起整个机器学习的数学语言。如果你对概率论完全没有基础，这一章会从零讲起。</p>
+<hr>
+<h2 id="概率论基础">概率论基础</h2>
+<h3 id="随机试验与样本空间">随机试验与样本空间</h3>
+<p><strong>随机试验（Random Experiment）</strong>：在相同条件下重复进行时，结果不确定但所有可能结果已知的实验。例如：抛一枚硬币。</p>
+<p><strong>样本空间（Sample Space）$\Omega$</strong>：随机试验所有可能结果的集合。</p>
+<ul>
+<li>抛硬币：$\Omega = \{\text{正面}, \text{反面}\}$</li>
+<li>掷骰子：$\Omega = \{1, 2, 3, 4, 5, 6\}$</li>
+</ul>
+<p><strong>事件（Event）</strong>：样本空间的一个子集。例如&quot;掷骰子结果为偶数&quot;就是事件 $A = \{2, 4, 6\}$。</p>
+<h3 id="概率的定义">概率的定义</h3>
+<p>概率是一个从事件到 $[0, 1]$ 的函数 $P$，满足三条公理（Kolmogorov 公理）：</p>
+<ol>
+<li><strong>非负性</strong>：$P(A) \ge 0$</li>
+<li><strong>规范性</strong>：$P(\Omega) = 1$</li>
+<li><strong>可加性</strong>：若 $A \cap B = \emptyset$，则 $P(A \cup B) = P(A) + P(B)$</li>
+</ol>
+<p>从这三条公理可以推出所有概率计算规则。</p>
+<h3 id="随机变量">随机变量</h3>
+<p><strong>定义</strong>：随机变量 $X$ 是从样本空间 $\Omega$ 到实数集 $\mathbb{R}$ 的一个映射函数：</p>
+<p>$$X: \Omega \to \mathbb{R}$$</p>
+<p>它把&quot;抽象的实验结果&quot;变成&quot;具体的数值&quot;，方便我们用数学工具处理。</p>
+<p><strong>例子</strong>：抛两枚硬币，$X$ = &quot;正面朝上的次数&quot;。样本空间是 $\{(正,正), (正,反), (反,正), (反,反)\}$，$X$ 分别取值 $2, 1, 1, 0$。</p>
+<h3 id="离散随机变量">离散随机变量</h3>
+<p><strong>定义</strong>：只取有限个或可数无限个值的随机变量。</p>
+<p><strong>概率质量函数（PMF, Probability Mass Function）</strong>：
+$$P(X = x) = p(x), \quad \sum_x p(x) = 1$$</p>
+<p>它告诉我们每个取值出现的概率。</p>
+<h3 id="连续随机变量">连续随机变量</h3>
+<p><strong>定义</strong>：取值充满某个区间的随机变量。对于连续型随机变量，单个点的概率为零（$P(X = x) = 0$），我们用**概率密度函数（PDF）**来描述：</p>
+<p><strong>概率密度函数（PDF, Probability Density Function）</strong>：
+$$P(a \le X \le b) = \int_a^b f(x)\,dx$$</p>
+<p>性质：</p>
+<ul>
+<li>$f(x) \ge 0$（密度非负）</li>
+<li>$\int_{-\infty}^{\infty} f(x)\,dx = 1$（总概率为 1）</li>
+</ul>
+<p><strong>注意</strong>：$f(x)$ 本身不是概率，它可以大于 1！概率是密度在区间上的积分。</p>
+<h3 id="期望与方差">期望与方差</h3>
+<p><strong>期望（Mean / Expectation）</strong>——随机变量的&quot;平均值&quot;：</p>
+<p>离散：$\mathbb{E}[X] = \sum_x x \cdot P(X=x)$</p>
+<p>连续：$\mathbb{E}[X] = \int_{-\infty}^{\infty} x \cdot f(x)\,dx$</p>
+<p><strong>期望的线性性</strong>（极其重要，无条件成立）：
+$$\mathbb{E}[aX + bY] = a\mathbb{E}[X] + b\mathbb{E}[Y]$$</p>
+<p><strong>方差（Variance）</strong>——衡量随机变量偏离期望的程度：</p>
+<p>$$\text{Var}(X) = \mathbb{E}[(X - \mathbb{E}[X])^2] = \mathbb{E}[X^2] - (\mathbb{E}[X])^2$$</p>
+<p><strong>标准差</strong>：$\sigma = \sqrt{\text{Var}(X)}$</p>
+<p><strong>方差的性质</strong>：</p>
+<ul>
+<li>$\text{Var}(aX) = a^2 \text{Var}(X)$</li>
+<li>若 $X, Y$ 独立：$\text{Var}(X+Y) = \text{Var}(X) + \text{Var}(Y)$</li>
+</ul>
+<h3 id="独立性">独立性</h3>
+<p>两个随机变量 $X, Y$ <strong>独立</strong>当且仅当：
+$$P(X=x, Y=y) = P(X=x) \cdot P(Y=y), \quad \forall x, y$$</p>
+<p>直觉：知道 $X$ 的值不会给你关于 $Y$ 的任何信息。</p>
+<p>独立性意味着：$\mathbb{E}[XY] = \mathbb{E}[X]\mathbb{E}[Y]$</p>
+<hr>
+<h2 id="几个关键的概率分布">几个关键的概率分布</h2>
+<h3 id="伯努利分布bernoulli-distribution">伯努利分布（Bernoulli Distribution）</h3>
+<p>最简单的分布——描述一次&quot;成功/失败&quot;试验。</p>
+<p>$$X \sim \text{Bernoulli}(\theta)$$</p>
+<p>$$P(X=1) = \theta, \quad P(X=0) = 1-\theta$$</p>
+<p>统一写法：$P(X=x) = \theta^x(1-\theta)^{1-x}$，$x \in \{0, 1\}$</p>
+<ul>
+<li>期望：$\mathbb{E}[X] = \theta$</li>
+<li>方差：$\text{Var}(X) = \theta(1-\theta)$</li>
+</ul>
+<p><strong>现实意义</strong>：硬币正反、邮件是否垃圾、贷款是否违约——任何二值结果。</p>
+<h3 id="二项分布binomial-distribution">二项分布（Binomial Distribution）</h3>
+<p>$n$ 次独立伯努利试验中成功的次数。</p>
+<p>$$P(X=k) = \binom{n}{k}\theta^k(1-\theta)^{n-k}, \quad k=0,1,\ldots,n$$</p>
+<h3 id="高斯分布正态分布gaussian-normal-distribution">高斯分布（正态分布，Gaussian / Normal Distribution）</h3>
+<p>自然界最常见的分布。由中心极限定理保证：大量独立随机因素的叠加效果趋于正态。</p>
+<p>$$X \sim \mathcal{N}(\mu, \sigma^2)$$</p>
+<p><strong>概率密度函数</strong>：</p>
+<p>$$f(x) = \frac{1}{\sqrt{2\pi}\sigma}\exp\left(-\frac{(x-\mu)^2}{2\sigma^2}\right)$$</p>
+<ul>
+<li>$\mu$：均值（分布中心的位置）</li>
+<li>$\sigma^2$：方差（分布的宽度/分散程度）</li>
+<li>$\sigma$：标准差</li>
+</ul>
+<p><strong>标准正态分布</strong>：$\mu = 0, \sigma = 1$ 时，$f(x) = \frac{1}{\sqrt{2\pi}}e^{-x^2/2}$</p>
+<p><strong>为什么重要</strong>：</p>
+<ol>
+<li>中心极限定理：大量独立随机变量之和趋于正态</li>
+<li>线性回归中假设噪声服从正态分布</li>
+<li>参数初始化、正则化都与正态分布密切相关</li>
+</ol>
+<h3 id="logistic-分布">Logistic 分布</h3>
+<p>分布函数（CDF）为：
+$$F(x) = \frac{1}{1 + e^{-(x-\mu)/s}}$$</p>
+<p>当 $\mu = 0, s = 1$ 时，CDF 就是 <strong>Sigmoid 函数</strong>：$\sigma(x) = \frac{1}{1+e^{-x}}$</p>
+<p>这就是逻辑回归的数学来源——Sigmoid 不是凭空选的函数，它是 Logistic 分布的 CDF。</p>
+<hr>
+<h2 id="条件概率与贝叶斯定理">条件概率与贝叶斯定理</h2>
+<h3 id="条件概率">条件概率</h3>
+<p><strong>定义</strong>：在事件 $B$ 已经发生的前提下，事件 $A$ 发生的概率：</p>
+<p>$$P(A|B) = \frac{P(A \cap B)}{P(B)}, \quad P(B) > 0$$</p>
+<p><strong>直觉</strong>：把&quot;已知 $B$ 发生&quot;看作缩小了样本空间，只在 $B$ 的范围内讨论 $A$。</p>
+<p><strong>乘法公式</strong>：$P(A \cap B) = P(A|B) \cdot P(B) = P(B|A) \cdot P(A)$</p>
+<h3 id="全概率公式">全概率公式</h3>
+<p>如果事件 $B_1, B_2, \ldots, B_n$ 构成样本空间的一个<strong>划分</strong>（互斥且并为全集），则对任意事件 $A$：</p>
+<p>$$P(A) = \sum_{i=1}^n P(A|B_i) \cdot P(B_i)$$</p>
+<p><strong>直觉</strong>：把复杂事件 $A$ 按&quot;通过哪条路径发生&quot;分解，分别算概率再加起来。</p>
+<h3 id="贝叶斯定理bayes39-theorem">贝叶斯定理（Bayes&#39; Theorem）</h3>
+<p>将乘法公式的两个形式联立：</p>
+<p>$$P(A|B) = \frac{P(B|A) \cdot P(A)}{P(B)}$$</p>
+<p>用全概率公式展开分母：</p>
+<p>$$P(A|B) = \frac{P(B|A) \cdot P(A)}{\sum_{i} P(B|A_i) \cdot P(A_i)}$$</p>
+<p><strong>各项的名称与含义</strong>：</p>
+<div class="table-wrap"><table><thead><tr>
+<th>项</th>
+<th>名称</th>
+<th>含义</th>
+</tr>
+</thead><tbody><tr>
+<td>$P(A)$</td>
+<td>先验概率（Prior）</td>
+<td>在看到证据 $B$ 之前，我们对 $A$ 的初始信念</td>
+</tr>
+<tr>
+<td>$P(B\|A)$</td>
+<td>似然（Likelihood）</td>
+<td>如果 $A$ 为真，观测到 $B$ 的可能性有多大</td>
+</tr>
+<tr>
+<td>$P(A\|B)$</td>
+<td>后验概率（Posterior）</td>
+<td>看到证据 $B$ 之后，我们对 $A$ 的更新信念</td>
+</tr>
+<tr>
+<td>$P(B)$</td>
+<td>证据/边际似然（Evidence）</td>
+<td>观测到 $B$ 的总概率，起归一化作用</td>
+</tr>
+</tbody></table></div>
+<p><strong>贝叶斯定理的本质</strong>：用新的证据更新我们的信念。</p>
+<p>$$\text{后验} = \frac{\text{似然} \times \text{先验}}{\text{证据}}$$</p>
+<h3 id="详细例题贷款诈骗识别">详细例题：贷款诈骗识别</h3>
+<p>一家银行的贷款诈骗识别系统，10000 份贷款中：</p>
+<ul>
+<li>实际诈骗 100 份（先验概率 $P(\text{诈骗}) = 0.01$）</li>
+<li>系统对诈骗的检出率 95%（$P(\text{报警}|\text{诈骗}) = 0.95$）</li>
+<li>系统对非诈骗的误报率 1%（$P(\text{报警}|\text{正常}) = 0.01$）</li>
+</ul>
+<p><strong>问题</strong>：系统报警了，这笔贷款真是诈骗的概率是多少？</p>
+<p><strong>解答</strong>：</p>
+<p>设事件 $A$ = 实际诈骗，事件 $B$ = 系统报警。</p>
+<p>第一步，列出已知信息：</p>
+<ul>
+<li>$P(A) = 0.01$，$P(\bar{A}) = 0.99$</li>
+<li>$P(B|A) = 0.95$（似然：是诈骗时，被系统抓到的概率）</li>
+<li>$P(B|\bar{A}) = 0.01$（假阳性率）</li>
+</ul>
+<p>第二步，用全概率公式算 $P(B)$：
+$$P(B) = P(B|A)P(A) + P(B|\bar{A})P(\bar{A}) = 0.95 \times 0.01 + 0.01 \times 0.99 = 0.0095 + 0.0099 = 0.0194$$</p>
+<p>第三步，贝叶斯定理：
+$$P(A|B) = \frac{P(B|A)P(A)}{P(B)} = \frac{0.95 \times 0.01}{0.0194} = \frac{0.0095}{0.0194} \approx 0.4897$$</p>
+<p><strong>结论</strong>：即使系统报警了，实际是诈骗的概率只有约 49%！这就是&quot;基率谬误&quot;——当先验概率（诈骗率）很低时，即使检测手段很灵敏，阳性结果中仍有大量假阳性。</p>
+<hr>
+<h2 id="似然函数与最大似然估计">似然函数与最大似然估计</h2>
+<h3 id="从quot概率quot到quot似然quot一个视角翻转">从&quot;概率&quot;到&quot;似然&quot;——一个视角翻转</h3>
+<p><strong>概率</strong>：参数 $\theta$ 已知，计算数据 $x$ 出现的可能性。&quot;硬币正面概率 0.6 时，抛 10 次出现 7 次正面的概率是多少？&quot;</p>
+<p><strong>似然</strong>：数据 $x$ 已观测到，评估不同参数 $\theta$ 的合理性。&quot;观测到 10 次中 7 次正面，正面概率 $\theta$ 最可能是多少？&quot;</p>
+<p>数学形式完全一样，只是&quot;谁固定、谁变化&quot;不同：</p>
+<p>$$\underbrace{P(x|\theta)}_{\text{概率：}\theta\text{固定，}x\text{变}} = \underbrace{\mathcal{L}(\theta|x)}_{\text{似然：}x\text{固定，}\theta\text{变}}$$</p>
+<h3 id="似然函数的定义">似然函数的定义</h3>
+<p>给定一组独立同分布（i.i.d.）的观测数据 $\mathcal{D} = \{x_1, x_2, \ldots, x_N\}$，<strong>似然函数</strong>是参数 $\theta$ 的函数：</p>
+<p>$$\mathcal{L}(\theta) = \mathcal{L}(\theta | \mathcal{D}) = \prod_{i=1}^N p(x_i | \theta)$$</p>
+<p>由于各样本独立，联合概率等于各概率之积。</p>
+<p><strong>为什么取对数</strong>：连乘不便计算（数值下溢、求导复杂），取对数将乘法变加法：</p>
+<p>$$\ell(\theta) = \ln\mathcal{L}(\theta) = \sum_{i=1}^N \ln p(x_i | \theta)$$</p>
+<p>这就是<strong>对数似然函数（Log-Likelihood）</strong>。由于 $\ln$ 是单调递增函数，最大化 $\ell$ 等价于最大化 $\mathcal{L}$。</p>
+<h3 id="最大似然估计maximum-likelihood-estimation-mle">最大似然估计（Maximum Likelihood Estimation, MLE）</h3>
+<p><strong>核心思想</strong>：在所有可能的参数中，选择使&quot;观测到的数据出现概率最大&quot;的那个。</p>
+<p>$$\hat{\theta}_{\text{MLE}} = \arg\max_\theta \ell(\theta) = \arg\max_\theta \sum_{i=1}^N \ln p(x_i | \theta)$$</p>
+<p><strong>求解方法</strong>：对 $\theta$ 求导，令导数为零，解方程。</p>
+<h3 id="完整示例抛硬币的-mle">完整示例：抛硬币的 MLE</h3>
+<p><strong>设定</strong>：抛硬币 $N$ 次，第 $i$ 次结果 $x_i \in \{0, 1\}$（1 为正面），正面概率为 $\theta$。</p>
+<p>每次服从伯努利分布：$p(x_i|\theta) = \theta^{x_i}(1-\theta)^{1-x_i}$</p>
+<p><strong>第一步：写出对数似然</strong></p>
+<p>$$\ell(\theta) = \sum_{i=1}^N \ln[\theta^{x_i}(1-\theta)^{1-x_i}] = \sum_{i=1}^N [x_i\ln\theta + (1-x_i)\ln(1-\theta)]$$</p>
+<p>设 $k = \sum_{i=1}^N x_i$（正面出现次数），则：</p>
+<p>$$\ell(\theta) = k\ln\theta + (N-k)\ln(1-\theta)$$</p>
+<p><strong>第二步：对 $\theta$ 求导</strong></p>
+<p>$$\frac{d\ell}{d\theta} = \frac{k}{\theta} - \frac{N-k}{1-\theta}$$</p>
+<p><strong>第三步：令导数为零</strong></p>
+<p>$$\frac{k}{\theta} = \frac{N-k}{1-\theta}$$</p>
+<p>$$k(1-\theta) = (N-k)\theta$$</p>
+<p>$$k - k\theta = N\theta - k\theta$$</p>
+<p>$$k = N\theta$$</p>
+<p>$$\hat{\theta}_{\text{MLE}} = \frac{k}{N} = \frac{\text{正面次数}}{\text{总次数}}$$</p>
+<p><strong>结论</strong>：MLE 告诉我们，最优估计就是正面出现的频率——直觉上非常合理。</p>
+<p><strong>具体数值</strong>：$N=10$，观测 $[1,0,1,1,0,1,1,0,0,1]$，$k=6$，$\hat{\theta} = 0.6$。</p>
+<h3 id="mle-的几何直觉">MLE 的几何直觉</h3>
+<p>对数似然 $\ell(\theta)$ 是 $\theta$ 的函数，画出来是一条曲线。MLE 就是这条曲线的最高点。对于伯努利分布，这条曲线是上凸的（凹函数），所以最高点唯一。</p>
+<hr>
+<h2 id="mle-与损失函数的联系">MLE 与损失函数的联系</h2>
+<h3 id="定理高斯噪声下-mle-最小二乘">定理：高斯噪声下 MLE = 最小二乘</h3>
+<p><strong>设定</strong>：线性回归 $y = \boldsymbol{w}^T\boldsymbol{x} + \epsilon$，噪声 $\epsilon \sim \mathcal{N}(0, \sigma^2)$。</p>
+<p>那么 $y | \boldsymbol{x} \sim \mathcal{N}(\boldsymbol{w}^T\boldsymbol{x}, \sigma^2)$，密度为：
+$$p(y_i | \boldsymbol{x}_i, \boldsymbol{w}) = \frac{1}{\sqrt{2\pi}\sigma}\exp\left(-\frac{(y_i - \boldsymbol{w}^T\boldsymbol{x}_i)^2}{2\sigma^2}\right)$$</p>
+<p>对数似然：
+$$\ell(\boldsymbol{w}) = \sum_{i=1}^N \ln p(y_i|\boldsymbol{x}_i, \boldsymbol{w}) = -\frac{N}{2}\ln(2\pi\sigma^2) - \frac{1}{2\sigma^2}\sum_{i=1}^N(y_i - \boldsymbol{w}^T\boldsymbol{x}_i)^2$$</p>
+<p>最大化 $\ell(\boldsymbol{w})$ 时，第一项是常数，所以等价于最小化：</p>
+<p>$$\sum_{i=1}^N(y_i - \boldsymbol{w}^T\boldsymbol{x}_i)^2$$</p>
+<p>这就是<strong>最小二乘法（Least Squares）</strong>。所以平方误差损失不是凭空定义的——它是&quot;假设噪声服从高斯分布&quot;时 MLE 的自然结果。</p>
+<h3 id="定理伯努利分布下-mle-交叉熵最小化">定理：伯努利分布下 MLE = 交叉熵最小化</h3>
+<p><strong>设定</strong>：逻辑回归中 $y \in \{0, 1\}$，$P(y=1|\boldsymbol{x}) = \sigma(\boldsymbol{w}^T\boldsymbol{x})$。</p>
+<p>对数似然：
+$$\ell(\boldsymbol{w}) = \sum_{i=1}^N [y_i\ln\sigma(\boldsymbol{w}^T\boldsymbol{x}_i) + (1-y_i)\ln(1-\sigma(\boldsymbol{w}^T\boldsymbol{x}_i))]$$</p>
+<p>最大化对数似然 = 最小化负对数似然 = 最小化<strong>交叉熵损失</strong>。</p>
+<p><strong>总结</strong>：损失函数的选择背后都有概率论的支撑。</p>
+<hr>
+<h2 id="机器学习的基本框架">机器学习的基本框架</h2>
+<h3 id="核心术语">核心术语</h3>
+<p><strong>模型 / 假设（Hypothesis）</strong>：从输入到输出的映射 $f: \mathcal{X} \to \mathcal{Y}$，由参数 $\boldsymbol{w}$ 控制。</p>
+<p><strong>假设类（Hypothesis Class）$\mathcal{H}$</strong>：模型能表示的所有函数的集合。例如线性模型的假设类是所有线性函数。</p>
+<p><strong>学习 / 训练</strong>：给定数据，在假设类中找到最优的那个函数。</p>
+<h3 id="机器学习三要素">机器学习三要素</h3>
+<div class="table-wrap"><table><thead><tr>
+<th>要素</th>
+<th>角色</th>
+<th>举例</th>
+</tr>
+</thead><tbody><tr>
+<td>假设类</td>
+<td>&quot;搜索空间&quot;——模型能长什么样</td>
+<td>线性函数、多层神经网络</td>
+</tr>
+<tr>
+<td>损失函数</td>
+<td>&quot;评分标准&quot;——衡量预测有多差</td>
+<td>MSE、交叉熵</td>
+</tr>
+<tr>
+<td>优化算法</td>
+<td>&quot;搜索策略&quot;——怎么找最优参数</td>
+<td>梯度下降、Adam</td>
+</tr>
+</tbody></table></div>
+<p>$$\boldsymbol{w}^* = \arg\min_{\boldsymbol{w} \in \mathcal{W}} \frac{1}{N}\sum_{i=1}^N L(y_i, f(\boldsymbol{x}_i; \boldsymbol{w}))$$</p>
+<h3 id="训练集-vs-测试集">训练集 vs 测试集</h3>
+<ul>
+<li><strong>训练集</strong>：用来学习参数的数据</li>
+<li><strong>测试集</strong>：用来评估最终效果的数据，<strong>训练过程中绝不能碰</strong></li>
+</ul>
+<p>为什么要分开？因为我们关心的不是模型对&quot;见过的数据&quot;预测有多好，而是对&quot;没见过的数据&quot;预测有多好——这就是<strong>泛化能力</strong>。</p>
+<hr>
+<h2 id="分类问题的评估指标">分类问题的评估指标</h2>
+<h3 id="混淆矩阵">混淆矩阵</h3>
+<p>对于二分类问题，模型的预测有四种可能：</p>
+<div class="table-wrap"><table><thead><tr>
+<th></th>
+<th>预测为正</th>
+<th>预测为负</th>
+</tr>
+</thead><tbody><tr>
+<td><strong>实际为正</strong></td>
+<td>TP（真正例：抓对了）</td>
+<td>FN（假负例：漏了）</td>
+</tr>
+<tr>
+<td><strong>实际为负</strong></td>
+<td>FP（假正例：冤枉了）</td>
+<td>TN（真负例：正确放过）</td>
+</tr>
+</tbody></table></div>
+<h3 id="精确率precision">精确率（Precision）</h3>
+<p>&quot;模型说是正的，有多少真的是正的？&quot;</p>
+<p>$$\text{Precision} = \frac{TP}{TP + FP}$$</p>
+<p>高 Precision = 低误报率。适用场景：垃圾邮件过滤（宁可放过，不可误杀正常邮件）。</p>
+<h3 id="召回率recall-灵敏度">召回率（Recall）/ 灵敏度</h3>
+<p>&quot;所有真正为正的样本，模型抓到了多少？&quot;</p>
+<p>$$\text{Recall} = \frac{TP}{TP + FN}$$</p>
+<p>高 Recall = 低漏检率。适用场景：癌症筛查（宁可误报，不可漏诊）。</p>
+<h3 id="f1-score">F1 Score</h3>
+<p>Precision 和 Recall 的调和平均（兼顾两者）：</p>
+<p>$$F_1 = \frac{2 \cdot \text{Precision} \cdot \text{Recall}}{\text{Precision} + \text{Recall}} = \frac{2 \cdot TP}{2 \cdot TP + FP + FN}$$</p>
+<h3 id="为什么不用准确率accuracy">为什么不用准确率（Accuracy）</h3>
+<p>当正负样本<strong>极度不均衡</strong>时，Accuracy 会误导。例如：1000 个样本中只有 10 个正例，模型全部预测为负，Accuracy = 99%，但完全没用。</p>
+<h3 id="完整例题">完整例题</h3>
+<p>某疾病检测试剂，1000 名志愿者结果如下：</p>
+<div class="table-wrap"><table><thead><tr>
+<th></th>
+<th>预测阳性</th>
+<th>预测阴性</th>
+<th>合计</th>
+</tr>
+</thead><tbody><tr>
+<td>实际患病</td>
+<td>45 (TP)</td>
+<td>5 (FN)</td>
+<td>50</td>
+</tr>
+<tr>
+<td>实际健康</td>
+<td>90 (FP)</td>
+<td>860 (TN)</td>
+<td>950</td>
+</tr>
+<tr>
+<td>合计</td>
+<td>135</td>
+<td>865</td>
+<td>1000</td>
+</tr>
+</tbody></table></div>
+<p>计算：</p>
+<ul>
+<li>Precision = $45 / (45+90) = 45/135 \approx 33.3\%$<ul>
+<li>临床意义：报告阳性的 135 人中，只有 1/3 真正患病，假阳性率很高</li>
+</ul>
+</li>
+<li>Recall = $45 / (45+5) = 45/50 = 90\%$<ul>
+<li>临床意义：50 个真患者中有 45 个被检出，漏诊率只有 10%</li>
+</ul>
+</li>
+</ul>
+<p><strong>这种试剂的设计倾向</strong>：宁可多误报，也不能漏诊（高 Recall，牺牲 Precision）。对于致死性疾病，这是正确的取舍。</p>
+<hr>
+<h2 id="线性代数速查">线性代数速查</h2>
+<h3 id="向量">向量</h3>
+<p><strong>定义</strong>：$\boldsymbol{x} = [x_1, x_2, \ldots, x_n]^T \in \mathbb{R}^n$，是 $n$ 维空间中的一个点或一个方向。</p>
+<p><strong>内积（点积）</strong>：
+$$\boldsymbol{a}^T\boldsymbol{b} = \sum_{i=1}^n a_i b_i = |\boldsymbol{a}||\boldsymbol{b}|\cos\theta$$</p>
+<p>内积的几何意义：一个向量在另一个方向上的投影长度 × 另一个向量的长度。当两向量正交时内积为零。</p>
+<p><strong>范数（向量长度）</strong>：</p>
+<ul>
+<li>L2 范数：$\|\boldsymbol{x}\|_2 = \sqrt{\sum_i x_i^2}$（欧几里得距离）</li>
+<li>L1 范数：$\|\boldsymbol{x}\|_1 = \sum_i |x_i|$（曼哈顿距离）</li>
+</ul>
+<h3 id="矩阵">矩阵</h3>
+<p><strong>定义</strong>：$\boldsymbol{A} \in \mathbb{R}^{m \times n}$ 是 $m$ 行 $n$ 列的数表，也可以看作从 $\mathbb{R}^n$ 到 $\mathbb{R}^m$ 的线性变换。</p>
+<p><strong>矩阵乘法</strong>：$\boldsymbol{C} = \boldsymbol{A}\boldsymbol{B}$，$C_{ij} = \sum_k A_{ik}B_{kj}$</p>
+<ul>
+<li>$\boldsymbol{A} \in \mathbb{R}^{m \times n}$，$\boldsymbol{B} \in \mathbb{R}^{n \times p}$ → $\boldsymbol{C} \in \mathbb{R}^{m \times p}$</li>
+<li>矩阵乘法<strong>不满足交换律</strong>：$\boldsymbol{AB} \ne \boldsymbol{BA}$（一般情况）</li>
+</ul>
+<p><strong>转置的性质</strong>：$(\boldsymbol{AB})^T = \boldsymbol{B}^T\boldsymbol{A}^T$</p>
+<p><strong>对称矩阵</strong>：$\boldsymbol{A} = \boldsymbol{A}^T$</p>
+<p><strong>对角矩阵</strong>：只有对角线上有非零元素</p>
+<p><strong>单位矩阵</strong>：$\boldsymbol{I}$，对角全为 1，$\boldsymbol{AI} = \boldsymbol{IA} = \boldsymbol{A}$</p>
+<p><strong>逆矩阵</strong>：$\boldsymbol{A}^{-1}$ 满足 $\boldsymbol{A}\boldsymbol{A}^{-1} = \boldsymbol{I}$（只有方阵且行列式非零时存在）</p>
+<h3 id="梯度">梯度</h3>
+<p><strong>标量对向量的梯度（Gradient）</strong>：设 $f: \mathbb{R}^n \to \mathbb{R}$，梯度是一个向量：</p>
+<p>$$\nabla_{\boldsymbol{x}} f = \left[\frac{\partial f}{\partial x_1}, \frac{\partial f}{\partial x_2}, \ldots, \frac{\partial f}{\partial x_n}\right]^T$$</p>
+<p><strong>梯度的几何意义</strong>：指向函数值增长最快的方向，大小等于最大变化率。</p>
+<p><strong>常用梯度</strong>：</p>
+<ul>
+<li>$\nabla_{\boldsymbol{x}}(\boldsymbol{a}^T\boldsymbol{x}) = \boldsymbol{a}$</li>
+<li>$\nabla_{\boldsymbol{x}}(\boldsymbol{x}^T\boldsymbol{A}\boldsymbol{x}) = (\boldsymbol{A} + \boldsymbol{A}^T)\boldsymbol{x}$</li>
+</ul>
+<hr>
+<h2 id="特征工程">特征工程</h2>
+<h3 id="什么是特征">什么是特征</h3>
+<p>特征（Feature）是用来描述样本的数值属性。一个样本 $\boldsymbol{x} = [x_1, x_2, \ldots, x_d]^T$ 有 $d$ 个特征。</p>
+<p>例如判断贷款是否违约：特征可以是收入、年龄、信用分、负债率等。</p>
+<h3 id="特征归一化">特征归一化</h3>
+<p>不同特征的量纲和范围可能差异巨大（收入几万到几百万，年龄 18-80）。不归一化时，范围大的特征会主导梯度方向，训练效率低下。</p>
+<p><strong>Min-Max 归一化</strong>：映射到 $[0, 1]$：
+$$x' = \frac{x - x_{\min}}{x_{\max} - x_{\min}}$$</p>
+<ul>
+<li>优点：范围确定</li>
+<li>缺点：对异常值极度敏感（一个极端值会压缩所有正常值）</li>
+</ul>
+<p><strong>Z-Score 标准化</strong>：映射为均值 0、方差 1：
+$$x' = \frac{x - \mu}{\sigma}$$</p>
+<ul>
+<li>优点：对异常值更鲁棒</li>
+<li>缺点：不保证范围</li>
+</ul>
+<p><strong>选择依据</strong>：如果特征可能有极端异常值（如收入），用 Z-Score；如果特征范围已知且分布均匀（如像素值 0-255），用 Min-Max。</p>
+
+    <nav class="pager">  <a class="disabled"><span class="label">← 上一章</span><span class="title"></span></a>  <a href="02-linear-logistic-regression.html" class="next">
+    <span class="label">下一章 →</span>
+    <span class="title">线性回归、逻辑回归与优化</span>
+  </a></nav>
+  </article>
+</div>
+
+<footer>
+  <div class="set">
+    <span>人工智能与数学原理</span>
+    <span>2026 · ZH-CN</span>
+  </div>
+  <div class="set">
+    <span>Mav</span>
+  </div>
+</footer>
+<div class="search-backdrop" id="search-overlay" role="dialog" aria-modal="true" aria-label="搜索" hidden>
+  <div class="search-modal">
+    <div class="search-input-wrap">
+      <input type="search" class="search-input" placeholder="搜索内容..." aria-label="搜索内容" autocomplete="off">
+      <kbd>ESC</kbd>
+    </div>
+    <div class="search-results" role="listbox" aria-label="搜索结果"></div>
+  </div>
+</div>
+
+<!-- Side Panel -->
+<div class="side-panel" id="side-panel">
+  <div class="side-panel-resize" id="side-panel-resize"></div>
+  <div class="side-panel-header">
+    <div class="side-panel-tabs">
+      <button class="side-panel-tab active" data-mode="sidenote">补充</button>
+      <button class="side-panel-tab" data-mode="notepad">笔记</button>
+    </div>
+    <button class="side-panel-close" aria-label="关闭">×</button>
+  </div>
+  <div class="side-panel-body"></div>
+</div>
+<button class="notepad-fab" id="notepad-fab" aria-label="便利贴">✎</button>
+
+<!-- Mobile TOC -->
+<button class="mtoc-fab" id="mtoc-fab" aria-label="目录">TOC</button>
+<div class="mtoc-drawer" id="mtoc-drawer">
+  <div class="mtoc-content"></div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/bash.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/typescript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/yaml.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/javascript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/json.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/python.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/css.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+<script>mermaid.initialize({startOnLoad:true, theme:'neutral', fontFamily:'Inter, sans-serif'});</script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}]});"></script>
+<script src="../assets/script.js"></script>
+</body>
+</html>

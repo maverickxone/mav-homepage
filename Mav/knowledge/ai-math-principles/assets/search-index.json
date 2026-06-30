@@ -1,0 +1,3164 @@
+{
+  "documents": [
+    {
+      "id": "01-ml-math-foundations",
+      "title": "机器学习基础与数学准备",
+      "chapter": "01",
+      "chapterTitle": "机器学习基础与数学准备",
+      "url": "chapters/01-ml-math-foundations.html",
+      "body": "\n   为什么需要数学\n\n机器学习的本质是：给定数据，找到一个函数，让这个函数能对未见过的数据做出好的预测。\n\n这句话里的每一步都需要数学：\n  \"给定数据\"——数据有噪声，我们需要  概率论  来描述不确定性\n  \"找到一个函数\"——需要  线性代数  来表示和变换高维数据\n  \"好的预测\"——需要  优化理论  来定义什么是\"好\"并找到最优解\n\n本章从最基础的概率论开始，逐步搭建起整个机器学习的数学语言。如果你对概率论完全没有基础，这一章会从零讲起。\n\n   \n\n   概率论基础\n\n    随机试验与样本空间\n\n  随机试验（Random Experiment）  ：在相同条件下重复进行时，结果不确定但所有可能结果已知的实验。例如：抛一枚硬币。\n\n  样本空间（Sample Space）$\\Omega$  ：随机试验所有可能结果的集合。\n  抛硬币：$\\Omega = \\ \\text 正面 , \\text 反面 \\ $\n  掷骰子：$\\Omega = \\ 1, 2, 3, 4, 5, 6\\ $\n\n  事件（Event）  ：样本空间的一个子集。例如\"掷骰子结果为偶数\"就是事件 $A = \\ 2, 4, 6\\ $。\n\n    概率的定义\n\n概率是一个从事件到 $ 0, 1 $ 的函数 $P$，满足三条公理（Kolmogorov 公理）：\n\n1.   非负性  ：$P A  \\ge 0$\n2.   规范性  ：$P \\Omega  = 1$\n3.   可加性  ：若 $A \\cap B = \\emptyset$，则 $P A \\cup B  = P A  + P B $\n\n从这三条公理可以推出所有概率计算规则。\n\n    随机变量\n\n  定义  ：随机变量 $X$ 是从样本空间 $\\Omega$ 到实数集 $\\mathbb R $ 的一个映射函数：\n\n$$X: \\Omega \\to \\mathbb R $$\n\n它把\"抽象的实验结果\"变成\"具体的数值\"，方便我们用数学工具处理。\n\n  例子  ：抛两枚硬币，$X$ = \"正面朝上的次数\"。样本空间是 $\\  正,正 ,  正,反 ,  反,正 ,  反,反 \\ $，$X$ 分别取值 $2, 1, 1, 0$。\n\n    离散随机变量\n\n  定义  ：只取有限个或可数无限个值的随机变量。\n\n  概率质量函数（PMF, Probability Mass Function）  ：\n$$P X = x  = p x , \\quad \\sum x p x  = 1$$\n\n它告诉我们每个取值出现的概率。\n\n    连续随机变量\n\n  定义  ：取值充满某个区间的随机变量。对于连续型随机变量，单个点的概率为零（$P X = x  = 0$），我们用  概率密度函数（PDF）  来描述：\n\n  概率密度函数（PDF, Probability Density Function）  ：\n$$P a \\le X \\le b  = \\int a^b f x \\,dx$$\n\n性质：\n  $f x  \\ge 0$（密度非负）\n  $\\int   \\infty ^ \\infty  f x \\,dx = 1$（总概率为 1）\n\n  注意  ：$f x $ 本身不是概率，它可以大于 1！概率是密度在区间上的积分。\n\n    期望与方差\n\n  期望（Mean / Expectation）  ——随机变量的\"平均值\"：\n\n离散：$\\mathbb E  X  = \\sum x x \\cdot P X=x $\n\n连续：$\\mathbb E  X  = \\int   \\infty ^ \\infty  x \\cdot f x \\,dx$\n\n  期望的线性性  （极其重要，无条件成立）：\n$$\\mathbb E  aX + bY  = a\\mathbb E  X  + b\\mathbb E  Y $$\n\n  方差（Variance）  ——衡量随机变量偏离期望的程度：\n\n$$\\text Var  X  = \\mathbb E   X   \\mathbb E  X  ^2  = \\mathbb E  X^2     \\mathbb E  X  ^2$$\n\n  标准差  ：$\\sigma = \\sqrt \\text Var  X  $\n\n  方差的性质  ：\n  $\\text Var  aX  = a^2 \\text Var  X $\n  若 $X, Y$ 独立：$\\text Var  X+Y  = \\text Var  X  + \\text Var  Y $\n\n    独立性\n\n两个随机变量 $X, Y$   独立  当且仅当：\n$$P X=x, Y=y  = P X=x  \\cdot P Y=y , \\quad \\forall"
+    },
+    {
+      "id": "01-ml-math-foundations-为什么需要数学",
+      "title": "为什么需要数学",
+      "chapter": "01",
+      "chapterTitle": "机器学习基础与数学准备",
+      "url": "chapters/01-ml-math-foundations.html#为什么需要数学",
+      "body": ""
+    },
+    {
+      "id": "01-ml-math-foundations-概率论基础",
+      "title": "概率论基础",
+      "chapter": "01",
+      "chapterTitle": "机器学习基础与数学准备",
+      "url": "chapters/01-ml-math-foundations.html#概率论基础",
+      "body": ""
+    },
+    {
+      "id": "01-ml-math-foundations-随机试验与样本空间",
+      "title": "随机试验与样本空间",
+      "chapter": "01",
+      "chapterTitle": "机器学习基础与数学准备",
+      "url": "chapters/01-ml-math-foundations.html#随机试验与样本空间",
+      "body": ""
+    },
+    {
+      "id": "01-ml-math-foundations-概率的定义",
+      "title": "概率的定义",
+      "chapter": "01",
+      "chapterTitle": "机器学习基础与数学准备",
+      "url": "chapters/01-ml-math-foundations.html#概率的定义",
+      "body": ""
+    },
+    {
+      "id": "01-ml-math-foundations-随机变量",
+      "title": "随机变量",
+      "chapter": "01",
+      "chapterTitle": "机器学习基础与数学准备",
+      "url": "chapters/01-ml-math-foundations.html#随机变量",
+      "body": ""
+    },
+    {
+      "id": "01-ml-math-foundations-离散随机变量",
+      "title": "离散随机变量",
+      "chapter": "01",
+      "chapterTitle": "机器学习基础与数学准备",
+      "url": "chapters/01-ml-math-foundations.html#离散随机变量",
+      "body": ""
+    },
+    {
+      "id": "01-ml-math-foundations-连续随机变量",
+      "title": "连续随机变量",
+      "chapter": "01",
+      "chapterTitle": "机器学习基础与数学准备",
+      "url": "chapters/01-ml-math-foundations.html#连续随机变量",
+      "body": ""
+    },
+    {
+      "id": "01-ml-math-foundations-期望与方差",
+      "title": "期望与方差",
+      "chapter": "01",
+      "chapterTitle": "机器学习基础与数学准备",
+      "url": "chapters/01-ml-math-foundations.html#期望与方差",
+      "body": ""
+    },
+    {
+      "id": "01-ml-math-foundations-独立性",
+      "title": "独立性",
+      "chapter": "01",
+      "chapterTitle": "机器学习基础与数学准备",
+      "url": "chapters/01-ml-math-foundations.html#独立性",
+      "body": ""
+    },
+    {
+      "id": "01-ml-math-foundations-几个关键的概率分布",
+      "title": "几个关键的概率分布",
+      "chapter": "01",
+      "chapterTitle": "机器学习基础与数学准备",
+      "url": "chapters/01-ml-math-foundations.html#几个关键的概率分布",
+      "body": ""
+    },
+    {
+      "id": "01-ml-math-foundations-伯努利分布bernoulli-distribution",
+      "title": "伯努利分布（Bernoulli Distribution）",
+      "chapter": "01",
+      "chapterTitle": "机器学习基础与数学准备",
+      "url": "chapters/01-ml-math-foundations.html#伯努利分布bernoulli-distribution",
+      "body": ""
+    },
+    {
+      "id": "01-ml-math-foundations-二项分布binomial-distribution",
+      "title": "二项分布（Binomial Distribution）",
+      "chapter": "01",
+      "chapterTitle": "机器学习基础与数学准备",
+      "url": "chapters/01-ml-math-foundations.html#二项分布binomial-distribution",
+      "body": ""
+    },
+    {
+      "id": "01-ml-math-foundations-高斯分布正态分布gaussian-normal-distribution",
+      "title": "高斯分布（正态分布，Gaussian / Normal Distribution）",
+      "chapter": "01",
+      "chapterTitle": "机器学习基础与数学准备",
+      "url": "chapters/01-ml-math-foundations.html#高斯分布正态分布gaussian-normal-distribution",
+      "body": ""
+    },
+    {
+      "id": "01-ml-math-foundations-logistic-分布",
+      "title": "Logistic 分布",
+      "chapter": "01",
+      "chapterTitle": "机器学习基础与数学准备",
+      "url": "chapters/01-ml-math-foundations.html#logistic-分布",
+      "body": ""
+    },
+    {
+      "id": "01-ml-math-foundations-条件概率与贝叶斯定理",
+      "title": "条件概率与贝叶斯定理",
+      "chapter": "01",
+      "chapterTitle": "机器学习基础与数学准备",
+      "url": "chapters/01-ml-math-foundations.html#条件概率与贝叶斯定理",
+      "body": ""
+    },
+    {
+      "id": "01-ml-math-foundations-条件概率",
+      "title": "条件概率",
+      "chapter": "01",
+      "chapterTitle": "机器学习基础与数学准备",
+      "url": "chapters/01-ml-math-foundations.html#条件概率",
+      "body": ""
+    },
+    {
+      "id": "01-ml-math-foundations-全概率公式",
+      "title": "全概率公式",
+      "chapter": "01",
+      "chapterTitle": "机器学习基础与数学准备",
+      "url": "chapters/01-ml-math-foundations.html#全概率公式",
+      "body": ""
+    },
+    {
+      "id": "01-ml-math-foundations-贝叶斯定理bayes39-theorem",
+      "title": "贝叶斯定理（Bayes&#39; Theorem）",
+      "chapter": "01",
+      "chapterTitle": "机器学习基础与数学准备",
+      "url": "chapters/01-ml-math-foundations.html#贝叶斯定理bayes39-theorem",
+      "body": ""
+    },
+    {
+      "id": "01-ml-math-foundations-详细例题贷款诈骗识别",
+      "title": "详细例题：贷款诈骗识别",
+      "chapter": "01",
+      "chapterTitle": "机器学习基础与数学准备",
+      "url": "chapters/01-ml-math-foundations.html#详细例题贷款诈骗识别",
+      "body": ""
+    },
+    {
+      "id": "01-ml-math-foundations-似然函数与最大似然估计",
+      "title": "似然函数与最大似然估计",
+      "chapter": "01",
+      "chapterTitle": "机器学习基础与数学准备",
+      "url": "chapters/01-ml-math-foundations.html#似然函数与最大似然估计",
+      "body": ""
+    },
+    {
+      "id": "01-ml-math-foundations-从quot概率quot到quot似然quot一个视角翻转",
+      "title": "从&quot;概率&quot;到&quot;似然&quot;——一个视角翻转",
+      "chapter": "01",
+      "chapterTitle": "机器学习基础与数学准备",
+      "url": "chapters/01-ml-math-foundations.html#从quot概率quot到quot似然quot一个视角翻转",
+      "body": ""
+    },
+    {
+      "id": "01-ml-math-foundations-似然函数的定义",
+      "title": "似然函数的定义",
+      "chapter": "01",
+      "chapterTitle": "机器学习基础与数学准备",
+      "url": "chapters/01-ml-math-foundations.html#似然函数的定义",
+      "body": ""
+    },
+    {
+      "id": "01-ml-math-foundations-最大似然估计maximum-likelihood-estimation-mle",
+      "title": "最大似然估计（Maximum Likelihood Estimation, MLE）",
+      "chapter": "01",
+      "chapterTitle": "机器学习基础与数学准备",
+      "url": "chapters/01-ml-math-foundations.html#最大似然估计maximum-likelihood-estimation-mle",
+      "body": ""
+    },
+    {
+      "id": "01-ml-math-foundations-完整示例抛硬币的-mle",
+      "title": "完整示例：抛硬币的 MLE",
+      "chapter": "01",
+      "chapterTitle": "机器学习基础与数学准备",
+      "url": "chapters/01-ml-math-foundations.html#完整示例抛硬币的-mle",
+      "body": ""
+    },
+    {
+      "id": "01-ml-math-foundations-mle-的几何直觉",
+      "title": "MLE 的几何直觉",
+      "chapter": "01",
+      "chapterTitle": "机器学习基础与数学准备",
+      "url": "chapters/01-ml-math-foundations.html#mle-的几何直觉",
+      "body": ""
+    },
+    {
+      "id": "01-ml-math-foundations-mle-与损失函数的联系",
+      "title": "MLE 与损失函数的联系",
+      "chapter": "01",
+      "chapterTitle": "机器学习基础与数学准备",
+      "url": "chapters/01-ml-math-foundations.html#mle-与损失函数的联系",
+      "body": ""
+    },
+    {
+      "id": "01-ml-math-foundations-定理高斯噪声下-mle-最小二乘",
+      "title": "定理：高斯噪声下 MLE = 最小二乘",
+      "chapter": "01",
+      "chapterTitle": "机器学习基础与数学准备",
+      "url": "chapters/01-ml-math-foundations.html#定理高斯噪声下-mle-最小二乘",
+      "body": ""
+    },
+    {
+      "id": "01-ml-math-foundations-定理伯努利分布下-mle-交叉熵最小化",
+      "title": "定理：伯努利分布下 MLE = 交叉熵最小化",
+      "chapter": "01",
+      "chapterTitle": "机器学习基础与数学准备",
+      "url": "chapters/01-ml-math-foundations.html#定理伯努利分布下-mle-交叉熵最小化",
+      "body": ""
+    },
+    {
+      "id": "01-ml-math-foundations-机器学习的基本框架",
+      "title": "机器学习的基本框架",
+      "chapter": "01",
+      "chapterTitle": "机器学习基础与数学准备",
+      "url": "chapters/01-ml-math-foundations.html#机器学习的基本框架",
+      "body": ""
+    },
+    {
+      "id": "01-ml-math-foundations-核心术语",
+      "title": "核心术语",
+      "chapter": "01",
+      "chapterTitle": "机器学习基础与数学准备",
+      "url": "chapters/01-ml-math-foundations.html#核心术语",
+      "body": ""
+    },
+    {
+      "id": "01-ml-math-foundations-机器学习三要素",
+      "title": "机器学习三要素",
+      "chapter": "01",
+      "chapterTitle": "机器学习基础与数学准备",
+      "url": "chapters/01-ml-math-foundations.html#机器学习三要素",
+      "body": ""
+    },
+    {
+      "id": "01-ml-math-foundations-训练集-vs-测试集",
+      "title": "训练集 vs 测试集",
+      "chapter": "01",
+      "chapterTitle": "机器学习基础与数学准备",
+      "url": "chapters/01-ml-math-foundations.html#训练集-vs-测试集",
+      "body": ""
+    },
+    {
+      "id": "01-ml-math-foundations-分类问题的评估指标",
+      "title": "分类问题的评估指标",
+      "chapter": "01",
+      "chapterTitle": "机器学习基础与数学准备",
+      "url": "chapters/01-ml-math-foundations.html#分类问题的评估指标",
+      "body": ""
+    },
+    {
+      "id": "01-ml-math-foundations-混淆矩阵",
+      "title": "混淆矩阵",
+      "chapter": "01",
+      "chapterTitle": "机器学习基础与数学准备",
+      "url": "chapters/01-ml-math-foundations.html#混淆矩阵",
+      "body": ""
+    },
+    {
+      "id": "01-ml-math-foundations-精确率precision",
+      "title": "精确率（Precision）",
+      "chapter": "01",
+      "chapterTitle": "机器学习基础与数学准备",
+      "url": "chapters/01-ml-math-foundations.html#精确率precision",
+      "body": ""
+    },
+    {
+      "id": "01-ml-math-foundations-召回率recall-灵敏度",
+      "title": "召回率（Recall）/ 灵敏度",
+      "chapter": "01",
+      "chapterTitle": "机器学习基础与数学准备",
+      "url": "chapters/01-ml-math-foundations.html#召回率recall-灵敏度",
+      "body": ""
+    },
+    {
+      "id": "01-ml-math-foundations-f1-score",
+      "title": "F1 Score",
+      "chapter": "01",
+      "chapterTitle": "机器学习基础与数学准备",
+      "url": "chapters/01-ml-math-foundations.html#f1-score",
+      "body": ""
+    },
+    {
+      "id": "01-ml-math-foundations-为什么不用准确率accuracy",
+      "title": "为什么不用准确率（Accuracy）",
+      "chapter": "01",
+      "chapterTitle": "机器学习基础与数学准备",
+      "url": "chapters/01-ml-math-foundations.html#为什么不用准确率accuracy",
+      "body": ""
+    },
+    {
+      "id": "01-ml-math-foundations-完整例题",
+      "title": "完整例题",
+      "chapter": "01",
+      "chapterTitle": "机器学习基础与数学准备",
+      "url": "chapters/01-ml-math-foundations.html#完整例题",
+      "body": ""
+    },
+    {
+      "id": "01-ml-math-foundations-线性代数速查",
+      "title": "线性代数速查",
+      "chapter": "01",
+      "chapterTitle": "机器学习基础与数学准备",
+      "url": "chapters/01-ml-math-foundations.html#线性代数速查",
+      "body": ""
+    },
+    {
+      "id": "01-ml-math-foundations-向量",
+      "title": "向量",
+      "chapter": "01",
+      "chapterTitle": "机器学习基础与数学准备",
+      "url": "chapters/01-ml-math-foundations.html#向量",
+      "body": ""
+    },
+    {
+      "id": "01-ml-math-foundations-矩阵",
+      "title": "矩阵",
+      "chapter": "01",
+      "chapterTitle": "机器学习基础与数学准备",
+      "url": "chapters/01-ml-math-foundations.html#矩阵",
+      "body": ""
+    },
+    {
+      "id": "01-ml-math-foundations-梯度",
+      "title": "梯度",
+      "chapter": "01",
+      "chapterTitle": "机器学习基础与数学准备",
+      "url": "chapters/01-ml-math-foundations.html#梯度",
+      "body": ""
+    },
+    {
+      "id": "01-ml-math-foundations-特征工程",
+      "title": "特征工程",
+      "chapter": "01",
+      "chapterTitle": "机器学习基础与数学准备",
+      "url": "chapters/01-ml-math-foundations.html#特征工程",
+      "body": ""
+    },
+    {
+      "id": "01-ml-math-foundations-什么是特征",
+      "title": "什么是特征",
+      "chapter": "01",
+      "chapterTitle": "机器学习基础与数学准备",
+      "url": "chapters/01-ml-math-foundations.html#什么是特征",
+      "body": ""
+    },
+    {
+      "id": "01-ml-math-foundations-特征归一化",
+      "title": "特征归一化",
+      "chapter": "01",
+      "chapterTitle": "机器学习基础与数学准备",
+      "url": "chapters/01-ml-math-foundations.html#特征归一化",
+      "body": ""
+    },
+    {
+      "id": "02-linear-logistic-regression",
+      "title": "线性回归、逻辑回归与优化",
+      "chapter": "02",
+      "chapterTitle": "线性回归、逻辑回归与优化",
+      "url": "chapters/02-linear-logistic-regression.html",
+      "body": "\n   线性回归\n\n    问题定义\n\n给定 $N$ 个样本 $\\  \\boldsymbol x  i, y i \\   i=1 ^N$，其中 $\\boldsymbol x  i \\in \\mathbb R ^d$ 是特征向量，$y i \\in \\mathbb R $ 是连续目标值。\n\n  目标  ：找到一个线性函数，使得 $f \\boldsymbol x  $ 尽可能接近 $y$。\n\n    模型（假设类）\n\n$$\\hat y  = f \\boldsymbol x ; \\boldsymbol w , b  = w 1 x 1 + w 2 x 2 + \\cdots + w d x d + b = \\boldsymbol w ^T\\boldsymbol x  + b$$\n\n  简化记号  ：将偏置 $b$ 吸收进权重向量——令 $\\boldsymbol x  \\leftarrow  1, x 1, \\ldots, x d ^T$，$\\boldsymbol w  \\leftarrow  b, w 1, \\ldots, w d ^T$，则：\n\n$$\\hat y  = \\boldsymbol w ^T\\boldsymbol x $$\n\n    损失函数：均方误差（MSE）\n\n衡量\"预测值和真实值差多少\"：\n\n$$J \\boldsymbol w   = \\frac 1  2N \\sum  i=1 ^N  y i   \\boldsymbol w ^T\\boldsymbol x  i ^2$$\n\n前面的 $\\frac 1  2 $ 是为了求导后消去系数，方便计算。\n\n  矩阵形式  ：设 $\\boldsymbol X  \\in \\mathbb R ^ N \\times  d+1  $ 每行一个样本，$\\boldsymbol y  \\in \\mathbb R ^N$：\n\n$$J \\boldsymbol w   = \\frac 1  2N  \\boldsymbol y    \\boldsymbol X \\boldsymbol w  ^T \\boldsymbol y    \\boldsymbol X \\boldsymbol w   = \\frac 1  2N \\ \\boldsymbol y    \\boldsymbol X \\boldsymbol w \\  2^2$$\n\n    解析解（Normal Equation）\n\n对 $J \\boldsymbol w  $ 求梯度：\n\n$$\\nabla  \\boldsymbol w   J = \\frac 1  N \\boldsymbol X ^T \\boldsymbol X \\boldsymbol w    \\boldsymbol y  $$\n\n令梯度为零：$\\boldsymbol X ^T\\boldsymbol X \\boldsymbol w  = \\boldsymbol X ^T\\boldsymbol y $\n\n若 $\\boldsymbol X ^T\\boldsymbol X $ 可逆，解析解为：\n\n$$\\boldsymbol w ^  =  \\boldsymbol X ^T\\boldsymbol X  ^  1 \\boldsymbol X ^T\\boldsymbol y $$\n\n  局限性  ：\n  计算 $ \\boldsymbol X ^T\\boldsymbol X  ^  1 $ 的时间复杂度是 $O d^3 $，当 $d$ 很大（如几万维）时不可行\n  只适用于线性模型和平方损失\n  非线性模型（如神经网络）没有解析解\n\n所以实际中几乎都用迭代优化方法。\n\n   \n\n   梯度下降法\n\n    核心思想\n\n梯度指向函数值增长最快的方向。沿  负梯度方向  走一小步，函数值就会下降。反复执行直到收敛。\n\n    更新规则\n\n$$\\boldsymbol w   t+1  = \\boldsymbol w  t   \\eta \\nabla  \\boldsymbol w   J \\boldsymbol w  t $$\n\n$\\eta   0$ 是  学习率（learning rate）  ，控制每步走多远。\n\n    对线性回归的梯度\n\n$$\\nabla  \\boldsymbol w   J = \\frac 1  N \\sum  i=1 ^N  \\boldsymbol w ^T\\boldsymbol x  i   y i \\boldsymbol x  i$$\n\n直觉：梯度等于\"预测误差 × 对应特征\"的平均。误差越大，对应方向的调整越大。\n\n    学习率的影响\n\n这是最核心的超参数之一。理解它的影响至关重要。\n\n  太小  （如 $\\eta = 0.001$）：每步走一丁点，虽然方向对但到达目标要迭代"
+    },
+    {
+      "id": "02-linear-logistic-regression-线性回归",
+      "title": "线性回归",
+      "chapter": "02",
+      "chapterTitle": "线性回归、逻辑回归与优化",
+      "url": "chapters/02-linear-logistic-regression.html#线性回归",
+      "body": ""
+    },
+    {
+      "id": "02-linear-logistic-regression-问题定义",
+      "title": "问题定义",
+      "chapter": "02",
+      "chapterTitle": "线性回归、逻辑回归与优化",
+      "url": "chapters/02-linear-logistic-regression.html#问题定义",
+      "body": ""
+    },
+    {
+      "id": "02-linear-logistic-regression-模型假设类",
+      "title": "模型（假设类）",
+      "chapter": "02",
+      "chapterTitle": "线性回归、逻辑回归与优化",
+      "url": "chapters/02-linear-logistic-regression.html#模型假设类",
+      "body": ""
+    },
+    {
+      "id": "02-linear-logistic-regression-损失函数均方误差mse",
+      "title": "损失函数：均方误差（MSE）",
+      "chapter": "02",
+      "chapterTitle": "线性回归、逻辑回归与优化",
+      "url": "chapters/02-linear-logistic-regression.html#损失函数均方误差mse",
+      "body": ""
+    },
+    {
+      "id": "02-linear-logistic-regression-解析解normal-equation",
+      "title": "解析解（Normal Equation）",
+      "chapter": "02",
+      "chapterTitle": "线性回归、逻辑回归与优化",
+      "url": "chapters/02-linear-logistic-regression.html#解析解normal-equation",
+      "body": ""
+    },
+    {
+      "id": "02-linear-logistic-regression-梯度下降法",
+      "title": "梯度下降法",
+      "chapter": "02",
+      "chapterTitle": "线性回归、逻辑回归与优化",
+      "url": "chapters/02-linear-logistic-regression.html#梯度下降法",
+      "body": ""
+    },
+    {
+      "id": "02-linear-logistic-regression-核心思想",
+      "title": "核心思想",
+      "chapter": "02",
+      "chapterTitle": "线性回归、逻辑回归与优化",
+      "url": "chapters/02-linear-logistic-regression.html#核心思想",
+      "body": ""
+    },
+    {
+      "id": "02-linear-logistic-regression-更新规则",
+      "title": "更新规则",
+      "chapter": "02",
+      "chapterTitle": "线性回归、逻辑回归与优化",
+      "url": "chapters/02-linear-logistic-regression.html#更新规则",
+      "body": ""
+    },
+    {
+      "id": "02-linear-logistic-regression-对线性回归的梯度",
+      "title": "对线性回归的梯度",
+      "chapter": "02",
+      "chapterTitle": "线性回归、逻辑回归与优化",
+      "url": "chapters/02-linear-logistic-regression.html#对线性回归的梯度",
+      "body": ""
+    },
+    {
+      "id": "02-linear-logistic-regression-学习率的影响",
+      "title": "学习率的影响",
+      "chapter": "02",
+      "chapterTitle": "线性回归、逻辑回归与优化",
+      "url": "chapters/02-linear-logistic-regression.html#学习率的影响",
+      "body": ""
+    },
+    {
+      "id": "02-linear-logistic-regression-完整手算示例",
+      "title": "完整手算示例",
+      "chapter": "02",
+      "chapterTitle": "线性回归、逻辑回归与优化",
+      "url": "chapters/02-linear-logistic-regression.html#完整手算示例",
+      "body": ""
+    },
+    {
+      "id": "02-linear-logistic-regression-三种梯度下降变体",
+      "title": "三种梯度下降变体",
+      "chapter": "02",
+      "chapterTitle": "线性回归、逻辑回归与优化",
+      "url": "chapters/02-linear-logistic-regression.html#三种梯度下降变体",
+      "body": ""
+    },
+    {
+      "id": "02-linear-logistic-regression-相关术语",
+      "title": "相关术语",
+      "chapter": "02",
+      "chapterTitle": "线性回归、逻辑回归与优化",
+      "url": "chapters/02-linear-logistic-regression.html#相关术语",
+      "body": ""
+    },
+    {
+      "id": "02-linear-logistic-regression-sigmoid-函数",
+      "title": "Sigmoid 函数",
+      "chapter": "02",
+      "chapterTitle": "线性回归、逻辑回归与优化",
+      "url": "chapters/02-linear-logistic-regression.html#sigmoid-函数",
+      "body": ""
+    },
+    {
+      "id": "02-linear-logistic-regression-为什么需要-sigmoid",
+      "title": "为什么需要 Sigmoid",
+      "chapter": "02",
+      "chapterTitle": "线性回归、逻辑回归与优化",
+      "url": "chapters/02-linear-logistic-regression.html#为什么需要-sigmoid",
+      "body": ""
+    },
+    {
+      "id": "02-linear-logistic-regression-定义",
+      "title": "定义",
+      "chapter": "02",
+      "chapterTitle": "线性回归、逻辑回归与优化",
+      "url": "chapters/02-linear-logistic-regression.html#定义",
+      "body": ""
+    },
+    {
+      "id": "02-linear-logistic-regression-关键性质",
+      "title": "关键性质",
+      "chapter": "02",
+      "chapterTitle": "线性回归、逻辑回归与优化",
+      "url": "chapters/02-linear-logistic-regression.html#关键性质",
+      "body": ""
+    },
+    {
+      "id": "02-linear-logistic-regression-导数极其重要",
+      "title": "导数（极其重要）",
+      "chapter": "02",
+      "chapterTitle": "线性回归、逻辑回归与优化",
+      "url": "chapters/02-linear-logistic-regression.html#导数极其重要",
+      "body": ""
+    },
+    {
+      "id": "02-linear-logistic-regression-对数-sigmoid-的导数",
+      "title": "对数 Sigmoid 的导数",
+      "chapter": "02",
+      "chapterTitle": "线性回归、逻辑回归与优化",
+      "url": "chapters/02-linear-logistic-regression.html#对数-sigmoid-的导数",
+      "body": ""
+    },
+    {
+      "id": "02-linear-logistic-regression-逻辑回归",
+      "title": "逻辑回归",
+      "chapter": "02",
+      "chapterTitle": "线性回归、逻辑回归与优化",
+      "url": "chapters/02-linear-logistic-regression.html#逻辑回归",
+      "body": ""
+    },
+    {
+      "id": "02-linear-logistic-regression-模型",
+      "title": "模型",
+      "chapter": "02",
+      "chapterTitle": "线性回归、逻辑回归与优化",
+      "url": "chapters/02-linear-logistic-regression.html#模型",
+      "body": ""
+    },
+    {
+      "id": "02-linear-logistic-regression-决策边界",
+      "title": "决策边界",
+      "chapter": "02",
+      "chapterTitle": "线性回归、逻辑回归与优化",
+      "url": "chapters/02-linear-logistic-regression.html#决策边界",
+      "body": ""
+    },
+    {
+      "id": "02-linear-logistic-regression-损失函数交叉熵",
+      "title": "损失函数：交叉熵",
+      "chapter": "02",
+      "chapterTitle": "线性回归、逻辑回归与优化",
+      "url": "chapters/02-linear-logistic-regression.html#损失函数交叉熵",
+      "body": ""
+    },
+    {
+      "id": "02-linear-logistic-regression-梯度推导",
+      "title": "梯度推导",
+      "chapter": "02",
+      "chapterTitle": "线性回归、逻辑回归与优化",
+      "url": "chapters/02-linear-logistic-regression.html#梯度推导",
+      "body": ""
+    },
+    {
+      "id": "02-linear-logistic-regression-softmax-与多分类",
+      "title": "Softmax 与多分类",
+      "chapter": "02",
+      "chapterTitle": "线性回归、逻辑回归与优化",
+      "url": "chapters/02-linear-logistic-regression.html#softmax-与多分类",
+      "body": ""
+    },
+    {
+      "id": "02-linear-logistic-regression-从二分类推广",
+      "title": "从二分类推广",
+      "chapter": "02",
+      "chapterTitle": "线性回归、逻辑回归与优化",
+      "url": "chapters/02-linear-logistic-regression.html#从二分类推广",
+      "body": ""
+    },
+    {
+      "id": "02-linear-logistic-regression-softmax-函数定义",
+      "title": "Softmax 函数定义",
+      "chapter": "02",
+      "chapterTitle": "线性回归、逻辑回归与优化",
+      "url": "chapters/02-linear-logistic-regression.html#softmax-函数定义",
+      "body": ""
+    },
+    {
+      "id": "02-linear-logistic-regression-softmax-与-sigmoid-的关系",
+      "title": "Softmax 与 Sigmoid 的关系",
+      "chapter": "02",
+      "chapterTitle": "线性回归、逻辑回归与优化",
+      "url": "chapters/02-linear-logistic-regression.html#softmax-与-sigmoid-的关系",
+      "body": ""
+    },
+    {
+      "id": "02-linear-logistic-regression-多分类交叉熵损失",
+      "title": "多分类交叉熵损失",
+      "chapter": "02",
+      "chapterTitle": "线性回归、逻辑回归与优化",
+      "url": "chapters/02-linear-logistic-regression.html#多分类交叉熵损失",
+      "body": ""
+    },
+    {
+      "id": "02-linear-logistic-regression-log-softmax-的梯度",
+      "title": "Log-Softmax 的梯度",
+      "chapter": "02",
+      "chapterTitle": "线性回归、逻辑回归与优化",
+      "url": "chapters/02-linear-logistic-regression.html#log-softmax-的梯度",
+      "body": ""
+    },
+    {
+      "id": "02-linear-logistic-regression-过拟合与正则化",
+      "title": "过拟合与正则化",
+      "chapter": "02",
+      "chapterTitle": "线性回归、逻辑回归与优化",
+      "url": "chapters/02-linear-logistic-regression.html#过拟合与正则化",
+      "body": ""
+    },
+    {
+      "id": "02-linear-logistic-regression-泛化能力",
+      "title": "泛化能力",
+      "chapter": "02",
+      "chapterTitle": "线性回归、逻辑回归与优化",
+      "url": "chapters/02-linear-logistic-regression.html#泛化能力",
+      "body": ""
+    },
+    {
+      "id": "02-linear-logistic-regression-过拟合-vs-欠拟合",
+      "title": "过拟合 vs 欠拟合",
+      "chapter": "02",
+      "chapterTitle": "线性回归、逻辑回归与优化",
+      "url": "chapters/02-linear-logistic-regression.html#过拟合-vs-欠拟合",
+      "body": ""
+    },
+    {
+      "id": "02-linear-logistic-regression-正则化regularization",
+      "title": "正则化（Regularization）",
+      "chapter": "02",
+      "chapterTitle": "线性回归、逻辑回归与优化",
+      "url": "chapters/02-linear-logistic-regression.html#正则化regularization",
+      "body": ""
+    },
+    {
+      "id": "02-linear-logistic-regression-l2-正则化ridge-weight-decay",
+      "title": "L2 正则化（Ridge / Weight Decay）",
+      "chapter": "02",
+      "chapterTitle": "线性回归、逻辑回归与优化",
+      "url": "chapters/02-linear-logistic-regression.html#l2-正则化ridge-weight-decay",
+      "body": ""
+    },
+    {
+      "id": "02-linear-logistic-regression-l1-正则化lasso",
+      "title": "L1 正则化（Lasso）",
+      "chapter": "02",
+      "chapterTitle": "线性回归、逻辑回归与优化",
+      "url": "chapters/02-linear-logistic-regression.html#l1-正则化lasso",
+      "body": ""
+    },
+    {
+      "id": "02-linear-logistic-regression-l1-vs-l2-完整对比",
+      "title": "L1 vs L2 完整对比",
+      "chapter": "02",
+      "chapterTitle": "线性回归、逻辑回归与优化",
+      "url": "chapters/02-linear-logistic-regression.html#l1-vs-l2-完整对比",
+      "body": ""
+    },
+    {
+      "id": "02-linear-logistic-regression-预防过拟合的其他方法",
+      "title": "预防过拟合的其他方法",
+      "chapter": "02",
+      "chapterTitle": "线性回归、逻辑回归与优化",
+      "url": "chapters/02-linear-logistic-regression.html#预防过拟合的其他方法",
+      "body": ""
+    },
+    {
+      "id": "02-linear-logistic-regression-补充mle-与交叉熵的联系",
+      "title": "补充：MLE 与交叉熵的联系",
+      "chapter": "02",
+      "chapterTitle": "线性回归、逻辑回归与优化",
+      "url": "chapters/02-linear-logistic-regression.html#补充mle-与交叉熵的联系",
+      "body": ""
+    },
+    {
+      "id": "02-linear-logistic-regression-为什么最小化交叉熵-最大化似然",
+      "title": "为什么最小化交叉熵 = 最大化似然",
+      "chapter": "02",
+      "chapterTitle": "线性回归、逻辑回归与优化",
+      "url": "chapters/02-linear-logistic-regression.html#为什么最小化交叉熵-最大化似然",
+      "body": ""
+    },
+    {
+      "id": "02-linear-logistic-regression-线性回归-mse-的-mle-解释",
+      "title": "线性回归 MSE 的 MLE 解释",
+      "chapter": "02",
+      "chapterTitle": "线性回归、逻辑回归与优化",
+      "url": "chapters/02-linear-logistic-regression.html#线性回归-mse-的-mle-解释",
+      "body": ""
+    },
+    {
+      "id": "02-linear-logistic-regression-补充特征工程",
+      "title": "补充：特征工程",
+      "chapter": "02",
+      "chapterTitle": "线性回归、逻辑回归与优化",
+      "url": "chapters/02-linear-logistic-regression.html#补充特征工程",
+      "body": ""
+    },
+    {
+      "id": "02-linear-logistic-regression-特征归一化",
+      "title": "特征归一化",
+      "chapter": "02",
+      "chapterTitle": "线性回归、逻辑回归与优化",
+      "url": "chapters/02-linear-logistic-regression.html#特征归一化",
+      "body": ""
+    },
+    {
+      "id": "02-linear-logistic-regression-齐次坐标与仿射变换",
+      "title": "齐次坐标与仿射变换",
+      "chapter": "02",
+      "chapterTitle": "线性回归、逻辑回归与优化",
+      "url": "chapters/02-linear-logistic-regression.html#齐次坐标与仿射变换",
+      "body": ""
+    },
+    {
+      "id": "02-linear-logistic-regression-本章核心要点",
+      "title": "本章核心要点",
+      "chapter": "02",
+      "chapterTitle": "线性回归、逻辑回归与优化",
+      "url": "chapters/02-linear-logistic-regression.html#本章核心要点",
+      "body": ""
+    },
+    {
+      "id": "02-linear-logistic-regression-补充梯度下降的几何直觉",
+      "title": "补充：梯度下降的几何直觉",
+      "chapter": "02",
+      "chapterTitle": "线性回归、逻辑回归与优化",
+      "url": "chapters/02-linear-logistic-regression.html#补充梯度下降的几何直觉",
+      "body": ""
+    },
+    {
+      "id": "02-linear-logistic-regression-等值线与梯度的关系",
+      "title": "等值线与梯度的关系",
+      "chapter": "02",
+      "chapterTitle": "线性回归、逻辑回归与优化",
+      "url": "chapters/02-linear-logistic-regression.html#等值线与梯度的关系",
+      "body": ""
+    },
+    {
+      "id": "02-linear-logistic-regression-条件数与收敛速度",
+      "title": "条件数与收敛速度",
+      "chapter": "02",
+      "chapterTitle": "线性回归、逻辑回归与优化",
+      "url": "chapters/02-linear-logistic-regression.html#条件数与收敛速度",
+      "body": ""
+    },
+    {
+      "id": "02-linear-logistic-regression-凸函数与全局最优",
+      "title": "凸函数与全局最优",
+      "chapter": "02",
+      "chapterTitle": "线性回归、逻辑回归与优化",
+      "url": "chapters/02-linear-logistic-regression.html#凸函数与全局最优",
+      "body": ""
+    },
+    {
+      "id": "02-linear-logistic-regression-补充逻辑回归的决策边界分析",
+      "title": "补充：逻辑回归的决策边界分析",
+      "chapter": "02",
+      "chapterTitle": "线性回归、逻辑回归与优化",
+      "url": "chapters/02-linear-logistic-regression.html#补充逻辑回归的决策边界分析",
+      "body": ""
+    },
+    {
+      "id": "02-linear-logistic-regression-分析不同参数的行为",
+      "title": "分析不同参数的行为",
+      "chapter": "02",
+      "chapterTitle": "线性回归、逻辑回归与优化",
+      "url": "chapters/02-linear-logistic-regression.html#分析不同参数的行为",
+      "body": ""
+    },
+    {
+      "id": "03-neural-networks-cnn",
+      "title": "前馈神经网络与卷积神经网络",
+      "chapter": "03",
+      "chapterTitle": "前馈神经网络与卷积神经网络",
+      "url": "chapters/03-neural-networks-cnn.html",
+      "body": "\n   从线性到非线性\n\n    线性模型的局限\n\n逻辑回归的决策边界是一条直线（超平面）。如果数据不是线性可分的（比如 XOR 问题），线性模型无能为力。\n\n  XOR 问题  ：\n  $ 0,0  \\to 0$，$ 1,1  \\to 0$\n  $ 0,1  \\to 1$，$ 1,0  \\to 1$\n\n画在平面上，没有任何一条直线能把 0 和 1 分开。\n\n  解决思路  ：如果我们先用一个变换把数据\"扭\"到另一个空间，在新空间中变成线性可分，再用线性分类器——这就是神经网络的直觉。\n\n   \n\n   神经元\n\n    单个人工神经元\n\n模拟生物神经元的简化数学模型：\n\n$$z = \\sum  j=1 ^d w j x j + b = \\boldsymbol w ^T\\boldsymbol x  + b \\quad \\text （加权求和） $$\n\n$$a = f z  \\quad \\text （激活函数） $$\n\n三部分：\n1.   输入  ：接收 $d$ 个信号 $x 1, \\ldots, x d$\n2.   加权求和  ：每个输入乘以对应权重，再加偏置\n3.   激活函数  ：引入非线性\n\n如果没有激活函数（或用恒等函数 $f z =z$），多层网络退化为单层线性模型（线性函数的复合还是线性函数）。\n\n    感知机（Perceptron）\n\n最早的神经网络模型（1958 年）。激活函数是阶跃函数：\n\n$$\\hat y  = \\text sign  \\boldsymbol w ^T\\boldsymbol x  + b  = \\begin cases  1, & \\boldsymbol w ^T\\boldsymbol x  + b   0 \\\\  1, & \\text otherwise  \\end cases $$\n\n  Minsky & Papert  1969    证明单层感知机无法表示 XOR → 第一次 AI 低谷。\n\n    万能近似定理（Universal Approximation Theorem）\n\n  定理  ：一个含有足够多隐藏单元的单隐层前馈网络，配合非线性激活函数，可以以任意精度逼近 $\\mathbb R ^n$ 上的任意连续函数。\n\n  意义  ：理论上一层就够。但实践中：\n  \"足够多\"可能意味着指数级的神经元数量\n  深层网络用更少的参数达到同样的表达力\n  深层结构更容易通过梯度下降训练\n\n   \n\n   多层前馈网络（MLP）\n\n    网络结构\n\n一个 $L$ 层的全连接网络（Multi Layer Perceptron）：\n\n  第 $l$ 层  （$l = 1, 2, \\ldots, L$）：\n\n$$\\boldsymbol z ^  l   = \\boldsymbol W ^  l  \\boldsymbol h ^  l 1   + \\boldsymbol b ^  l  $$\n$$\\boldsymbol h ^  l   = f \\boldsymbol z ^  l   $$\n\n其中：\n  $\\boldsymbol h ^  0   = \\boldsymbol x $（输入层）\n  $\\boldsymbol W ^  l   \\in \\mathbb R ^ n l \\times n  l 1  $（第 $l$ 层权重矩阵）\n  $\\boldsymbol b ^  l   \\in \\mathbb R ^ n l $（第 $l$ 层偏置向量）\n  $n l$：第 $l$ 层神经元数量\n  $f$：激活函数（逐元素作用）\n\n    \"全连接\"的含义\n\n第 $l$ 层的每个神经元都与第 $l 1$ 层的  所有  神经元连接。$\\boldsymbol W ^  l  $ 的每一行对应一个神经元，每一列对应一个输入。\n\n    参数量计算\n\n第 $l$ 层的参数：\n  权重：$n l \\times n  l 1 $ 个\n  偏置：$n l$ 个\n    总计  ：$n l \\times  n  l 1  + 1 $\n\n  示例 1：大型全连接网络  \n\n输入 160,000 → 隐藏层1 40,000 → 隐藏层2 2,000 → 输出 100\n\n  层   输入维度   输出维度   参数量  \n                                     \n  1   160,000   40,000   $ 160000+1  \\times 40000 = 6 , 400 , 040 , 000$  \n  2   40,000   2,000   $ 40000+1  \\times 2000 = 80 , 002 , 000$  \n  3   2,000   100 "
+    },
+    {
+      "id": "03-neural-networks-cnn-从线性到非线性",
+      "title": "从线性到非线性",
+      "chapter": "03",
+      "chapterTitle": "前馈神经网络与卷积神经网络",
+      "url": "chapters/03-neural-networks-cnn.html#从线性到非线性",
+      "body": ""
+    },
+    {
+      "id": "03-neural-networks-cnn-线性模型的局限",
+      "title": "线性模型的局限",
+      "chapter": "03",
+      "chapterTitle": "前馈神经网络与卷积神经网络",
+      "url": "chapters/03-neural-networks-cnn.html#线性模型的局限",
+      "body": ""
+    },
+    {
+      "id": "03-neural-networks-cnn-神经元",
+      "title": "神经元",
+      "chapter": "03",
+      "chapterTitle": "前馈神经网络与卷积神经网络",
+      "url": "chapters/03-neural-networks-cnn.html#神经元",
+      "body": ""
+    },
+    {
+      "id": "03-neural-networks-cnn-单个人工神经元",
+      "title": "单个人工神经元",
+      "chapter": "03",
+      "chapterTitle": "前馈神经网络与卷积神经网络",
+      "url": "chapters/03-neural-networks-cnn.html#单个人工神经元",
+      "body": ""
+    },
+    {
+      "id": "03-neural-networks-cnn-感知机perceptron",
+      "title": "感知机（Perceptron）",
+      "chapter": "03",
+      "chapterTitle": "前馈神经网络与卷积神经网络",
+      "url": "chapters/03-neural-networks-cnn.html#感知机perceptron",
+      "body": ""
+    },
+    {
+      "id": "03-neural-networks-cnn-万能近似定理universal-approximation-theorem",
+      "title": "万能近似定理（Universal Approximation Theorem）",
+      "chapter": "03",
+      "chapterTitle": "前馈神经网络与卷积神经网络",
+      "url": "chapters/03-neural-networks-cnn.html#万能近似定理universal-approximation-theorem",
+      "body": ""
+    },
+    {
+      "id": "03-neural-networks-cnn-多层前馈网络mlp",
+      "title": "多层前馈网络（MLP）",
+      "chapter": "03",
+      "chapterTitle": "前馈神经网络与卷积神经网络",
+      "url": "chapters/03-neural-networks-cnn.html#多层前馈网络mlp",
+      "body": ""
+    },
+    {
+      "id": "03-neural-networks-cnn-网络结构",
+      "title": "网络结构",
+      "chapter": "03",
+      "chapterTitle": "前馈神经网络与卷积神经网络",
+      "url": "chapters/03-neural-networks-cnn.html#网络结构",
+      "body": ""
+    },
+    {
+      "id": "03-neural-networks-cnn-quot全连接quot的含义",
+      "title": "&quot;全连接&quot;的含义",
+      "chapter": "03",
+      "chapterTitle": "前馈神经网络与卷积神经网络",
+      "url": "chapters/03-neural-networks-cnn.html#quot全连接quot的含义",
+      "body": ""
+    },
+    {
+      "id": "03-neural-networks-cnn-参数量计算",
+      "title": "参数量计算",
+      "chapter": "03",
+      "chapterTitle": "前馈神经网络与卷积神经网络",
+      "url": "chapters/03-neural-networks-cnn.html#参数量计算",
+      "body": ""
+    },
+    {
+      "id": "03-neural-networks-cnn-前向传播的运算量",
+      "title": "前向传播的运算量",
+      "chapter": "03",
+      "chapterTitle": "前馈神经网络与卷积神经网络",
+      "url": "chapters/03-neural-networks-cnn.html#前向传播的运算量",
+      "body": ""
+    },
+    {
+      "id": "03-neural-networks-cnn-激活函数",
+      "title": "激活函数",
+      "chapter": "03",
+      "chapterTitle": "前馈神经网络与卷积神经网络",
+      "url": "chapters/03-neural-networks-cnn.html#激活函数",
+      "body": ""
+    },
+    {
+      "id": "03-neural-networks-cnn-为什么需要激活函数",
+      "title": "为什么需要激活函数",
+      "chapter": "03",
+      "chapterTitle": "前馈神经网络与卷积神经网络",
+      "url": "chapters/03-neural-networks-cnn.html#为什么需要激活函数",
+      "body": ""
+    },
+    {
+      "id": "03-neural-networks-cnn-sigmoid",
+      "title": "Sigmoid",
+      "chapter": "03",
+      "chapterTitle": "前馈神经网络与卷积神经网络",
+      "url": "chapters/03-neural-networks-cnn.html#sigmoid",
+      "body": ""
+    },
+    {
+      "id": "03-neural-networks-cnn-relurectified-linear-unit",
+      "title": "ReLU（Rectified Linear Unit）",
+      "chapter": "03",
+      "chapterTitle": "前馈神经网络与卷积神经网络",
+      "url": "chapters/03-neural-networks-cnn.html#relurectified-linear-unit",
+      "body": ""
+    },
+    {
+      "id": "03-neural-networks-cnn-leaky-relu",
+      "title": "Leaky ReLU",
+      "chapter": "03",
+      "chapterTitle": "前馈神经网络与卷积神经网络",
+      "url": "chapters/03-neural-networks-cnn.html#leaky-relu",
+      "body": ""
+    },
+    {
+      "id": "03-neural-networks-cnn-preluparametric-relu",
+      "title": "PReLU（Parametric ReLU）",
+      "chapter": "03",
+      "chapterTitle": "前馈神经网络与卷积神经网络",
+      "url": "chapters/03-neural-networks-cnn.html#preluparametric-relu",
+      "body": ""
+    },
+    {
+      "id": "03-neural-networks-cnn-eluexponential-linear-unit",
+      "title": "ELU（Exponential Linear Unit）",
+      "chapter": "03",
+      "chapterTitle": "前馈神经网络与卷积神经网络",
+      "url": "chapters/03-neural-networks-cnn.html#eluexponential-linear-unit",
+      "body": ""
+    },
+    {
+      "id": "03-neural-networks-cnn-激活函数对比",
+      "title": "激活函数对比",
+      "chapter": "03",
+      "chapterTitle": "前馈神经网络与卷积神经网络",
+      "url": "chapters/03-neural-networks-cnn.html#激活函数对比",
+      "body": ""
+    },
+    {
+      "id": "03-neural-networks-cnn-卷积神经网络cnn",
+      "title": "卷积神经网络（CNN）",
+      "chapter": "03",
+      "chapterTitle": "前馈神经网络与卷积神经网络",
+      "url": "chapters/03-neural-networks-cnn.html#卷积神经网络cnn",
+      "body": ""
+    },
+    {
+      "id": "03-neural-networks-cnn-动机",
+      "title": "动机",
+      "chapter": "03",
+      "chapterTitle": "前馈神经网络与卷积神经网络",
+      "url": "chapters/03-neural-networks-cnn.html#动机",
+      "body": ""
+    },
+    {
+      "id": "03-neural-networks-cnn-卷积运算cross-correlation",
+      "title": "卷积运算（Cross-correlation）",
+      "chapter": "03",
+      "chapterTitle": "前馈神经网络与卷积神经网络",
+      "url": "chapters/03-neural-networks-cnn.html#卷积运算cross-correlation",
+      "body": ""
+    },
+    {
+      "id": "03-neural-networks-cnn-输出尺寸公式",
+      "title": "输出尺寸公式",
+      "chapter": "03",
+      "chapterTitle": "前馈神经网络与卷积神经网络",
+      "url": "chapters/03-neural-networks-cnn.html#输出尺寸公式",
+      "body": ""
+    },
+    {
+      "id": "03-neural-networks-cnn-运算量计算详解",
+      "title": "运算量计算详解",
+      "chapter": "03",
+      "chapterTitle": "前馈神经网络与卷积神经网络",
+      "url": "chapters/03-neural-networks-cnn.html#运算量计算详解",
+      "body": ""
+    },
+    {
+      "id": "03-neural-networks-cnn-多通道卷积",
+      "title": "多通道卷积",
+      "chapter": "03",
+      "chapterTitle": "前馈神经网络与卷积神经网络",
+      "url": "chapters/03-neural-networks-cnn.html#多通道卷积",
+      "body": ""
+    },
+    {
+      "id": "03-neural-networks-cnn-11-卷积",
+      "title": "1×1 卷积",
+      "chapter": "03",
+      "chapterTitle": "前馈神经网络与卷积神经网络",
+      "url": "chapters/03-neural-networks-cnn.html#11-卷积",
+      "body": ""
+    },
+    {
+      "id": "03-neural-networks-cnn-池化pooling",
+      "title": "池化（Pooling）",
+      "chapter": "03",
+      "chapterTitle": "前馈神经网络与卷积神经网络",
+      "url": "chapters/03-neural-networks-cnn.html#池化pooling",
+      "body": ""
+    },
+    {
+      "id": "03-neural-networks-cnn-cnn-参数量计算完整示例",
+      "title": "CNN 参数量计算完整示例",
+      "chapter": "03",
+      "chapterTitle": "前馈神经网络与卷积神经网络",
+      "url": "chapters/03-neural-networks-cnn.html#cnn-参数量计算完整示例",
+      "body": ""
+    },
+    {
+      "id": "03-neural-networks-cnn-cnn-参数少的本质原因",
+      "title": "CNN 参数少的本质原因",
+      "chapter": "03",
+      "chapterTitle": "前馈神经网络与卷积神经网络",
+      "url": "chapters/03-neural-networks-cnn.html#cnn-参数少的本质原因",
+      "body": ""
+    },
+    {
+      "id": "03-neural-networks-cnn-空洞卷积dilated-atrous-convolution",
+      "title": "空洞卷积（Dilated / Atrous Convolution）",
+      "chapter": "03",
+      "chapterTitle": "前馈神经网络与卷积神经网络",
+      "url": "chapters/03-neural-networks-cnn.html#空洞卷积dilated-atrous-convolution",
+      "body": ""
+    },
+    {
+      "id": "03-neural-networks-cnn-卷积运算量计算",
+      "title": "卷积运算量计算",
+      "chapter": "03",
+      "chapterTitle": "前馈神经网络与卷积神经网络",
+      "url": "chapters/03-neural-networks-cnn.html#卷积运算量计算",
+      "body": ""
+    },
+    {
+      "id": "03-neural-networks-cnn-基本公式",
+      "title": "基本公式",
+      "chapter": "03",
+      "chapterTitle": "前馈神经网络与卷积神经网络",
+      "url": "chapters/03-neural-networks-cnn.html#基本公式",
+      "body": ""
+    },
+    {
+      "id": "03-neural-networks-cnn-示例math_block_132-输入的卷积运算量",
+      "title": "示例：$7\\times7$ 输入的卷积运算量",
+      "chapter": "03",
+      "chapterTitle": "前馈神经网络与卷积神经网络",
+      "url": "chapters/03-neural-networks-cnn.html#示例math_block_132-输入的卷积运算量",
+      "body": ""
+    },
+    {
+      "id": "03-neural-networks-cnn-感受野receptive-field",
+      "title": "感受野（Receptive Field）",
+      "chapter": "03",
+      "chapterTitle": "前馈神经网络与卷积神经网络",
+      "url": "chapters/03-neural-networks-cnn.html#感受野receptive-field",
+      "body": ""
+    },
+    {
+      "id": "03-neural-networks-cnn-定义",
+      "title": "定义",
+      "chapter": "03",
+      "chapterTitle": "前馈神经网络与卷积神经网络",
+      "url": "chapters/03-neural-networks-cnn.html#定义",
+      "body": ""
+    },
+    {
+      "id": "03-neural-networks-cnn-递推计算",
+      "title": "递推计算",
+      "chapter": "03",
+      "chapterTitle": "前馈神经网络与卷积神经网络",
+      "url": "chapters/03-neural-networks-cnn.html#递推计算",
+      "body": ""
+    },
+    {
+      "id": "03-neural-networks-cnn-全连接层-vs-卷积层-vs-池化层对比",
+      "title": "全连接层 vs 卷积层 vs 池化层对比",
+      "chapter": "03",
+      "chapterTitle": "前馈神经网络与卷积神经网络",
+      "url": "chapters/03-neural-networks-cnn.html#全连接层-vs-卷积层-vs-池化层对比",
+      "body": ""
+    },
+    {
+      "id": "03-neural-networks-cnn-典型-cnn-架构演进了解",
+      "title": "典型 CNN 架构演进（了解）",
+      "chapter": "03",
+      "chapterTitle": "前馈神经网络与卷积神经网络",
+      "url": "chapters/03-neural-networks-cnn.html#典型-cnn-架构演进了解",
+      "body": ""
+    },
+    {
+      "id": "03-neural-networks-cnn-本章核心要点",
+      "title": "本章核心要点",
+      "chapter": "03",
+      "chapterTitle": "前馈神经网络与卷积神经网络",
+      "url": "chapters/03-neural-networks-cnn.html#本章核心要点",
+      "body": ""
+    },
+    {
+      "id": "03-neural-networks-cnn-补充多通道卷积的完整数学",
+      "title": "补充：多通道卷积的完整数学",
+      "chapter": "03",
+      "chapterTitle": "前馈神经网络与卷积神经网络",
+      "url": "chapters/03-neural-networks-cnn.html#补充多通道卷积的完整数学",
+      "body": ""
+    },
+    {
+      "id": "03-neural-networks-cnn-单输入通道-多输出通道",
+      "title": "单输入通道 → 多输出通道",
+      "chapter": "03",
+      "chapterTitle": "前馈神经网络与卷积神经网络",
+      "url": "chapters/03-neural-networks-cnn.html#单输入通道-多输出通道",
+      "body": ""
+    },
+    {
+      "id": "03-neural-networks-cnn-多输入通道-单输出通道",
+      "title": "多输入通道 → 单输出通道",
+      "chapter": "03",
+      "chapterTitle": "前馈神经网络与卷积神经网络",
+      "url": "chapters/03-neural-networks-cnn.html#多输入通道-单输出通道",
+      "body": ""
+    },
+    {
+      "id": "03-neural-networks-cnn-多输入通道-多输出通道一般情况",
+      "title": "多输入通道 → 多输出通道（一般情况）",
+      "chapter": "03",
+      "chapterTitle": "前馈神经网络与卷积神经网络",
+      "url": "chapters/03-neural-networks-cnn.html#多输入通道-多输出通道一般情况",
+      "body": ""
+    },
+    {
+      "id": "03-neural-networks-cnn-具体计算示例",
+      "title": "具体计算示例",
+      "chapter": "03",
+      "chapterTitle": "前馈神经网络与卷积神经网络",
+      "url": "chapters/03-neural-networks-cnn.html#具体计算示例",
+      "body": ""
+    },
+    {
+      "id": "03-neural-networks-cnn-补充11-卷积的数学本质",
+      "title": "补充：1×1 卷积的数学本质",
+      "chapter": "03",
+      "chapterTitle": "前馈神经网络与卷积神经网络",
+      "url": "chapters/03-neural-networks-cnn.html#补充11-卷积的数学本质",
+      "body": ""
+    },
+    {
+      "id": "03-neural-networks-cnn-为什么-math_block_204-卷积有意义",
+      "title": "为什么 $1\\times1$ 卷积有意义？",
+      "chapter": "03",
+      "chapterTitle": "前馈神经网络与卷积神经网络",
+      "url": "chapters/03-neural-networks-cnn.html#为什么-math_block_204-卷积有意义",
+      "body": ""
+    },
+    {
+      "id": "03-neural-networks-cnn-用途",
+      "title": "用途",
+      "chapter": "03",
+      "chapterTitle": "前馈神经网络与卷积神经网络",
+      "url": "chapters/03-neural-networks-cnn.html#用途",
+      "body": ""
+    },
+    {
+      "id": "03-neural-networks-cnn-参数量",
+      "title": "参数量",
+      "chapter": "03",
+      "chapterTitle": "前馈神经网络与卷积神经网络",
+      "url": "chapters/03-neural-networks-cnn.html#参数量",
+      "body": ""
+    },
+    {
+      "id": "03-neural-networks-cnn-补充从全连接到卷积的数学联系",
+      "title": "补充：从全连接到卷积的数学联系",
+      "chapter": "03",
+      "chapterTitle": "前馈神经网络与卷积神经网络",
+      "url": "chapters/03-neural-networks-cnn.html#补充从全连接到卷积的数学联系",
+      "body": ""
+    },
+    {
+      "id": "04-backpropagation",
+      "title": "反向传播与训练优化",
+      "chapter": "04",
+      "chapterTitle": "反向传播与训练优化",
+      "url": "chapters/04-backpropagation.html",
+      "body": "\n   本章导读\n\n前一章我们搭建了神经网络的\"骨架\"——知道网络长什么样、前向传播怎么算。但还有一个核心问题没解决：  怎么找到那些好的权重？  \n\n答案是  反向传播（Backpropagation, BP）算法  。它是训练神经网络的基石——通过链式法则系统地计算损失对每个参数的梯度，然后用梯度下降更新参数。\n\n本章首先从数学上严格推导链式法则，然后一步步推导 BP 公式，用具体数值做一次完整手算，最后讨论深层网络训练中遇到的问题（梯度消失/爆炸）和对应的解决方案（激活函数、残差连接、归一化、参数初始化）。\n\n   \n\n   链式法则——反向传播的数学基础\n\n    为什么需要链式法则\n\n一个深度神经网络本质上是  复合函数  ：\n\n$$L = L f L f  L 1  \\cdots f 2 f 1 \\boldsymbol x ; \\boldsymbol W ^  1   ; \\boldsymbol W ^  2    \\cdots ; \\boldsymbol W ^  L    $$\n\n我们想求 $\\frac \\partial L  \\partial \\boldsymbol W ^  l   $——损失对第 $l$ 层参数的梯度。这些参数深埋在层层嵌套的函数里，直接求导不现实。链式法则让我们能把这个复杂求导  拆成一连串简单的局部导数的乘积  。\n\n    一元链式法则\n\n若 $y = f u $，$u = g x $，则：\n\n$$\\frac dy  dx  = \\frac dy  du  \\cdot \\frac du  dx $$\n\n  直觉  ：$x$ 的微小变化 $\\Delta x$ 先影响 $u$（变化了 $\\frac du  dx \\Delta x$），然后 $u$ 的变化再影响 $y$（变化了 $\\frac dy  du  \\cdot \\frac du  dx \\Delta x$）。\n\n  三层嵌套  ：若 $y = f g h x   $：\n\n$$\\frac dy  dx  = f' g h x    \\cdot g' h x   \\cdot h' x $$\n\n    多元链式法则\n\n若 $z = f x, y $，而 $x = x t $，$y = y t $，则：\n\n$$\\frac dz  dt  = \\frac \\partial f  \\partial x \\frac dx  dt  + \\frac \\partial f  \\partial y \\frac dy  dt $$\n\n  推广  ：若 $z = f u 1, u 2, \\ldots, u n $，而每个 $u i = u i t $：\n\n$$\\frac dz  dt  = \\sum  i=1 ^n \\frac \\partial f  \\partial u i \\frac du i  dt $$\n\n  核心原则  ：当一个变量通过  多条路径  影响最终结果时，各路径上的偏导数相加。\n\n    向量 标量链式法则\n\n若损失 $L$ 是标量，中间变量 $\\boldsymbol z  =  z 1, \\ldots, z n ^T$ 是向量，$\\boldsymbol z  = g \\boldsymbol w  $，则：\n\n$$\\frac \\partial L  \\partial w i  = \\sum  j=1 ^n \\frac \\partial L  \\partial z j  \\frac \\partial z j  \\partial w i $$\n\n写成向量形式：$\\frac \\partial L  \\partial \\boldsymbol w   = \\left \\frac \\partial \\boldsymbol z   \\partial \\boldsymbol w  \\right ^T \\frac \\partial L  \\partial \\boldsymbol z  $\n\n    实例：两层网络的链式法则\n\n设网络：$\\boldsymbol z ^  1   = \\boldsymbol W ^  1  \\boldsymbol x $，$\\boldsymbol h  = \\sigma \\boldsymbol z ^  1   $，$z^  2   = \\boldsymbol w ^  2 T \\boldsymbol h $，$L = \\frac 1  2  y   z^  2   ^2$\n\n求 $\\frac \\partial L  \\partial \\boldsymbol W ^  1   $：\n\n$$\\frac \\partial L  \\partial \\boldsymbol W ^  1    = \\frac \\partial L"
+    },
+    {
+      "id": "04-backpropagation-本章导读",
+      "title": "本章导读",
+      "chapter": "04",
+      "chapterTitle": "反向传播与训练优化",
+      "url": "chapters/04-backpropagation.html#本章导读",
+      "body": ""
+    },
+    {
+      "id": "04-backpropagation-链式法则反向传播的数学基础",
+      "title": "链式法则——反向传播的数学基础",
+      "chapter": "04",
+      "chapterTitle": "反向传播与训练优化",
+      "url": "chapters/04-backpropagation.html#链式法则反向传播的数学基础",
+      "body": ""
+    },
+    {
+      "id": "04-backpropagation-为什么需要链式法则",
+      "title": "为什么需要链式法则",
+      "chapter": "04",
+      "chapterTitle": "反向传播与训练优化",
+      "url": "chapters/04-backpropagation.html#为什么需要链式法则",
+      "body": ""
+    },
+    {
+      "id": "04-backpropagation-一元链式法则",
+      "title": "一元链式法则",
+      "chapter": "04",
+      "chapterTitle": "反向传播与训练优化",
+      "url": "chapters/04-backpropagation.html#一元链式法则",
+      "body": ""
+    },
+    {
+      "id": "04-backpropagation-多元链式法则",
+      "title": "多元链式法则",
+      "chapter": "04",
+      "chapterTitle": "反向传播与训练优化",
+      "url": "chapters/04-backpropagation.html#多元链式法则",
+      "body": ""
+    },
+    {
+      "id": "04-backpropagation-向量-标量链式法则",
+      "title": "向量-标量链式法则",
+      "chapter": "04",
+      "chapterTitle": "反向传播与训练优化",
+      "url": "chapters/04-backpropagation.html#向量-标量链式法则",
+      "body": ""
+    },
+    {
+      "id": "04-backpropagation-实例两层网络的链式法则",
+      "title": "实例：两层网络的链式法则",
+      "chapter": "04",
+      "chapterTitle": "反向传播与训练优化",
+      "url": "chapters/04-backpropagation.html#实例两层网络的链式法则",
+      "body": ""
+    },
+    {
+      "id": "04-backpropagation-反向传播算法",
+      "title": "反向传播算法",
+      "chapter": "04",
+      "chapterTitle": "反向传播与训练优化",
+      "url": "chapters/04-backpropagation.html#反向传播算法",
+      "body": ""
+    },
+    {
+      "id": "04-backpropagation-符号约定",
+      "title": "符号约定",
+      "chapter": "04",
+      "chapterTitle": "反向传播与训练优化",
+      "url": "chapters/04-backpropagation.html#符号约定",
+      "body": ""
+    },
+    {
+      "id": "04-backpropagation-误差项delta的定义",
+      "title": "误差项（Delta）的定义",
+      "chapter": "04",
+      "chapterTitle": "反向传播与训练优化",
+      "url": "chapters/04-backpropagation.html#误差项delta的定义",
+      "body": ""
+    },
+    {
+      "id": "04-backpropagation-第一步输出层的误差",
+      "title": "第一步：输出层的误差",
+      "chapter": "04",
+      "chapterTitle": "反向传播与训练优化",
+      "url": "chapters/04-backpropagation.html#第一步输出层的误差",
+      "body": ""
+    },
+    {
+      "id": "04-backpropagation-第二步误差逐层回传",
+      "title": "第二步：误差逐层回传",
+      "chapter": "04",
+      "chapterTitle": "反向传播与训练优化",
+      "url": "chapters/04-backpropagation.html#第二步误差逐层回传",
+      "body": ""
+    },
+    {
+      "id": "04-backpropagation-第三步计算梯度",
+      "title": "第三步：计算梯度",
+      "chapter": "04",
+      "chapterTitle": "反向传播与训练优化",
+      "url": "chapters/04-backpropagation.html#第三步计算梯度",
+      "body": ""
+    },
+    {
+      "id": "04-backpropagation-第四步参数更新",
+      "title": "第四步：参数更新",
+      "chapter": "04",
+      "chapterTitle": "反向传播与训练优化",
+      "url": "chapters/04-backpropagation.html#第四步参数更新",
+      "body": ""
+    },
+    {
+      "id": "04-backpropagation-bp-算法完整流程",
+      "title": "BP 算法完整流程",
+      "chapter": "04",
+      "chapterTitle": "反向传播与训练优化",
+      "url": "chapters/04-backpropagation.html#bp-算法完整流程",
+      "body": ""
+    },
+    {
+      "id": "04-backpropagation-bp-完整手算示例",
+      "title": "BP 完整手算示例",
+      "chapter": "04",
+      "chapterTitle": "反向传播与训练优化",
+      "url": "chapters/04-backpropagation.html#bp-完整手算示例",
+      "body": ""
+    },
+    {
+      "id": "04-backpropagation-网络设定",
+      "title": "网络设定",
+      "chapter": "04",
+      "chapterTitle": "反向传播与训练优化",
+      "url": "chapters/04-backpropagation.html#网络设定",
+      "body": ""
+    },
+    {
+      "id": "04-backpropagation-前向传播",
+      "title": "前向传播",
+      "chapter": "04",
+      "chapterTitle": "反向传播与训练优化",
+      "url": "chapters/04-backpropagation.html#前向传播",
+      "body": ""
+    },
+    {
+      "id": "04-backpropagation-反向传播",
+      "title": "反向传播",
+      "chapter": "04",
+      "chapterTitle": "反向传播与训练优化",
+      "url": "chapters/04-backpropagation.html#反向传播",
+      "body": ""
+    },
+    {
+      "id": "04-backpropagation-参数更新",
+      "title": "参数更新",
+      "chapter": "04",
+      "chapterTitle": "反向传播与训练优化",
+      "url": "chapters/04-backpropagation.html#参数更新",
+      "body": ""
+    },
+    {
+      "id": "04-backpropagation-验证更新后的损失是否下降",
+      "title": "验证：更新后的损失是否下降",
+      "chapter": "04",
+      "chapterTitle": "反向传播与训练优化",
+      "url": "chapters/04-backpropagation.html#验证更新后的损失是否下降",
+      "body": ""
+    },
+    {
+      "id": "04-backpropagation-卷积层与池化层的反向传播",
+      "title": "卷积层与池化层的反向传播",
+      "chapter": "04",
+      "chapterTitle": "反向传播与训练优化",
+      "url": "chapters/04-backpropagation.html#卷积层与池化层的反向传播",
+      "body": ""
+    },
+    {
+      "id": "04-backpropagation-池化层的反向传播",
+      "title": "池化层的反向传播",
+      "chapter": "04",
+      "chapterTitle": "反向传播与训练优化",
+      "url": "chapters/04-backpropagation.html#池化层的反向传播",
+      "body": ""
+    },
+    {
+      "id": "04-backpropagation-卷积层的反向传播",
+      "title": "卷积层的反向传播",
+      "chapter": "04",
+      "chapterTitle": "反向传播与训练优化",
+      "url": "chapters/04-backpropagation.html#卷积层的反向传播",
+      "body": ""
+    },
+    {
+      "id": "04-backpropagation-运算量分析",
+      "title": "运算量分析",
+      "chapter": "04",
+      "chapterTitle": "反向传播与训练优化",
+      "url": "chapters/04-backpropagation.html#运算量分析",
+      "body": ""
+    },
+    {
+      "id": "04-backpropagation-前向传播",
+      "title": "前向传播",
+      "chapter": "04",
+      "chapterTitle": "反向传播与训练优化",
+      "url": "chapters/04-backpropagation.html#前向传播",
+      "body": ""
+    },
+    {
+      "id": "04-backpropagation-反向传播",
+      "title": "反向传播",
+      "chapter": "04",
+      "chapterTitle": "反向传播与训练优化",
+      "url": "chapters/04-backpropagation.html#反向传播",
+      "body": ""
+    },
+    {
+      "id": "04-backpropagation-梯度消失与梯度爆炸",
+      "title": "梯度消失与梯度爆炸",
+      "chapter": "04",
+      "chapterTitle": "反向传播与训练优化",
+      "url": "chapters/04-backpropagation.html#梯度消失与梯度爆炸",
+      "body": ""
+    },
+    {
+      "id": "04-backpropagation-问题根源",
+      "title": "问题根源",
+      "chapter": "04",
+      "chapterTitle": "反向传播与训练优化",
+      "url": "chapters/04-backpropagation.html#问题根源",
+      "body": ""
+    },
+    {
+      "id": "04-backpropagation-梯度消失",
+      "title": "梯度消失",
+      "chapter": "04",
+      "chapterTitle": "反向传播与训练优化",
+      "url": "chapters/04-backpropagation.html#梯度消失",
+      "body": ""
+    },
+    {
+      "id": "04-backpropagation-梯度爆炸",
+      "title": "梯度爆炸",
+      "chapter": "04",
+      "chapterTitle": "反向传播与训练优化",
+      "url": "chapters/04-backpropagation.html#梯度爆炸",
+      "body": ""
+    },
+    {
+      "id": "04-backpropagation-退化问题degradation",
+      "title": "退化问题（Degradation）",
+      "chapter": "04",
+      "chapterTitle": "反向传播与训练优化",
+      "url": "chapters/04-backpropagation.html#退化问题degradation",
+      "body": ""
+    },
+    {
+      "id": "04-backpropagation-激活函数详解",
+      "title": "激活函数详解",
+      "chapter": "04",
+      "chapterTitle": "反向传播与训练优化",
+      "url": "chapters/04-backpropagation.html#激活函数详解",
+      "body": ""
+    },
+    {
+      "id": "04-backpropagation-sigmoid",
+      "title": "Sigmoid",
+      "chapter": "04",
+      "chapterTitle": "反向传播与训练优化",
+      "url": "chapters/04-backpropagation.html#sigmoid",
+      "body": ""
+    },
+    {
+      "id": "04-backpropagation-tanh",
+      "title": "Tanh",
+      "chapter": "04",
+      "chapterTitle": "反向传播与训练优化",
+      "url": "chapters/04-backpropagation.html#tanh",
+      "body": ""
+    },
+    {
+      "id": "04-backpropagation-relurectified-linear-unit",
+      "title": "ReLU（Rectified Linear Unit）",
+      "chapter": "04",
+      "chapterTitle": "反向传播与训练优化",
+      "url": "chapters/04-backpropagation.html#relurectified-linear-unit",
+      "body": ""
+    },
+    {
+      "id": "04-backpropagation-leaky-relu",
+      "title": "Leaky ReLU",
+      "chapter": "04",
+      "chapterTitle": "反向传播与训练优化",
+      "url": "chapters/04-backpropagation.html#leaky-relu",
+      "body": ""
+    },
+    {
+      "id": "04-backpropagation-preluparametric-relu",
+      "title": "PReLU（Parametric ReLU）",
+      "chapter": "04",
+      "chapterTitle": "反向传播与训练优化",
+      "url": "chapters/04-backpropagation.html#preluparametric-relu",
+      "body": ""
+    },
+    {
+      "id": "04-backpropagation-eluexponential-linear-unit",
+      "title": "ELU（Exponential Linear Unit）",
+      "chapter": "04",
+      "chapterTitle": "反向传播与训练优化",
+      "url": "chapters/04-backpropagation.html#eluexponential-linear-unit",
+      "body": ""
+    },
+    {
+      "id": "04-backpropagation-对比总结",
+      "title": "对比总结",
+      "chapter": "04",
+      "chapterTitle": "反向传播与训练优化",
+      "url": "chapters/04-backpropagation.html#对比总结",
+      "body": ""
+    },
+    {
+      "id": "04-backpropagation-残差连接residual-connection",
+      "title": "残差连接（Residual Connection）",
+      "chapter": "04",
+      "chapterTitle": "反向传播与训练优化",
+      "url": "chapters/04-backpropagation.html#残差连接residual-connection",
+      "body": ""
+    },
+    {
+      "id": "04-backpropagation-核心公式",
+      "title": "核心公式",
+      "chapter": "04",
+      "chapterTitle": "反向传播与训练优化",
+      "url": "chapters/04-backpropagation.html#核心公式",
+      "body": ""
+    },
+    {
+      "id": "04-backpropagation-为什么解决退化",
+      "title": "为什么解决退化",
+      "chapter": "04",
+      "chapterTitle": "反向传播与训练优化",
+      "url": "chapters/04-backpropagation.html#为什么解决退化",
+      "body": ""
+    },
+    {
+      "id": "04-backpropagation-梯度流分析",
+      "title": "梯度流分析",
+      "chapter": "04",
+      "chapterTitle": "反向传播与训练优化",
+      "url": "chapters/04-backpropagation.html#梯度流分析",
+      "body": ""
+    },
+    {
+      "id": "04-backpropagation-维度匹配",
+      "title": "维度匹配",
+      "chapter": "04",
+      "chapterTitle": "反向传播与训练优化",
+      "url": "chapters/04-backpropagation.html#维度匹配",
+      "body": ""
+    },
+    {
+      "id": "04-backpropagation-归一化方法",
+      "title": "归一化方法",
+      "chapter": "04",
+      "chapterTitle": "反向传播与训练优化",
+      "url": "chapters/04-backpropagation.html#归一化方法",
+      "body": ""
+    },
+    {
+      "id": "04-backpropagation-为什么需要归一化",
+      "title": "为什么需要归一化",
+      "chapter": "04",
+      "chapterTitle": "反向传播与训练优化",
+      "url": "chapters/04-backpropagation.html#为什么需要归一化",
+      "body": ""
+    },
+    {
+      "id": "04-backpropagation-batch-normalization-bn",
+      "title": "Batch Normalization (BN)",
+      "chapter": "04",
+      "chapterTitle": "反向传播与训练优化",
+      "url": "chapters/04-backpropagation.html#batch-normalization-bn",
+      "body": ""
+    },
+    {
+      "id": "04-backpropagation-layer-normalization-ln",
+      "title": "Layer Normalization (LN)",
+      "chapter": "04",
+      "chapterTitle": "反向传播与训练优化",
+      "url": "chapters/04-backpropagation.html#layer-normalization-ln",
+      "body": ""
+    },
+    {
+      "id": "04-backpropagation-bn-vs-ln-对比",
+      "title": "BN vs LN 对比",
+      "chapter": "04",
+      "chapterTitle": "反向传播与训练优化",
+      "url": "chapters/04-backpropagation.html#bn-vs-ln-对比",
+      "body": ""
+    },
+    {
+      "id": "04-backpropagation-instance-normalization-in",
+      "title": "Instance Normalization (IN)",
+      "chapter": "04",
+      "chapterTitle": "反向传播与训练优化",
+      "url": "chapters/04-backpropagation.html#instance-normalization-in",
+      "body": ""
+    },
+    {
+      "id": "04-backpropagation-group-normalization-gn",
+      "title": "Group Normalization (GN)",
+      "chapter": "04",
+      "chapterTitle": "反向传播与训练优化",
+      "url": "chapters/04-backpropagation.html#group-normalization-gn",
+      "body": ""
+    },
+    {
+      "id": "04-backpropagation-dytdynamic-tanh",
+      "title": "DyT（Dynamic Tanh）",
+      "chapter": "04",
+      "chapterTitle": "反向传播与训练优化",
+      "url": "chapters/04-backpropagation.html#dytdynamic-tanh",
+      "body": ""
+    },
+    {
+      "id": "04-backpropagation-参数初始化",
+      "title": "参数初始化",
+      "chapter": "04",
+      "chapterTitle": "反向传播与训练优化",
+      "url": "chapters/04-backpropagation.html#参数初始化",
+      "body": ""
+    },
+    {
+      "id": "04-backpropagation-为什么初始化很重要",
+      "title": "为什么初始化很重要",
+      "chapter": "04",
+      "chapterTitle": "反向传播与训练优化",
+      "url": "chapters/04-backpropagation.html#为什么初始化很重要",
+      "body": ""
+    },
+    {
+      "id": "04-backpropagation-全零初始化的问题",
+      "title": "全零初始化的问题",
+      "chapter": "04",
+      "chapterTitle": "反向传播与训练优化",
+      "url": "chapters/04-backpropagation.html#全零初始化的问题",
+      "body": ""
+    },
+    {
+      "id": "04-backpropagation-随机初始化的方差选择",
+      "title": "随机初始化的方差选择",
+      "chapter": "04",
+      "chapterTitle": "反向传播与训练优化",
+      "url": "chapters/04-backpropagation.html#随机初始化的方差选择",
+      "body": ""
+    },
+    {
+      "id": "04-backpropagation-xavier-初始化glorot-2010",
+      "title": "Xavier 初始化（Glorot, 2010）",
+      "chapter": "04",
+      "chapterTitle": "反向传播与训练优化",
+      "url": "chapters/04-backpropagation.html#xavier-初始化glorot-2010",
+      "body": ""
+    },
+    {
+      "id": "04-backpropagation-he-初始化kaiming-2015",
+      "title": "He 初始化（Kaiming, 2015）",
+      "chapter": "04",
+      "chapterTitle": "反向传播与训练优化",
+      "url": "chapters/04-backpropagation.html#he-初始化kaiming-2015",
+      "body": ""
+    },
+    {
+      "id": "04-backpropagation-prelu-情形下的-he-初始化",
+      "title": "PReLU 情形下的 He 初始化",
+      "chapter": "04",
+      "chapterTitle": "反向传播与训练优化",
+      "url": "chapters/04-backpropagation.html#prelu-情形下的-he-初始化",
+      "body": ""
+    },
+    {
+      "id": "04-backpropagation-训练优化技巧",
+      "title": "训练优化技巧",
+      "chapter": "04",
+      "chapterTitle": "反向传播与训练优化",
+      "url": "chapters/04-backpropagation.html#训练优化技巧",
+      "body": ""
+    },
+    {
+      "id": "04-backpropagation-mini-batch-sgd",
+      "title": "Mini-batch SGD",
+      "chapter": "04",
+      "chapterTitle": "反向传播与训练优化",
+      "url": "chapters/04-backpropagation.html#mini-batch-sgd",
+      "body": ""
+    },
+    {
+      "id": "04-backpropagation-学习率调度",
+      "title": "学习率调度",
+      "chapter": "04",
+      "chapterTitle": "反向传播与训练优化",
+      "url": "chapters/04-backpropagation.html#学习率调度",
+      "body": ""
+    },
+    {
+      "id": "04-backpropagation-dropout",
+      "title": "Dropout",
+      "chapter": "04",
+      "chapterTitle": "反向传播与训练优化",
+      "url": "chapters/04-backpropagation.html#dropout",
+      "body": ""
+    },
+    {
+      "id": "04-backpropagation-提前终止early-stopping",
+      "title": "提前终止（Early Stopping）",
+      "chapter": "04",
+      "chapterTitle": "反向传播与训练优化",
+      "url": "chapters/04-backpropagation.html#提前终止early-stopping",
+      "body": ""
+    },
+    {
+      "id": "04-backpropagation-数据增强data-augmentation",
+      "title": "数据增强（Data Augmentation）",
+      "chapter": "04",
+      "chapterTitle": "反向传播与训练优化",
+      "url": "chapters/04-backpropagation.html#数据增强data-augmentation",
+      "body": ""
+    },
+    {
+      "id": "04-backpropagation-权重衰减weight-decay",
+      "title": "权重衰减（Weight Decay）",
+      "chapter": "04",
+      "chapterTitle": "反向传播与训练优化",
+      "url": "chapters/04-backpropagation.html#权重衰减weight-decay",
+      "body": ""
+    },
+    {
+      "id": "05-graph-neural-networks",
+      "title": "图神经网络",
+      "chapter": "05",
+      "chapterTitle": "图神经网络",
+      "url": "chapters/05-graph-neural-networks.html",
+      "body": "\n   本章导读\n\n前面几章处理的数据都有规则的结构——向量（表格数据）、网格（图像）、序列（文本）。但现实中有大量数据是  图结构  的：社交网络、分子结构、引用网络、知识图谱……\n\n图的核心挑战：节点数量不固定、邻居数量不固定、没有天然的\"顺序\"——传统的 CNN 和 RNN 都用不了。\n\n图神经网络（GNN）的核心思想：  让每个节点通过\"聚合邻居信息\"来更新自己的表示  。本章从图的数学基础开始，一步步搭建到 GCN、GAT、GraphSAGE。\n\n   \n\n   图的数学定义\n\n    基本定义\n\n  图（Graph）  ：一个有序对 $G =  V, E $\n\n    节点集（Vertex Set）  ：$V = \\ v 1, v 2, \\ldots, v n\\ $，共 $n$ 个节点\n    边集（Edge Set）  ：$E \\subseteq V \\times V$，连接节点对的集合\n\n  无向图  ：边没有方向。若 $ v i, v j  \\in E$，则 $ v j, v i  \\in E$。\n\n  有向图  ：边有方向。$ v i, v j $ 和 $ v j, v i $ 是两条不同的边。\n\n  邻居（Neighbors）  ：节点 $v$ 直接连接的所有节点构成其邻居集：\n$$\\mathcal N  v  = \\ u \\in V \\mid  v, u  \\in E\\ $$\n\n  度（Degree）  ：节点 $v$ 的度数是它的边数：$\\deg v  =  \\mathcal N  v  $\n\n    图的存储方式\n\n  邻接表  ：对每个节点存储一个链表，记录它的所有邻居。空间 $O  V  +  E  $。\n\n  邻接矩阵  ：一个 $n \\times n$ 的矩阵。空间 $O n^2 $，适合稠密图或需要矩阵运算的场景。\n\n   \n\n   邻接矩阵（Adjacency Matrix）\n\n    定义\n\n给定图 $G =  V, E $，$ V  = n$，邻接矩阵 $\\boldsymbol A  \\in \\ 0, 1\\ ^ n \\times n $：\n\n$$A  ij  = \\begin cases  1, &  v i, v j  \\in E \\\\ 0, & \\text otherwise  \\end cases $$\n\n  性质  ：\n  对于无向图：$\\boldsymbol A $ 是对称的，$A  ij  = A  ji $\n  对角线为 0（无自环时）：$A  ii  = 0$\n  第 $i$ 行的和 = 节点 $i$ 的度数：$\\sum j A  ij  = \\deg v i $\n\n    示例\n\n考虑以下 4 节点的无向图：\n\n   \n  1     2\n      /  \n     /   \n  3     4\n   \n\n边集：$\\  1,2 ,  1,3 ,  2,3 ,  2,4 \\ $\n\n邻接矩阵：\n$$\\boldsymbol A  = \\begin pmatrix  0 & 1 & 1 & 0 \\\\ 1 & 0 & 1 & 1 \\\\ 1 & 1 & 0 & 0 \\\\ 0 & 1 & 0 & 0 \\end pmatrix $$\n\n验证：\n  节点 1 的邻居是 2、3 → 第 1 行中 $A  12 =1, A  13 =1$，度数为 2 ✓\n  节点 2 的邻居是 1、3、4 → 第 2 行中 $A  21 =A  23 =A  24 =1$，度数为 3 ✓\n  节点 4 只连接 2 → 度数为 1 ✓\n\n    邻接矩阵的代数含义\n\n$\\boldsymbol A ^k$ 的第 $ i,j $ 元素 = 从节点 $i$ 到节点 $j$ 经过恰好 $k$ 步的路径数。\n\n例如 $\\boldsymbol A ^2$ 的对角线 = 各节点的度数（走两步回到自己 = 选一条边出去再回来）。\n\n   \n\n   度矩阵（Degree Matrix）\n\n    定义\n\n度矩阵 $\\boldsymbol D  \\in \\mathbb R ^ n \\times n $ 是对角矩阵：\n\n$$D  ii  = \\deg v i  = \\sum  j=1 ^n A  ij $$\n\n非对角元素全为 0。\n\n    示例\n\n对于上面的图：\n\n$$\\boldsymbol D  = \\begin pmatrix  2 & 0 & 0 & 0 \\\\ 0 & 3 & 0 & 0 \\\\ 0 & 0 & 2 & 0 \\\\ 0 & 0 & 0 & 1 \\end pmatrix $$\n\n    度矩阵的逆\n\n$$\\boldsymbol D ^  1  = \\begin pmatrix  1/2 & 0 & 0 & "
+    },
+    {
+      "id": "05-graph-neural-networks-本章导读",
+      "title": "本章导读",
+      "chapter": "05",
+      "chapterTitle": "图神经网络",
+      "url": "chapters/05-graph-neural-networks.html#本章导读",
+      "body": ""
+    },
+    {
+      "id": "05-graph-neural-networks-图的数学定义",
+      "title": "图的数学定义",
+      "chapter": "05",
+      "chapterTitle": "图神经网络",
+      "url": "chapters/05-graph-neural-networks.html#图的数学定义",
+      "body": ""
+    },
+    {
+      "id": "05-graph-neural-networks-基本定义",
+      "title": "基本定义",
+      "chapter": "05",
+      "chapterTitle": "图神经网络",
+      "url": "chapters/05-graph-neural-networks.html#基本定义",
+      "body": ""
+    },
+    {
+      "id": "05-graph-neural-networks-图的存储方式",
+      "title": "图的存储方式",
+      "chapter": "05",
+      "chapterTitle": "图神经网络",
+      "url": "chapters/05-graph-neural-networks.html#图的存储方式",
+      "body": ""
+    },
+    {
+      "id": "05-graph-neural-networks-邻接矩阵adjacency-matrix",
+      "title": "邻接矩阵（Adjacency Matrix）",
+      "chapter": "05",
+      "chapterTitle": "图神经网络",
+      "url": "chapters/05-graph-neural-networks.html#邻接矩阵adjacency-matrix",
+      "body": ""
+    },
+    {
+      "id": "05-graph-neural-networks-定义",
+      "title": "定义",
+      "chapter": "05",
+      "chapterTitle": "图神经网络",
+      "url": "chapters/05-graph-neural-networks.html#定义",
+      "body": ""
+    },
+    {
+      "id": "05-graph-neural-networks-示例",
+      "title": "示例",
+      "chapter": "05",
+      "chapterTitle": "图神经网络",
+      "url": "chapters/05-graph-neural-networks.html#示例",
+      "body": ""
+    },
+    {
+      "id": "05-graph-neural-networks-邻接矩阵的代数含义",
+      "title": "邻接矩阵的代数含义",
+      "chapter": "05",
+      "chapterTitle": "图神经网络",
+      "url": "chapters/05-graph-neural-networks.html#邻接矩阵的代数含义",
+      "body": ""
+    },
+    {
+      "id": "05-graph-neural-networks-度矩阵degree-matrix",
+      "title": "度矩阵（Degree Matrix）",
+      "chapter": "05",
+      "chapterTitle": "图神经网络",
+      "url": "chapters/05-graph-neural-networks.html#度矩阵degree-matrix",
+      "body": ""
+    },
+    {
+      "id": "05-graph-neural-networks-定义",
+      "title": "定义",
+      "chapter": "05",
+      "chapterTitle": "图神经网络",
+      "url": "chapters/05-graph-neural-networks.html#定义",
+      "body": ""
+    },
+    {
+      "id": "05-graph-neural-networks-示例",
+      "title": "示例",
+      "chapter": "05",
+      "chapterTitle": "图神经网络",
+      "url": "chapters/05-graph-neural-networks.html#示例",
+      "body": ""
+    },
+    {
+      "id": "05-graph-neural-networks-度矩阵的逆",
+      "title": "度矩阵的逆",
+      "chapter": "05",
+      "chapterTitle": "图神经网络",
+      "url": "chapters/05-graph-neural-networks.html#度矩阵的逆",
+      "body": ""
+    },
+    {
+      "id": "05-graph-neural-networks-拉普拉斯矩阵laplacian-matrix",
+      "title": "拉普拉斯矩阵（Laplacian Matrix）",
+      "chapter": "05",
+      "chapterTitle": "图神经网络",
+      "url": "chapters/05-graph-neural-networks.html#拉普拉斯矩阵laplacian-matrix",
+      "body": ""
+    },
+    {
+      "id": "05-graph-neural-networks-定义",
+      "title": "定义",
+      "chapter": "05",
+      "chapterTitle": "图神经网络",
+      "url": "chapters/05-graph-neural-networks.html#定义",
+      "body": ""
+    },
+    {
+      "id": "05-graph-neural-networks-显式形式",
+      "title": "显式形式",
+      "chapter": "05",
+      "chapterTitle": "图神经网络",
+      "url": "chapters/05-graph-neural-networks.html#显式形式",
+      "body": ""
+    },
+    {
+      "id": "05-graph-neural-networks-示例",
+      "title": "示例",
+      "chapter": "05",
+      "chapterTitle": "图神经网络",
+      "url": "chapters/05-graph-neural-networks.html#示例",
+      "body": ""
+    },
+    {
+      "id": "05-graph-neural-networks-性质",
+      "title": "性质",
+      "chapter": "05",
+      "chapterTitle": "图神经网络",
+      "url": "chapters/05-graph-neural-networks.html#性质",
+      "body": ""
+    },
+    {
+      "id": "05-graph-neural-networks-归一化拉普拉斯矩阵",
+      "title": "归一化拉普拉斯矩阵",
+      "chapter": "05",
+      "chapterTitle": "图神经网络",
+      "url": "chapters/05-graph-neural-networks.html#归一化拉普拉斯矩阵",
+      "body": ""
+    },
+    {
+      "id": "05-graph-neural-networks-手算归一化拉普拉斯",
+      "title": "手算归一化拉普拉斯",
+      "chapter": "05",
+      "chapterTitle": "图神经网络",
+      "url": "chapters/05-graph-neural-networks.html#手算归一化拉普拉斯",
+      "body": ""
+    },
+    {
+      "id": "05-graph-neural-networks-随机游走random-walk",
+      "title": "随机游走（Random Walk）",
+      "chapter": "05",
+      "chapterTitle": "图神经网络",
+      "url": "chapters/05-graph-neural-networks.html#随机游走random-walk",
+      "body": ""
+    },
+    {
+      "id": "05-graph-neural-networks-转移矩阵",
+      "title": "转移矩阵",
+      "chapter": "05",
+      "chapterTitle": "图神经网络",
+      "url": "chapters/05-graph-neural-networks.html#转移矩阵",
+      "body": ""
+    },
+    {
+      "id": "05-graph-neural-networks-示例",
+      "title": "示例",
+      "chapter": "05",
+      "chapterTitle": "图神经网络",
+      "url": "chapters/05-graph-neural-networks.html#示例",
+      "body": ""
+    },
+    {
+      "id": "05-graph-neural-networks-多步游走",
+      "title": "多步游走",
+      "chapter": "05",
+      "chapterTitle": "图神经网络",
+      "url": "chapters/05-graph-neural-networks.html#多步游走",
+      "body": ""
+    },
+    {
+      "id": "05-graph-neural-networks-稳态分布与图结构的关系",
+      "title": "稳态分布与图结构的关系",
+      "chapter": "05",
+      "chapterTitle": "图神经网络",
+      "url": "chapters/05-graph-neural-networks.html#稳态分布与图结构的关系",
+      "body": ""
+    },
+    {
+      "id": "05-graph-neural-networks-图表征学习",
+      "title": "图表征学习",
+      "chapter": "05",
+      "chapterTitle": "图神经网络",
+      "url": "chapters/05-graph-neural-networks.html#图表征学习",
+      "body": ""
+    },
+    {
+      "id": "05-graph-neural-networks-任务层级",
+      "title": "任务层级",
+      "chapter": "05",
+      "chapterTitle": "图神经网络",
+      "url": "chapters/05-graph-neural-networks.html#任务层级",
+      "body": ""
+    },
+    {
+      "id": "05-graph-neural-networks-节点嵌入的目标",
+      "title": "节点嵌入的目标",
+      "chapter": "05",
+      "chapterTitle": "图神经网络",
+      "url": "chapters/05-graph-neural-networks.html#节点嵌入的目标",
+      "body": ""
+    },
+    {
+      "id": "05-graph-neural-networks-图神经网络的核心消息传递",
+      "title": "图神经网络的核心：消息传递",
+      "chapter": "05",
+      "chapterTitle": "图神经网络",
+      "url": "chapters/05-graph-neural-networks.html#图神经网络的核心消息传递",
+      "body": ""
+    },
+    {
+      "id": "05-graph-neural-networks-核心思想",
+      "title": "核心思想",
+      "chapter": "05",
+      "chapterTitle": "图神经网络",
+      "url": "chapters/05-graph-neural-networks.html#核心思想",
+      "body": ""
+    },
+    {
+      "id": "05-graph-neural-networks-通用公式",
+      "title": "通用公式",
+      "chapter": "05",
+      "chapterTitle": "图神经网络",
+      "url": "chapters/05-graph-neural-networks.html#通用公式",
+      "body": ""
+    },
+    {
+      "id": "05-graph-neural-networks-为什么必须置换不变",
+      "title": "为什么必须置换不变？",
+      "chapter": "05",
+      "chapterTitle": "图神经网络",
+      "url": "chapters/05-graph-neural-networks.html#为什么必须置换不变",
+      "body": ""
+    },
+    {
+      "id": "05-graph-neural-networks-gcngraph-convolutional-network",
+      "title": "GCN（Graph Convolutional Network）",
+      "chapter": "05",
+      "chapterTitle": "图神经网络",
+      "url": "chapters/05-graph-neural-networks.html#gcngraph-convolutional-network",
+      "body": ""
+    },
+    {
+      "id": "05-graph-neural-networks-公式",
+      "title": "公式",
+      "chapter": "05",
+      "chapterTitle": "图神经网络",
+      "url": "chapters/05-graph-neural-networks.html#公式",
+      "body": ""
+    },
+    {
+      "id": "05-graph-neural-networks-逐节点理解",
+      "title": "逐节点理解",
+      "chapter": "05",
+      "chapterTitle": "图神经网络",
+      "url": "chapters/05-graph-neural-networks.html#逐节点理解",
+      "body": ""
+    },
+    {
+      "id": "05-graph-neural-networks-gcn-的特点",
+      "title": "GCN 的特点",
+      "chapter": "05",
+      "chapterTitle": "图神经网络",
+      "url": "chapters/05-graph-neural-networks.html#gcn-的特点",
+      "body": ""
+    },
+    {
+      "id": "05-graph-neural-networks-gatgraph-attention-network",
+      "title": "GAT（Graph Attention Network）",
+      "chapter": "05",
+      "chapterTitle": "图神经网络",
+      "url": "chapters/05-graph-neural-networks.html#gatgraph-attention-network",
+      "body": ""
+    },
+    {
+      "id": "05-graph-neural-networks-动机",
+      "title": "动机",
+      "chapter": "05",
+      "chapterTitle": "图神经网络",
+      "url": "chapters/05-graph-neural-networks.html#动机",
+      "body": ""
+    },
+    {
+      "id": "05-graph-neural-networks-注意力系数计算",
+      "title": "注意力系数计算",
+      "chapter": "05",
+      "chapterTitle": "图神经网络",
+      "url": "chapters/05-graph-neural-networks.html#注意力系数计算",
+      "body": ""
+    },
+    {
+      "id": "05-graph-neural-networks-多头注意力",
+      "title": "多头注意力",
+      "chapter": "05",
+      "chapterTitle": "图神经网络",
+      "url": "chapters/05-graph-neural-networks.html#多头注意力",
+      "body": ""
+    },
+    {
+      "id": "05-graph-neural-networks-gat-的特点",
+      "title": "GAT 的特点",
+      "chapter": "05",
+      "chapterTitle": "图神经网络",
+      "url": "chapters/05-graph-neural-networks.html#gat-的特点",
+      "body": ""
+    },
+    {
+      "id": "05-graph-neural-networks-graphsage",
+      "title": "GraphSAGE",
+      "chapter": "05",
+      "chapterTitle": "图神经网络",
+      "url": "chapters/05-graph-neural-networks.html#graphsage",
+      "body": ""
+    },
+    {
+      "id": "05-graph-neural-networks-动机",
+      "title": "动机",
+      "chapter": "05",
+      "chapterTitle": "图神经网络",
+      "url": "chapters/05-graph-neural-networks.html#动机",
+      "body": ""
+    },
+    {
+      "id": "05-graph-neural-networks-核心做法",
+      "title": "核心做法",
+      "chapter": "05",
+      "chapterTitle": "图神经网络",
+      "url": "chapters/05-graph-neural-networks.html#核心做法",
+      "body": ""
+    },
+    {
+      "id": "05-graph-neural-networks-聚合器选择",
+      "title": "聚合器选择",
+      "chapter": "05",
+      "chapterTitle": "图神经网络",
+      "url": "chapters/05-graph-neural-networks.html#聚合器选择",
+      "body": ""
+    },
+    {
+      "id": "05-graph-neural-networks-graphsage-的特点",
+      "title": "GraphSAGE 的特点",
+      "chapter": "05",
+      "chapterTitle": "图神经网络",
+      "url": "chapters/05-graph-neural-networks.html#graphsage-的特点",
+      "body": ""
+    },
+    {
+      "id": "05-graph-neural-networks-三者对比",
+      "title": "三者对比",
+      "chapter": "05",
+      "chapterTitle": "图神经网络",
+      "url": "chapters/05-graph-neural-networks.html#三者对比",
+      "body": ""
+    },
+    {
+      "id": "05-graph-neural-networks-gnn-与随机游走的深层联系",
+      "title": "GNN 与随机游走的深层联系",
+      "chapter": "05",
+      "chapterTitle": "图神经网络",
+      "url": "chapters/05-graph-neural-networks.html#gnn-与随机游走的深层联系",
+      "body": ""
+    },
+    {
+      "id": "05-graph-neural-networks-简单均值-gnn-随机游走",
+      "title": "简单均值 GNN = 随机游走",
+      "chapter": "05",
+      "chapterTitle": "图神经网络",
+      "url": "chapters/05-graph-neural-networks.html#简单均值-gnn-随机游走",
+      "body": ""
+    },
+    {
+      "id": "05-graph-neural-networks-加入残差连接",
+      "title": "加入残差连接",
+      "chapter": "05",
+      "chapterTitle": "图神经网络",
+      "url": "chapters/05-graph-neural-networks.html#加入残差连接",
+      "body": ""
+    },
+    {
+      "id": "05-graph-neural-networks-异构图heterogeneous-graph",
+      "title": "异构图（Heterogeneous Graph）",
+      "chapter": "05",
+      "chapterTitle": "图神经网络",
+      "url": "chapters/05-graph-neural-networks.html#异构图heterogeneous-graph",
+      "body": ""
+    },
+    {
+      "id": "05-graph-neural-networks-定义",
+      "title": "定义",
+      "chapter": "05",
+      "chapterTitle": "图神经网络",
+      "url": "chapters/05-graph-neural-networks.html#定义",
+      "body": ""
+    },
+    {
+      "id": "05-graph-neural-networks-示例",
+      "title": "示例",
+      "chapter": "05",
+      "chapterTitle": "图神经网络",
+      "url": "chapters/05-graph-neural-networks.html#示例",
+      "body": ""
+    },
+    {
+      "id": "05-graph-neural-networks-处理方式",
+      "title": "处理方式",
+      "chapter": "05",
+      "chapterTitle": "图神经网络",
+      "url": "chapters/05-graph-neural-networks.html#处理方式",
+      "body": ""
+    },
+    {
+      "id": "05-graph-neural-networks-过平滑问题oversmoothing",
+      "title": "过平滑问题（Oversmoothing）",
+      "chapter": "05",
+      "chapterTitle": "图神经网络",
+      "url": "chapters/05-graph-neural-networks.html#过平滑问题oversmoothing",
+      "body": ""
+    },
+    {
+      "id": "05-graph-neural-networks-现象",
+      "title": "现象",
+      "chapter": "05",
+      "chapterTitle": "图神经网络",
+      "url": "chapters/05-graph-neural-networks.html#现象",
+      "body": ""
+    },
+    {
+      "id": "05-graph-neural-networks-原因",
+      "title": "原因",
+      "chapter": "05",
+      "chapterTitle": "图神经网络",
+      "url": "chapters/05-graph-neural-networks.html#原因",
+      "body": ""
+    },
+    {
+      "id": "05-graph-neural-networks-缓解方法",
+      "title": "缓解方法",
+      "chapter": "05",
+      "chapterTitle": "图神经网络",
+      "url": "chapters/05-graph-neural-networks.html#缓解方法",
+      "body": ""
+    },
+    {
+      "id": "05-graph-neural-networks-图卷积的谱域视角补充理解",
+      "title": "图卷积的谱域视角（补充理解）",
+      "chapter": "05",
+      "chapterTitle": "图神经网络",
+      "url": "chapters/05-graph-neural-networks.html#图卷积的谱域视角补充理解",
+      "body": ""
+    },
+    {
+      "id": "05-graph-neural-networks-图上的quot频率quot",
+      "title": "图上的&quot;频率&quot;",
+      "chapter": "05",
+      "chapterTitle": "图神经网络",
+      "url": "chapters/05-graph-neural-networks.html#图上的quot频率quot",
+      "body": ""
+    },
+    {
+      "id": "05-graph-neural-networks-图傅里叶变换",
+      "title": "图傅里叶变换",
+      "chapter": "05",
+      "chapterTitle": "图神经网络",
+      "url": "chapters/05-graph-neural-networks.html#图傅里叶变换",
+      "body": ""
+    },
+    {
+      "id": "05-graph-neural-networks-gcn-的谱域解释",
+      "title": "GCN 的谱域解释",
+      "chapter": "05",
+      "chapterTitle": "图神经网络",
+      "url": "chapters/05-graph-neural-networks.html#gcn-的谱域解释",
+      "body": ""
+    },
+    {
+      "id": "05-graph-neural-networks-完整计算示例邻接矩阵到-gcn-前向",
+      "title": "完整计算示例：邻接矩阵到 GCN 前向",
+      "chapter": "05",
+      "chapterTitle": "图神经网络",
+      "url": "chapters/05-graph-neural-networks.html#完整计算示例邻接矩阵到-gcn-前向",
+      "body": ""
+    },
+    {
+      "id": "05-graph-neural-networks-题设",
+      "title": "题设",
+      "chapter": "05",
+      "chapterTitle": "图神经网络",
+      "url": "chapters/05-graph-neural-networks.html#题设",
+      "body": ""
+    },
+    {
+      "id": "05-graph-neural-networks-step-1加自环",
+      "title": "Step 1：加自环",
+      "chapter": "05",
+      "chapterTitle": "图神经网络",
+      "url": "chapters/05-graph-neural-networks.html#step-1加自环",
+      "body": ""
+    },
+    {
+      "id": "05-graph-neural-networks-step-2计算度矩阵",
+      "title": "Step 2：计算度矩阵",
+      "chapter": "05",
+      "chapterTitle": "图神经网络",
+      "url": "chapters/05-graph-neural-networks.html#step-2计算度矩阵",
+      "body": ""
+    },
+    {
+      "id": "05-graph-neural-networks-step-3归一化",
+      "title": "Step 3：归一化",
+      "chapter": "05",
+      "chapterTitle": "图神经网络",
+      "url": "chapters/05-graph-neural-networks.html#step-3归一化",
+      "body": ""
+    },
+    {
+      "id": "05-graph-neural-networks-step-4设简单权重",
+      "title": "Step 4：设简单权重",
+      "chapter": "05",
+      "chapterTitle": "图神经网络",
+      "url": "chapters/05-graph-neural-networks.html#step-4设简单权重",
+      "body": ""
+    },
+    {
+      "id": "05-graph-neural-networks-本章要点回顾",
+      "title": "本章要点回顾",
+      "chapter": "05",
+      "chapterTitle": "图神经网络",
+      "url": "chapters/05-graph-neural-networks.html#本章要点回顾",
+      "body": ""
+    },
+    {
+      "id": "06-transformer",
+      "title": "Transformer",
+      "chapter": "06",
+      "chapterTitle": "Transformer",
+      "url": "chapters/06-transformer.html",
+      "body": "\n   本章导读\n\nTransformer 是当代深度学习最核心的架构——GPT、BERT、Vision Transformer、扩散模型的骨架都是它。它用  注意力机制  完全替代了 RNN 的循环结构，实现了并行计算和对长距离依赖的直接建模。\n\n本章从\"为什么需要注意力\"开始，完整推导自注意力的数学，手算一个完整的自注意力示例，详解多头注意力的参数量计算，最后拆解整个 Transformer 的编码器 解码器架构。\n\n   \n\n   RNN 的困境\n\n    RNN 基本结构回顾\n\nRNN 按时间步顺序处理序列，每步的隐状态依赖上一步：\n\n$$\\boldsymbol h  t = f \\boldsymbol W  h \\boldsymbol h   t 1  + \\boldsymbol W  x \\boldsymbol x  t + \\boldsymbol b  $$\n\n输入 $\\boldsymbol x  1, \\boldsymbol x  2, \\ldots, \\boldsymbol x  T$ 被逐步\"压缩\"到最终的隐状态 $\\boldsymbol h  T$。\n\n    RNN 的三大问题\n\n  1. 长距离依赖困难  \n\n信息只能通过隐状态逐步传递。位置 1 的信息要到达位置 100，必须经过 99 步传递——每步都会衰减（梯度消失）。\n\n数学上：$\\frac \\partial \\boldsymbol h  T  \\partial \\boldsymbol h  1  = \\prod  t=1 ^ T 1  \\frac \\partial \\boldsymbol h   t+1   \\partial \\boldsymbol h  t $\n\n这个连乘项在 $T$ 很大时要么消失要么爆炸。\n\n  2. 无法并行计算  \n\n$\\boldsymbol h  t$ 必须等 $\\boldsymbol h   t 1 $ 算完才能算——天然的顺序依赖。在 GPU 上无法并行，序列越长训练越慢。\n\n  3. 信息瓶颈  \n\n整个输入序列被压缩到一个固定维度的向量 $\\boldsymbol h  T$。对于长序列，这个向量不可能携带所有信息——必然有信息损失。\n\n    LSTM 的部分缓解\n\nLSTM 通过  记忆单元   $\\boldsymbol c  t$ 和  门控机制  缓解梯度消失：\n\n    遗忘门   $\\boldsymbol f  t = \\sigma \\boldsymbol W  f \\boldsymbol h   t 1 , \\boldsymbol x  t  $：决定丢弃多少旧记忆\n    输入门   $\\boldsymbol i  t = \\sigma \\boldsymbol W  i \\boldsymbol h   t 1 , \\boldsymbol x  t  $：决定写入多少新信息\n    记忆更新   $\\boldsymbol c  t = \\boldsymbol f  t \\odot \\boldsymbol c   t 1  + \\boldsymbol i  t \\odot \\tilde \\boldsymbol c   t$\n    输出门   $\\boldsymbol o  t = \\sigma \\boldsymbol W  o \\boldsymbol h   t 1 , \\boldsymbol x  t  $：决定输出多少记忆\n    隐状态   $\\boldsymbol h  t = \\boldsymbol o  t \\odot \\tanh \\boldsymbol c  t $\n\n关键：记忆单元 $\\boldsymbol c  t$ 有一条\"高速公路\"——乘以接近 1 的遗忘门可以让信息无损传递很远。\n\n但 LSTM   仍然无法并行  ，只是\"不那么容易忘\"而已。\n\n    注意力的动机\n\n  能不能让每个位置直接\"看到\"序列中任意其他位置？   不需要逐步传递，直接建立任意两点之间的连接——这就是注意力机制。\n\n   \n\n   注意力机制（Attention）\n\n    基本框架\n\n注意力可以理解为一种  可微的查字典  操作：\n\n    Query（查询）  ：我在找什么\n    Key（键）  ：每个候选有什么\"标签\"\n    Value（值）  ：每个候选的实际内容\n\n给定 query $\\boldsymbol q $，和 $n$ 个键值对 $\\  \\boldsymbol k  i, \\boldsymbol v  i \\   i=1 ^n$：\n\n1. 计算 query 和每个 key 的  匹配度  （打分）\n2. 将打分归一化为  权重  （概率分布）\n3. 用权重对 value "
+    },
+    {
+      "id": "06-transformer-本章导读",
+      "title": "本章导读",
+      "chapter": "06",
+      "chapterTitle": "Transformer",
+      "url": "chapters/06-transformer.html#本章导读",
+      "body": ""
+    },
+    {
+      "id": "06-transformer-rnn-的困境",
+      "title": "RNN 的困境",
+      "chapter": "06",
+      "chapterTitle": "Transformer",
+      "url": "chapters/06-transformer.html#rnn-的困境",
+      "body": ""
+    },
+    {
+      "id": "06-transformer-rnn-基本结构回顾",
+      "title": "RNN 基本结构回顾",
+      "chapter": "06",
+      "chapterTitle": "Transformer",
+      "url": "chapters/06-transformer.html#rnn-基本结构回顾",
+      "body": ""
+    },
+    {
+      "id": "06-transformer-rnn-的三大问题",
+      "title": "RNN 的三大问题",
+      "chapter": "06",
+      "chapterTitle": "Transformer",
+      "url": "chapters/06-transformer.html#rnn-的三大问题",
+      "body": ""
+    },
+    {
+      "id": "06-transformer-lstm-的部分缓解",
+      "title": "LSTM 的部分缓解",
+      "chapter": "06",
+      "chapterTitle": "Transformer",
+      "url": "chapters/06-transformer.html#lstm-的部分缓解",
+      "body": ""
+    },
+    {
+      "id": "06-transformer-注意力的动机",
+      "title": "注意力的动机",
+      "chapter": "06",
+      "chapterTitle": "Transformer",
+      "url": "chapters/06-transformer.html#注意力的动机",
+      "body": ""
+    },
+    {
+      "id": "06-transformer-注意力机制attention",
+      "title": "注意力机制（Attention）",
+      "chapter": "06",
+      "chapterTitle": "Transformer",
+      "url": "chapters/06-transformer.html#注意力机制attention",
+      "body": ""
+    },
+    {
+      "id": "06-transformer-基本框架",
+      "title": "基本框架",
+      "chapter": "06",
+      "chapterTitle": "Transformer",
+      "url": "chapters/06-transformer.html#基本框架",
+      "body": ""
+    },
+    {
+      "id": "06-transformer-前馈注意力additive-bahdanau-attention",
+      "title": "前馈注意力（Additive / Bahdanau Attention）",
+      "chapter": "06",
+      "chapterTitle": "Transformer",
+      "url": "chapters/06-transformer.html#前馈注意力additive-bahdanau-attention",
+      "body": ""
+    },
+    {
+      "id": "06-transformer-点积注意力dot-product-attention",
+      "title": "点积注意力（Dot-Product Attention）",
+      "chapter": "06",
+      "chapterTitle": "Transformer",
+      "url": "chapters/06-transformer.html#点积注意力dot-product-attention",
+      "body": ""
+    },
+    {
+      "id": "06-transformer-自注意力self-attention",
+      "title": "自注意力（Self-Attention）",
+      "chapter": "06",
+      "chapterTitle": "Transformer",
+      "url": "chapters/06-transformer.html#自注意力self-attention",
+      "body": ""
+    },
+    {
+      "id": "06-transformer-核心思想",
+      "title": "核心思想",
+      "chapter": "06",
+      "chapterTitle": "Transformer",
+      "url": "chapters/06-transformer.html#核心思想",
+      "body": ""
+    },
+    {
+      "id": "06-transformer-qkv-投影",
+      "title": "QKV 投影",
+      "chapter": "06",
+      "chapterTitle": "Transformer",
+      "url": "chapters/06-transformer.html#qkv-投影",
+      "body": ""
+    },
+    {
+      "id": "06-transformer-缩放点积注意力scaled-dot-product-attention",
+      "title": "缩放点积注意力（Scaled Dot-Product Attention）",
+      "chapter": "06",
+      "chapterTitle": "Transformer",
+      "url": "chapters/06-transformer.html#缩放点积注意力scaled-dot-product-attention",
+      "body": ""
+    },
+    {
+      "id": "06-transformer-为什么除以-math_block_62",
+      "title": "为什么除以 $\\sqrt{d_k}$",
+      "chapter": "06",
+      "chapterTitle": "Transformer",
+      "url": "chapters/06-transformer.html#为什么除以-math_block_62",
+      "body": ""
+    },
+    {
+      "id": "06-transformer-手算自注意力完整示例",
+      "title": "手算自注意力完整示例",
+      "chapter": "06",
+      "chapterTitle": "Transformer",
+      "url": "chapters/06-transformer.html#手算自注意力完整示例",
+      "body": ""
+    },
+    {
+      "id": "06-transformer-输入",
+      "title": "输入",
+      "chapter": "06",
+      "chapterTitle": "Transformer",
+      "url": "chapters/06-transformer.html#输入",
+      "body": ""
+    },
+    {
+      "id": "06-transformer-step-1计算-q-k-v",
+      "title": "Step 1：计算 Q, K, V",
+      "chapter": "06",
+      "chapterTitle": "Transformer",
+      "url": "chapters/06-transformer.html#step-1计算-q-k-v",
+      "body": ""
+    },
+    {
+      "id": "06-transformer-step-2打分矩阵",
+      "title": "Step 2：打分矩阵",
+      "chapter": "06",
+      "chapterTitle": "Transformer",
+      "url": "chapters/06-transformer.html#step-2打分矩阵",
+      "body": ""
+    },
+    {
+      "id": "06-transformer-step-3缩放",
+      "title": "Step 3：缩放",
+      "chapter": "06",
+      "chapterTitle": "Transformer",
+      "url": "chapters/06-transformer.html#step-3缩放",
+      "body": ""
+    },
+    {
+      "id": "06-transformer-step-4softmax按行",
+      "title": "Step 4：Softmax（按行）",
+      "chapter": "06",
+      "chapterTitle": "Transformer",
+      "url": "chapters/06-transformer.html#step-4softmax按行",
+      "body": ""
+    },
+    {
+      "id": "06-transformer-step-5加权聚合",
+      "title": "Step 5：加权聚合",
+      "chapter": "06",
+      "chapterTitle": "Transformer",
+      "url": "chapters/06-transformer.html#step-5加权聚合",
+      "body": ""
+    },
+    {
+      "id": "06-transformer-多头注意力multi-head-attention",
+      "title": "多头注意力（Multi-Head Attention）",
+      "chapter": "06",
+      "chapterTitle": "Transformer",
+      "url": "chapters/06-transformer.html#多头注意力multi-head-attention",
+      "body": ""
+    },
+    {
+      "id": "06-transformer-动机",
+      "title": "动机",
+      "chapter": "06",
+      "chapterTitle": "Transformer",
+      "url": "chapters/06-transformer.html#动机",
+      "body": ""
+    },
+    {
+      "id": "06-transformer-公式",
+      "title": "公式",
+      "chapter": "06",
+      "chapterTitle": "Transformer",
+      "url": "chapters/06-transformer.html#公式",
+      "body": ""
+    },
+    {
+      "id": "06-transformer-参数量计算",
+      "title": "参数量计算",
+      "chapter": "06",
+      "chapterTitle": "Transformer",
+      "url": "chapters/06-transformer.html#参数量计算",
+      "body": ""
+    },
+    {
+      "id": "06-transformer-关键结论头数不影响总参数量",
+      "title": "关键结论：头数不影响总参数量",
+      "chapter": "06",
+      "chapterTitle": "Transformer",
+      "url": "chapters/06-transformer.html#关键结论头数不影响总参数量",
+      "body": ""
+    },
+    {
+      "id": "06-transformer-transformer-完整架构",
+      "title": "Transformer 完整架构",
+      "chapter": "06",
+      "chapterTitle": "Transformer",
+      "url": "chapters/06-transformer.html#transformer-完整架构",
+      "body": ""
+    },
+    {
+      "id": "06-transformer-整体结构",
+      "title": "整体结构",
+      "chapter": "06",
+      "chapterTitle": "Transformer",
+      "url": "chapters/06-transformer.html#整体结构",
+      "body": ""
+    },
+    {
+      "id": "06-transformer-编码器encoder",
+      "title": "编码器（Encoder）",
+      "chapter": "06",
+      "chapterTitle": "Transformer",
+      "url": "chapters/06-transformer.html#编码器encoder",
+      "body": ""
+    },
+    {
+      "id": "06-transformer-解码器decoder",
+      "title": "解码器（Decoder）",
+      "chapter": "06",
+      "chapterTitle": "Transformer",
+      "url": "chapters/06-transformer.html#解码器decoder",
+      "body": ""
+    },
+    {
+      "id": "06-transformer-嵌入层",
+      "title": "嵌入层",
+      "chapter": "06",
+      "chapterTitle": "Transformer",
+      "url": "chapters/06-transformer.html#嵌入层",
+      "body": ""
+    },
+    {
+      "id": "06-transformer-前馈网络ffn",
+      "title": "前馈网络（FFN）",
+      "chapter": "06",
+      "chapterTitle": "Transformer",
+      "url": "chapters/06-transformer.html#前馈网络ffn",
+      "body": ""
+    },
+    {
+      "id": "06-transformer-ffn-的作用",
+      "title": "FFN 的作用",
+      "chapter": "06",
+      "chapterTitle": "Transformer",
+      "url": "chapters/06-transformer.html#ffn-的作用",
+      "body": ""
+    },
+    {
+      "id": "06-transformer-add-amp-layernorm",
+      "title": "Add &amp; LayerNorm",
+      "chapter": "06",
+      "chapterTitle": "Transformer",
+      "url": "chapters/06-transformer.html#add-amp-layernorm",
+      "body": ""
+    },
+    {
+      "id": "06-transformer-掩码机制masking",
+      "title": "掩码机制（Masking）",
+      "chapter": "06",
+      "chapterTitle": "Transformer",
+      "url": "chapters/06-transformer.html#掩码机制masking",
+      "body": ""
+    },
+    {
+      "id": "06-transformer-padding-mask",
+      "title": "Padding Mask",
+      "chapter": "06",
+      "chapterTitle": "Transformer",
+      "url": "chapters/06-transformer.html#padding-mask",
+      "body": ""
+    },
+    {
+      "id": "06-transformer-causal-mask因果掩码解码器用",
+      "title": "Causal Mask（因果掩码，解码器用）",
+      "chapter": "06",
+      "chapterTitle": "Transformer",
+      "url": "chapters/06-transformer.html#causal-mask因果掩码解码器用",
+      "body": ""
+    },
+    {
+      "id": "06-transformer-transformer-应用架构",
+      "title": "Transformer 应用架构",
+      "chapter": "06",
+      "chapterTitle": "Transformer",
+      "url": "chapters/06-transformer.html#transformer-应用架构",
+      "body": ""
+    },
+    {
+      "id": "06-transformer-三种变体",
+      "title": "三种变体",
+      "chapter": "06",
+      "chapterTitle": "Transformer",
+      "url": "chapters/06-transformer.html#三种变体",
+      "body": ""
+    },
+    {
+      "id": "06-transformer-token-与-bpe",
+      "title": "Token 与 BPE",
+      "chapter": "06",
+      "chapterTitle": "Transformer",
+      "url": "chapters/06-transformer.html#token-与-bpe",
+      "body": ""
+    },
+    {
+      "id": "06-transformer-本章计算要点速查",
+      "title": "本章计算要点速查",
+      "chapter": "06",
+      "chapterTitle": "Transformer",
+      "url": "chapters/06-transformer.html#本章计算要点速查",
+      "body": ""
+    },
+    {
+      "id": "06-transformer-注意力的计算复杂度",
+      "title": "注意力的计算复杂度",
+      "chapter": "06",
+      "chapterTitle": "Transformer",
+      "url": "chapters/06-transformer.html#注意力的计算复杂度",
+      "body": ""
+    },
+    {
+      "id": "06-transformer-时间复杂度",
+      "title": "时间复杂度",
+      "chapter": "06",
+      "chapterTitle": "Transformer",
+      "url": "chapters/06-transformer.html#时间复杂度",
+      "body": ""
+    },
+    {
+      "id": "06-transformer-空间复杂度",
+      "title": "空间复杂度",
+      "chapter": "06",
+      "chapterTitle": "Transformer",
+      "url": "chapters/06-transformer.html#空间复杂度",
+      "body": ""
+    },
+    {
+      "id": "06-transformer-transformer-与-cnnrnn-的对比",
+      "title": "Transformer 与 CNN、RNN 的对比",
+      "chapter": "06",
+      "chapterTitle": "Transformer",
+      "url": "chapters/06-transformer.html#transformer-与-cnnrnn-的对比",
+      "body": ""
+    },
+    {
+      "id": "06-transformer-完整的单层编码器前向传播",
+      "title": "完整的单层编码器前向传播",
+      "chapter": "06",
+      "chapterTitle": "Transformer",
+      "url": "chapters/06-transformer.html#完整的单层编码器前向传播",
+      "body": ""
+    },
+    {
+      "id": "06-transformer-为什么-transformer-能统一-nlp-和-cv",
+      "title": "为什么 Transformer 能统一 NLP 和 CV",
+      "chapter": "06",
+      "chapterTitle": "Transformer",
+      "url": "chapters/06-transformer.html#为什么-transformer-能统一-nlp-和-cv",
+      "body": ""
+    },
+    {
+      "id": "07-ssl-lm-rl",
+      "title": "自监督学习、语言模型与强化学习",
+      "chapter": "07",
+      "chapterTitle": "自监督学习、语言模型与强化学习",
+      "url": "chapters/07-ssl-lm-rl.html",
+      "body": "\n   本章导读\n\n前面的章节讲了\"如何训练模型\"——但都假设有标注数据。现实中，标注数据是  昂贵  的，而无标注数据（文本、图片、网页）是  海量  的。\n\n  自监督学习  的核心思想：从无标注数据中  自动构造监督信号  来预训练模型，然后在少量有标注数据上微调。这是 GPT、BERT 等大模型的基础范式。\n\n本章还覆盖强化学习的基本数学框架，作为课程的最后一个主题。\n\n   \n\n   自监督学习概述\n\n    定义与动机\n\n  监督学习  ：需要人工标注的 $ x, y $ 对。\n\n  自监督学习  ：从数据本身生成\"伪标签\"——不需要人工标注。\n\n典型做法：\n  遮住输入的一部分，让模型预测被遮住的部分（自预测）\n  生成输入的两个不同\"视角\"，让模型判断它们是否来自同一个样本（对比学习）\n\n    核心流程\n\n   \n大量无标注数据 →  自监督预训练  → 通用表示\n                                        ↓\n少量有标注数据 →  微调 Fine tuning  → 下游任务模型\n   \n\n    两大框架\n\n  框架   思想   监督信号来源   代表方法  \n                                      \n  自预测（Predictive）   从上下文预测缺失内容   输入本身的结构   BERT  MLM 、GPT  LM   \n  对比学习（Contrastive）   拉近正样本对，推远负样本对   数据增强构造正/负对   SimCLR、MoCo、CLIP  \n\n   \n\n   Word2Vec：Skip gram 模型\n\n    目标\n\n学习  词向量（Word Embedding）  ：将每个词映射到一个低维实数向量 $\\boldsymbol v  w \\in \\mathbb R ^d$，使得语义相近的词在向量空间中距离也近。\n\n经典例子：$\\vec king    \\vec man  + \\vec woman  \\approx \\vec queen $\n\n    两个向量\n\n每个词 $w$ 实际上有两个向量：\n    中心词向量   $\\boldsymbol v  w$：当 $w$ 作为中心词时使用\n    上下文向量   $\\boldsymbol u  w$：当 $w$ 作为上下文词时使用\n\n训练完成后通常只使用 $\\boldsymbol v  w$（或取两者平均）。\n\n    Skip gram 思想\n\n给定一个中心词 $w$，预测其上下文窗口内出现的词：\n\n$$\\max \\sum   w,c  \\in \\text 正样本对   \\log P c   w $$\n\n理想情况下，用 softmax 定义概率：\n\n$$P c   w  = \\frac \\exp \\boldsymbol u  c^T \\boldsymbol v  w   \\sum  c' \\in V  \\exp \\boldsymbol u   c' ^T \\boldsymbol v  w  $$\n\n    Softmax 的计算代价问题\n\n分母需要对  整个词汇表   $ V $（通常几万到几十万）求和：\n\n$$\\sum  c' \\in V  \\exp \\boldsymbol u   c' ^T \\boldsymbol v  w $$\n\n每次更新都要计算 $ V $ 次指数和内积——  计算成本 $O  V  $，不可行  。\n\n    负采样（Negative Sampling）\n\n  核心思想  ：将  多分类   softmax 问题转化为  多个独立的二分类  问题。\n\n对于一个正样本对 $ w, c $——中心词 $w$ 确实和上下文词 $c$ 共现：\n  正信号：$\\boldsymbol u  c^T \\boldsymbol v  w$ 应该大 → $\\sigma \\boldsymbol u  c^T \\boldsymbol v  w  \\approx 1$\n\n对于 $K$ 个随机采样的负样本 $c 1^ , c 2^ , \\ldots, c K^ $（从词汇表中按噪声分布 $P n$ 采样的词，不在窗口内）：\n  负信号：$\\boldsymbol u   c k^  ^T \\boldsymbol v  w$ 应该小 → $\\sigma  \\boldsymbol u   c k^  ^T \\boldsymbol v  w  \\approx 1$\n\n  负采样损失函数  ：\n\n$$\\mathcal L  = \\log\\sigma \\boldsymbol u  c^T \\boldsymbol v  w  + \\sum  k=1 ^K \\mathbb "
+    },
+    {
+      "id": "07-ssl-lm-rl-本章导读",
+      "title": "本章导读",
+      "chapter": "07",
+      "chapterTitle": "自监督学习、语言模型与强化学习",
+      "url": "chapters/07-ssl-lm-rl.html#本章导读",
+      "body": ""
+    },
+    {
+      "id": "07-ssl-lm-rl-自监督学习概述",
+      "title": "自监督学习概述",
+      "chapter": "07",
+      "chapterTitle": "自监督学习、语言模型与强化学习",
+      "url": "chapters/07-ssl-lm-rl.html#自监督学习概述",
+      "body": ""
+    },
+    {
+      "id": "07-ssl-lm-rl-定义与动机",
+      "title": "定义与动机",
+      "chapter": "07",
+      "chapterTitle": "自监督学习、语言模型与强化学习",
+      "url": "chapters/07-ssl-lm-rl.html#定义与动机",
+      "body": ""
+    },
+    {
+      "id": "07-ssl-lm-rl-核心流程",
+      "title": "核心流程",
+      "chapter": "07",
+      "chapterTitle": "自监督学习、语言模型与强化学习",
+      "url": "chapters/07-ssl-lm-rl.html#核心流程",
+      "body": ""
+    },
+    {
+      "id": "07-ssl-lm-rl-两大框架",
+      "title": "两大框架",
+      "chapter": "07",
+      "chapterTitle": "自监督学习、语言模型与强化学习",
+      "url": "chapters/07-ssl-lm-rl.html#两大框架",
+      "body": ""
+    },
+    {
+      "id": "07-ssl-lm-rl-word2vecskip-gram-模型",
+      "title": "Word2Vec：Skip-gram 模型",
+      "chapter": "07",
+      "chapterTitle": "自监督学习、语言模型与强化学习",
+      "url": "chapters/07-ssl-lm-rl.html#word2vecskip-gram-模型",
+      "body": ""
+    },
+    {
+      "id": "07-ssl-lm-rl-目标",
+      "title": "目标",
+      "chapter": "07",
+      "chapterTitle": "自监督学习、语言模型与强化学习",
+      "url": "chapters/07-ssl-lm-rl.html#目标",
+      "body": ""
+    },
+    {
+      "id": "07-ssl-lm-rl-两个向量",
+      "title": "两个向量",
+      "chapter": "07",
+      "chapterTitle": "自监督学习、语言模型与强化学习",
+      "url": "chapters/07-ssl-lm-rl.html#两个向量",
+      "body": ""
+    },
+    {
+      "id": "07-ssl-lm-rl-skip-gram-思想",
+      "title": "Skip-gram 思想",
+      "chapter": "07",
+      "chapterTitle": "自监督学习、语言模型与强化学习",
+      "url": "chapters/07-ssl-lm-rl.html#skip-gram-思想",
+      "body": ""
+    },
+    {
+      "id": "07-ssl-lm-rl-softmax-的计算代价问题",
+      "title": "Softmax 的计算代价问题",
+      "chapter": "07",
+      "chapterTitle": "自监督学习、语言模型与强化学习",
+      "url": "chapters/07-ssl-lm-rl.html#softmax-的计算代价问题",
+      "body": ""
+    },
+    {
+      "id": "07-ssl-lm-rl-负采样negative-sampling",
+      "title": "负采样（Negative Sampling）",
+      "chapter": "07",
+      "chapterTitle": "自监督学习、语言模型与强化学习",
+      "url": "chapters/07-ssl-lm-rl.html#负采样negative-sampling",
+      "body": ""
+    },
+    {
+      "id": "07-ssl-lm-rl-bert",
+      "title": "BERT",
+      "chapter": "07",
+      "chapterTitle": "自监督学习、语言模型与强化学习",
+      "url": "chapters/07-ssl-lm-rl.html#bert",
+      "body": ""
+    },
+    {
+      "id": "07-ssl-lm-rl-核心创新",
+      "title": "核心创新",
+      "chapter": "07",
+      "chapterTitle": "自监督学习、语言模型与强化学习",
+      "url": "chapters/07-ssl-lm-rl.html#核心创新",
+      "body": ""
+    },
+    {
+      "id": "07-ssl-lm-rl-模型结构",
+      "title": "模型结构",
+      "chapter": "07",
+      "chapterTitle": "自监督学习、语言模型与强化学习",
+      "url": "chapters/07-ssl-lm-rl.html#模型结构",
+      "body": ""
+    },
+    {
+      "id": "07-ssl-lm-rl-预训练任务-1掩码语言模型mlm",
+      "title": "预训练任务 1：掩码语言模型（MLM）",
+      "chapter": "07",
+      "chapterTitle": "自监督学习、语言模型与强化学习",
+      "url": "chapters/07-ssl-lm-rl.html#预训练任务-1掩码语言模型mlm",
+      "body": ""
+    },
+    {
+      "id": "07-ssl-lm-rl-预训练任务-2下一句预测nsp",
+      "title": "预训练任务 2：下一句预测（NSP）",
+      "chapter": "07",
+      "chapterTitle": "自监督学习、语言模型与强化学习",
+      "url": "chapters/07-ssl-lm-rl.html#预训练任务-2下一句预测nsp",
+      "body": ""
+    },
+    {
+      "id": "07-ssl-lm-rl-bert-的微调",
+      "title": "BERT 的微调",
+      "chapter": "07",
+      "chapterTitle": "自监督学习、语言模型与强化学习",
+      "url": "chapters/07-ssl-lm-rl.html#bert-的微调",
+      "body": ""
+    },
+    {
+      "id": "07-ssl-lm-rl-自回归语言模型与-gpt",
+      "title": "自回归语言模型与 GPT",
+      "chapter": "07",
+      "chapterTitle": "自监督学习、语言模型与强化学习",
+      "url": "chapters/07-ssl-lm-rl.html#自回归语言模型与-gpt",
+      "body": ""
+    },
+    {
+      "id": "07-ssl-lm-rl-自回归分解",
+      "title": "自回归分解",
+      "chapter": "07",
+      "chapterTitle": "自监督学习、语言模型与强化学习",
+      "url": "chapters/07-ssl-lm-rl.html#自回归分解",
+      "body": ""
+    },
+    {
+      "id": "07-ssl-lm-rl-gpt-的结构",
+      "title": "GPT 的结构",
+      "chapter": "07",
+      "chapterTitle": "自监督学习、语言模型与强化学习",
+      "url": "chapters/07-ssl-lm-rl.html#gpt-的结构",
+      "body": ""
+    },
+    {
+      "id": "07-ssl-lm-rl-gpt-演进",
+      "title": "GPT 演进",
+      "chapter": "07",
+      "chapterTitle": "自监督学习、语言模型与强化学习",
+      "url": "chapters/07-ssl-lm-rl.html#gpt-演进",
+      "body": ""
+    },
+    {
+      "id": "07-ssl-lm-rl-gpt-vs-bert-完整对比",
+      "title": "GPT vs BERT 完整对比",
+      "chapter": "07",
+      "chapterTitle": "自监督学习、语言模型与强化学习",
+      "url": "chapters/07-ssl-lm-rl.html#gpt-vs-bert-完整对比",
+      "body": ""
+    },
+    {
+      "id": "07-ssl-lm-rl-n-gram-语言模型",
+      "title": "N-gram 语言模型",
+      "chapter": "07",
+      "chapterTitle": "自监督学习、语言模型与强化学习",
+      "url": "chapters/07-ssl-lm-rl.html#n-gram-语言模型",
+      "body": ""
+    },
+    {
+      "id": "07-ssl-lm-rl-定义",
+      "title": "定义",
+      "chapter": "07",
+      "chapterTitle": "自监督学习、语言模型与强化学习",
+      "url": "chapters/07-ssl-lm-rl.html#定义",
+      "body": ""
+    },
+    {
+      "id": "07-ssl-lm-rl-参数量",
+      "title": "参数量",
+      "chapter": "07",
+      "chapterTitle": "自监督学习、语言模型与强化学习",
+      "url": "chapters/07-ssl-lm-rl.html#参数量",
+      "body": ""
+    },
+    {
+      "id": "07-ssl-lm-rl-困惑度perplexity-ppl",
+      "title": "困惑度（Perplexity, PPL）",
+      "chapter": "07",
+      "chapterTitle": "自监督学习、语言模型与强化学习",
+      "url": "chapters/07-ssl-lm-rl.html#困惑度perplexity-ppl",
+      "body": ""
+    },
+    {
+      "id": "07-ssl-lm-rl-神经网络语言模型的优势",
+      "title": "神经网络语言模型的优势",
+      "chapter": "07",
+      "chapterTitle": "自监督学习、语言模型与强化学习",
+      "url": "chapters/07-ssl-lm-rl.html#神经网络语言模型的优势",
+      "body": ""
+    },
+    {
+      "id": "07-ssl-lm-rl-参数量对比示例",
+      "title": "参数量对比示例",
+      "chapter": "07",
+      "chapterTitle": "自监督学习、语言模型与强化学习",
+      "url": "chapters/07-ssl-lm-rl.html#参数量对比示例",
+      "body": ""
+    },
+    {
+      "id": "07-ssl-lm-rl-大语言模型llm",
+      "title": "大语言模型（LLM）",
+      "chapter": "07",
+      "chapterTitle": "自监督学习、语言模型与强化学习",
+      "url": "chapters/07-ssl-lm-rl.html#大语言模型llm",
+      "body": ""
+    },
+    {
+      "id": "07-ssl-lm-rl-关键概念",
+      "title": "关键概念",
+      "chapter": "07",
+      "chapterTitle": "自监督学习、语言模型与强化学习",
+      "url": "chapters/07-ssl-lm-rl.html#关键概念",
+      "body": ""
+    },
+    {
+      "id": "07-ssl-lm-rl-llm-构建三阶段",
+      "title": "LLM 构建三阶段",
+      "chapter": "07",
+      "chapterTitle": "自监督学习、语言模型与强化学习",
+      "url": "chapters/07-ssl-lm-rl.html#llm-构建三阶段",
+      "body": ""
+    },
+    {
+      "id": "07-ssl-lm-rl-强化学习基础",
+      "title": "强化学习基础",
+      "chapter": "07",
+      "chapterTitle": "自监督学习、语言模型与强化学习",
+      "url": "chapters/07-ssl-lm-rl.html#强化学习基础",
+      "body": ""
+    },
+    {
+      "id": "07-ssl-lm-rl-与其他学习范式的关系",
+      "title": "与其他学习范式的关系",
+      "chapter": "07",
+      "chapterTitle": "自监督学习、语言模型与强化学习",
+      "url": "chapters/07-ssl-lm-rl.html#与其他学习范式的关系",
+      "body": ""
+    },
+    {
+      "id": "07-ssl-lm-rl-马尔可夫决策过程mdp",
+      "title": "马尔可夫决策过程（MDP）",
+      "chapter": "07",
+      "chapterTitle": "自监督学习、语言模型与强化学习",
+      "url": "chapters/07-ssl-lm-rl.html#马尔可夫决策过程mdp",
+      "body": ""
+    },
+    {
+      "id": "07-ssl-lm-rl-定义",
+      "title": "定义",
+      "chapter": "07",
+      "chapterTitle": "自监督学习、语言模型与强化学习",
+      "url": "chapters/07-ssl-lm-rl.html#定义",
+      "body": ""
+    },
+    {
+      "id": "07-ssl-lm-rl-马尔可夫性质",
+      "title": "马尔可夫性质",
+      "chapter": "07",
+      "chapterTitle": "自监督学习、语言模型与强化学习",
+      "url": "chapters/07-ssl-lm-rl.html#马尔可夫性质",
+      "body": ""
+    },
+    {
+      "id": "07-ssl-lm-rl-策略policy",
+      "title": "策略（Policy）",
+      "chapter": "07",
+      "chapterTitle": "自监督学习、语言模型与强化学习",
+      "url": "chapters/07-ssl-lm-rl.html#策略policy",
+      "body": ""
+    },
+    {
+      "id": "07-ssl-lm-rl-价值函数",
+      "title": "价值函数",
+      "chapter": "07",
+      "chapterTitle": "自监督学习、语言模型与强化学习",
+      "url": "chapters/07-ssl-lm-rl.html#价值函数",
+      "body": ""
+    },
+    {
+      "id": "07-ssl-lm-rl-状态价值函数-math_block_113",
+      "title": "状态价值函数 $V^\\pi(s)$",
+      "chapter": "07",
+      "chapterTitle": "自监督学习、语言模型与强化学习",
+      "url": "chapters/07-ssl-lm-rl.html#状态价值函数-math_block_113",
+      "body": ""
+    },
+    {
+      "id": "07-ssl-lm-rl-动作价值函数-math_block_117",
+      "title": "动作价值函数 $Q^\\pi(s, a)$",
+      "chapter": "07",
+      "chapterTitle": "自监督学习、语言模型与强化学习",
+      "url": "chapters/07-ssl-lm-rl.html#动作价值函数-math_block_117",
+      "body": ""
+    },
+    {
+      "id": "07-ssl-lm-rl-math_block_121-和-math_block_122-的关系",
+      "title": "$V$ 和 $Q$ 的关系",
+      "chapter": "07",
+      "chapterTitle": "自监督学习、语言模型与强化学习",
+      "url": "chapters/07-ssl-lm-rl.html#math_block_121-和-math_block_122-的关系",
+      "body": ""
+    },
+    {
+      "id": "07-ssl-lm-rl-贝尔曼方程",
+      "title": "贝尔曼方程",
+      "chapter": "07",
+      "chapterTitle": "自监督学习、语言模型与强化学习",
+      "url": "chapters/07-ssl-lm-rl.html#贝尔曼方程",
+      "body": ""
+    },
+    {
+      "id": "07-ssl-lm-rl-贝尔曼期望方程",
+      "title": "贝尔曼期望方程",
+      "chapter": "07",
+      "chapterTitle": "自监督学习、语言模型与强化学习",
+      "url": "chapters/07-ssl-lm-rl.html#贝尔曼期望方程",
+      "body": ""
+    },
+    {
+      "id": "07-ssl-lm-rl-贝尔曼最优方程",
+      "title": "贝尔曼最优方程",
+      "chapter": "07",
+      "chapterTitle": "自监督学习、语言模型与强化学习",
+      "url": "chapters/07-ssl-lm-rl.html#贝尔曼最优方程",
+      "body": ""
+    },
+    {
+      "id": "07-ssl-lm-rl-动态规划",
+      "title": "动态规划",
+      "chapter": "07",
+      "chapterTitle": "自监督学习、语言模型与强化学习",
+      "url": "chapters/07-ssl-lm-rl.html#动态规划",
+      "body": ""
+    },
+    {
+      "id": "07-ssl-lm-rl-前提条件",
+      "title": "前提条件",
+      "chapter": "07",
+      "chapterTitle": "自监督学习、语言模型与强化学习",
+      "url": "chapters/07-ssl-lm-rl.html#前提条件",
+      "body": ""
+    },
+    {
+      "id": "07-ssl-lm-rl-价值迭代value-iteration",
+      "title": "价值迭代（Value Iteration）",
+      "chapter": "07",
+      "chapterTitle": "自监督学习、语言模型与强化学习",
+      "url": "chapters/07-ssl-lm-rl.html#价值迭代value-iteration",
+      "body": ""
+    },
+    {
+      "id": "07-ssl-lm-rl-q-learning",
+      "title": "Q-Learning",
+      "chapter": "07",
+      "chapterTitle": "自监督学习、语言模型与强化学习",
+      "url": "chapters/07-ssl-lm-rl.html#q-learning",
+      "body": ""
+    },
+    {
+      "id": "07-ssl-lm-rl-无模型学习",
+      "title": "无模型学习",
+      "chapter": "07",
+      "chapterTitle": "自监督学习、语言模型与强化学习",
+      "url": "chapters/07-ssl-lm-rl.html#无模型学习",
+      "body": ""
+    },
+    {
+      "id": "07-ssl-lm-rl-更新规则",
+      "title": "更新规则",
+      "chapter": "07",
+      "chapterTitle": "自监督学习、语言模型与强化学习",
+      "url": "chapters/07-ssl-lm-rl.html#更新规则",
+      "body": ""
+    },
+    {
+      "id": "07-ssl-lm-rl-off-policy-特性",
+      "title": "Off-policy 特性",
+      "chapter": "07",
+      "chapterTitle": "自监督学习、语言模型与强化学习",
+      "url": "chapters/07-ssl-lm-rl.html#off-policy-特性",
+      "body": ""
+    },
+    {
+      "id": "07-ssl-lm-rl-dqndeep-q-network",
+      "title": "DQN（Deep Q-Network）",
+      "chapter": "07",
+      "chapterTitle": "自监督学习、语言模型与强化学习",
+      "url": "chapters/07-ssl-lm-rl.html#dqndeep-q-network",
+      "body": ""
+    },
+    {
+      "id": "07-ssl-lm-rl-问题",
+      "title": "问题",
+      "chapter": "07",
+      "chapterTitle": "自监督学习、语言模型与强化学习",
+      "url": "chapters/07-ssl-lm-rl.html#问题",
+      "body": ""
+    },
+    {
+      "id": "07-ssl-lm-rl-解决用神经网络近似-q-函数",
+      "title": "解决：用神经网络近似 Q 函数",
+      "chapter": "07",
+      "chapterTitle": "自监督学习、语言模型与强化学习",
+      "url": "chapters/07-ssl-lm-rl.html#解决用神经网络近似-q-函数",
+      "body": ""
+    },
+    {
+      "id": "07-ssl-lm-rl-两个关键技术",
+      "title": "两个关键技术",
+      "chapter": "07",
+      "chapterTitle": "自监督学习、语言模型与强化学习",
+      "url": "chapters/07-ssl-lm-rl.html#两个关键技术",
+      "body": ""
+    },
+    {
+      "id": "07-ssl-lm-rl-dqn-损失函数",
+      "title": "DQN 损失函数",
+      "chapter": "07",
+      "chapterTitle": "自监督学习、语言模型与强化学习",
+      "url": "chapters/07-ssl-lm-rl.html#dqn-损失函数",
+      "body": ""
+    },
+    {
+      "id": "07-ssl-lm-rl-infonce-与-skip-gram-负采样的对比",
+      "title": "InfoNCE 与 Skip-gram 负采样的对比",
+      "chapter": "07",
+      "chapterTitle": "自监督学习、语言模型与强化学习",
+      "url": "chapters/07-ssl-lm-rl.html#infonce-与-skip-gram-负采样的对比",
+      "body": ""
+    },
+    {
+      "id": "07-ssl-lm-rl-infonce-损失对比学习",
+      "title": "InfoNCE 损失（对比学习）",
+      "chapter": "07",
+      "chapterTitle": "自监督学习、语言模型与强化学习",
+      "url": "chapters/07-ssl-lm-rl.html#infonce-损失对比学习",
+      "body": ""
+    },
+    {
+      "id": "07-ssl-lm-rl-两者对比",
+      "title": "两者对比",
+      "chapter": "07",
+      "chapterTitle": "自监督学习、语言模型与强化学习",
+      "url": "chapters/07-ssl-lm-rl.html#两者对比",
+      "body": ""
+    }
+  ]
+}

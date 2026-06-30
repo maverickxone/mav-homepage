@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>前馈神经网络与卷积神经网络 — 人工智能与数学原理</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" id="hljs-light" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+<link rel="stylesheet" id="hljs-dark" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" media="not all">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+</head>
+<body>
+
+<div class="progress-bar" id="progress-bar"></div>
+
+<nav class="topnav" id="topnav">
+  <div class="topnav-inner">
+    <a class="brand" href="../index.html">人工智能与数学原理</a>
+    <div class="nav-links">
+      <a href="01-ml-math-foundations.html">01</a>
+      <a href="02-linear-logistic-regression.html">02</a>
+      <a href="03-neural-networks-cnn.html" class="active">03</a>
+      <a href="04-backpropagation.html">04</a>
+      <a href="05-graph-neural-networks.html">05</a>
+      <a href="06-transformer.html">06</a>
+      <a href="07-ssl-lm-rl.html">07</a>
+    </div>
+    <div class="nav-controls">
+      <button class="nav-btn" id="search-btn" aria-label="搜索 (Ctrl+K)">⌘K</button>
+      <button class="nav-btn" id="settings-btn" aria-label="阅读设置">Aa</button>
+      <a class="nav-btn" href="../../index.html" aria-label="返回知识库">← 知识库</a>
+      <a class="nav-btn" href="https://github.com/maverickxone/mav-homepage" target="_blank" rel="noopener" aria-label="GitHub" style="padding: 6px 8px;"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg></a>
+    </div>
+  </div>
+</nav>
+<div class="settings-pop" id="settings-pop">
+  <h5>主题</h5>
+  <div class="row">
+    <button class="seg" data-theme-set="light">明亮</button>
+    <button class="seg" data-theme-set="dark">暗色</button>
+  </div>
+  <h5>字号</h5>
+  <div class="row">
+    <button class="seg" data-size-set="s">小</button>
+    <button class="seg" data-size-set="m">中</button>
+    <button class="seg" data-size-set="l">大</button>
+  </div>
+</div>
+
+<div class="with-sidebar">
+  <aside class="sidebar">
+  <div class="chapter-num">CHAPTER 03</div>
+  <div class="chapter-name">前馈神经网络与卷积神经网络</div>
+  <h4>目录</h4>
+  <ul>
+    <li><a href="#从线性到非线性">从线性到非线性</a></li>
+    <li><a href="#神经元">神经元</a></li>
+    <li><a href="#多层前馈网络mlp">多层前馈网络（MLP）</a></li>
+    <li><a href="#激活函数">激活函数</a></li>
+    <li><a href="#卷积神经网络cnn">卷积神经网络（CNN）</a></li>
+    <li><a href="#卷积运算量计算">卷积运算量计算</a></li>
+    <li><a href="#感受野receptive-field">感受野（Receptive Field）</a></li>
+    <li><a href="#全连接层-vs-卷积层-vs-池化层对比">全连接层 vs 卷积层 vs 池化层对比</a></li>
+    <li><a href="#典型-cnn-架构演进了解">典型 CNN 架构演进（了解）</a></li>
+    <li><a href="#本章核心要点">本章核心要点</a></li>
+    <li><a href="#补充多通道卷积的完整数学">补充：多通道卷积的完整数学</a></li>
+    <li><a href="#补充11-卷积的数学本质">补充：1×1 卷积的数学本质</a></li>
+    <li><a href="#补充从全连接到卷积的数学联系">补充：从全连接到卷积的数学联系</a></li>
+  </ul>
+</aside>
+  <article class="chapter-body">
+    <header class="chapter-head">
+  <div class="chapter-head-meta">
+    <span class="num">CHAPTER 03</span>
+    <span>≈ 40 MIN READ</span>
+  </div>
+  <h1>前馈神经网络与卷积神经网络</h1>
+
+</header>
+    <h2 id="从线性到非线性">从线性到非线性</h2>
+<h3 id="线性模型的局限">线性模型的局限</h3>
+<p>逻辑回归的决策边界是一条直线（超平面）。如果数据不是线性可分的（比如 XOR 问题），线性模型无能为力。</p>
+<p><strong>XOR 问题</strong>：</p>
+<ul>
+<li>$(0,0) \to 0$，$(1,1) \to 0$</li>
+<li>$(0,1) \to 1$，$(1,0) \to 1$</li>
+</ul>
+<p>画在平面上，没有任何一条直线能把 0 和 1 分开。</p>
+<p><strong>解决思路</strong>：如果我们先用一个变换把数据&quot;扭&quot;到另一个空间，在新空间中变成线性可分，再用线性分类器——这就是神经网络的直觉。</p>
+<hr>
+<h2 id="神经元">神经元</h2>
+<h3 id="单个人工神经元">单个人工神经元</h3>
+<p>模拟生物神经元的简化数学模型：</p>
+<p>$$z = \sum_{j=1}^d w_j x_j + b = \boldsymbol{w}^T\boldsymbol{x} + b \quad \text{（加权求和）}$$</p>
+<p>$$a = f(z) \quad \text{（激活函数）}$$</p>
+<p>三部分：</p>
+<ol>
+<li><strong>输入</strong>：接收 $d$ 个信号 $x_1, \ldots, x_d$</li>
+<li><strong>加权求和</strong>：每个输入乘以对应权重，再加偏置</li>
+<li><strong>激活函数</strong>：引入非线性</li>
+</ol>
+<p>如果没有激活函数（或用恒等函数 $f(z)=z$），多层网络退化为单层线性模型（线性函数的复合还是线性函数）。</p>
+<h3 id="感知机perceptron">感知机（Perceptron）</h3>
+<p>最早的神经网络模型（1958 年）。激活函数是阶跃函数：</p>
+<p>$$\hat{y} = \text{sign}(\boldsymbol{w}^T\boldsymbol{x} + b) = \begin{cases} 1, & \boldsymbol{w}^T\boldsymbol{x} + b > 0 \\ -1, & \text{otherwise} \end{cases}$$</p>
+<p><strong>Minsky &amp; Papert (1969)</strong> 证明单层感知机无法表示 XOR → 第一次 AI 低谷。</p>
+<h3 id="万能近似定理universal-approximation-theorem">万能近似定理（Universal Approximation Theorem）</h3>
+<p><strong>定理</strong>：一个含有足够多隐藏单元的单隐层前馈网络，配合非线性激活函数，可以以任意精度逼近 $\mathbb{R}^n$ 上的任意连续函数。</p>
+<p><strong>意义</strong>：理论上一层就够。但实践中：</p>
+<ul>
+<li>&quot;足够多&quot;可能意味着指数级的神经元数量</li>
+<li>深层网络用更少的参数达到同样的表达力</li>
+<li>深层结构更容易通过梯度下降训练</li>
+</ul>
+<hr>
+<h2 id="多层前馈网络mlp">多层前馈网络（MLP）</h2>
+<h3 id="网络结构">网络结构</h3>
+<p>一个 $L$ 层的全连接网络（Multi-Layer Perceptron）：</p>
+<p><strong>第 $l$ 层</strong>（$l = 1, 2, \ldots, L$）：</p>
+<p>$$\boldsymbol{z}^{(l)} = \boldsymbol{W}^{(l)}\boldsymbol{h}^{(l-1)} + \boldsymbol{b}^{(l)}$$
+$$\boldsymbol{h}^{(l)} = f(\boldsymbol{z}^{(l)})$$</p>
+<p>其中：</p>
+<ul>
+<li>$\boldsymbol{h}^{(0)} = \boldsymbol{x}$（输入层）</li>
+<li>$\boldsymbol{W}^{(l)} \in \mathbb{R}^{n_l \times n_{l-1}}$（第 $l$ 层权重矩阵）</li>
+<li>$\boldsymbol{b}^{(l)} \in \mathbb{R}^{n_l}$（第 $l$ 层偏置向量）</li>
+<li>$n_l$：第 $l$ 层神经元数量</li>
+<li>$f$：激活函数（逐元素作用）</li>
+</ul>
+<h3 id="quot全连接quot的含义">&quot;全连接&quot;的含义</h3>
+<p>第 $l$ 层的每个神经元都与第 $l-1$ 层的<strong>所有</strong>神经元连接。$\boldsymbol{W}^{(l)}$ 的每一行对应一个神经元，每一列对应一个输入。</p>
+<h3 id="参数量计算">参数量计算</h3>
+<p>第 $l$ 层的参数：</p>
+<ul>
+<li>权重：$n_l \times n_{l-1}$ 个</li>
+<li>偏置：$n_l$ 个</li>
+<li><strong>总计</strong>：$n_l \times (n_{l-1} + 1)$</li>
+</ul>
+<p><strong>示例 1：大型全连接网络</strong></p>
+<p>输入 160,000 → 隐藏层1 40,000 → 隐藏层2 2,000 → 输出 100</p>
+<div class="table-wrap"><table><thead><tr>
+<th>层</th>
+<th>输入维度</th>
+<th>输出维度</th>
+<th>参数量</th>
+</tr>
+</thead><tbody><tr>
+<td>1</td>
+<td>160,000</td>
+<td>40,000</td>
+<td>$(160000+1) \times 40000 = 6{,}400{,}040{,}000$</td>
+</tr>
+<tr>
+<td>2</td>
+<td>40,000</td>
+<td>2,000</td>
+<td>$(40000+1) \times 2000 = 80{,}002{,}000$</td>
+</tr>
+<tr>
+<td>3</td>
+<td>2,000</td>
+<td>100</td>
+<td>$(2000+1) \times 100 = 200{,}100$</td>
+</tr>
+<tr>
+<td><strong>总计</strong></td>
+<td></td>
+<td></td>
+<td><strong>≈ 6.5 × 10⁹</strong></td>
+</tr>
+</tbody></table></div>
+<p>65 亿参数！仅仅是一个三层网络。全连接网络处理高维输入（如图像）时参数量爆炸。</p>
+<h3 id="前向传播的运算量">前向传播的运算量</h3>
+<p>对于每层 $n$ 个输入、$n$ 个输出的网络（共 $L$ 层）：</p>
+<p>每层：矩阵乘法 $\boldsymbol{W}\boldsymbol{h}$ 需要 $n^2$ 次乘法，$n^2 - n \approx n^2$ 次加法（再加 $n$ 个偏置加法）。</p>
+<p>整个网络前向传播总乘法：$L \cdot n^2$</p>
+<hr>
+<h2 id="激活函数">激活函数</h2>
+<h3 id="为什么需要激活函数">为什么需要激活函数</h3>
+<p>如果所有层都是线性变换 $\boldsymbol{h} = \boldsymbol{W}\boldsymbol{x}$，那么 $L$ 层网络等价于：
+$$\boldsymbol{y} = \boldsymbol{W}^{(L)}\boldsymbol{W}^{(L-1)}\cdots\boldsymbol{W}^{(1)}\boldsymbol{x} = \boldsymbol{W}'\boldsymbol{x}$$</p>
+<p>多层线性 = 单层线性。激活函数引入非线性，使深层网络能表示复杂函数。</p>
+<h3 id="sigmoid">Sigmoid</h3>
+<p>$$\sigma(z) = \frac{1}{1+e^{-z}}, \quad \sigma'(z) = \sigma(z)(1-\sigma(z)) \in (0, 0.25]$$</p>
+<p><strong>问题</strong>：</p>
+<ul>
+<li>梯度最大 0.25 → 深层连乘 → <strong>梯度消失</strong></li>
+<li>输出不以 0 为中心 → 梯度更新效率低</li>
+<li>指数运算计算量大</li>
+</ul>
+<p>现在主要用于输出层（二分类概率），隐藏层已不再使用。</p>
+<h3 id="relurectified-linear-unit">ReLU（Rectified Linear Unit）</h3>
+<p>$$\text{ReLU}(z) = \max(0, z) = \begin{cases} z, & z > 0 \\ 0, & z \le 0 \end{cases}$$</p>
+<p>$$\text{ReLU}'(z) = \begin{cases} 1, & z > 0 \\ 0, & z \le 0 \end{cases}$$</p>
+<p><strong>优势</strong>：</p>
+<ul>
+<li>正区间梯度恒为 1 → 不会梯度消失</li>
+<li>计算极快（只需判断正负）</li>
+<li>稀疏激活（约 50% 的神经元输出 0）</li>
+</ul>
+<p><strong>问题</strong>：<strong>Dead ReLU</strong>——如果某个神经元的 $z$ 总是负数（因为权重初始化不好或学习率太大），它永远输出 0，梯度永远为 0，再也学不到东西——&quot;死了&quot;。</p>
+<h3 id="leaky-relu">Leaky ReLU</h3>
+<p>$$\text{LeakyReLU}(z) = \begin{cases} z, & z > 0 \\ \alpha z, & z \le 0 \end{cases}, \quad \alpha = 0.01 \text{（小正数）}$$</p>
+<p>负半轴也有小梯度 $\alpha$，不会&quot;死&quot;。</p>
+<h3 id="preluparametric-relu">PReLU（Parametric ReLU）</h3>
+<p>$$\text{PReLU}(z) = \begin{cases} z, & z > 0 \\ \alpha z, & z \le 0 \end{cases}, \quad \alpha \text{是可学习参数}$$</p>
+<p>$\alpha$ 不再是固定常数，而是通过训练数据学出来的。</p>
+<h3 id="eluexponential-linear-unit">ELU（Exponential Linear Unit）</h3>
+<p>$$\text{ELU}(z) = \begin{cases} z, & z > 0 \\ \alpha(e^z - 1), & z \le 0 \end{cases}$$</p>
+<ul>
+<li>负半轴连续且平滑</li>
+<li>输出均值更接近零</li>
+<li>但含指数运算，计算比 ReLU 慢</li>
+</ul>
+<h3 id="激活函数对比">激活函数对比</h3>
+<div class="table-wrap"><table><thead><tr>
+<th>函数</th>
+<th>正区间梯度</th>
+<th>负区间梯度</th>
+<th>梯度消失</th>
+<th>计算量</th>
+<th>输出中心</th>
+</tr>
+</thead><tbody><tr>
+<td>Sigmoid</td>
+<td>$\le 0.25$</td>
+<td>$\le 0.25$</td>
+<td>严重</td>
+<td>高</td>
+<td>0.5</td>
+</tr>
+<tr>
+<td>ReLU</td>
+<td>1</td>
+<td>0</td>
+<td>正区间无</td>
+<td>极低</td>
+<td>&gt;0</td>
+</tr>
+<tr>
+<td>Leaky ReLU</td>
+<td>1</td>
+<td>$\alpha$</td>
+<td>无</td>
+<td>极低</td>
+<td>≈0</td>
+</tr>
+<tr>
+<td>PReLU</td>
+<td>1</td>
+<td>学习的 $\alpha$</td>
+<td>无</td>
+<td>低</td>
+<td>≈0</td>
+</tr>
+<tr>
+<td>ELU</td>
+<td>1</td>
+<td>连续变化</td>
+<td>无</td>
+<td>中</td>
+<td>≈0</td>
+</tr>
+</tbody></table></div>
+<hr>
+<h2 id="卷积神经网络cnn">卷积神经网络（CNN）</h2>
+<h3 id="动机">动机</h3>
+<p>全连接网络处理图像的三大问题：</p>
+<ol>
+<li><strong>参数爆炸</strong>：$224 \times 224 \times 3$ 的图像 = 150,528 维输入，一层全连接到 1000 个神经元就有 1.5 亿参数</li>
+<li><strong>忽视空间结构</strong>：打乱像素顺序对全连接网络没有影响——它不知道相邻像素是相关的</li>
+<li><strong>缺乏平移不变性</strong>：一只猫在图像左上角和右下角，全连接网络需要分别学习</li>
+</ol>
+<p>CNN 用三个核心设计解决这些问题：<strong>局部连接、参数共享、池化</strong>。</p>
+<h3 id="卷积运算cross-correlation">卷积运算（Cross-correlation）</h3>
+<p>严格来说 CNN 中实现的是互相关（cross-correlation），不是数学上的卷积（需要翻转核），但深度学习界习惯称之为&quot;卷积&quot;。</p>
+<p><strong>二维卷积</strong>：输入 $\boldsymbol{X} \in \mathbb{R}^{H \times W}$，卷积核 $\boldsymbol{K} \in \mathbb{R}^{k_h \times k_w}$：</p>
+<p>$$Y_{i,j} = \sum_{m=0}^{k_h-1}\sum_{n=0}^{k_w-1} K_{m,n} \cdot X_{i+m, j+n}$$</p>
+<p>核在输入上&quot;滑动&quot;，每个位置做一次逐元素乘法再求和。</p>
+<h3 id="输出尺寸公式">输出尺寸公式</h3>
+<p>输入尺寸 $N$，核尺寸 $F$，步幅 $S$（stride），填充 $P$（padding）：</p>
+<p>$$\text{输出尺寸} = \left\lfloor\frac{N - F + 2P}{S}\right\rfloor + 1$$</p>
+<p><strong>常见设置</strong>：</p>
+<ul>
+<li>普通卷积（$P=0$）：输出变小</li>
+<li>等宽卷积（Same，$P = \lfloor F/2 \rfloor$，$S=1$）：输出尺寸 = 输入尺寸</li>
+<li>步幅卷积（$S>1$）：降采样</li>
+</ul>
+<h3 id="运算量计算详解">运算量计算详解</h3>
+<p><strong>示例</strong>：输入 $7 \times 7$，核 $3 \times 3$，步幅 1，无填充。</p>
+<ul>
+<li>输出尺寸：$(7-3)/1 + 1 = 5$，即 $5 \times 5$</li>
+<li>输出中有 $5 \times 5 = 25$ 个位置</li>
+<li>每个位置：$3 \times 3 = 9$ 次乘法，$9 - 1 = 8$ 次加法</li>
+<li><strong>总乘法</strong>：$25 \times 9 = 225$</li>
+<li><strong>总加法</strong>：$25 \times 8 = 200$</li>
+</ul>
+<p><strong>另一个示例</strong>：输入 $7 \times 7$，核 $5 \times 5$，步幅 1。</p>
+<ul>
+<li>输出尺寸：$(7-5)/1 + 1 = 3$，即 $3 \times 3$</li>
+<li>总乘法：$9 \times 25 = 225$</li>
+</ul>
+<p><strong>步幅 2</strong>：输入 $7 \times 7$，2 个 $3 \times 3$ 核，步幅 2。</p>
+<ul>
+<li>输出尺寸：$(7-3)/2 + 1 = 3$，即 $3 \times 3$，每个核输出 9 个位置</li>
+<li>每个核总乘法：$9 \times 9 = 81$</li>
+<li>2 个核：$81 \times 2 = 162$</li>
+</ul>
+<h3 id="多通道卷积">多通道卷积</h3>
+<p>现实中输入不是单通道灰度图，而是 $C_{\text{in}}$ 个通道（如 RGB 3 通道）。</p>
+<p>一个卷积核的完整形状：$k_h \times k_w \times C_{\text{in}}$</p>
+<p>对所有通道分别卷积后求和，得到<strong>一个</strong>输出通道。</p>
+<p>用 $C_{\text{out}}$ 个这样的核，就得到 $C_{\text{out}}$ 个输出通道。</p>
+<p><strong>参数量</strong>：</p>
+<p>$$\text{一层卷积参数} = C_{\text{out}} \times (k_h \times k_w \times C_{\text{in}} + 1)$$</p>
+<p>$+1$ 是每个核的偏置。</p>
+<h3 id="11-卷积">1×1 卷积</h3>
+<p>核大小 $1 \times 1$，对每个空间位置的 $C_{\text{in}}$ 个通道做线性组合，相当于对通道维度做全连接。</p>
+<p>用途：</p>
+<ul>
+<li>改变通道数（升维/降维）</li>
+<li>几乎不增加参数就能增加非线性</li>
+</ul>
+<h3 id="池化pooling">池化（Pooling）</h3>
+<p>在固定窗口内压缩特征图，降低分辨率。</p>
+<p><strong>最大池化（Max Pooling）</strong>：取窗口内最大值
+<strong>平均池化（Average Pooling）</strong>：取窗口内均值</p>
+<p>特点：</p>
+<ul>
+<li><strong>没有可学习参数</strong></li>
+<li>提供一定的平移不变性</li>
+<li>减小特征图尺寸（降低后续计算量）</li>
+</ul>
+<h3 id="cnn-参数量计算完整示例">CNN 参数量计算完整示例</h3>
+<p>输入 160,000（如 $400 \times 400$），网络结构如下：</p>
+<div class="table-wrap"><table><thead><tr>
+<th>层</th>
+<th>配置</th>
+<th>参数量计算</th>
+<th>参数量</th>
+</tr>
+</thead><tbody><tr>
+<td>Conv1</td>
+<td>3 个 $5\times5$ 核，输入 1 通道</td>
+<td>$3 \times (5\times5\times1 + 1)$</td>
+<td>78</td>
+</tr>
+<tr>
+<td>MaxPool</td>
+<td>$2\times2$</td>
+<td>0</td>
+<td>0</td>
+</tr>
+<tr>
+<td>Conv2</td>
+<td>5 个 $4\times4$ 核，输入 3 通道</td>
+<td>$5 \times (4\times4\times3 + 1)$</td>
+<td>245</td>
+</tr>
+<tr>
+<td>MaxPool</td>
+<td></td>
+<td>0</td>
+<td>0</td>
+</tr>
+<tr>
+<td>Conv3</td>
+<td>5 个 $4\times4$ 核，输入 5 通道</td>
+<td>$5 \times (4\times4\times5 + 1)$</td>
+<td>405</td>
+</tr>
+<tr>
+<td>MaxPool</td>
+<td></td>
+<td>0</td>
+<td>0</td>
+</tr>
+<tr>
+<td>FC</td>
+<td>400 → 100</td>
+<td>$(400+1)\times100$</td>
+<td>40,100</td>
+</tr>
+<tr>
+<td><strong>总计</strong></td>
+<td></td>
+<td></td>
+<td><strong>40,828</strong></td>
+</tr>
+</tbody></table></div>
+<p>对比全连接网络的 65 亿参数——CNN 只用 4 万参数！减少了 <strong>5 个数量级</strong>。</p>
+<h3 id="cnn-参数少的本质原因">CNN 参数少的本质原因</h3>
+<ol>
+<li><strong>参数共享</strong>：同一个卷积核在整个输入上滑动复用。$3\times3$ 的核无论输入多大，永远只有 9 个参数。</li>
+<li><strong>局部连接</strong>：每个输出位置只&quot;看&quot;局部的 $k\times k$ 区域，不需要和所有输入连接。</li>
+<li><strong>层级特征提取</strong>：浅层学边缘，深层学形状/物体——每层只需少量核。</li>
+</ol>
+<h3 id="空洞卷积dilated-atrous-convolution">空洞卷积（Dilated / Atrous Convolution）</h3>
+<p>在核元素之间插入空洞（dilation rate $d$），等效核大小变大但参数量不变。</p>
+<p>等效感受野 = $k + (k-1)(d-1)$</p>
+<p>例如 $3\times3$ 核，dilation=2，等效感受野 = $3 + 2\times1 = 5$，但只有 9 个参数。</p>
+<p>用途：在不降低分辨率的情况下扩大感受野（语义分割中常用）。</p>
+<hr>
+<h2 id="卷积运算量计算">卷积运算量计算</h2>
+<p>卷积层虽然参数少，但<strong>计算量</strong>（乘法和加法次数）也是重要指标。</p>
+<h3 id="基本公式">基本公式</h3>
+<p>设输入特征图 $N \times N$，核 $F \times F$，步幅 $S$，填充 $P$：</p>
+<ul>
+<li><strong>输出特征图大小</strong>：$O = \frac{N - F + 2P}{S} + 1$</li>
+<li><strong>输出位置数</strong>：$O \times O$（二维情况）</li>
+<li><strong>每个位置的乘法次数</strong>：$F \times F$（核的元素个数）</li>
+<li><strong>每个位置的加法次数</strong>：$F \times F - 1$（$F^2$ 个乘积相加需要 $F^2-1$ 次加法）</li>
+<li><strong>总乘法次数</strong>：$O^2 \times F^2$</li>
+<li><strong>总加法次数</strong>：$O^2 \times (F^2 - 1)$</li>
+</ul>
+<h3 id="示例math_block_132-输入的卷积运算量">示例：$7\times7$ 输入的卷积运算量</h3>
+<p><strong>（1）1 个 $3\times3$ 核，步幅 1，无填充</strong></p>
+<ul>
+<li>输出大小：$(7-3)/1 + 1 = 5$，即 $5\times5 = 25$ 个位置</li>
+<li>每个位置：$3\times3 = 9$ 次乘法</li>
+<li>总乘法：$25 \times 9 = 225$</li>
+<li>总加法：$25 \times 8 = 200$</li>
+</ul>
+<p><strong>（2）1 个 $5\times5$ 核，步幅 1，无填充</strong></p>
+<ul>
+<li>输出大小：$(7-5)/1 + 1 = 3$，即 $3\times3 = 9$ 个位置</li>
+<li>总乘法：$9 \times 25 = 225$</li>
+<li>总加法：$9 \times 24 = 216$</li>
+</ul>
+<p><strong>（3）2 个 $3\times3$ 核，步幅 2，无填充</strong></p>
+<ul>
+<li>输出大小：$(7-3)/2 + 1 = 3$，即 $3\times3 = 9$ 个位置</li>
+<li>每个核的乘法：$9 \times 9 = 81$</li>
+<li>两个核总乘法：$81 \times 2 = 162$</li>
+<li>总加法：$9 \times 8 \times 2 = 144$</li>
+</ul>
+<p><strong>（4）1 个 $3\times3$ 核，步幅 1，等宽卷积（Same Convolution，$P=1$）</strong></p>
+<ul>
+<li>输出大小：$(7-3+2)/1 + 1 = 7$，即 $7\times7 = 49$ 个位置</li>
+<li>总乘法：$49 \times 9 = 441$</li>
+<li>总加法：$49 \times 8 = 392$</li>
+</ul>
+<p><strong>（5）先做 (1) 得到 $5\times5$，再做一次 $3\times3$ 卷积</strong></p>
+<ul>
+<li>第一次：输入 $7\times7$ → 输出 $5\times5$，乘法 225</li>
+<li>第二次：输入 $5\times5$ → 输出 $3\times3 = 9$ 个位置，乘法 $9 \times 9 = 81$</li>
+<li>总乘法：$225 + 81 = 306$</li>
+</ul>
+<p><strong>两次 $3\times3$ 堆叠 vs 一次 $5\times5$</strong>：</p>
+<ul>
+<li>两次 $3\times3$：等效感受野 $5\times5$，但参数 $2 \times 9 = 18$，计算量 306 次</li>
+<li>一次 $5\times5$：参数 $25$，计算量 225 次</li>
+</ul>
+<p>参数更少但计算量稍多——现代网络选择堆叠小核（VGGNet 的核心思想），因为更多非线性（每层都有激活函数）且参数效率高。</p>
+<hr>
+<h2 id="感受野receptive-field">感受野（Receptive Field）</h2>
+<h3 id="定义">定义</h3>
+<p>某一层输出的一个像素&quot;看到&quot;的输入区域大小。</p>
+<h3 id="递推计算">递推计算</h3>
+<p>若第 $l$ 层的感受野为 $r_l$，核大小 $k_l$，步幅 $s_l$：</p>
+<p>$$r_{l} = r_{l-1} + (k_l - 1) \times \prod_{i=1}^{l-1} s_i$$</p>
+<p>对于全部步幅 1 的情况简化为：</p>
+<p>$$r_l = r_{l-1} + (k_l - 1)$$</p>
+<ul>
+<li>一层 $3\times3$（步幅 1）：感受野 $= 1 + 2 = 3$</li>
+<li>两层 $3\times3$（步幅 1）：感受野 $= 3 + 2 = 5$</li>
+<li>三层 $3\times3$（步幅 1）：感受野 $= 5 + 2 = 7$</li>
+</ul>
+<p><strong>结论</strong>：堆叠小核可以达到大核的感受野，同时参数更少、非线性更强。</p>
+<hr>
+<h2 id="全连接层-vs-卷积层-vs-池化层对比">全连接层 vs 卷积层 vs 池化层对比</h2>
+<div class="table-wrap"><table><thead><tr>
+<th>性质</th>
+<th>全连接层</th>
+<th>卷积层</th>
+<th>池化层</th>
+</tr>
+</thead><tbody><tr>
+<td>可学习参数</td>
+<td>$(n_{in}+1) \times n_{out}$</td>
+<td>$C_{out}(k^2 C_{in} + 1)$</td>
+<td><strong>0</strong></td>
+</tr>
+<tr>
+<td>连接方式</td>
+<td>全部连接</td>
+<td>局部连接</td>
+<td>局部窗口</td>
+</tr>
+<tr>
+<td>参数共享</td>
+<td>✗</td>
+<td>✓（同一核滑动）</td>
+<td>—</td>
+</tr>
+<tr>
+<td>平移不变性</td>
+<td>✗</td>
+<td>✓</td>
+<td>✓</td>
+</tr>
+<tr>
+<td>输出尺寸</td>
+<td>任意</td>
+<td>由 $N, k, S, P$ 决定</td>
+<td>通常缩小一半</td>
+</tr>
+<tr>
+<td>主要作用</td>
+<td>全局组合特征</td>
+<td>提取局部模式</td>
+<td>降分辨率/不变性</td>
+</tr>
+</tbody></table></div>
+<hr>
+<h2 id="典型-cnn-架构演进了解">典型 CNN 架构演进（了解）</h2>
+<div class="table-wrap"><table><thead><tr>
+<th>网络</th>
+<th>年份</th>
+<th>核心贡献</th>
+</tr>
+</thead><tbody><tr>
+<td>LeNet-5</td>
+<td>1998</td>
+<td>CNN 的开山之作，手写数字识别</td>
+</tr>
+<tr>
+<td>AlexNet</td>
+<td>2012</td>
+<td>深层 CNN + GPU 训练，ImageNet 冠军</td>
+</tr>
+<tr>
+<td>VGGNet</td>
+<td>2014</td>
+<td>全部用 $3\times3$ 核堆叠，证明深度比宽度重要</td>
+</tr>
+<tr>
+<td>GoogLeNet</td>
+<td>2014</td>
+<td>Inception 模块（并行多尺度卷积）</td>
+</tr>
+<tr>
+<td>ResNet</td>
+<td>2015</td>
+<td>残差连接，训练 152 层，解决退化问题</td>
+</tr>
+</tbody></table></div>
+<hr>
+<h2 id="本章核心要点">本章核心要点</h2>
+<ol>
+<li><strong>单个神经元</strong> = 线性变换 + 激活函数</li>
+<li><strong>万能近似定理</strong>：一个隐藏层足以逼近任意连续函数（但不保证能训练到）</li>
+<li><strong>全连接参数量</strong>：$(n_{in}+1) \times n_{out}$，对图像来说参数爆炸</li>
+<li><strong>卷积核心公式</strong>：输出尺寸 $(N-F+2P)/S + 1$，参数量 $C_{out}(k^2 C_{in}+1)$</li>
+<li><strong>CNN 三宝</strong>：参数共享、局部连接、层级特征</li>
+<li><strong>1×1 卷积</strong>：通道维度的全连接，改变通道数</li>
+<li><strong>池化</strong>：无参数，降分辨率，Max 保最强特征，Avg 保全局信息</li>
+<li><strong>堆叠小核 &gt; 一个大核</strong>：更多非线性，更少参数，同等感受野</li>
+</ol>
+<hr>
+<h2 id="补充多通道卷积的完整数学">补充：多通道卷积的完整数学</h2>
+<h3 id="单输入通道-多输出通道">单输入通道 → 多输出通道</h3>
+<p>输入 $\boldsymbol{X} \in \mathbb{R}^{H \times W}$（1 个通道），用 $C_{out}$ 个核各生成 1 个输出通道：</p>
+<p>$$Y_c = \boldsymbol{X} * \boldsymbol{K}_c, \quad c = 1, 2, \ldots, C_{out}$$</p>
+<p>输出 $\boldsymbol{Y} \in \mathbb{R}^{C_{out} \times H' \times W'}$。</p>
+<h3 id="多输入通道-单输出通道">多输入通道 → 单输出通道</h3>
+<p>输入 $\boldsymbol{X} \in \mathbb{R}^{C_{in} \times H \times W}$，一个核 $\boldsymbol{K} \in \mathbb{R}^{C_{in} \times k \times k}$：</p>
+<p>$$Y_{i,j} = \sum_{c=1}^{C_{in}} \sum_{m=0}^{k-1}\sum_{n=0}^{k-1} K_{c,m,n} \cdot X_{c, i+m, j+n}$$</p>
+<p><strong>对所有输入通道做卷积后求和</strong>，得到 1 个输出通道。</p>
+<h3 id="多输入通道-多输出通道一般情况">多输入通道 → 多输出通道（一般情况）</h3>
+<p>$C_{out}$ 个核，每个核形状 $C_{in} \times k \times k$：</p>
+<p>$$Y_{c', i, j} = \sum_{c=1}^{C_{in}} \sum_{m=0}^{k-1}\sum_{n=0}^{k-1} K_{c', c, m, n} \cdot X_{c, i+m, j+n} + b_{c'}$$</p>
+<p><strong>参数总量</strong>：$C_{out} \times (C_{in} \times k \times k + 1)$</p>
+<h3 id="具体计算示例">具体计算示例</h3>
+<p>输入 3 通道（RGB），$32\times32$。用 16 个 $5\times5$ 核，步幅 1，无填充：</p>
+<ul>
+<li>每个核参数：$3 \times 5 \times 5 + 1 = 76$</li>
+<li>16 个核总参数：$16 \times 76 = 1216$</li>
+<li>输出尺寸：$(32-5)/1+1 = 28$，即 $16 \times 28 \times 28$</li>
+<li>每个输出位置的乘法：$3 \times 5 \times 5 = 75$ 次</li>
+<li>总乘法次数：$16 \times 28 \times 28 \times 75 = 940,800$</li>
+</ul>
+<hr>
+<h2 id="补充11-卷积的数学本质">补充：1×1 卷积的数学本质</h2>
+<h3 id="为什么-math_block_204-卷积有意义">为什么 $1\times1$ 卷积有意义？</h3>
+<p>虽然空间上只看一个像素，但它在<strong>通道维度</strong>上是全连接的。</p>
+<p>输入 $\boldsymbol{X} \in \mathbb{R}^{C_{in} \times H \times W}$，$1\times1$ 卷积核 $\boldsymbol{K} \in \mathbb{R}^{C_{out} \times C_{in} \times 1 \times 1}$：</p>
+<p>对于每个空间位置 $(i,j)$：
+$$Y_{c', i, j} = \sum_{c=1}^{C_{in}} K_{c', c} \cdot X_{c, i, j} + b_{c'}$$</p>
+<p>这就是对 $C_{in}$ 维向量做线性变换得到 $C_{out}$ 维向量——<strong>逐像素的全连接层</strong>。</p>
+<h3 id="用途">用途</h3>
+<ol>
+<li><strong>降维</strong>：$C_{in}=256 \to C_{out}=64$，减少后续层的计算量</li>
+<li><strong>升维</strong>：$C_{in}=64 \to C_{out}=256$，增加特征空间</li>
+<li><strong>跨通道信息融合</strong>：不改变空间尺寸，只混合通道信息</li>
+<li><strong>引入非线性</strong>：$1\times1$ Conv + ReLU = 逐像素的非线性变换</li>
+</ol>
+<h3 id="参数量">参数量</h3>
+<p>$C_{out} \times (C_{in} + 1)$（远少于 $3\times3$ 或更大的核）</p>
+<hr>
+<h2 id="补充从全连接到卷积的数学联系">补充：从全连接到卷积的数学联系</h2>
+<p>全连接层可以看作卷积核大小等于整个输入的&quot;超大核卷积&quot;：</p>
+<ul>
+<li>输入 $7\times7$，核 $7\times7$，无填充 → 输出 $1\times1$</li>
+<li>这和全连接层完全等价！</li>
+</ul>
+<p>所以 CNN 的&quot;局部连接&quot;本质是限制了核的大小（只看局部），&quot;参数共享&quot;是强制核在不同位置相同。</p>
+<p>这两个约束将参数量从 $O(N^2)$（全连接）降到 $O(k^2)$（卷积），但代价是每个输出只能&quot;看到&quot;局部信息——需要通过堆叠多层来扩大感受野。</p>
+
+    <nav class="pager">  <a href="02-linear-logistic-regression.html">
+    <span class="label">← 上一章</span>
+    <span class="title">线性回归、逻辑回归与优化</span>
+  </a>  <a href="04-backpropagation.html" class="next">
+    <span class="label">下一章 →</span>
+    <span class="title">反向传播与训练优化</span>
+  </a></nav>
+  </article>
+</div>
+
+<footer>
+  <div class="set">
+    <span>人工智能与数学原理</span>
+    <span>2026 · ZH-CN</span>
+  </div>
+  <div class="set">
+    <span>Mav</span>
+  </div>
+</footer>
+<div class="search-backdrop" id="search-overlay" role="dialog" aria-modal="true" aria-label="搜索" hidden>
+  <div class="search-modal">
+    <div class="search-input-wrap">
+      <input type="search" class="search-input" placeholder="搜索内容..." aria-label="搜索内容" autocomplete="off">
+      <kbd>ESC</kbd>
+    </div>
+    <div class="search-results" role="listbox" aria-label="搜索结果"></div>
+  </div>
+</div>
+
+<!-- Side Panel -->
+<div class="side-panel" id="side-panel">
+  <div class="side-panel-resize" id="side-panel-resize"></div>
+  <div class="side-panel-header">
+    <div class="side-panel-tabs">
+      <button class="side-panel-tab active" data-mode="sidenote">补充</button>
+      <button class="side-panel-tab" data-mode="notepad">笔记</button>
+    </div>
+    <button class="side-panel-close" aria-label="关闭">×</button>
+  </div>
+  <div class="side-panel-body"></div>
+</div>
+<button class="notepad-fab" id="notepad-fab" aria-label="便利贴">✎</button>
+
+<!-- Mobile TOC -->
+<button class="mtoc-fab" id="mtoc-fab" aria-label="目录">TOC</button>
+<div class="mtoc-drawer" id="mtoc-drawer">
+  <div class="mtoc-content"></div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/bash.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/typescript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/yaml.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/javascript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/json.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/python.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/css.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+<script>mermaid.initialize({startOnLoad:true, theme:'neutral', fontFamily:'Inter, sans-serif'});</script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}]});"></script>
+<script src="../assets/script.js"></script>
+</body>
+</html>

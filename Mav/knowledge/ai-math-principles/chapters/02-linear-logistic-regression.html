@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>线性回归、逻辑回归与优化 — 人工智能与数学原理</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" id="hljs-light" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+<link rel="stylesheet" id="hljs-dark" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" media="not all">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+</head>
+<body>
+
+<div class="progress-bar" id="progress-bar"></div>
+
+<nav class="topnav" id="topnav">
+  <div class="topnav-inner">
+    <a class="brand" href="../index.html">人工智能与数学原理</a>
+    <div class="nav-links">
+      <a href="01-ml-math-foundations.html">01</a>
+      <a href="02-linear-logistic-regression.html" class="active">02</a>
+      <a href="03-neural-networks-cnn.html">03</a>
+      <a href="04-backpropagation.html">04</a>
+      <a href="05-graph-neural-networks.html">05</a>
+      <a href="06-transformer.html">06</a>
+      <a href="07-ssl-lm-rl.html">07</a>
+    </div>
+    <div class="nav-controls">
+      <button class="nav-btn" id="search-btn" aria-label="搜索 (Ctrl+K)">⌘K</button>
+      <button class="nav-btn" id="settings-btn" aria-label="阅读设置">Aa</button>
+      <a class="nav-btn" href="../../index.html" aria-label="返回知识库">← 知识库</a>
+      <a class="nav-btn" href="https://github.com/maverickxone/mav-homepage" target="_blank" rel="noopener" aria-label="GitHub" style="padding: 6px 8px;"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg></a>
+    </div>
+  </div>
+</nav>
+<div class="settings-pop" id="settings-pop">
+  <h5>主题</h5>
+  <div class="row">
+    <button class="seg" data-theme-set="light">明亮</button>
+    <button class="seg" data-theme-set="dark">暗色</button>
+  </div>
+  <h5>字号</h5>
+  <div class="row">
+    <button class="seg" data-size-set="s">小</button>
+    <button class="seg" data-size-set="m">中</button>
+    <button class="seg" data-size-set="l">大</button>
+  </div>
+</div>
+
+<div class="with-sidebar">
+  <aside class="sidebar">
+  <div class="chapter-num">CHAPTER 02</div>
+  <div class="chapter-name">线性回归、逻辑回归与优化</div>
+  <h4>目录</h4>
+  <ul>
+    <li><a href="#线性回归">线性回归</a></li>
+    <li><a href="#梯度下降法">梯度下降法</a></li>
+    <li><a href="#sigmoid-函数">Sigmoid 函数</a></li>
+    <li><a href="#逻辑回归">逻辑回归</a></li>
+    <li><a href="#softmax-与多分类">Softmax 与多分类</a></li>
+    <li><a href="#过拟合与正则化">过拟合与正则化</a></li>
+    <li><a href="#补充mle-与交叉熵的联系">补充：MLE 与交叉熵的联系</a></li>
+    <li><a href="#补充特征工程">补充：特征工程</a></li>
+    <li><a href="#本章核心要点">本章核心要点</a></li>
+    <li><a href="#补充梯度下降的几何直觉">补充：梯度下降的几何直觉</a></li>
+    <li><a href="#补充逻辑回归的决策边界分析">补充：逻辑回归的决策边界分析</a></li>
+  </ul>
+</aside>
+  <article class="chapter-body">
+    <header class="chapter-head">
+  <div class="chapter-head-meta">
+    <span class="num">CHAPTER 02</span>
+    <span>≈ 45 MIN READ</span>
+  </div>
+  <h1>线性回归、逻辑回归与优化</h1>
+
+</header>
+    <h2 id="线性回归">线性回归</h2>
+<h3 id="问题定义">问题定义</h3>
+<p>给定 $N$ 个样本 $\{(\boldsymbol{x}_i, y_i)\}_{i=1}^N$，其中 $\boldsymbol{x}_i \in \mathbb{R}^d$ 是特征向量，$y_i \in \mathbb{R}$ 是连续目标值。</p>
+<p><strong>目标</strong>：找到一个线性函数，使得 $f(\boldsymbol{x})$ 尽可能接近 $y$。</p>
+<h3 id="模型假设类">模型（假设类）</h3>
+<p>$$\hat{y} = f(\boldsymbol{x}; \boldsymbol{w}, b) = w_1 x_1 + w_2 x_2 + \cdots + w_d x_d + b = \boldsymbol{w}^T\boldsymbol{x} + b$$</p>
+<p><strong>简化记号</strong>：将偏置 $b$ 吸收进权重向量——令 $\boldsymbol{x} \leftarrow [1, x_1, \ldots, x_d]^T$，$\boldsymbol{w} \leftarrow [b, w_1, \ldots, w_d]^T$，则：</p>
+<p>$$\hat{y} = \boldsymbol{w}^T\boldsymbol{x}$$</p>
+<h3 id="损失函数均方误差mse">损失函数：均方误差（MSE）</h3>
+<p>衡量&quot;预测值和真实值差多少&quot;：</p>
+<p>$$J(\boldsymbol{w}) = \frac{1}{2N}\sum_{i=1}^N (y_i - \boldsymbol{w}^T\boldsymbol{x}_i)^2$$</p>
+<p>前面的 $\frac{1}{2}$ 是为了求导后消去系数，方便计算。</p>
+<p><strong>矩阵形式</strong>：设 $\boldsymbol{X} \in \mathbb{R}^{N \times (d+1)}$ 每行一个样本，$\boldsymbol{y} \in \mathbb{R}^N$：</p>
+<p>$$J(\boldsymbol{w}) = \frac{1}{2N}(\boldsymbol{y} - \boldsymbol{X}\boldsymbol{w})^T(\boldsymbol{y} - \boldsymbol{X}\boldsymbol{w}) = \frac{1}{2N}\|\boldsymbol{y} - \boldsymbol{X}\boldsymbol{w}\|_2^2$$</p>
+<h3 id="解析解normal-equation">解析解（Normal Equation）</h3>
+<p>对 $J(\boldsymbol{w})$ 求梯度：</p>
+<p>$$\nabla_{\boldsymbol{w}} J = \frac{1}{N}\boldsymbol{X}^T(\boldsymbol{X}\boldsymbol{w} - \boldsymbol{y})$$</p>
+<p>令梯度为零：$\boldsymbol{X}^T\boldsymbol{X}\boldsymbol{w} = \boldsymbol{X}^T\boldsymbol{y}$</p>
+<p>若 $\boldsymbol{X}^T\boldsymbol{X}$ 可逆，解析解为：</p>
+<p>$$\boldsymbol{w}^* = (\boldsymbol{X}^T\boldsymbol{X})^{-1}\boldsymbol{X}^T\boldsymbol{y}$$</p>
+<p><strong>局限性</strong>：</p>
+<ul>
+<li>计算 $(\boldsymbol{X}^T\boldsymbol{X})^{-1}$ 的时间复杂度是 $O(d^3)$，当 $d$ 很大（如几万维）时不可行</li>
+<li>只适用于线性模型和平方损失</li>
+<li>非线性模型（如神经网络）没有解析解</li>
+</ul>
+<p>所以实际中几乎都用迭代优化方法。</p>
+<hr>
+<h2 id="梯度下降法">梯度下降法</h2>
+<h3 id="核心思想">核心思想</h3>
+<p>梯度指向函数值增长最快的方向。沿<strong>负梯度方向</strong>走一小步，函数值就会下降。反复执行直到收敛。</p>
+<h3 id="更新规则">更新规则</h3>
+<p>$$\boldsymbol{w}_{t+1} = \boldsymbol{w}_t - \eta \nabla_{\boldsymbol{w}} J(\boldsymbol{w}_t)$$</p>
+<p>$\eta > 0$ 是<strong>学习率（learning rate）</strong>，控制每步走多远。</p>
+<h3 id="对线性回归的梯度">对线性回归的梯度</h3>
+<p>$$\nabla_{\boldsymbol{w}} J = \frac{1}{N}\sum_{i=1}^N (\boldsymbol{w}^T\boldsymbol{x}_i - y_i)\boldsymbol{x}_i$$</p>
+<p>直觉：梯度等于&quot;预测误差 × 对应特征&quot;的平均。误差越大，对应方向的调整越大。</p>
+<h3 id="学习率的影响">学习率的影响</h3>
+<p>这是最核心的超参数之一。理解它的影响至关重要。</p>
+<p><strong>太小</strong>（如 $\eta = 0.001$）：每步走一丁点，虽然方向对但到达目标要迭代非常多次，效率极低。</p>
+<p><strong>适中</strong>（如 $\eta = 0.1$ 或 $0.3$）：稳步下降，几十步即可接近最优解。</p>
+<p><strong>太大</strong>（如 $\eta = 0.8$ 或 $1.0$）：步子太大，越过最优解跳到另一边，在最优解两侧来回震荡。更极端时甚至<strong>发散</strong>（每步越来越远）。</p>
+<h3 id="完整手算示例">完整手算示例</h3>
+<p>$f(x) = (x-1)^2 = x^2 - 2x + 1$，导数 $f'(x) = 2x - 2$，最优解 $x^* = 1$。</p>
+<p><strong>情形 1：$\eta = 0.1$，$x_0 = 0$</strong></p>
+<div class="table-wrap"><table><thead><tr>
+<th>步</th>
+<th>$x_t$</th>
+<th>$f'(x_t) = 2x_t - 2$</th>
+<th>$x_{t+1} = x_t - 0.1 \cdot f'$</th>
+</tr>
+</thead><tbody><tr>
+<td>0</td>
+<td>0</td>
+<td>$-2$</td>
+<td>$0 + 0.2 = 0.2$</td>
+</tr>
+<tr>
+<td>1</td>
+<td>0.2</td>
+<td>$-1.6$</td>
+<td>$0.2 + 0.16 = 0.36$</td>
+</tr>
+<tr>
+<td>2</td>
+<td>0.36</td>
+<td>$-1.28$</td>
+<td>$0.36 + 0.128 = 0.488$</td>
+</tr>
+<tr>
+<td>3</td>
+<td>0.488</td>
+<td>$-1.024$</td>
+<td>$0.488 + 0.1024 = 0.5904$</td>
+</tr>
+</tbody></table></div>
+<p>每步都朝 $x^* = 1$ 稳步前进，但速度比较慢——4 步后才走到 0.59。</p>
+<p><strong>情形 2：$\eta = 0.3$，$x_0 = 0.5$</strong></p>
+<div class="table-wrap"><table><thead><tr>
+<th>步</th>
+<th>$x_t$</th>
+<th>$f'(x_t)$</th>
+<th>$x_{t+1}$</th>
+</tr>
+</thead><tbody><tr>
+<td>0</td>
+<td>0.5</td>
+<td>$-1$</td>
+<td>$0.5 + 0.3 = 0.8$</td>
+</tr>
+<tr>
+<td>1</td>
+<td>0.8</td>
+<td>$-0.4$</td>
+<td>$0.8 + 0.12 = 0.92$</td>
+</tr>
+<tr>
+<td>2</td>
+<td>0.92</td>
+<td>$-0.16$</td>
+<td>$0.92 + 0.048 = 0.968$</td>
+</tr>
+<tr>
+<td>3</td>
+<td>0.968</td>
+<td>$-0.064$</td>
+<td>$0.968 + 0.0192 = 0.9872$</td>
+</tr>
+</tbody></table></div>
+<p>非常快地逼近 $x^* = 1$，4 步后已经到 0.987。</p>
+<p><strong>情形 3：$\eta = 0.8$，$x_0 = 0.5$</strong></p>
+<div class="table-wrap"><table><thead><tr>
+<th>步</th>
+<th>$x_t$</th>
+<th>$f'(x_t)$</th>
+<th>$x_{t+1}$</th>
+</tr>
+</thead><tbody><tr>
+<td>0</td>
+<td>0.5</td>
+<td>$-1$</td>
+<td>$0.5 + 0.8 = 1.3$</td>
+</tr>
+<tr>
+<td>1</td>
+<td>1.3</td>
+<td>$0.6$</td>
+<td>$1.3 - 0.48 = 0.82$</td>
+</tr>
+<tr>
+<td>2</td>
+<td>0.82</td>
+<td>$-0.36$</td>
+<td>$0.82 + 0.288 = 1.108$</td>
+</tr>
+<tr>
+<td>3</td>
+<td>1.108</td>
+<td>$0.216$</td>
+<td>$1.108 - 0.173 = 0.935$</td>
+</tr>
+</tbody></table></div>
+<p>在 $x^* = 1$ 两侧来回震荡（1.3 → 0.82 → 1.108 → 0.935），虽然还在收敛但非常不稳定。</p>
+<h3 id="三种梯度下降变体">三种梯度下降变体</h3>
+<p><strong>批量梯度下降（Batch GD）</strong>：每次使用<strong>全部</strong> $N$ 个样本计算梯度。</p>
+<ul>
+<li>优点：方向最准确</li>
+<li>缺点：$N$ 很大时每步计算代价高，且内存放不下</li>
+</ul>
+<p><strong>随机梯度下降（Stochastic GD, SGD）</strong>：每次只用 <strong>1 个</strong>随机样本。
+$$\boldsymbol{w}_{t+1} = \boldsymbol{w}_t - \eta \cdot (\boldsymbol{w}_t^T\boldsymbol{x}_i - y_i)\boldsymbol{x}_i$$</p>
+<ul>
+<li>优点：每步极快</li>
+<li>缺点：梯度方向噪声大，收敛路径锯齿状</li>
+</ul>
+<p><strong>小批量梯度下降（Mini-batch SGD）</strong>：每次用 $B$ 个样本（如 $B=32, 64, 128$）。
+$$\boldsymbol{w}_{t+1} = \boldsymbol{w}_t - \frac{\eta}{B}\sum_{j \in \mathcal{B}}(\boldsymbol{w}_t^T\boldsymbol{x}_j - y_j)\boldsymbol{x}_j$$</p>
+<ul>
+<li>实际中最常用，平衡了准确性和效率</li>
+<li>可以利用 GPU 并行计算</li>
+</ul>
+<h3 id="相关术语">相关术语</h3>
+<ul>
+<li><strong>Batch Size ($B$)</strong>：每次更新用的样本数</li>
+<li><strong>Epoch</strong>：所有训练样本被用过一遍。$N$ 个样本、batch size $B$ → 每个 epoch 有 $\lceil N/B \rceil$ 次更新</li>
+<li><strong>Iteration / Step</strong>：一次参数更新</li>
+</ul>
+<hr>
+<h2 id="sigmoid-函数">Sigmoid 函数</h2>
+<h3 id="为什么需要-sigmoid">为什么需要 Sigmoid</h3>
+<p>线性回归输出 $z = \boldsymbol{w}^T\boldsymbol{x} \in (-\infty, +\infty)$。但分类问题需要输出概率（$\in [0,1]$）。我们需要一个函数把 $(-\infty, +\infty)$ 压缩到 $(0, 1)$。</p>
+<p>Sigmoid 不是随便选的——它是 Logistic 分布的累积分布函数（CDF），具有严格的概率论基础。</p>
+<h3 id="定义">定义</h3>
+<p>$$\sigma(z) = \frac{1}{1 + e^{-z}}$$</p>
+<h3 id="关键性质">关键性质</h3>
+<ol>
+<li><strong>值域</strong> $(0, 1)$：可直接解释为概率</li>
+<li><strong>单调递增</strong>：输入越大，概率越高</li>
+<li>$\sigma(0) = 0.5$：决策分界点</li>
+<li><strong>对称性</strong>：$\sigma(-z) = 1 - \sigma(z)$</li>
+<li>$\lim_{z \to +\infty}\sigma(z) = 1$，$\lim_{z \to -\infty}\sigma(z) = 0$</li>
+</ol>
+<h3 id="导数极其重要">导数（极其重要）</h3>
+<p>$$\sigma'(z) = \sigma(z)(1 - \sigma(z))$$</p>
+<p><strong>推导过程</strong>：</p>
+<p>$$\sigma'(z) = \frac{d}{dz}\left(\frac{1}{1+e^{-z}}\right) = \frac{e^{-z}}{(1+e^{-z})^2}$$</p>
+<p>注意到 $1 - \sigma(z) = \frac{e^{-z}}{1+e^{-z}}$，所以：</p>
+<p>$$\sigma'(z) = \frac{1}{1+e^{-z}} \cdot \frac{e^{-z}}{1+e^{-z}} = \sigma(z) \cdot (1-\sigma(z))$$</p>
+<p><strong>意义</strong>：Sigmoid 的导数只需要其函数值就能算出来，不需要重新算指数——这在反向传播中极其高效。</p>
+<p><strong>导数的最大值</strong>：$\sigma'(z)_{\max} = \sigma(0)(1-\sigma(0)) = 0.5 \times 0.5 = 0.25$</p>
+<p>这意味着梯度最大只有 0.25，深层网络中连乘会导致梯度消失——这是后来 ReLU 取代 Sigmoid 的原因。</p>
+<h3 id="对数-sigmoid-的导数">对数 Sigmoid 的导数</h3>
+<p>在推导交叉熵梯度时需要：</p>
+<p>$$\frac{d}{dz}\ln\sigma(z) = \frac{\sigma'(z)}{\sigma(z)} = \frac{\sigma(z)(1-\sigma(z))}{\sigma(z)} = 1 - \sigma(z)$$</p>
+<p>$$\frac{d}{dz}\ln(1-\sigma(z)) = \frac{-\sigma'(z)}{1-\sigma(z)} = \frac{-\sigma(z)(1-\sigma(z))}{1-\sigma(z)} = -\sigma(z)$$</p>
+<hr>
+<h2 id="逻辑回归">逻辑回归</h2>
+<h3 id="模型">模型</h3>
+<p>将 Sigmoid 作用在线性输出上，得到正类概率：</p>
+<p>$$P(y=1|\boldsymbol{x}; \boldsymbol{w}) = \sigma(\boldsymbol{w}^T\boldsymbol{x}) = \frac{1}{1 + e^{-\boldsymbol{w}^T\boldsymbol{x}}}$$</p>
+<p>$$P(y=0|\boldsymbol{x}; \boldsymbol{w}) = 1 - \sigma(\boldsymbol{w}^T\boldsymbol{x})$$</p>
+<h3 id="决策边界">决策边界</h3>
+<p>分类的判定：若 $P(y=1|\boldsymbol{x}) > 0.5$，预测为正类；否则为负类。</p>
+<p>$P = 0.5$ 对应 $\sigma(\boldsymbol{w}^T\boldsymbol{x}) = 0.5$，即 $\boldsymbol{w}^T\boldsymbol{x} = 0$。</p>
+<p>这是一个<strong>超平面</strong>。二维情况下就是一条直线 $w_1 x_1 + w_2 x_2 + b = 0$。</p>
+<p><strong>关于参数缩放的重要观察</strong>：</p>
+<p>设 $\boldsymbol{w} = [1, 1, 1]^T$，$\boldsymbol{w}' = [3, 3, 3]^T$。</p>
+<ul>
+<li>决策边界相同：$x_1 + x_2 + 1 = 0$ 和 $3x_1 + 3x_2 + 3 = 0$ 是同一条线</li>
+<li>但输出概率不同：当 $\boldsymbol{x} = [1, 1]^T$ 时<ul>
+<li>$\sigma(1+1+1) = \sigma(3) \approx 0.953$</li>
+<li>$\sigma(3+3+3) = \sigma(9) \approx 0.9999$</li>
+</ul>
+</li>
+<li>参数越大，模型越&quot;自信&quot;（概率越接近 0 或 1）</li>
+</ul>
+<h3 id="损失函数交叉熵">损失函数：交叉熵</h3>
+<p><strong>为什么不用 MSE？</strong></p>
+<ul>
+<li>MSE + Sigmoid 会形成非凸优化问题（存在坏的局部最优）</li>
+<li>数学上不优雅——正确的做法是从 MLE 出发</li>
+</ul>
+<p><strong>从 MLE 推导</strong>：</p>
+<p>单个样本的对数似然：
+$$\ln P(y_i|\boldsymbol{x}_i) = y_i\ln\sigma(\boldsymbol{w}^T\boldsymbol{x}_i) + (1-y_i)\ln(1-\sigma(\boldsymbol{w}^T\boldsymbol{x}_i))$$</p>
+<p>所有样本的负对数似然（即损失函数）：</p>
+<p>$$J(\boldsymbol{w}) = -\frac{1}{N}\sum_{i=1}^N\left[y_i\ln\hat{y}_i + (1-y_i)\ln(1-\hat{y}_i)\right]$$</p>
+<p>其中 $\hat{y}_i = \sigma(\boldsymbol{w}^T\boldsymbol{x}_i)$。这就是<strong>二元交叉熵损失（Binary Cross-Entropy, BCE）</strong>。</p>
+<p><strong>直觉理解</strong>：</p>
+<ul>
+<li>若真实 $y_i = 1$：损失 = $-\ln\hat{y}_i$。$\hat{y}_i$ 越接近 1，损失越小</li>
+<li>若真实 $y_i = 0$：损失 = $-\ln(1-\hat{y}_i)$。$\hat{y}_i$ 越接近 0，损失越小</li>
+<li>预测错得越离谱（如 $y=1$ 但 $\hat{y}=0.01$），$-\ln(0.01) = 4.6$ 损失极大</li>
+</ul>
+<h3 id="梯度推导">梯度推导</h3>
+<p>$$\frac{\partial J}{\partial \boldsymbol{w}} = -\frac{1}{N}\sum_{i=1}^N\left[y_i(1-\sigma_i) - (1-y_i)\sigma_i\right]\boldsymbol{x}_i$$</p>
+<p>展开：$y_i - y_i\sigma_i - \sigma_i + y_i\sigma_i = y_i - \sigma_i$</p>
+<p>$$\frac{\partial J}{\partial \boldsymbol{w}} = \frac{1}{N}\sum_{i=1}^N(\sigma_i - y_i)\boldsymbol{x}_i$$</p>
+<p><strong>最终形式极其简洁</strong>：梯度 = &quot;预测概率 - 真实标签&quot; × 特征向量的平均。</p>
+<p>这和线性回归的梯度形式几乎一样！只是把预测值 $\hat{y}$ 换成了 $\sigma(\boldsymbol{w}^T\boldsymbol{x})$。</p>
+<hr>
+<h2 id="softmax-与多分类">Softmax 与多分类</h2>
+<h3 id="从二分类推广">从二分类推广</h3>
+<p>二分类：一个输出 + Sigmoid → 概率
+多分类（$K$ 类）：$K$ 个输出 + Softmax → $K$ 个概率</p>
+<h3 id="softmax-函数定义">Softmax 函数定义</h3>
+<p>给定 $K$ 个原始分数（logits）$z_1, z_2, \ldots, z_K$：</p>
+<p>$$\text{softmax}(z_k) = \frac{e^{z_k}}{\sum_{j=1}^K e^{z_j}}, \quad k = 1, 2, \ldots, K$$</p>
+<p><strong>性质</strong>：</p>
+<ul>
+<li>每个输出 $\in (0, 1)$</li>
+<li>所有输出之和 = 1（构成合法概率分布）</li>
+<li>保序：$z_i > z_j \Rightarrow \text{softmax}(z_i) > \text{softmax}(z_j)$</li>
+<li>对所有 $z_k$ 加同一常数不改变结果（平移不变性）</li>
+</ul>
+<h3 id="softmax-与-sigmoid-的关系">Softmax 与 Sigmoid 的关系</h3>
+<p>当 $K = 2$ 时：
+$$\text{softmax}(z_1) = \frac{e^{z_1}}{e^{z_1} + e^{z_2}} = \frac{1}{1 + e^{-(z_1-z_2)}} = \sigma(z_1 - z_2)$$</p>
+<p>所以 Sigmoid 是 Softmax 在二分类情况下的特例。</p>
+<h3 id="多分类交叉熵损失">多分类交叉熵损失</h3>
+<p>$$J = -\frac{1}{N}\sum_{i=1}^N\sum_{k=1}^K y_{ik}\ln\hat{y}_{ik}$$</p>
+<p>其中 $y_{ik}$ 是 one-hot 编码（真实类别对应位为 1，其余为 0），$\hat{y}_{ik} = \text{softmax}(z_{ik})$。</p>
+<p>由于 one-hot 中只有一个 1，实际上等价于：
+$$J = -\frac{1}{N}\sum_{i=1}^N \ln\hat{y}_{i, c_i}$$</p>
+<p>其中 $c_i$ 是第 $i$ 个样本的真实类别。</p>
+<h3 id="log-softmax-的梯度">Log-Softmax 的梯度</h3>
+<p>$$\frac{\partial}{\partial z_j}\ln\text{softmax}(z_k) = \delta_{jk} - \text{softmax}(z_j)$$</p>
+<p>其中 $\delta_{jk}$ 是 Kronecker delta。梯度形式同样简洁：预测概率 - one-hot 真实标签。</p>
+<hr>
+<h2 id="过拟合与正则化">过拟合与正则化</h2>
+<h3 id="泛化能力">泛化能力</h3>
+<p><strong>泛化（Generalization）</strong>：模型对<strong>未见过</strong>的新数据的预测能力。这是机器学习的终极目标。</p>
+<h3 id="过拟合-vs-欠拟合">过拟合 vs 欠拟合</h3>
+<p><strong>过拟合（Overfitting）</strong>：</p>
+<ul>
+<li>表现：训练误差极低，测试误差很高</li>
+<li>原因：模型太复杂，把训练数据中的噪声和巧合也学进去了</li>
+<li>类比：一个学生把答案背了，考试换题就不会了</li>
+</ul>
+<p><strong>欠拟合（Underfitting）</strong>：</p>
+<ul>
+<li>表现：训练误差和测试误差都很高</li>
+<li>原因：模型太简单，连数据中的基本规律都没学到</li>
+<li>类比：一个学生连课本都没看懂</li>
+</ul>
+<p><strong>判断方法</strong>：比较训练误差和测试误差的差距（gap）。</p>
+<h3 id="正则化regularization">正则化（Regularization）</h3>
+<p><strong>思想</strong>：在损失函数中增加惩罚项，限制模型复杂度，让模型不能&quot;过度拟合&quot;训练数据。</p>
+<p>$$J_{\text{reg}}(\boldsymbol{w}) = J(\boldsymbol{w}) + \lambda\Omega(\boldsymbol{w})$$</p>
+<p>$\lambda > 0$ 是正则化强度——越大，对复杂度的惩罚越重，模型越简单。</p>
+<h3 id="l2-正则化ridge-weight-decay">L2 正则化（Ridge / Weight Decay）</h3>
+<p>$$\Omega(\boldsymbol{w}) = \|\boldsymbol{w}\|_2^2 = \sum_{j=1}^d w_j^2$$</p>
+<p><strong>效果</strong>：</p>
+<ul>
+<li>所有权重都被&quot;往零的方向拉&quot;，但通常不会精确为零</li>
+<li>对大权重惩罚更重（平方项）</li>
+<li>使解更平滑</li>
+</ul>
+<p><strong>梯度</strong>：$\nabla_{\boldsymbol{w}}\Omega = 2\boldsymbol{w}$</p>
+<p>带 L2 正则化的更新规则：
+$$\boldsymbol{w} \leftarrow \boldsymbol{w} - \eta(\nabla J + 2\lambda\boldsymbol{w}) = (1 - 2\eta\lambda)\boldsymbol{w} - \eta\nabla J$$</p>
+<p>每次更新时权重先乘以小于 1 的系数——所以也叫&quot;权重衰减（Weight Decay）&quot;。</p>
+<p><strong>贝叶斯视角</strong>：L2 正则化等价于给参数加了高斯先验 $\boldsymbol{w} \sim \mathcal{N}(0, \frac{1}{2\lambda}\boldsymbol{I})$。</p>
+<h3 id="l1-正则化lasso">L1 正则化（Lasso）</h3>
+<p>$$\Omega(\boldsymbol{w}) = \|\boldsymbol{w}\|_1 = \sum_{j=1}^d |w_j|$$</p>
+<p><strong>效果</strong>：</p>
+<ul>
+<li>能产生<strong>稀疏解</strong>——很多 $w_j$ 精确变为零</li>
+<li>自动进行特征选择（零权重对应的特征被丢弃）</li>
+</ul>
+<p><strong>为什么 L1 能产生稀疏解？</strong> 几何直觉：L1 约束区域是菱形（在二维是正方形旋转 45°），其顶点在坐标轴上。等值线与约束区域相切时，切点很可能恰好落在顶点（即某些坐标为零）。</p>
+<p><strong>贝叶斯视角</strong>：L1 正则化等价于 Laplace 先验。</p>
+<h3 id="l1-vs-l2-完整对比">L1 vs L2 完整对比</h3>
+<div class="table-wrap"><table><thead><tr>
+<th>性质</th>
+<th>L1 (Lasso)</th>
+<th>L2 (Ridge)</th>
+</tr>
+</thead><tbody><tr>
+<td>惩罚形式</td>
+<td>$\sum\|w_j\|$</td>
+<td>$\sum w_j^2$</td>
+</tr>
+<tr>
+<td>稀疏性</td>
+<td>✓ 很多权重为零</td>
+<td>✗ 权重缩小但不为零</td>
+</tr>
+<tr>
+<td>特征选择</td>
+<td>✓ 自动剔除</td>
+<td>✗ 保留全部</td>
+</tr>
+<tr>
+<td>对异常值</td>
+<td>相对敏感</td>
+<td>更鲁棒</td>
+</tr>
+<tr>
+<td>解的唯一性</td>
+<td>可能不唯一</td>
+<td>唯一</td>
+</tr>
+<tr>
+<td>约束几何</td>
+<td>菱形</td>
+<td>圆（球）</td>
+</tr>
+<tr>
+<td>贝叶斯先验</td>
+<td>Laplace 分布</td>
+<td>高斯分布</td>
+</tr>
+<tr>
+<td>求解</td>
+<td>不可微（$w=0$ 处），需次梯度</td>
+<td>处处可微，好优化</td>
+</tr>
+</tbody></table></div>
+<h3 id="预防过拟合的其他方法">预防过拟合的其他方法</h3>
+<ol>
+<li><strong>增加训练数据</strong>：更多数据 → 模型更难记住噪声</li>
+<li><strong>降低模型复杂度</strong>：更少参数、更浅网络</li>
+<li><strong>Dropout</strong>：训练时随机丢弃神经元（后面章节详述）</li>
+<li><strong>Early Stopping</strong>：当验证集误差开始上升时停止训练</li>
+<li><strong>数据增强</strong>：通过变换制造更多训练数据（翻转、裁剪、加噪声）</li>
+</ol>
+<hr>
+<h2 id="补充mle-与交叉熵的联系">补充：MLE 与交叉熵的联系</h2>
+<h3 id="为什么最小化交叉熵-最大化似然">为什么最小化交叉熵 = 最大化似然</h3>
+<p>这个联系值得独立阐述，因为它是整个损失函数设计的核心逻辑。</p>
+<p><strong>信息论视角</strong>：给定真实分布 $p$ 和模型分布 $q$，交叉熵定义为：</p>
+<p>$$H(p, q) = -\sum_x p(x)\ln q(x)$$</p>
+<p>当 $p$ 是 one-hot（单个正确类别概率为 1）时：$H(p, q) = -\ln q(\text{正确类别})$</p>
+<p>这恰好等于<strong>负对数似然</strong>。</p>
+<p><strong>统一视角</strong>：
+$$\text{最大化似然} \iff \text{最大化对数似然} \iff \text{最小化负对数似然} \iff \text{最小化交叉熵}$$</p>
+<p>所以 MLE 和最小化交叉熵本质上是同一件事，只是从不同角度描述。</p>
+<h3 id="线性回归-mse-的-mle-解释">线性回归 MSE 的 MLE 解释</h3>
+<p>假设 $y = \boldsymbol{w}^T\boldsymbol{x} + \epsilon$，噪声 $\epsilon \sim \mathcal{N}(0, \sigma^2)$。</p>
+<p>则 $y | \boldsymbol{x} \sim \mathcal{N}(\boldsymbol{w}^T\boldsymbol{x}, \sigma^2)$。</p>
+<p>对数似然：
+$$\ell(\boldsymbol{w}) = \sum_{i=1}^N \ln p(y_i|\boldsymbol{x}_i) = -\frac{N}{2}\ln(2\pi\sigma^2) - \frac{1}{2\sigma^2}\sum_{i=1}^N(y_i - \boldsymbol{w}^T\boldsymbol{x}_i)^2$$</p>
+<p>最大化 $\ell$ 等价于最小化 $\sum(y_i - \boldsymbol{w}^T\boldsymbol{x}_i)^2$ = MSE。</p>
+<p><strong>结论</strong>：高斯噪声假设下，MSE 是&quot;正确&quot;的损失函数。</p>
+<hr>
+<h2 id="补充特征工程">补充：特征工程</h2>
+<h3 id="特征归一化">特征归一化</h3>
+<p>不同特征的量纲和范围可能差异巨大。梯度下降在各维度步长相同——如果特征尺度差很多，收敛会很慢（椭圆形等值线，沿短轴震荡）。</p>
+<p><strong>Min-Max 归一化</strong>：
+$$x' = \frac{x - x_{\min}}{x_{\max} - x_{\min}} \in [0, 1]$$</p>
+<p><strong>Z-Score 标准化</strong>：
+$$x' = \frac{x - \mu}{\sigma}$$</p>
+<p>变换后均值 0、标准差 1。</p>
+<p><strong>选择原则</strong>：</p>
+<ul>
+<li>有明确上下界且分布较均匀 → Min-Max</li>
+<li>有异常值（极大/极小的个别样本）→ Z-Score 更鲁棒</li>
+<li>原因：Min-Max 受极值影响严重（一个极大值会把其他所有点压到接近 0）</li>
+</ul>
+<h3 id="齐次坐标与仿射变换">齐次坐标与仿射变换</h3>
+<p>将 $n$ 维向量扩展为 $n+1$ 维（最后加一个 1），可以用矩阵乘法统一表示平移、旋转、缩放。</p>
+<p>二维平面的点 $(x_1, x_2)$ 用齐次坐标表示为 $\boldsymbol{v} = [x_1, x_2, 1]^T$。</p>
+<p>变换矩阵：
+$$\boldsymbol{T} = \begin{pmatrix} 1 & 0 & a \\ 0 & 1 & b \\ 0 & 0 & 1 \end{pmatrix}$$</p>
+<p>则 $\boldsymbol{T}\boldsymbol{v} = [x_1 + a, x_2 + b, 1]^T$——几何意义是平移 $(a, b)$。</p>
+<p><strong>与机器学习的联系</strong>：逻辑回归中 $\boldsymbol{x} \leftarrow [1, x_1, \ldots, x_d]^T$（加一个 1 吸收偏置）本质上就是齐次坐标的思想。</p>
+<hr>
+<h2 id="本章核心要点">本章核心要点</h2>
+<ol>
+<li><strong>线性回归</strong>：模型 $\hat{y} = \boldsymbol{w}^T\boldsymbol{x}$，损失 MSE，解析解需要矩阵逆</li>
+<li><strong>梯度下降</strong>：沿负梯度方向迭代更新，学习率决定收敛行为</li>
+<li><strong>SGD / Mini-batch</strong>：用部分样本估计梯度，平衡效率和准确性</li>
+<li><strong>Sigmoid</strong>：$\sigma(z) = 1/(1+e^{-z})$，导数 $\sigma'=\sigma(1-\sigma)$，最大 0.25</li>
+<li><strong>逻辑回归</strong>：Sigmoid + 线性 → 二分类概率，损失是交叉熵（= 负对数似然）</li>
+<li><strong>Softmax</strong>：多分类的概率化，保证和为 1</li>
+<li><strong>正则化</strong>：L1 稀疏化特征选择，L2 权重衰减防止过大</li>
+<li><strong>MLE 统一视角</strong>：高斯噪声 → MSE，伯努利 → 交叉熵</li>
+</ol>
+<hr>
+<h2 id="补充梯度下降的几何直觉">补充：梯度下降的几何直觉</h2>
+<h3 id="等值线与梯度的关系">等值线与梯度的关系</h3>
+<p>损失函数 $J(\boldsymbol{w})$ 可以画出等值线——相同损失值的参数点连成的曲线。</p>
+<ul>
+<li><strong>梯度方向</strong>：垂直于等值线，指向函数增长最快的方向</li>
+<li><strong>负梯度方向</strong>：垂直于等值线，指向下降最快的方向</li>
+<li><strong>等值线密集</strong>处梯度大（变化快），<strong>稀疏</strong>处梯度小（变化慢）</li>
+</ul>
+<h3 id="条件数与收敛速度">条件数与收敛速度</h3>
+<p>对于二次函数 $J(\boldsymbol{w}) = \frac{1}{2}\boldsymbol{w}^T\boldsymbol{A}\boldsymbol{w}$，等值线是椭圆。</p>
+<p><strong>条件数</strong> $\kappa = \lambda_{\max}/\lambda_{\min}$（$\boldsymbol{A}$ 的最大与最小特征值之比）：</p>
+<ul>
+<li>$\kappa \approx 1$：等值线接近圆形，梯度下降直奔最优解</li>
+<li>$\kappa \gg 1$：等值线非常狭长，梯度下降走锯齿形路径，收敛极慢</li>
+</ul>
+<p><strong>特征归一化</strong>的本质作用就是让条件数接近 1——等值线变圆。</p>
+<h3 id="凸函数与全局最优">凸函数与全局最优</h3>
+<p><strong>凸函数定义</strong>：对任意 $\boldsymbol{x}, \boldsymbol{y}$ 和 $\lambda \in [0,1]$：
+$$f(\lambda\boldsymbol{x} + (1-\lambda)\boldsymbol{y}) \le \lambda f(\boldsymbol{x}) + (1-\lambda)f(\boldsymbol{y})$$</p>
+<p><strong>凸函数的关键性质</strong>：任何局部最优都是全局最优。</p>
+<ul>
+<li>线性回归的 MSE 是凸函数 → 梯度下降一定能找到全局最优</li>
+<li>逻辑回归的交叉熵也是凸函数 → 同上</li>
+<li>神经网络的损失函数<strong>不是凸的</strong> → 只能找到局部最优（但实践中局部最优通常够好）</li>
+</ul>
+<hr>
+<h2 id="补充逻辑回归的决策边界分析">补充：逻辑回归的决策边界分析</h2>
+<h3 id="分析不同参数的行为">分析不同参数的行为</h3>
+<p>设特征 $\boldsymbol{x} = [1, x_1, x_2]^T$（含截距项），考虑三组参数：</p>
+<p><strong>参数 I</strong>：$\boldsymbol{w} = [1, 1, 1]^T$</p>
+<ul>
+<li>决策边界：$1 + x_1 + x_2 = 0$，即 $x_1 + x_2 = -1$</li>
+<li>对 $\boldsymbol{x} = [1, 1]$：$\boldsymbol{w}^T\boldsymbol{x} = 3$，$P(y=1) = \sigma(3) \approx 0.953$</li>
+</ul>
+<p><strong>参数 II</strong>：$\boldsymbol{w} = [0.5, 2, 0.5]^T$</p>
+<ul>
+<li>决策边界：$0.5 + 2x_1 + 0.5x_2 = 0$，即 $4x_1 + x_2 = -1$（不同的线！）</li>
+<li>对 $\boldsymbol{x} = [1, 1]$：$\boldsymbol{w}^T\boldsymbol{x} = 3$，$P(y=1) = \sigma(3) \approx 0.953$</li>
+</ul>
+<p><strong>参数 III</strong>：$\boldsymbol{w} = [3, 3, 3]^T$</p>
+<ul>
+<li>决策边界：$3 + 3x_1 + 3x_2 = 0$，即 $x_1 + x_2 = -1$（和 I 相同！）</li>
+<li>对 $\boldsymbol{x} = [1, 1]$：$\boldsymbol{w}^T\boldsymbol{x} = 9$，$P(y=1) = \sigma(9) \approx 0.9999$</li>
+</ul>
+<p><strong>关键观察</strong>：</p>
+<ol>
+<li>I 和 III 决策边界相同（等比例缩放）但 III 更&quot;自信&quot;</li>
+<li>I 和 II 决策边界不同（不是等比例缩放）</li>
+<li>等比例缩放参数不改变分类决策，但改变概率的&quot;锐度&quot;</li>
+</ol>
+
+    <nav class="pager">  <a href="01-ml-math-foundations.html">
+    <span class="label">← 上一章</span>
+    <span class="title">机器学习基础与数学准备</span>
+  </a>  <a href="03-neural-networks-cnn.html" class="next">
+    <span class="label">下一章 →</span>
+    <span class="title">前馈神经网络与卷积神经网络</span>
+  </a></nav>
+  </article>
+</div>
+
+<footer>
+  <div class="set">
+    <span>人工智能与数学原理</span>
+    <span>2026 · ZH-CN</span>
+  </div>
+  <div class="set">
+    <span>Mav</span>
+  </div>
+</footer>
+<div class="search-backdrop" id="search-overlay" role="dialog" aria-modal="true" aria-label="搜索" hidden>
+  <div class="search-modal">
+    <div class="search-input-wrap">
+      <input type="search" class="search-input" placeholder="搜索内容..." aria-label="搜索内容" autocomplete="off">
+      <kbd>ESC</kbd>
+    </div>
+    <div class="search-results" role="listbox" aria-label="搜索结果"></div>
+  </div>
+</div>
+
+<!-- Side Panel -->
+<div class="side-panel" id="side-panel">
+  <div class="side-panel-resize" id="side-panel-resize"></div>
+  <div class="side-panel-header">
+    <div class="side-panel-tabs">
+      <button class="side-panel-tab active" data-mode="sidenote">补充</button>
+      <button class="side-panel-tab" data-mode="notepad">笔记</button>
+    </div>
+    <button class="side-panel-close" aria-label="关闭">×</button>
+  </div>
+  <div class="side-panel-body"></div>
+</div>
+<button class="notepad-fab" id="notepad-fab" aria-label="便利贴">✎</button>
+
+<!-- Mobile TOC -->
+<button class="mtoc-fab" id="mtoc-fab" aria-label="目录">TOC</button>
+<div class="mtoc-drawer" id="mtoc-drawer">
+  <div class="mtoc-content"></div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/bash.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/typescript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/yaml.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/javascript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/json.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/python.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/css.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+<script>mermaid.initialize({startOnLoad:true, theme:'neutral', fontFamily:'Inter, sans-serif'});</script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}]});"></script>
+<script src="../assets/script.js"></script>
+</body>
+</html>
