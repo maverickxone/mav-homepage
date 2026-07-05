@@ -103,9 +103,9 @@ $$x\sim\sum_{n=1}^{\infty}\frac{2(-1)^{n+1}}{n}\sin nx,\quad x\in(-\pi,\pi).$$
 $$f(x)\sim\frac{4}{\pi}\sum_{k=0}^{\infty}\frac{\sin(2k+1)x}{2k+1}.$$
 在 $x=0$ 处级数收敛到 $0$（跳跃平均）；在 $(0,\pi)$ 内收敛到 $1$。
 
-**例 12.2'** 方波 $f(x)=x$（$-\pi\le x\le\pi$），周期 $2\pi$。$f$ 奇，$b_n=\dfrac{2(-1)^{n+1}}{n}$，即
+**例 12.2'** 锯齿波 $f(x)=x$（$-\pi<x<\pi$），周期 $2\pi$。这是例 12.1 的同一个周期延拓。$f$ 奇，$b_n=\dfrac{2(-1)^{n+1}}{n}$，即
 $$x\sim 2\sum_{n=1}^{\infty}\frac{(-1)^{n+1}}{n}\sin nx.$$
-与例 12.1 差一因子 $2$ 是因为区间端点约定不同；在 $(-\pi,\pi)$ 内结论一致。
+端点取值不影响 Fourier 系数；在跳跃点 $x=(2k+1)\pi$ 处，级数收敛到左右极限的平均值 $0$。
 
 ### 12.1.3 有限区间上的展开与延拓
 
@@ -135,10 +135,10 @@ b_n=\frac{2}{L}\int_0^L f(x)\sin\frac{n\pi x}{L}\,dx.$$
 
 **余弦展开**：$a_0=\dfrac{2}{\pi}\int_0^{\pi}x(\pi-x)\,dx=\dfrac{2}{\pi}\Big[\dfrac{\pi x^2}{2}-\dfrac{x^3}{3}\Big]_0^{\pi}=\dfrac{\pi^2}{3}$。
 $$a_n=\frac{2}{\pi}\int_0^{\pi}x(\pi-x)\cos nx\,dx.$$
-分部积分两次（或利用 $x(\pi-x)$ 关于 $x=\pi/2$ 对称），得 $a_n=-\dfrac{2}{n^2}[1+(-1)^n]$：$n$ 偶时 $a_n=0$；$n=2k+1$ 时 $a_{2k+1}=-\dfrac{4}{(2k+1)^2}$。故
-$$x(\pi-x)\sim\frac{\pi^2}{6}-\frac{4}{\pi}\sum_{k=0}^{\infty}\frac{\cos(2k+1)x}{(2k+1)^2},\quad x\in[0,\pi].$$
+分部积分两次（或利用 $x(\pi-x)$ 关于 $x=\pi/2$ 对称），得 $a_n=-\dfrac{2}{n^2}[1+(-1)^n]$：$n$ 奇时 $a_n=0$；$n=2k$ 时 $a_{2k}=-\dfrac{1}{k^2}$。故
+$$x(\pi-x)\sim\frac{\pi^2}{6}-\sum_{k=1}^{\infty}\frac{\cos 2kx}{k^2},\quad x\in[0,\pi].$$
 
-**正弦展开**：$b_n=\dfrac{2}{\pi}\int_0^{\pi}x(\pi-x)\sin nx\,dx$。设 $I_n=\int_0^{\pi}x(\pi-x)\sin nx\,dx$，分部积分得 $I_n=\dfrac{2\pi}{n^2}[1-(-1)^n]$，故 $b_n=\dfrac{4\big(1-(-1)^n\big)}{\pi n^3}$：$n$ 偶时 $b_n=0$；$n=2k+1$ 时 $b_{2k+1}=\dfrac{8}{\pi(2k+1)^3}$。
+**正弦展开**：$b_n=\dfrac{2}{\pi}\int_0^{\pi}x(\pi-x)\sin nx\,dx$。设 $I_n=\int_0^{\pi}x(\pi-x)\sin nx\,dx$，分部积分得 $I_n=\dfrac{2\big(1-(-1)^n\big)}{n^3}$，故 $b_n=\dfrac{4\big(1-(-1)^n\big)}{\pi n^3}$：$n$ 偶时 $b_n=0$；$n=2k+1$ 时 $b_{2k+1}=\dfrac{8}{\pi(2k+1)^3}$。
 
 **例 12.3'** $f(x)=x^2$（$-\pi\le x\le\pi$），周期 $2\pi$。$f$ 偶，$b_n=0$。$a_0=\dfrac{2}{\pi}\int_0^{\pi}x^2\,dx=\dfrac{2\pi^2}{3}$；$a_n=\dfrac{2}{\pi}\int_0^{\pi}x^2\cos nx\,dx=\dfrac{4(-1)^n}{n^2}$。故
 $$x^2\sim\frac{\pi^2}{3}+4\sum_{n=1}^{\infty}\frac{(-1)^n}{n^2}\cos nx.$$
@@ -170,8 +170,8 @@ c_n=\frac{1}{2L}\int_{-L}^{L} f(x)e^{-in\pi x/L}\,dx.$$
 **例 12.4** $f(x)=e^x$（$-\pi<x<\pi$），周期 $2\pi$ 延拓。
 $$c_n=\frac{1}{2\pi}\int_{-\pi}^{\pi}e^x e^{-inx}\,dx=\frac{1}{2\pi}\int_{-\pi}^{\pi}e^{(1-in)x}\,dx
 =\frac{1}{2\pi(1-in)}\big[e^{(1-in)\pi}-e^{-(1-in)\pi}\big]
-=\frac{(-1)^{n+1}}{\pi(1-in)}\sinh\pi.$$
-实部、虚部分别对应 $\cos nx$、$\sin nx$ 的系数；$|c_n|\sim C/n$，级数一致收敛。
+=\frac{(-1)^n}{\pi(1-in)}\sinh\pi.$$
+实部、虚部分别对应 $\cos nx$、$\sin nx$ 的系数；$|c_n|\sim C/n$。由于周期延拓在 $\pm\pi$ 处有跳跃，级数不在全区间上一致收敛；按 Dirichlet 定理，它在连续点收敛到 $e^x$，在端点收敛到 $\dfrac{e^\pi+e^{-\pi}}{2}=\cosh\pi$。
 
 **复形式计算 $f(x)=x$（$-\pi,\pi$）**：$c_n=\dfrac{1}{2\pi}\int_{-\pi}^{\pi}x e^{-inx}\,dx$。$n=0$ 时 $c_0=0$；$n\neq 0$ 时分部积分得 $c_n=\dfrac{i(-1)^n}{n}$，故
 $$x\sim\sum_{n\neq 0}\frac{i(-1)^n}{n}e^{inx}=2\sum_{n=1}^{\infty}\frac{(-1)^{n+1}}{n}\sin nx,$$
@@ -206,17 +206,19 @@ $$\|f-S_N(f)\|_{L^2}\le\|f-T_N\|_{L^2}.$$
 
 ### 12.2.2 Bessel 不等式与 Parseval 等式
 
-记 $f_n=\cos nx$（$n\ge0$，$f_0=1/\sqrt2$ 归一化亦可）、$g_n=\sin nx$（$n\ge1$）。正交归一系 $\{e_n\}$ 下，部分和系数满足
-$$\sum_{n=0}^{N}|c_n|^2\le\|f\|_{L^2}^2\quad\text{（Bessel 不等式）},$$
-其中 $c_n$ 为 Fourier 系数（复形式或实形式等价）。等号对一切 $N$ 成立当且仅当 $f\in\mathrm{span}\{e_n\}_{n\le N}$；对无穷级数，等号成立即 Parseval。当 $N\to\infty$ 时，若 $f\in L^2$，则
+在实系数写法下，部分和系数满足
+$$\frac{a_0^2}{2}+\sum_{n=1}^{N}(a_n^2+b_n^2)\le\|f\|_{L^2}^2\quad\text{（Bessel 不等式）}.$$
+有限项等号成立当且仅当 $f$ 本身就是次数 $\le N$ 的三角多项式；无穷项等号成立即 Parseval。当 $N\to\infty$ 时，若 $f\in L^2$，则
 $$\|f-S_N(f)\|_{L^2}\to 0\quad\text{（平方平均收敛）},$$
 且 **Parseval 等式**
-$$\|f\|_{L^2}^2=\frac{a_0^2}{2}+\sum_{n=1}^{\infty}(a_n^2+b_n^2)
-=\sum_{n=-\infty}^{\infty}|c_n|^2.$$
+$$\|f\|_{L^2}^2=\frac{a_0^2}{2}+\sum_{n=1}^{\infty}(a_n^2+b_n^2).$$
+若使用复系数 $c_n=\dfrac{1}{2\pi}\int_{-\pi}^{\pi}f(x)e^{-inx}\,dx$，则
+$$\frac{1}{2\pi}\int_{-\pi}^{\pi}|f(x)|^2\,dx=\sum_{n=-\infty}^{\infty}|c_n|^2,$$
+等价地，在本章的归一化范数 $\|f\|_{L^2}^2=\dfrac{1}{\pi}\int|f|^2$ 下有 $\|f\|_{L^2}^2=2\sum_{n\in\mathbb{Z}}|c_n|^2$。
 实形式下 $\tfrac{a_0^2}{2}+\sum(a_n^2+b_n^2)$ 表示信号总能量在频率上的分配。
 
 **证明 Bessel 不等式（概要）**：设 $r_N=f-S_N(f)$。$S_N(f)\perp r_N$（正交投影），故
-$$\|f\|_{L^2}^2=\|S_N(f)\|_{L^2}^2+\|r_N\|_{L^2}^2\ge\|S_N(f)\|_{L^2}^2=\sum_{|n|\le N}|c_n|^2.$$
+$$\|f\|_{L^2}^2=\|S_N(f)\|_{L^2}^2+\|r_N\|_{L^2}^2\ge\|S_N(f)\|_{L^2}^2.$$
 令 $N\to\infty$ 即得 Bessel；平方平均收敛成立时范数极限给出 Parseval。
 
 **实系数形式的 Parseval**：由 $a_n=c_n+\overline{c_{-n}}$、$b_n=i(c_{-n}-c_n)$（$n>0$）及 $c_{-n}=\overline{c_n}$ 可验证
@@ -233,7 +235,8 @@ $$\|f\|_{L^2}^2=\frac{1}{\pi}\int_{-\pi}^{\pi}|f|^2=\frac{a_0^2}{2}+\sum_{n=1}^{
 一致 $\Rightarrow$ 逐点（在适当条件下）$\Rightarrow$ 平方平均；反向一般不成立。
 
 :::callout 为何 $L^2$ 收敛最重要
-工程与概率中更关心能量 $\int|f|^2$ 而非逐点值；$L^2$ 收敛保证截断级数的能量误差趋于零。数值计算中 $N$ 项部分和在 $L^2$ 意义下已是「最优」$N$ 阶三角逼近，Parseval 给出可检验的误差上界 $\|r_N\|_{L^2}^2=\|f\|_{L^2}^2-\sum_{|n|\le N}|c_n|^2$。
+工程与概率中更关心能量 $\int|f|^2$ 而非逐点值；$L^2$ 收敛保证截断级数的能量误差趋于零。数值计算中 $N$ 项部分和在 $L^2$ 意义下已是「最优」$N$ 阶三角逼近，Parseval 给出可检验的误差上界
+$$\|r_N\|_{L^2}^2=\|f\|_{L^2}^2-\left[\frac{a_0^2}{2}+\sum_{n=1}^{N}(a_n^2+b_n^2)\right].$$
 :::
 
 **例 12.5** 对例 12.1 的 $f(x)=x$（$-\pi,\pi$），Parseval 验证
@@ -263,15 +266,15 @@ $$\frac{f(x_0+)+f(x_0-)}{2}.$$
 
 **证明思路（概要）**：
 
-1. **Dirichlet 核** $D_N(x)=\dfrac{\sin\big(N+\tfrac12\big)x}{2\sin\tfrac{x}{2}}$。利用
+1. **Dirichlet 核** $D_N(x)=\dfrac12+\sum_{n=1}^{N}\cos nx=\dfrac{\sin\big(N+\tfrac12\big)x}{2\sin\tfrac{x}{2}}$。利用复指数恒等式
    $$\sum_{n=-N}^{N}e^{inx}=\frac{\sin\big(N+\tfrac12\big)x}{\sin\tfrac{x}{2}}$$
    与系数定义，部分和写为卷积型积分
    $$S_N(f)(x)=\frac{1}{\pi}\int_{-\pi}^{\pi}f(t)D_N(x-t)\,dt.$$
-2. **核的性质**：$D_N$ 为偶函数；$\dfrac{1}{\pi}\int_{-\pi}^{\pi}D_N=1$（归一化）；对固定 $\delta\in(0,\pi)$，$\dfrac{1}{\pi}\int_{\delta\le|x|\le\pi}|D_N(x)|\,dx\to 0$（$N\to\infty$）——能量集中在 $x=0$ 附近，近似 $\delta$ 函数。
-3. **连续点**：设 $x_0$ 连续。拆积分 $I_1=\int_{|t-x_0|<\delta}$、$I_2=\int_{|t-x_0|\ge\delta}$。$I_2$ 由控制项趋于 $0$；$I_1$ 中 $f(t)\approx f(x_0)$，结合归一化得 $S_N(f)(x_0)\to f(x_0)$。
+2. **核的性质**：$D_N$ 为偶函数；$\dfrac{1}{\pi}\int_{-\pi}^{\pi}D_N=1$（归一化）。注意 $D_N$ 不是正核，不能把它简单当成普通概率密度；远离 $0$ 的振荡贡献要用 Dirichlet 判别或 Riemann-Lebesgue 型估计处理。
+3. **连续点**：设 $x_0$ 连续。拆积分 $I_1=\int_{|t-x_0|<\delta}$、$I_2=\int_{|t-x_0|\ge\delta}$。$I_1$ 中 $f(t)\approx f(x_0)$，结合归一化给出主项；$I_2$ 由于核的快速振荡趋于 $0$，故 $S_N(f)(x_0)\to f(x_0)$。
 4. **跳跃点**：设 $f(x_0+)\neq f(x_0-)$。换元 $t=x_0+u$，核的对称性使左右贡献分别趋于 $f(x_0+)$ 与 $f(x_0-)$ 的加权平均，极限为 $\tfrac12[f(x_0+)+f(x_0-)]$。
 
-**一致收敛的补充**：若 $f$ 连续且以 $2\pi$ 为周期的导数 $f'$ 分段连续，则 Fourier 级数在 $\mathbb{R}$ 上**一致收敛**于 $f$（M 判别法：$|a_n|,|b_n|=O(1/n)$，$\sum 1/n^2$ 收敛 ⇒ 系数可和）。
+**一致收敛的补充**：若 $f$ 连续且周期拼接处也连续，并且正则性足够强（例如 $f$ 分段 $C^2$），则 Fourier 级数在 $\mathbb{R}$ 上**一致收敛**于 $f$。若只知道 $f$ 分段光滑，通常只能直接保证逐点收敛；遇到跳跃间断时不可能一致收敛到原函数。
 
 :::callout Gibbs 现象
 在跳跃间断附近，$S_N(f)$ 出现过冲（约 9% 跃变量），随 $N$ 增大过冲区变窄但不消失。这不与 Dirichlet 定理矛盾——定理说的是**逐点极限**在间断点等于平均值，而非一致收敛。
@@ -297,7 +300,7 @@ $$\frac{f(x_0+)+f(x_0-)}{2}.$$
 
 **例 12.6** $f(x)=\begin{cases}1,&0<x<\pi,\\-1,&-\pi<x<0,\end{cases}$ 周期 $2\pi$。在 $x=0$ 处 $f(0+)=1,\ f(0-)=-1$，Dirichlet 给出 $S_f(0)=0$；而 $\|f-S_N\|_{L^2}\to 0$ 仍成立。
 
-**例 12.6'** $f(x)=\begin{cases}x,&0\le x<\pi,\\x-2\pi,&-\pi\le x<0,\end{cases}$ 周期 $2\pi$（锯齿波）。$f$ 连续但 $f'(\pi-)=1,\ f'(\pi+)=1$ 在 $x=\pi$ 处导数跳跃。Fourier 系数 $b_n=\dfrac{2(-1)^n}{n}$，级数在 $\mathbb{R}$ 上收敛到 $f$ 的周期延拓；在 $x=\pi+2k\pi$ 处 Dirichlet 值仍为 $\pi$（连续点）。
+**例 12.6'** 锯齿波 $f(x)=x$（$-\pi<x<\pi$），周期 $2\pi$。此即例 12.1 的函数。它在每个周期内部连续，但在 $x=\pi+2k\pi$ 处有跳跃间断：$f(\pi-)=\pi,\ f(\pi+)=f(-\pi+)=-\pi$。Fourier 系数 $b_n=\dfrac{2(-1)^{n+1}}{n}$；级数在连续点收敛到 $f(x)$，在跳跃点收敛到 $\dfrac{\pi+(-\pi)}2=0$。
 
 ---
 
@@ -382,17 +385,37 @@ $$\hat{f}(\omega)=\sqrt{2\pi}\,e^{-\omega^2/2},$$
 解析要点：偶延拓得 $a_0=\pi$，$a_n=\frac{2}{\pi}\cdot\frac{(-1)^n-1}{n^2}$（仅奇数项非零）。由 Dirichlet 定理：
 $$x=\frac{\pi}{2}-\frac{4}{\pi}\sum_{k=1}^{\infty}\frac{\cos(2k-1)x}{(2k-1)^2},\quad x\in[0,\pi].$$
 
-取 $x=0$：$\sum\frac{1}{(2k-1)^2}=\frac{\pi^2}{8}$。用 Parseval：$\sum\frac{1}{(2k-1)^4}=\frac{\pi^4}{96}$。对级数在 $[0,x]$ 逐项积分得 $\sum\frac{\sin(2n-1)x}{(2n-1)^3}=\frac{\pi}{8}(x-\frac{x^2}{\pi})$。
+取 $x=0$：$\sum\frac{1}{(2k-1)^2}=\frac{\pi^2}{8}$。用 Parseval：$\sum\frac{1}{(2k-1)^4}=\frac{\pi^4}{96}$。对级数在 $[0,x]$ 逐项积分得
+$$\sum_{n=1}^{\infty}\frac{\sin(2n-1)x}{(2n-1)^3}=\frac{\pi}{8}(\pi x-x^2).$$
 
 ---
 
 **[2024-一(1)]** 将 $f(x)=1-\frac{x}{\pi}$（$0\le x\le\pi$）展为正弦级数并求和函数 $S(x)$，计算 $S(-3)$ 和 $S(12)$。
 
-解析要点：奇延拓后以 $2\pi$ 为周期。$b_n=\frac{2}{\pi}\int_0^\pi(1-\frac{x}{\pi})\sin nx\,dx=\frac{2}{n\pi}$（所有 $n$）。正弦级数：$f(x)=\frac{2}{\pi}\sum_{n=1}^\infty\frac{\sin nx}{n}$。$S(x)$ 在间断点取平均值。$S(-3)=S(3)=\frac{\pi-3}{\pi}$；$S(12)=S(12-4\pi)=1-\frac{12-4\pi}{\pi}=\frac{12-3\pi}{\pi}$... 需要判断 $12-4\pi$ 落在哪个区间。
+解析要点：奇延拓后以 $2\pi$ 为周期，记延拓函数为 $F$。$b_n=\frac{2}{\pi}\int_0^\pi(1-\frac{x}{\pi})\sin nx\,dx=\frac{2}{n\pi}$（所有 $n$），故
+$$S(x)=\frac{2}{\pi}\sum_{n=1}^\infty\frac{\sin nx}{n}.$$
+在连续点 $S(x)=F(x)$，在跳跃点取左右极限平均。因 $-3\in(-\pi,0)$，
+$$S(-3)=F(-3)=-F(3)=-\left(1-\frac{3}{\pi}\right)=\frac{3-\pi}{\pi}.$$
+又 $12-4\pi\in(-\pi,0)$，所以
+$$S(12)=F(12-4\pi)=-\left(1-\frac{4\pi-12}{\pi}\right)=\frac{3\pi-12}{\pi}.$$
 
 ---
 
-**[2024-二]** 将 $f(x)$ 展为正弦级数（系数为 $\frac{\sin n}{n^2}$），利用 Parseval 证明 $\displaystyle\sum_{n=1}^{\infty}\frac{\sin^2 n}{n^4}=\frac{(\pi-1)^2}{6}$。
+**[2024-二]** 设
+$$f(x)=\begin{cases}\dfrac{\pi-1}{2}x,&0\le x\le1,\\[4pt]\dfrac{\pi-x}{2},&1<x\le\pi,\end{cases}$$
+将 $f(x)$ 展为正弦级数，并利用 Parseval 证明 $\displaystyle\sum_{n=1}^{\infty}\frac{\sin^2 n}{n^4}=\frac{(\pi-1)^2}{6}$。
+
+解析要点：$f(0)=f(\pi)=0$，分段求导得 $f'(x)=\frac{\pi-1}{2}$（$0<x<1$），$f'(x)=-\frac12$（$1<x<\pi$）。分部积分：
+$$b_n=\frac{2}{\pi}\int_0^\pi f(x)\sin nx\,dx
+=\frac{2}{\pi n}\int_0^\pi f'(x)\cos nx\,dx
+=\frac{2}{\pi n}\left[\frac{\pi-1}{2}\int_0^1\cos nx\,dx-\frac12\int_1^\pi\cos nx\,dx\right]
+=\frac{\sin n}{n^2}.$$
+于是 $f(x)\sim\sum_{n=1}^\infty\dfrac{\sin n}{n^2}\sin nx$。由 Parseval（半区间正弦形式）
+$$\sum_{n=1}^{\infty}b_n^2=\frac{2}{\pi}\int_0^\pi f^2(x)\,dx.$$
+而
+$$\int_0^\pi f^2(x)\,dx=\int_0^1\frac{(\pi-1)^2x^2}{4}\,dx+\int_1^\pi\frac{(\pi-x)^2}{4}\,dx
+=\frac{\pi(\pi-1)^2}{12},$$
+故 $\displaystyle\sum_{n=1}^{\infty}\frac{\sin^2 n}{n^4}=\frac{(\pi-1)^2}{6}$。
 
 ---
 
@@ -416,13 +439,27 @@ $$x=\frac{\pi}{2}-\frac{4}{\pi}\sum_{k=1}^{\infty}\frac{\cos(2k-1)x}{(2k-1)^2},\
 
 **[2021-六]** 将 $f(x)=\frac{\pi}{2}-x$（$x\in[0,\pi]$）展为正弦级数，由此求 $\displaystyle\sum_{n=1}^{\infty}\frac{1}{(2n-1)^2}$ 和 $\displaystyle\sum_{n=1}^{\infty}\frac{1}{n^4}$。
 
-解析要点：$b_n=\frac{2}{n\pi}[1-(-1)^n]+\frac{2(-1)^{n+1}}{n}$... 最终利用 Parseval 得 $\sum\frac{1}{n^4}=\frac{\pi^4}{90}$。
+解析要点：直接计算
+$$b_n=\frac{2}{\pi}\int_0^\pi\left(\frac{\pi}{2}-x\right)\sin nx\,dx
+=\frac{1+(-1)^n}{n}.$$
+故 $n$ 奇时 $b_n=0$，$n=2k$ 时 $b_{2k}=\dfrac1k$，正弦级数为
+$$\frac{\pi}{2}-x\sim\sum_{k=1}^{\infty}\frac{\sin 2kx}{k},\quad 0<x<\pi.$$
+Parseval 给出
+$$\sum_{k=1}^{\infty}\frac1{k^2}=\frac{2}{\pi}\int_0^\pi\left(\frac{\pi}{2}-x\right)^2dx=\frac{\pi^2}{6},$$
+从而 $\sum_{n=1}^{\infty}\frac{1}{(2n-1)^2}=\frac{\pi^2}{8}$。再对级数在 $[0,x]$ 上逐项积分：
+$$\sum_{k=1}^\infty\frac{1-\cos 2kx}{2k^2}=\frac{\pi x}{2}-\frac{x^2}{2},$$
+即 $\sum_{k=1}^\infty\frac{\cos 2kx}{k^2}=\frac{\pi^2}{6}-\pi x+x^2$。对这个余弦级数再用 Parseval，可得 $\sum_{k=1}^{\infty}\frac1{k^4}=\frac{\pi^4}{90}$。
 
 ---
 
 **[2023-四] (Dirichlet 积分应用)** 利用 $\int_0^{+\infty}\frac{\sin x}{x}\,dx=\frac\pi2$ 计算 $\int_0^{+\infty}\frac{\sin(ax)\sin(bx)}{x^2}\,dx$（$0<a<b$）。
 
-解析要点：令 $f(t)=\int_0^\infty\frac{\sin(at)\sin(bx)}{x^2}\,dx$，对 $t$ 求导得 $f'(t)=\int_0^\infty\frac{\cos(at)\sin(bx)}{x}\,dx$，利用积化和差化为 Dirichlet 积分之和 $f'(t)=\pi/2$，结合 $f(0)=0$ 得 $f(a)=\frac{\pi a}{2}$。
+解析要点：固定 $b$，令
+$$F(a)=\int_0^\infty\frac{\sin(ax)\sin(bx)}{x^2}\,dx,\quad 0\le a<b.$$
+对参数 $a$ 求导：
+$$F'(a)=\int_0^\infty\frac{\cos(ax)\sin(bx)}{x}\,dx
+=\frac12\int_0^\infty\frac{\sin((b+a)x)+\sin((b-a)x)}{x}\,dx=\frac{\pi}{2}.$$
+又 $F(0)=0$，故 $F(a)=\dfrac{\pi a}{2}$。
 
 ---
 

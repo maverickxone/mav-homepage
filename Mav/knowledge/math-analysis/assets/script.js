@@ -706,6 +706,15 @@
 
       if (mode === 'sidenote') {
         bodyEl.innerHTML = '<div class="side-panel-sidenote-content">' + content + '</div>';
+        if (window.renderMathInElement) {
+          renderMathInElement(bodyEl, {
+            delimiters: [
+              {left: '$$', right: '$$', display: true},
+              {left: '$', right: '$', display: false}
+            ],
+            throwOnError: false
+          });
+        }
       } else {
         const saved = safeGetItem(NOTES_KEY) || '';
         bodyEl.innerHTML = '<textarea class="side-panel-notepad" placeholder="随手记点什么...">' + escapeHtml(saved) + '</textarea>';

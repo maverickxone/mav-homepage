@@ -79,12 +79,13 @@
 </ul>
 </blockquote>
 <p>前面各章把函数在<strong>空间区域</strong>上积分；本章换一条思路——把「足够好的」函数写成<strong>三角函数（或复指数）的叠加</strong>，在频率域里分析信号与周期现象。Fourier 级数处理周期函数；平方平均收敛给出 $L^2$ 意义下「最佳逼近」；Dirichlet 定理回答何时级数在每一点收敛；Fourier 积分与变换把周期推广到全直线，是偏微分方程、信号处理、量子力学的共同语言。</p>
-<p><strong>本章主线</strong>：正交性 $\Rightarrow$ 系数公式 $\Rightarrow$ 级数展开 $\Rightarrow$ 三种收敛（一致 / 逐点 / 平方平均）$\Rightarrow$ 非周期情形的 Fourier 变换。计算题要分清：周期延拓方式、奇偶性、半区间展开类型；理论题要分清：$L^2$ 收敛条件最宽，Dirichlet 条件保证逐点收敛到 $\tfrac12[f_++f_-]$。</p>
+<p><strong>本章主线</strong>：正交性 $\Rightarrow$ 系数公式 $\Rightarrow$ 级数展开 $\Rightarrow$ 三种收敛（一致 / 逐点 / 平方平均）$\Rightarrow$ 非周期情形的 Fourier 变换。计算题要分清：周期延拓方式、奇偶性、半区间展开类型；理论题要分清：$L^2$ 收敛条件最宽，Dirichlet 条件保证逐点收敛到 $\tfrac12[f_++f_-]$。<span class="sidenote-mark" data-note="<strong>新手阅读建议</strong><br><br>如果你是第一次接触 Fourier 分析，建议带着一个核心问题来阅读：<strong>「任意一个函数，能否用 sin 和 cos 的叠加来表示？」</strong>整章都在围绕这个问题展开——§12.1 告诉你怎么算出每个 sin/cos 前面的系数；§12.2 告诉你这种逼近在能量意义下有多好；§12.3 告诉你在哪些点上级数真的等于原函数；§12.4 把这套方法推广到非周期函数。<br><br>阅读每一节时，<strong>先看例题再看定理</strong>往往更容易建立直觉。遇到证明可以先跳过，抓住结论和「怎么用」，回头再补细节。">新手阅读建议</span></p>
 <hr>
 <h2 id="121-fourier-级数">12.1 Fourier 级数</h2>
 <blockquote><p>🔴 <strong>考试重要度：极高</strong> | 展开 + 求和函数 + 利用展开求数项级数，每年必考</p>
 </blockquote>
 <h3 id="1211-三角函数系的正交性">12.1.1 三角函数系的正交性</h3>
+<p>在正式推导之前，先建立一个直觉。回忆线性代数中的正交基：三维空间里 $\vec{i},\vec{j},\vec{k}$ 两两垂直（内积为零），任何向量 $\vec{v}$ 都可以唯一分解为 $\vec{v}=a\vec{i}+b\vec{j}+c\vec{k}$，而系数就是「在各方向上的投影」$a=\vec{v}\cdot\vec{i}$。Fourier 分析的核心思想完全一样——只不过把有限维的向量换成了函数，把点积换成了积分，把 $\vec{i},\vec{j},\vec{k}$ 换成了 $\cos nx$ 和 $\sin nx$。因此，<strong>第一步就是验证这组「基函数」确实两两正交</strong>。</p>
 <p>在区间 $[-\pi,\pi]$ 上，考虑函数系
 $$1,\ \cos x,\ \cos 2x,\ \ldots,\ \cos nx,\ \ldots;\qquad \sin x,\ \sin 2x,\ \ldots,\ \sin nx,\ \ldots.$$
 对任意 $m,n\in\mathbb{N}$（$m,n\ge 1$），有
@@ -106,24 +107,19 @@ $$\int_{-\pi}^{\pi}\cos mx\cos nx\,dx=\frac12\int_{-\pi}^{\pi}\big[\cos(m+n)x+\c
 因 $m\pm n\neq 0$，$\cos kx$ 在完整周期上积分为零。$m=n$ 时 $\cos^2 nx=\tfrac12(1+\cos 2nx)$，得 $\pi$。$\sin mx\cos nx$ 可写成 $\tfrac12[\sin(m+n)x+\sin(m-n)x]$，两项在 $[-\pi,\pi]$ 上亦为零。</p>
 <p><strong>内积与正交</strong>：对平方可积函数 $f,g$，定义
 $$\langle f,g\rangle=\frac{1}{\pi}\int_{-\pi}^{\pi} f(x)g(x)\,dx.$$
-则上述系在加权意义下两两正交；$\{\cos nx\}_{n\ge0}$、$\{\sin nx\}_{n\ge1}$ 各自构成正交系（$\cos 0=1$ 单独计）。</p>
-<div class="callout">
-<p class="callout-title">正交性的计算技巧</p>
+则上述系在加权意义下两两正交；$\{\cos nx\}_{n\ge0}$、$\{\sin nx\}_{n\ge1}$ 各自构成正交系（$\cos 0=1$ 单独计）。<span class="sidenote-mark" data-note="<strong>正交性的计算技巧</strong><br><br>利用 $\cos mx\cos nx=\tfrac12[\cos(m+n)x+\cos(m-n)x]$ 等积化和差，把乘积化为单项三角函数在完整周期上的积分。$\int_{-\pi}^{\pi}\cos kx\,dx=0$（$k\neq0$）来自「正负半周抵消」；$\int_{-\pi}^{\pi}\cos^2 kx\,dx=\pi$ 可用倍角公式 $\cos^2 kx=\tfrac12(1+\cos 2kx)$。<br><br><strong>归一化写法</strong>：令 $\phi_0=1/\sqrt2$，$\phi_n=\cos nx$，$\psi_n=\sin nx$（$n\ge1$），则 $\langle\phi_m,\phi_n\rangle=\delta_{mn}$，$\langle\psi_m,\psi_n\rangle=\delta_{mn}$，$\langle\phi_m,\psi_n\rangle=0$。Fourier 系数可写 $a_n/\sqrt2=\langle f,\phi_n\rangle$（$n\ge0$），$b_n=\langle f,\psi_n\rangle$，与有限维正交基坐标一致。">计算技巧</span></p>
 
-<p>利用 $\cos mx\cos nx=\tfrac12[\cos(m+n)x+\cos(m-n)x]$ 等积化和差，把乘积化为单项三角函数在完整周期上的积分。$\int_{-\pi}^{\pi}\cos kx\,dx=0$（$k\neq0$）来自「正负半周抵消」；$\int_{-\pi}^{\pi}\cos^2 kx\,dx=\pi$ 可用倍角公式 $\cos^2 kx=\tfrac12(1+\cos 2kx)$。</p>
-<p><strong>归一化写法</strong>：令 $\phi_0=1/\sqrt2$，$\phi_n=\cos nx$，$\psi_n=\sin nx$（$n\ge1$），则 $\langle\phi_m,\phi_n\rangle=\delta_{mn}$，$\langle\psi_m,\psi_n\rangle=\delta_{mn}$，$\langle\phi_m,\psi_n\rangle=0$。Fourier 系数可写 $a_n/\sqrt2=\langle f,\phi_n\rangle$（$n\ge0$），$b_n=\langle f,\psi_n\rangle$，与有限维正交基坐标一致。</p>
-</div>
-
-<p><strong>由正交性导出系数公式</strong>：设 $f$ 在 $[-\pi,\pi]$ 上可展开为
+<p><strong>由正交性导出系数公式</strong>：有了正交性这个武器，接下来自然要问：如果一个函数 $f$ 真的可以写成三角级数的叠加，那每个 $\cos nx$、$\sin nx$ 前面的系数应该是多少？这个推导思路和求向量在正交基下坐标的方法完全一致——<strong>两边和某个基函数做内积，利用正交性消掉其他项</strong>。</p>
+<p>具体地，设 $f$ 在 $[-\pi,\pi]$ 上可展开为
 $$f(x)\sim\frac{a_0}{2}+\sum_{n=1}^{\infty}\big(a_n\cos nx+b_n\sin nx\big).$$
-形式上把 $f$ 与级数等同，两边同乘 $\cos kx$ 并在 $[-\pi,\pi]$ 上积分（<strong>逐项积分</strong>在收敛性未证前只是形式操作，但导出正确的候选系数）：
+现在我们想「提取」$a_k$ 的值。办法是：两边同乘 $\cos kx$，然后在 $[-\pi,\pi]$ 上积分（<strong>逐项积分</strong>在收敛性未证前只是形式操作，但导出正确的候选系数）。为什么这样做有效？因为正交性会帮我们把右边「不想要的项」全部杀掉：
 $$\int_{-\pi}^{\pi}f(x)\cos kx\,dx=\frac{a_0}{2}\underbrace{\int_{-\pi}^{\pi}\cos kx\,dx}_{=0}+\sum_{n=1}^{\infty}a_n\underbrace{\int_{-\pi}^{\pi}\cos nx\cos kx\,dx}_{=\pi\delta_{nk}}+\sum_{n=1}^{\infty}b_n\underbrace{\int_{-\pi}^{\pi}\sin nx\cos kx\,dx}_{=0}=\pi a_k.$$
 故 $a_k=\dfrac{1}{\pi}\int_{-\pi}^{\pi} f(x)\cos kx\,dx$（$k\ge 1$）。$k=0$ 时与 $1$ 作内积：
 $$\int_{-\pi}^{\pi}f(x)\,dx=\frac{a_0}{2}\cdot 2\pi=a_0\pi\quad\Rightarrow\quad a_0=\frac{1}{\pi}\int_{-\pi}^{\pi} f(x)\,dx.$$
 与 $\sin kx$ 作内积得
 $$b_k=\frac{1}{\pi}\int_{-\pi}^{\pi} f(x)\sin kx\,dx,\quad k\ge 1.$$
-<strong>上述公式对任意可积 $f$ 均有意义</strong>；它们是否给出 $f$ 的「正确展开」取决于收敛性（§12.2、§12.3）。</p>
-<p><strong>计算技巧</strong>：若 $f$ 为偶函数，则 $b_n=0$，只需算 $a_n$；若 $f$ 为奇函数，则 $a_n=0$（含 $a_0$），只需算 $b_n$。若 $f(\pi-x)=f(x)$，则仅含 $\cos 2nx,\sin 2nx$ 等偶次谐波；$f(\pi-x)=-f(x)$ 则仅含奇次谐波。</p>
+<strong>上述公式对任意可积 $f$ 均有意义</strong>；它们是否给出 $f$ 的「正确展开」取决于收敛性（§12.2、§12.3）。换句话说，我们已经知道「如果能展开，系数一定长这样」，但「是否真的能展开、展开之后是否收敛回 $f$」是后面两节的任务。现阶段先放心用公式算系数就好。</p>
+<p><strong>计算技巧</strong>：在动手算系数之前，先花 10 秒检查 $f$ 的对称性，往往能省掉一半积分。若 $f$ 为偶函数，$f(x)\sin nx$ 是奇函数，在对称区间上积分为零，所以 $b_n=0$，只需算 $a_n$；若 $f$ 为奇函数，同理 $a_n=0$（含 $a_0$），只需算 $b_n$。若 $f(\pi-x)=f(x)$，则仅含 $\cos 2nx,\sin 2nx$ 等偶次谐波；$f(\pi-x)=-f(x)$ 则仅含奇次谐波。</p>
 <blockquote><p>[要点]</p>
 <ul>
 <li>正交性 ⇒ 系数是「在各基函数方向上的投影」。</li>
@@ -145,20 +141,24 @@ $$a_n=\frac{1}{L}\int_{-L}^{L} f(x)\cos\frac{n\pi x}{L}\,dx,\qquad
 b_n=\frac{1}{L}\int_{-L}^{L} f(x)\sin\frac{n\pi x}{L}\,dx.$$</p>
 <p><strong>换元验证</strong>：令 $x=Lt/\pi$，则 $f(x)=F(t)$ 以 $2\pi$ 为周期，标准公式给出 $a_n=\dfrac{1}{\pi}\int_{-\pi}^{\pi}F(t)\cos nt\,dt$，换回 $x$ 即得上式。周期为 $T$ 时，角频率 $\omega_n=2\pi n/T$，公式中 $\pi/L=\pi/(T/2)=2\pi/T$ 与物理频率对应。</p>
 <p><strong>例 12.1</strong> 求 $f(x)=x$（$-\pi<x<\pi$）的 Fourier 级数，并周期延拓到 $\mathbb{R}$。</p>
-<p>$f$ 为奇函数，故 $a_n=0$。$b_n=\dfrac{1}{\pi}\int_{-\pi}^{\pi} x\sin nx\,dx$。分部积分：
+<p><em>解题思路</em>：拿到一道 Fourier 展开题，标准三步走——<strong>①判断奇偶性</strong>（决定只算 $a_n$ 还是只算 $b_n$）→ <strong>②用公式算系数</strong>（通常需要分部积分）→ <strong>③写出级数并讨论特殊点的收敛</strong>。</p>
+<p><strong>第一步</strong>：$f(x)=x$ 是奇函数，故 $a_n=0$（包括 $a_0$）。这立刻省掉了一半工作量。</p>
+<p><strong>第二步</strong>：只需算 $b_n$。$b_n=\dfrac{1}{\pi}\int_{-\pi}^{\pi} x\sin nx\,dx$。分部积分：
 $$\int_{-\pi}^{\pi} x\sin nx\,dx=\Big[-\frac{x\cos nx}{n}\Big]_{-\pi}^{\pi}+\frac{1}{n}\int_{-\pi}^{\pi}\cos nx\,dx
 =\frac{(-1)^{n+1}2\pi}{n}.$$
 故 $b_n=\dfrac{2(-1)^{n+1}}{n}$，级数为
 $$x\sim\sum_{n=1}^{\infty}\frac{2(-1)^{n+1}}{n}\sin nx,\quad x\in(-\pi,\pi).$$
-在 $x=\pm\pi$ 及整数倍处，级数收敛到 $0$（跳跃间断点的中点），见 §12.3。</p>
+<strong>第三步</strong>：讨论特殊点。在 $x=\pm\pi$ 处，周期延拓后出现跳跃间断，级数收敛到左右极限的平均值 $\frac{1}{2}[\pi+(-\pi)]=0$，见 §12.3 的 Dirichlet 定理。</p>
+<p>有了第一个例子的经验，我们来看几个变体，体会不同函数的展开套路有何异同。</p>
 <p><strong>例 12.2</strong> 矩形波：$f(x)=1$（$0<x<\pi$），$f(x)=-1$（$-\pi<x<0$），以 $2\pi$ 为周期。$f$ 奇，$b_n=\dfrac{2}{\pi}\int_0^{\pi}\sin nx\,dx=\dfrac{2}{n\pi}[1-(-1)^n]$，故
 $$f(x)\sim\frac{4}{\pi}\sum_{k=0}^{\infty}\frac{\sin(2k+1)x}{2k+1}.$$
 在 $x=0$ 处级数收敛到 $0$（跳跃平均）；在 $(0,\pi)$ 内收敛到 $1$。</p>
-<p><strong>例 12.2&#39;</strong> 方波 $f(x)=x$（$-\pi\le x\le\pi$），周期 $2\pi$。$f$ 奇，$b_n=\dfrac{2(-1)^{n+1}}{n}$，即
+<p><strong>例 12.2&#39;</strong> 锯齿波 $f(x)=x$（$-\pi<x<\pi$），周期 $2\pi$。这是例 12.1 的同一个周期延拓。$f$ 奇，$b_n=\dfrac{2(-1)^{n+1}}{n}$，即
 $$x\sim 2\sum_{n=1}^{\infty}\frac{(-1)^{n+1}}{n}\sin nx.$$
-与例 12.1 差一因子 $2$ 是因为区间端点约定不同；在 $(-\pi,\pi)$ 内结论一致。</p>
+端点取值不影响 Fourier 系数；在跳跃点 $x=(2k+1)\pi$ 处，级数收敛到左右极限的平均值 $0$。</p>
 <h3 id="1213-有限区间上的展开与延拓">12.1.3 有限区间上的展开与延拓</h3>
-<p>函数 $f$ 仅定义在 $[0,L]$（或 $[-L,L]$）上时，<strong>没有</strong>天然的周期；要写成三角级数，须先<strong>延拓</strong>成周期函数，再取 Fourier 级数。延拓方式决定级数形式。</p>
+<p>前面的公式都假设 $f$ 定义在完整的 $[-\pi,\pi]$（或 $[-L,L]$）上。但实际问题中，你经常只有「半边」数据——比如物理上弦振动问题中 $f$ 只定义在 $[0,L]$，热传导问题中温度只在正半轴有意义。这时一个自然的问题是：<strong>能不能也把它展成三角级数？</strong></p>
+<p>答案是可以的，但需要一个额外步骤：先把 $f$ 从 $[0,L]$ 「补」成 $[-L,L]$ 上的函数，然后再做周期延拓。补法不同，得到的级数也不同。这就是所谓的<strong>「延拓」</strong>。最常用的两种延拓方式是偶延拓（得到余弦级数）和奇延拓（得到正弦级数）。</p>
 <p><strong>偶延拓（余弦级数）</strong>：定义
 $$F_{\mathrm{even}}(x)=\begin{cases} f(x), & 0\le x\le L,\\ f(-x), & -L\le x<0, \end{cases}$$
 再以 $2L$ 为周期延拓。$F_{\mathrm{even}}$ 为偶函数，$b_n=0$，得<strong>余弦级数</strong>
@@ -174,11 +174,12 @@ b_n=\frac{2}{L}\int_0^L f(x)\sin\frac{n\pi x}{L}\,dx.$$</p>
 <p><strong>奇延拓的几何意义</strong>：镜像时取负值，图像过原点（若 $f(0)=0$）并在 $x=\pm L$ 处可能出现跳跃。适合 Dirichlet 边界 $u=0$ 的弦振动、热传导问题。</p>
 <p><strong>系数公式为何是 $\dfrac{2}{L}\int_0^L$</strong>：在 $[0,L]$ 上 $\{\cos\tfrac{n\pi x}{L}\}$ 与 $\{\sin\tfrac{n\pi x}{L}\}$ 关于权 $\tfrac{2}{L}\int_0^L$ 正交归一；偶（奇）延拓后全区间 $[-L,L]$ 上的标准 Fourier 系数化简即得上式。</p>
 <p><strong>例 12.3</strong> 在 $[0,\pi]$ 上 $f(x)=x(\pi-x)$。</p>
+<p><em>解题思路</em>：题目给的是半区间 $[0,\pi]$ 上的函数，所以这是一道<strong>半区间展开</strong>题。题目没指定用余弦还是正弦？那就两个都做，看看结果有何不同。注意系数公式里的积分区间是 $[0,\pi]$（不是 $[-\pi,\pi]$），前面的系数是 $\frac{2}{\pi}$（不是 $\frac{1}{\pi}$）。</p>
 <p><strong>余弦展开</strong>：$a_0=\dfrac{2}{\pi}\int_0^{\pi}x(\pi-x)\,dx=\dfrac{2}{\pi}\Big[\dfrac{\pi x^2}{2}-\dfrac{x^3}{3}\Big]_0^{\pi}=\dfrac{\pi^2}{3}$。
 $$a_n=\frac{2}{\pi}\int_0^{\pi}x(\pi-x)\cos nx\,dx.$$
-分部积分两次（或利用 $x(\pi-x)$ 关于 $x=\pi/2$ 对称），得 $a_n=-\dfrac{2}{n^2}[1+(-1)^n]$：$n$ 偶时 $a_n=0$；$n=2k+1$ 时 $a_{2k+1}=-\dfrac{4}{(2k+1)^2}$。故
-$$x(\pi-x)\sim\frac{\pi^2}{6}-\frac{4}{\pi}\sum_{k=0}^{\infty}\frac{\cos(2k+1)x}{(2k+1)^2},\quad x\in[0,\pi].$$</p>
-<p><strong>正弦展开</strong>：$b_n=\dfrac{2}{\pi}\int_0^{\pi}x(\pi-x)\sin nx\,dx$。设 $I_n=\int_0^{\pi}x(\pi-x)\sin nx\,dx$，分部积分得 $I_n=\dfrac{2\pi}{n^2}[1-(-1)^n]$，故 $b_n=\dfrac{4\big(1-(-1)^n\big)}{\pi n^3}$：$n$ 偶时 $b_n=0$；$n=2k+1$ 时 $b_{2k+1}=\dfrac{8}{\pi(2k+1)^3}$。</p>
+分部积分两次（或利用 $x(\pi-x)$ 关于 $x=\pi/2$ 对称），得 $a_n=-\dfrac{2}{n^2}[1+(-1)^n]$：$n$ 奇时 $a_n=0$；$n=2k$ 时 $a_{2k}=-\dfrac{1}{k^2}$。故
+$$x(\pi-x)\sim\frac{\pi^2}{6}-\sum_{k=1}^{\infty}\frac{\cos 2kx}{k^2},\quad x\in[0,\pi].$$</p>
+<p><strong>正弦展开</strong>：$b_n=\dfrac{2}{\pi}\int_0^{\pi}x(\pi-x)\sin nx\,dx$。设 $I_n=\int_0^{\pi}x(\pi-x)\sin nx\,dx$，分部积分得 $I_n=\dfrac{2\big(1-(-1)^n\big)}{n^3}$，故 $b_n=\dfrac{4\big(1-(-1)^n\big)}{\pi n^3}$：$n$ 偶时 $b_n=0$；$n=2k+1$ 时 $b_{2k+1}=\dfrac{8}{\pi(2k+1)^3}$。</p>
 <p><strong>例 12.3&#39;</strong> $f(x)=x^2$（$-\pi\le x\le\pi$），周期 $2\pi$。$f$ 偶，$b_n=0$。$a_0=\dfrac{2}{\pi}\int_0^{\pi}x^2\,dx=\dfrac{2\pi^2}{3}$；$a_n=\dfrac{2}{\pi}\int_0^{\pi}x^2\cos nx\,dx=\dfrac{4(-1)^n}{n^2}$。故
 $$x^2\sim\frac{\pi^2}{3}+4\sum_{n=1}^{\infty}\frac{(-1)^n}{n^2}\cos nx.$$
 取 $x=\pi$ 得 $\pi^2\sim\dfrac{\pi^2}{3}+4\sum\dfrac{1}{n^2}$，即 $\displaystyle\sum_{n=1}^{\infty}\frac{1}{n^2}=\frac{\pi^2}{6}$（Euler 问题；亦可用 Parseval 从 $x$ 的展开得到）。</p>
@@ -190,6 +191,7 @@ $$x^2\sim\frac{\pi^2}{3}+4\sum_{n=1}^{\infty}\frac{(-1)^n}{n^2}\cos nx.$$
 </ul>
 </blockquote>
 <h3 id="1214-复数形式的-fourier-级数">12.1.4 复数形式的 Fourier 级数</h3>
+<p>到目前为止，我们一直在用 $\cos nx$ 和 $\sin nx$ 来展开函数。这种「实数形式」在计算上有时比较繁琐——你需要同时跟踪 $a_n$ 和 $b_n$ 两套系数。有没有更简洁的写法？有——利用 Euler 公式把 $\cos$ 和 $\sin$ 统一成<strong>复指数</strong> $e^{inx}$，就能把两套系数合并成一套 $c_n$，公式更对称，计算也往往更省事。</p>
 <p>Euler 公式 $e^{inx}=\cos nx+i\sin nx$ 把三角系化为指数系 $\{e^{inx}\}_{n\in\mathbb{Z}}$。在 $[-\pi,\pi]$ 上
 $$\int_{-\pi}^{\pi} e^{inx}\,e^{-imx}\,dx=2\pi\delta_{nm}.$$
 设
@@ -205,22 +207,19 @@ c_n=\frac{1}{2L}\int_{-L}^{L} f(x)e^{-in\pi x/L}\,dx.$$</p>
 <p><strong>例 12.4</strong> $f(x)=e^x$（$-\pi<x<\pi$），周期 $2\pi$ 延拓。
 $$c_n=\frac{1}{2\pi}\int_{-\pi}^{\pi}e^x e^{-inx}\,dx=\frac{1}{2\pi}\int_{-\pi}^{\pi}e^{(1-in)x}\,dx
 =\frac{1}{2\pi(1-in)}\big[e^{(1-in)\pi}-e^{-(1-in)\pi}\big]
-=\frac{(-1)^{n+1}}{\pi(1-in)}\sinh\pi.$$
-实部、虚部分别对应 $\cos nx$、$\sin nx$ 的系数；$|c_n|\sim C/n$，级数一致收敛。</p>
+=\frac{(-1)^n}{\pi(1-in)}\sinh\pi.$$
+实部、虚部分别对应 $\cos nx$、$\sin nx$ 的系数；$|c_n|\sim C/n$。由于周期延拓在 $\pm\pi$ 处有跳跃，级数不在全区间上一致收敛；按 Dirichlet 定理，它在连续点收敛到 $e^x$，在端点收敛到 $\dfrac{e^\pi+e^{-\pi}}{2}=\cosh\pi$。</p>
 <p><strong>复形式计算 $f(x)=x$（$-\pi,\pi$）</strong>：$c_n=\dfrac{1}{2\pi}\int_{-\pi}^{\pi}x e^{-inx}\,dx$。$n=0$ 时 $c_0=0$；$n\neq 0$ 时分部积分得 $c_n=\dfrac{i(-1)^n}{n}$，故
 $$x\sim\sum_{n\neq 0}\frac{i(-1)^n}{n}e^{inx}=2\sum_{n=1}^{\infty}\frac{(-1)^{n+1}}{n}\sin nx,$$
-与例 12.1 一致。</p>
-<div class="callout">
-<p class="callout-title">为何引入复形式</p>
-
-<p>复指数 $e^{inx}$ 在求导、卷积、偏微分方程（如热方程分离变量）中运算更简洁；物理上 $|c_n|^2$ 直接给出第 $n$ 个频率分量的能量（Parseval，§12.2）。对称性 $c_{-n}=\overline{c_n}$ 保证实函数的级数仍为实值。</p>
-</div>
+与例 12.1 一致。<span class="sidenote-mark" data-note="<strong>为何引入复形式</strong><br><br>复指数 $e^{inx}$ 在求导、卷积、偏微分方程（如热方程分离变量）中运算更简洁；物理上 $|c_n|^2$ 直接给出第 $n$ 个频率分量的能量（Parseval，§12.2）。对称性 $c_{-n}=\overline{c_n}$ 保证实函数的级数仍为实值。">为何引入复形式</span></p>
 
 <hr>
 <h2 id="122-平方平均收敛">12.2 平方平均收敛</h2>
 <blockquote><p>🔴 <strong>考试重要度：极高</strong> | Parseval 等式求 $\sum 1/n^2$, $\sum 1/n^4$, $\sum 1/(2n-1)^k$ 是标准大题</p>
 </blockquote>
-<h3 id="1221-math_block_261-内积与正交投影">12.2.1 $L^2$ 内积与正交投影</h3>
+<p>上一节我们学会了怎么算 Fourier 系数、怎么写出级数。但有一个根本问题还悬而未决：<strong>这个级数到底在什么意义下「等于」原函数？</strong>截断到前 $N$ 项的部分和 $S_N(f)$ 和真正的 $f$ 之间差了多少？</p>
+<p>这一节给出一个强有力的回答：在「能量」（平方积分）的意义下，$S_N(f)$ 是所有 $N$ 阶三角多项式中对 $f$ 的<strong>最佳逼近</strong>，而且随着 $N\to\infty$，逼近误差趋于零。由此导出的 Parseval 等式是考试中求数项级数和的核心工具。</p>
+<h3 id="1221-l2-内积与正交投影">12.2.1 $L^2$ 内积与正交投影</h3>
 <p>设 $f,g\in L^2[-\pi,\pi]$（平方可积），内积
 $$\langle f,g\rangle=\frac{1}{\pi}\int_{-\pi}^{\pi}f(x)g(x)\,dx,\qquad
 \|f\|_{L^2}=\sqrt{\langle f,f\rangle}=\sqrt{\frac{1}{\pi}\int_{-\pi}^{\pi}|f(x)|^2\,dx}.$$
@@ -234,16 +233,18 @@ $$S_N(f)=\sum_{n=0}^{N}\langle f,e_n\rangle e_n+\sum_{n=1}^{N}\langle f,\tilde{e
 $$\|f-S_N(f)\|_{L^2}\le\|f-T_N\|_{L^2}.$$
 <strong>证明要点</strong>：$f-S_N(f)\perp T_N-S_N(f)$（正交补），由勾股定理 $\|f-T_N\|^2=\|f-S_N\|^2+\|T_N-S_N\|^2\ge\|f-S_N\|^2$。</p>
 <h3 id="1222-bessel-不等式与-parseval-等式">12.2.2 Bessel 不等式与 Parseval 等式</h3>
-<p>记 $f_n=\cos nx$（$n\ge0$，$f_0=1/\sqrt2$ 归一化亦可）、$g_n=\sin nx$（$n\ge1$）。正交归一系 $\{e_n\}$ 下，部分和系数满足
-$$\sum_{n=0}^{N}|c_n|^2\le\|f\|_{L^2}^2\quad\text{（Bessel 不等式）},$$
-其中 $c_n$ 为 Fourier 系数（复形式或实形式等价）。等号对一切 $N$ 成立当且仅当 $f\in\mathrm{span}\{e_n\}_{n\le N}$；对无穷级数，等号成立即 Parseval。当 $N\to\infty$ 时，若 $f\in L^2$，则
+<p>有了「最佳逼近」这个结果，下一步自然要问：随着 $N$ 增大，逼近误差到底趋不趋于零？如果趋于零，能不能写出一个把 $\|f\|^2$ 和所有系数 $a_n,b_n$ 联系起来的等式？答案就是 Bessel 不等式（有限项的上界）和 Parseval 等式（无穷项的精确等式）。</p>
+<p>在实系数写法下，部分和系数满足
+$$\frac{a_0^2}{2}+\sum_{n=1}^{N}(a_n^2+b_n^2)\le\|f\|_{L^2}^2\quad\text{（Bessel 不等式）}.$$
+有限项等号成立当且仅当 $f$ 本身就是次数 $\le N$ 的三角多项式；无穷项等号成立即 Parseval。当 $N\to\infty$ 时，若 $f\in L^2$，则
 $$\|f-S_N(f)\|_{L^2}\to 0\quad\text{（平方平均收敛）},$$
 且 <strong>Parseval 等式</strong>
-$$\|f\|_{L^2}^2=\frac{a_0^2}{2}+\sum_{n=1}^{\infty}(a_n^2+b_n^2)
-=\sum_{n=-\infty}^{\infty}|c_n|^2.$$
-实形式下 $\tfrac{a_0^2}{2}+\sum(a_n^2+b_n^2)$ 表示信号总能量在频率上的分配。</p>
+$$\|f\|_{L^2}^2=\frac{a_0^2}{2}+\sum_{n=1}^{\infty}(a_n^2+b_n^2).$$
+若使用复系数 $c_n=\dfrac{1}{2\pi}\int_{-\pi}^{\pi}f(x)e^{-inx}\,dx$，则
+$$\frac{1}{2\pi}\int_{-\pi}^{\pi}|f(x)|^2\,dx=\sum_{n=-\infty}^{\infty}|c_n|^2,$$
+等价地，在本章的归一化范数 $\|f\|_{L^2}^2=\dfrac{1}{\pi}\int|f|^2$ 下有 $\|f\|_{L^2}^2=2\sum_{n\in\mathbb{Z}}|c_n|^2$。实形式下 $\tfrac{a_0^2}{2}+\sum(a_n^2+b_n^2)$ 表示信号总能量在频率上的分配。</p>
 <p><strong>证明 Bessel 不等式（概要）</strong>：设 $r_N=f-S_N(f)$。$S_N(f)\perp r_N$（正交投影），故
-$$\|f\|_{L^2}^2=\|S_N(f)\|_{L^2}^2+\|r_N\|_{L^2}^2\ge\|S_N(f)\|_{L^2}^2=\sum_{|n|\le N}|c_n|^2.$$
+$$\|f\|_{L^2}^2=\|S_N(f)\|_{L^2}^2+\|r_N\|_{L^2}^2\ge\|S_N(f)\|_{L^2}^2.$$
 令 $N\to\infty$ 即得 Bessel；平方平均收敛成立时范数极限给出 Parseval。</p>
 <p><strong>实系数形式的 Parseval</strong>：由 $a_n=c_n+\overline{c_{-n}}$、$b_n=i(c_{-n}-c_n)$（$n>0$）及 $c_{-n}=\overline{c_n}$ 可验证
 $$\|f\|_{L^2}^2=\frac{1}{\pi}\int_{-\pi}^{\pi}|f|^2=\frac{a_0^2}{2}+\sum_{n=1}^{\infty}(a_n^2+b_n^2).$$</p>
@@ -269,13 +270,9 @@ $$\|f\|_{L^2}^2=\frac{1}{\pi}\int_{-\pi}^{\pi}|f|^2=\frac{a_0^2}{2}+\sum_{n=1}^{
 <td>$f\in L^2$（最宽）</td>
 </tr>
 </tbody></table></div>
-<p>一致 $\Rightarrow$ 逐点（在适当条件下）$\Rightarrow$ 平方平均；反向一般不成立。</p>
-<div class="callout">
-<p class="callout-title">为何 $L^2$ 收敛最重要</p>
+<p>一致 $\Rightarrow$ 逐点（在适当条件下）$\Rightarrow$ 平方平均；反向一般不成立。简单地说：<strong>一致收敛要求最严格</strong>（函数越光滑、越连续，越容易满足）；<strong>$L^2$ 收敛要求最宽松</strong>（只要平方可积就行）；逐点收敛介于两者之间。考试中最常用的是 Dirichlet 定理（逐点）和 Parseval 等式（$L^2$），一致收敛主要用于判断能否逐项积分/求导。<span class="sidenote-mark" data-note="<strong>为何 $L^2$ 收敛最重要</strong><br><br>工程与概率中更关心能量 $\int|f|^2$ 而非逐点值；$L^2$ 收敛保证截断级数的能量误差趋于零。数值计算中 $N$ 项部分和在 $L^2$ 意义下已是「最优」$N$ 阶三角逼近，Parseval 给出可检验的误差上界 $\|r_N\|_{L^2}^2=\|f\|_{L^2}^2-\left[\frac{a_0^2}{2}+\sum_{n=1}^{N}(a_n^2+b_n^2)\right]$。">为何 $L^2$ 收敛最重要</span></p>
 
-<p>工程与概率中更关心能量 $\int|f|^2$ 而非逐点值；$L^2$ 收敛保证截断级数的能量误差趋于零。数值计算中 $N$ 项部分和在 $L^2$ 意义下已是「最优」$N$ 阶三角逼近，Parseval 给出可检验的误差上界 $\|r_N\|_{L^2}^2=\|f\|_{L^2}^2-\sum_{|n|\le N}|c_n|^2$。</p>
-</div>
-
+<p><em>用 Parseval 求数项级数的标准套路</em>：<strong>①选一个函数 $f$，展开得到 Fourier 系数</strong>（通常直接用前面某道例题的结果） → <strong>②算左边 $\frac{1}{\pi}\int_{-\pi}^{\pi}|f|^2\,dx$</strong>（这是个普通定积分，一般很好算） → <strong>③算右边 $\frac{a_0^2}{2}+\sum(a_n^2+b_n^2)$</strong>（把系数代入） → <strong>④左 = 右，解出目标级数和</strong>。以下两个例子展示这个流程。</p>
 <p><strong>例 12.5</strong> 对例 12.1 的 $f(x)=x$（$-\pi,\pi$），Parseval 验证
 $$\frac{1}{\pi}\int_{-\pi}^{\pi}x^2\,dx=\frac{2\pi^2}{3}=\sum_{n=1}^{\infty}\frac{4}{n^2}=4\cdot\frac{\pi^2}{6}=\frac{2\pi^2}{3}.$$</p>
 <p><strong>例 12.5&#39;</strong> 对 $f(x)=x^2$（例 12.3&#39;），$\|f\|_{L^2}^2=\dfrac{1}{\pi}\int_{-\pi}^{\pi}x^4\,dx=\dfrac{2\pi^4}{5}$。又 $\dfrac{a_0^2}{2}+\sum a_n^2=\dfrac{2\pi^4}{9}+16\sum\dfrac{1}{n^4}$，得 $\displaystyle\sum_{n=1}^{\infty}\frac{1}{n^4}=\frac{\pi^4}{90}$。</p>
@@ -290,29 +287,27 @@ $$\frac{1}{\pi}\int_{-\pi}^{\pi}x^2\,dx=\frac{2\pi^2}{3}=\sum_{n=1}^{\infty}\fra
 <h2 id="123-收敛性定理">12.3 收敛性定理</h2>
 <blockquote><p>🟡 <strong>考试重要度：中等</strong> | Dirichlet 定理的应用（判断间断点收敛值）常作为展开题的一部分</p>
 </blockquote>
+<p>§12.2 回答了「能量意义下 Fourier 级数多好」，但没有回答一个更直接的问题：<strong>在某个具体的点 $x_0$，级数 $S_N(f)(x_0)$ 到底收敛到什么值？</strong>特别是在函数有跳跃间断的点，级数会怎样表现？Dirichlet 定理给出了明确的逐点回答。</p>
 <h3 id="1231-dirichlet-定理陈述与证明思路">12.3.1 Dirichlet 定理（陈述与证明思路）</h3>
 <p><strong>Dirichlet 条件</strong>：$f$ 在 $[-\pi,\pi]$ 上分段光滑（分段 $C^1$，有限个第一类间断点），作 $2\pi$ 周期延拓。</p>
 <p><strong>Dirichlet 定理</strong>：在任意点 $x_0$，Fourier 级数 $S_f(x_0)$ 收敛到
 $$\frac{f(x_0+)+f(x_0-)}{2}.$$
 特别地，若 $f$ 在 $x_0$ 连续，则 $S_f(x_0)=f(x_0)$；在跳跃间断处收敛到<strong>左右极限的平均</strong>（Gibbs 现象：间断点附近部分和有过冲，但不影响积分意义下的收敛）。</p>
+<p><em>怎么用这个定理？</em> 在展开题中，写完级数后，你需要回答「级数在端点/间断点收敛到什么值」。操作步骤：<strong>①画出周期延拓后的函数图像</strong>（至少在脑中画）→ <strong>②找到跳跃间断点</strong>（通常在延拓拼接处 $x=0,\pm L,\pm 2L,\ldots$） → <strong>③算左右极限的平均</strong>。连续点不需要特别处理，级数就等于函数值。</p>
 <p><strong>证明思路（概要）</strong>：</p>
 <ol>
-<li><strong>Dirichlet 核</strong> $D_N(x)=\dfrac{\sin\big(N+\tfrac12\big)x}{2\sin\tfrac{x}{2}}$。利用
+<li><strong>Dirichlet 核</strong> $D_N(x)=\dfrac12+\sum_{n=1}^{N}\cos nx=\dfrac{\sin\big(N+\tfrac12\big)x}{2\sin\tfrac{x}{2}}$。利用复指数恒等式
 $$\sum_{n=-N}^{N}e^{inx}=\frac{\sin\big(N+\tfrac12\big)x}{\sin\tfrac{x}{2}}$$
 与系数定义，部分和写为卷积型积分
 $$S_N(f)(x)=\frac{1}{\pi}\int_{-\pi}^{\pi}f(t)D_N(x-t)\,dt.$$</li>
-<li><strong>核的性质</strong>：$D_N$ 为偶函数；$\dfrac{1}{\pi}\int_{-\pi}^{\pi}D_N=1$（归一化）；对固定 $\delta\in(0,\pi)$，$\dfrac{1}{\pi}\int_{\delta\le|x|\le\pi}|D_N(x)|\,dx\to 0$（$N\to\infty$）——能量集中在 $x=0$ 附近，近似 $\delta$ 函数。</li>
-<li><strong>连续点</strong>：设 $x_0$ 连续。拆积分 $I_1=\int_{|t-x_0|<\delta}$、$I_2=\int_{|t-x_0|\ge\delta}$。$I_2$ 由控制项趋于 $0$；$I_1$ 中 $f(t)\approx f(x_0)$，结合归一化得 $S_N(f)(x_0)\to f(x_0)$。</li>
+<li><strong>核的性质</strong>：$D_N$ 为偶函数；$\dfrac{1}{\pi}\int_{-\pi}^{\pi}D_N=1$（归一化）。注意 $D_N$ 不是正核，不能把它简单当成普通概率密度；远离 $0$ 的振荡贡献要用 Dirichlet 判别或 Riemann-Lebesgue 型估计处理。</li>
+<li><strong>连续点</strong>：设 $x_0$ 连续。拆积分 $I_1=\int_{|t-x_0|<\delta}$、$I_2=\int_{|t-x_0|\ge\delta}$。$I_1$ 中 $f(t)\approx f(x_0)$，结合归一化给出主项；$I_2$ 由于核的快速振荡趋于 $0$，故 $S_N(f)(x_0)\to f(x_0)$。</li>
 <li><strong>跳跃点</strong>：设 $f(x_0+)\neq f(x_0-)$。换元 $t=x_0+u$，核的对称性使左右贡献分别趋于 $f(x_0+)$ 与 $f(x_0-)$ 的加权平均，极限为 $\tfrac12[f(x_0+)+f(x_0-)]$。</li>
 </ol>
-<p><strong>一致收敛的补充</strong>：若 $f$ 连续且以 $2\pi$ 为周期的导数 $f'$ 分段连续，则 Fourier 级数在 $\mathbb{R}$ 上<strong>一致收敛</strong>于 $f$（M 判别法：$|a_n|,|b_n|=O(1/n)$，$\sum 1/n^2$ 收敛 ⇒ 系数可和）。</p>
-<div class="callout">
-<p class="callout-title">Gibbs 现象</p>
-
-<p>在跳跃间断附近，$S_N(f)$ 出现过冲（约 9% 跃变量），随 $N$ 增大过冲区变窄但不消失。这不与 Dirichlet 定理矛盾——定理说的是<strong>逐点极限</strong>在间断点等于平均值，而非一致收敛。</p>
-</div>
+<p><strong>一致收敛的补充</strong>：若 $f$ 连续且周期拼接处也连续，并且正则性足够强（例如 $f$ 分段 $C^2$），则 Fourier 级数在 $\mathbb{R}$ 上<strong>一致收敛</strong>于 $f$。若只知道 $f$ 分段光滑，通常只能直接保证逐点收敛；遇到跳跃间断时不可能一致收敛到原函数。<span class="sidenote-mark" data-note="<strong>Gibbs 现象</strong><br><br>在跳跃间断附近，$S_N(f)$ 出现过冲（约 9% 跃变量），随 $N$ 增大过冲区变窄但不消失。这不与 Dirichlet 定理矛盾——定理说的是<strong>逐点极限</strong>在间断点等于平均值，而非一致收敛。">Gibbs 现象</span></p>
 
 <h3 id="1232-平方平均收敛的证明思路">12.3.2 平方平均收敛的证明思路</h3>
+<p>前面 §12.2 已经用过平方平均收敛的结论（Parseval 等式就是它的推论）。这里补充证明的核心思路，帮助理解为什么 $L^2$ 收敛条件最宽。如果你目前只关心计算，可以先跳过本小节。</p>
 <p><strong>定理</strong>：若 $f\in L^2[-\pi,\pi]$，则 $\|f-S_N(f)\|_{L^2}\to 0$。</p>
 <p><strong>证明思路</strong>：</p>
 <ol>
@@ -326,11 +321,13 @@ $$\|f-S_N(f)\|_{L^2}\le\|f-T_M\|_{L^2}<\varepsilon/2.$$</li>
 <p><strong>对比</strong>：Dirichlet 定理要<strong>分段光滑</strong>（点态）；$L^2$ 收敛只需<strong>平方可积</strong>，但不要求逐点极限等于 $f$。存在连续函数其 Fourier 级数在某点发散（Du Bois-Reymond 型反例，超出本课程范围）；但 $L^2$ 理论保证「几乎处处」意义下 Cesàro 平均收敛（Fejér 定理）。</p>
 <p><strong>Fejér 定理（补充）</strong>：对连续周期 $f$，Fejér 和 $\sigma_N(f)=\dfrac{1}{N+1}\sum_{k=0}^{N}S_k(f)$ 一致收敛于 $f$。说明三角级数在 Cesàro 意义下表现良好，而 Gibbs 现象只影响 $S_N$ 而非 $\sigma_N$。</p>
 <p><strong>例 12.6</strong> $f(x)=\begin{cases}1,&0<x<\pi,\\-1,&-\pi<x<0,\end{cases}$ 周期 $2\pi$。在 $x=0$ 处 $f(0+)=1,\ f(0-)=-1$，Dirichlet 给出 $S_f(0)=0$；而 $\|f-S_N\|_{L^2}\to 0$ 仍成立。</p>
-<p><strong>例 12.6&#39;</strong> $f(x)=\begin{cases}x,&0\le x<\pi,\\x-2\pi,&-\pi\le x<0,\end{cases}$ 周期 $2\pi$（锯齿波）。$f$ 连续但 $f'(\pi-)=1,\ f'(\pi+)=1$ 在 $x=\pi$ 处导数跳跃。Fourier 系数 $b_n=\dfrac{2(-1)^n}{n}$，级数在 $\mathbb{R}$ 上收敛到 $f$ 的周期延拓；在 $x=\pi+2k\pi$ 处 Dirichlet 值仍为 $\pi$（连续点）。</p>
+<p><strong>例 12.6&#39;</strong> 锯齿波 $f(x)=x$（$-\pi < x < \pi$），周期 $2\pi$。此即例 12.1 的函数，$f$ 在每个周期内部连续，但在 $x=\pi+2k\pi$（$k\in\mathbb{Z}$）处有跳跃间断：$f(\pi-)=\pi$，$f(\pi+)=f(-\pi+)=-\pi$。Fourier 系数 $b_n=\dfrac{2(-1)^{n+1}}{n}$（例 12.1）。级数在连续点收敛到 $f(x)$；在 $x=\pi+2k\pi$ 处 Dirichlet 值为 $\dfrac{\pi+(-\pi)}{2}=0$。注意：虽然 $f$ 在 $\pi$ 处不连续，但 $\|f-S_N\|_{L^2}\to 0$ 仍成立——这正是 $L^2$ 收敛比逐点收敛条件更宽的体现。</p>
 <hr>
 <h2 id="124-fourier-积分与-fourier-变换">12.4 Fourier 积分与 Fourier 变换</h2>
 <blockquote><p>🟢 <strong>考试重要度：了解</strong> | 期末偶尔考 Dirichlet 积分 $\int_0^\infty \frac{\sin x}{x}dx=\pi/2$ 的应用</p>
 </blockquote>
+<p>前三节处理的都是<strong>周期函数</strong>——它们的频谱是离散的（只含 $\omega=n\pi/L$ 这些离散频率）。但现实中很多信号并不是周期的：一个脉冲、一个衰减的波、一个只出现一次的信号。怎么对它们做频率分析？</p>
+<p>核心思想非常自然：<strong>把非周期函数看成周期趋向无穷大的极限</strong>。当周期 $2L\to\infty$ 时，离散频率 $n\pi/L$ 之间的间隔 $\Delta\omega=\pi/L\to 0$，求和变成积分——这就从 Fourier 级数过渡到了 Fourier 变换。</p>
 <h3 id="1241-从周期到非周期">12.4.1 从周期到非周期</h3>
 <p>当 $f$ 定义在全直线 $\mathbb{R}$ 上且<strong>非周期</strong>时，可视为周期 $2L$ 的极限 $L\to\infty$。记 $\omega_n=\dfrac{n\pi}{L}$，$\Delta\omega=\dfrac{\pi}{L}$，复系数
 $$c_n=\frac{1}{2L}\int_{-L}^{L}f(x)e^{-i\omega_n x}\,dx\approx\frac{\Delta\omega}{2\pi}\int_{-\infty}^{\infty}f(x)e^{-i\omega x}\,dx.$$
@@ -376,23 +373,20 @@ $$\lim_{R\to\infty}\frac{1}{2\pi}\int_{-R}^{R}\hat{f}(\omega)e^{i\omega x}\,d\om
 <p><strong>Plancherel 定理</strong>：对 $f\in L^2(\mathbb{R})$，$\mathcal{F}$ 可延拓为 $L^2$ 上的等距同构（差一个 $2\pi$ 因子），即 Parseval 等式对 $L^2$ 函数成立；这是 Fourier 变换在 Hilbert 空间框架下的严格表述。</p>
 <p><strong>Parseval（连续情形）</strong>：
 $$\int_{-\infty}^{\infty}|f(x)|^2\,dx=\frac{1}{2\pi}\int_{-\infty}^{\infty}|\hat{f}(\omega)|^2\,d\omega.$$</p>
+<p>下面通过几个经典例子来熟悉 Fourier 变换的计算。每个例子展示了不同的计算技巧——直接积分、利用已知结果、利用微分性质化为代数方程。</p>
 <p><strong>例 12.7</strong> 矩形脉冲 $f(x)=\begin{cases}1,&|x|<a,\\0,&|x|>a,\end{cases}$
 $$\hat{f}(\omega)=\int_{-a}^{a}e^{-i\omega x}\,dx=\frac{2\sin a\omega}{\omega}\quad(\omega\neq 0),\qquad \hat{f}(0)=2a.$$
 $\hat{f}$ 为 $\operatorname{sinc}$ 型；$\omega\to\infty$ 时振荡衰减，与 Riemann–Lebesgue 引理一致。物理上，窄脉冲（小 $a$）⇒ 频谱展宽。</p>
 <p><strong>例 12.8</strong> 高斯函数 $f(x)=e^{-x^2/2}$。利用 $\int_{-\infty}^{\infty}e^{-ax^2+bx}\,dx=\sqrt{\pi/a}\,e^{b^2/(4a)}$ 得
 $$\hat{f}(\omega)=\sqrt{2\pi}\,e^{-\omega^2/2},$$
 即高斯的 Fourier 变换仍是高斯（相差常数与尺度）。</p>
+<p>下面这个例子展示了一个巧妙的技巧：不直接算积分，而是<strong>利用 Fourier 变换的微分性质</strong>把问题转化为代数方程。</p>
 <p><strong>例 12.9</strong> 用微分性质求 $\mathcal{F}[e^{-|x|}]$。令 $g(x)=e^{-|x|}$，则 $-g''+g=2\delta(x)$（分布意义），变换得 $(\omega^2+1)\hat{g}(\omega)=2$，故 $\hat{g}(\omega)=\dfrac{2}{\omega^2+1}$（Lorentz 型谱）。</p>
 <p><strong>例 12.10</strong> 求 $\mathcal{F}[\mathbf{1}_{[-a,a]}(x)]$ 与 $\mathcal{F}[\sin\omega_0 x]$。前者即例 12.7；后者 $\mathcal{F}[\sin\omega_0 x]=\dfrac{i}{2}\big[\delta(\omega+\omega_0)-\delta(\omega-\omega_0)\big]$（分布意义），体现单频信号的线谱。</p>
 <h3 id="1243-应用简述">12.4.3 应用简述</h3>
 <p><strong>偏微分方程</strong>：一维热方程 $u_t=ku_{xx}$ 在 $[-\pi,\pi]$ 上分离变量 $u=T(t)X(x)$ 得 $X''+\lambda X=0$，本征函数为 $\sin nx,\cos nx$，解展开为 Fourier 级数；无穷长 rod 上用 Fourier 变换把 PDE 化为 $\hat{u}_t=-k\omega^2\hat{u}$，形式解 $\hat{u}(\omega,t)=\hat{u}_0(\omega)e^{-k\omega^2 t}$。</p>
 <p><strong>信号处理</strong>：$|\hat{f}(\omega)|$ 为频谱幅度；卷积定理使滤波（乘窗）对应时域卷积，是数字信号处理的基础。</p>
-<p><strong>Heisenberg 不确定性（直观）</strong>：在 $L^2$ 意义下，$f$ 与其 Fourier 变换不能同时高度局域——$\|xf\|\cdot\|\omega\hat{f}\|$ 有下界（量子力学中位置与动量的对偶关系与此同构）。严格表述需分布理论，此处仅作背景联系。</p>
-<div class="callout">
-<p class="callout-title">$2\pi$ 约定的提醒</p>
-
-<p>不同教材在 $\mathcal{F}$、$\mathcal{F}^{-1}$ 前放置 $2\pi$ 的方式不同（有的在正变换、有的在逆变换、有的各放 $\sqrt{2\pi}$）。本书采用 $\hat{f}(\omega)=\int f e^{-i\omega x}\,dx$，$f(x)=\dfrac{1}{2\pi}\int\hat{f}(\omega)e^{i\omega x}\,d\omega$。换书查表时务必核对 Parseval 式中的系数。</p>
-</div>
+<p><strong>Heisenberg 不确定性（直观）</strong>：在 $L^2$ 意义下，$f$ 与其 Fourier 变换不能同时高度局域——$\|xf\|\cdot\|\omega\hat{f}\|$ 有下界（量子力学中位置与动量的对偶关系与此同构）。严格表述需分布理论，此处仅作背景联系。<span class="sidenote-mark" data-note="<strong>$2\pi$ 约定的提醒</strong><br><br>不同教材在 $\mathcal{F}$、$\mathcal{F}^{-1}$ 前放置 $2\pi$ 的方式不同（有的在正变换、有的在逆变换、有的各放 $\sqrt{2\pi}$）。本书采用 $\hat{f}(\omega)=\int f e^{-i\omega x}\,dx$，$f(x)=\dfrac{1}{2\pi}\int\hat{f}(\omega)e^{i\omega x}\,d\omega$。换书查表时务必核对 Parseval 式中的系数。">$2\pi$ 约定提醒</span></p>
 
 <blockquote><p>[要点]</p>
 <ul>
@@ -404,29 +398,66 @@ $$\hat{f}(\omega)=\sqrt{2\pi}\,e^{-\omega^2/2},$$
 <hr>
 <h2 id="本章综合习题真题精选">本章综合习题（真题精选）</h2>
 <p><strong>[2025-三]</strong> 将 $f(x)=x$ 在 $[0,\pi]$ 上展开为余弦级数，并计算 $\displaystyle\sum_{n=1}^{\infty}\frac{1}{(2n-1)^2}$，$\displaystyle\sum_{n=1}^{\infty}\frac{1}{(2n-1)^4}$，以及 $\displaystyle\sum_{n=1}^{\infty}\frac{\sin(2n-1)x}{(2n-1)^3}$。</p>
+<p><em>拆解</em>：这道题问了三件事，用到了三种不同的技巧——展开后<strong>代特殊值</strong>求第一个级数；用 <strong>Parseval 等式</strong>求第二个级数；对级数<strong>逐项积分</strong>求第三个级数（一个函数级数的和函数）。这正是 Fourier 分析大题的「三板斧」。</p>
 <p>解析要点：偶延拓得 $a_0=\pi$，$a_n=\frac{2}{\pi}\cdot\frac{(-1)^n-1}{n^2}$（仅奇数项非零）。由 Dirichlet 定理：
 $$x=\frac{\pi}{2}-\frac{4}{\pi}\sum_{k=1}^{\infty}\frac{\cos(2k-1)x}{(2k-1)^2},\quad x\in[0,\pi].$$</p>
-<p>取 $x=0$：$\sum\frac{1}{(2k-1)^2}=\frac{\pi^2}{8}$。用 Parseval：$\sum\frac{1}{(2k-1)^4}=\frac{\pi^4}{96}$。对级数在 $[0,x]$ 逐项积分得 $\sum\frac{\sin(2n-1)x}{(2n-1)^3}=\frac{\pi}{8}(x-\frac{x^2}{\pi})$。</p>
+<p>取 $x=0$：$\sum\frac{1}{(2k-1)^2}=\frac{\pi^2}{8}$。用 Parseval：$\sum\frac{1}{(2k-1)^4}=\frac{\pi^4}{96}$。对级数在 $[0,x]$ 逐项积分得
+$$\sum_{n=1}^{\infty}\frac{\sin(2n-1)x}{(2n-1)^3}=\frac{\pi}{8}(\pi x-x^2).$$</p>
 <hr>
 <p><strong>[2024-一(1)]</strong> 将 $f(x)=1-\frac{x}{\pi}$（$0\le x\le\pi$）展为正弦级数并求和函数 $S(x)$，计算 $S(-3)$ 和 $S(12)$。</p>
-<p>解析要点：奇延拓后以 $2\pi$ 为周期。$b_n=\frac{2}{\pi}\int_0^\pi(1-\frac{x}{\pi})\sin nx\,dx=\frac{2}{n\pi}$（所有 $n$）。正弦级数：$f(x)=\frac{2}{\pi}\sum_{n=1}^\infty\frac{\sin nx}{n}$。$S(x)$ 在间断点取平均值。$S(-3)=S(3)=\frac{\pi-3}{\pi}$；$S(12)=S(12-4\pi)=1-\frac{12-4\pi}{\pi}=\frac{12-3\pi}{\pi}$... 需要判断 $12-4\pi$ 落在哪个区间。</p>
+<p><em>拆解</em>：这道题的关键在第二问。「求和函数」意味着你需要利用 Dirichlet 定理判断级数在每个点（包括间断点）收敛到什么。$S(-3)$ 和 $S(12)$ 不在 $[0,\pi]$ 上，所以你要先利用<strong>周期性</strong>把它们折回一个基本周期内，再判断该点是连续点还是间断点。</p>
+<p>解析要点：奇延拓后以 $2\pi$ 为周期，$F$ 为奇函数。$b_n=\frac{2}{\pi}\int_0^\pi(1-\frac{x}{\pi})\sin nx\,dx=\frac{2}{n\pi}$（所有 $n$）。正弦级数 $S(x)=\frac{2}{\pi}\sum_{n=1}^\infty\frac{\sin nx}{n}$。$f(0)=1$，$f(\pi)=0$，故延拓后 $x=0$ 为跳跃间断点（$S(0)=0$），$x=\pi$ 为连续点。
+
+求 $S(-3)$：$-3\in(-\pi,0)$，连续点，由奇性 $S(-3)=-S(3)=-f(3)=-\left(1-\frac{3}{\pi}\right)=\frac{3-\pi}{\pi}$。
+
+求 $S(12)$：$12-4\pi\approx -0.566\in(-\pi,0)$，连续点。由奇延拓 $F(x)=-f(-x)$（$x<0$），$S(12)=S(12-4\pi)=F(12-4\pi)=-f\big(-(12-4\pi)\big)=-f(4\pi-12)=-\left(1-\frac{4\pi-12}{\pi}\right)=-\frac{12-3\pi}{\pi}=\frac{3\pi-12}{\pi}$。</p>
 <hr>
-<p><strong>[2024-二]</strong> 将 $f(x)$ 展为正弦级数（系数为 $\frac{\sin n}{n^2}$），利用 Parseval 证明 $\displaystyle\sum_{n=1}^{\infty}\frac{\sin^2 n}{n^4}=\frac{(\pi-1)^2}{6}$。</p>
+<p><strong>[2024-二]</strong> 设
+$$f(x)=\begin{cases}\dfrac{\pi-1}{2}x,&0\le x\le1,\\[4pt]\dfrac{\pi-x}{2},&1<x\le\pi,\end{cases}$$
+将 $f(x)$ 展为正弦级数，并利用 Parseval 证明 $\displaystyle\sum_{n=1}^{\infty}\frac{\sin^2 n}{n^4}=\frac{(\pi-1)^2}{6}$。</p>
+<p><em>拆解</em>：这题的函数是一个折线函数，端点 $f(0)=f(\pi)=0$，适合正弦级数。系数里出现 $\sin n/n^2$，说明分部积分后要利用分段常数的 $f'(x)$。</p>
+<p>解析要点：$f'(x)=\frac{\pi-1}{2}$（$0<x<1$），$f'(x)=-\frac12$（$1<x<\pi$）。分部积分：
+$$b_n=\frac{2}{\pi}\int_0^\pi f(x)\sin nx\,dx
+=\frac{2}{\pi n}\int_0^\pi f'(x)\cos nx\,dx
+=\frac{2}{\pi n}\left[\frac{\pi-1}{2}\int_0^1\cos nx\,dx-\frac12\int_1^\pi\cos nx\,dx\right]
+=\frac{\sin n}{n^2}.$$
+于是 $f(x)\sim\sum_{n=1}^\infty\dfrac{\sin n}{n^2}\sin nx$。</p>
+<p>由 Parseval（半区间正弦形式）
+$$\sum_{n=1}^{\infty}b_n^2=\frac{2}{\pi}\int_0^\pi f^2(x)\,dx.$$
+而
+$$\int_0^\pi f^2(x)\,dx=\int_0^1\frac{(\pi-1)^2x^2}{4}\,dx+\int_1^\pi\frac{(\pi-x)^2}{4}\,dx
+=\frac{\pi(\pi-1)^2}{12},$$
+故 $\displaystyle\sum_{n=1}^{\infty}\frac{\sin^2 n}{n^4}=\frac{(\pi-1)^2}{6}$。</p>
 <hr>
 <p><strong>[2023-三]</strong> 设 $f(x)$ 以 $2\pi$ 为周期，且 $f(x)=\begin{cases}\pi-x,&0\le x\le\pi,\\\pi+x,&-\pi\le x<0.\end{cases}$ 求 Fourier 级数并计算 $\displaystyle\sum_{n=1}^{\infty}\frac{(-1)^{n-1}}{(2n-1)^3}$ 和 $\displaystyle\sum_{n=1}^{\infty}\frac{1}{(2n-1)^4}$。</p>
+<p><em>拆解</em>：第一问是标准展开（先判奇偶！$x\in[0,\pi]$ 时 $-x\in[-\pi,0]$，用第二分支 $f(-x)=\pi+(-x)=\pi-x=f(x)$，故 $f$ 为偶函数，只需算 $a_n$）。第二个级数带 $(-1)^{n-1}$，提示你需要在展开结果中<strong>代入特殊值 $x$</strong>（通常是 $x=\pi/2$）来产生交替符号。第三个级数用 Parseval。</p>
 <p>解析要点：$f$ 为偶函数，$a_n=\frac{4}{\pi(2n-1)^2}$（仅奇数项）。对级数在 $[0,\pi/2]$ 上积分得 $\sum\frac{(-1)^{n-1}}{(2n-1)^3}=\frac{\pi^3}{32}$；Parseval 得 $\sum\frac{1}{(2n-1)^4}=\frac{\pi^4}{96}$。</p>
 <hr>
 <p><strong>[2022-二]</strong> $f(x)=\cos^2 x-\sin^2 x+\frac{1}{3}\sin 2x$（$x\in[-\pi,\pi]$）求 Fourier 级数。</p>
+<p><em>拆解</em>：这道题看似要算积分，实则是「送分题」——关键在于<strong>先化简</strong>。遇到三角函数的平方/乘积，第一反应应该是用二倍角、积化和差公式化简，看看能不能直接写成 $\cos nx$、$\sin nx$ 的形式。</p>
 <p>解析要点：化简 $f(x)=\cos 2x+\frac{1}{3}\sin 2x$，本身已是有限三角和，故 $a_2=1$，$b_2=\frac{1}{3}$，其余系数为 $0$。</p>
 <hr>
 <p><strong>[2022-四]</strong> 将 $f(x)=\begin{cases}1,&|x|<1,\\0,&1\le|x|\le\pi,\end{cases}$ 展为 Fourier 级数（周期 $2\pi$），由此求 $\displaystyle\sum_{n=1}^{\infty}\frac{\sin n}{n}$ 和 $\displaystyle\sum_{n=1}^{\infty}\frac{\sin^2 n}{n^2}$。</p>
+<p><em>拆解</em>：展开后系数含 $\sin n$（注意这里的 $n$ 是整数，$\sin n$ 不等于零！）。第一个级数通过在<strong>连续点代值</strong>得到（$x=0$ 是连续点，级数值等于函数值 $1$）；第二个级数通过 <strong>Parseval</strong> 得到。</p>
 <p>解析要点：$f$ 偶，$a_0=\frac{2}{\pi}$，$a_n=\frac{2\sin n}{n\pi}$。取 $x=0$（连续点）：$1=\frac{1}{\pi}+\frac{2}{\pi}\sum\frac{\sin n}{n}$，得 $\sum\frac{\sin n}{n}=\frac{\pi-1}{2}$。Parseval：$\sum\frac{\sin^2 n}{n^2}=\frac{\pi-1}{2}$。</p>
 <hr>
 <p><strong>[2021-六]</strong> 将 $f(x)=\frac{\pi}{2}-x$（$x\in[0,\pi]$）展为正弦级数，由此求 $\displaystyle\sum_{n=1}^{\infty}\frac{1}{(2n-1)^2}$ 和 $\displaystyle\sum_{n=1}^{\infty}\frac{1}{n^4}$。</p>
-<p>解析要点：$b_n=\frac{2}{n\pi}[1-(-1)^n]+\frac{2(-1)^{n+1}}{n}$... 最终利用 Parseval 得 $\sum\frac{1}{n^4}=\frac{\pi^4}{90}$。</p>
+<p>解析要点：$b_n=\frac{2}{\pi}\int_0^\pi\left(\frac{\pi}{2}-x\right)\sin nx\,dx=\frac{2}{\pi}\left[\frac{\pi}{2}\cdot\frac{1-(-1)^n}{n}+\frac{\pi(-1)^n}{n}\right]=\frac{1+(-1)^n}{n}$（$n$ 奇时 $b_n=0$；$n=2k$ 时 $b_{2k}=\frac{1}{k}$）。正弦级数 $S(x)=\sum_{k=1}^\infty\frac{\sin 2kx}{k}=\frac{\pi}{2}-x$（$x\in(0,\pi)$）。
+
+① Parseval 一次：$\frac{2}{\pi}\int_0^\pi\left(\frac{\pi}{2}-x\right)^2 dx=\frac{2}{\pi}\cdot\frac{\pi^3}{12}=\frac{\pi^2}{6}=\sum_{k=1}^\infty\frac{1}{k^2}$，即 $\sum\frac{1}{n^2}=\frac{\pi^2}{6}$。由此 $\sum\frac{1}{(2n-1)^2}=\sum\frac{1}{n^2}-\frac{1}{4}\sum\frac{1}{n^2}=\frac{\pi^2}{6}\cdot\frac{3}{4}=\frac{\pi^2}{8}$。
+
+② 对 $S(x)$ 在 $[0,x]$ 逐项积分：$\sum_{k=1}^\infty\frac{1-\cos 2kx}{2k^2}=\frac{\pi x}{2}-\frac{x^2}{2}$，即 $\sum_{k=1}^\infty\frac{\cos 2kx}{k^2}=\frac{\pi^2}{6}-\pi x+x^2$。
+
+③ Parseval 二次：$\frac{2}{\pi}\int_0^\pi\left(\frac{\pi^2}{6}-\pi x+x^2\right)^2 dx=\sum_{k=1}^\infty\frac{1}{k^4}$。展开积分（$\int_0^\pi\left(\frac{\pi^4}{36}-\frac{\pi^3 x}{3}+\frac{4\pi^2 x^2}{3}-2\pi x^3+x^4\right)dx=\frac{\pi^5}{180}$），故 $\sum\frac{1}{n^4}=\frac{2}{\pi}\cdot\frac{\pi^5}{180}=\frac{\pi^4}{90}$。</p>
 <hr>
 <p><strong>[2023-四] (Dirichlet 积分应用)</strong> 利用 $\int_0^{+\infty}\frac{\sin x}{x}\,dx=\frac\pi2$ 计算 $\int_0^{+\infty}\frac{\sin(ax)\sin(bx)}{x^2}\,dx$（$0<a<b$）。</p>
-<p>解析要点：令 $f(t)=\int_0^\infty\frac{\sin(at)\sin(bx)}{x^2}\,dx$，对 $t$ 求导得 $f'(t)=\int_0^\infty\frac{\cos(at)\sin(bx)}{x}\,dx$，利用积化和差化为 Dirichlet 积分之和 $f'(t)=\pi/2$，结合 $f(0)=0$ 得 $f(a)=\frac{\pi a}{2}$。</p>
+<p><em>拆解</em>：这道题和前面的 Fourier 级数套路不同——它是含参积分问题。关键技巧是<strong>「对参数求导降次」</strong>：分母有 $x^2$，对参数 $a$（或 $b$）求一次导可以消掉一个 $x$，把 $\frac{1}{x^2}$ 变成 $\frac{1}{x}$，就能利用已知的 Dirichlet 积分了。</p>
+<p>解析要点：固定 $b$，令
+$$F(a)=\int_0^\infty\frac{\sin(ax)\sin(bx)}{x^2}\,dx,\quad 0\le a<b.$$
+对参数 $a$ 求导：
+$$F'(a)=\int_0^\infty\frac{\cos(ax)\sin(bx)}{x}\,dx
+=\frac12\int_0^\infty\frac{\sin((b+a)x)+\sin((b-a)x)}{x}\,dx=\frac{\pi}{2}.$$
+又 $F(0)=0$，故 $F(a)=\dfrac{\pi a}{2}$。</p>
 <hr>
 <p><strong>备考提示</strong>：</p>
 <ul>
