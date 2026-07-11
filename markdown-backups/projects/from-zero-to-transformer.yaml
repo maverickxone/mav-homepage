@@ -1,6 +1,8 @@
 title: "从零开始学 Transformer"
 slug: from-zero-to-transformer
 order: 1
+status: draft
+statusNote: "未完成的深度学习路线，等待相关书稿统一整合。"
 description: "从数学直觉到 Transformer 架构——每个算法从零手写一遍，再用框架跑一遍"
 books:
   - slug: ai-math-foundations

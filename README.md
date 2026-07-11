@@ -75,10 +75,6 @@
 - **深度学习从零到能读论文** — DL 工具箱 → CNN → RNN
 - **数字世界的底层格式** — PDF → 视频 → 浏览器
 
-## 知识图谱
-
-基于 [force-graph](https://github.com/vasturiano/force-graph) 的交互式力导向图，展示跨书知识关联。滚轮缩放、拖拽节点、hover 高亮。
-
 ## 项目结构
 
 ```
@@ -103,7 +99,6 @@ cd md2HTML
 node build.js <Book-Name>        # 构建单本书
 node build.js <Book-Name>/ch.md  # 只构建一章
 node build-projects.js            # 构建 Project 页面
-node build-graph.js               # 构建知识图谱数据
 ```
 
 ## 技术栈
@@ -113,7 +108,6 @@ node build-graph.js               # 构建知识图谱数据
 - **代码高亮**：highlight.js（CDN）
 - **图表**：Mermaid.js（CDN，客户端渲染）
 - **搜索**：MiniSearch（客户端全文搜索）
-- **知识图谱**：force-graph（Canvas + d3-force）
 - **部署**：Ubuntu + Nginx + GitHub webhook 自动同步
 
 ## 使用内容

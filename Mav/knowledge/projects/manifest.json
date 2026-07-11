@@ -3,6 +3,9 @@
     "title": "从零开始学 Transformer",
     "slug": "from-zero-to-transformer",
     "description": "从数学直觉到 Transformer 架构——每个算法从零手写一遍，再用框架跑一遍",
+    "status": "draft",
+    "statusNote": "未完成的深度学习路线，等待相关书稿统一整合。",
+    "order": 1,
     "bookCount": 5,
     "readTimeMinutes": 2970,
     "books": [
@@ -37,6 +40,9 @@
     "title": "计算机是怎么工作的",
     "slug": "how-computer-works",
     "description": "从晶体管到浏览器，一路向上——理解你每天用的这台机器",
+    "status": "published",
+    "statusNote": "",
+    "order": 2,
     "bookCount": 3,
     "readTimeMinutes": 591,
     "books": [
@@ -61,6 +67,9 @@
     "title": "深度学习从零到能读论文",
     "slug": "deep-learning-path",
     "description": "从 PyTorch 张量运算到 Transformer，一步步建立动手能力",
+    "status": "draft",
+    "statusNote": "历史版本与未完成书稿，等待后续统一整合。",
+    "order": 3,
     "bookCount": 3,
     "readTimeMinutes": 431,
     "books": [
@@ -85,6 +94,9 @@
     "title": "数字世界的底层格式",
     "slug": "digital-formats",
     "description": "文件、视频、网页——你每天接触的数字内容，底层到底长什么样",
+    "status": "published",
+    "statusNote": "",
+    "order": 4,
     "bookCount": 3,
     "readTimeMinutes": 456,
     "books": [

@@ -1,6 +1,8 @@
 title: "深度学习从零到能读论文"
 slug: deep-learning-path
 order: 3
+status: draft
+statusNote: "历史版本与未完成书稿，等待后续统一整合。"
 description: "从 PyTorch 张量运算到 Transformer，一步步建立动手能力"
 books:
   - slug: d2l-toolbox

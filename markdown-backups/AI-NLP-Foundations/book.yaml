@@ -3,3 +3,5 @@ author: "Mav"
 description: "语言遇上神经网络——分词、词嵌入、RNN、Seq2Seq、注意力机制和子词分词。"
 language: "ZH-CN"
 version: "1.0.0"
+status: draft
+statusNote: "未完成书稿，等待后续统一整合。"

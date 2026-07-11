@@ -407,6 +407,10 @@ footer {
    Responsive
    ============================================================ */
 @media (max-width: 768px) {
+  .knowledge-grid {
+    grid-template-columns: 1fr;
+    gap: var(--space-3);
+  }
   .cards {
     grid-template-columns: 1fr;
   }

@@ -4,3 +4,5 @@ description: "面向深度学习初学者的中文讲义，覆盖 PyTorch 基础
 language: "ZH-CN"
 version: "1.0.0"
 catalog: false
+status: draft
+statusNote: "旧版合订书稿，等待后续统一整合。"

@@ -3,3 +3,5 @@ author: "Mav"
 description: "改变一切的架构——Self-Attention、Multi-Head Attention、位置编码、完整 Transformer、BERT 和 GPT。"
 language: "ZH-CN"
 version: "1.0.0"
+status: draft
+statusNote: "未完成书稿，等待后续统一整合。"

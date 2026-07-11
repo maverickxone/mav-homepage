@@ -61,6 +61,10 @@ function formatReadTime(minutes) {
   return minutes > 60 ? `${Math.round(minutes / 60)} 小时` : `${minutes} 分钟`;
 }
 
+function isCatalogProject(project) {
+  return project.catalog !== false && project.status !== 'draft';
+}
+
 /**
  * Read book.yaml for a given slug to get its title and metadata.
  */
@@ -201,6 +205,11 @@ function getChaptersMeta(dirName) {
 function buildProjectDetailPage(project, booksMeta) {
   const totalTime = estimateReadTime(project.books);
   const timeDisplay = formatReadTime(totalTime);
+  const isDraft = project.status === 'draft';
+  const statusNote = project.statusNote || '这条路线仍在整理，暂不作为推荐阅读。';
+  const draftNotice = isDraft
+    ? `\n        <p class="project-status-note">${escapeHtml(statusNote)}</p>`
+    : '';
 
   const stepsHtml = project.books.map((book, i) => {
     const meta = booksMeta[i];
@@ -318,10 +327,10 @@ ${items}
 
   <div class="project-layout">
     <div class="project-main">
-      <header class="project-header">
-        <span class="eyebrow">PROJECT</span>
+      <header class="project-header${isDraft ? ' project-header--draft' : ''}">
+        <span class="eyebrow">${isDraft ? 'DRAFT PATH' : 'PROJECT'}</span>
         <h1>${project.title}</h1>
-        <p class="project-desc">${project.description}</p>
+        <p class="project-desc">${project.description}</p>${draftNotice}
         <div class="project-stats">
           <span>${project.books.length} 本书</span>
           <span>·</span>
@@ -342,10 +351,9 @@ ${sidebarHtml}
   <section class="project-finish">
     <span class="eyebrow">PATH COMPLETE</span>
     <h2>继续整理你的知识地图</h2>
-    <p>完成这条路径后，可以回到知识库选择下一本书，或在图谱中查看这些主题之间的联系。</p>
+    <p>完成这条路径后，可以回到知识库选择下一本书。</p>
     <div class="project-finish-actions">
       <a class="finish-primary" href="../../index.html">返回知识库</a>
-      <a href="../../graph/index.html">查看知识图谱 →</a>
     </div>
   </section>
 
@@ -409,6 +417,9 @@ function main() {
       title: project.title,
       slug: project.slug,
       description: project.description,
+      status: project.status || 'published',
+      statusNote: project.statusNote || '',
+      order: project.order ?? null,
       bookCount: project.books.length,
       readTimeMinutes: totalTime,
       books: project.books.map(b => {
@@ -428,7 +439,7 @@ function main() {
     'utf-8'
   );
   console.log(`  ✓ manifest.json`);
-  updateKnowledgeIndex(allProjects);
+  updateKnowledgeIndex(allProjects.filter(isCatalogProject));
   console.log(`  ✓ knowledge/index.html project cards`);
   console.log(`\n  Done! Output: ${OUTPUT_BASE}/\n`);
 }

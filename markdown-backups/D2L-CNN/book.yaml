@@ -3,3 +3,5 @@ author: "Mav"
 description: "系统讲解图像表示、卷积、池化、归一化、数据增强、数据集加载、CNN 模型构建、迁移学习、训练技巧与可视化。"
 language: "ZH-CN"
 version: "1.0.0"
+status: draft
+statusNote: "历史版本与未完成书稿，等待后续统一整合。"
