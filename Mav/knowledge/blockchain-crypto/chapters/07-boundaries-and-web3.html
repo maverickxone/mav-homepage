@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>边界与 Web3 — 区块链与加密货币：从原理到生态</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" id="hljs-light" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+<link rel="stylesheet" id="hljs-dark" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" media="not all">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+
+</head>
+<body>
+
+<div class="progress-bar" id="progress-bar"></div>
+
+<nav class="topnav" id="topnav">
+  <div class="topnav-inner">
+    <a class="brand" href="../index.html">区块链与加密货币：从原理到生态</a>
+    <div class="nav-links">
+      <a href="01-trust-and-cryptography.html">01</a>
+      <a href="02-bitcoin-design.html">02</a>
+      <a href="03-bitcoin-network.html">03</a>
+      <a href="04-ethereum-and-contracts.html">04</a>
+      <a href="05-consensus.html">05</a>
+      <a href="06-crypto-ecosystem.html">06</a>
+      <a href="07-boundaries-and-web3.html" class="active">07</a>
+      <a href="08-security-practice.html">08</a>
+    </div>
+    <div class="nav-controls">
+      <button class="nav-btn" id="search-btn" aria-label="搜索 (Ctrl+K)">⌘K</button>
+      <button class="nav-btn" id="settings-btn" aria-label="阅读设置">Aa</button>
+      <a class="nav-btn" href="../../index.html" aria-label="返回知识库">← 知识库</a>
+      <a class="nav-btn" href="https://github.com/maverickxone/mav-homepage" target="_blank" rel="noopener" aria-label="GitHub" style="padding: 6px 8px;"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg></a>
+    </div>
+  </div>
+</nav>
+<div class="settings-pop" id="settings-pop">
+  <h5>主题</h5>
+  <div class="row">
+    <button class="seg" data-theme-set="light">明亮</button>
+    <button class="seg" data-theme-set="dark">暗色</button>
+  </div>
+  <h5>字号</h5>
+  <div class="row">
+    <button class="seg" data-size-set="s">小</button>
+    <button class="seg" data-size-set="m">中</button>
+    <button class="seg" data-size-set="l">大</button>
+  </div>
+</div>
+
+<div class="with-sidebar">
+  <aside class="sidebar">
+  <div class="chapter-num">CHAPTER 07</div>
+  <div class="chapter-name">边界与 Web3</div>
+  <h4>目录</h4>
+  <ul>
+    <li><a href="#71-钩子远航公司真的需要区块链吗">7.1 钩子：远航公司真的需要区块链吗？</a></li>
+    <li><a href="#72-区块链适合什么共享记录-难以指定中心维护者">7.2 区块链适合什么：共享记录 + 难以指定中心维护者</a></li>
+    <li><a href="#73-区块链不适合什么速度隐私链外信息">7.3 区块链不适合什么：速度、隐私、链外信息</a></li>
+    <li><a href="#74-不可能三角去中心化安全可扩展性">7.4 不可能三角：去中心化、安全、可扩展性</a></li>
+    <li><a href="#75-web3-这个词从哪里来">7.5 Web3 这个词从哪里来</a></li>
+    <li><a href="#76-web3-的承诺与炒作">7.6 Web3 的承诺与炒作</a></li>
+    <li><a href="#77-几个具体项目的价值判断">7.7 几个具体项目的价值判断</a></li>
+    <li><a href="#78-本章小结">7.8 本章小结</a></li>
+  </ul>
+</aside>
+  <article class="chapter-body">
+    <header class="chapter-head">
+  <div class="chapter-head-meta">
+    <span class="num">CHAPTER 07</span>
+    <span>≈ 30 MIN READ</span>
+  </div>
+  <h1>边界与 Web3</h1>
+  <div class="chapter-info-cutoff">信息更新至 2026-07-13</div>
+
+</header>
+    <h2 id="71-钩子远航公司真的需要区块链吗">7.1 钩子：远航公司真的需要区块链吗？</h2>
+<h3 id="711-小林的期末项目">7.1.1 小林的期末项目</h3>
+<p>小林是中国科大软件学院的大二学生。期末作业要求他给一家虚构公司设计一套“数字化改造方案”。他抽到的是<strong>远航供应链公司</strong>：一家帮出口商追踪货物的中型物流企业，客户分布在五个国家，经常因为单据对不上而扯皮。</p>
+<p>小林的第一个念头是：最近不是老听说区块链不可篡改、多方共享吗？给远航公司做一条联盟链，把提单、报关单、物流节点都写上去，看起来又前沿又解决痛点。</p>
+<p>他带着方案去找助教阿杰。阿杰翻了两页，问了他三个问题：</p>
+<ol>
+<li>远航的客户之间，是真的互不信任到没法指定一个共同维护的数据库管理员吗？</li>
+<li>货物状态很大一部分来自仓库扫码和轮船 GPS，这些信息上链之前谁保证它真实？</li>
+<li>如果海关临时要求改一笔报关数据，区块链不允许回滚，远航打算怎么办？</li>
+</ol>
+<p>小林愣住了。他发现“用区块链”和“需要区块链”之间，还隔着一整片需要仔细判断的边界。</p>
+<h3 id="712-先别急着选技术">7.1.2 先别急着选技术</h3>
+<p>这不是在批评远航公司不能用区块链，而是在说：<strong>技术选型应该由问题结构决定，而不是由流行词决定。</strong></p>
+<p>区块链确实提供了一种很特殊的能力：让互不信任的参与者，在没有共同管理员的情况下，共同维护一份难以单方面篡改的状态。但这项能力是有代价的——它慢、贵、公开、不可逆，而且很多现实信息本来就在链外。</p>
+<p>本章要做的事，就是帮小林（也帮读者）画出这张地图：区块链的边界在哪里？什么样的场景真的值得用？Web3 这个词又是在什么背景下出现的？为什么有些 Web3 项目创造了真实价值，有些只是披着新词的外衣继续老套路？</p>
+<div class="callout callout-tip">
+<p class="callout-title">**关键直觉**：区块链不是“更高级的数据库”，而是“在缺少共同信任时用来达成共同记录的工具”。如果现场本来就有可信协调者，强行上链往往只是增加复杂度和成本。</p>
+
+
+
+</div>
+
+<hr>
+<h2 id="72-区块链适合什么共享记录-难以指定中心维护者">7.2 区块链适合什么：共享记录 + 难以指定中心维护者</h2>
+<h3 id="721-一份谁都不愿意单独保管的账本">7.2.1 一份谁都不愿意单独保管的账本</h3>
+<p>想象一个最简单的场景：五个大学社团每学期共用一笔活动经费。过去这笔钱存在会长个人账户里，其他社团总担心会长私自挪用；如果换成五个社团轮流管账，每次交接又可能扯皮。</p>
+<p>他们的核心需求不是“高科技”，而是：<strong>共同拥有一份大家都承认的账本，而且没有任何一方能单独改它。</strong></p>
+<p>区块链正好适合这种结构：多方需要写入同一份状态，各方之间没有天然信任，又找不到一个所有人都愿意托付的中心管理员。把账本放在链上，每次支出都需要多签或投票，历史记录公开可查，任何一方都无法在半夜偷偷改账。</p>
+<div class="callout callout-tip">
+<p class="callout-title">**一句话判断**：如果参与方之间缺少共同信任，又确实需要共享一份状态，区块链才进入候选名单。</p>
+
+
+
+</div>
+
+<h3 id="722-远航公司可能适合的场景">7.2.2 远航公司可能适合的场景</h3>
+<p>回到远航公司。小林仔细一想，发现并非所有业务都同样适合区块链。</p>
+<p><strong>比较适合上链的部分</strong>：跨境多方共同确认的货物状态。例如，出口商、货代、港口、进口商四方共同维护一份“电子提单”的状态：货物已装船、已到港、已清关、已签收。每一方都担心自己单独改记录会被其他方质疑，四方又分属不同国家，很难指定一个大家都信任的中心数据库。</p>
+<p><strong>不太适合上链的部分</strong>：船上的实时 GPS 温度、仓库内部的库存盘点。这些数据在写入链上前，本来就要依赖传感器和管理员；链只能保证“写入后难以篡改”，不能保证“写入前一定真实”。</p>
+<p><strong>预言机</strong>（Oracle）解决的就是“链外信息怎样可信地上链”的问题：它通过多个数据源提交同一类信息，并在链上聚合出一个被多方接受的数值。预言机不能创造真实，只能把链外的可信度传递到链上；如果链外源头本身不可信，链上记录也会跟着失真。</p>
+<h3 id="723-公开可验证与退出能力">7.2.3 公开可验证与退出能力</h3>
+<p>除了“没有中心管理员”，区块链还有另一个价值：<strong>公开可验证</strong>。</p>
+<p>在中心化系统里，普通用户只能看到前端界面，真正的数据库和规则都掌握在公司手里。公司改了推荐算法、冻结了账户、或者悄悄修改了积分规则，用户往往事后才发现。</p>
+<p>区块链把规则和状态都公开在链上。任何人都可以运行一个全节点，独立验证每一笔交易和每一个状态变化。如果你不满意当前规则，还可以带着私钥和资产“退出”到另一条遵循不同规则的链上——这就是分叉所代表的<strong>退出权</strong>。</p>
+<div class="callout callout-tip">
+<p class="callout-title">**作者旁白**：公开可验证不是“全民都要读代码”，而是“如果有人想核查，他有地方可查”。它提供的是一种威慑和救济，而不是要求每个用户都成为审计师。</p>
+
+
+
+</div>
+
+<h3 id="724-四层视角别把不同层混为一谈">7.2.4 四层视角：别把不同层混为一谈</h3>
+<p>当我们说“区块链很安全”时，需要说清楚是在哪一层安全。本书采用四层视角来拆解一个完整的区块链系统：</p>
+<pre data-label="text"><code class="language-text">第四层：法律与市场
+        ↓ 处理链外权利、合同、监管和资产交割
+第三层：用户入口
+        ↓ 钱包、交易所、稳定币发行商、网页前端
+第二层：应用与桥接
+        ↓ 智能合约、跨链桥、预言机
+第一层：共识网络
+        ↓ 节点、共识规则、区块历史</code></pre>
+<p><strong>共识网络</strong>负责决定哪些交易进入共同历史。<strong>智能合约和跨链桥</strong>负责执行具体业务逻辑。<strong>钱包、交易所、稳定币发行商和网页入口</strong>负责让人真正使用系统。<strong>法律和市场</strong>负责处理链外权利与责任。</p>
+<p>一层表现良好，无法自动替其他层担保。比特币的共识规则可以正常运行，同时某家交易所仍可能挪用客户资产；以太坊账本可以准确记录交易，同时某个智能合约仍可能写错逻辑；一个 NFT 的转移记录可以在链上长期保留，同时它指向的图片服务器仍可能关闭。</p>
+<div class="callout callout-warn">
+<p class="callout-title">**风险提示**：很多“区块链项目被盗”的新闻，问题并不出在底层共识，而是出在钱包、跨链桥、预言机或合约权限这些上层环节。评估安全时，要沿着资产路径逐层检查。</p>
+
+
+
+</div>
+
+<hr>
+<h2 id="73-区块链不适合什么速度隐私链外信息">7.3 区块链不适合什么：速度、隐私、链外信息</h2>
+<h3 id="731-速度边界共同验证需要付出成本">7.3.1 速度边界：共同验证需要付出成本</h3>
+<p>公开区块链让许多互不认识的节点共同保存和验证数据。这个结构换来了较强的开放性和抗单点故障能力，也带来了重复计算、网络传播和数据存储成本。</p>
+<p>以 2023 至 2024 年常见的基础层数据为参照，比特币每秒通常处理个位数交易，以太坊基础层处理能力也远低于大型中心化支付网络。具体数值会随交易类型、升级和统计口径变化，比较时应标明日期与口径。</p>
+<p>性能差异来自目标差异。中心化系统可以由一个运营方安排服务器、账户和回滚规则；公开区块链需要让分散节点对同一结果达成一致，还要允许新节点独立检查历史。</p>
+<p><strong>Layer 2</strong>（第二层扩容方案）解决的是“怎样在保持主链安全假设的前提下提高吞吐量”的问题：把大量执行移到链下或侧链，再向主链提交状态承诺和必要数据。常见的两种路线是：</p>
+<ul>
+<li><strong>零知识 Rollup</strong>（ZK Rollup）：提交有效性证明，主链可以快速验证链下执行是否正确。</li>
+<li><strong>乐观 Rollup</strong>（Optimistic Rollup）：默认相信提交结果，但保留一个窗口，让任何人可以提出欺诈证明来挑战错误结果。</li>
+</ul>
+<div class="callout callout-tip">
+<p class="callout-title">**关键直觉**：扩容不是免费加速。Layer 2 换来了吞吐量，但增加了桥接、排序器和退出规则等新的依赖。性能提升是真实的，新的风险也要一起计算。</p>
+
+
+
+</div>
+
+<h3 id="732-隐私边界公开验证与个人信息">7.3.2 隐私边界：公开验证与个人信息</h3>
+<p>比特币和以太坊使用地址记录交易。地址本身通常没有姓名，交易历史却长期公开。</p>
+<p>一旦某个地址通过交易所实名记录、公开收款或现实交易与个人建立联系，分析者就可能沿着历史资金流继续追踪。区块链因此常被称为“<strong>伪匿名</strong>”系统：不是完全匿名，而是“匿名到被关联为止”。</p>
+<p>隐私技术尝试在验证与保密之间寻找平衡。<strong>门罗币</strong>（Monero）使用环签名、隐匿地址和保密交易隐藏关系与金额。<strong>Zcash</strong> 的屏蔽交易使用零知识证明，让节点在看不到完整细节时仍能验证规则。</p>
+<p>这些技术也带来计算成本、钱包兼容和监管压力。门罗币默认使用协议规定的隐私机制；Zcash 同时存在透明与屏蔽使用方式。当 Zcash 用户大量选择透明交易时，屏蔽交易的匿名集合会相对缩小。</p>
+<div class="callout callout-warn">
+<p class="callout-title">**风险提示**：单纯“换一个地址”并不能彻底保护隐私。如果你的新地址仍然从同一个交易所提币，或者仍然用来收同一个商家的款，分析者仍然可以把新旧地址关联起来。</p>
+
+
+
+</div>
+
+<h3 id="733-链外信息边界区块链不能自己出门看天气">7.3.3 链外信息边界：区块链不能自己出门看天气</h3>
+<p>智能合约只能稳定处理所有节点都能复现的数据。天气、汇率、比赛结果、货物是否真实到港，都来自链外。合约无法自行访问网页或 API，否则不同节点可能得到不同结果，破坏共识。</p>
+<p>这意味着：<strong>区块链不能自动让链外世界变真实。</strong> 它可以记录“某一方声称货物已签收”，但不能代替签收行为本身；它可以记录“预言机报告金价为 2300 美元”，但不能保证预言机没有被操纵或延迟。</p>
+<p>远航公司的项目如果要上链，必须同时设计链外流程：谁负责扫码？谁负责维护传感器？如果数据出错，链上记录能否被纠正？纠正的权限由谁掌握？这些问题不是区块链能单独回答的。</p>
+<h3 id="734-用户边界自己掌管资产意味着自己承担错误">7.3.4 用户边界：自己掌管资产意味着自己承担错误</h3>
+<p><strong>自托管钱包</strong>把资产控制权交给用户。助记词丢失后通常缺少统一的找回机构，助记词泄露后攻击者可以直接转走资产。</p>
+<p>这项设计适合愿意承担保管责任的人，也让初学者面对很高的操作门槛。地址长、网络多、代币同名、授权内容难读，任何一步都可能产生不可逆后果。</p>
+<p><strong>账户抽象</strong>（Account Abstraction）解决的是“怎样让链上账户更像普通互联网账户”的问题：通过智能合约定义账户规则，可以支持社交恢复、批量交易、代付 Gas 等更灵活的操作。具体产品的成熟度会随时间变化，评估时应查看恢复机制由谁控制、代付费用来自哪里、紧急权限怎样使用。</p>
+<p>托管服务提供密码找回、客服和风控，代价是用户重新依赖运营方。自托管与托管可以服务不同需求，关键在于让用户清楚控制权落在哪里，以及出现错误时谁能处理。</p>
+<hr>
+<h2 id="74-不可能三角去中心化安全可扩展性">7.4 不可能三角：去中心化、安全、可扩展性</h2>
+<h3 id="741-一个工程观察不是数学定理">7.4.1 一个工程观察，不是数学定理</h3>
+<p>区块链社区里常提到一个说法：<strong>去中心化、安全、可扩展性，三者只能同时满足两个。</strong> 这个说法被称为区块链的<strong>不可能三角</strong>（Trilemma）。</p>
+<p>严格来说，它不是一条经过严格证明的数学定理，而是一种工程观察：在现有技术条件下，增强其中一项往往会削弱另一项。</p>
+<ul>
+<li>更强的<strong>去中心化</strong>：让更多低配置节点能参与，通常会限制每个区块能装多少数据，从而降低可扩展性。</li>
+<li>更强的<strong>可扩展性</strong>：提高区块大小或缩短出块时间，会提高节点硬件要求，可能让运行全节点变得更困难，从而削弱去中心化。</li>
+<li>更强的<strong>安全</strong>：需要更多验证轮次、更保守的参数，可能让确认变慢，影响用户体验。</li>
+</ul>
+<div class="callout callout-tip">
+<p class="callout-title">**关键直觉**：使用“不可能三角”时，重点不是背诵“只能选两个”，而是追问具体取舍：谁需要更强的机器？谁负责排序？用户在故障时怎样退出？最终结果由哪一层确认？</p>
+
+
+
+</div>
+
+<h3 id="742-不同项目的不同取舍">7.4.2 不同项目的不同取舍</h3>
+<p>比特币把主要赌注押在<strong>去中心化和安全</strong>上。它的区块小、出块慢、脚本简单，普通用户仍然可以运行全节点验证整条链。代价是每秒交易量和确认速度无法与中心化支付网络相比。</p>
+<p>一些高性能公链把主要赌注押在<strong>可扩展性和安全</strong>上，通过更少的验证节点或更集中的共识机制来提升速度。代价是用户更难独立验证整条链，网络更容易被少数实体影响。</p>
+<p>Layer 2 则试图把“结算安全”留在主链，把“执行速度”放到上层。它的核心取舍是：用户获得更快、更便宜的交易，但需要信任排序器、桥接合约或退出机制。</p>
+<p>远航公司如果要做联盟链，取舍又不一样。联盟链的参与者是已知机构，不需要抵抗女巫攻击，因此可以用更快的共识算法；代价是它不再对公众开放，也无法享受公开网络的去中心化安全保证。</p>
+<hr>
+<h2 id="75-web3-这个词从哪里来">7.5 Web3 这个词从哪里来</h2>
+<h3 id="751-从-web1-到-web2-再到-web3">7.5.1 从 Web1 到 Web2 再到 Web3</h3>
+<p>要理解 Web3，最好先回顾一下前两个“Web”在说什么。</p>
+<p><strong>Web1</strong>（大约 1990 年代到 2000 年代初）是“只读”的互联网。普通用户浏览网页，内容由网站所有者发布。个人主页和早期门户是典型代表。</p>
+<p><strong>Web2</strong>（大约 2000 年代中期至今）是“读写”的互联网。用户可以在社交媒体上发布内容、在电商平台上开店、在视频网站上投稿。但数据、关系、收入和规则都掌握在平台手里。平台可以改变推荐规则、关闭账户、限制数据导出。</p>
+<p><strong>Web3</strong> 这个词最早由以太坊联合创始人 Gavin Wood 在 2014 年提出。它想表达一种愿景：用户能够直接控制自己的数字资产和数据，用开放协议在应用之间转移，减少对单个平台的依赖。</p>
+<div class="callout callout-tip">
+<p class="callout-title">**关键直觉**：Web3 不是某种具体技术，而是一组正在变化的理念：把用户身份、资产和数据从平台服务器上“解放”出来，让用户带着它们在不同服务之间移动。</p>
+
+
+
+</div>
+
+<h3 id="752-web3-想解决的真实问题">7.5.2 Web3 想解决的真实问题</h3>
+<p>Web3 的愿景回应了真实问题：</p>
+<ul>
+<li>平台可以随意改变规则或关闭账户；</li>
+<li>跨境支付价格高、速度慢、中间环节多；</li>
+<li>创作者和用户提供价值后，收入分配由平台决定；</li>
+<li>用户的游戏道具、社交关系和数据被锁在某个封闭系统里。</li>
+</ul>
+<p>区块链提供了一种解法：用公开规则记录资产与操作，让多个互不信任的参与者共同验证。这套解法也增加了共识成本、密钥责任、治理协调和法律连接。Web3 的价值取决于某个场景是否真正需要这些特性。</p>
+<hr>
+<h2 id="76-web3-的承诺与炒作">7.6 Web3 的承诺与炒作</h2>
+<h3 id="761-承诺数字主权的另一种可能">7.6.1 承诺：数字主权的另一种可能</h3>
+<p><strong>数字主权</strong>可以理解为个人和组织对数字身份、数据和资产拥有更清楚的控制权与迁移能力。</p>
+<p>区块链通过私钥和开放协议提供一种实现路径：用户可以直接持有资产，应用可以读取同一套公开状态，平台退出后数据记录仍可能存在。</p>
+<p>真正的主权还需要可用性。普通人要能安全恢复账户，理解授权，纠正错误，并在发生欺诈时获得适当救济。技术控制权与现实保护需要共同设计。</p>
+<div class="callout callout-tip">
+<p class="callout-title">**作者旁白**：数字主权不是“政府和企业都别管我”，而是“用户清楚自己拥有什么、能带到哪里、出错时能找到谁”。</p>
+
+
+
+</div>
+
+<h3 id="762-炒作代币价格会提前兑现未来预期">7.6.2 炒作：代币价格会提前兑现未来预期</h3>
+<p>区块链项目常在产品成熟前发行可交易代币。代币价格会把未来预期提前变成今天的数字，市场情绪因此容易超出实际使用。</p>
+<p>早期团队、投资机构和用户的成本不同，解锁时间也不同。价格上涨时，各方利益看起来一致；新增资金放缓时，持仓结构和卖出压力会暴露。</p>
+<p>高额代币奖励也会制造短期繁荣。用户为了奖励存入资金，项目用新发行代币支付收益，代币上涨又吸引更多资金。真实手续费无法支撑奖励时，这个循环会反向运行。</p>
+<p>NFT、链游、DeFi 和新公链都出现过这种现象，具体程度因项目而异。判断时应查看真实用户、费用收入、代币分配、解锁安排和补贴停止后的留存。</p>
+<div class="callout callout-warn">
+<p class="callout-title">**炒作风险提示**：实际成交只能说明部分参与者愿意按相应价格交易，持续价值还需要使用、收入和流动性数据验证。代币价格上涨不是产品成功的证明。</p>
+
+
+
+</div>
+
+<h3 id="763-泡沫与技术进步可以同时存在">7.6.3 泡沫与技术进步可以同时存在</h3>
+<p>这听起来矛盾，却是历史反复出现的画面：2000 年互联网泡沫破裂，但宽带、搜索引擎和电子商务的技术进步是真实的；2017 年 ICO 泡沫中很多项目归零，但稳定币、自动做市商等基础设施的原型也开始出现。</p>
+<p>泡沫能够与技术进步同时存在。对学习者来说，关键是区分“可验证的事实”和“未兑现的预期”：前者包括链上交易量、费用收入、合约代码和权限结构；后者包括“未来每个人都会用”“马上取代某某平台”之类的叙事。</p>
+<hr>
+<h2 id="77-几个具体项目的价值判断">7.7 几个具体项目的价值判断</h2>
+<h3 id="771-比特币一种数字资产的共同账本">7.7.1 比特币：一种数字资产的共同账本</h3>
+<p>比特币已经展示了公开网络可以长期维护共同账本。它的核心问题是：<strong>在没有中央银行的情况下，怎样让全球互不相识的节点就一笔转账的归属达成一致。</strong></p>
+<p>比特币给出的答案是：工作量证明、UTXO、区块链和最长链原则。过去十多年的运行历史提供了真实证据，说明这套机制可以持续运转；但它无法保证未来永远不会出现协议风险、监管风险或市场风险。</p>
+<p>判断比特币的价值时，可以问：它是否提供了一种传统金融体系难以提供的跨境、无需许可的价值转移？它的安全性是否足够支撑当前市值？它的能耗和监管环境是否在可接受范围内？</p>
+<h3 id="772-以太坊可编程的公共计算平台">7.7.2 以太坊：可编程的公共计算平台</h3>
+<p>以太坊在比特币的基础上增加了<strong>智能合约</strong>，让区块链从“转账账本”升级为“公开可验证的通用计算平台”。</p>
+<p>以太坊的价值在于：开发者可以部署公开透明的规则，用户可以直接与这些规则交互，不需要依赖某个公司持续运营。稳定币、DeFi、NFT 和 DAO 大多建立在以太坊或兼容它的链上。</p>
+<p>判断以太坊时，除了看价格和市值，还要看：网络是否持续被实际使用？Layer 2 是否降低了普通用户的成本？质押是否过于集中？协议升级是否平稳？</p>
+<h3 id="773-稳定币链上美元凭证">7.7.3 稳定币：链上美元凭证</h3>
+<p><strong>稳定币</strong>解决的是“怎样在区块链上持有价格相对稳定的美元等价物”的问题。它把法币的稳定性与区块链的可编程性结合在一起，方便交易、转账和跨境结算。</p>
+<p>稳定币展示了链上美元凭证在交易和跨境转移中的需求。使用规模能够证明需求存在，储备、银行和发行商依赖也应同时计入。如果发行商的储备不透明，或者托管银行出现问题，稳定币也可能脱锚。</p>
+<h3 id="774-defi自动执行的金融规则">7.7.4 DeFi：自动执行的金融规则</h3>
+<p><strong>DeFi</strong>（去中心化金融）解决的是“怎样用公开代码替代传统金融中介的部分功能”的问题。自动做市商和超额抵押借贷展示了金融规则可以由智能合约自动执行。</p>
+<p>它们服务了真实用户，也经历过漏洞、脱锚、清算和市场投机。判断一个 DeFi 协议时，应查看：合约是否经过审计？管理员权限多大？预言机由谁控制？清算机制在极端行情下是否 robust？</p>
+<h3 id="775-nft数字稀缺性与所有权凭证">7.7.5 NFT：数字稀缺性与所有权凭证</h3>
+<p><strong>NFT</strong>（非同质化代币）解决的是“怎样在链上表达独一无二的数字资产所有权”的问题。它可以代表艺术品、门票、游戏道具或身份凭证。</p>
+<p>NFT 的链上转移记录可以长期保留，但它指向的图片、视频或元数据通常仍存放在链外服务器上。如果服务器关闭或链接失效，NFT 仍然存在，只是它“代表”的东西可能无法访问。此外，NFT 市场也经历过显著的投机泡沫。</p>
+<h3 id="776-现实资产代币化把链外资产搬上链">7.7.6 现实资产代币化：把链外资产搬上链</h3>
+<p><strong>现实资产代币化</strong>（Real World Assets，RWA）解决的是“怎样把房地产、债券、股票等链外资产以数字代币形式登记和流转”的问题。</p>
+<p>它可能提高登记与结算效率，但成败依赖托管、法律认可、数据质量和违约处理。区块链可以记录代币归属，却无法自动执行现实资产的交付或违约清算。这些都需要链外的法律制度和托管机构配合。</p>
+<h3 id="777-一个通用判断框架">7.7.7 一个通用判断框架</h3>
+<p>面对任何一个 Web3 项目，都可以落在三个层面判断：</p>
+<ol>
+<li><strong>技术层面</strong>：它是否提供了传统方案难以提供的共同验证与退出能力？</li>
+<li><strong>产品层面</strong>：用户是否持续使用？费用和体验是否合理？</li>
+<li><strong>治理层面</strong>：关键权力由谁掌握？故障和争议怎样处理？</li>
+</ol>
+<p>三个层面都有清楚答案时，区块链更可能带来实际价值。主要答案停留在代币上涨和宏大愿景时，风险会明显增加。</p>
+<div class="callout callout-tip">
+<p class="callout-title">**小林的选择**：回到期末项目，小林最终决定给远航公司设计一个“混合方案”：用传统数据库处理高频内部操作，只在跨境多方确认的提单环节引入联盟链。这样既保留了区块链的核心价值，又避免了把它塞进所有流程。</p>
+
+
+
+</div>
+
+<hr>
+<h2 id="78-本章小结">7.8 本章小结</h2>
+<p>区块链是一套分层系统。共识层负责共同历史，合约层负责业务逻辑，服务层负责用户入口，法律和市场负责链外权利。每一层都有自己的安全假设和治理方式。</p>
+<p>区块链最适合的场景是：多方需要共享状态，各方互不信任，又难以指定一个共同接受的中心维护者。它不适合追求极高速度、强隐私保护、依赖大量链外真实信息，或者可以由传统数据库和法律合同高效完成的场景。</p>
+<p>“不可能三角”提醒我们，去中心化、安全和可扩展性之间存在真实张力。不同项目做不同取舍，没有 universally 最优的答案。</p>
+<p>Web3 的愿景是让用户更直接地控制数字资产和数据，减少对单一平台的依赖。这个愿景回应了真实问题，但也被大量炒作和投机包裹。判断一个 Web3 项目时，要看技术层面的可验证能力、产品层面的真实使用，以及治理层面的权力分布。</p>
+<p>技术永远在流动。本章的所有结论都带有时间边界：新的数据、新的法规和新的失败案例都会更新旧判断。作为学习者，最有价值的不是记住“哪些项目好、哪些项目坏”，而是养成沿着<strong>权力、资金和失败路径</strong>去追问的习惯。</p>
+
+    <nav class="pager">  <a href="06-crypto-ecosystem.html">
+    <span class="label">← 上一章</span>
+    <span class="title">加密货币生态</span>
+  </a>  <a href="08-security-practice.html" class="next">
+    <span class="label">下一章 →</span>
+    <span class="title">安全实战</span>
+  </a></nav>
+  </article>
+</div>
+
+<footer>
+  <div class="set">
+    <span>区块链与加密货币：从原理到生态</span>
+    <span>2026 · ZH-CN</span>
+  </div>
+  <div class="set">
+    <span>Mav</span>
+  </div>
+</footer>
+<div class="search-backdrop" id="search-overlay" role="dialog" aria-modal="true" aria-label="搜索" hidden>
+  <div class="search-modal">
+    <div class="search-input-wrap">
+      <input type="search" class="search-input" placeholder="搜索内容..." aria-label="搜索内容" autocomplete="off">
+      <kbd>ESC</kbd>
+    </div>
+    <div class="search-results" role="listbox" aria-label="搜索结果"></div>
+  </div>
+</div>
+
+<!-- Side Panel -->
+<div class="side-panel" id="side-panel">
+  <div class="side-panel-resize" id="side-panel-resize"></div>
+  <div class="side-panel-header">
+    <div class="side-panel-tabs">
+      <button class="side-panel-tab active" data-mode="sidenote">补充</button>
+      <button class="side-panel-tab" data-mode="notepad">笔记</button>
+    </div>
+    <button class="side-panel-close" aria-label="关闭">×</button>
+  </div>
+  <div class="side-panel-body"></div>
+</div>
+<button class="notepad-fab" id="notepad-fab" aria-label="便利贴">✎</button>
+
+<!-- Mobile TOC -->
+<button class="mtoc-fab" id="mtoc-fab" aria-label="目录">TOC</button>
+<div class="mtoc-drawer" id="mtoc-drawer">
+  <div class="mtoc-content"></div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/bash.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/typescript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/yaml.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/javascript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/json.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/python.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/css.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+<script>mermaid.initialize({startOnLoad:true, theme:'neutral', fontFamily:'Inter, sans-serif'});</script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}]});"></script>
+<script src="../assets/script.js"></script>
+
+</body>
+</html>

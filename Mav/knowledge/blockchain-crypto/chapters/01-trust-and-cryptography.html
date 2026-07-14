@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>信任与密码学 — 区块链与加密货币：从原理到生态</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" id="hljs-light" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+<link rel="stylesheet" id="hljs-dark" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" media="not all">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+
+</head>
+<body>
+
+<div class="progress-bar" id="progress-bar"></div>
+
+<nav class="topnav" id="topnav">
+  <div class="topnav-inner">
+    <a class="brand" href="../index.html">区块链与加密货币：从原理到生态</a>
+    <div class="nav-links">
+      <a href="01-trust-and-cryptography.html" class="active">01</a>
+      <a href="02-bitcoin-design.html">02</a>
+      <a href="03-bitcoin-network.html">03</a>
+      <a href="04-ethereum-and-contracts.html">04</a>
+      <a href="05-consensus.html">05</a>
+      <a href="06-crypto-ecosystem.html">06</a>
+      <a href="07-boundaries-and-web3.html">07</a>
+      <a href="08-security-practice.html">08</a>
+    </div>
+    <div class="nav-controls">
+      <button class="nav-btn" id="search-btn" aria-label="搜索 (Ctrl+K)">⌘K</button>
+      <button class="nav-btn" id="settings-btn" aria-label="阅读设置">Aa</button>
+      <a class="nav-btn" href="../../index.html" aria-label="返回知识库">← 知识库</a>
+      <a class="nav-btn" href="https://github.com/maverickxone/mav-homepage" target="_blank" rel="noopener" aria-label="GitHub" style="padding: 6px 8px;"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg></a>
+    </div>
+  </div>
+</nav>
+<div class="settings-pop" id="settings-pop">
+  <h5>主题</h5>
+  <div class="row">
+    <button class="seg" data-theme-set="light">明亮</button>
+    <button class="seg" data-theme-set="dark">暗色</button>
+  </div>
+  <h5>字号</h5>
+  <div class="row">
+    <button class="seg" data-size-set="s">小</button>
+    <button class="seg" data-size-set="m">中</button>
+    <button class="seg" data-size-set="l">大</button>
+  </div>
+</div>
+
+<div class="with-sidebar">
+  <aside class="sidebar">
+  <div class="chapter-num">CHAPTER 01</div>
+  <div class="chapter-name">信任与密码学</div>
+  <h4>目录</h4>
+  <ul>
+    <li><a href="#11-钩子为什么-alice-不能直接给-bob-转-100-元">1.1 钩子：为什么 Alice 不能直接给 Bob 转 100 元？</a></li>
+    <li><a href="#12-银行做了什么清算账本信任">1.2 银行做了什么：清算、账本、信任</a></li>
+    <li><a href="#13-没有银行时的问题谁记账双花女巫攻击">1.3 没有银行时的问题：谁记账、双花、女巫攻击</a></li>
+    <li><a href="#14-比特币的全景答案">1.4 比特币的全景答案</a></li>
+    <li><a href="#15-四类参与者">1.5 四类参与者</a></li>
+    <li><a href="#16-哈希函数数字指纹">1.6 哈希函数：数字指纹</a></li>
+    <li><a href="#17-私钥公钥地址">1.7 私钥、公钥、地址</a></li>
+    <li><a href="#18-数字签名授权与完整性">1.8 数字签名：授权与完整性</a></li>
+    <li><a href="#19-alice-如何签署一笔交易">1.9 Alice 如何签署一笔交易</a></li>
+    <li><a href="#110-merkle-树把交易压成指纹">1.10 Merkle 树：把交易压成指纹</a></li>
+    <li><a href="#111-密码学的边界">1.11 密码学的边界</a></li>
+    <li><a href="#112-本章小结">1.12 本章小结</a></li>
+  </ul>
+</aside>
+  <article class="chapter-body">
+    <header class="chapter-head">
+  <div class="chapter-head-meta">
+    <span class="num">CHAPTER 01</span>
+    <span>≈ 35 MIN READ</span>
+  </div>
+  <h1>信任与密码学</h1>
+  <div class="chapter-info-cutoff">信息更新至 2026-07-13</div>
+
+</header>
+    <h2 id="11-钩子为什么-alice-不能直接给-bob-转-100-元">1.1 钩子：为什么 Alice 不能直接给 Bob 转 100 元？</h2>
+<p>Alice 和 Bob 是同校学生。Alice 欠 Bob 100 元饭钱，她想直接通过手机转过去，不经过微信、不经过支付宝、也不经过银行 App。</p>
+<p>&quot;直接转&quot;是什么意思？</p>
+<p>她理想的情况很简单：在自己的手机上把 Alice 的余额减 100，在 Bob 的手机上把余额加 100。两个人都确认一下，交易完成。</p>
+<p>但稍微一想就会发现不对劲：如果 Alice 的手机显示&quot;已转出&quot;，Bob 的手机却显示&quot;没收到&quot;，该听谁的？如果 Alice 手里其实只有 80 元，她能不能仍然在自己的手机上写下&quot;余额减 100&quot;？如果 Alice 同时给 Bob 和 Carol 各转 100 元，用的是同一份钱，系统能不能发现？</p>
+<p>这些问题不是技术细节，而是数字货币最基础的问题：<strong>在没有银行参与的情况下，怎么让一群互不信任的人共同承认一份余额记录？</strong></p>
+<p>银行之所以看起来让这件事变简单，是因为它扮演了三个角色：</p>
+<ol>
+<li><strong>账本保管者</strong>：银行数据库里记着每个人的余额。</li>
+<li><strong>交易执行者</strong>：你发起转账，银行检查、扣款、入账。</li>
+<li><strong>纠纷仲裁者</strong>：出了问题，你可以找银行申诉、冻结、撤销。</li>
+</ol>
+<p>本章要做的事，就是把银行这三个角色拆开，看看在没有单一机构的情况下，密码学和公开规则能不能重新拼出一份可信的账本。</p>
+<div class="callout callout-tip">
+<p class="callout-title">**先把问题记住，不用记住术语。**</p>
+
+<p>读完这一章，你应该能回答：为什么 Alice 不能只在自己手机上改余额？为什么需要很多人一起记账？为什么密码学能解决授权问题，却不能自动解决&quot;钱够不够&quot;和&quot;哪笔先发生&quot;？</p>
+</div>
+
+<h2 id="12-银行做了什么清算账本信任">1.2 银行做了什么：清算、账本、信任</h2>
+<p>在讨论&quot;去掉银行&quot;之前，先仔细看看银行到底做了什么。很多人以为转账就是&quot;我的钱变少，你的钱变多&quot;，实际上银行内部至少做了以下几件事。</p>
+<h3 id="121-账本谁有多少钱">1.2.1 账本：谁有多少钱</h3>
+<p>银行最核心的资产是一份<strong>账本</strong>（ledger）。账本不是一本实体账簿，而是数据库里的一系列记录：Alice 的账户余额、Bob 的账户余额、每一笔收入和支出。</p>
+<p>账本的关键特征是：银行保存着唯一被认可的版本。Alice 说自己有 1000 元不算数，银行数据库里的记录才算数。</p>
+<h3 id="122-清算把一笔交易落实到账本">1.2.2 清算：把一笔交易落实到账本</h3>
+<p>当你用手机银行给 Bob 转 100 元时，银行会做<strong>清算</strong>（clearance/settlement）：</p>
+<ul>
+<li>检查 Alice 的余额是否大于等于 100 元；</li>
+<li>把 Alice 的余额减去 100 元；</li>
+<li>把 Bob 的余额增加 100 元；</li>
+<li>记录这笔交易的时间、金额、双方账户。</li>
+</ul>
+<p>这个过程中，银行实际上回答了三个问题：这笔钱存在吗？这笔钱属于 Alice 吗？这笔钱之前有没有被花掉？</p>
+<h3 id="123-信任我们为什么相信银行">1.2.3 信任：我们为什么相信银行</h3>
+<p>你之所以敢把钱放在银行，并不是因为银行用了什么神奇的密码学，而是因为你相信一整套制度：法律、存款保险、监管、客服和司法救济。如果银行搞错了，你可以投诉、起诉、要求恢复。</p>
+<div class="callout callout-tip">
+<p class="callout-title">**数字货币不是要消灭所有信任。**</p>
+
+<p>比特币的目标不是让世界不再需要银行，而是在某些场景下，把&quot;必须信任某一家机构&quot;变成&quot;可以依据公开规则自行核查&quot;。</p>
+</div>
+
+<h3 id="124-中心机构也有边界">1.2.4 中心机构也有边界</h3>
+<p>中心机构能做很多事，但也有一些代价：</p>
+<ul>
+<li>它可以冻结账户、限制交易、审查资金流向；</li>
+<li>它需要维护昂贵的数据库和客服体系；</li>
+<li>它只能服务能开户、能被识别身份的人；</li>
+<li>跨境转账尤其慢，因为不同国家的银行要互相清算。</li>
+</ul>
+<p>这些代价不是&quot;银行坏&quot;，而是说明：银行适合很多场景，但不一定适合所有场景。区块链研究的是另一类场景——参与者分散在全球，彼此没有稳定信任关系，却仍然希望共同维护一份记录。</p>
+<h2 id="13-没有银行时的问题谁记账双花女巫攻击">1.3 没有银行时的问题：谁记账、双花、女巫攻击</h2>
+<p>现在把银行拿掉。Alice 和 Bob 只通过互联网联系，周围还有许多互不相识的节点。新的问题马上出现。</p>
+<h3 id="131-谁保存账本">1.3.1 谁保存账本</h3>
+<p>没有银行，账本就不能只存在一个地方。如果 Alice 的手机保存&quot;真实账本&quot;，她随时可以改成对自己有利的版本；如果 Bob 的手机保存，他也一样可以。</p>
+<p>所以一个自然的想法是：让很多人各自保存一份账本副本。每次交易发生后，把消息广播出去，让每个副本都更新。但这样又带来新的问题：大家看到的更新顺序可能不同，有人可能故意广播假消息。</p>
+<h3 id="132-双花同一笔钱能不能花两次">1.3.2 双花：同一笔钱能不能花两次</h3>
+<p>这是数字货币最著名的问题，叫作<strong>双花</strong>（double spending）。</p>
+<p>现金不会双花：一张 100 元纸币交给 Bob 后，Alice 手里就没有这张纸币了。但数字文件可以无限复制。Alice 完全可以把同一份&quot;价值 100 元&quot;的数字记录复制十次，分别发给十个人。</p>
+<p>如果两份交易都带有 Alice 的有效授权，系统该接受哪一份？签名只能证明&quot;Alice 同意这笔交易&quot;，不能单独决定&quot;哪一笔先发生&quot;。</p>
+<p>因此，数字货币不能只是&quot;一份写着余额的文件&quot;。它需要一条规则：某份资金一旦在一笔有效交易中被使用，后续交易就不能再次使用它。</p>
+<h3 id="133-女巫攻击一个坏人可以扮演很多人">1.3.3 女巫攻击：一个坏人可以扮演很多人</h3>
+<p>在一个封闭公司里，可以事先登记服务器身份，规定谁有投票权。但公开网络允许任何人加入，一个人也能创建成千上万个网络身份。</p>
+<p>如果简单采用&quot;一台电脑一票&quot;，攻击者只需批量注册账号，就能伪装成多数。这种行为叫作<strong>女巫攻击</strong>（Sybil attack）。</p>
+<p>它说明了一个基本事实：<strong>网络身份很便宜，不能直接用来衡量意见的分量。</strong> 你需要某种机制，让&quot;发表意见&quot;和&quot;付出代价&quot;挂钩。</p>
+<div class="callout callout-tip">
+<p class="callout-title">**三个核心困难的记忆法：**</p>
+
+<ul>
+<li><strong>谁记账</strong>：去掉银行后，没有单一可信账本。</li>
+<li><strong>双花</strong>：数字文件可复制，需要防止同一笔钱花两次。</li>
+<li><strong>女巫攻击</strong>：网络身份廉价，不能让一人冒充多人。</li>
+</ul>
+<p>比特币的答案会分别对应：公开账本 + 区块排序、UTXO + 区块链、工作量证明。</p>
+</div>
+
+<h2 id="14-比特币的全景答案">1.4 比特币的全景答案</h2>
+<p>比特币给出的方案可以先压缩成一段话，先建立一个整体印象，后面再拆开看每一块。</p>
+<blockquote><p>Alice 用自己的<strong>私钥</strong>对交易做<strong>数字签名</strong>，把交易发给比特币网络。网络中的<strong>全节点</strong>分别检查交易是否合法。<strong>矿工</strong>从有效交易中组织<strong>候选区块</strong>，并通过<strong>工作量证明</strong>竞争记账机会。某个候选区块胜出后，全节点再次独立检查它；符合规则的区块被接到当前<strong>账本</strong>后面，其他矿工继续在新区块之后工作。</p>
+</blockquote>
+<p>这段话已经包含了整套系统。接下来几章会逐一回答其中的问题：签名为什么可信、节点检查什么、矿工怎样竞争、区块怎样连接、以及不同版本出现时网络怎样继续。</p>
+<p>现在只需要记住这幅全景图：</p>
+<pre data-label="text"><code class="language-text">Alice 的钱包
+    ↓ 生成私钥 / 公钥 / 地址
+Alice 组织交易并用私钥签名
+    ↓ 广播到 P2P 网络
+全节点检查签名、资金来源、金额关系
+    ↓ 有效交易进入内存池
+矿工挑选交易、组织候选区块、做工作量证明
+    ↓ 某个区块被网络接受
+新区块接入账本，所有节点更新状态
+    ↓ 下一轮继续</code></pre>
+<div class="callout callout-tip">
+<p class="callout-title">**记住流程，不用记住每个词。**</p>
+
+<p>你现在只需要知道：用户负责授权，节点负责检查，矿工负责排序和竞争，公开规则负责统一标准。这四件事分别对应四类参与者，下一节就会讲。</p>
+</div>
+
+<h2 id="15-四类参与者">1.5 四类参与者</h2>
+<p>比特币网络中有四类角色。同一台电脑可以同时承担多个角色，但职责要分开理解。</p>
+<h3 id="151-用户与钱包">1.5.1 用户与钱包</h3>
+<p>用户通过<strong>钱包</strong>（wallet）软件参与网络。钱包的主要工作是：</p>
+<ul>
+<li>生成并保管<strong>私钥</strong>、<strong>公钥</strong>和<strong>地址</strong>；</li>
+<li>组织交易：选择要花掉的旧资金、填写收款地址和金额；</li>
+<li>用私钥对交易做<strong>数字签名</strong>；</li>
+<li>把签名后的交易广播到网络。</li>
+</ul>
+<p>普通用户不需要挖矿。钱包只负责&quot;发出一笔有效的请求&quot;。</p>
+<h3 id="152-全节点">1.5.2 全节点</h3>
+<p><strong>全节点</strong>（full node）保存着完整的账本副本，并独立执行规则。它的主要工作是：</p>
+<ul>
+<li>接收交易和区块；</li>
+<li>检查每笔交易是否合法：签名是否匹配、资金来源是否存在、金额是否平衡；</li>
+<li>检查每个区块是否符合规则：工作量证明是否合格、矿工奖励是否超额、交易集合是否正确；</li>
+<li>只把合法内容加入自己的账本副本，并把消息继续转发给邻居。</li>
+</ul>
+<p>全节点是比特币&quot;去信任&quot;的核心。你不需要相信某个服务器，可以自己运行一个全节点来验证一切。</p>
+<h3 id="153-矿工">1.5.3 矿工</h3>
+<p><strong>矿工</strong>（miner）的工作是组织候选区块并竞争出块机会。他们会：</p>
+<ul>
+<li>从全节点那里收集待处理交易（内存池）；</li>
+<li>把交易组织成一个候选区块；</li>
+<li>通过大量哈希计算寻找满足难度要求的区块头；</li>
+<li>找到后把区块广播出去，希望全节点接受。</li>
+</ul>
+<p>矿工不能随意改变规则。即使他找到了一个合格的工作量证明，全节点仍会检查区块内容；如果内容不合法，区块会被拒绝。</p>
+<h3 id="154-矿池">1.5.4 矿池</h3>
+<p>现实中，单个矿工的算力可能很小，中奖概率很低。<strong>矿池</strong>（mining pool）把大量矿机的算力集中起来，统一分配任务、共享收益。矿池提高了中小矿工收入的稳定性，但也引入了新的信任问题：矿池管理者可能选择哪些交易被打包。</p>
+<pre data-label="text"><code class="language-text">┌─────────────┐    ┌─────────────┐    ┌─────────────┐    ┌─────────────┐
+│ 用户与钱包   │ → │ 全节点       │ → │ 矿工         │ → │ 矿池（可选） │
+│ 创建并签名   │    │ 检查并转发   │    │ 打包并竞争   │    │ 协调算力     │
+└─────────────┘    └─────────────┘    └─────────────┘    └─────────────┘</code></pre>
+<div class="callout callout-tip">
+<p class="callout-title">**一个常见误解：**</p>
+
+<p>&quot;矿工决定比特币规则。&quot;不对。矿工决定的是<strong>哪个候选区块被提交</strong>，但全节点决定<strong>这个区块是否合法</strong>。规则写在软件里，由运行全节点的人共同执行。</p>
+</div>
+
+<h2 id="16-哈希函数数字指纹">1.6 哈希函数：数字指纹</h2>
+<p>现在进入密码学部分。密码学很深，但我们只学理解交易所需的三件工具：<strong>哈希函数</strong>、<strong>公私钥</strong>和<strong>数字签名</strong>。</p>
+<h3 id="161-什么是哈希函数">1.6.1 什么是哈希函数</h3>
+<p><strong>哈希函数</strong>（hash function）接收任意长度的数据，输出固定长度的结果。你可以把它想象成一台&quot;数字指纹机&quot;：把任何文件放进去，都会得到一个长度固定的指纹字符串；文件只要改一个字，指纹通常会完全不同。</p>
+<p>比特币大量使用 <strong>SHA-256</strong> 哈希算法。下面是一个可以实际运行的 Python 例子：</p>
+<pre data-label="python"><code class="language-python">import hashlib
+
+message = "hello".encode("utf-8")
+print(hashlib.sha256(message).hexdigest())
+
+# 输出：2cf24dba5fb0a30e26e83b2ac5b9e29e1b161e5c1fa7425e73043362938b9824</code></pre>
+<p>试着把 <code>&quot;hello&quot;</code> 改成 <code>&quot;Hello&quot;</code>（大写 H），再运行一次。你会发现输出完全变了：</p>
+<pre data-label="python"><code class="language-python">import hashlib
+
+message = "Hello".encode("utf-8")
+print(hashlib.sha256(message).hexdigest())
+
+# 输出：185f8db32271fe25f561a6fc938b2e264306ec304eda518007d1764826381969</code></pre>
+<h3 id="162-哈希的几个重要性质">1.6.2 哈希的几个重要性质</h3>
+<ol>
+<li><strong>确定性</strong>：同样的输入一定得到同样的输出。</li>
+<li><strong>敏感性</strong>：输入微小的变化会导致输出大范围变化。</li>
+<li><strong>单向性</strong>：从哈希值倒推原文，在计算上极其困难。</li>
+<li><strong>抗碰撞性</strong>：很难找到两个不同的输入产生相同的输出。</li>
+</ol>
+<div class="callout callout-tip">
+<p class="callout-title">**哈希和加密的区别：**</p>
+
+<p>加密需要密钥，接收者可以解密还原原文；哈希只生成一个固定长度的摘要，用来比较&quot;是不是同一份数据&quot;。加密是&quot;可逆的隐藏&quot;，哈希是&quot;不可逆的指纹&quot;。</p>
+</div>
+
+<h3 id="163-比特币用哈希做什么">1.6.3 比特币用哈希做什么</h3>
+<p>在比特币里，哈希承担几项容易理解的工作：</p>
+<ul>
+<li><strong>交易标识</strong>：每笔交易计算哈希，得到唯一的交易 ID；</li>
+<li><strong>区块标识</strong>：区块头计算哈希，得到区块 ID；</li>
+<li><strong>Merkle 根</strong>：一批交易的哈希汇总成一个根哈希；</li>
+<li><strong>工作量证明</strong>：矿工反复改变区块头并计算哈希，寻找满足难度要求的结果；</li>
+<li><strong>链式连接</strong>：每个区块头包含前一个区块的哈希，修改旧记录会让后续连接失效。</li>
+</ul>
+<p>这些我们会在后面逐一展开。现在只需要一个直觉：<strong>哈希让&quot;数据是否被改动&quot;变成一件可以快速核查的事</strong>。</p>
+<h2 id="17-私钥公钥地址">1.7 私钥、公钥、地址</h2>
+<p>哈希解决的是&quot;数据完整性&quot;问题，但还没有解决&quot;谁有权花这笔钱&quot;。这需要公私钥密码学。</p>
+<h3 id="171-私钥一把不能告诉任何人的钥匙">1.7.1 私钥：一把不能告诉任何人的钥匙</h3>
+<p>Alice 的钱包第一次使用时，会生成一个足够随机的巨大整数，这就是<strong>私钥</strong>（private key）。</p>
+<p>私钥有多大？比特币使用的私钥是一个 256 位的随机数，可能的取值数量大约是 2 的 256 次方。这个数字大到什么程度？它比宇宙中所有原子的数量还要多得多。</p>
+<p><strong>掌握私钥的人可以授权花费相应资金</strong>。因此私钥需要一直保密，最好离线保存、备份在多个安全位置。</p>
+<div class="callout callout-warn">
+<p class="callout-title">**安全警告：私钥丢失无法找回。**</p>
+
+<p>如果你忘记了银行密码，可以拿身份证去柜台重置。但比特币没有客服中心：私钥丢了，对应地址里的钱就永远动不了；私钥被窃，钱可能立即被别人转走。不要把私钥截图保存在手机里，不要把它发给任何人，包括自称&quot;客服&quot;的人。</p>
+</div>
+
+<h3 id="172-公钥可以公开的身份标识">1.7.2 公钥：可以公开的身份标识</h3>
+<p>钱包通过椭圆曲线运算，从私钥推导出<strong>公钥</strong>（public key）。这个方向计算很快，但从公钥反推私钥，在现实算力下不可行。</p>
+<p>你可以把关系记成一条单向推导链：</p>
+<pre data-label="text"><code class="language-text">足够随机的私钥
+        ↓ 单向推导
+      公钥
+        ↓ 与花费脚本组合
+   按地址类型处理并编码
+        ↓
+   对外使用的地址</code></pre>
+<h3 id="173-地址收款用的quot门牌号quot">1.7.3 地址：收款用的&quot;门牌号&quot;</h3>
+<p><strong>地址</strong>（address）是公钥经过处理后的简短表示，用来告诉别人&quot;把钱付到这里&quot;。它通常不会直接写入姓名或现实身份。</p>
+<p>比特币地址有多种格式，本书示例会用 <code>bc1q...</code> 这样的缩写表示。省略号只代表中间内容被省略，<strong>不能作为真实转账地址使用</strong>。</p>
+<div class="callout callout-tip">
+<p class="callout-title">**保护隐私的习惯：**</p>
+
+<p>现代钱包通常会为不同收款生成不同地址。不要反复用同一个地址收钱，这会让别人很容易把你的多笔交易关联起来。</p>
+</div>
+
+<h3 id="174-为什么比特币选择椭圆曲线">1.7.4 为什么比特币选择椭圆曲线</h3>
+<p>这一节只提供直觉，不参与后续主线。</p>
+<p>比特币使用的椭圆曲线系统建立在有限域上的数学运算。私钥可以看作一个巨大范围内的随机整数，公钥则由私钥与公开基点进行标量乘法得到。正向计算高效，已知公钥反推私钥需要解决椭圆曲线离散对数问题，当前通用算法仍需要无法承受的计算资源。</p>
+<p>RSA 也能实现公钥密码学，但它依赖大整数分解问题，需要更长的密钥才能达到相近安全强度。比特币交易需要频繁生成和验证签名，较短的椭圆曲线密钥更适合带宽与存储受限的公开网络。</p>
+<p>量子计算的发展会影响许多现有公钥系统，包括椭圆曲线签名。这属于长期密码迁移问题，了解基本交易流程后再研究不迟。</p>
+<h2 id="18-数字签名授权与完整性">1.8 数字签名：授权与完整性</h2>
+<p>有了私钥和公钥，Alice 就可以对一笔交易做<strong>数字签名</strong>（digital signature）。</p>
+<h3 id="181-签名解决什么问题">1.8.1 签名解决什么问题</h3>
+<p>数字签名同时完成两件事：</p>
+<ol>
+<li><strong>授权证明</strong>：证明这笔交易是由私钥持有者发起的；</li>
+<li><strong>完整性证明</strong>：证明交易内容在签名后没有被改动。</li>
+</ol>
+<p>Alice 用私钥对交易内容生成签名，然后把&quot;交易内容 + 签名 + 必要的公钥信息&quot;一起广播出去。节点用 Alice 的公钥验证签名：</p>
+<pre data-label="text"><code class="language-text">Alice 持有：私钥
+Alice 发送：交易内容 + 签名 + 必要的公钥信息
+
+节点执行：Verify(公钥, 交易内容, 签名)
+结果为真：这份授权与公钥匹配，受保护内容未被改动
+结果为假：拒绝交易</code></pre>
+<h3 id="182-签名不隐藏交易内容">1.8.2 签名不隐藏交易内容</h3>
+<p>注意，数字签名没有把交易内容隐藏起来。交易金额、输入和输出仍然可以被网络读取。签名提供的是一份可验证的授权证明，不是保密。</p>
+<p>如果你希望交易内容保密，需要额外的加密层，比如闪电网络或其他隐私技术。比特币主链默认是公开的。</p>
+<h3 id="183-签名能证明什么不能证明什么">1.8.3 签名能证明什么、不能证明什么</h3>
+<p>签名能证明：&quot;某个私钥授权了这笔交易，并且交易内容没有被改动。&quot;</p>
+<p>签名<strong>不能</strong>证明：</p>
+<ul>
+<li>屏幕前操作的人一定是现实中的 Alice；</li>
+<li>这笔交易背后的商品或服务一定真实交付；</li>
+<li>Alice 不是被胁迫或被骗签名的。</li>
+</ul>
+<p>私钥一旦被盗，攻击者也能生成有效签名。这就是钱包安全如此重要的原因。</p>
+<h3 id="184-ecdsa-与-schnorr-签名">1.8.4 ECDSA 与 Schnorr 签名</h3>
+<p>经典比特币交易长期使用 <strong>ECDSA</strong> 签名，Taproot 交易还会使用 <strong>Schnorr</strong> 签名。初学阶段只需要掌握它们共同完成的任务：私钥产生证明，公钥检查证明。具体算法差异属于进阶内容。</p>
+<h2 id="19-alice-如何签署一笔交易">1.9 Alice 如何签署一笔交易</h2>
+<p>现在把前面所有工具串起来，看 Alice 给 Bob 转比特币的完整过程。</p>
+<h3 id="191-utxo不是余额而是quot数字钞票quot">1.9.1 UTXO：不是余额，而是&quot;数字钞票&quot;</h3>
+<p>假设 Alice 的钱包里显示有 0.5 BTC。比特币账本并没有保存一行&quot;Alice 余额：0.5 BTC&quot;。钱包找到的是一份尚未被花费的交易输出，简称 <strong>UTXO</strong>（Unspent Transaction Output，未花费交易输出）。</p>
+<p>你可以先把 UTXO 理解成一张面额为 0.5 BTC、带有特定开锁条件的数字钞票。这张&quot;钞票&quot;的开锁条件通常是&quot;只有对应私钥持有者才能花&quot;。</p>
+<h3 id="192-组织一笔新交易">1.9.2 组织一笔新交易</h3>
+<p>Alice 想给 Bob 支付 0.3 BTC。钱包会创建一笔新交易：</p>
+<ul>
+<li><strong>输入</strong>：使用那张 0.5 BTC 的数字钞票；</li>
+<li><strong>输出 1</strong>：0.3 BTC 交给 Bob；</li>
+<li><strong>输出 2</strong>：约 0.199 BTC 作为找零交回 Alice 的新地址；</li>
+<li><strong>差额</strong>：约 0.001 BTC 留作手续费给矿工。</li>
+</ul>
+<pre data-label="text"><code class="language-text">旧输出：0.500 BTC，满足 Alice 的签名条件才能花费
+
+新交易：
+  输入  0.500 BTC
+  输出  0.300 BTC → Bob
+  输出  0.199 BTC → Alice 的找零地址
+  差额  0.001 BTC → 作为手续费留给打包该交易的矿工</code></pre>
+<p>这很像用现金买东西：Alice 拿出一张 50 元钞票买一杯 30 元的咖啡，店员找给她 20 元。在比特币里，输入 0.5 BTC 必须全部花掉：0.3 给 Bob，0.199 作为找零回到 Alice 自己的地址，剩下的 0.001 是给矿工的小费。</p>
+<h3 id="193-签名与广播">1.9.3 签名与广播</h3>
+<p>钱包随后用常见的签名范围对这笔交易生成签名，收款条件和全部输出金额都受到保护。如果有人把 Bob 的 0.3 BTC 改成自己的地址，原签名将无法通过验证。</p>
+<p>钱包把交易发送给几个直接连接的全节点。每个节点会检查：</p>
+<ul>
+<li>签名是否有效；</li>
+<li>输入引用的旧输出是否存在；</li>
+<li>旧输出是否已经被花掉（防止双花）；</li>
+<li>输入总额是否足以覆盖输出总额。</li>
+</ul>
+<p>通过检查的交易进入该节点自己的<strong>内存池</strong>（mempool），并继续传给邻居节点。</p>
+<h3 id="194-尚未确认的状态">1.9.4 尚未确认的状态</h3>
+<p>这时交易仍然处于&quot;有效但尚未确认&quot;的状态。许多节点已经看见它，矿工也可以选择把它放进候选区块。交易怎样进入区块、怎样得到第一次确认，将在后续章节完整讲解。</p>
+<div class="callout callout-tip">
+<p class="callout-title">**UTXO 的直觉：**</p>
+
+<p>不要试图把比特币想象成&quot;账户余额&quot;。把它想象成你钱包里的一叠叠不同面额的数字钞票：每笔交易消耗旧的钞票，生成新的钞票。找零就是新钞票，必须回到你自己的地址。</p>
+</div>
+
+<h2 id="110-merkle-树把交易压成指纹">1.10 Merkle 树：把交易压成指纹</h2>
+<p>一个区块可能包含大量交易。全节点需要一个简洁方法，证明区块中的交易集合没有被悄悄修改。这就是 <strong>Merkle 树</strong>（Merkle tree）的工作。</p>
+<h3 id="1101-merkle-树的构造">1.10.1 Merkle 树的构造</h3>
+<p>假设一个区块里有四笔交易 A、B、C、D。先分别计算每笔交易的哈希，再两两组合计算上一层哈希，最后得到一个根哈希：</p>
+<pre data-label="text"><code class="language-text">              Merkle Root
+              /         \
+          Hash(AB)     Hash(CD)
+          /    \       /    \
+       Hash(A) Hash(B) Hash(C) Hash(D)</code></pre>
+<p>任何一笔交易发生变化，比如 C 的金额被改动，Hash(C) 会变，Hash(CD) 会变，最终 Merkle Root 也会变。区块头只需保存这个根哈希，就能为整批交易提供统一指纹。</p>
+<h3 id="1102-简洁的成员证明">1.10.2 简洁的成员证明</h3>
+<p>Merkle 树还有一个好处：可以提供简短的成员证明。想证明交易 C 位于区块中，不必传输全部交易，只需给出从 C 通向根节点所需的少量相邻哈希。轻量钱包会利用这类证明减少数据需求。</p>
+<div class="callout callout-tip">
+<p class="callout-title">**Merkle 树的本质：**</p>
+
+<p>它把&quot;很多交易是否被改动&quot;这个问题，压缩成&quot;一个根哈希是否匹配&quot;。这让区块头很小，同时仍能保护整个交易集合。</p>
+</div>
+
+<h2 id="111-密码学的边界">1.11 密码学的边界</h2>
+<p>数字签名可以检查授权与完整性，哈希可以检查数据变化，成熟密码算法可以让伪造在计算上极其困难。但这些保证都有明确边界。</p>
+<h3 id="1111-密码学不能保证什么">1.11.1 密码学不能保证什么</h3>
+<ul>
+<li><strong>不能阻止你主动把私钥交给诈骗者</strong>；</li>
+<li><strong>不能自动修复钱包软件漏洞</strong>；</li>
+<li><strong>不能判断链外商品是否真实交付</strong>；</li>
+<li><strong>不能判断稳定币发行者是否真的持有足额储备</strong>；</li>
+<li><strong>不能替代现实中的法律责任</strong>。</li>
+</ul>
+<h3 id="1112-区块链适合什么不适合什么">1.11.2 区块链适合什么、不适合什么</h3>
+<p>区块链适合处理&quot;多方需要共享记录，同时难以共同指定一个中心维护者&quot;的场景。即使满足这个条件，它也会带来速度、成本、隐私和治理方面的代价。</p>
+<p>它能证明某个私钥授权了一笔交易，也能为某段数据在大致时间范围内已经存在提供证据。但它无法自动判断链外信息是真是假——比如链上合约看到&quot;货物已经送达&quot;时，仍然需要某个人、设备或服务把现实信息带进系统。</p>
+<p>它还能保证符合规则的记录很难被事后改写，却无法保证规则本身合理。一个有漏洞的智能合约可以被准确执行；一个设计失衡的金融协议也可能按照原定规则准确崩溃。</p>
+<div class="callout callout-tip">
+<p class="callout-title">**工程上最重要的习惯：**</p>
+
+<p>把问题问完整：哪一步由数学保护，哪一步依赖软件，哪一步依赖运营者，哪一步需要现实世界的数据和制度。不要看到&quot;区块链&quot;三个字就默认一切可信。</p>
+</div>
+
+<h2 id="112-本章小结">1.12 本章小结</h2>
+<p>这一章从&quot;Alice 为什么不能直接给 Bob 转 100 元&quot;这个问题出发，逐步拆开了数字货币的三层困难：谁记账、防止双花、抵抗女巫攻击。</p>
+<p>我们建立了比特币网络的全景图：</p>
+<ul>
+<li><strong>用户与钱包</strong>生成密钥、组织交易、签名并广播；</li>
+<li><strong>全节点</strong>保存完整账本，独立检查交易与区块是否符合规则；</li>
+<li><strong>矿工</strong>组织候选区块，通过工作量证明竞争出块机会；</li>
+<li><strong>矿池</strong>在现实中协调大量矿机，把任务和收益集中管理。</li>
+</ul>
+<p>我们也学习了三种密码学工具：</p>
+<ul>
+<li><strong>哈希函数</strong>为数据生成指纹，让改动可以被快速发现；</li>
+<li><strong>私钥 / 公钥 / 地址</strong>建立单向推导关系，私钥授权、公钥验证、地址收款；</li>
+<li><strong>数字签名</strong>绑定授权与交易内容，保证&quot;私钥持有者同意且内容未被改动&quot;。</li>
+</ul>
+<p>最后，我们用 Alice 给 Bob 转账的例子，走了一遍交易的实际流程：从 UTXO 的选择、到新交易的组织、到签名广播、再到进入节点的内存池。</p>
+<div class="callout callout-tip">
+<p class="callout-title">**读完本章，你应该能回答：**</p>
+
+<ol>
+<li>为什么一种数字货币会被接受？（账本可靠 + 有人愿意接受）</li>
+<li>普通用户为什么不需要挖矿？（钱包只负责签名和广播）</li>
+<li>签名为什么不能单独解决双花？（签名只证明授权，不能决定交易顺序）</li>
+<li>矿工找到结果后为什么还要经过全节点检查？（规则由全节点执行，矿工只能提案）</li>
+<li>哈希和加密有什么区别？（哈希是单向指纹，加密是可逆隐藏）</li>
+<li>Alice 的 0.5 BTC 为什么会变成给 Bob 的输出、找零和手续费？（UTXO 模型：输入必须全部花掉，差额给矿工）</li>
+</ol>
+</div>
+
+<p>下一章，我们会把目光投向<strong>区块与工作量证明</strong>：矿工到底在计算什么？为什么说&quot;用算力投票&quot;？当两个矿工几乎同时找到合格区块时，网络怎样选择采用哪一条链？</p>
+
+    <nav class="pager">  <a class="disabled"><span class="label">← 上一章</span><span class="title"></span></a>  <a href="02-bitcoin-design.html" class="next">
+    <span class="label">下一章 →</span>
+    <span class="title">比特币的设计</span>
+  </a></nav>
+  </article>
+</div>
+
+<footer>
+  <div class="set">
+    <span>区块链与加密货币：从原理到生态</span>
+    <span>2026 · ZH-CN</span>
+  </div>
+  <div class="set">
+    <span>Mav</span>
+  </div>
+</footer>
+<div class="search-backdrop" id="search-overlay" role="dialog" aria-modal="true" aria-label="搜索" hidden>
+  <div class="search-modal">
+    <div class="search-input-wrap">
+      <input type="search" class="search-input" placeholder="搜索内容..." aria-label="搜索内容" autocomplete="off">
+      <kbd>ESC</kbd>
+    </div>
+    <div class="search-results" role="listbox" aria-label="搜索结果"></div>
+  </div>
+</div>
+
+<!-- Side Panel -->
+<div class="side-panel" id="side-panel">
+  <div class="side-panel-resize" id="side-panel-resize"></div>
+  <div class="side-panel-header">
+    <div class="side-panel-tabs">
+      <button class="side-panel-tab active" data-mode="sidenote">补充</button>
+      <button class="side-panel-tab" data-mode="notepad">笔记</button>
+    </div>
+    <button class="side-panel-close" aria-label="关闭">×</button>
+  </div>
+  <div class="side-panel-body"></div>
+</div>
+<button class="notepad-fab" id="notepad-fab" aria-label="便利贴">✎</button>
+
+<!-- Mobile TOC -->
+<button class="mtoc-fab" id="mtoc-fab" aria-label="目录">TOC</button>
+<div class="mtoc-drawer" id="mtoc-drawer">
+  <div class="mtoc-content"></div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/bash.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/typescript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/yaml.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/javascript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/json.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/python.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/css.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+<script>mermaid.initialize({startOnLoad:true, theme:'neutral', fontFamily:'Inter, sans-serif'});</script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}]});"></script>
+<script src="../assets/script.js"></script>
+
+</body>
+</html>
