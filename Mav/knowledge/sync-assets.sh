@@ -1,39 +1,16 @@
 #!/bin/bash
 # sync-assets.sh
-# Copies style.css and script.js from ai-deep-learning-core/assets/ to all other knowledge book assets/ directories.
-# This ensures cross-book consistency (Requirements 9.1, 9.2, 9.3).
+# Copies style.css and script.js from ai-deep-learning-core/assets/ to all other
+# knowledge book assets/ directories.
 #
-# Usage: Run from the knowledge/ directory, or from anywhere — the script resolves its own location.
-#   ./sync-assets.sh
+# SAFETY CHANGES (2026-07):
+# - Default mode is DRY-RUN. Use --force to actually copy.
+# - Respects md2HTML/build-lock.yaml: any entry matching
+#   "<book-slug>/assets/style.css" or "<book-slug>/assets/script.js" is skipped.
 #
-# Source of truth: ai-deep-learning-core/assets/
-# Targets: All other book directories that contain an assets/ subdirectory.
-#
-# Book directories with assets/ (23 total, 22 targets excluding source):
-#   ai-computer-vision
-#   ai-math-foundations
-#   ai-nlp-foundations
-#   ai-transformers
-#   bite-to-byte-硬件篇
-#   blockchain-crypto
-#   browser-war
-#   claude-code
-#   claude-d2l-to-rnn
-#   d2l-cnn
-#   d2l-rnn
-#   d2l-toolbox
-#   data-structures
-#   euv-lithography
-#   git-guide
-#   math-analysis
-#   money-bank
-#   pdf-explained
-#   rust-book
-#   server-frontend-backend
-#   thermodynamics
-#   video-screen
-#
-# Note: Directories without an assets/ subdirectory (e.g., graph, projects) are auto-skipped.
+# Usage:
+#   ./sync-assets.sh            # dry-run: list what would change
+#   ./sync-assets.sh --force    # actually copy, but still skip locked files
 
 set -e
 
@@ -43,6 +20,7 @@ SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 SOURCE_DIR="$SCRIPT_DIR/ai-deep-learning-core/assets"
 SOURCE_CSS="$SOURCE_DIR/style.css"
 SOURCE_JS="$SOURCE_DIR/script.js"
+LOCK_FILE="$(dirname "$(dirname "$SCRIPT_DIR")")/md2HTML/build-lock.yaml"
 
 # Verify source files exist
 if [ ! -f "$SOURCE_CSS" ]; then
@@ -54,13 +32,43 @@ if [ ! -f "$SOURCE_JS" ]; then
   exit 1
 fi
 
+FORCE=false
+if [ "$1" = "--force" ]; then
+  FORCE=true
+elif [ -n "$1" ]; then
+  echo "Unknown argument: $1"
+  echo "Usage: $0 [--force]"
+  exit 1
+fi
+
+# Parse build-lock.yaml into a newline-separated list of normalized entries.
+# Assumes the simple YAML format:
+#   locked:
+#     - BookName/chapter.md
+#     - slug/assets/filename
+locked_list=""
+if [ -f "$LOCK_FILE" ]; then
+  # Strip leading "- " and inline spaces/tabs, but keep line breaks for grep.
+  locked_list="$(sed -n 's/^[[:space:]]*-[[:space:]]*//p' "$LOCK_FILE" | tr -d ' \t')"
+fi
+
+is_locked() {
+  echo "$locked_list" | grep -qx "$1"
+}
+
 echo "=== Knowledge Library Asset Sync ==="
 echo "Source: $SOURCE_DIR"
-echo "Files: style.css, script.js"
+echo "Files:  style.css, script.js"
+echo "Lock:   $LOCK_FILE"
+if [ "$FORCE" = false ]; then
+  echo "Mode:   DRY-RUN (use --force to apply)"
+fi
 echo ""
 
 copied=0
-skipped=0
+skipped_lock=0
+skipped_no_assets=0
+would_copy=0
 
 # Iterate over all directories in knowledge/ that have an assets/ subdirectory
 for book_dir in "$SCRIPT_DIR"/*/; do
@@ -73,20 +81,44 @@ for book_dir in "$SCRIPT_DIR"/*/; do
 
   # Skip directories without an assets/ subdirectory
   if [ ! -d "$book_dir/assets" ]; then
-    skipped=$((skipped + 1))
+    skipped_no_assets=$((skipped_no_assets + 1))
     echo "  SKIP: $book_name (no assets/ directory)"
     continue
   fi
 
-  # Copy files
-  cp "$SOURCE_CSS" "$book_dir/assets/style.css"
-  cp "$SOURCE_JS" "$book_dir/assets/script.js"
-  copied=$((copied + 1))
-  echo "  DONE: $book_name"
+  for file in style.css script.js; do
+    lock_key="$book_name/assets/$file"
+    target="$book_dir/assets/$file"
+
+    if is_locked "$lock_key"; then
+      skipped_lock=$((skipped_lock + 1))
+      echo "  LOCK: $book_name/$file (build-lock.yaml)"
+      continue
+    fi
+
+    if [ "$FORCE" = true ]; then
+      cp "$SOURCE_DIR/$file" "$target"
+      copied=$((copied + 1))
+      echo "  DONE: $book_name/$file"
+    else
+      would_copy=$((would_copy + 1))
+      echo "  WOULD: $book_name/$file"
+    fi
+  done
 done
 
 echo ""
-echo "=== Sync Complete ==="
-echo "Copied to: $copied books"
-echo "Skipped:   $skipped directories"
-echo "Source:    ai-deep-learning-core/assets/"
+if [ "$FORCE" = true ]; then
+  echo "=== Sync Complete ==="
+  echo "Copied:        $copied files"
+  echo "Locked skip:   $skipped_lock files"
+  echo "No assets/:    $skipped_no_assets directories"
+  echo "Source:        ai-deep-learning-core/assets/"
+else
+  echo "=== Dry Run Complete ==="
+  echo "Would copy:    $would_copy files"
+  echo "Locked skip:   $skipped_lock files"
+  echo "No assets/:    $skipped_no_assets directories"
+  echo ""
+  echo "To apply changes, run: $0 --force"
+fi

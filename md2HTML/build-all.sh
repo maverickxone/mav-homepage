@@ -9,29 +9,20 @@
 #   ./build-all.sh --unlock <path>                Unlock a file
 #   ./build-all.sh --list-lock                    List locked files
 #   ./build-all.sh --force Browser-War            Force build (ignore lock)
-#   ./build-all.sh --all                          Build ALL books (use with caution!)
+#
+# NOTE: --all is intentionally removed. Building all books at once overwrites
+# per-book frontend customizations. See note4ai.md for details.
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
-BOOKS_DIR="$(dirname "$SCRIPT_DIR")/markdown-backups"
 
-if [ $# -eq 0 ]; then
-  cd "$SCRIPT_DIR" && node build.js
-  exit 0
-fi
+# Explicitly reject --all to prevent accidental mass overwrites.
+for arg in "$@"; do
+  if [ "$arg" = "--all" ]; then
+    echo "❌ --all is disabled."
+    echo "   Building all books at once overwrites per-book frontend customizations."
+    echo "   See note4ai.md for the recommended single-book workflow."
+    exit 1
+  fi
+done
 
-# Handle --all: iterate over all book directories
-if [ "$1" = "--all" ]; then
-  echo "⚠️  Building ALL books. Locked files will be skipped."
-  echo ""
-  for book_dir in "$BOOKS_DIR"/*/; do
-    name=$(basename "$book_dir")
-    if [ "$name" != "original-backups" ]; then
-      cd "$SCRIPT_DIR" && node build.js "$name"
-    fi
-  done
-  echo "=== All done ==="
-  exit 0
-fi
-
-# Pass all arguments directly to build.js
 cd "$SCRIPT_DIR" && node build.js "$@"

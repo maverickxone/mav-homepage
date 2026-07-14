@@ -188,6 +188,26 @@ function generateSearchOverlay() {
 }
 
 /**
+ * Generate extra asset links based on book.features.
+ * Supported features: quiz, mermaid.
+ */
+function generateFeatureAssets(features) {
+  const list = Array.isArray(features) ? features : [];
+  const extraHead = [];
+  const extraScripts = [];
+
+  if (list.includes('quiz')) {
+    extraHead.push('<link rel="stylesheet" href="../assets/quiz.css">');
+    extraScripts.push('<script src="../assets/quiz.js"></script>');
+  }
+
+  return {
+    extraHead: extraHead.join('\n'),
+    extraScripts: extraScripts.join('\n')
+  };
+}
+
+/**
  * Generate chapter cards grid for index page.
  */
 function generateChaptersGrid(chaptersMeta) {
@@ -223,6 +243,7 @@ function buildChapterPage(book, chapter, chaptersMeta, currentIndex, headings, c
   const settingsPop = generateSettingsPop();
   const footer = generateFooter(book);
   const searchOverlay = generateSearchOverlay();
+  const { extraHead, extraScripts } = generateFeatureAssets(book.features);
 
   return template
     .replace(/\{\{book_title\}\}/g, () => book.title)
@@ -234,7 +255,9 @@ function buildChapterPage(book, chapter, chaptersMeta, currentIndex, headings, c
     .replace('{{content}}', () => contentHtml)
     .replace('{{pager}}', () => pager)
     .replace('{{footer}}', () => footer)
-    .replace('{{search_overlay}}', () => searchOverlay);
+    .replace('{{search_overlay}}', () => searchOverlay)
+    .replace('{{extra_head}}', () => extraHead)
+    .replace('{{extra_scripts}}', () => extraScripts);
 }
 
 /**

@@ -5,3 +5,6 @@ language: "ZH-CN"
 version: "1.0.0"
 status: draft
 statusNote: "未完成书稿，等待后续统一整合。"
+features:
+  - quiz
+  - mermaid

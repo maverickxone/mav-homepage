@@ -2,8 +2,12 @@
 // ============================================================
 // inject-quiz.js
 //
-// Injects quiz.css and quiz.js references into built HTML files
-// for the 5 AI books. Run AFTER build.
+// LEGACY helper: injects quiz.css / quiz.js into built HTML for
+// the 5 AI books. Prefer book.yaml features: [quiz] + rebuild
+// via build.js instead of this script for new work.
+//
+// Mermaid is handled by the chapter template + script.js fallback;
+// do NOT inject mermaid-init.js (that file has been removed).
 //
 // Usage: node inject-quiz.js
 // ============================================================
@@ -46,14 +50,6 @@ for (const slug of BOOKS) {
       '</head>',
       '<link rel="stylesheet" href="../assets/quiz.css">\n</head>'
     );
-
-    // Inject mermaid-init.js BEFORE script.js (must run before highlight.js)
-    if (!html.includes('mermaid-init.js')) {
-      html = html.replace(
-        '<script src="../assets/script.js"></script>',
-        '<script src="../assets/mermaid-init.js"></script>\n<script src="../assets/script.js"></script>'
-      );
-    }
 
     // Inject quiz JS before </body>
     html = html.replace(

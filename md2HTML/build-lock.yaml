@@ -37,11 +37,7 @@ locked:
   - ai-nlp-foundations/assets/quiz.js
   - ai-transformers/assets/quiz.css
   - ai-transformers/assets/quiz.js
-  - ai-math-foundations/assets/mermaid-init.js
-  - ai-deep-learning-core/assets/mermaid-init.js
-  - ai-computer-vision/assets/mermaid-init.js
-  - ai-nlp-foundations/assets/mermaid-init.js
-  - ai-transformers/assets/mermaid-init.js
+  # mermaid-init.js entries removed — mermaid is now handled by the template + script.js fallback.
   - ai-math-foundations/assets/style.css
   - ai-math-foundations/assets/script.js
   - ai-deep-learning-core/assets/style.css
