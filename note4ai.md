@@ -1,6 +1,6 @@
 # note4ai.md
 
-> 最后更新：2026.07.12
+> 最后更新：2026.07.14
 
 本文件面向接手本项目的 AI agent，不是给人类线性阅读的文档。目标是让你读完之后对项目结构、构建系统、约束规则了如指掌。
 
@@ -38,11 +38,12 @@ mav-homepage/
 │   │   ├── claude-code/         ← ⚠️ 纯手写 HTML，无 Markdown 源码
 │   │   └── ...
 │   └── assets/                  ← 全站共享 CSS/JS
-│       ├── style.css            ← 主样式
-│       └── projects.css         ← Project 功能专用样式
+│       ├── style.css            ← 主样式（首页 / about / 知识库入口）
+│       ├── projects.css         ← Project 功能专用样式
+│       └── about.css            ← About 页轻量覆盖
 ├── markdown-backups/            ← 知识库 Markdown 源文件
 │   ├── Browser-War/             ← 每本书一个文件夹
-│   │   ├── book.yaml            ← 元数据（title/author/description/language）
+│   │   ├── book.yaml            ← 元数据（title/author/description/language/status）
 │   │   ├── 01-chapter.md        ← 章节文件（带 front-matter）
 │   │   └── ...
 │   ├── projects/                ← Project 数据源（YAML）
@@ -53,7 +54,7 @@ mav-homepage/
 ├── md2HTML/                     ← 静态站点生成器
 │   ├── build.js                 ← 主构建入口（书籍）
 │   ├── build-projects.js        ← Project 构建脚本
-│   ├── build-all.sh             ← shell 包装
+│   ├── build-all.sh             ← shell 包装（⚠️ 内含危险的 `--all` 选项）
 │   ├── build-lock.yaml          ← 白名单/锁定列表
 │   ├── assets/                  ← 模板 CSS/JS（新书的默认样式）
 │   ├── templates/               ← HTML 模板（chapter.html, index.html）
@@ -63,7 +64,8 @@ mav-homepage/
 │       ├── templates.js         ← 生成完整 HTML 页面 + copyAssets
 │       └── lock.js              ← 白名单管理
 ├── server/                      ← 后端（评论/点赞 API，SQLite）
-├── Others/                      ← 杂项草稿
+├── 前端风格探索/                ← 阅读主题 JSON 草稿（未接入构建/样式系统）
+├── 参考资料/                    ← 外部参考素材
 └── .kiro/steering/              ← AI 工作规则（gitignored）
     └── command-timeout.md      ← macOS PTY 超时处理规则
 ```
@@ -123,6 +125,29 @@ description: "..."  # 章节描述（用于封面卡片和搜索）
 正文内容...
 ```
 
+### book.yaml 字段
+
+| 字段 | 必需 | 说明 |
+|------|------|------|
+| `title` | ✓ | 书名 |
+| `author` | | 作者 |
+| `description` | | 一句话描述 |
+| `language` | | 语言，默认 `ZH-CN` |
+| `version` | | 版本号 |
+| `status` | | `draft` 表示草稿；仅元数据，不自动影响首页分类 |
+| `catalog` | | `false` 表示 suppress "无首页入口" 警告（旧字段，建议用 `status` 替代） |
+| `features` | | 数组，控制章节页额外加载的资源。当前 **仅 `quiz` 会真正注入** |
+
+`features` 示例：
+
+```yaml
+features:
+  - quiz
+```
+
+- `quiz`：在章节页 head 注入 `../assets/quiz.css`，body 末尾注入 `../assets/quiz.js`。新书优先用此方式；遗留的 `inject-quiz.js` 仅作兼容，不要再依赖它注入 mermaid。
+- **Mermaid 不走 features**：章节模板默认加载 Mermaid CDN + `initialize`；`renderer.js` 把 ` ```mermaid ` 渲染为 `<div class="mermaid">`；`assets/script.js` 额外处理可能残留的 `<pre><code class="language-mermaid">`。book.yaml 里写 `features: [mermaid]` 目前无额外效果，可省略。
+
 ### 输出结构（每本书）
 
 ```
@@ -166,26 +191,32 @@ node blog-build.js
 
 ### Tips/补充信息
 
-使用 `<span class="sidenote-mark" data-note="<HTML内容>">tips</span>` 内联在正文中。点击后在右侧 Side Panel 显示补充内容。参考 `browser-war` 的实现。
+有两种方式加入正文外的补充信息：
 
-**不要用 `.callout` div 块**——那个样式在 CSS 中定义了但实际使用的是 sidenote-mark 机制。
+1. **Markdown 层：`:::callout` 扩展语法**（推荐在源文件中使用）  
+   支持 `:::callout` / `:::callout-tip` / `:::callout-warn`，由 `md2HTML/lib/renderer.js` 渲染为 `.callout` 提示块。这是当前主要使用的提示机制，`Math-Analysis`、`server-frontend-backend` 等书都有大量使用。
 
-### 图片渲染（EUV 定制）
+2. **HTML 层：`sidenote-mark` 内联标记**（build 后手写定制）  
+   在已经生成的 HTML 中插入 `<span class="sidenote-mark" data-note="<HTML内容>">tips</span>`，点击后在右侧 Side Panel 显示补充内容。参考 `browser-war` 的实现。  
+   **注意**：Markdown 源文件不会自动生成 `sidenote-mark`；若手写插入，请记得 lock 对应章节 HTML，否则 rebuild 会被覆盖。
 
-`euv-lithography` 的 `script.js` 中有一段自定义代码：扫描所有 `<blockquote>` 中以 `[图片` 开头的内容，尝试从 `assets/images/` 加载对应图片。
+### 图片渲染（EUV 定制）⚠️ 当前未生效
 
-命名规则：`[图片 02-03：描述]` → 尝试加载 `assets/images/02-03.webp`、`.png`、`.jpg`...
+`note4ai.md` 旧版本曾描述：`euv-lithography` 的 `script.js` 会扫描 `<blockquote>` 中以 `[图片` 开头的内容，尝试从 `assets/images/` 加载对应图片。
 
-如果无显式 ID（`[图片：描述]`），则按页面出现顺序自动编号 `{章节号}-{序号}`。
+实际情况：当前 `Mav/knowledge/euv-lithography/assets/script.js` 是模板副本，**没有图片加载逻辑**；生成的 HTML 中 `[图片 02-03：描述]` 只是普通 blockquote 文本，不会变成 `<img>`。该功能需要修复或从文档中移除，目前先保留为已知问题。
 
 ---
 
 ## 绝对禁止的操作
 
-1. **不要 build 全部书籍**（`--all`）——会覆盖所有前端定制
-2. **不要动 `Mav/knowledge/claude-code/`**——纯手写 HTML，无源码
-3. **不要未经确认就 commit/push**
-4. **不要修改 `md2HTML/assets/` 里的模板 CSS/JS 除非明确要改所有书的默认样式**
+1. **不要 build 全部书籍**（`--all`）——会覆盖所有前端定制。  
+   `md2HTML/build-all.sh` 仍保留 `--all` 参数，与本文档冲突，属于历史遗留，**不要执行**。
+2. **不要动 `Mav/knowledge/claude-code/`**——纯手写 HTML，无 Markdown 源码。
+3. **不要未经确认就 commit/push**。
+4. **不要修改 `md2HTML/assets/` 里的模板 CSS/JS 除非明确要改所有书的默认样式**。
+5. **不要运行 `Mav/knowledge/sync-assets.sh`**（除非已确认它不会影响被锁定的文件）。  
+   该脚本会把 `ai-deep-learning-core/assets/style.css` 和 `script.js` **强制覆盖**到所有其他书的 `assets/` 目录，且不会读取 `build-lock.yaml`。跑一次可能抹掉 `euv-lithography`、`browser-war`、AI 系列等书的全部前端定制。
 
 ---
 
@@ -193,9 +224,10 @@ node blog-build.js
 
 - 前端：纯 HTML/CSS/JS，Inter + JetBrains Mono
 - 构建：Node.js（marked + gray-matter + js-yaml）
-- 搜索：MiniSearch（客户端全文搜索，search-index.json）
+- 搜索：基于 `search-index.json` 的客户端子串过滤（`assets/script.js` 中实现）
 - 代码高亮：highlight.js（CDN）
-- 数学公式：KaTeX（CDN，euv-lithography 和 thermodynamics 启用）
+- 数学公式：KaTeX（CDN，模板统一加载，不限于某几本书）
+- 图表：Mermaid.js（CDN，客户端渲染；`md2HTML/lib/renderer.js` 把 ` ```mermaid ` 代码块渲染为 `<div class="mermaid">`，`assets/script.js` 额外处理可能的 `<pre><code class="language-mermaid">` fallback）
 - 后端：Express + SQLite（server/ 目录，评论和点赞）
 - 部署：Ubuntu + Nginx，通过 GitHub 同步
 
@@ -229,7 +261,7 @@ node blog-build.js
 | thermodynamics | 热学速通 | 6 章；进入“大一下学期课程讲义”折叠区；有 `_figures/*.py` 生成图片（PNG），含 2024 真题实战，KaTeX 数学公式；script.js 锁定 |
 | money-bank | 银行体系与货币系统 | 8 章 |
 | bite-to-byte-硬件篇 | 电脑怎么工作的 | 8 章 |
-| blockchain-crypto | 区块链与加密货币 | 5 章 |
+| blockchain-crypto | 区块链与加密货币 | 8 章；`status: published`；v3.0（信任/比特币设计与网络/以太坊/共识/生态/Web3/安全实战） |
 | rust-book | Rust | 7 章 |
 | git-guide | Git 概念与实操 | 5 章 |
 | server-frontend-backend | 服务器与前后端 | 5 章；多章锁定 |
@@ -305,7 +337,7 @@ node build-projects.js <slug>       # 构建单个 project
 
 ```
 Mav/knowledge/projects/
-├── manifest.json                          ← 所有 project 的元数据（首页消费）
+├── manifest.json                          ← 所有 project 的元数据（当前未被首页动态消费，仅作为备用数据）
 ├── from-zero-to-transformer/index.html    ← 详情页
 ├── how-computer-works/index.html          ← 详情页
 ├── deep-learning-path/index.html
@@ -325,16 +357,29 @@ Mav/knowledge/projects/
 
 路径 `Mav/knowledge/index.html`。现在有两个 tab：
 
-1. **Projects** — 展示 project 卡片（带路径圆点动画）+ 独立阅读区
-2. **全部书籍** — 原始的平铺三列卡片视图
+1. **Projects** — 展示 published project 卡片（带路径圆点动画）+ 独立阅读区
+2. **全部书籍** — 平铺 12 本 published 主书的卡片视图（不含课程讲义与 draft 书稿）
 
-两个视图下方共用两个原生 `<details>` 折叠区。“大一下学期课程讲义”收纳热学与数学分析；“深度学习相关书稿”收纳 10 本 `status: draft` 的书稿和 2 条旧路线。两个区域均默认收起。
+两个视图下方共用两个原生 `<details>` 折叠区：
+- **大一下学期课程讲义**：收纳 `thermodynamics` 与 `math-analysis`。
+- **深度学习相关书稿**：收纳 10 本 `status: draft` 的书稿和 2 条 draft 旧路线。
+
+两个区域均默认收起。
 
 新增 project 后需要：
 1. 在 `markdown-backups/projects/` 创建 YAML
 2. 运行 `node build-projects.js`
 
-Project 卡片由构建脚本根据 YAML 自动回填；`order` 控制顺序，book 项的 `label` 控制路径短标签，`status: draft` 的 Project 会从主列表过滤。独立阅读、全部书籍和两个折叠区的卡片仍在首页手动维护。
+Project 卡片由构建脚本根据 YAML 自动回填到 `Mav/knowledge/index.html` 的以下标记之间：
+
+```html
+<!-- AUTO:PROJECTS:START -->
+<!-- AUTO:PROJECTS:END -->
+```
+
+`order` 控制顺序，book 项的 `label` 控制路径短标签，`status: draft` 的 Project 会从主列表过滤。
+
+**注意**：`book.yaml` 和 `project.yaml` 中的 `status: draft` 目前只是元数据，不会自动驱动首页分类。独立阅读、全部书籍和两个折叠区的卡片仍需在 `Mav/knowledge/index.html` 中手动维护，新增/移动书籍时务必同步更新。
 
 ### Project 详情页布局
 
@@ -353,11 +398,15 @@ Project 卡片由构建脚本根据 YAML 自动回填；`order` 控制顺序，b
 |------|-----------|
 | 新建知识库书 | `markdown-backups/` 下建文件夹 + `book.yaml` + `.md` |
 | 构建单本书 | `cd md2HTML && node build.js <Book-Name>` |
-| 增加独立书籍入口卡片 | 编辑 `Mav/knowledge/index.html` 的独立阅读和全部书籍区域 |
+| 构建单章 | `cd md2HTML && node build.js <Book-Name>/chapter.md` |
+| 增加独立书籍入口卡片 | 编辑 `Mav/knowledge/index.html` 的独立阅读和全部书籍区域（目前仍需手动） |
 | 新建 Project | `markdown-backups/projects/` 下建 `.yaml`，然后 `node build-projects.js` |
 | 构建 Project | `cd md2HTML && node build-projects.js` |
 | 发博客 | `Mav/blog/posts/` 下写 `.md`，然后 `cd Mav/blog && node blog-build.js` |
-| 锁定文件 | `node build.js --lock <path>` |
-| 查看所有锁 | `node build.js --list-lock` |
-| 修改前端样式（特定书） | 直接改 `Mav/knowledge/<slug>/assets/style.css`，然后锁定 |
-| 加 tips | 在 HTML 中插入 `<span class="sidenote-mark" data-note="...">tips</span>` |
+| 锁定文件 | `cd md2HTML && node build.js --lock <path>` |
+| 解锁文件 | `cd md2HTML && node build.js --unlock <path>` |
+| 查看所有锁 | `cd md2HTML && node build.js --list-lock` |
+| 修改前端样式（特定书） | 直接改 `Mav/knowledge/<slug>/assets/style.css`，然后 `--lock <slug>/assets/style.css` |
+| 加 Markdown 提示块 | 在 `.md` 中使用 `:::callout` / `:::callout-tip` / `:::callout-warn` |
+| 加 HTML sidenote tips | 在已生成 HTML 中插入 `<span class="sidenote-mark" data-note="...">tips</span>`，并 lock 该章节 |
+| **危险：不要执行** | `md2HTML/build-all.sh --all` / `Mav/knowledge/sync-assets.sh` |
