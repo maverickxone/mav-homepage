@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>一条命令的旅程 — RoboGame 2026：从一条命令到四个车轮</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" id="hljs-light" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+<link rel="stylesheet" id="hljs-dark" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" media="not all">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+
+</head>
+<body>
+
+<div class="progress-bar" id="progress-bar"></div>
+
+<nav class="topnav" id="topnav">
+  <div class="topnav-inner">
+    <a class="brand" href="../index.html">RoboGame 2026：从一条命令到四个车轮</a>
+    <div class="nav-links">
+      <a href="00-preface.html">01</a>
+      <a href="01-hardware-origin.html">02</a>
+      <a href="02-architecture-boot.html">03</a>
+      <a href="03-command-journey.html" class="active">04</a>
+      <a href="04-mecanum-motion.html">05</a>
+      <a href="05-feedback-safety.html">06</a>
+      <a href="06-progress-evidence.html">07</a>
+      <a href="07-development-map.html">08</a>
+    </div>
+    <div class="nav-controls">
+      <button class="nav-btn" id="search-btn" aria-label="搜索 (Ctrl+K)">⌘K</button>
+      <button class="nav-btn" id="settings-btn" aria-label="阅读设置">Aa</button>
+      <a class="nav-btn" href="../../index.html" aria-label="返回知识库">← 知识库</a>
+      <a class="nav-btn" href="https://github.com/maverickxone/mav-homepage" target="_blank" rel="noopener" aria-label="GitHub" style="padding: 6px 8px;"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg></a>
+    </div>
+  </div>
+</nav>
+<div class="settings-pop" id="settings-pop">
+  <h5>主题</h5>
+  <div class="row">
+    <button class="seg" data-theme-set="light">明亮</button>
+    <button class="seg" data-theme-set="dark">暗色</button>
+  </div>
+  <h5>字号</h5>
+  <div class="row">
+    <button class="seg" data-size-set="s">小</button>
+    <button class="seg" data-size-set="m">中</button>
+    <button class="seg" data-size-set="l">大</button>
+  </div>
+</div>
+
+<div class="with-sidebar">
+  <aside class="sidebar">
+  <div class="chapter-num">CHAPTER 04</div>
+  <div class="chapter-name">一条命令的旅程</div>
+  <h4>目录</h4>
+  <ul>
+    <li><a href="#第一个字节抵达-pa10">第一个字节抵达 PA10</a></li>
+    <li><a href="#256-格的环形等候区">256 格的环形等候区</a></li>
+    <li><a href="#一封带封条的数字信件">一封带封条的数字信件</a></li>
+    <li><a href="#状态机怎样拼出完整帧">状态机怎样拼出完整帧</a></li>
+    <li><a href="#把-start_motion-拆成真实字节">把 START_MOTION 拆成真实字节</a></li>
+    <li><a href="#分发器像一座接线台">分发器像一座接线台</a></li>
+    <li><a href="#ack-沿原路返回">ACK 沿原路返回</a></li>
+    <li><a href="#命令已经走到车轮面前">命令已经走到车轮面前</a></li>
+  </ul>
+</aside>
+  <article class="chapter-body">
+    <header class="chapter-head">
+  <div class="chapter-head-meta">
+    <span class="num">CHAPTER 04</span>
+    <span>≈ 21 MIN READ</span>
+  </div>
+  <h1>一条命令的旅程</h1>
+
+</header>
+    <h2 id="第一个字节抵达-pa10">第一个字节抵达 PA10</h2>
+<p><code>app_task</code> 已经开始等待。电脑把一条 <code>START_MOTION</code> 写入串口，电信号沿着接收线来到 STM32 的 PA10 引脚。</p>
+<p>UART1 以 <code>115200</code> 波特率、8 位数据、1 个停止位、无奇偶校验的格式工作。串口硬件会按约定的节奏采样电平，把连续的高低变化恢复成一个字节。字节收好以后，USART1 的 RXNE 标志置位。RXNE 可以读作 Receive Data Register Not Empty，意思是“接收数据寄存器里有新内容”。</p>
+<p>这时，STM32 进入 <code>USART1_IRQHandler()</code>。 <strong>中断服务函数（Interrupt Service Routine，ISR）</strong> 是硬件事件发生时立即执行的一小段程序，可以把它看成门铃响起后负责开门的人。</p>
+<pre data-label="c"><code class="language-c">int USART1_IRQHandler(void)
+{
+    if (USART_GetITStatus(USART1, USART_IT_RXNE) != RESET) {
+        transport_uart_rx_from_isr(
+            (uint8_t)USART_ReceiveData(USART1));
+    }
+    return 0;
+}</code></pre>
+<p>这段中断函数只做一件关键工作：从 USART1 取出新字节，然后交给 <code>transport_uart_rx_from_isr()</code>。解析协议、判断方向、控制电机都留给普通任务。中断保持简短，后面的字节到来时就更容易及时接住。</p>
+<h2 id="256-格的环形等候区">256 格的环形等候区</h2>
+<p>中断收到的字节会进入一个长度为 <code>256</code> 的数组 <code>s_rx_buffer</code>。这个数组和两个下标一起构成<strong>环形缓冲区（ring buffer）</strong>。它像一圈首尾相接的候车座位：写入位置由 <code>head</code> 指示，读取位置由 <code>tail</code> 指示；走到第 255 格以后，下一个位置回到第 0 格。</p>
+<pre data-label="c"><code class="language-c">static volatile uint16_t s_rx_head = 0U;
+static volatile uint16_t s_rx_tail = 0U;
+static uint8_t s_rx_buffer[256];</code></pre>
+<p>中断负责移动 <code>head</code>，<code>app_task</code> 负责移动 <code>tail</code>。两边各自处理一端，可以让“迅速接住字节”和“按程序节奏解析字节”衔接起来。</p>
+<p>写入前，代码先计算 <code>head</code> 的下一个位置。这个位置与 <code>tail</code> 不同时，当前字节写进数组，<code>head</code> 再向前移动。两者相同时，表示等候区已满，当前实现会保留缓冲区里的已有字节，并放弃新到的字节。</p>
+<p>数组有 256 格，其中一格用于区分“空”和“满”，因此最多同时保存 255 个尚未读取的字节。这种设计代码很小，也很常见。后续实机联调可以加入溢出计数，让上位机或日志知道字节是否曾因缓冲区满而丢失。</p>
+<p>应用任务从另一端取数据：</p>
+<pre data-label="c"><code class="language-c">if (s_rx_tail != s_rx_head) {
+    *out_byte = s_rx_buffer[s_rx_tail];
+    s_rx_tail = next_index(s_rx_tail);
+    return true;
+}</code></pre>
+<p>缓冲区暂时为空时，<code>transport_uart_receive_byte()</code> 每隔一个 FreeRTOS 节拍再检查一次。<code>app_task</code> 传入 <code>portMAX_DELAY</code>，因此它会持续等候。新字节出现后，任务按进入缓冲区的顺序逐个取走。</p>
+<h2 id="一封带封条的数字信件">一封带封条的数字信件</h2>
+<p>串口只负责传送字节，它看不出一条消息从哪里开始。通信双方因此约定了<strong>协议帧（protocol frame）</strong>。帧像一只格式固定的信封：前面有醒目的封套标记，中间有寄送信息与正文，末尾有用于检查运输损伤的封条。</p>
+<p>当前帧格式由 <code>LOWER_CONTROLLER/PROTOCOL/firmware/comm_protocol.h</code> 定义：</p>
+<div class="table-wrap"><table><thead><tr>
+<th>部分</th>
+<th align="right">长度</th>
+<th>含义</th>
+</tr>
+</thead><tbody><tr>
+<td>SOF</td>
+<td align="right">2 字节</td>
+<td>固定为 <code>AA 55</code>，标记一帧开始</td>
+</tr>
+<tr>
+<td>version</td>
+<td align="right">1 字节</td>
+<td>当前协议版本为 <code>01</code></td>
+</tr>
+<tr>
+<td>frame_type</td>
+<td align="right">1 字节</td>
+<td>command、ACK、telemetry 或 heartbeat</td>
+</tr>
+<tr>
+<td>seq</td>
+<td align="right">2 字节</td>
+<td>这一帧的序号，小端序</td>
+</tr>
+<tr>
+<td>payload_len</td>
+<td align="right">2 字节</td>
+<td>payload 长度，小端序</td>
+</tr>
+<tr>
+<td>payload</td>
+<td align="right">0～256 字节</td>
+<td>命令或数据正文</td>
+</tr>
+<tr>
+<td>CRC</td>
+<td align="right">2 字节</td>
+<td>对 header 与 payload 的校验结果，小端序</td>
+</tr>
+</tbody></table></div>
+<p>SOF 是 Start of Frame 的缩写，中文可以叫帧起始标记。连续的 <code>AA 55</code> 像信封外面统一印刷的醒目标识，解析器在字节流中看到它，才开始收集后面的头部。</p>
+<p>帧头固定为 6 字节，也就是 <code>version</code>、<code>frame_type</code>、<code>seq</code> 和 <code>payload_len</code>。<code>seq</code> 是 sequence number，中文叫序号。它给每封消息一个编号，ACK 可以借此说明自己回应的是哪一条请求。</p>
+<p>这里的两个 256 容易混在一起。UART transport 的接收数组长度是 256，协议允许单帧 payload 最多 256 字节。完整最大帧还要加上 2 字节 SOF、6 字节 header 和 2 字节 CRC，总长可达 266 字节。应用任务会一边接收一边取走字节，缓冲区负责吸收两者之间的短时速度差。</p>
+<h2 id="状态机怎样拼出完整帧">状态机怎样拼出完整帧</h2>
+<p><strong>状态机（state machine）</strong> 是一种按当前阶段处理输入的方法。可以把它想成门卫手里的收件流程卡：先找第一枚标记，再找第二枚标记，然后收固定长度的表头，接着按表头写明的长度收正文，最后核对封条。</p>
+<p>解析器共有五个阶段：</p>
+<div class="mermaid">stateDiagram-v2
+    [*] --> 等待AA
+    等待AA --> 等待55: 收到 AA
+    等待55 --> 读取头部: 收到 55
+    等待55 --> 等待55: 再次收到 AA
+    等待55 --> 等待AA: 收到其他字节
+    读取头部 --> 读取正文: payload_len 大于 0
+    读取头部 --> 读取CRC: payload_len 等于 0
+    读取正文 --> 读取CRC: 正文收齐
+    读取CRC --> 等待AA: 校验结束</div>
+<p>解析器先等待 <code>AA</code>。随后收到 <code>55</code>，才进入读取头部。如果第二个字节再次是 <code>AA</code>，它继续等待 <code>55</code>，这样连续出现多个 <code>AA</code> 时仍有机会找到正确开头。收到其他数值时，它回到最初状态。</p>
+<p>6 字节头部收齐以后，程序把多字节字段按 <strong>小端序（little-endian）</strong> 还原。小端序把数值的低位字节放在前面。例如序号 <code>1</code> 在帧里写作 <code>01 00</code>，长度 <code>4</code> 写作 <code>04 00</code>。解析器随后检查协议版本是否为 <code>01</code>，也检查 payload 是否超过 256 字节。</p>
+<p>正文按照 <code>payload_len</code> 收齐后，解析器再读两个 CRC 字节。CRC 的全称是 Cyclic Redundancy Check，中文叫循环冗余校验。它像信封封口处的校验印记：发送端根据内容算出一个数，接收端用同样方法再算一次；两个结果一致，说明这段数据通过了当前校验。</p>
+<p>工程采用 <code>CRC-16/CCITT-FALSE</code>，初始值是 <code>FFFF</code>，多项式是 <code>1021</code>。计算范围从 <code>version</code> 开始，覆盖 6 字节 header 与完整 payload，SOF 不参与计算。接收到的 CRC 也按小端序读取。</p>
+<p>版本错误、payload 过大和 CRC 错误都会让解析器回到等待 <code>AA</code> 的状态。校验成功时，完整内容复制到 <code>comm_frame_t</code>，<code>ready</code> 被设为 <code>true</code>。<code>app_task</code> 直到此刻才把 frame 交给命令分发器。</p>
+<h2 id="把-start_motion-拆成真实字节">把 START_MOTION 拆成真实字节</h2>
+<p>命令帧的 <code>frame_type</code> 是 <code>01</code>。它的 payload 还有一层简单包装：第一个字节是命令 ID，第二个字节是参数长度，后面才是参数。</p>
+<p><code>START_MOTION</code> 的命令 ID 为 <code>04</code>，参数长度固定为 <code>2</code>。第一个参数是方向 <code>direction</code>，第二个参数是档位 <code>gear</code>。方向编码中，向前为 <code>01</code>，向后为 <code>02</code>，向左为 <code>03</code>，向右为 <code>04</code>；档位编码中，微速为 <code>01</code>，慢速为 <code>02</code>，快速为 <code>03</code>。</p>
+<p>假设上位机发送序号 <code>1</code>，要求机器人以“慢速”开始“向前”运动，完整帧可以写成：</p>
+<pre data-label="text"><code class="language-text">AA 55 | 01 01 01 00 04 00 | 04 02 01 02 | CF 93
+  SOF |       header       |   payload   |  CRC</code></pre>
+<p>这 14 个字节可以从左到右读懂。<code>AA 55</code> 表示开始；第一个 <code>01</code> 是协议版本；第二个 <code>01</code> 表示 command；<code>01 00</code> 是序号 1；<code>04 00</code> 表示 payload 有 4 字节。payload 里的 <code>04</code> 是 <code>START_MOTION</code>，<code>02</code> 表示后面有两个参数，<code>01</code> 是向前，<code>02</code> 是慢速。最后的 <code>CF 93</code> 是前面 header 与 payload 算出的 CRC，小端序对应数值 <code>0x93CF</code>。</p>
+<p>真实上位机应当使用双方共享的协议生成代码来编码消息。这里把字节展开，是为了看清每一层包装怎样对应代码字段。</p>
+<h2 id="分发器像一座接线台">分发器像一座接线台</h2>
+<p>完整帧到达 <code>command_dispatcher_handle_frame()</code> 后，函数先查看 <code>frame_type</code>。当前应用只把 command 帧交给命令处理函数。<code>comm_decode_command_view()</code> 再检查 payload 至少有两个字节，并确认“2 加参数长度”恰好等于整个 payload 长度。</p>
+<p>随后，分发器读取 <code>cmd_id</code>，进入 <code>switch</code>。这座 <strong>命令分发器（command dispatcher）</strong> 像旧式电话接线台：它读出呼叫号码，再把请求接到对应业务接口。</p>
+<pre data-label="c"><code class="language-c">case COMM_CMD_START_MOTION: {
+    comm_start_motion_args_t args;
+
+    if (!comm_unpack_start_motion_args(frame, &amp;args)) {
+        response_send_ack(frame-&gt;seq, command.cmd_id,
+                          RESPONSE_STATUS_BAD_PAYLOAD);
+        break;
+    }
+
+    status = motion_start_motion(args.direction, args.gear) ?
+        RESPONSE_STATUS_OK : RESPONSE_STATUS_BAD_PAYLOAD;
+    response_send_ack(frame-&gt;seq, command.cmd_id, status);
+    break;
+}</code></pre>
+<p><code>comm_unpack_start_motion_args()</code> 再做一次针对性核对：命令 ID 必须是 <code>04</code>，参数必须恰好有 2 字节。通过以后，<code>data[0]</code> 成为 <code>direction</code>，<code>data[1]</code> 成为 <code>gear</code>。这种层层核对让长度异常的消息停在业务动作之前。</p>
+<p><code>motion_start_motion()</code> 接到 <code>direction = 01</code> 后，选择向前分支，把四个逻辑轮位都设为正的固定 PWM。当前固定值为 <code>3000</code>，档位参数已经传入，现阶段统一输出固定值。运动层随后应用每个轮位的方向校正和 A、D、B、C 通道映射，再写入方向脚与 PWM 寄存器。四轮怎样靠不同正负组合实现前后、横移与旋转，会在下一章继续展开。</p>
+<h2 id="ack-沿原路返回">ACK 沿原路返回</h2>
+<p>运动接口返回 <code>true</code> 时，分发器发送状态为 <code>OK</code> 的 <strong>ACK（acknowledgement，确认响应）</strong>。ACK 像收件回执，告诉上位机某条命令已经通过软件链路处理。</p>
+<p>ACK 的 payload 固定为 4 字节：被回应命令的序号占 2 字节，命令 ID 占 1 字节，状态占 1 字节。响应帧还有自己的发送序号，<code>response_sender.c</code> 当前从 <code>100</code> 开始，每发送一帧就递增。</p>
+<p>如果前面的示例是控制板启动后处理的第一条响应，ACK 帧会是：</p>
+<pre data-label="text"><code class="language-text">AA 55 | 01 02 64 00 04 00 | 01 00 04 00 | 1F 76
+  SOF |       header       |   payload   |  CRC</code></pre>
+<p><code>02</code> 表示 ACK 帧，<code>64 00</code> 是十进制发送序号 100，payload 中的 <code>01 00</code> 指回上位机命令序号 1，<code>04</code> 指向 <code>START_MOTION</code>，<code>00</code> 表示状态 OK。<code>response_send_ack()</code> 编码完成后调用 <code>transport_uart_send_bytes()</code>，transport 再通过 <code>uart1_send()</code> 逐字节写入 USART1，并等待每个字节发送完成。</p>
+<p>ACK 说明帧校验、参数解析、命令选择和运动接口调用已经走通。轮子在实物上的表现还会受到电源、电机驱动、接线、安装方向与机械状态影响，因此联调记录需要同时观察返回帧和真实动作。</p>
+<h2 id="命令已经走到车轮面前">命令已经走到车轮面前</h2>
+<p>现在回看整段旅程，电脑发送的是 14 个普通字节。UART1 中断迅速接住它们，环形缓冲区把中断与任务连接起来，状态机找到 <code>AA 55</code> 并核对 CRC，分发器读出 <code>04 02 01 02</code> 的业务含义，运动层收到“向前、慢速”，响应模块再把 ACK 送回电脑。</p>
+<p>协议当前共定义 17 条命令：<code>01</code> 到 <code>0F</code> 覆盖连通测试、底盘、航向和机构动作，<code>FE</code> 用于查询 payload 版本，<code>FF</code> 用于测试回环。<code>PING</code>、版本查询、测试命令、持续平移、持续旋转和停止已经具有具体行为，其余命令已能进入格式校验与状态响应，后续会逐步接上运动、传感器和执行机构。</p>
+<p>这条 <code>START_MOTION</code> 还带着一个重要约定：持续运动由后续 <code>STOP_MOTION</code> 结束。当前软件链已经能够执行这两个入口，命令超时、看门狗、使能状态和统一安全停止仍需继续接入。理解这条边界之后，我们便可以把目光移向车底，看看四个带斜滚子的麦轮如何把四组正负号变成向前、横移和旋转。</p>
+
+    <nav class="pager">  <a href="02-architecture-boot.html">
+    <span class="label">← 上一章</span>
+    <span class="title">新的骨架：从上电到 app_task</span>
+  </a>  <a href="04-mecanum-motion.html" class="next">
+    <span class="label">下一章 →</span>
+    <span class="title">四个轮子如何配合</span>
+  </a></nav>
+  </article>
+</div>
+
+<footer>
+  <div class="set">
+    <span>RoboGame 2026：从一条命令到四个车轮</span>
+    <span>2026 · ZH-CN</span>
+  </div>
+  <div class="set">
+    <span>Mav</span>
+  </div>
+</footer>
+<div class="search-backdrop" id="search-overlay" role="dialog" aria-modal="true" aria-label="搜索" hidden>
+  <div class="search-modal">
+    <div class="search-input-wrap">
+      <input type="search" class="search-input" placeholder="搜索内容..." aria-label="搜索内容" autocomplete="off">
+      <kbd>ESC</kbd>
+    </div>
+    <div class="search-results" role="listbox" aria-label="搜索结果"></div>
+  </div>
+</div>
+
+<!-- Side Panel -->
+<div class="side-panel" id="side-panel">
+  <div class="side-panel-resize" id="side-panel-resize"></div>
+  <div class="side-panel-header">
+    <div class="side-panel-tabs">
+      <button class="side-panel-tab active" data-mode="sidenote">补充</button>
+      <button class="side-panel-tab" data-mode="notepad">笔记</button>
+    </div>
+    <button class="side-panel-close" aria-label="关闭">×</button>
+  </div>
+  <div class="side-panel-body"></div>
+</div>
+<button class="notepad-fab" id="notepad-fab" aria-label="便利贴">✎</button>
+
+<!-- Mobile TOC -->
+<button class="mtoc-fab" id="mtoc-fab" aria-label="目录">TOC</button>
+<div class="mtoc-drawer" id="mtoc-drawer">
+  <div class="mtoc-content"></div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/bash.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/typescript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/yaml.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/javascript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/json.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/python.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/css.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+<script>mermaid.initialize({startOnLoad:true, theme:'neutral', fontFamily:'Inter, sans-serif'});</script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}]});"></script>
+<script src="../assets/script.js"></script>
+
+</body>
+</html>

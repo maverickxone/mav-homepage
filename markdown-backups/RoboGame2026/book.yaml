@@ -1,0 +1,9 @@
+title: "RoboGame 2026：从一条命令到四个车轮"
+author: "Mav"
+description: "面向初学者的 RoboGame 2026 下位机讲义，从一条 START_MOTION 命令出发，读懂 STM32、FreeRTOS、串口协议、麦轮控制、项目进度与后续开发。"
+language: "ZH-CN"
+version: "1.0.0"
+status: "published"
+features:
+  - mermaid
+infoCutoff: "项目状态截至 2026-07-14 · Git HEAD fc3ef5d"

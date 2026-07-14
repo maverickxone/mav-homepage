@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>继续把机器人做完整 — RoboGame 2026：从一条命令到四个车轮</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" id="hljs-light" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+<link rel="stylesheet" id="hljs-dark" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" media="not all">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+
+</head>
+<body>
+
+<div class="progress-bar" id="progress-bar"></div>
+
+<nav class="topnav" id="topnav">
+  <div class="topnav-inner">
+    <a class="brand" href="../index.html">RoboGame 2026：从一条命令到四个车轮</a>
+    <div class="nav-links">
+      <a href="00-preface.html">01</a>
+      <a href="01-hardware-origin.html">02</a>
+      <a href="02-architecture-boot.html">03</a>
+      <a href="03-command-journey.html">04</a>
+      <a href="04-mecanum-motion.html">05</a>
+      <a href="05-feedback-safety.html">06</a>
+      <a href="06-progress-evidence.html">07</a>
+      <a href="07-development-map.html" class="active">08</a>
+    </div>
+    <div class="nav-controls">
+      <button class="nav-btn" id="search-btn" aria-label="搜索 (Ctrl+K)">⌘K</button>
+      <button class="nav-btn" id="settings-btn" aria-label="阅读设置">Aa</button>
+      <a class="nav-btn" href="../../index.html" aria-label="返回知识库">← 知识库</a>
+      <a class="nav-btn" href="https://github.com/maverickxone/mav-homepage" target="_blank" rel="noopener" aria-label="GitHub" style="padding: 6px 8px;"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg></a>
+    </div>
+  </div>
+</nav>
+<div class="settings-pop" id="settings-pop">
+  <h5>主题</h5>
+  <div class="row">
+    <button class="seg" data-theme-set="light">明亮</button>
+    <button class="seg" data-theme-set="dark">暗色</button>
+  </div>
+  <h5>字号</h5>
+  <div class="row">
+    <button class="seg" data-size-set="s">小</button>
+    <button class="seg" data-size-set="m">中</button>
+    <button class="seg" data-size-set="l">大</button>
+  </div>
+</div>
+
+<div class="with-sidebar">
+  <aside class="sidebar">
+  <div class="chapter-num">CHAPTER 08</div>
+  <div class="chapter-name">继续把机器人做完整</div>
+  <h4>目录</h4>
+  <ul>
+    <li><a href="#从已经走通的路继续向前">从已经走通的路继续向前</a></li>
+    <li><a href="#先认识工程的几个入口">先认识工程的几个入口</a></li>
+    <li><a href="#建立一次可以复现的构建">建立一次可以复现的构建</a></li>
+    <li><a href="#在车轮接触地面前验证通信">在车轮接触地面前验证通信</a></li>
+    <li><a href="#让四个通道依次说话">让四个通道依次说话</a></li>
+    <li><a href="#先把停止能力接牢">先把停止能力接牢</a></li>
+    <li><a href="#用编码器把档位变成真实速度">用编码器把档位变成真实速度</a></li>
+    <li><a href="#再补航向和操作机构">再补航向和操作机构</a></li>
+  </ul>
+</aside>
+  <article class="chapter-body">
+    <header class="chapter-head">
+  <div class="chapter-head-meta">
+    <span class="num">CHAPTER 08</span>
+    <span>≈ 26 MIN READ</span>
+  </div>
+  <h1>继续把机器人做完整</h1>
+
+</header>
+    <h2 id="从已经走通的路继续向前">从已经走通的路继续向前</h2>
+<p>故事开始时，上位机只发来一条 <code>START_MOTION</code>。现在我们已经知道，这条命令会进入 USART1，经过协议解析和命令分发，再由 <code>motion_start_motion()</code> 把 PWM 3000 写到四个电机通道。它证明了新架构的主干已经形成，也给后续开发留下了一条自然路线。</p>
+<p>接下来的工作适合像搭桥一样进行。先确认脚下这一段能够稳定承重，再向前接下一段。每接通一个功能，就留下编译、通信和实机证据。这样遇到问题时，可以很快判断故障发生在协议、任务、运动计算、接线还是机械结构上。</p>
+<div class="mermaid">flowchart LR
+    A["可重复构建"] --> B["协议冒烟测试"]
+    B --> C["单轮与轮位验证"]
+    C --> D["停止与安全联锁"]
+    D --> E["编码器闭环与档位"]
+    E --> F["航向与精确运动"]
+    F --> G["升降 / 夹爪 / 推杆"]
+    G --> H["整车联调记录"]</div>
+<h2 id="先认识工程的几个入口">先认识工程的几个入口</h2>
+<p>第一次打开大型嵌入式仓库，很容易在几百个文件之间迷路。这个项目可以沿着命令的实际路径阅读。Keil 工程告诉编译器哪些文件参与构建，<code>main.c</code> 告诉芯片从哪里开始运行，<code>app_task</code> 则守在新业务的入口。</p>
+<div class="table-wrap"><table><thead><tr>
+<th>入口</th>
+<th>阅读时关注的内容</th>
+</tr>
+</thead><tbody><tr>
+<td><code>USER/WHEELTEC.uvprojx</code></td>
+<td>芯片、编译器、目标名、源码分组和输出设置</td>
+</tr>
+<tr>
+<td><code>USER/main.c</code></td>
+<td><code>systemInit()</code>、FreeRTOS 启动和 <code>app_task</code> 的创建</td>
+</tr>
+<tr>
+<td><code>USER/system.c</code></td>
+<td>USART1、PWM、ICM20948、使能开关和四路编码器初始化</td>
+</tr>
+<tr>
+<td><code>LOWER_CONTROLLER/APP/app_main.c</code></td>
+<td>字节怎样进入协议解析器</td>
+</tr>
+<tr>
+<td><code>LOWER_CONTROLLER/APP/command_dispatcher.c</code></td>
+<td>17 条命令目前各自走向哪里</td>
+</tr>
+<tr>
+<td><code>LOWER_CONTROLLER/BOARD/</code></td>
+<td>USART1、115200、PWM 3000 和 A/D/B/C 轮位映射</td>
+</tr>
+<tr>
+<td><code>LOWER_CONTROLLER/MOTION/motion_controller.c</code></td>
+<td>平移、旋转、停止和电机方向引脚</td>
+</tr>
+</tbody></table></div>
+<p>遇到“为什么车轮这样转”的问题，可以从 <code>command_dispatcher.c</code> 跟到 <code>motion_controller.c</code>，再看 <code>board_motion_config.h</code> 和 <code>HARDWARE/motor.h</code>。遇到“为什么收不到命令”的问题，可以从 <code>board_uart_config.h</code> 跟到 <code>uart_irq.c</code>、<code>transport_uart.c</code> 和协议解析器。沿数据流寻找答案，阅读范围会很快缩小。</p>
+<h2 id="建立一次可以复现的构建">建立一次可以复现的构建</h2>
+<p><code>USER/WHEELTEC.uvprojx</code> 是现有 Keil µVision 工程。目标名为 <code>Mec_Car</code>，芯片配置为 STM32F407VE，工程记录的编译器是 ARMCC 5.06 update 7，设备包是 <code>Keil.STM32F4xx_DFP.3.1.1</code>。这些版本信息很重要，同一份旧工程在另一套编译器上可能出现语法、库或链接差异。</p>
+<p>工程把输出目录设为 <code>OBJ/</code>，输出名为 <code>Mec_Car</code>，并开启 HEX 生成。构建完成后，<code>fromelf</code> 会从 <code>OBJ/Mec_Car.axf</code> 生成仓库根目录下的 <code>Mec_Car.bin</code>，<code>copyhex.bat</code> 会把生成的 HEX 复制到根目录。构建前执行的 <code>hexbinHandle.bat</code> 会清理旧的 HEX 和 BIN，避免把上一次产物误当成当前结果。</p>
+<p>工程文件和批处理脚本记录了 ARMCC 5.06 update 7、AXF、HEX、BIN 的生成过程。仓库还保存了 Windows 程序 <code>FlyMcu2188.exe</code>。<code>源码工程使用指南.pdf</code> 讲到 target 选择、全量编译和 HEX 产物；FlyMcu 的端口、波特率、芯片选项和 BOOT 状态将在现场烧录时确认并写入记录。</p>
+<p>第一次构建的目标很朴素：让 HEAD <code>fc3ef5d</code> 在指定工具链中完整编译，并保存错误数、警告数、AXF/HEX/BIN 生成时间和提交号。产物被 <code>.gitignore</code> 忽略很正常，构建记录仍可以单独保存。这样，后续源码变化造成编译问题时，会有一个明确的可用基线。</p>
+<h2 id="在车轮接触地面前验证通信">在车轮接触地面前验证通信</h2>
+<p>通信测试可以先让机器人保持静止。USART1 的当前配置是 115200 波特率，协议帧头为 <code>0xAA 0x55</code>，payload version 是 <code>20260612</code>。<code>PING</code> 适合确认收发通道，<code>GET_PAYLOAD_VERSION</code> 适合确认上下位机协议版本，<code>TEST_COMMAND</code> 可以确认一个 32 位整数能否完整往返。</p>
+<p><code>TESTS/</code> 目前只有 README。后续加入的第一个上位机脚本可以依次发送这三条命令，核对 ACK 的原命令序号、命令 ID 和状态，再核对版本或测试 telemetry。随后加入错误 CRC、错误参数长度和未知命令，观察解析器丢弃坏帧、分发器回复 <code>INVALID_ARGS</code> 或 <code>INVALID_COMMAND</code>。</p>
+<p>这一步像先打电话确认双方语言一致。只要 PING、版本和测试值都能稳定往返，接下来的电机问题就可以集中到运动层与硬件层。</p>
+<h2 id="让四个通道依次说话">让四个通道依次说话</h2>
+<p>正式测试整车方向前，车轮适合先悬空。<code>motion_test_motor_channels_loop()</code> 已经提供一个通道测试：A、B、C、D 分别以 PWM 1200 运行一秒，然后全部停止两秒。当前主任务没有调用它，调试时需要用临时测试入口接入，验证结束后恢复 <code>app_task</code>。</p>
+<p>观察记录应同时写下“哪个接口获得输出”和“车身哪个轮位转动”。当前配置期望左前接 A、左后接 D、右前接 B、右后接 C。轮位正确后再核对转向，左后和右前使用 <code>-1</code> 方向系数。接线变化写入 <code>board_motion_config.h</code>，运动层继续使用左前、左后、右前、右后的逻辑顺序。</p>
+<p>四个通道逐一确认后，可以发送 <code>START_MOTION</code> 的前进、后退、左移、右移，再发送两种 <code>START_ROTATION</code>。每次动作后都发送 <code>STOP_MOTION</code>，确认 PWM 和方向引脚清零。当前三种 <code>gear</code> 都会得到固定 PWM 3000，因此这轮测试关注方向组合和停止效果。</p>
+<h2 id="先把停止能力接牢">先把停止能力接牢</h2>
+<p>车轮落地前，安全链需要从“收到停止命令就停”扩展到“通信异常和任务异常也能停”。使能开关 PE4 已经初始化，下一步是让 APP 读取它并维护统一的运动许可。所有底盘和执行机构入口都读取这份许可，许可撤销时进入同一个安全停止函数。</p>
+<p>命令超时需要周期性检查最后一条有效运动命令的时间。当前 <code>app_task</code> 使用：</p>
+<pre data-label="c"><code class="language-c">transport_uart_receive_byte(&amp;byte, portMAX_DELAY);</code></pre>
+<p><code>portMAX_DELAY</code> 会一直等待下一个字节。要加入超时检查，可以让接收等待按固定周期返回，也可以建立独立的安全任务或软件定时器。无论采用哪种方式，通信安静时也要有代码醒来检查时间。超时长度由上位机发送周期和实车制动测试决定，并写入板级配置和通信约定。</p>
+<p>看门狗随后负责发现任务卡死。正常任务定期喂狗，关键任务停止运行时由硬件复位。启动后的默认电机状态、复位原因记录和复位后的输出清零也应一起验证。完成这一步后，串口拔掉、上位机退出、使能关闭和任务停顿都能得到可观察的安全结果。</p>
+<h2 id="用编码器把档位变成真实速度">用编码器把档位变成真实速度</h2>
+<p>当前 PWM 3000 让车轮获得固定驱动，<code>gear</code> 还没有参与计算。编码器接入后，可以为微速、慢速和快速档位定义目标轮速，再周期性读取 A、B、C、D 的增量。控制器比较目标与测量值，逐步调整 PWM，这就是速度闭环。</p>
+<p>这里需要先测清编码器每圈脉冲数、减速比、轮径、读取周期和正负方向。数据单位统一后，<code>SENSORS</code> 对外提供轮速，<code>MOTION</code> 管理目标和控制器。原厂 <code>BALANCE/</code> 中保留了 PI 控制思路，可以作为参考；新的初始化已经停用原厂 PI 参数，比赛底盘需要结合当前机械结构重新测量和整定。</p>
+<p>有了稳定轮速，按时间移动可以使用 FreeRTOS 时钟结束动作，按距离移动可以累计编码器里程。持续动作与精确动作适合由运动状态机管理。<strong>状态机</strong>，英文是 <strong>state machine</strong>，可以想成一张写着“空闲、运行、减速、完成、故障”的流程牌。命令分发器只负责接单和启动状态，运动任务持续执行，新的 <code>STOP_MOTION</code> 仍能随时被接收。</p>
+<h2 id="再补航向和操作机构">再补航向和操作机构</h2>
+<p>按角度旋转和 <code>GET_HEADING</code> 需要 ICM20948 提供稳定朝向。开发时先记录静止零漂，再验证缓慢旋转一周时角度是否连续，随后把 heading 接入 <code>SENSORS</code> 和 telemetry。编码器负责看轮子走了多少，IMU 负责看车身朝向怎样，两种反馈合在一起可以提高直线和旋转控制的可靠性。</p>
+<p>升降、夹爪和推杆适合在底盘安全链稳定后接入。每个机构先完成单独的手动低速动作，再加入限位读取、动作超时和停止，最后连接六条已有协议命令。目标高度、方向和开合状态已经有生成的参数结构，新的 <code>ACTUATORS</code> 层负责把这些参数变成受保护的机械动作。</p>
+<p>整车联调时，每条记录都带上 Git 提交号、固件版本、板卡与接线、发送命令、收到的 ACK/telemetry 和实际动作。构建日志证明代码进入固件，串口抓包证明命令完成往返，轮位记录和视频证明机械动作符合预期。证据连成一条线，项目的完成状态也会自然变得清楚。</p>
+<p>那条最初的 <code>START_MOTION</code> 已经从一个协议名称走到四路电机输出接口。继续沿着构建、验证、反馈和安全这条路线前进，它会逐渐从“写下电机输出”成长为“让机器人知道自己在做什么，并且能够可靠地停下来”。</p>
+
+    <nav class="pager">  <a href="06-progress-evidence.html">
+    <span class="label">← 上一章</span>
+    <span class="title">项目走到哪一步了</span>
+  </a>  <a class="disabled next"><span class="label">下一章 →</span><span class="title"></span></a></nav>
+  </article>
+</div>
+
+<footer>
+  <div class="set">
+    <span>RoboGame 2026：从一条命令到四个车轮</span>
+    <span>2026 · ZH-CN</span>
+  </div>
+  <div class="set">
+    <span>Mav</span>
+  </div>
+</footer>
+<div class="search-backdrop" id="search-overlay" role="dialog" aria-modal="true" aria-label="搜索" hidden>
+  <div class="search-modal">
+    <div class="search-input-wrap">
+      <input type="search" class="search-input" placeholder="搜索内容..." aria-label="搜索内容" autocomplete="off">
+      <kbd>ESC</kbd>
+    </div>
+    <div class="search-results" role="listbox" aria-label="搜索结果"></div>
+  </div>
+</div>
+
+<!-- Side Panel -->
+<div class="side-panel" id="side-panel">
+  <div class="side-panel-resize" id="side-panel-resize"></div>
+  <div class="side-panel-header">
+    <div class="side-panel-tabs">
+      <button class="side-panel-tab active" data-mode="sidenote">补充</button>
+      <button class="side-panel-tab" data-mode="notepad">笔记</button>
+    </div>
+    <button class="side-panel-close" aria-label="关闭">×</button>
+  </div>
+  <div class="side-panel-body"></div>
+</div>
+<button class="notepad-fab" id="notepad-fab" aria-label="便利贴">✎</button>
+
+<!-- Mobile TOC -->
+<button class="mtoc-fab" id="mtoc-fab" aria-label="目录">TOC</button>
+<div class="mtoc-drawer" id="mtoc-drawer">
+  <div class="mtoc-content"></div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/bash.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/typescript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/yaml.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/javascript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/json.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/python.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/css.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+<script>mermaid.initialize({startOnLoad:true, theme:'neutral', fontFamily:'Inter, sans-serif'});</script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}]});"></script>
+<script src="../assets/script.js"></script>
+
+</body>
+</html>

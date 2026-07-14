@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>机器人如何感知并安全行动 — RoboGame 2026：从一条命令到四个车轮</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" id="hljs-light" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+<link rel="stylesheet" id="hljs-dark" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" media="not all">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+
+</head>
+<body>
+
+<div class="progress-bar" id="progress-bar"></div>
+
+<nav class="topnav" id="topnav">
+  <div class="topnav-inner">
+    <a class="brand" href="../index.html">RoboGame 2026：从一条命令到四个车轮</a>
+    <div class="nav-links">
+      <a href="00-preface.html">01</a>
+      <a href="01-hardware-origin.html">02</a>
+      <a href="02-architecture-boot.html">03</a>
+      <a href="03-command-journey.html">04</a>
+      <a href="04-mecanum-motion.html">05</a>
+      <a href="05-feedback-safety.html" class="active">06</a>
+      <a href="06-progress-evidence.html">07</a>
+      <a href="07-development-map.html">08</a>
+    </div>
+    <div class="nav-controls">
+      <button class="nav-btn" id="search-btn" aria-label="搜索 (Ctrl+K)">⌘K</button>
+      <button class="nav-btn" id="settings-btn" aria-label="阅读设置">Aa</button>
+      <a class="nav-btn" href="../../index.html" aria-label="返回知识库">← 知识库</a>
+      <a class="nav-btn" href="https://github.com/maverickxone/mav-homepage" target="_blank" rel="noopener" aria-label="GitHub" style="padding: 6px 8px;"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg></a>
+    </div>
+  </div>
+</nav>
+<div class="settings-pop" id="settings-pop">
+  <h5>主题</h5>
+  <div class="row">
+    <button class="seg" data-theme-set="light">明亮</button>
+    <button class="seg" data-theme-set="dark">暗色</button>
+  </div>
+  <h5>字号</h5>
+  <div class="row">
+    <button class="seg" data-size-set="s">小</button>
+    <button class="seg" data-size-set="m">中</button>
+    <button class="seg" data-size-set="l">大</button>
+  </div>
+</div>
+
+<div class="with-sidebar">
+  <aside class="sidebar">
+  <div class="chapter-num">CHAPTER 06</div>
+  <div class="chapter-name">机器人如何感知并安全行动</div>
+  <h4>目录</h4>
+  <ul>
+    <li><a href="#输出已经写下接下来要知道动作结果">输出已经写下，接下来要知道动作结果</a></li>
+    <li><a href="#编码器记录车轮走过的刻度">编码器记录车轮走过的刻度</a></li>
+    <li><a href="#imu-感受车身的转动">IMU 感受车身的转动</a></li>
+    <li><a href="#升降夹爪和推杆是另一组手脚">升降、夹爪和推杆是另一组手脚</a></li>
+    <li><a href="#当前安全链已经走到哪里">当前安全链已经走到哪里</a></li>
+    <li><a href="#从能转走向可控">从“能转”走向“可控”</a></li>
+  </ul>
+</aside>
+  <article class="chapter-body">
+    <header class="chapter-head">
+  <div class="chapter-head-meta">
+    <span class="num">CHAPTER 06</span>
+    <span>≈ 25 MIN READ</span>
+  </div>
+  <h1>机器人如何感知并安全行动</h1>
+
+</header>
+    <h2 id="输出已经写下接下来要知道动作结果">输出已经写下，接下来要知道动作结果</h2>
+<p><code>START_MOTION</code> 已经让程序向四路电机写入 PWM 3000。此时的控制很像闭着眼睛推一辆小车：双手在用力，动作结果还没有回到控制程序。车身是否跑偏、轮子实际多快、是否到达目标，都要由传感器回答。</p>
+<p>这种“给出输出，然后持续保持”的方式叫<strong>开环控制</strong>，英文是 <strong>open-loop control</strong>。厨房里把燃气旋钮转到某个位置后等待三分钟，就是一种开环做法；火力大小已经给定，锅里的真实温度没有参与调节。</p>
+<p>机器人常常需要<strong>反馈</strong>，英文是 <strong>feedback</strong>。反馈像人的眼睛和耳朵，它把动作造成的结果送回控制器。控制器不断比较“我想要的状态”和“我测到的状态”，再调整输出，这个循环叫<strong>闭环控制</strong>，英文是 <strong>closed-loop control</strong>。</p>
+<div class="mermaid">flowchart LR
+    A["目标：向前移动"] --> B["MOTION 计算四轮输出"]
+    B --> C["电机与车轮"]
+    C --> D["编码器 / IMU"]
+    D --> E["测得速度、距离、朝向"]
+    E --> B</div>
+<p>当前工程已经保留了产生反馈所需的底层硬件驱动。新的 <code>SENSORS</code> 层仍在搭建中，因此这些信号还没有进入 <code>motion_start_motion()</code> 的控制循环。</p>
+<h2 id="编码器记录车轮走过的刻度">编码器记录车轮走过的刻度</h2>
+<p>编码器的英文是 <strong>encoder</strong>。它通常随着电机轴转动并产生一串电脉冲，效果很像自行车码表里的磁铁：车轮每转过一小段，计数器就多记一次。固定时间内的脉冲数可以帮助估计速度，累计脉冲数可以帮助估计距离。</p>
+<p><code>USER/system.c</code> 在上电初始化时依次调用 <code>EncoderA_Init()</code>、<code>EncoderB_Init()</code>、<code>EncoderC_Init()</code> 和 <code>EncoderD_Init()</code>。四个接口分别使用 STM32 的定时器计数。底层读取接口位于 <code>HARDWARE/encoder.c</code>：</p>
+<pre data-label="c"><code class="language-c">short Read_Encoder(ENCODER_t e)
+{
+    Encoder_TIM = (short)ENCODER_A_TIM-&gt;CNT;
+    ENCODER_A_TIM-&gt;CNT = 0;
+    return Encoder_TIM;
+}</code></pre>
+<p>代码按传入的 A、B、C、D 选择对应定时器。读出计数后，它把计数器清零，下一次读取就得到下一个时间片里的新增脉冲。上面的片段只展示了 A 通道，完整函数对四个通道采用同样的处理。</p>
+<p>要让这些数字参与运动，需要先约定读取周期、脉冲与轮周的换算关系、正负方向和异常值处理。随后 <code>SENSORS/encoder_feedback.c</code> 可以提供稳定接口，<code>MOTION</code> 再用它调节四路 PWM。当前 <code>SENSORS/README.md</code> 已经写下这个接口方向，实际的 <code>encoder_feedback.c</code> 尚待创建。</p>
+<h2 id="imu-感受车身的转动">IMU 感受车身的转动</h2>
+<p>车轮计数能描述各个电机的转动，车身朝向还需要另一双“眼睛”。工程中的 ICM20948 是一颗九轴<strong>惯性测量单元</strong>，英文是 <strong>Inertial Measurement Unit，IMU</strong>。它集合了加速度计、陀螺仪和磁力计。加速度计像人感受到的推背感，陀螺仪像内耳对旋转的感觉，磁力计则提供类似指南针的方向信息。</p>
+<p>系统启动时会调用 <code>ICM20948_Init()</code>。底层驱动可以读取加速度和角速度，也提供静止状态下的零漂校准函数 <code>ICM20948_Calibrate_ZeroOffset()</code>。默认校准参数是采样 100 次、每次间隔 5 毫秒，完整过程约 500 毫秒；当前初始化只加载默认零漂值，没有自动执行这段阻塞校准。</p>
+<p>协议中已经有 <code>GET_HEADING</code>，其中 heading 指车头朝向角。当前命令分发器会检查这条命令的载荷格式，然后回复 <code>NOT_IMPLEMENTED</code>。<code>SENSORS/heading.c</code>、周期读取、姿态融合和 heading telemetry 都属于后续接线工作。初始化成功说明硬件入口已经准备好，朝向角仍需要从原始传感器数据一步步计算出来。</p>
+<h2 id="升降夹爪和推杆是另一组手脚">升降、夹爪和推杆是另一组手脚</h2>
+<p>底盘负责移动，升降机构、夹爪和推杆负责操作物体。这些装置统称<strong>执行机构</strong>，英文是 <strong>actuator</strong>。可以把底盘看成机器人的腿，把夹爪看成手，升降机构则像手臂。腿和手面对的危险也不同：底盘关注车速与碰撞，升降和夹爪还要关注行程终点、卡住和夹持力度。</p>
+<p>协议为这组机构准备了六条命令：<code>MOVE_LIFT_TO_HEIGHT</code>、<code>SET_LIFT</code>、<code>STOP_LIFT</code>、<code>SET_GRIPPER</code>、<code>START_PUSHROD</code> 和 <code>STOP_PUSHROD</code>。生成的协议代码已经能够拆出高度、方向、档位和开合状态。命令分发器目前在参数正确时回复 <code>NOT_IMPLEMENTED</code>，<code>LOWER_CONTROLLER/ACTUATORS/</code> 中保存的是设计说明，<code>lift.c</code>、<code>gripper.c</code> 和实际控制接口仍待加入工程。</p>
+<p>执行机构常用<strong>限位开关</strong>，英文是 <strong>limit switch</strong>。它像电梯到达最高层时碰到的行程开关，告诉控制器机械结构已经走到边界。<code>SENSORS/README.md</code> 规划了 <code>limit_switch.c</code>，<code>ACTUATORS/README.md</code> 也把限位、超时保护和安全停止列为职责。当前仓库还没有这些实现文件，实机接线与有效电平也需要后续记录。</p>
+<h2 id="当前安全链已经走到哪里">当前安全链已经走到哪里</h2>
+<p>安全保护可以看成沿命令旅程设置的多道门。当前代码已经有几道门，也有清楚的待建位置。</p>
+<div class="table-wrap"><table><thead><tr>
+<th>环节</th>
+<th>当前代码中的行为</th>
+</tr>
+</thead><tbody><tr>
+<td>协议帧</td>
+<td>检查协议版本、载荷长度上限 256 字节和 CRC；错误帧不会进入命令分发</td>
+</tr>
+<tr>
+<td>命令参数</td>
+<td>生成的解码函数检查参数长度；错误参数回复 <code>INVALID_ARGS</code></td>
+</tr>
+<tr>
+<td>运动方向</td>
+<td>无效的平移或旋转方向会调用 <code>motion_stop()</code></td>
+</tr>
+<tr>
+<td>输出幅度</td>
+<td>固定 PWM 为 3000，低于 16800 的满量程</td>
+</tr>
+<tr>
+<td>主动停止</td>
+<td><code>STOP_MOTION</code> 把四路 PWM 和方向引脚清零</td>
+</tr>
+<tr>
+<td>使能开关</td>
+<td>PE4 输入已经由 <code>EnableKey_Init()</code> 初始化，APP 读取与联锁仍待接入</td>
+</tr>
+<tr>
+<td>通信超时</td>
+<td>持续运动命令的超时停止仍待接入</td>
+</tr>
+<tr>
+<td>看门狗</td>
+<td>应用层的初始化与定期喂狗仍待接入</td>
+</tr>
+<tr>
+<td>限位与急停状态</td>
+<td><code>SENSORS</code>、<code>ACTUATORS</code> 和计划中的 <code>robot_state.c</code> 将承接这些状态</td>
+</tr>
+</tbody></table></div>
+<p>这里有一个需要牢记的现状：<code>START_MOTION</code> 写入 PWM 后，输出会一直保持，直到新命令覆盖它或 <code>STOP_MOTION</code> 到达。串口线松动或上位机退出时，当前 APP 没有依据“最后一次有效命令的时间”自动停止底盘。</p>
+<p>这类保护通常叫<strong>命令超时</strong>，英文是 <strong>command timeout</strong>。控制器记录最后一条有效运动命令到达的时刻，周期性检查经过了多久。超过约定时间后调用 <code>motion_stop()</code>。具体超时时间需要结合上位机发送频率和整车测试确定，当前仓库没有给出可直接采用的数值。</p>
+<p><strong>看门狗</strong>的英文是 <strong>watchdog</strong>。它像需要工作人员定时签到的值班室：程序正常运行时不断“喂狗”，任务卡死后签到停止，硬件便触发复位。工程包含 STM32 的 IWDG、WWDG 库头文件，当前业务代码中还没有看门狗初始化与喂狗调用，因此它处在待接入阶段。</p>
+<p>使能开关也处在相似位置。<code>EnableKey_Init()</code> 已把 PE4 配置为上拉输入，宏 <code>EN</code> 可以读取引脚。新的 <code>app_task</code> 当前只等待串口字节，没有读取 <code>EN</code> 并控制运动许可。后续把使能、急停、通信在线状态统一放入机器人状态中，所有会产生机械动作的入口都能检查同一份许可。</p>
+<p>原厂 <code>BALANCE</code> 业务保存了低电压、自检、急停和命令丢失的处理思路，当前 Keil 目标把这些文件留作参考。新的 <code>APP</code>、<code>MOTION</code>、<code>SENSORS</code> 和 <code>ACTUATORS</code> 将重新接入限位、急停、命令超时和看门狗，形成比赛业务自己的安全状态。</p>
+<h2 id="从能转走向可控">从“能转”走向“可控”</h2>
+<p>下一段开发需要让反馈和安全先形成小闭环。编码器能够稳定读取后，固定的 PWM 3000 就可以逐渐变成目标速度；四个轮子的实测速度参与调节，车身跑偏时控制器有机会修正。IMU 朝向可用后，按角度旋转和 <code>GET_HEADING</code> 才能获得可靠的数据来源。升降、夹爪与推杆接入时，限位、超时和停止应当与动作代码同时出现。</p>
+<p>仓库已经保留底层接口和模块规划，下一步是把它们接进新的业务链。整车烧录、轮子实转和比赛场地测试将通过后续记录补齐；本书此处采用源码能够确认的动作范围。</p>
+<p>那条 <code>START_MOTION</code> 已经在软件里走完从命令到电机输出的第一段旅程。接下来，我们把镜头拉远，沿着 Git 历史看看这条主线怎样从原厂工程中生长出来，也看看整个项目走到了哪里。</p>
+
+    <nav class="pager">  <a href="04-mecanum-motion.html">
+    <span class="label">← 上一章</span>
+    <span class="title">四个轮子如何配合</span>
+  </a>  <a href="06-progress-evidence.html" class="next">
+    <span class="label">下一章 →</span>
+    <span class="title">项目走到哪一步了</span>
+  </a></nav>
+  </article>
+</div>
+
+<footer>
+  <div class="set">
+    <span>RoboGame 2026：从一条命令到四个车轮</span>
+    <span>2026 · ZH-CN</span>
+  </div>
+  <div class="set">
+    <span>Mav</span>
+  </div>
+</footer>
+<div class="search-backdrop" id="search-overlay" role="dialog" aria-modal="true" aria-label="搜索" hidden>
+  <div class="search-modal">
+    <div class="search-input-wrap">
+      <input type="search" class="search-input" placeholder="搜索内容..." aria-label="搜索内容" autocomplete="off">
+      <kbd>ESC</kbd>
+    </div>
+    <div class="search-results" role="listbox" aria-label="搜索结果"></div>
+  </div>
+</div>
+
+<!-- Side Panel -->
+<div class="side-panel" id="side-panel">
+  <div class="side-panel-resize" id="side-panel-resize"></div>
+  <div class="side-panel-header">
+    <div class="side-panel-tabs">
+      <button class="side-panel-tab active" data-mode="sidenote">补充</button>
+      <button class="side-panel-tab" data-mode="notepad">笔记</button>
+    </div>
+    <button class="side-panel-close" aria-label="关闭">×</button>
+  </div>
+  <div class="side-panel-body"></div>
+</div>
+<button class="notepad-fab" id="notepad-fab" aria-label="便利贴">✎</button>
+
+<!-- Mobile TOC -->
+<button class="mtoc-fab" id="mtoc-fab" aria-label="目录">TOC</button>
+<div class="mtoc-drawer" id="mtoc-drawer">
+  <div class="mtoc-content"></div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/bash.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/typescript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/yaml.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/javascript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/json.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/python.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/css.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+<script>mermaid.initialize({startOnLoad:true, theme:'neutral', fontFamily:'Inter, sans-serif'});</script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}]});"></script>
+<script src="../assets/script.js"></script>
+
+</body>
+</html>

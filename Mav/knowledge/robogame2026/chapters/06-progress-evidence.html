@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>项目走到哪一步了 — RoboGame 2026：从一条命令到四个车轮</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" id="hljs-light" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+<link rel="stylesheet" id="hljs-dark" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" media="not all">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+
+</head>
+<body>
+
+<div class="progress-bar" id="progress-bar"></div>
+
+<nav class="topnav" id="topnav">
+  <div class="topnav-inner">
+    <a class="brand" href="../index.html">RoboGame 2026：从一条命令到四个车轮</a>
+    <div class="nav-links">
+      <a href="00-preface.html">01</a>
+      <a href="01-hardware-origin.html">02</a>
+      <a href="02-architecture-boot.html">03</a>
+      <a href="03-command-journey.html">04</a>
+      <a href="04-mecanum-motion.html">05</a>
+      <a href="05-feedback-safety.html">06</a>
+      <a href="06-progress-evidence.html" class="active">07</a>
+      <a href="07-development-map.html">08</a>
+    </div>
+    <div class="nav-controls">
+      <button class="nav-btn" id="search-btn" aria-label="搜索 (Ctrl+K)">⌘K</button>
+      <button class="nav-btn" id="settings-btn" aria-label="阅读设置">Aa</button>
+      <a class="nav-btn" href="../../index.html" aria-label="返回知识库">← 知识库</a>
+      <a class="nav-btn" href="https://github.com/maverickxone/mav-homepage" target="_blank" rel="noopener" aria-label="GitHub" style="padding: 6px 8px;"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg></a>
+    </div>
+  </div>
+</nav>
+<div class="settings-pop" id="settings-pop">
+  <h5>主题</h5>
+  <div class="row">
+    <button class="seg" data-theme-set="light">明亮</button>
+    <button class="seg" data-theme-set="dark">暗色</button>
+  </div>
+  <h5>字号</h5>
+  <div class="row">
+    <button class="seg" data-size-set="s">小</button>
+    <button class="seg" data-size-set="m">中</button>
+    <button class="seg" data-size-set="l">大</button>
+  </div>
+</div>
+
+<div class="with-sidebar">
+  <aside class="sidebar">
+  <div class="chapter-num">CHAPTER 07</div>
+  <div class="chapter-name">项目走到哪一步了</div>
+  <h4>目录</h4>
+  <ul>
+    <li><a href="#把镜头从一条命令拉到整个仓库">把镜头从一条命令拉到整个仓库</a></li>
+    <li><a href="#从原厂小车工程长出新的下位机">从原厂小车工程长出新的下位机</a></li>
+    <li><a href="#十七条命令分别走到了哪里">十七条命令分别走到了哪里</a></li>
+    <li><a href="#八个新模块的实际状态">八个新模块的实际状态</a></li>
+    <li><a href="#代码证据与实车证据之间">代码证据与实车证据之间</a></li>
+  </ul>
+</aside>
+  <article class="chapter-body">
+    <header class="chapter-head">
+  <div class="chapter-head-meta">
+    <span class="num">CHAPTER 07</span>
+    <span>≈ 26 MIN READ</span>
+  </div>
+  <h1>项目走到哪一步了</h1>
+  <div class="chapter-info-cutoff">项目状态截至 2026-07-14 · Git HEAD fc3ef5d</div>
+
+</header>
+    <h2 id="把镜头从一条命令拉到整个仓库">把镜头从一条命令拉到整个仓库</h2>
+<p>前面几章一直跟着 <code>START_MOTION</code> 行走。它从 USART1 进入 STM32，通过协议解析和命令分发，最后让四路电机得到 PWM。沿着这条路，我们已经看到一段完整的软件链路。现在把镜头拉远，问题变成：整个 RoboGame 2026 下位机已经完成了哪些部分，哪些部分刚刚留好接口，哪些结论还需要实车来证明？</p>
+<p>本章以 2026 年 7 月 14 日看到的仓库为准，Git 当前提交是 <code>fc3ef5d</code>。这个提交本身产生于 2026 年 6 月 13 日。状态判断优先查看当前源码和 <code>USER/WHEELTEC.uvprojx</code>，然后参考各模块 README 与 Git 历史。</p>
+<p>完成度在嵌入式项目里有几种不同含义。文件已经写好，说明设计进入了代码；文件已经加入 Keil 工程，说明它会参与目标构建；编译通过、烧录成功、电机实转和整车联调，又是更进一步的证据。把这些证据分开记录，初学者就能清楚理解“代码里有”与“车上验证过”之间的距离。</p>
+<h2 id="从原厂小车工程长出新的下位机">从原厂小车工程长出新的下位机</h2>
+<p>仓库在 2026 年 4 月 30 日导入 WHEELTEC C50X 原厂工程。2026 年 6 月 6 日，项目重新整理商家源码，只保留 <code>Mec_Car</code> 目标，并创建 <code>LOWER_CONTROLLER/</code>。电机、编码器、串口、IMU、FreeRTOS 和 STM32 标准库继续提供基础能力，新的比赛业务获得了单独、清楚的代码边界。</p>
+<p>随后一周的提交把工作台逐渐接通。6 月 8 日，<code>main.c</code> 从原厂的多任务入口切换到新的 <code>app_task</code>，UART 接收、协议解析、命令分发和响应发送进入 Keil 工程。6 月 9 日，ICM20948 驱动与系统初始化得到整理，USB 手柄等冲突依赖被清理。6 月 11 日加入 <code>FlyMcu2188.exe</code>，为已有工程补上一个烧录工具入口。6 月 12 日更新生成的通信协议。6 月 13 日加入固定 PWM 的平移、旋转和停止，并把新协议通信口确定为 USART1。</p>
+<div class="table-wrap"><table><thead><tr>
+<th>时间</th>
+<th>提交</th>
+<th>留下的关键结果</th>
+</tr>
+</thead><tbody><tr>
+<td>2026-04-30</td>
+<td><code>813481c</code></td>
+<td>导入 WHEELTEC 原厂工程</td>
+</tr>
+<tr>
+<td>2026-06-06</td>
+<td><code>d87d486</code></td>
+<td>重新整理商家源码基线</td>
+</tr>
+<tr>
+<td>2026-06-06</td>
+<td><code>927d447</code></td>
+<td>Keil 工程只保留 <code>Mec_Car</code> 目标</td>
+</tr>
+<tr>
+<td>2026-06-06</td>
+<td><code>c88087b</code></td>
+<td>建立 APP、PROTOCOL、TRANSPORT、MOTION、SENSORS、ACTUATORS、BOARD、COMMON 的目录边界</td>
+</tr>
+<tr>
+<td>2026-06-08</td>
+<td><code>be94cd7</code></td>
+<td><code>app_task</code>、UART 通道、协议解析、命令分发和响应链路接入</td>
+</tr>
+<tr>
+<td>2026-06-09</td>
+<td><code>7eae974</code>、<code>de7cb00</code>、<code>6b23148</code></td>
+<td>调整 ICM20948、精简初始化、清理冲突依赖</td>
+</tr>
+<tr>
+<td>2026-06-11</td>
+<td><code>6e17464</code></td>
+<td>加入 FlyMcu 烧录程序</td>
+</tr>
+<tr>
+<td>2026-06-12</td>
+<td><code>6743876</code></td>
+<td>更新协议与生成的消息编解码代码</td>
+</tr>
+<tr>
+<td>2026-06-13</td>
+<td><code>0191992</code>、<code>fc3ef5d</code></td>
+<td>接入部分运动命令，通信口切到 USART1</td>
+</tr>
+</tbody></table></div>
+<p>这条历史线说明当前阶段的重点很明确：先把新的软件骨架接通，再让第一组运动命令落到真实电机接口。编码器闭环、航向角和操作机构位于下一段工作中。</p>
+<h2 id="十七条命令分别走到了哪里">十七条命令分别走到了哪里</h2>
+<p>协议头文件 <code>comm_protocol.h</code> 定义了 17 条命令。命令出现在协议里，表示上下位机已经约定了名称、编号和参数格式。命令分发器拥有具体动作后，它才会真正推动机器人或返回有意义的数据。</p>
+<p>当前有 6 条命令具备具体行为。<code>PING</code> 回复成功 ACK；<code>GET_PAYLOAD_VERSION</code> 回复 ACK 并发送版本值 <code>20260612</code>；<code>TEST_COMMAND</code> 把收到的 32 位整数作为测试 telemetry 送回；<code>START_MOTION</code> 和 <code>START_ROTATION</code> 驱动固定 PWM；<code>STOP_MOTION</code> 清零四路输出。其余 11 条命令已经进入参数解析和错误回复链路，合法参数得到 <code>NOT_IMPLEMENTED</code>。</p>
+<div class="table-wrap"><table><thead><tr>
+<th>命令</th>
+<th>当前行为</th>
+</tr>
+</thead><tbody><tr>
+<td><code>PING</code></td>
+<td>检查空参数，回复 ACK OK</td>
+</tr>
+<tr>
+<td><code>MOVE_BY_TIME</code></td>
+<td>解析方向、档位和持续时间，回复 <code>NOT_IMPLEMENTED</code></td>
+</tr>
+<tr>
+<td><code>MOVE_BY_DISTANCE</code></td>
+<td>解析方向、档位、距离和容差，回复 <code>NOT_IMPLEMENTED</code></td>
+</tr>
+<tr>
+<td><code>START_MOTION</code></td>
+<td>根据方向输出固定 PWM 3000，回复执行状态</td>
+</tr>
+<tr>
+<td><code>ROTATE_BY_TIME</code></td>
+<td>解析方向、档位和持续时间，回复 <code>NOT_IMPLEMENTED</code></td>
+</tr>
+<tr>
+<td><code>ROTATE_BY_ANGLE</code></td>
+<td>解析方向、档位、角度和容差，回复 <code>NOT_IMPLEMENTED</code></td>
+</tr>
+<tr>
+<td><code>START_ROTATION</code></td>
+<td>根据顺时针或逆时针方向输出固定 PWM 3000</td>
+</tr>
+<tr>
+<td><code>STOP_MOTION</code></td>
+<td>清零 A、B、C、D 四路 PWM 和方向引脚</td>
+</tr>
+<tr>
+<td><code>GET_HEADING</code></td>
+<td>检查空参数，回复 <code>NOT_IMPLEMENTED</code></td>
+</tr>
+<tr>
+<td><code>MOVE_LIFT_TO_HEIGHT</code></td>
+<td>解析目标高度，回复 <code>NOT_IMPLEMENTED</code></td>
+</tr>
+<tr>
+<td><code>SET_LIFT</code></td>
+<td>解析升降方向和档位，回复 <code>NOT_IMPLEMENTED</code></td>
+</tr>
+<tr>
+<td><code>STOP_LIFT</code></td>
+<td>检查空参数，回复 <code>NOT_IMPLEMENTED</code></td>
+</tr>
+<tr>
+<td><code>SET_GRIPPER</code></td>
+<td>解析夹爪开合状态，回复 <code>NOT_IMPLEMENTED</code></td>
+</tr>
+<tr>
+<td><code>START_PUSHROD</code></td>
+<td>解析推杆方向，回复 <code>NOT_IMPLEMENTED</code></td>
+</tr>
+<tr>
+<td><code>STOP_PUSHROD</code></td>
+<td>检查空参数，回复 <code>NOT_IMPLEMENTED</code></td>
+</tr>
+<tr>
+<td><code>GET_PAYLOAD_VERSION</code></td>
+<td>回复 ACK，并发送 payload version telemetry <code>20260612</code></td>
+</tr>
+<tr>
+<td><code>TEST_COMMAND</code></td>
+<td>回复 ACK，并把输入整数作为测试 telemetry 返回</td>
+</tr>
+</tbody></table></div>
+<p>这张表也展示了“协议入口”和“完整功能”之间的进度。按距离移动已经拥有 <code>distance_mm</code>、<code>tolerance_mm</code> 和参数校验；当前控制板会返回 <code>NOT_IMPLEMENTED</code>，清楚告诉上位机这项功能仍在建设。编码器反馈与距离控制接入后，这条命令就能继续向真实动作推进。</p>
+<h2 id="八个新模块的实际状态">八个新模块的实际状态</h2>
+<p><code>LOWER_CONTROLLER/</code> 里的目录名描绘了目标架构，目录中的源码和 Keil 工程文件则显示当前落地程度。</p>
+<div class="table-wrap"><table><thead><tr>
+<th>模块</th>
+<th>当前可确认的状态</th>
+</tr>
+</thead><tbody><tr>
+<td><code>APP</code></td>
+<td><code>app_task</code>、命令分发和 ACK/telemetry 发送已经加入 Keil 目标</td>
+</tr>
+<tr>
+<td><code>PROTOCOL</code></td>
+<td>帧解析、CRC、命令参数解码和响应编码已经接入，payload version 为 <code>20260612</code></td>
+</tr>
+<tr>
+<td><code>TRANSPORT</code></td>
+<td>USART1 中断收字节、256 字节接收缓冲和逐字节发送已经接入</td>
+</tr>
+<tr>
+<td><code>BOARD</code></td>
+<td>USART1、115200、固定 PWM、轮位映射和方向系数已有集中配置</td>
+</tr>
+<tr>
+<td><code>MOTION</code></td>
+<td>持续平移、持续旋转和停止已接入；档位、时间、距离、角度和闭环仍待完成</td>
+</tr>
+<tr>
+<td><code>SENSORS</code></td>
+<td>编码器和 ICM20948 底层驱动已经初始化；新的航向、编码器反馈和限位接口仍待接入</td>
+</tr>
+<tr>
+<td><code>ACTUATORS</code></td>
+<td>升降、夹爪、推杆的协议入口和规划已经存在，业务源码与硬件接口仍待接入</td>
+</tr>
+<tr>
+<td><code>COMMON</code></td>
+<td>职责边界已经写入 README，公共类型与工具文件仍待按实际需要增加</td>
+</tr>
+</tbody></table></div>
+<p>旧的 <code>HARDWARE/</code> 继续承担 GPIO、定时器、电机、编码器和 IMU 驱动。新的模块像一层整齐的接线板，把比赛命令连接到这些底层能力。<code>USER/main.c</code> 当前只创建新的 <code>app_task</code>，原厂 <code>Balance_task</code>、显示任务、手柄任务和数据上报任务已经退出启动链路。</p>
+<h2 id="代码证据与实车证据之间">代码证据与实车证据之间</h2>
+<p><code>USER/WHEELTEC.uvprojx</code> 的目标名是 <code>Mec_Car</code>，芯片为 STM32F407VE。工程文件已经包含 APP、协议、UART 和运动控制的 <code>.c</code> 文件，说明新的主链路进入了构建清单。项目配置会生成 AXF 和 HEX，并在构建后调用 <code>fromelf</code> 生成 BIN。</p>
+<p>仓库使用 <code>.gitignore</code> 将 <code>OBJ/</code>、<code>*.hex</code> 和 <code>*.bin</code> 作为本地产物管理，因此 Git 历史主要保存源码和工程配置。<code>TESTS/</code> 当前保存了测试规划，下一次联调可以把提交号、Keil 编译结果、烧录结果、串口抓包和轮子动作写入同一份记录。按照当前仓库证据，最新代码的编译、烧录与整车测试状态记为“仓库中待补验证记录”。</p>
+<p>源码已经清楚展示固定 PWM 的输出路径，现场记录将继续回答轮子怎样实际转动。带有提交号、板卡版本、接线、命令帧、ACK 和动作结果的记录，会让这项状态继续向前推进。</p>
+<p>阅读文档时还有两处值得留意的同步事项。真实轮位映射以 <code>board_motion_config.h</code> 为准，当前是左前 A、左后 D、右前 B、右后 C；<code>MOTION/README.md</code> 的一张旧表仍写着 A、B、C、D。真实发送串口由 <code>board_uart_config.h</code> 选为 USART1，发送代码会进入 <code>uart1_send()</code>；<code>TRANSPORT/README.md</code> 的发送路径示例仍保留 <code>uart3_send()</code>。这些差异属于文档更新工作，当前书稿采用实际配置头文件和源码的值。</p>
+<p>项目现在已经拥有一条能够讲清楚、也能够继续扩展的主干。下一章沿着这条主干安排开发顺序：先让工程可重复构建，再验证通信和单轮动作，随后补齐安全、闭环、航向和操作机构，让每一步都留下看得见的证据。</p>
+
+    <nav class="pager">  <a href="05-feedback-safety.html">
+    <span class="label">← 上一章</span>
+    <span class="title">机器人如何感知并安全行动</span>
+  </a>  <a href="07-development-map.html" class="next">
+    <span class="label">下一章 →</span>
+    <span class="title">继续把机器人做完整</span>
+  </a></nav>
+  </article>
+</div>
+
+<footer>
+  <div class="set">
+    <span>RoboGame 2026：从一条命令到四个车轮</span>
+    <span>2026 · ZH-CN</span>
+  </div>
+  <div class="set">
+    <span>Mav</span>
+  </div>
+</footer>
+<div class="search-backdrop" id="search-overlay" role="dialog" aria-modal="true" aria-label="搜索" hidden>
+  <div class="search-modal">
+    <div class="search-input-wrap">
+      <input type="search" class="search-input" placeholder="搜索内容..." aria-label="搜索内容" autocomplete="off">
+      <kbd>ESC</kbd>
+    </div>
+    <div class="search-results" role="listbox" aria-label="搜索结果"></div>
+  </div>
+</div>
+
+<!-- Side Panel -->
+<div class="side-panel" id="side-panel">
+  <div class="side-panel-resize" id="side-panel-resize"></div>
+  <div class="side-panel-header">
+    <div class="side-panel-tabs">
+      <button class="side-panel-tab active" data-mode="sidenote">补充</button>
+      <button class="side-panel-tab" data-mode="notepad">笔记</button>
+    </div>
+    <button class="side-panel-close" aria-label="关闭">×</button>
+  </div>
+  <div class="side-panel-body"></div>
+</div>
+<button class="notepad-fab" id="notepad-fab" aria-label="便利贴">✎</button>
+
+<!-- Mobile TOC -->
+<button class="mtoc-fab" id="mtoc-fab" aria-label="目录">TOC</button>
+<div class="mtoc-drawer" id="mtoc-drawer">
+  <div class="mtoc-content"></div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/bash.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/typescript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/yaml.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/javascript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/json.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/python.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/css.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+<script>mermaid.initialize({startOnLoad:true, theme:'neutral', fontFamily:'Inter, sans-serif'});</script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}]});"></script>
+<script src="../assets/script.js"></script>
+
+</body>
+</html>

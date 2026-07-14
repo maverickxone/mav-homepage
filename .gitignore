@@ -14,3 +14,6 @@ ai-engineering-from-scratch/
 1.py
 dl/
 参考资料/
+
+# 本地时间戳备份目录，不进入 Git
+markdown-backups/*.backup.*/

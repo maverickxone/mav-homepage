@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>开篇：一条命令，为什么需要下位机 — RoboGame 2026：从一条命令到四个车轮</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" id="hljs-light" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+<link rel="stylesheet" id="hljs-dark" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" media="not all">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+
+</head>
+<body>
+
+<div class="progress-bar" id="progress-bar"></div>
+
+<nav class="topnav" id="topnav">
+  <div class="topnav-inner">
+    <a class="brand" href="../index.html">RoboGame 2026：从一条命令到四个车轮</a>
+    <div class="nav-links">
+      <a href="00-preface.html" class="active">01</a>
+      <a href="01-hardware-origin.html">02</a>
+      <a href="02-architecture-boot.html">03</a>
+      <a href="03-command-journey.html">04</a>
+      <a href="04-mecanum-motion.html">05</a>
+      <a href="05-feedback-safety.html">06</a>
+      <a href="06-progress-evidence.html">07</a>
+      <a href="07-development-map.html">08</a>
+    </div>
+    <div class="nav-controls">
+      <button class="nav-btn" id="search-btn" aria-label="搜索 (Ctrl+K)">⌘K</button>
+      <button class="nav-btn" id="settings-btn" aria-label="阅读设置">Aa</button>
+      <a class="nav-btn" href="../../index.html" aria-label="返回知识库">← 知识库</a>
+      <a class="nav-btn" href="https://github.com/maverickxone/mav-homepage" target="_blank" rel="noopener" aria-label="GitHub" style="padding: 6px 8px;"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg></a>
+    </div>
+  </div>
+</nav>
+<div class="settings-pop" id="settings-pop">
+  <h5>主题</h5>
+  <div class="row">
+    <button class="seg" data-theme-set="light">明亮</button>
+    <button class="seg" data-theme-set="dark">暗色</button>
+  </div>
+  <h5>字号</h5>
+  <div class="row">
+    <button class="seg" data-size-set="s">小</button>
+    <button class="seg" data-size-set="m">中</button>
+    <button class="seg" data-size-set="l">大</button>
+  </div>
+</div>
+
+<div class="with-sidebar">
+  <aside class="sidebar">
+  <div class="chapter-num">CHAPTER 01</div>
+  <div class="chapter-name">开篇：一条命令，为什么需要下位机</div>
+  <h4>目录</h4>
+  <ul>
+    <li><a href="#调试台边的一次向前">调试台边的一次“向前”</a></li>
+    <li><a href="#两台计算机各自做擅长的事">两台计算机，各自做擅长的事</a></li>
+    <li><a href="#stm32-是机器人的现场管家">STM32 是机器人的现场管家</a></li>
+    <li><a href="#一份原厂工程长出一条新的业务主线">一份原厂工程，长出一条新的业务主线</a></li>
+    <li><a href="#程序为什么要分层">程序为什么要分层</a></li>
+    <li><a href="#同一条命令会换好几种模样">同一条命令，会换好几种模样</a></li>
+    <li><a href="#本书怎样使用仓库证据">本书怎样使用仓库证据</a></li>
+  </ul>
+</aside>
+  <article class="chapter-body">
+    <header class="chapter-head">
+  <div class="chapter-head-meta">
+    <span class="num">CHAPTER 01</span>
+    <span>≈ 13 MIN READ</span>
+  </div>
+  <h1>开篇：一条命令，为什么需要下位机</h1>
+
+</header>
+    <h2 id="调试台边的一次向前">调试台边的一次“向前”</h2>
+<p>先设想一个调试场景：机器人固定在调试架上，四个轮子悬空；上位机准备发送一条“向前”命令。这个场景用来带领我们阅读源码，实际界面和实车动作以后续联调记录为准。</p>
+<p>上位机把“开始向前运动”编码成一条命令。命令通过串口线进入控制板，控制板检查内容，认出方向，再把四路控制量送到电机输出接口。到这里，源码能够证明的旅程已经从通信走到了硬件寄存器。</p>
+<p>这条命令在代码中的名字叫 <code>START_MOTION</code>。<code>start</code> 表示开始，<code>motion</code> 表示运动。它会让 PWM 输出持续保持，直到 <code>STOP_MOTION</code> 到达或新的命令改写输出。</p>
+<p>本书会一直跟着这条命令。我们先看电脑和控制板如何分工，再认识 STM32、串口、电机和传感器，随后从上电走进中断、缓冲区、协议解析器、命令分发器和运动控制层。走到四路电机输出写入时，整个项目也会从一组目录变成一条连贯的故事。</p>
+<div class="mermaid">flowchart LR
+    A["电脑发出 START_MOTION"] --> B["UART1 收到字节"]
+    B --> C["协议解析器拼出完整帧"]
+    C --> D["命令分发器读出方向"]
+    D --> E["运动层计算四个轮子的动作"]
+    E --> F["电机驱动输出方向与 PWM"]
+    F --> G["四路电机输出完成写入"]
+    D --> H["控制板回送 ACK"]</div>
+<h2 id="两台计算机各自做擅长的事">两台计算机，各自做擅长的事</h2>
+<p>机器人里常见两种角色：<strong>上位机（host computer）<strong>和</strong>下位机（lower controller）</strong>。这两个名字描述的是分工关系。</p>
+<p>上位机通常拥有更强的计算能力，适合处理界面、路径、视觉和任务安排。它像拿着地图的领航员，知道接下来要往哪里走。下位机靠近电机和传感器，适合按稳定的节奏收发数据、控制引脚和处理紧急动作。它像坐在驾驶位上的驾驶员，双手握着方向盘，双脚能够及时踩下踏板。</p>
+<p>领航员说“向前”，驾驶员还要把这句话落实成许多细节：方向是否有效，车辆是否允许动作，四个轮子分别朝哪边转，输出多大的动力，什么时候停下。RoboGame 2026 当前仓库负责的正是这部分工作。根目录的 <code>README.md</code> 把它称为“机器人比赛下位机固件仓库”，目标包括接收上位机命令、执行底盘与机构动作，并按通信协议返回信息。</p>
+<p>这里的“固件（firmware）”可以理解为住在控制板里的程序。普通电脑上的程序常常面对文件、窗口和网络；固件直接面对电压、引脚、定时器和中断。它一边要懂“向前”这样的业务含义，一边要知道哪一个寄存器会改变电机的 PWM。</p>
+<h2 id="stm32-是机器人的现场管家">STM32 是机器人的现场管家</h2>
+<p>这块控制板的核心是 STM32F407 系列微控制器。仓库中的 Keil 工程把目标设备写为 <code>STM32F407VE</code>，C50C 原理图上标出了 <code>F407VET6</code>。 <strong>微控制器（microcontroller，MCU）</strong> 是一颗适合控制现场设备的小型计算机，处理器、存储器和许多外设都放在同一颗芯片里。</p>
+<p>可以把 MCU 想成场馆里的现场管家。串口来消息时，它会立刻接收；定时器到点时，它会更新控制节奏；编码器产生脉冲时，它可以记录轮子转了多少；程序要求改变 PWM 时，它会把结果送到电机驱动电路。它的价值来自稳定、及时和贴近硬件。</p>
+<p>上位机和 STM32 之间传递的是一个个<strong>字节（byte）</strong>。一个字节由 8 个二进制位组成，可以表示 <code>0</code> 到 <code>255</code>。电脑里的 <code>START_MOTION</code> 最终也会变成若干字节。STM32 收到这些数字时，需要先判断哪里是开头、这是什么类型的消息、里面有几个参数、传输过程中有没有出错。完成这些检查以后，“数字”才恢复成“向前运动”这层含义。</p>
+<p>这就像快递运输。寄件人不会把一句口头要求直接丢进货车，而会准备包装、地址、单号和封条。接收方先核对包装，再打开盒子取出真正的内容。通信协议就是双方共同遵守的打包方法。</p>
+<h2 id="一份原厂工程长出一条新的业务主线">一份原厂工程，长出一条新的业务主线</h2>
+<p>这个项目建立在 WHEELTEC 原厂工程之上。原工程已经带有 STM32 启动代码、FreeRTOS、串口、电机、编码器、OLED、蜂鸣器和 ICM20948 驱动，也包含多种车型与手柄控制相关的业务代码。Keil 工程当前目标名是 <code>Mec_Car</code>，编译宏中保留了 <code>MEC_CAR</code>，说明底盘目标采用麦轮车型。</p>
+<p>比赛项目需要一套更清楚的命令链。仓库为此增加了 <code>LOWER_CONTROLLER/</code>，把新业务分成应用、协议、通信、运动、执行机构、传感器、板级配置和公共工具。原厂的 <code>HARDWARE/</code> 继续提供成熟的底层接口，新代码通过清楚的模块边界调用这些接口。</p>
+<p>这样的结构像在已有厂房里重新规划生产线。供电、传送带和电机设备仍然可用，新生产线把“收订单、验订单、安排工位、完成加工、回报结果”分开。以后更换通信端口时，主要看 <code>TRANSPORT</code> 和 <code>BOARD</code>；修改麦轮动作时，主要看 <code>MOTION</code>；接入夹爪时，工作会落在 <code>ACTUATORS</code>。文件夹名称因此也成了阅读地图。</p>
+<div class="table-wrap"><table><thead><tr>
+<th>位置</th>
+<th>初学者可以把它看成</th>
+<th>当前作用</th>
+</tr>
+</thead><tbody><tr>
+<td><code>USER/</code></td>
+<td>大门与总电闸</td>
+<td>上电入口、硬件初始化、创建任务</td>
+</tr>
+<tr>
+<td><code>LOWER_CONTROLLER/APP/</code></td>
+<td>调度台</td>
+<td>运行主任务、分发命令、组织响应</td>
+</tr>
+<tr>
+<td><code>LOWER_CONTROLLER/PROTOCOL/</code></td>
+<td>翻译室</td>
+<td>判断帧是否完整，读出命令和参数</td>
+</tr>
+<tr>
+<td><code>LOWER_CONTROLLER/TRANSPORT/</code></td>
+<td>收发室</td>
+<td>通过 UART1 接收和发送字节</td>
+</tr>
+<tr>
+<td><code>LOWER_CONTROLLER/MOTION/</code></td>
+<td>底盘工位</td>
+<td>把运动方向变成四轮输出</td>
+</tr>
+<tr>
+<td><code>HARDWARE/</code></td>
+<td>设备间</td>
+<td>提供电机、编码器、IMU 等底层驱动</td>
+</tr>
+</tbody></table></div>
+<h2 id="程序为什么要分层">程序为什么要分层</h2>
+<p>假设串口接收函数一看到方向码，就直接改四个电机的寄存器。起初代码会显得很短。后来加入 CAN 通信、距离运动、急停和闭环控制时，每一种通信方式都要理解电机接线，每一种运动功能也会夹杂帧格式。修改一个字段便可能牵动很多文件。</p>
+<p>当前工程让每层只回答一个清楚的问题。<code>TRANSPORT</code> 关心“字节从哪里来”；<code>PROTOCOL</code> 关心“这些字节能否组成合法消息”；<code>APP</code> 关心“这条命令要交给谁”；<code>MOTION</code> 关心“四个轮子怎样配合”；<code>HARDWARE</code> 关心“怎样写入真实引脚和定时器”。</p>
+<p>这种分层还让排错更有方向。控制板完全收不到数据时，可以先检查 UART1 和中断。能收到帧却返回参数错误时，可以检查协议和参数长度。ACK 显示成功而轮子不动时，可以继续查看运动映射、电机方向脚和 PWM。每一层都像走廊里的一扇门，顺着命令经过的顺序检查，问题会逐渐缩小。</p>
+<h2 id="同一条命令会换好几种模样">同一条命令，会换好几种模样</h2>
+<p>沿着主线阅读时，<code>START_MOTION</code> 会不断改变外观。在上位机界面里，它可能对应一次按钮操作；进入协议后，它成为命令号 <code>04</code> 和两个参数；进入 C 语言代码后，它成为枚举、结构体与函数调用；进入运动层后，它成为四个轮位的正负输出；抵达硬件时，它最终表现为方向引脚的高低电平和 PWM 寄存器里的数值。</p>
+<p>这些外观都在描述同一件事，只是每层关心的问题不同。协议层看到 <code>01</code> 时，把它解释成“向前”；运动层看到“向前”时，生成四轮组合；板级配置再把“左前轮”对应到电机 A。学习嵌入式项目的关键动作，就是追踪含义怎样从一层传到下一层。</p>
+<p>初读源码时，可以先抓住函数之间的接力。看到 <code>command_dispatcher_handle_frame()</code>，就去找它在哪里被调用；看到 <code>motion_start_motion()</code>，就继续寻找它怎样设置轮位；看到 <code>PWMA</code>，再回到电机头文件确认它对应哪个定时器通道。这样阅读会始终围绕一个具体问题展开，目录再多也有清楚方向。</p>
+<p>后面的章节会在代码片段旁解释参数从哪里来、返回值去向何处。完整源码仍保留在仓库中，短片段负责照亮当前这一段路。读者掌握主线以后，再进入驱动细节、寄存器配置和控制算法，会更容易看出每段代码在整台机器人中的位置。</p>
+<h2 id="本书怎样使用仓库证据">本书怎样使用仓库证据</h2>
+<p>书中的配置和进度以 2026 年 7 月 14 日的仓库 <code>fc3ef5d</code> 为依据。启动过程来自 <code>USER/main.c</code> 与 <code>USER/system.c</code>，串口路径来自 <code>TRANSPORT</code> 和 <code>BOARD</code>，帧格式来自生成的协议代码，电机动作来自 <code>MOTION</code>。Keil 工程文件 <code>USER/WHEELTEC.uvprojx</code> 用来确认哪些新文件已经加入编译目标。</p>
+<p>仓库已经接通 UART 接收、协议解析、命令分发、ACK 返回以及部分固定 PWM 运动命令。升降、夹爪、推杆、传感器抽象和闭环运动仍处在后续接入位置。编译、烧录和整车运行的实机记录还需要继续补入仓库。书里会把代码中已经存在的行为讲清楚，也会把等待验证的部分写明。</p>
+<p>现在，电脑一端已经准备发出 <code>START_MOTION</code>。在追赶这些字节之前，我们先看看它将要进入怎样的一块控制板。芯片、电机、编码器和 IMU 各自扮演什么角色，决定了后面的代码为什么会写成今天的样子。</p>
+
+    <nav class="pager">  <a class="disabled"><span class="label">← 上一章</span><span class="title"></span></a>  <a href="01-hardware-origin.html" class="next">
+    <span class="label">下一章 →</span>
+    <span class="title">从通用小车到比赛底盘</span>
+  </a></nav>
+  </article>
+</div>
+
+<footer>
+  <div class="set">
+    <span>RoboGame 2026：从一条命令到四个车轮</span>
+    <span>2026 · ZH-CN</span>
+  </div>
+  <div class="set">
+    <span>Mav</span>
+  </div>
+</footer>
+<div class="search-backdrop" id="search-overlay" role="dialog" aria-modal="true" aria-label="搜索" hidden>
+  <div class="search-modal">
+    <div class="search-input-wrap">
+      <input type="search" class="search-input" placeholder="搜索内容..." aria-label="搜索内容" autocomplete="off">
+      <kbd>ESC</kbd>
+    </div>
+    <div class="search-results" role="listbox" aria-label="搜索结果"></div>
+  </div>
+</div>
+
+<!-- Side Panel -->
+<div class="side-panel" id="side-panel">
+  <div class="side-panel-resize" id="side-panel-resize"></div>
+  <div class="side-panel-header">
+    <div class="side-panel-tabs">
+      <button class="side-panel-tab active" data-mode="sidenote">补充</button>
+      <button class="side-panel-tab" data-mode="notepad">笔记</button>
+    </div>
+    <button class="side-panel-close" aria-label="关闭">×</button>
+  </div>
+  <div class="side-panel-body"></div>
+</div>
+<button class="notepad-fab" id="notepad-fab" aria-label="便利贴">✎</button>
+
+<!-- Mobile TOC -->
+<button class="mtoc-fab" id="mtoc-fab" aria-label="目录">TOC</button>
+<div class="mtoc-drawer" id="mtoc-drawer">
+  <div class="mtoc-content"></div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/bash.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/typescript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/yaml.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/javascript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/json.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/python.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/css.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+<script>mermaid.initialize({startOnLoad:true, theme:'neutral', fontFamily:'Inter, sans-serif'});</script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}]});"></script>
+<script src="../assets/script.js"></script>
+
+</body>
+</html>
