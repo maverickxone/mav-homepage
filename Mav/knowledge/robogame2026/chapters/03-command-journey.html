@@ -78,9 +78,12 @@
 
 </header>
     <h2 id="第一个字节抵达-pa10">第一个字节抵达 PA10</h2>
-<p><code>app_task</code> 已经开始等待。电脑把一条 <code>START_MOTION</code> 写入串口，电信号沿着接收线来到 STM32 的 PA10 引脚。</p>
-<p>UART1 以 <code>115200</code> 波特率、8 位数据、1 个停止位、无奇偶校验的格式工作。串口硬件会按约定的节奏采样电平，把连续的高低变化恢复成一个字节。字节收好以后，USART1 的 RXNE 标志置位。RXNE 可以读作 Receive Data Register Not Empty，意思是“接收数据寄存器里有新内容”。</p>
-<p>这时，STM32 进入 <code>USART1_IRQHandler()</code>。 <strong>中断服务函数（Interrupt Service Routine，ISR）</strong> 是硬件事件发生时立即执行的一小段程序，可以把它看成门铃响起后负责开门的人。</p>
+<p>故事从 <code>app_task</code> 的一次等待开始。</p>
+<p>此时的下位机正在 FreeRTOS 中正常运行，<code>app_task</code> 已经完成了初始化，正循环等待新的命令帧。与此同时，上位机——可能是电脑上的调试助手，也可能是 RoboGame 主控程序——决定让机器人动起来。它把一条 <code>START_MOTION</code> 命令写入串口。</p>
+<p>串口通信的本质是逐位发送的高低电平。电脑端的串口控制器按照约定的节奏把二进制数据转换成电信号，电信号沿着一根细细的导线（在开发板上通常就是 USB 转串口线）来到 STM32 的 <code>PA10</code> 引脚。<code>PA10</code> 是 STM32F407 上 <code>USART1</code> 的默认 RX 引脚，也就是串口接收端。</p>
+<p>UART1 在本工程中的配置是 <code>115200</code> 波特率、8 位数据位、1 个停止位、无奇偶校验，简称 &quot;8-N-1&quot;。波特率 <code>115200</code> 表示每秒最多传输 115200 个比特位，实际每个字节大约需要 <code>1 / 11520 ≈ 87 微秒</code>。串口硬件会按照这个节奏对 <code>PA10</code> 上的电平进行采样，把连续的高低变化恢复成一个一个字节。</p>
+<p>当一个新的字节被硬件接收并放入接收数据寄存器时，<code>USART1</code> 的 <code>RXNE</code> 标志位就会置位。<code>RXNE</code> 可以读作 <strong>Receive Data Register Not Empty</strong>，直译就是&quot;接收数据寄存器不是空的&quot;，换句话说就是&quot;有新字节到了，快来取走&quot;。</p>
+<p>这时，STM32 会立即跳转到 <code>USART1_IRQHandler()</code>。<strong>中断服务函数（Interrupt Service Routine，ISR）</strong> 是硬件事件发生时 CPU 会立刻放下手头工作去执行的一段小程序。你可以把它想象成家里的门铃：门铃一响，不管主人正在做饭还是看电视，都会先跑去开门看一眼。这里&quot;门铃&quot;就是 <code>RXNE</code> 标志，&quot;开门的人&quot;就是中断服务函数。</p>
 <pre data-label="c"><code class="language-c">int USART1_IRQHandler(void)
 {
     if (USART_GetITStatus(USART1, USART_IT_RXNE) != RESET) {
@@ -89,25 +92,51 @@
     }
     return 0;
 }</code></pre>
-<p>这段中断函数只做一件关键工作：从 USART1 取出新字节，然后交给 <code>transport_uart_rx_from_isr()</code>。解析协议、判断方向、控制电机都留给普通任务。中断保持简短，后面的字节到来时就更容易及时接住。</p>
+<p>这段中断函数非常短，只干一件关键的事情：</p>
+<ol>
+<li>检查 <code>USART_IT_RXNE</code> 中断标志是否置位。</li>
+<li>如果确实收到了新字节，就通过 <code>USART_ReceiveData(USART1)</code> 把字节从硬件寄存器中读出来。</li>
+<li>立刻调用 <code>transport_uart_rx_from_isr()</code>，把字节交给 transport 层处理。</li>
+</ol>
+<p>注意这里没有任何协议解析、没有任何电机控制，甚至连 CRC 计算都没有。中断只做&quot;取字节、转交&quot;这两件事。为什么要这么设计？因为中断的优先级很高，它执行期间会打断普通任务。如果中断里塞入太多逻辑，后面新的字节来的时候可能就来不及接收，导致丢数据。把中断做得尽可能短、尽可能快，是嵌入式串口接收的常用做法。</p>
+<blockquote><p><strong>初学者常见疑问</strong>：为什么一定要在中断里读数据？</p>
+<p>因为 <code>RXNE</code> 标志被置位后，如果不及时读走 <code>USART_ReceiveData()</code>，下一个字节再来时可能会触发 <strong>ORE（Overrun Error，溢出错误）</strong>，新到的字节会被硬件丢掉。所以&quot;收到即读&quot;是串口中断的基本原则。读走之后，字节交给缓冲区，后续慢慢解析即可。</p>
+</blockquote>
 <h2 id="256-格的环形等候区">256 格的环形等候区</h2>
-<p>中断收到的字节会进入一个长度为 <code>256</code> 的数组 <code>s_rx_buffer</code>。这个数组和两个下标一起构成<strong>环形缓冲区（ring buffer）</strong>。它像一圈首尾相接的候车座位：写入位置由 <code>head</code> 指示，读取位置由 <code>tail</code> 指示；走到第 255 格以后，下一个位置回到第 0 格。</p>
+<p>中断收到的字节不会立刻被 <code>app_task</code> 取走，而是先进入一个长度为 <code>256</code> 的数组 <code>s_rx_buffer</code>。这个数组和两个下标一起，共同构成一个<strong>环形缓冲区（ring buffer）</strong>，也常被称为&quot;循环队列&quot;。</p>
+<p>你可以把它想象成一圈首尾相接的候车座位：有新的乘客（字节）来时，<code>head</code> 指向当前可以入座的位置；有乘客离开时，<code>tail</code> 指向下一个该离开的位置。座位一共有 256 个，从 <code>0</code> 编号到 <code>255</code>。当 <code>head</code> 走到 <code>255</code> 之后，下一个位置不是 <code>256</code>，而是绕回到 <code>0</code>。</p>
 <pre data-label="c"><code class="language-c">static volatile uint16_t s_rx_head = 0U;
 static volatile uint16_t s_rx_tail = 0U;
 static uint8_t s_rx_buffer[256];</code></pre>
-<p>中断负责移动 <code>head</code>，<code>app_task</code> 负责移动 <code>tail</code>。两边各自处理一端，可以让“迅速接住字节”和“按程序节奏解析字节”衔接起来。</p>
-<p>写入前，代码先计算 <code>head</code> 的下一个位置。这个位置与 <code>tail</code> 不同时，当前字节写进数组，<code>head</code> 再向前移动。两者相同时，表示等候区已满，当前实现会保留缓冲区里的已有字节，并放弃新到的字节。</p>
-<p>数组有 256 格，其中一格用于区分“空”和“满”，因此最多同时保存 255 个尚未读取的字节。这种设计代码很小，也很常见。后续实机联调可以加入溢出计数，让上位机或日志知道字节是否曾因缓冲区满而丢失。</p>
-<p>应用任务从另一端取数据：</p>
+<p>这里有两个关键点：</p>
+<ul>
+<li><code>s_rx_head</code> 由<strong>中断</strong>负责移动。每来一个有效字节，中断就把它写入 <code>s_rx_buffer[s_rx_head]</code>，然后 <code>head</code> 向前一格。</li>
+<li><code>s_rx_tail</code> 由 <strong><code>app_task</code>（普通任务）</strong> 负责移动。任务按自己的节奏读取 <code>s_rx_buffer[s_rx_tail]</code>，然后 <code>tail</code> 向前一格。</li>
+</ul>
+<p>两边各处理一端，互不干扰，这就把&quot;硬件要求快速响应&quot;和&quot;软件希望按节奏处理&quot;之间的矛盾隔离开了。中断只管&quot;接&quot;，任务只管&quot;取&quot;，中间的缓冲区负责吸收两边的速度差。</p>
+<p>具体写入时，代码会先计算 <code>head</code> 的下一个位置。如果下一个位置不等于 <code>tail</code>，说明缓冲区还有空位，当前字节可以安全写入；写入后 <code>head</code> 再真正前移。如果下一个位置等于 <code>tail</code>，说明缓冲区已经满了，当前实现会选择<strong>保留已有字节、放弃新到的字节</strong>。</p>
+<pre data-label="c"><code class="language-c">uint16_t next = next_index(s_rx_head);
+if (next != s_rx_tail) {
+    s_rx_buffer[s_rx_head] = byte;
+    s_rx_head = next;
+}</code></pre>
+<blockquote><p><strong>初学者常见疑问</strong>：为什么缓冲区长度是 256，却只能存 255 个字节？</p>
+<p>这是一个很经典的设计细节。环形缓冲区通常用一个元素位置来区分&quot;空&quot;和&quot;满&quot;。如果 <code>head == tail</code> 表示空，那么当缓冲区真正写满时，也必然是 <code>head == tail</code>，这就和&quot;空&quot;无法区分了。所以工程上常见的做法就是：缓冲区满的判断条件是 <code>next(head) == tail</code>，也就是再写一个就会撞上 tail。这样虽然浪费了 1 个格子，但换来了&quot;空&quot;和&quot;满&quot;判断的简单可靠。256 格的数组最多同时保存 255 个未读字节。</p>
+<p>如果你在实际联调时发现串口有丢数据的情况，可以在满的时候增加一个溢出计数器，上位机或日志就能知道是否因为缓冲区太小而丢失了字节。</p>
+</blockquote>
+<p>应用任务从另一端取数据时，代码同样很简单：</p>
 <pre data-label="c"><code class="language-c">if (s_rx_tail != s_rx_head) {
     *out_byte = s_rx_buffer[s_rx_tail];
     s_rx_tail = next_index(s_rx_tail);
     return true;
 }</code></pre>
-<p>缓冲区暂时为空时，<code>transport_uart_receive_byte()</code> 每隔一个 FreeRTOS 节拍再检查一次。<code>app_task</code> 传入 <code>portMAX_DELAY</code>，因此它会持续等候。新字节出现后，任务按进入缓冲区的顺序逐个取走。</p>
+<p>如果 <code>s_rx_tail == s_rx_head</code>，说明缓冲区暂时为空。<code>transport_uart_receive_byte()</code> 会进入阻塞等待，每隔一个 FreeRTOS 节拍检查一次。<code>app_task</code> 传入的是 <code>portMAX_DELAY</code>，表示会无限期等下去，直到新字节出现。新字节出现后，任务会按照&quot;先进先出&quot;的顺序逐个取走——先进缓冲区的字节先被解析，这保证了命令帧的字节顺序不会乱。</p>
+<blockquote><p><strong>小结一下</strong>：UART 中断像门口收快递的人，收到一个包裹（字节）就往环形缓冲区里放；<code>app_task</code> 像仓库管理员，按顺序从缓冲区取包裹去拆。缓冲区就是两者之间的小货架，解决&quot;收件太快&quot;和&quot;拆件太慢&quot;的节奏差异。</p>
+</blockquote>
 <h2 id="一封带封条的数字信件">一封带封条的数字信件</h2>
-<p>串口只负责传送字节，它看不出一条消息从哪里开始。通信双方因此约定了<strong>协议帧（protocol frame）</strong>。帧像一只格式固定的信封：前面有醒目的封套标记，中间有寄送信息与正文，末尾有用于检查运输损伤的封条。</p>
-<p>当前帧格式由 <code>LOWER_CONTROLLER/PROTOCOL/firmware/comm_protocol.h</code> 定义：</p>
+<p>串口本身只负责传送字节流，它并不知道&quot;一条命令从哪里开始、到哪里结束&quot;。想象一下你收到一条没有标点符号、没有段落分隔的长消息，根本分不清哪几句话是一组。因此，通信双方必须约定一种格式，把字节流切分成一帧一帧的消息。这种格式就叫<strong>协议帧（protocol frame）</strong>。</p>
+<p>帧可以比喻成一封格式固定的信件：最外面有醒目的封套标记，中间有寄件信息和正文，末尾还有用于检查信件是否在运输中被损坏的封条。只有当一帧完整收到、封条核对无误，接收方才认为这是一条有效的命令。</p>
+<p>当前工程中的帧格式由 <code>LOWER_CONTROLLER/PROTOCOL/firmware/comm_protocol.h</code> 定义，结构如下：</p>
 <div class="table-wrap"><table><thead><tr>
 <th>部分</th>
 <th align="right">长度</th>
@@ -149,12 +178,33 @@ static uint8_t s_rx_buffer[256];</code></pre>
 <td>对 header 与 payload 的校验结果，小端序</td>
 </tr>
 </tbody></table></div>
-<p>SOF 是 Start of Frame 的缩写，中文可以叫帧起始标记。连续的 <code>AA 55</code> 像信封外面统一印刷的醒目标识，解析器在字节流中看到它，才开始收集后面的头部。</p>
-<p>帧头固定为 6 字节，也就是 <code>version</code>、<code>frame_type</code>、<code>seq</code> 和 <code>payload_len</code>。<code>seq</code> 是 sequence number，中文叫序号。它给每封消息一个编号，ACK 可以借此说明自己回应的是哪一条请求。</p>
-<p>这里的两个 256 容易混在一起。UART transport 的接收数组长度是 256，协议允许单帧 payload 最多 256 字节。完整最大帧还要加上 2 字节 SOF、6 字节 header 和 2 字节 CRC，总长可达 266 字节。应用任务会一边接收一边取走字节，缓冲区负责吸收两者之间的短时速度差。</p>
+<h3 id="各部分的作用">各部分的作用</h3>
+<ul>
+<li><strong>SOF（Start of Frame）</strong>：帧起始标记，固定为 <code>AA 55</code>。你可以把它理解为信封外面统一印刷的醒目标识。解析器在茫茫字节流中看到这两个字，就知道&quot;一封信件从这里开始了&quot;。</li>
+<li><strong>version</strong>：协议版本号。当前是 <code>01</code>。如果将来协议升级，可以通过版本号区分新旧消息，老版本的下位机可以拒绝不认识的版本。</li>
+<li><strong>frame_type</strong>：帧类型。例如 <code>01</code> 表示命令帧，<code>02</code> 表示 ACK 响应帧，等等。它告诉接收方这帧里装的是什么类别的消息。</li>
+<li><strong>seq（sequence number）</strong>：序号。它给每帧消息一个编号，上位机发送的命令有序号，下位机返回的 ACK 也包含这个序号，这样上位机就知道这个 ACK 是在回应哪一条命令。</li>
+<li><strong>payload_len</strong>：正文长度。它告诉接收方后面要跟多少字节的 payload。</li>
+<li><strong>payload</strong>：正文，真正的命令参数或数据。</li>
+<li><strong>CRC</strong>：循环冗余校验，相当于信封封口处的校验印记。发送端根据 header + payload 的内容算出一个数值，接收端用同样的方法再算一次，两个结果一致就说明数据在传输中没有损坏。</li>
+</ul>
+<p>帧头固定为 6 字节，也就是 <code>version</code>（1 字节）+ <code>frame_type</code>（1 字节）+ <code>seq</code>（2 字节）+ <code>payload_len</code>（2 字节）。</p>
+<blockquote><p><strong>初学者容易混淆的地方</strong>：这里有两个&quot;256&quot;。</p>
+<p>一个是 UART transport 的接收数组 <code>s_rx_buffer[256]</code>，它是用来暂存串口收到的原始字节的。另一个是协议允许单帧 payload 最大为 256 字节。完整最大帧还要加上 2 字节 SOF、6 字节 header 和 2 字节 CRC，总长可达 <code>2 + 6 + 256 + 2 = 266</code> 字节。</p>
+<p>这两个数字没有必然联系，只是恰好都是 256。缓冲区负责吸收&quot;字节流&quot;和&quot;帧解析&quot;之间的速度差，payload_len 负责描述单帧消息正文的大小。</p>
+</blockquote>
 <h2 id="状态机怎样拼出完整帧">状态机怎样拼出完整帧</h2>
-<p><strong>状态机（state machine）</strong> 是一种按当前阶段处理输入的方法。可以把它想成门卫手里的收件流程卡：先找第一枚标记，再找第二枚标记，然后收固定长度的表头，接着按表头写明的长度收正文，最后核对封条。</p>
-<p>解析器共有五个阶段：</p>
+<p>字节流是连续不断的，解析器必须按照约定好的顺序一步步识别：<code>AA</code> → <code>55</code> → 6 字节 header → payload → 2 字节 CRC。这种按阶段处理输入的方法就叫<strong>状态机（state machine）</strong>。</p>
+<p>你可以把状态机想象成门卫手里的收件流程卡：</p>
+<ol>
+<li>先看信封第一个标识；</li>
+<li>再看第二个标识；</li>
+<li>然后收固定长度的表头；</li>
+<li>接着按表头写明的长度收正文；</li>
+<li>最后核对封口处的校验印记。</li>
+</ol>
+<p>只有每一步都走对了，才认为一封信件完整有效；任何一步出错，就回到最开始重新寻找下一个信件。</p>
+<p>本工程的解析器共有五个阶段：</p>
 <div class="mermaid">stateDiagram-v2
     [*] --> 等待AA
     等待AA --> 等待55: 收到 AA
@@ -165,22 +215,127 @@ static uint8_t s_rx_buffer[256];</code></pre>
     读取头部 --> 读取CRC: payload_len 等于 0
     读取正文 --> 读取CRC: 正文收齐
     读取CRC --> 等待AA: 校验结束</div>
-<p>解析器先等待 <code>AA</code>。随后收到 <code>55</code>，才进入读取头部。如果第二个字节再次是 <code>AA</code>，它继续等待 <code>55</code>，这样连续出现多个 <code>AA</code> 时仍有机会找到正确开头。收到其他数值时，它回到最初状态。</p>
-<p>6 字节头部收齐以后，程序把多字节字段按 <strong>小端序（little-endian）</strong> 还原。小端序把数值的低位字节放在前面。例如序号 <code>1</code> 在帧里写作 <code>01 00</code>，长度 <code>4</code> 写作 <code>04 00</code>。解析器随后检查协议版本是否为 <code>01</code>，也检查 payload 是否超过 256 字节。</p>
-<p>正文按照 <code>payload_len</code> 收齐后，解析器再读两个 CRC 字节。CRC 的全称是 Cyclic Redundancy Check，中文叫循环冗余校验。它像信封封口处的校验印记：发送端根据内容算出一个数，接收端用同样方法再算一次；两个结果一致，说明这段数据通过了当前校验。</p>
-<p>工程采用 <code>CRC-16/CCITT-FALSE</code>，初始值是 <code>FFFF</code>，多项式是 <code>1021</code>。计算范围从 <code>version</code> 开始，覆盖 6 字节 header 与完整 payload，SOF 不参与计算。接收到的 CRC 也按小端序读取。</p>
-<p>版本错误、payload 过大和 CRC 错误都会让解析器回到等待 <code>AA</code> 的状态。校验成功时，完整内容复制到 <code>comm_frame_t</code>，<code>ready</code> 被设为 <code>true</code>。<code>app_task</code> 直到此刻才把 frame 交给命令分发器。</p>
+<h3 id="逐个阶段解释">逐个阶段解释</h3>
+<ul>
+<li><strong>等待 AA</strong>：解析器在字节流中漫无目的地寻找 <code>AA</code>。收到 <code>AA</code> 后进入下一阶段。</li>
+<li><strong>等待 55</strong>：已经看到 <code>AA</code>，期待下一个字节是 <code>55</code>。如果确实是 <code>55</code>，说明帧头开始，进入&quot;读取头部&quot;。如果再次收到 <code>AA</code>，则继续留在&quot;等待 55&quot;——这允许连续多个 <code>AA</code> 出现时仍能找准正确的开头。如果收到其他任何字节，则回到&quot;等待 AA&quot;重新寻找。</li>
+<li><strong>读取头部</strong>：连续收齐 6 字节后，解析器就得到了 <code>version</code>、<code>frame_type</code>、<code>seq</code> 和 <code>payload_len</code>。</li>
+<li><strong>读取正文</strong>：如果 <code>payload_len &gt; 0</code>，就按这个长度继续收 payload；如果 <code>payload_len == 0</code>，直接跳过这个阶段去收 CRC。</li>
+<li><strong>读取 CRC</strong>：收齐 2 字节 CRC 后，用 header + payload 重新计算 CRC，和收到的 CRC 比较。</li>
+</ul>
+<p>6 字节头部收齐以后，程序需要把多字节字段按**小端序（little-endian）**还原。小端序是嵌入式和 x86 平台上很常见的一种字节排列方式：数值的低位字节放在前面，高位字节放在后面。</p>
+<p>例如：</p>
+<ul>
+<li>序号 <code>1</code> 在帧里写作 <code>01 00</code>；</li>
+<li>长度 <code>4</code> 在帧里写作 <code>04 00</code>；</li>
+<li>发送序号 <code>100</code> 在帧里写作 <code>64 00</code>。</li>
+</ul>
+<p>解析器随后会做两个基本检查：</p>
+<ol>
+<li>协议版本是否为 <code>01</code>；</li>
+<li><code>payload_len</code> 是否超过 256 字节。</li>
+</ol>
+<p>只要有一个检查不通过，解析器就会回到&quot;等待 AA&quot;状态，重新在字节流中寻找下一帧。</p>
+<p>正文按照 <code>payload_len</code> 收齐后，解析器再读两个 CRC 字节。CRC 的全称是 <strong>Cyclic Redundancy Check</strong>，中文叫<strong>循环冗余校验</strong>。它本质上是一种根据数据内容算出来的&quot;指纹&quot;：发送端根据 header + payload 算出一个 16 位数值，接收端用同样的算法也算一次，两个&quot;指纹&quot;一致就认为数据没有损坏。</p>
+<blockquote><p><strong>初学者常见疑问</strong>：CRC 能纠错吗？</p>
+<p>不能。CRC 只能<strong>检测</strong>数据是否在传输中发生了变化，它不能自动修复错误。如果 CRC 校验失败，接收端通常的做法是<strong>丢弃这一帧</strong>，等待上位机重发或发送错误响应。它像信封上的封条：封条破了，你知道信件可能被拆过，但封条本身不会帮你把信粘好。</p>
+</blockquote>
+<p>本工程采用 <code>CRC-16/CCITT-FALSE</code>，初始值是 <code>0xFFFF</code>，多项式是 <code>0x1021</code>。计算范围从 <code>version</code> 字节开始，覆盖 6 字节 header 与完整 payload，SOF 不参与计算。接收到的 CRC 也按小端序读取。</p>
+<p>版本错误、payload 过大、CRC 错误都会让解析器回到等待 <code>AA</code> 的状态。校验成功时，完整帧的内容被复制到 <code>comm_frame_t</code> 结构体中，<code>ready</code> 标志被设为 <code>true</code>。直到此刻，<code>app_task</code> 才会把这一帧交给命令分发器。</p>
+<blockquote><p><strong>小结一下</strong>：状态机就像拼乐高，必须严格按照说明书一步一步来。少一块、错一块，整盒就推倒重来。这种设计让解析器即使遇到噪声、丢字节、乱序等情况，也能尽快回到安全状态，重新寻找下一帧。</p>
+</blockquote>
 <h2 id="把-start_motion-拆成真实字节">把 START_MOTION 拆成真实字节</h2>
-<p>命令帧的 <code>frame_type</code> 是 <code>01</code>。它的 payload 还有一层简单包装：第一个字节是命令 ID，第二个字节是参数长度，后面才是参数。</p>
-<p><code>START_MOTION</code> 的命令 ID 为 <code>04</code>，参数长度固定为 <code>2</code>。第一个参数是方向 <code>direction</code>，第二个参数是档位 <code>gear</code>。方向编码中，向前为 <code>01</code>，向后为 <code>02</code>，向左为 <code>03</code>，向右为 <code>04</code>；档位编码中，微速为 <code>01</code>，慢速为 <code>02</code>，快速为 <code>03</code>。</p>
-<p>假设上位机发送序号 <code>1</code>，要求机器人以“慢速”开始“向前”运动，完整帧可以写成：</p>
+<p>前面讲的是通用帧格式。现在我们要把 <code>START_MOTION</code> 这条具体命令拆成真实字节，看看它长什么样。</p>
+<p>命令帧的 <code>frame_type</code> 固定为 <code>01</code>。它的 payload 还有一层更细的包装：</p>
+<div class="table-wrap"><table><thead><tr>
+<th>payload 位置</th>
+<th>含义</th>
+</tr>
+</thead><tbody><tr>
+<td>第 1 字节</td>
+<td>命令 ID</td>
+</tr>
+<tr>
+<td>第 2 字节</td>
+<td>参数长度</td>
+</tr>
+<tr>
+<td>后续字节</td>
+<td>参数列表</td>
+</tr>
+</tbody></table></div>
+<p>也就是说，payload 不是直接把参数塞进去，而是先说明&quot;我是谁（命令 ID）&quot;、&quot;我有几个参数&quot;，然后再放参数。</p>
+<p><code>START_MOTION</code> 的命令 ID 为 <code>04</code>，参数长度固定为 <code>2</code>。两个参数分别是：</p>
+<ul>
+<li>第一个参数：<code>direction</code>，运动方向。</li>
+<li>第二个参数：<code>gear</code>，运动档位。</li>
+</ul>
+<p>方向编码：</p>
+<div class="table-wrap"><table><thead><tr>
+<th>编码</th>
+<th>含义</th>
+</tr>
+</thead><tbody><tr>
+<td><code>01</code></td>
+<td>向前</td>
+</tr>
+<tr>
+<td><code>02</code></td>
+<td>向后</td>
+</tr>
+<tr>
+<td><code>03</code></td>
+<td>向左</td>
+</tr>
+<tr>
+<td><code>04</code></td>
+<td>向右</td>
+</tr>
+</tbody></table></div>
+<p>档位编码：</p>
+<div class="table-wrap"><table><thead><tr>
+<th>编码</th>
+<th>含义</th>
+</tr>
+</thead><tbody><tr>
+<td><code>01</code></td>
+<td>微速</td>
+</tr>
+<tr>
+<td><code>02</code></td>
+<td>慢速</td>
+</tr>
+<tr>
+<td><code>03</code></td>
+<td>快速</td>
+</tr>
+</tbody></table></div>
+<p>假设上位机发送序号为 <code>1</code>，要求机器人以&quot;慢速&quot;开始&quot;向前&quot;运动，那么完整帧可以写成：</p>
 <pre data-label="text"><code class="language-text">AA 55 | 01 01 01 00 04 00 | 04 02 01 02 | CF 93
   SOF |       header       |   payload   |  CRC</code></pre>
-<p>这 14 个字节可以从左到右读懂。<code>AA 55</code> 表示开始；第一个 <code>01</code> 是协议版本；第二个 <code>01</code> 表示 command；<code>01 00</code> 是序号 1；<code>04 00</code> 表示 payload 有 4 字节。payload 里的 <code>04</code> 是 <code>START_MOTION</code>，<code>02</code> 表示后面有两个参数，<code>01</code> 是向前，<code>02</code> 是慢速。最后的 <code>CF 93</code> 是前面 header 与 payload 算出的 CRC，小端序对应数值 <code>0x93CF</code>。</p>
-<p>真实上位机应当使用双方共享的协议生成代码来编码消息。这里把字节展开，是为了看清每一层包装怎样对应代码字段。</p>
+<p>让我们从左到右逐字节读懂这 14 个字节：</p>
+<ul>
+<li><code>AA 55</code>：帧起始标记，表示&quot;一封信件从这里开始&quot;。</li>
+<li><code>01</code>（version）：协议版本为 1。</li>
+<li><code>01</code>（frame_type）：这是一帧命令帧。</li>
+<li><code>01 00</code>（seq）：命令序号为 1，小端序。</li>
+<li><code>04 00</code>（payload_len）：payload 长度为 4 字节。</li>
+<li><code>04</code>（cmd_id）：命令 ID 是 <code>04</code>，对应 <code>START_MOTION</code>。</li>
+<li><code>02</code>（参数长度）：后面跟着 2 个参数。</li>
+<li><code>01</code>（direction）：方向为向前。</li>
+<li><code>02</code>（gear）：档位为慢速。</li>
+<li><code>CF 93</code>（CRC）：对前面 header + payload 计算得到的 CRC 校验值，小端序，对应数值 <code>0x93CF</code>。</li>
+</ul>
+<p>真实项目中，上位机不会手动掰这些字节，而是使用双方共享的协议生成代码来编码消息。但在这里把字节展开，是为了让你看清：代码里的每一个字段，最终都会落实在串口线上的一串 0 和 1 上。所谓&quot;协议&quot;，不过就是双方对这些 0 和 1 的约定。</p>
 <h2 id="分发器像一座接线台">分发器像一座接线台</h2>
-<p>完整帧到达 <code>command_dispatcher_handle_frame()</code> 后，函数先查看 <code>frame_type</code>。当前应用只把 command 帧交给命令处理函数。<code>comm_decode_command_view()</code> 再检查 payload 至少有两个字节，并确认“2 加参数长度”恰好等于整个 payload 长度。</p>
-<p>随后，分发器读取 <code>cmd_id</code>，进入 <code>switch</code>。这座 <strong>命令分发器（command dispatcher）</strong> 像旧式电话接线台：它读出呼叫号码，再把请求接到对应业务接口。</p>
+<p>完整帧经过状态机和 CRC 校验后，最终被送到 <code>command_dispatcher_handle_frame()</code>。这个函数就像一座旧式电话接线台：它先读出呼叫号码（命令 ID），再把线路接到对应的业务接口。</p>
+<p>函数处理流程如下：</p>
+<ol>
+<li>先查看 <code>frame_type</code>。当前应用只把 <code>frame_type == 01</code> 的 command 帧交给命令处理函数。</li>
+<li>调用 <code>comm_decode_command_view()</code>，检查 payload 至少有两个字节（命令 ID + 参数长度），并确认&quot;2 加参数长度&quot;恰好等于整个 payload 长度。这一步防止 payload 长度和命令自称的参数长度不一致。</li>
+<li>读取 <code>cmd_id</code>，进入 <code>switch</code> 分支。</li>
+</ol>
+<p>以 <code>START_MOTION</code> 为例：</p>
 <pre data-label="c"><code class="language-c">case COMM_CMD_START_MOTION: {
     comm_start_motion_args_t args;
 
@@ -195,20 +350,67 @@ static uint8_t s_rx_buffer[256];</code></pre>
     response_send_ack(frame-&gt;seq, command.cmd_id, status);
     break;
 }</code></pre>
-<p><code>comm_unpack_start_motion_args()</code> 再做一次针对性核对：命令 ID 必须是 <code>04</code>，参数必须恰好有 2 字节。通过以后，<code>data[0]</code> 成为 <code>direction</code>，<code>data[1]</code> 成为 <code>gear</code>。这种层层核对让长度异常的消息停在业务动作之前。</p>
-<p><code>motion_start_motion()</code> 接到 <code>direction = 01</code> 后，选择向前分支，把四个逻辑轮位都设为正的固定 PWM。当前固定值为 <code>3000</code>，档位参数已经传入，现阶段统一输出固定值。运动层随后应用每个轮位的方向校正和 A、D、B、C 通道映射，再写入方向脚与 PWM 寄存器。四轮怎样靠不同正负组合实现前后、横移与旋转，会在下一章继续展开。</p>
+<p>这里又做了一层针对性核对：<code>comm_unpack_start_motion_args()</code> 会确认命令 ID 必须是 <code>04</code>，参数必须恰好有 2 字节。通过以后，<code>data[0]</code> 成为 <code>direction</code>，<code>data[1]</code> 成为 <code>gear</code>。</p>
+<p>为什么要层层核对？因为这是嵌入式系统里很典型的&quot;防御式编程&quot;思想：每一层都假设上一层可能犯错，只有自己再检查一遍才放心。长度异常、参数个数不对的消息会被挡在运动动作之前，避免机器人因为收到一个坏命令而做出危险动作。</p>
+<p>核对通过后，<code>motion_start_motion(args.direction, args.gear)</code> 被调用。当 <code>direction = 01</code>（向前）时，函数选择向前分支，把四个逻辑轮位都设为正的固定 PWM。当前固定值为 <code>3000</code>，档位参数虽然传入，但现阶段统一输出固定值，不区分快慢。运动层随后应用每个轮位的方向校正和 A、D、B、C 通道映射，再写入方向脚与 PWM 寄存器。</p>
+<blockquote><p><strong>预告</strong>：四个麦轮怎样靠不同的正负号组合实现前后、横移与旋转，会在下一章继续展开。现在你只需要知道：命令已经走到了&quot;让电机转起来&quot;的最后一层。</p>
+</blockquote>
 <h2 id="ack-沿原路返回">ACK 沿原路返回</h2>
-<p>运动接口返回 <code>true</code> 时，分发器发送状态为 <code>OK</code> 的 <strong>ACK（acknowledgement，确认响应）</strong>。ACK 像收件回执，告诉上位机某条命令已经通过软件链路处理。</p>
-<p>ACK 的 payload 固定为 4 字节：被回应命令的序号占 2 字节，命令 ID 占 1 字节，状态占 1 字节。响应帧还有自己的发送序号，<code>response_sender.c</code> 当前从 <code>100</code> 开始，每发送一帧就递增。</p>
-<p>如果前面的示例是控制板启动后处理的第一条响应，ACK 帧会是：</p>
+<p>运动接口返回 <code>true</code> 时，分发器会发送一条状态为 <code>OK</code> 的 <strong>ACK（acknowledgement，确认响应）</strong>。ACK 就像快递签收单，告诉上位机&quot;你发的这条命令我已经处理完了&quot;。</p>
+<p>ACK 帧的 payload 固定为 4 字节：</p>
+<div class="table-wrap"><table><thead><tr>
+<th>字节</th>
+<th>含义</th>
+</tr>
+</thead><tbody><tr>
+<td>第 1～2 字节</td>
+<td>被回应命令的序号（小端序）</td>
+</tr>
+<tr>
+<td>第 3 字节</td>
+<td>被回应命令的 ID</td>
+</tr>
+<tr>
+<td>第 4 字节</td>
+<td>处理状态</td>
+</tr>
+</tbody></table></div>
+<p>响应帧自己也有发送序号。在 <code>response_sender.c</code> 中，当前实现从 <code>100</code> 开始，每发送一帧就递增。这样上位机也可以区分下位机发出的不同响应。</p>
+<p>如果前面的 <code>START_MOTION</code> 示例是控制板启动后处理的第一条响应，ACK 帧会是：</p>
 <pre data-label="text"><code class="language-text">AA 55 | 01 02 64 00 04 00 | 01 00 04 00 | 1F 76
   SOF |       header       |   payload   |  CRC</code></pre>
-<p><code>02</code> 表示 ACK 帧，<code>64 00</code> 是十进制发送序号 100，payload 中的 <code>01 00</code> 指回上位机命令序号 1，<code>04</code> 指向 <code>START_MOTION</code>，<code>00</code> 表示状态 OK。<code>response_send_ack()</code> 编码完成后调用 <code>transport_uart_send_bytes()</code>，transport 再通过 <code>uart1_send()</code> 逐字节写入 USART1，并等待每个字节发送完成。</p>
-<p>ACK 说明帧校验、参数解析、命令选择和运动接口调用已经走通。轮子在实物上的表现还会受到电源、电机驱动、接线、安装方向与机械状态影响，因此联调记录需要同时观察返回帧和真实动作。</p>
+<p>逐字节解读：</p>
+<ul>
+<li><code>AA 55</code>：帧起始标记。</li>
+<li><code>01</code>：协议版本。</li>
+<li><code>02</code>：frame_type 为 ACK。</li>
+<li><code>64 00</code>：下位机发送序号为 100（十进制），小端序。</li>
+<li><code>04 00</code>：ACK payload 长度为 4 字节。</li>
+<li><code>01 00</code>：回应的是上位机序号为 1 的命令。</li>
+<li><code>04</code>：被回应的命令 ID 是 <code>START_MOTION</code>。</li>
+<li><code>00</code>：状态为 OK，表示命令处理成功。</li>
+<li><code>1F 76</code>：CRC 校验值，小端序。</li>
+</ul>
+<p><code>response_send_ack()</code> 编码完成后，会调用 <code>transport_uart_send_bytes()</code>；transport 再通过 <code>uart1_send()</code> 逐字节写入 <code>USART1</code>，并等待每个字节发送完成。于是 ACK 沿着和命令相反的方向，从 STM32 回到电脑。</p>
+<blockquote><p><strong>重要提醒</strong>：ACK 只能说明&quot;帧校验通过、参数解析成功、命令分发成功、运动接口调用成功&quot;这一整条软件链路走通了。它<strong>不保证</strong>机器人轮子一定在实物上按预期转动了。轮子的实际表现还会受到电源电压、电机驱动板、接线、安装方向、机械阻力、地面摩擦等因素影响。因此联调时一定要同时观察返回的 ACK 帧和机器人的真实动作。</p>
+</blockquote>
 <h2 id="命令已经走到车轮面前">命令已经走到车轮面前</h2>
-<p>现在回看整段旅程，电脑发送的是 14 个普通字节。UART1 中断迅速接住它们，环形缓冲区把中断与任务连接起来，状态机找到 <code>AA 55</code> 并核对 CRC，分发器读出 <code>04 02 01 02</code> 的业务含义，运动层收到“向前、慢速”，响应模块再把 ACK 送回电脑。</p>
-<p>协议当前共定义 17 条命令：<code>01</code> 到 <code>0F</code> 覆盖连通测试、底盘、航向和机构动作，<code>FE</code> 用于查询 payload 版本，<code>FF</code> 用于测试回环。<code>PING</code>、版本查询、测试命令、持续平移、持续旋转和停止已经具有具体行为，其余命令已能进入格式校验与状态响应，后续会逐步接上运动、传感器和执行机构。</p>
-<p>这条 <code>START_MOTION</code> 还带着一个重要约定：持续运动由后续 <code>STOP_MOTION</code> 结束。当前软件链已经能够执行这两个入口，命令超时、看门狗、使能状态和统一安全停止仍需继续接入。理解这条边界之后，我们便可以把目光移向车底，看看四个带斜滚子的麦轮如何把四组正负号变成向前、横移和旋转。</p>
+<p>现在我们把整条旅程串起来回看：</p>
+<ol>
+<li>电脑发送 14 个普通字节。</li>
+<li><code>USART1_IRQHandler()</code> 在 <code>PA10</code> 上迅速接住每一个字节。</li>
+<li><code>transport_uart_rx_from_isr()</code> 把字节放入 256 格环形缓冲区。</li>
+<li><code>app_task</code> 按节奏从缓冲区取字节，交给协议状态机。</li>
+<li>状态机在字节流中找到 <code>AA 55</code>，收齐 header、payload 和 CRC，核对无误后拼出一帧。</li>
+<li><code>command_dispatcher_handle_frame()</code> 读出 <code>cmd_id = 04</code>，进入 <code>START_MOTION</code> 分支。</li>
+<li><code>comm_unpack_start_motion_args()</code> 拆出 <code>direction = 01</code>、<code>gear = 02</code>。</li>
+<li><code>motion_start_motion()</code> 收到&quot;向前、慢速&quot;，把固定 PWM 写入四个轮子。</li>
+<li>响应模块把 ACK 帧送回电脑，上位机看到&quot;序号 1 的命令已 OK&quot;。</li>
+</ol>
+<p>整个过程从一串冷冰冰的字节开始，最终变成电机驱动板上的 PWM 波形。</p>
+<p>目前协议共定义了 17 条命令：<code>01</code> 到 <code>0F</code> 覆盖连通测试、底盘、航向和机构动作，<code>FE</code> 用于查询 payload 版本，<code>FF</code> 用于测试回环。其中 <code>PING</code>、版本查询、测试命令、持续平移、持续旋转和停止已经具有具体行为，其余命令已经能进入格式校验与状态响应，后续会逐步接上运动、传感器和执行机构。</p>
+<p>这条 <code>START_MOTION</code> 还带着一个重要的使用约定：它是一个<strong>持续运动命令</strong>，必须由后续的 <code>STOP_MOTION</code> 来结束。当前软件链已经能够执行这两个入口，但命令超时保护、看门狗、使能状态检查和统一安全停止机制仍需继续接入。</p>
+<p>理解了这个边界之后，我们便可以把目光移向车底，看看四个带斜滚子的麦轮，如何把四组正负 PWM 变成向前、横移和旋转。下一章见。</p>
 
     <nav class="pager">  <a href="02-architecture-boot.html">
     <span class="label">← 上一章</span>

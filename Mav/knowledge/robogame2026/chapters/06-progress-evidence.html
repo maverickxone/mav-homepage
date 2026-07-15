@@ -63,25 +63,43 @@
     <li><a href="#十七条命令分别走到了哪里">十七条命令分别走到了哪里</a></li>
     <li><a href="#八个新模块的实际状态">八个新模块的实际状态</a></li>
     <li><a href="#代码证据与实车证据之间">代码证据与实车证据之间</a></li>
+    <li><a href="#本章小结">本章小结</a></li>
   </ul>
 </aside>
   <article class="chapter-body">
     <header class="chapter-head">
   <div class="chapter-head-meta">
     <span class="num">CHAPTER 07</span>
-    <span>≈ 26 MIN READ</span>
+    <span>≈ 45 MIN READ</span>
   </div>
   <h1>项目走到哪一步了</h1>
   <div class="chapter-info-cutoff">项目状态截至 2026-07-14 · Git HEAD fc3ef5d</div>
 
 </header>
     <h2 id="把镜头从一条命令拉到整个仓库">把镜头从一条命令拉到整个仓库</h2>
-<p>前面几章一直跟着 <code>START_MOTION</code> 行走。它从 USART1 进入 STM32，通过协议解析和命令分发，最后让四路电机得到 PWM。沿着这条路，我们已经看到一段完整的软件链路。现在把镜头拉远，问题变成：整个 RoboGame 2026 下位机已经完成了哪些部分，哪些部分刚刚留好接口，哪些结论还需要实车来证明？</p>
-<p>本章以 2026 年 7 月 14 日看到的仓库为准，Git 当前提交是 <code>fc3ef5d</code>。这个提交本身产生于 2026 年 6 月 13 日。状态判断优先查看当前源码和 <code>USER/WHEELTEC.uvprojx</code>，然后参考各模块 README 与 Git 历史。</p>
-<p>完成度在嵌入式项目里有几种不同含义。文件已经写好，说明设计进入了代码；文件已经加入 Keil 工程，说明它会参与目标构建；编译通过、烧录成功、电机实转和整车联调，又是更进一步的证据。把这些证据分开记录，初学者就能清楚理解“代码里有”与“车上验证过”之间的距离。</p>
+<p>前面几章我们一直跟着 <code>START_MOTION</code> 这条命令在代码里“行走”。它从 USART1 进入 STM32，经过协议解析和命令分发，最后让四路电机得到 PWM 信号。沿着这条路，我们已经看到一段完整的软件链路：串口收到字节、协议把它翻译成命令、分发器决定该做什么、运动模块把命令变成电机输出。</p>
+<p>现在把镜头拉远，问题自然变成：整个 RoboGame 2026 下位机项目，到底已经完成了哪些部分？哪些部分刚刚留好接口、还没填血肉？哪些结论还只是代码层面的推断，还需要真正把小车上电、把轮子放到地上才能证明？</p>
+<p>本章以 2026 年 7 月 14 日看到的仓库状态为准，Git 当前提交是 <code>fc3ef5d</code>。这个提交本身产生于 2026 年 6 月 13 日，也就是说，虽然我们看到它时已经 7 月中旬，但代码本身停留在 6 月中旬的版本。状态判断时，我会优先查看当前源码和 <code>USER/WHEELTEC.uvprojx</code> 这两个“一手的代码证据”，然后再参考各模块的 README 与 Git 历史作为辅助说明。</p>
+<blockquote><p><strong>初学者小提醒</strong>：为什么要把“代码里有”和“车上验证过”分开看？</p>
+<p>很多刚接触嵌入式的小白容易把“代码写好了”和“功能完成了”混为一谈。实际上，一个功能从构思到真正可用，通常要跨过好几道门：</p>
+<ol>
+<li><strong>设计阶段</strong>：脑子里想清楚要做什么；</li>
+<li><strong>编码阶段</strong>：把想法写成 <code>.c</code> / <code>.h</code> 文件；</li>
+<li><strong>入工程阶段</strong>：文件加入 Keil 工程，会被编译进固件；</li>
+<li><strong>编译通过阶段</strong>：Keil 不报错，生成 <code>.axf</code>、<code>.hex</code>、<code>.bin</code>；</li>
+<li><strong>烧录阶段</strong>：把固件写到 STM32 的 Flash 里；</li>
+<li><strong>单板验证阶段</strong>：上电后串口能收到 ACK，LED 会闪；</li>
+<li><strong>整车验证阶段</strong>：电机真转、小车真走、机构真动。</li>
+</ol>
+<p>每一道门都可能卡住。本章的目标就是把“到哪一道门了”这件事讲清楚，避免你误以为代码里写了闭环控制，车上就真的能跑闭环。</p>
+</blockquote>
+<p>完成度在嵌入式项目里有好几种不同含义。文件已经写好，只说明设计进入了代码；文件已经加入 Keil 工程，说明它会参与目标构建；编译通过、烧录成功、电机实转、整车联调，又是更进一步的证据。把这些证据分开记录，初学者就能清楚理解“代码里有”与“车上验证过”之间的距离，不会在调试时找错方向。</p>
+<hr>
 <h2 id="从原厂小车工程长出新的下位机">从原厂小车工程长出新的下位机</h2>
-<p>仓库在 2026 年 4 月 30 日导入 WHEELTEC C50X 原厂工程。2026 年 6 月 6 日，项目重新整理商家源码，只保留 <code>Mec_Car</code> 目标，并创建 <code>LOWER_CONTROLLER/</code>。电机、编码器、串口、IMU、FreeRTOS 和 STM32 标准库继续提供基础能力，新的比赛业务获得了单独、清楚的代码边界。</p>
-<p>随后一周的提交把工作台逐渐接通。6 月 8 日，<code>main.c</code> 从原厂的多任务入口切换到新的 <code>app_task</code>，UART 接收、协议解析、命令分发和响应发送进入 Keil 工程。6 月 9 日，ICM20948 驱动与系统初始化得到整理，USB 手柄等冲突依赖被清理。6 月 11 日加入 <code>FlyMcu2188.exe</code>，为已有工程补上一个烧录工具入口。6 月 12 日更新生成的通信协议。6 月 13 日加入固定 PWM 的平移、旋转和停止，并把新协议通信口确定为 USART1。</p>
+<p>仓库不是从零开始写的。2026 年 4 月 30 日，项目导入了 WHEELTEC C50X 的原厂工程。这套原厂代码就像一辆已经能跑的“样板车”：电机能转、编码器能读、串口能发、IMU 能初始化、FreeRTOS 能调度、STM32 标准库也已经配好。对于刚接手的小白来说，这是一个非常宝贵的起点——你不需要自己从头写 PWM 驱动，也不用担心时钟树配错导致串口乱码。</p>
+<p>但原厂工程的问题也很典型：它是为了展示小车能力而写的，里面可能同时存在多个演示任务（比如平衡车任务、手柄遥控任务、OLED 显示任务），彼此耦合在一起，而且命名和目录结构不一定适合 RoboGame 的比赛逻辑。如果直接在上面加比赛代码，很容易写着写着就陷入“改一处、崩三处”的困境。</p>
+<p>所以 2026 年 6 月 6 日，项目做了一次关键的“整理手术”：重新整理商家源码，只保留 <code>Mec_Car</code> 这一个目标，并创建了 <code>LOWER_CONTROLLER/</code> 目录。电机、编码器、串口、IMU、FreeRTOS 和 STM32 标准库这些“底层器官”继续提供基础能力，而新的比赛业务代码则获得了单独、清楚的代码边界。你可以把它理解为：把原厂那辆整车的“底盘和动力系统”保留下来，但在上面重新搭了一个“比赛专用的驾驶舱和任务控制台”。</p>
+<p>随后一周的提交把工作台逐渐接通。我们按时间线来看一下：</p>
 <div class="table-wrap"><table><thead><tr>
 <th>时间</th>
 <th>提交</th>
@@ -133,10 +151,21 @@
 <td>接入部分运动命令，通信口切到 USART1</td>
 </tr>
 </tbody></table></div>
-<p>这条历史线说明当前阶段的重点很明确：先把新的软件骨架接通，再让第一组运动命令落到真实电机接口。编码器闭环、航向角和操作机构位于下一段工作中。</p>
+<h3 id="这条时间线告诉了我们什么">这条时间线告诉了我们什么？</h3>
+<ul>
+<li><strong>4 月底到 6 月初</strong>：项目处于“看懂原厂代码、准备重构”的阶段。这一步看起来很不起眼，但对于小白来说其实很重要——如果你还没搞懂原厂代码怎么跑起来，就别急着往里面加新功能。</li>
+<li><strong>6 月 6 日</strong>：是关键的分界点。从这一天起，项目有了清晰的模块边界。以后看代码时，你可以先判断一个问题属于“APP 层”“协议层”“运动层”还是“传感器层”，再去找对应文件，不会在一堆 <code>HARDWARE/</code> 文件里迷路。</li>
+<li><strong>6 月 8 日到 6 月 13 日</strong>：是“把骨架接通电”的阶段。<code>app_task</code> 替代了原厂的多任务入口，新的协议解析链路跑通，USART1 被确定为上下位机通信口，第一组运动命令（固定 PWM 的平移、旋转、停止）也落了地。</li>
+</ul>
+<p>这条历史线说明当前阶段的重点非常明确：<strong>先把新的软件骨架接通，再让第一组运动命令落到真实电机接口。</strong> 编码器闭环、航向角解算、升降夹爪这些更复杂的功能，位于下一段工作中。换句话说，现在不是“所有功能都做好了”，而是“主干已经能通电，叶子功能可以一片一片往上长”。</p>
+<blockquote><p><strong>初学者常见疑问</strong>：为什么 6 月 13 日之后就没有新提交了？</p>
+<p>这很正常。嵌入式项目经常出现“代码停在某一个稳定节点，但开发和调试还在继续”的状态。可能的原因有很多：作者在写文档、在等硬件、在调车、在忙考试，或者在憋一个大改动。我们本章只根据 7 月 14 日看到的仓库状态来做判断，不猜测背后的故事。</p>
+</blockquote>
+<hr>
 <h2 id="十七条命令分别走到了哪里">十七条命令分别走到了哪里</h2>
-<p>协议头文件 <code>comm_protocol.h</code> 定义了 17 条命令。命令出现在协议里，表示上下位机已经约定了名称、编号和参数格式。命令分发器拥有具体动作后，它才会真正推动机器人或返回有意义的数据。</p>
-<p>当前有 6 条命令具备具体行为。<code>PING</code> 回复成功 ACK；<code>GET_PAYLOAD_VERSION</code> 回复 ACK 并发送版本值 <code>20260612</code>；<code>TEST_COMMAND</code> 把收到的 32 位整数作为测试 telemetry 送回；<code>START_MOTION</code> 和 <code>START_ROTATION</code> 驱动固定 PWM；<code>STOP_MOTION</code> 清零四路输出。其余 11 条命令已经进入参数解析和错误回复链路，合法参数得到 <code>NOT_IMPLEMENTED</code>。</p>
+<p>协议头文件 <code>comm_protocol.h</code> 定义了 17 条命令。对于初学者来说，可以这样理解这个文件的作用：它是上下位机之间的“合同”。合同里写明了每一条命令叫什么名字、编号是多少、参数有几个字节、每个字节代表什么意思。只要上下位机都遵守这份合同，不管上位机是 Python 脚本、ROS 节点还是PC 上位机，都能向 STM32 发命令。</p>
+<p>但“合同里有这条命令”和“这条命令能真的让小车动起来”是两回事。合同只是约定了接口；命令分发器拥有具体动作之后，它才会真正推动机器人，或者向上位机返回有意义的数据。</p>
+<p>当前仓库里，有 <strong>6 条命令</strong>已经具备具体行为，其余 <strong>11 条命令</strong>虽然已经进入参数解析和错误回复链路，但合法参数只能得到 <code>NOT_IMPLEMENTED</code> 的回复。下面我们逐条看：</p>
 <div class="table-wrap"><table><thead><tr>
 <th>命令</th>
 <th>当前行为</th>
@@ -210,9 +239,46 @@
 <td>回复 ACK，并把输入整数作为测试 telemetry 返回</td>
 </tr>
 </tbody></table></div>
-<p>这张表也展示了“协议入口”和“完整功能”之间的进度。按距离移动已经拥有 <code>distance_mm</code>、<code>tolerance_mm</code> 和参数校验；当前控制板会返回 <code>NOT_IMPLEMENTED</code>，清楚告诉上位机这项功能仍在建设。编码器反馈与距离控制接入后，这条命令就能继续向真实动作推进。</p>
+<h3 id="已经能跑起来的六条命令">已经能跑起来的六条命令</h3>
+<ol>
+<li><p><strong><code>PING</code></strong>
+这是通信链路最基础的“心跳”命令。上位机发一个 <code>PING</code>，下位机回复 ACK OK，说明“我能收到你、我也能回你”。对于初学者来说，调试时第一件事往往就是反复发 <code>PING</code>，确认串口接线、波特率、帧格式都没问题。如果连 <code>PING</code> 都不通，后面任何运动命令都不用试。</p>
+</li>
+<li><p><strong><code>GET_PAYLOAD_VERSION</code></strong>
+这条命令回复一个版本号 <code>20260612</code>。你可以把它理解为固件的“身份证”。上位机启动时可以先读一下版本号，确认自己正在和下位机的哪个协议版本对话。如果以后协议升级，版本号也要跟着改，上位机就能根据版本号选择不同的命令集。</p>
+</li>
+<li><p><strong><code>TEST_COMMAND</code></strong>
+这是一条专门给调试用的“回音壁”命令。上位机发一个 32 位整数，下位机原样把它作为 telemetry 送回。初学者可以用它来验证：</p>
+<ul>
+<li>发送的帧格式是否正确；</li>
+<li>参数能不能被正确解析；</li>
+<li>下位机的响应链路是否工作。</li>
+</ul>
+</li>
+<li><p><strong><code>START_MOTION</code></strong>
+前面章节已经详细讲过。它根据方向参数输出固定 PWM 3000，让小车朝某个方向平移。注意这里是“固定 PWM”，不是“按距离走的闭环控制”——也就是说，它只管让轮子以固定速度转，不管走多远、也不看编码器反馈。</p>
+</li>
+<li><p><strong><code>START_ROTATION</code></strong>
+和 <code>START_MOTION</code> 类似，只不过它输出固定 PWM 让小原地旋转。顺时针或逆时针由方向参数决定。</p>
+</li>
+<li><p><strong><code>STOP_MOTION</code></strong>
+把 A、B、C、D 四路 PWM 和方向引脚全部清零。这是安全相关的命令：不管你之前在让车往哪走，只要收到 <code>STOP_MOTION</code>，所有输出立刻停掉。</p>
+</li>
+</ol>
+<h3 id="已经留了接口还没实现的十一条命令">已经留了接口、还没实现的十一条命令</h3>
+<p>剩下的命令都已经能完成“收到命令 → 检查参数格式 → 参数合法则返回 <code>NOT_IMPLEMENTED</code>”这个流程。这一步虽然看起来只是“回个错误码”，但其实很有价值：</p>
+<ul>
+<li>它说明协议解析层已经认识这些命令；</li>
+<li>它说明参数解码已经写好了（比如 <code>MOVE_BY_DISTANCE</code> 能正确拆出 <code>distance_mm</code> 和 <code>tolerance_mm</code>）；</li>
+<li>它给上位机一个明确的反馈：我知道你要做什么，但我暂时还没做，而不是石沉大海没反应。</li>
+</ul>
+<blockquote><p><strong>初学者小提醒</strong>：<code>NOT_IMPLEMENTED</code> 不是 bug，而是一种诚实的进度标记。</p>
+<p>初学者可能觉得返回“未实现”很丢脸，恨不得先把所有命令都 stub 成“假装成功”。但在团队项目里，<code>NOT_IMPLEMENTED</code> 其实非常有用：上位机开发者看到它，就知道这条命令的接口已经稳定，可以开始写上位机逻辑；下位机开发者看到它，也知道下一步该填什么坑。相反，如果返回虚假的 ACK，上位机以为功能可用，调试时反而会浪费大量时间。</p>
+</blockquote>
+<p>这张表也展示了“协议入口”和“完整功能”之间的进度。比如 <code>MOVE_BY_DISTANCE</code> 已经拥有 <code>distance_mm</code>、<code>tolerance_mm</code> 和参数校验；当前控制板会返回 <code>NOT_IMPLEMENTED</code>，清楚告诉上位机“我知道你要按距离走，但距离闭环还没接好”。一旦编码器反馈与距离控制接入，这条命令就能继续向真实动作推进，而不需要再改协议格式。</p>
+<hr>
 <h2 id="八个新模块的实际状态">八个新模块的实际状态</h2>
-<p><code>LOWER_CONTROLLER/</code> 里的目录名描绘了目标架构，目录中的源码和 Keil 工程文件则显示当前落地程度。</p>
+<p><code>LOWER_CONTROLLER/</code> 里的目录名描绘了目标架构，目录中的源码和 Keil 工程文件则显示当前落地程度。我们可以把 <code>LOWER_CONTROLLER/</code> 想象成一个小型工厂的车间布局图：每个目录是一个车间，车间门口挂了牌子（目录名），但车间里设备安装到什么程度，还得进去看。</p>
 <div class="table-wrap"><table><thead><tr>
 <th>模块</th>
 <th>当前可确认的状态</th>
@@ -250,12 +316,76 @@
 <td>职责边界已经写入 README，公共类型与工具文件仍待按实际需要增加</td>
 </tr>
 </tbody></table></div>
-<p>旧的 <code>HARDWARE/</code> 继续承担 GPIO、定时器、电机、编码器和 IMU 驱动。新的模块像一层整齐的接线板，把比赛命令连接到这些底层能力。<code>USER/main.c</code> 当前只创建新的 <code>app_task</code>，原厂 <code>Balance_task</code>、显示任务、手柄任务和数据上报任务已经退出启动链路。</p>
+<h3 id="各模块的简单解读">各模块的简单解读</h3>
+<ul>
+<li><p><strong><code>APP</code></strong>：这是整个下位机的“前台接待”。<code>app_task</code> 是 FreeRTOS 里的一个任务，负责不断从串口缓冲区取数据、交给协议层解析、根据命令号分发、再把响应发回去。它已经加入 Keil 目标，意味着它会被编译进固件。</p>
+</li>
+<li><p><strong><code>PROTOCOL</code></strong>：这是“翻译科”。它负责把串口收到的字节流拆成帧、校验 CRC、解码命令参数、编码响应帧。当前它已经能处理全部 17 条命令的解析，只是有些命令解析完只能回 <code>NOT_IMPLEMENTED</code>。</p>
+</li>
+<li><p><strong><code>TRANSPORT</code></strong>：这是“收发室”。USART1 以中断方式一个字节一个字节地收数据，收到后放进 256 字节的环形缓冲区；发送时则逐字节把响应送出去。选择中断而不是 DMA，对于当前数据量来说简单够用，也更容易调试。</p>
+</li>
+<li><p><strong><code>BOARD</code></strong>：这是“设备档案室”。所有和硬件相关的常量——比如 USART1、波特率 115200、固定 PWM 值、四个轮子的编号映射、方向系数——都集中放在这里。这样做的目的是：以后换板子、换电机、换轮子布局，只要改 <code>BOARD</code> 里的配置，不用到处翻源码。</p>
+</li>
+<li><p><strong><code>MOTION</code></strong>：这是“运动科”。目前已经能控制电机持续平移、持续旋转和停止。但“按时间走”“按距离走”“按角度转”“多档位速度”“编码器闭环”这些更精细的控制还没接入。打个比方：现在就像一辆只能挂一档、踩油门就走的车，还没有定速巡航和里程计。</p>
+</li>
+<li><p><strong><code>SENSORS</code></strong>：这是“感知科”。编码器和 ICM20948 的底层驱动已经初始化好，新的上层接口——比如“给我当前航向角”“给我左前轮走了多少脉冲”“限位开关有没有触发”——还没有接入到命令层。你可以理解为传感器硬件已经通电，但数据还没送到业务代码能随手拿到的地方。</p>
+</li>
+<li><p><strong><code>ACTUATORS</code></strong>：这是“执行机构科”。升降、夹爪、推杆这三套机构在比赛里可能会用到，协议层已经为它们留好了命令入口，目录结构和规划也写好了，但实际的业务源码和硬件接口（比如哪个 GPIO 控制升降电机、哪个 PWM 控制夹爪）还没接入。</p>
+</li>
+<li><p><strong><code>COMMON</code></strong>：这是“公共工具间”。README 里已经写清楚它该放什么（公共类型定义、工具函数等），但实际文件还比较少，后续会随着开发慢慢填充。</p>
+</li>
+</ul>
+<p>旧的 <code>HARDWARE/</code> 继续承担 GPIO、定时器、电机、编码器和 IMU 驱动。新的模块像一层整齐的接线板，把比赛命令连接到这些底层能力。<code>USER/main.c</code> 当前只创建新的 <code>app_task</code>，原厂 <code>Balance_task</code>、显示任务、手柄任务和数据上报任务已经退出启动链路。这意味着程序启动后，不再跑原厂那些演示任务，而是直接跑我们自己的比赛主任务。</p>
+<blockquote><p><strong>初学者常见疑问</strong>：为什么 <code>MOTION</code> 里已经写了 <code>START_MOTION</code>，却说闭环没接好？</p>
+<p>因为 <code>START_MOTION</code> 目前只是“开环输出固定 PWM”。它告诉电机：“以 3000 占空比转起来”，但不问“你到底转没转、转多快、走多远”。闭环控制则需要在输出 PWM 的同时，不断读编码器脉冲、计算实际速度、和目标速度比较、再动态调整 PWM。代码里可能有编码器读取函数，但这些函数还没有被运动控制算法调用起来。</p>
+</blockquote>
+<hr>
 <h2 id="代码证据与实车证据之间">代码证据与实车证据之间</h2>
-<p><code>USER/WHEELTEC.uvprojx</code> 的目标名是 <code>Mec_Car</code>，芯片为 STM32F407VE。工程文件已经包含 APP、协议、UART 和运动控制的 <code>.c</code> 文件，说明新的主链路进入了构建清单。项目配置会生成 AXF 和 HEX，并在构建后调用 <code>fromelf</code> 生成 BIN。</p>
-<p>仓库使用 <code>.gitignore</code> 将 <code>OBJ/</code>、<code>*.hex</code> 和 <code>*.bin</code> 作为本地产物管理，因此 Git 历史主要保存源码和工程配置。<code>TESTS/</code> 当前保存了测试规划，下一次联调可以把提交号、Keil 编译结果、烧录结果、串口抓包和轮子动作写入同一份记录。按照当前仓库证据，最新代码的编译、烧录与整车测试状态记为“仓库中待补验证记录”。</p>
+<p>看完模块状态，我们再来审视一个更根本的问题：这些“代码层面的完成”到底算不算“功能完成”？</p>
+<p><code>USER/WHEELTEC.uvprojx</code> 的目标名是 <code>Mec_Car</code>，芯片为 STM32F407VE。工程文件已经包含 APP、协议、UART 和运动控制的 <code>.c</code> 文件，说明新的主链路进入了构建清单。项目配置会生成 AXF 和 HEX，并在构建后调用 <code>fromelf</code> 生成 BIN。这些都能证明：<strong>当前代码在 Keil 眼里是一份可以参与编译的合法工程</strong>。</p>
+<p>但“可以编译”和“车上能跑”之间还有几步：</p>
+<ol>
+<li><p><strong>编译是否真的通过？</strong>
+工程文件包含了源文件，但如果某些头文件路径没配好、或者函数声明和定义不匹配，编译时仍会报错。本章只能根据工程配置推断“应该能编”，不能替 Keil 保证结果。</p>
+</li>
+<li><p><strong>烧录是否成功？</strong>
+仓库里有 <code>FlyMcu2188.exe</code>，说明作者已经为烧录准备了一个工具入口。但“有工具”不等于“已经烧过并且成功”。</p>
+</li>
+<li><p><strong>上电后通信是否通？</strong>
+代码逻辑上 USART1 会收会发，但真到板上，可能波特率配错、接线反了、GND 没共、USB 转串口模块不支持 115200，各种问题都会出现。</p>
+</li>
+<li><p><strong>电机是否真的转？</strong>
+<code>START_MOTION</code> 输出固定 PWM 3000，但电机驱动板是否需要使能信号、方向引脚逻辑是否正确、电机电源有没有接上、PWM 频率是否和驱动板匹配，这些都要实机验证。</p>
+</li>
+<li><p><strong>整车行为是否符合预期？</strong>
+即使电机转了，四个轮子转的方对不对、速度一不一致、小车是不是往命令指定的方向走，也都要在地面上验证。</p>
+</li>
+</ol>
+<p>仓库使用 <code>.gitignore</code> 将 <code>OBJ/</code>、<code>*.hex</code> 和 <code>*.bin</code> 作为本地产物管理，因此 Git 历史主要保存源码和工程配置。<code>TESTS/</code> 当前保存了测试规划，下一次联调可以把提交号、Keil 编译结果、烧录结果、串口抓包和轮子动作写入同一份记录。</p>
+<p>按照当前仓库证据，最新代码的编译、烧录与整车测试状态可以记为：<strong>仓库中待补验证记录</strong>。也就是说，源码已经把“该怎么验证”的路径画好了，但验证结果那一栏还空着，等真正上电、抓包、看轮子动作之后才能填上。</p>
 <p>源码已经清楚展示固定 PWM 的输出路径，现场记录将继续回答轮子怎样实际转动。带有提交号、板卡版本、接线、命令帧、ACK 和动作结果的记录，会让这项状态继续向前推进。</p>
-<p>阅读文档时还有两处值得留意的同步事项。真实轮位映射以 <code>board_motion_config.h</code> 为准，当前是左前 A、左后 D、右前 B、右后 C；<code>MOTION/README.md</code> 的一张旧表仍写着 A、B、C、D。真实发送串口由 <code>board_uart_config.h</code> 选为 USART1，发送代码会进入 <code>uart1_send()</code>；<code>TRANSPORT/README.md</code> 的发送路径示例仍保留 <code>uart3_send()</code>。这些差异属于文档更新工作，当前书稿采用实际配置头文件和源码的值。</p>
+<h3 id="两处需要同步更新的文档差异">两处需要同步更新的文档差异</h3>
+<p>阅读文档时还有两处值得留意的同步事项，初学者如果只看 README 可能会被带偏：</p>
+<ol>
+<li><p><strong>轮位映射</strong>：
+真实轮位映射以 <code>board_motion_config.h</code> 为准，当前是左前 A、左后 D、右前 B、右后 C；但 <code>MOTION/README.md</code> 里的一张旧表仍写着 A、B、C、D。如果你按 README 去接线或写上位机，可能会把左右前后搞反。当前书稿采用实际配置头文件和源码里的值。</p>
+</li>
+<li><p><strong>发送串口</strong>：
+真实发送串口由 <code>board_uart_config.h</code> 选为 USART1，发送代码会进入 <code>uart1_send()</code>；但 <code>TRANSPORT/README.md</code> 的发送路径示例仍保留 <code>uart3_send()</code>。这也是文档没跟上代码演进的表现。</p>
+</li>
+</ol>
+<p>这些差异属于“文档更新工作”，不影响当前代码运行，但新手容易踩坑。建议后续把 README 里的旧示例更新到和头文件一致。</p>
+<hr>
+<h2 id="本章小结">本章小结</h2>
+<p>走到这里，我们可以给项目当前状态画一张清晰的快照：</p>
+<ul>
+<li><strong>骨架已经搭好</strong>：<code>LOWER_CONTROLLER/</code> 的八个模块边界清楚，<code>app_task</code> 替代了原厂入口。</li>
+<li><strong>通信链路已经跑通</strong>：USART1、协议解析、命令分发、ACK/telemetry 发送都已经接入。</li>
+<li><strong>第一批运动命令已经落地</strong>：<code>PING</code>、<code>GET_PAYLOAD_VERSION</code>、<code>TEST_COMMAND</code>、<code>START_MOTION</code>、<code>START_ROTATION</code>、<code>STOP_MOTION</code> 已经具备具体行为。</li>
+<li><strong>第二批功能已经留好接口</strong>：按时间/距离移动、按角度旋转、获取航向、升降夹爪推杆等命令能解析参数并返回 <code>NOT_IMPLEMENTED</code>。</li>
+<li><strong>闭环和机构控制还在路上</strong>：编码器反馈、IMU 航向解算、PID 闭环、升降夹爪推杆的硬件接口都还没有接入命令层。</li>
+<li><strong>实车验证记录待补</strong>：代码已经准备好被编译、烧录和测试，但仓库里还没有留下这些验证的结果。</li>
+</ul>
 <p>项目现在已经拥有一条能够讲清楚、也能够继续扩展的主干。下一章沿着这条主干安排开发顺序：先让工程可重复构建，再验证通信和单轮动作，随后补齐安全、闭环、航向和操作机构，让每一步都留下看得见的证据。</p>
 
     <nav class="pager">  <a href="05-feedback-safety.html">

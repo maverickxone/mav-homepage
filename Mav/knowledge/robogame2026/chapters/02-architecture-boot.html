@@ -78,8 +78,8 @@
 
 </header>
     <h2 id="电源接通以后">电源接通以后</h2>
-<p>控制板刚刚上电时，<code>START_MOTION</code> 还在电脑一端等待发送。STM32 先要把自己和周围设备准备好，随后进入一个能够长期运行的工作节奏。</p>
-<p>初学者打开嵌入式工程，常会看到几百个 C 文件。真正的故事入口仍然很朴素。处理器完成底层启动后进入 <code>USER/main.c</code> 的 <code>main()</code>，当前主函数只做三件连贯的事：初始化系统，创建一个启动任务，开启 FreeRTOS 调度。</p>
+<p>按下电源键的那一刻，控制板上的 STM32 还什么都没做，电脑端的 <code>START_MOTION</code> 也还在屏幕上等待发送。对初学者来说，这个瞬间往往最容易被忽略，但它其实藏着整个程序的起点：处理器要先把自己和周围一圈设备都唤醒，然后进入一种能够长期、稳定、可预期运行的工作节奏。</p>
+<p>第一次打开大型嵌入式工程的人，通常会被成百上千个 C 文件吓到，心里直打鼓：&quot;这么多代码，到底从哪看起？&quot; 好消息是，真正决定程序从哪开始的故事入口往往非常朴素。处理器完成最底层的启动代码（启动文件里的汇编复位流程）之后，最终会跳进 <code>USER/main.c</code> 里的 <code>main()</code> 函数。在当前的下位机仓库里，<code>main()</code> 只干三件连贯的事：先初始化系统，再创建一个临时启动任务，最后把 FreeRTOS 调度器打开。</p>
 <pre data-label="c"><code class="language-c">int main(void)
 {
     systemInit();
@@ -88,12 +88,20 @@
                 NULL, 1, &amp;StartTask_Handler);
     vTaskStartScheduler();
 }</code></pre>
-<p>这里的 <code>xTaskCreate()</code> 用来创建任务。<code>start_task</code> 是任务函数，<code>&quot;start_task&quot;</code> 是调试时可见的名称，<code>512</code> 是工程为它安排的栈大小，<code>1</code> 是优先级，最后一个参数接收任务句柄。 <strong>任务句柄（task handle）</strong> 像一张任务的工牌，系统可以通过它找到对应任务。</p>
+<p>这里的 <code>xTaskCreate()</code> 是 FreeRTOS 提供的任务创建函数。它的参数从左到右依次是：任务函数 <code>start_task</code>、调试时显示的任务名称 <code>&quot;start_task&quot;</code>、分配给这个任务的栈大小 <code>512</code>、传给任务函数的参数 <code>NULL</code>、任务优先级 <code>1</code>，以及用来接收任务句柄的变量 <code>&amp;StartTask_Handler</code>。</p>
+<p><strong>任务句柄（task handle）</strong> 可以把它理解成一张&quot;工牌&quot;：系统拿到这张工牌，就能在后续找到对应的任务，比如删除它、通知它，或者查询它的状态。<code>start_task</code> 在这里只负责搭把手，把真正的长期任务创建起来，所以工程也给它留了这张工牌，方便后面管理。</p>
+<blockquote><p><strong>初学者小问：为什么 main 里不直接创建 <code>app_task</code>，还要绕一个 <code>start_task</code>？</strong>
+这是个好问题。在 FreeRTOS 里，调用 <code>vTaskStartScheduler()</code> 之前，调度器还没开始工作，所有代码都按普通顺序执行。<code>start_task</code> 的模式让启动过程有一个明确的&quot;交接人&quot;：它运行在调度器启动之后，可以在临界区里安全地创建其他关键任务，然后自己功成身退。这种写法在 FreeRTOS 工程里很常见，后面我们还会看到它的好处。</p>
+</blockquote>
 <h2 id="systeminit开馆前的设备检查">systemInit：开馆前的设备检查</h2>
-<p><code>systemInit()</code> 位于 <code>USER/system.c</code>。它运行时，FreeRTOS 调度器还没有开始分配任务时间，因此这些硬件准备按代码顺序完成。</p>
-<p>函数先设置 NVIC 中断优先级分组，再用 <code>delay_init(168)</code> 准备基于 168 MHz 系统时钟的延时。接下来初始化 I²C 与系统参数，然后打开 UART1 和 UART3，波特率都设为 <code>115200</code>。UART1 会承载新协议，UART3 仍是已经准备好的另一条串口通道。</p>
-<p>电机 PWM 随后以 <code>MiniBalance_PWM_Init(16799, 0)</code> 启动。TIM8 的计数设置让 PWM 频率成为 10 kHz，四个通道的满量程为 16800。再往下，ICM20948、蜂鸣器、使能按键、用户按键、OLED，以及 A 到 D 四路编码器依次初始化。最后，<code>Buzzer_AddTask(1,100)</code> 把一次提示请求加入蜂鸣器队列。当前新任务链还需要周期调用 <code>Buzzer_task()</code> 才能执行这份请求，因此仓库现状可以确认“请求已入队”，提示声留待任务接入和实机验证。</p>
-<p>原厂工程中还有车型选择、机器人控制参数、四个 PI 控制器、自动回充、OLED 参数和 APP 参数等初始化。当前 <code>system.c</code> 把这些语句保留为注释。它们展示了旧业务的来路，也说明新的主线目前聚焦于串口命令和固定 PWM 运动。后续接入闭环时，新的控制参数会按 <code>LOWER_CONTROLLER</code> 的模块边界重新安排。</p>
+<p><code>systemInit()</code> 位于 <code>USER/system.c</code>。注意它运行的时间点：此时 FreeRTOS 调度器还没有启动，处理器仍然按照传统的顺序执行方式一行一行跑下去。因此，这里所有的硬件准备都是&quot;串行&quot;完成的，代码写到哪就执行到哪，不会被其他任务打断。</p>
+<p>这就像是实验室每天开馆前的设备检查：先开总闸，再检查每一台仪器是否归位，最后才对外开放。如果顺序乱了，比如还没通电就去读传感器，结果往往不可预期。</p>
+<p>函数先设置 NVIC 中断优先级分组。NVIC 是 STM32 的中断管家，优先级分组决定了当多个中断同时到来时，谁更重要、谁可以打断谁。接下来用 <code>delay_init(168)</code> 初始化延时模块，让它基于 168 MHz 的系统时钟计算延时。</p>
+<p>再往后，代码依次初始化 I²C 与系统参数，然后打开 UART1 和 UART3，两个串口的波特率都设为 <code>115200</code>。UART1 会承载新协议，它是电脑和控制板之间新的&quot;主通道&quot;；UART3 则是已经准备好的另一条串口通道，可能用于调试、日志或者其他外设通信。</p>
+<p>电机 PWM 随后以 <code>MiniBalance_PWM_Init(16799, 0)</code> 启动。这里的数字看起来有点奇怪，为什么不是 16800 而是 16799？因为 TIM8 的计数器是&quot;从 0 数到 16799&quot;，一共数了 16800 个刻度。把自动重装载值设为 16799，配合 168 MHz 的时钟和预分频设置，最终可以让 PWM 频率落在 10 kHz，而四个 PWM 通道的满量程对应 16800。这个数值在后面把&quot;运动速度&quot;换算成&quot;PWM 占空比&quot;时会再次遇到。</p>
+<p>再往下，ICM20948（IMU 惯性测量单元）、蜂鸣器、使能按键、用户按键、OLED，以及 A 到 D 四路编码器依次初始化。每一件设备都像是控制板的一位员工，只有先完成入职培训，后面才能各司其职。</p>
+<p>最后，<code>Buzzer_AddTask(1,100)</code> 把一次蜂鸣器提示请求加入队列。不过这里有一个小小的&quot;伏笔&quot;：新的任务链目前还需要周期调用 <code>Buzzer_task()</code> 才能执行这份请求。也就是说，仓库现状可以确认&quot;请求已经入队&quot;，但真正听到提示声，还要等任务调度接入并在实机上验证。这种&quot;先登记、后执行&quot;的设计在后面很多模块里都会看到。</p>
+<p>原厂工程中其实还有更多的初始化内容：车型选择、机器人控制参数、四个 PI 控制器、自动回充、OLED 参数和 APP 参数等等。当前 <code>system.c</code> 把这些语句保留为注释。它们不是垃圾，而是旧业务的来路——读懂这些被注释掉的代码，能帮助我们理解这个仓库过去做了什么、现在为什么只保留一部分。这也说明新的主线目前聚焦于串口命令和固定 PWM 运动。后续如果接入闭环控制，新的控制参数会按照 <code>LOWER_CONTROLLER</code> 的模块边界重新安排，而不是简单地把旧代码重新打开。</p>
 <div class="mermaid">flowchart TD
     A["main 开始"] --> B["systemInit 初始化硬件"]
     B --> C["创建 start_task"]
@@ -102,30 +110,37 @@
     E --> F["start_task 完成并删除自己"]
     F --> G["app_task 等待 UART1 字节"]</div>
 <h2 id="freertos为持续工作安排时间">FreeRTOS：为持续工作安排时间</h2>
-<p><strong>FreeRTOS（Free Real-Time Operating System，自由实时操作系统）</strong> 负责管理任务。这里的“实时”强调可预测地响应事件。机器人需要长期等待通信，也可能同时读取传感器、更新控制和处理安全状态。任务把这些持续工作分成若干条独立流程，调度器按优先级和就绪状态安排处理器时间。</p>
-<p>可以把调度器想成实验室值班表。有人等待快递时，他暂时让出工作台；快递到达后，他再回来处理。这样处理器可以在等待期间照顾其他任务。<code>vTaskDelay(1)</code>、队列等待和事件通知都能形成这种“暂时让出”的节奏。</p>
-<p>当前工程先创建一个短命的 <code>start_task</code>。它像开门时的值班员，只负责把长期岗位安排好。进入任务后，代码先调用 <code>taskENTER_CRITICAL()</code> 进入<strong>临界区（critical section）</strong>。临界区像短时间锁住调度室的门，保证创建关键任务的过程保持连续。</p>
+<p><strong>FreeRTOS（Free Real-Time Operating System，自由实时操作系统）</strong> 是下位机的任务管家。这里的&quot;实时&quot;不是指&quot;跑得特别快&quot;，而是强调&quot;可预测地响应事件&quot;。机器人控制对时间敏感：它可能需要长期等待电脑发来的命令，也可能同时读取传感器、更新控制输出、处理安全状态。如果所有事情都写在同一个死循环里，代码会迅速变得难以维护；FreeRTOS 的&quot;任务&quot;机制把这些持续工作分成若干条独立的流程，调度器再根据优先级和就绪状态安排处理器时间。</p>
+<p>可以把调度器想象成实验室的值班表。假设小明在等快递，快递还没到时，他不需要一直盯着门口，而是可以暂时让出工作台，让其他同学先做实验；快递到达后，他再回来处理。处理器也是一样的逻辑：<code>vTaskDelay(1)</code>、队列等待、事件通知等机制都能让任务&quot;暂时让出&quot;处理器，等条件满足后再回来继续。</p>
+<p>当前工程先创建一个短命的 <code>start_task</code>。它就像开门时的值班员：上班第一件事不是自己做实验，而是把长期岗位安排好。进入任务后，代码先调用 <code>taskENTER_CRITICAL()</code> 进入<strong>临界区（critical section）</strong>。</p>
 <pre data-label="c"><code class="language-c">taskENTER_CRITICAL();
 xTaskCreate(app_task, "app", APP_STK_SIZE,
             NULL, APP_TASK_PRIO, NULL);
 taskEXIT_CRITICAL();
 vTaskDelete(NULL);</code></pre>
-<p><code>APP_STK_SIZE</code> 当前为 <code>512</code>，<code>APP_TASK_PRIO</code> 当前为 <code>4</code>。创建完成后退出临界区，<code>vTaskDelete(NULL)</code> 删除正在运行的 <code>start_task</code>。这里的 <code>NULL</code> 指向当前任务。启动任务完成使命后释放自己的调度位置，长期工作交给 <code>app_task</code>。</p>
-<p>旧版 <code>main.c</code> 曾经在这里创建 <code>Balance_task</code>、<code>show_task</code>、<code>led_task</code>、<code>data_task</code>、IMU、手柄和自检等多项原厂任务。2026 年 6 月 8 日的改造把入口集中到新的 <code>app_task</code>。这一步让比赛命令拥有单独而清楚的主线，也减少新旧业务同时争用串口和电机的机会。</p>
+<p>临界区可以理解为短时间&quot;锁住调度室的门&quot;。在临界区里，调度器暂时不会切换到其他任务，保证创建关键任务的过程保持连续，不会因为中断或其他任务插进来而导致状态混乱。创建完成后调用 <code>taskEXIT_CRITICAL()</code> 退出临界区，然后 <code>vTaskDelete(NULL)</code> 删除正在运行的 <code>start_task</code>。</p>
+<p>这里的 <code>NULL</code> 指向当前任务本身。启动任务完成使命后，主动释放自己的调度位置，把长期工作交给 <code>app_task</code>。这种&quot;自杀式启动&quot;看起来有点悲壮，其实非常常见：它让启动过程干净利落，不留一个只跑一次的僵尸任务占用资源。</p>
+<p><code>APP_STK_SIZE</code> 当前为 <code>512</code>，<code>APP_TASK_PRIO</code> 当前为 <code>4</code>。也就是说，<code>app_task</code> 拥有一块 512 单位深度的私有栈，以及比启动任务更高的优先级。</p>
+<p>旧版 <code>main.c</code> 曾经在这里创建 <code>Balance_task</code>、<code>show_task</code>、<code>led_task</code>、<code>data_task</code>、IMU、手柄和自检等多项原厂任务。2026 年 6 月 8 日的改造把入口集中到新的 <code>app_task</code>。这一步的好处是：比赛命令从此拥有单独而清楚的主线，不会因为旧业务同时抢占串口和电机而变得难以调试。这也解释了为什么现在看 <code>main.c</code> 会觉得&quot;变轻了&quot;——重活儿被挪到了 <code>LOWER_CONTROLLER</code> 内部，而 <code>main()</code> 只负责搭台子。</p>
 <h2 id="任务与普通函数有什么区别">任务与普通函数有什么区别</h2>
-<p>普通函数通常由调用者进入，工作完成后返回原来的位置。FreeRTOS 任务拥有自己的栈和长期执行路径，调度器可以让它运行、等待、暂停，再从上次停下的位置继续。<code>app_task</code> 里的无限循环因此很自然：接收命令本来就是控制板整个运行期间都要保持的岗位。</p>
-<p>栈可以想成任务自己的临时书桌。函数参数、局部变量和调用关系会在这里留下工作材料。<code>app_task</code> 的 <code>parser</code> 与 <code>frame</code> 都放在这张书桌上，所以 <code>APP_STK_SIZE</code> 要为协议对象和函数调用保留空间。当前值是 512，采用的是工程里的 FreeRTOS 栈深度单位。实际部署时可以借助 FreeRTOS 的栈余量检查功能观察空间是否充足。</p>
-<p>优先级则像值班安排中的响应顺序。<code>app_task</code> 的优先级是 4，启动任务是 1。较高优先级任务在就绪时更早得到运行机会，等待字节期间又会主动让出处理器。合理的任务设计会让高优先级岗位快速完成一次工作，然后进入等待，为其他任务留下时间。</p>
-<p>当前主线只有一个新应用任务。以后加入传感器采样、控制周期和安全监测时，可以根据实时要求决定采用独立任务、定时器回调或由一个任务统一调度。无论采用哪种形式，命令入口仍可以保持在 <code>app_task</code>，把解析完成的业务请求交给清楚的模块接口。</p>
+<p>普通函数通常由调用者进入，工作完成后返回原来的位置，调用栈也随之恢复。FreeRTOS 任务则不同：它拥有自己的栈和长期执行路径，调度器可以让它运行、等待、暂停，再从上次停下的位置继续。<code>app_task</code> 里的无限循环 <code>while (1)</code> 因此非常自然——接收命令本来就是控制板整个运行期间都要保持的岗位，而不是一件&quot;做完就结束&quot;的事。</p>
+<p>栈可以想成任务自己的临时书桌。函数参数、局部变量和函数调用关系会在这里留下工作材料。<code>app_task</code> 里的 <code>parser</code> 与 <code>frame</code> 都摆放在这张书桌上，所以 <code>APP_STK_SIZE</code> 要为协议对象和函数调用保留足够的空间。当前值是 512，这里采用的是工程里 FreeRTOS 的栈深度单位。实际部署时，可以借助 FreeRTOS 的栈余量检查功能（比如 <code>uxTaskGetStackHighWaterMark()</code>）观察空间是否充足。如果发现栈水位逼近 0，就要考虑扩大栈大小或者减少局部变量。</p>
+<blockquote><p><strong>初学者小问：栈不够会怎么样？</strong>
+栈溢出是嵌入式里非常典型又隐蔽的 bug。任务栈被写穿之后，可能破坏相邻任务的内存，表现为莫名其妙的 HardFault、变量被篡改、程序跑飞。养成定期检查栈水位的习惯，能帮你省下大量抓虫时间。</p>
+</blockquote>
+<p>优先级则像值班安排中的响应顺序。<code>app_task</code> 的优先级是 4，启动任务是 1。较高优先级任务在就绪时会更早得到运行机会；而在等待字节期间，它又会主动让出处理器。合理的任务设计会让高优先级岗位快速完成一次工作，然后进入等待，为其他任务留下时间。反过来说，如果高优先级任务一直死循环不释放 CPU，低优先级任务就会&quot;饿死&quot;，系统看起来像卡死一样。</p>
+<p>当前主线只有一个新应用任务。以后加入传感器采样、控制周期和安全监测时，可以根据实时要求决定采用独立任务、定时器回调，还是由一个任务统一调度。无论采用哪种形式，命令入口仍可以保持在 <code>app_task</code>，把解析完成的业务请求交给清楚的模块接口。这样即使系统变复杂，入口始终是清晰的。</p>
 <h2 id="app_task一直守在收发室旁边">app_task：一直守在收发室旁边</h2>
-<p><code>app_task()</code> 位于 <code>LOWER_CONTROLLER/APP/app_main.c</code>。函数开始时在自己的栈上准备三个重要变量：<code>parser</code> 保存协议解析进度，<code>frame</code> 用来容纳完整帧，<code>byte</code> 保存刚刚取出的一个字节。布尔变量 <code>ready</code> 表示一封完整消息是否已经拼好。</p>
+<p><code>app_task()</code> 位于 <code>LOWER_CONTROLLER/APP/app_main.c</code>。函数一开始，会在自己的栈上准备三个重要变量：<code>parser</code> 保存协议解析的当前进度，<code>frame</code> 用来容纳一帧完整消息，<code>byte</code> 保存刚刚从串口取出的一个字节。布尔变量 <code>ready</code> 表示&quot;一封完整消息是否已经拼好&quot;。</p>
 <pre data-label="c"><code class="language-c">comm_parser_init(&amp;parser);
 if (!transport_uart_init()) {
     vTaskDelete(NULL);
     return;
 }</code></pre>
-<p><code>comm_parser_init()</code> 把解析器清空，并让它进入“等待第一个帧头字节”的状态。<code>transport_uart_init()</code> 当前直接返回 <code>true</code>，因为 UART1 的真实硬件初始化已经在 <code>systemInit()</code> 中完成。这个接口仍然很有价值：以后 transport 需要创建队列、清空统计信息或检查端口时，应用层的调用方式可以保持稳定。</p>
-<p>准备结束后，任务进入 <code>while (1)</code>。这是一条长期循环，机器人运行多久，它就守候多久。</p>
+<p><code>comm_parser_init()</code> 把解析器清空，并让它进入&quot;等待第一个帧头字节&quot;的状态。可以把它理解成把拼图的边框先摆好，后面每收到一个字节就往正确位置放一块。</p>
+<p><code>transport_uart_init()</code> 当前直接返回 <code>true</code>，因为 UART1 的真实硬件初始化已经在 <code>systemInit()</code> 中完成。这个接口看似多余，其实很有价值：以后如果 transport 层需要创建自己的队列、清空统计信息、检查端口状态，甚至切换到 DMA 接收，应用层的调用方式可以保持稳定。换句话说，这里为未来的扩展留了一道门，而应用层不需要知道门后面换了什么。</p>
+<p>如果 <code>transport_uart_init()</code> 返回失败，任务会调用 <code>vTaskDelete(NULL)</code> 删除自己并返回。虽然当前实现不会失败，但这个判断体现了嵌入式里的一条好习惯：对可能失败的步骤做防御，避免带着错误状态继续跑。</p>
+<p>准备结束后，任务进入 <code>while (1)</code>。这是一条长期循环，机器人运行多久，它就守候多久。它不像普通函数那样&quot;做完就回家&quot;，而是像收发室的值班员，一直坐在 UART 缓冲区旁边。</p>
 <pre data-label="c"><code class="language-c">while (1) {
     if (!transport_uart_receive_byte(&amp;byte, portMAX_DELAY)) {
         continue;
@@ -141,15 +156,19 @@ if (!transport_uart_init()) {
         ready = false;
     }
 }</code></pre>
-<p><code>portMAX_DELAY</code> 表示愿意一直等到有字节可取。当前 transport 的实现会查看环形缓冲区；缓冲区为空时调用 <code>vTaskDelay(1)</code>，过一个系统节拍再查看。等待期间，调度器可以运行其他就绪任务。</p>
+<p><code>portMAX_DELAY</code> 表示任务愿意一直等到有字节可取。当前 transport 的实现会查看环形缓冲区；缓冲区为空时调用 <code>vTaskDelay(1)</code>，过一个系统节拍再查看。等待期间，调度器可以运行其他就绪任务，CPU 不会被空转浪费。</p>
 <p>每取到一个字节，任务就把它交给 <code>comm_parser_process_byte()</code>。解析器可能还在等待帧头，也可能正在收集头部、payload 或 CRC。只要消息还没收完，<code>ready</code> 就保持 <code>false</code>。版本错误、payload 过大或 CRC 错误会让函数返回对应错误，应用循环跳过这一轮，继续等待下一次输入。</p>
-<p>当 <code>ready</code> 变成 <code>true</code>，<code>frame</code> 里已经有版本、帧类型、序号、payload 长度和 payload 内容。应用层这时才调用 <code>command_dispatcher_handle_frame()</code>。字节运输与业务动作在这里完成交接。</p>
+<p>当 <code>ready</code> 变成 <code>true</code>，<code>frame</code> 里已经有版本号、帧类型、序号、payload 长度和 payload 内容。应用层这时才调用 <code>command_dispatcher_handle_frame()</code>。字节运输与业务动作在这里完成交接：transport 只负责&quot;把字节搬到门口&quot;，protocol 负责&quot;检查这封信是否完整&quot;，APP 负责&quot;根据信的内容办事&quot;。</p>
 <h2 id="一次循环只推进一小步">一次循环只推进一小步</h2>
-<p><code>app_task</code> 每轮只取一个字节，这种写法与协议解析器很合拍。假设一帧共有 14 个字节，循环会运行 14 次。前 13 次不断更新解析状态，第 14 次收到 CRC 的最后一个字节后，<code>ready</code> 才会变为真。任务无需提前知道串口会在什么时刻送完一帧，也无需把一次读取强行凑成固定长度。</p>
-<p>逐字节处理还允许相邻帧紧接着到达。第一帧处理完后，解析器已经回到等待帧头的状态，下一轮便能识别下一组 <code>AA 55</code>。消息中间暂停一小段时间时，已收内容保存在 <code>parser</code> 中，后续字节到来后接着推进。</p>
-<p>错误也在很小的范围内处理。某一帧的版本或 CRC 不合要求时，解析器复位，任务继续守候新的帧头。应用层得到的 <code>frame</code> 都经过完整性检查，命令分发器可以把注意力放在命令 ID 与参数上。通信噪声、帧格式和业务动作由此获得各自的处理位置。</p>
+<p><code>app_task</code> 每轮循环只取一个字节，这种写法与协议解析器非常合拍。假设一帧共有 14 个字节，循环会运行 14 次。前 13 次不断更新解析状态，第 14 次收到 CRC 的最后一个字节后，<code>ready</code> 才会变为真。</p>
+<p>这种设计的妙处在于：任务无需提前知道串口会在什么时刻送完一帧，也无需把一次读取强行凑成固定长度。串口是流式通信，字节可能连续到达，也可能断断续续到达；逐字节处理让程序对 timing 的变化天然不敏感。</p>
+<p>逐字节处理还允许相邻帧紧接着到达。第一帧处理完后，解析器已经回到等待帧头的状态，下一轮循环便能识别下一组 <code>AA 55</code>。消息中间即使暂停一小段时间，已收内容也会安全保存在 <code>parser</code> 中，后续字节到来后接着推进，而不会因为&quot;等久了就忘了前面收到什么&quot;而丢帧。</p>
+<p>错误也在很小的范围内处理。某一帧的版本或 CRC 不合要求时，解析器复位，任务继续守候新的帧头。应用层得到的 <code>frame</code> 都经过完整性检查，命令分发器可以把注意力放在命令 ID 与参数上，不用再担心收到半截数据。通信噪声、帧格式校验和业务动作由此获得各自的处理位置，问题定位时也能更快缩小范围。</p>
+<blockquote><p><strong>初学者小问：为什么不一次性读完整帧再处理？</strong>
+理论上可以，但嵌入式串口通常一次只收到少量字节，而且帧与帧之间可能紧挨着。如果硬要等满 14 个字节，可能会把下一帧的前几个字节也读进来，增加拆帧难度；如果设一个固定超时，又会让响应变慢。逐字节处理配合状态机，是一种简单、可靠、容易扩展的做法。</p>
+</blockquote>
 <h2 id="八个模块组成的新骨架">八个模块组成的新骨架</h2>
-<p><code>LOWER_CONTROLLER</code> 把新业务分成八个目录。命令先由 <code>TRANSPORT</code> 接收，再由 <code>PROTOCOL</code> 整理成完整消息，随后交给 <code>APP</code> 安排动作。<code>MOTION</code> 承接底盘控制，<code>ACTUATORS</code> 和 <code>SENSORS</code> 将继续接入机构与反馈；<code>BOARD</code> 和 <code>COMMON</code> 为这条链提供配置与公共工具。下面的图展示了它们之间的数据流。</p>
+<p><code>LOWER_CONTROLLER</code> 把新业务分成八个目录。可以把它们想象成一个小型工厂的车间：命令先由 <code>TRANSPORT</code> 接收，相当于门卫把货车领进来；再由 <code>PROTOCOL</code> 整理成完整消息，相当于质检员检查货物清单；随后交给 <code>APP</code> 安排动作，相当于调度室下发工单。<code>MOTION</code> 承接底盘控制，<code>ACTUATORS</code> 和 <code>SENSORS</code> 将继续接入机构与反馈；<code>BOARD</code> 和 <code>COMMON</code> 为这条链提供配置与公共工具。下面的图展示了它们之间的数据流。</p>
 <div class="mermaid">flowchart LR
     T["TRANSPORT<br/>收发字节"] --> P["PROTOCOL<br/>拼帧与校验"]
     P --> A["APP<br/>命令分发"]
@@ -160,9 +179,19 @@ if (!transport_uart_init()) {
     B -.-> M
     C["COMMON<br/>公共工具"] -.-> A</div>
 <p>截至当前版本，<code>APP</code>、<code>PROTOCOL</code>、UART <code>TRANSPORT</code> 和 <code>BOARD</code> 已经进入编译与调用链，<code>MOTION</code> 接入了持续平移、持续旋转和停止。<code>ACTUATORS</code> 与 <code>SENSORS</code> 仍以 README 里的接口规划为主，<code>COMMON</code> 也等待实际公共代码。Keil 工程文件已经包含应用、协议、通信和运动层的 C 文件，这一点说明它们属于当前固件目标的一部分。</p>
+<blockquote><p><strong>初学者小问：为什么 <code>BOARD</code> 和 <code>COMMON</code> 用虚线？</strong>
+虚线表示它们不像 <code>TRANSPORT -&gt; PROTOCOL -&gt; APP</code> 那样直接传递数据，而是作为&quot;基础设施&quot;被其他层依赖。比如 <code>BOARD</code> 提供板级引脚定义、时钟配置，<code>COMMON</code> 提供错误码、宏和工具函数。它们不参与主数据流，但没有它们，其他层就站不稳。</p>
+</blockquote>
 <h2 id="每层都守住自己的门">每层都守住自己的门</h2>
-<p>分层的价值会在修改时显现。串口中断把字节送入 transport，协议解析器检查并整理消息，命令分发器选择业务接口，运动层计算轮位输出，最后通过 <code>HARDWARE/motor</code> 的宏写入真实电机通道。每一层都有清楚的输入和输出。</p>
-<p>这种边界使同一个 <code>START_MOTION</code> 可以被逐段检查。<code>app_task</code> 收不到字节时，重点落在串口中断与缓冲区；解析器持续报 CRC 错误时，重点落在上下位机帧格式；分发器返回 <code>BAD_PAYLOAD</code> 时，重点落在命令参数；ACK 成功后轮子状态异常时，重点落在运动映射与硬件输出。</p>
+<p>分层的价值会在修改时显现。串口中断把字节送入 transport，协议解析器检查并整理消息，命令分发器选择业务接口，运动层计算轮位输出，最后通过 <code>HARDWARE/motor</code> 的宏写入真实电机通道。每一层都有清楚的输入和输出，就像流水线上的每道工序只负责自己的环节。</p>
+<p>这种边界使同一个 <code>START_MOTION</code> 可以被逐段检查：</p>
+<ul>
+<li><code>app_task</code> 收不到字节时，重点落在串口中断与缓冲区；</li>
+<li>解析器持续报 CRC 错误时，重点落在上下位机帧格式是否一致；</li>
+<li>分发器返回 <code>BAD_PAYLOAD</code> 时，重点落在命令参数是否越界；</li>
+<li>ACK 成功后轮子状态异常时，重点落在运动映射与硬件输出。</li>
+</ul>
+<p>如果没有这种分层，所有问题都会挤在同一个函数里，调试时就像在一团毛线里找线头。分层之后，每一层都守住自己的门，故障范围自然被限制住。</p>
 <p>上电故事已经走到一个安静的画面：硬件完成初始化，FreeRTOS 正在运行，<code>app_task</code> 守着 UART 接收缓冲区。电脑现在送出 <code>START_MOTION</code> 的第一个字节。下一章将把时间放慢，观察它怎样经过 PA10、中断、环形缓冲区和协议状态机，最后重新变成一条可执行的命令。</p>
 
     <nav class="pager">  <a href="01-hardware-origin.html">
