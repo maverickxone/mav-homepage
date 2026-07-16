@@ -2,25 +2,41 @@
   "documents": [
     {
       "id": "00-preface",
-      "title": "开篇：一条命令，为什么需要下位机",
+      "title": "开篇：一条命令的旅程",
       "chapter": "01",
-      "chapterTitle": "开篇：一条命令，为什么需要下位机",
+      "chapterTitle": "开篇：一条命令的旅程",
       "url": "chapters/00-preface.html",
-      "body": "\n   调试台边的一次“向前”\n\n先设想一个调试场景：机器人被牢牢固定在调试架上，四个轮子悬空，不会真的冲出去；上位机的调试界面已经打开，操作员正准备点击“向前”按钮。这个场景是我们阅读源码的入口——它把抽象的代码变成了一件具体的事：电脑说“向前”，机器人怎么听懂、怎么动起来的？实际比赛时界面可能更复杂，实车动作也会受到场地、负载和闭环参数的影响，但这里我们只关注源码能够证明的旅程。\n\n当操作员点击按钮后，上位机软件会把“开始向前运动”这条语义编码成一串字节。这些字节沿着串口线进入控制板，控制板一边接收，一边检查：这串字节是不是一个完整的命令？有没有在传输中被干扰？命令号代表什么？需要几个参数？等一切核对无误，控制板才会认出“向前”这个方向，再把对应的四路控制量送到电机输出接口。到这里，源码能够证明的旅程已经从“通信”走到了“硬件寄存器”。\n\n这条命令在代码中的名字叫  START MOTION 。 start  表示开始， motion  表示运动。它会让控制板持续输出 PWM，驱动四个轮子向前转动，直到  STOP MOTION  命令到达，或者有新的命令改写当前输出。换句话说， START MOTION  不是“走一步就停”，而是“进入向前的运动状态”，直到被显式停止或覆盖。\n\n本书会一直跟着这条命令走。我们先看电脑和控制板如何分工，再认识 STM32、串口、电机和传感器这些“演员”，随后从上电启动走进中断、缓冲区、协议解析器、命令分发器和运动控制层。当最终走到四路电机输出被写入时，整个项目也会从一组看似零散的目录，变成一条连贯的故事线。\n\n   mermaid\nflowchart LR\n    A \"电脑发出 START MOTION\"      B \"UART1 收到字节\" \n    B     C \"协议解析器拼出完整帧\" \n    C     D \"命令分发器读出方向\" \n    D     E \"运动层计算四个轮子的动作\" \n    E     F \"电机驱动输出方向与 PWM\" \n    F     G \"四路电机输出完成写入\" \n    D     H \"控制板回送 ACK\" \n   \n\n    初学者小提示  ：上面这张图不是 decorative（装饰性的），而是我们的“阅读地图”。以后每次打开一个源文件，都可以问自己：这条命令现在走到了图里的哪一步？这样就不会迷失在细节里。\n\n   两台计算机，各自做擅长的事\n\n机器人里常见两种角色：  上位机（host computer）  和  下位机（lower controller）  。这两个名字描述的是分工关系，而不是某个固定的硬件型号。上位机可以是一台笔记本电脑、一个工控机，甚至是一块性能较强的单板计算机；下位机通常就是 STM32 这样的微控制器板。\n\n上位机通常拥有更强的计算能力，适合处理界面、路径规划、视觉识别和任务安排。它像拿着地图的领航员，知道接下来要往哪里走，也知道整场任务的全局节奏。下位机则靠近电机和传感器，适合按稳定的节奏收发数据、控制引脚和处理紧急动作。它像坐在驾驶位上的驾驶员，双手握着方向盘，双脚能够及时踩下踏板。\n\n    常见的疑问  ：为什么不让上位机直接控制电机？\n \n  理论上可以，但实际上上位机运行的是通用操作系统，调度不够确定，一次按键可能经过几十毫秒甚至更久才真正影响到引脚。而机器人控制需要毫秒级甚至微秒级的响应，电机电流突变、编码器脉冲、急停信号都要求立刻处理。下位机专门干这件事，比上位机更可靠。\n\n领航员说“向前”，驾驶员还要把这句话落实成许多细节：方向是否有效？车辆当前是否允许动作？四个轮子分别朝哪边转？输出多大的动力？什么时候停下？这些细节就是下位机固件的工作内容。RoboGame 2026 当前仓库负责的正是这部分工作。根目录的  README.md  把它称为“机器人比赛下位机固件仓库”，目标包括接收上位机命令、执行底盘与机构动作，并按通信协议返回信息。\n\n这里的“固件（firmware）”可以理解为住在控制板里的程序。普通电脑上的程序常常面对文件、窗口和网络；固件直接面对电压、引脚、定时器和中断。它一边要懂“向前”这样的业务含义，一边要知道哪一个寄存器会改变电机的 PWM。固件通常烧录进芯片的 Flash 里，上电后直接运行，不需要像普通软件那样先经过复杂的启动过程。\n\n   STM32 是机器人的现场管家\n\n这块控制板的核心是 STM32F407 系列微控制器。仓库中的 Keil 工程把目标设备写为  STM32F407VE ，C50C 原理图上标出了  F407VET6 。  微控制器（microcontroller，MCU）  是一颗适合控制现场设备的小型计算机，处理器、存储器和许多外设都放在同一颗"
+      "body": "\n   在开始之前\n\n这本书要讲的，是一台机器人\"从内部看\"是怎样工作的。\n\n你有没有想过：当你在电脑上点了一个\"向前\"按钮，机器人是怎样理解这个指令、然后真正转动轮子的？这背后涉及的并不只是\"写一个程序\"那么简单——它需要两台计算机配合、需要一套约定好的通信规则、需要把抽象的文字指令变成电机的转动。\n\n这个领域有一个名字，叫  嵌入式（embedded systems）  。简单来说，嵌入式就是\"把一台微型电脑塞进一个设备里，让它专门控制这个设备\"。你身边的洗衣机、电梯、空调遥控器，里面都有这样的微型电脑在工作。我们这本书里的机器人控制板，也是一个嵌入式系统。\n\n不用担心——  你不需要提前懂编程或电子电路  。每个术语在第一次出现时，我们都会用日常生活中的比喻来解释它。慢慢来，跟着这条命令一步一步走，你一定能看懂。\n\n:::callout 🎯 本章你会学到\n  机器人里\"上位机\"和\"下位机\"分别是什么，它们怎样分工\n  一条\"向前\"命令从电脑到电机，中间会经过哪些步骤\n  为什么程序要分成好几层，每层各做什么\n  本书的整体结构和阅读方法\n:::\n\n   调试台边的一次\"向前\"\n\n先设想一个调试场景：机器人被牢牢固定在调试架上，四个轮子悬空，不会真的冲出去。上位机的调试界面已经打开，操作员正准备点击\"向前\"按钮。\n\n现在问题来了：电脑说\"向前\"，机器人怎么听懂？\"向前\"这两个字并不能直接让轮子转起来——它需要被翻译、被传输、被检查、被拆解，最终才能变成电机的实际动作。这个过程，就是我们整本书要追踪的旅程。\n\n这个场景就是我们阅读源码的入口。实际比赛时界面可能更复杂，实车动作也会受到场地、负载的影响，但在这里，我们只关注源码能够证明的旅程——从\"电脑发出命令\"一直到\"电机开始转动\"。\n\n   命令是怎样被传递的\n\n当操作员点击按钮后，上位机软件会把\"开始向前运动\"这条语义编码成一串  字节（byte）  。\n\n:::callout 💡 零基础小课堂：什么是字节？\n一个字节就是一个 0 到 255 之间的数字。计算机之间传递信息时，所有内容——文字、命令、图片——最终都会变成一连串这样的数字。你可以把字节想象成一个个小积木块，电脑用不同的积木组合来表达不同的含义。\n:::\n\n这些字节会沿着  串口（serial port）  线进入控制板。\n\n:::callout 💡 零基础小课堂：什么是串口？\n串口就像两台设备之间的一根\"对讲机连接线\"。数据通过这根线，一个字节接一个字节地依次传送（所以叫\"串\"口——串成一串）。在我们的项目里，电脑（上位机）和控制板（下位机）就是通过串口来对话的。\n:::\n\n控制板收到字节后，会一边接收，一边检查：这串字节是不是一个完整的命令？有没有在传输中被干扰？命令号代表什么？需要几个参数？等一切核对无误，控制板才会认出\"向前\"这个方向，再把对应的控制量送到电机输出接口。到这里，源码能够证明的旅程已经从\"通信\"走到了\"硬件  寄存器  （register，芯片内部的小格子，往里写数字就能控制硬件的行为）\"。\n\n这条命令在代码中的名字叫  START MOTION 。 start  表示开始， motion  表示运动。它会让控制板持续输出   PWM（一种控制电机转速的方式，第 1 章会详细讲）  ，驱动四个轮子向前转动，直到  STOP MOTION  命令到达，或者有新的命令改写当前输出。换句话说， START MOTION  不是\"走一步就停\"，而是\"进入向前的运动状态\"，直到被明确停止或覆盖。\n\n本书会一直跟着这条命令走。我们先看电脑和控制板如何分工，再认识 STM32、串口、电机和传感器这些\"演员\"，随后从上电启动走进中断、缓冲区、  协议（protocol，两台设备之间约好的通信规则，就像两个人事先商量好的暗号）  解析器、命令分发器和运动控制层。当最终走到四路电机输出被写入时，整个项目也会从一组看似零散的目录，变成一条连贯的故事线。\n\n下面这张流程图展示的就是  START MOTION  从电脑到电机的完整旅程。你不需要现在就记住每一步——它是我们的\"阅读地图\"，以后每次打开一个源文件，都可以回来看看：这条命令现在走到了图里的哪一步？\n\n   mermaid\nflowchart LR\n    A \"电脑发出 START MOTION\"      B \"UART1 收到字节\" \n    B     C \"协议解析器拼出完整帧\" \n    C     D \"命令分发器读出方向\" \n    D     E \"运动层计算四个轮子的动作\" \n    E     F \"电机驱动输出方向与 PWM\" \n    F     G \"四路电机输出完成写入\" \n    D     H \"控制板回送 AC"
     },
     {
-      "id": "00-preface-调试台边的一次向前",
-      "title": "调试台边的一次“向前”",
+      "id": "00-preface-在开始之前",
+      "title": "在开始之前",
       "chapter": "01",
-      "chapterTitle": "开篇：一条命令，为什么需要下位机",
-      "url": "chapters/00-preface.html#调试台边的一次向前",
+      "chapterTitle": "开篇：一条命令的旅程",
+      "url": "chapters/00-preface.html#在开始之前",
+      "body": ""
+    },
+    {
+      "id": "00-preface-调试台边的一次quot向前quot",
+      "title": "调试台边的一次&quot;向前&quot;",
+      "chapter": "01",
+      "chapterTitle": "开篇：一条命令的旅程",
+      "url": "chapters/00-preface.html#调试台边的一次quot向前quot",
+      "body": ""
+    },
+    {
+      "id": "00-preface-命令是怎样被传递的",
+      "title": "命令是怎样被传递的",
+      "chapter": "01",
+      "chapterTitle": "开篇：一条命令的旅程",
+      "url": "chapters/00-preface.html#命令是怎样被传递的",
       "body": ""
     },
     {
       "id": "00-preface-两台计算机各自做擅长的事",
       "title": "两台计算机，各自做擅长的事",
       "chapter": "01",
-      "chapterTitle": "开篇：一条命令，为什么需要下位机",
+      "chapterTitle": "开篇：一条命令的旅程",
       "url": "chapters/00-preface.html#两台计算机各自做擅长的事",
       "body": ""
     },
@@ -28,7 +44,7 @@
       "id": "00-preface-stm32-是机器人的现场管家",
       "title": "STM32 是机器人的现场管家",
       "chapter": "01",
-      "chapterTitle": "开篇：一条命令，为什么需要下位机",
+      "chapterTitle": "开篇：一条命令的旅程",
       "url": "chapters/00-preface.html#stm32-是机器人的现场管家",
       "body": ""
     },
@@ -36,7 +52,7 @@
       "id": "00-preface-一份原厂工程长出一条新的业务主线",
       "title": "一份原厂工程，长出一条新的业务主线",
       "chapter": "01",
-      "chapterTitle": "开篇：一条命令，为什么需要下位机",
+      "chapterTitle": "开篇：一条命令的旅程",
       "url": "chapters/00-preface.html#一份原厂工程长出一条新的业务主线",
       "body": ""
     },
@@ -44,7 +60,7 @@
       "id": "00-preface-程序为什么要分层",
       "title": "程序为什么要分层",
       "chapter": "01",
-      "chapterTitle": "开篇：一条命令，为什么需要下位机",
+      "chapterTitle": "开篇：一条命令的旅程",
       "url": "chapters/00-preface.html#程序为什么要分层",
       "body": ""
     },
@@ -52,63 +68,175 @@
       "id": "00-preface-同一条命令会换好几种模样",
       "title": "同一条命令，会换好几种模样",
       "chapter": "01",
-      "chapterTitle": "开篇：一条命令，为什么需要下位机",
+      "chapterTitle": "开篇：一条命令的旅程",
       "url": "chapters/00-preface.html#同一条命令会换好几种模样",
+      "body": ""
+    },
+    {
+      "id": "00-preface-全书阅读地图",
+      "title": "全书阅读地图",
+      "chapter": "01",
+      "chapterTitle": "开篇：一条命令的旅程",
+      "url": "chapters/00-preface.html#全书阅读地图",
       "body": ""
     },
     {
       "id": "00-preface-本书怎样使用仓库证据",
       "title": "本书怎样使用仓库证据",
       "chapter": "01",
-      "chapterTitle": "开篇：一条命令，为什么需要下位机",
+      "chapterTitle": "开篇：一条命令的旅程",
       "url": "chapters/00-preface.html#本书怎样使用仓库证据",
       "body": ""
     },
     {
+      "id": "00-preface-本章新词",
+      "title": "本章新词",
+      "chapter": "01",
+      "chapterTitle": "开篇：一条命令的旅程",
+      "url": "chapters/00-preface.html#本章新词",
+      "body": ""
+    },
+    {
       "id": "01-hardware-origin",
-      "title": "从通用小车到比赛底盘",
+      "title": "认识机器人的身体：控制板、电机和传感器",
       "chapter": "02",
-      "chapterTitle": "从通用小车到比赛底盘",
+      "chapterTitle": "认识机器人的身体：控制板、电机和传感器",
       "url": "chapters/01-hardware-origin.html",
-      "body": "\n   命令来到控制板门口\n\n上一章里，电脑已经准备好一条  START MOTION 。在它变成四个轮子的动作之前，我们先沿着串口线走到控制板旁边。\n\n一块控制板看上去布满芯片、插座和走线。初学者很容易把它看成一整块难懂的黑盒，甚至有些畏惧：这里一根线，那里一个电容，到底该从哪里看起？换一个角度，它其实更像机器人的身体：STM32 负责组织工作，串口负责听取消息，电机输出像肌肉，编码器与 IMU 提供感觉，蜂鸣器和 OLED 帮助人了解现场状态。每个部件只负责一小段任务，组合起来才完成一次运动。理解这个身体，不是为了记住每一块芯片的名字，而是为了知道：当电脑发来一条命令时，这条命令会经过哪些“器官”，最后怎样变成轮子转动。\n\n仓库根目录有一份 C50C 原理图。图中主控标记为  F407VET6 ，Keil 工程的目标设备写成  STM32F407VE 。这里的核心型号都指向 STM32F407 系列，工程按这个芯片系列选择启动文件、寄存器定义和下载算法。对初学者来说，只要记住：这块板子的“大脑”是 STM32F407，后面我们看到的串口、定时器、GPIO 都是它身上的外设。\n\n    小提示  ：看原理图时不用一开始就把每一页都看懂。先找到主控芯片、电源部分、电机接口、串口接口，剩下的细节可以随着调试逐步补充。\n\n   STM32F407：站在现场中央的指挥者\n\n  STM32F407 微控制器（microcontroller，MCU）   是一颗能够独立运行固件的芯片。它里面有处理器，也有串口、定时器、GPIO 等外设。你可以把它想象成一台高度集成的小型计算机：CPU 负责思考，闪存（Flash）负责记住程序，RAM 负责临时存放数据，而外设则负责和外界打交道。微控制器和普通电脑 CPU 的区别在于，它把“计算”和“控制”打包在了一起，而且非常重视实时性——外界事件来了，它需要在可预测的时间内做出反应。\n\nGPIO 的全称是 General Purpose Input/Output，中文常叫通用输入输出口。它像一排可以安排不同工作的门：有的门读取开关电平，有的门输出电机方向，有的门切换到串口或定时器功能。同一根引脚在不同配置下可以做完全不同的事情，这种灵活性是 STM32 强大的地方，也是初学者一开始容易迷糊的地方。好在工程里已经把引脚用途写进了初始化代码，我们只需要知道“这个引脚现在被配置成什么功能”，就可以继续往下读了。\n\n微控制器很适合守在机器人现场。电脑发送消息的时刻无法精确预测，轮子反馈的脉冲也会不断到来。STM32 可以用   中断（interrupt）   及时处理这些事件。中断像服务台上的呼叫铃：平时工作人员做自己手里的事，铃响时，他先接住眼前的紧急事项，处理完再回到原来的工作。没有中断的话，程序就只能一直轮询“有没有新数据”，既浪费 CPU 时间，又可能错过关键时机。\n\n项目启动时， systemInit    会先设置中断优先级分组，再初始化延时、I²C、系统参数、串口、电机 PWM、ICM20948、蜂鸣器、使能按键、用户按键、OLED 和四路编码器。这段代码位于  USER/system.c ，它相当于开馆前逐间亮灯和检查设备：先确定谁有优先权（中断分组），再按顺序把每个外设唤醒。这个顺序不是随便写的，例如 I²C 要在 ICM20948 之前准备好，串口要在命令进来之前打开，电机 PWM 要在任何运动指令下发之前配置好。\n\n   c\nUART1 Init 115200 ;\nMiniBalance PWM Init 16799, 0 ;\nICM20948 Init  ;\n\nEncoderA Init  ;\nEncoderB Init  ;\nEncoderC Init  ;\nEncoderD Init  ;\n   \n\n这几行展示了硬件的主干。UART1 准备以  115200  波特率收发消息；定时器准备产生四路电机 PWM；IMU 完成初始化；A、B、C、D 四路编码器也都可以开始计数。初始化完成代表设备已经具备工作条件，但“具备条件”不等于“正在参与控制”。就像把乐器都调好了音，但乐曲什么时候开始演奏，还要看后面的指挥。各项数据何时进入新业务，还要由后面的任务安排。\n\n    初学者常见疑问  ：为什么初始化函数的名字有的叫  Init ，有的叫   Init ？这主要是代码风格问题，不同文件作者习惯不同。阅读时重点是看它初始化了哪个外设、用了哪个定时器、哪个引脚。\n\n   UART1：命令进入机器人的门\n\n  UART（Universal Asynchronous Receiver/Transmitter，通用异步收发器）   是一种常见串行通信方式。“串行”表示数据沿一条线路按时间顺序逐位通"
+      "body": "\n:::callout 🔄 上一章回顾\n上一章我们跟着一条  START MOTION  命令出发，认识了  上位机  （电脑，负责发号施令）和  下位机  （控制板，负责现场执行）。我们知道了命令会通过  串口  这条\"对讲机线\"从电脑传给控制板，最终变成电机转动。现在，我们要走到控制板旁边，看看它的\"身体\"究竟由哪些零件组成。\n:::\n\n:::callout 🎯 本章你会学到\n  STM32 控制芯片是什么，为什么它能当机器人的\"大脑\"\n  串口通信（UART）的工作原理——电脑和控制板如何\"对话\"\n  电机是怎样被控制方向和力道的（H 桥和 PWM）\n  编码器如何让机器人\"知道\"轮子转了多少\n  IMU 如何让机器人\"感受\"自己的姿态\n  原厂小车怎样被改造成比赛机器人\n:::\n\n   命令来到控制板门口\n\n上一章里，电脑已经准备好一条  START MOTION 。在它变成四个轮子的动作之前，我们先沿着串口线走到控制板旁边，看看这块板子上都有些什么。\n\n一块控制板看上去布满芯片、插座和走线，初学者很容易感到不知所措——这里一根线，那里一个电容，到底该从哪里看起？不用担心，换个角度想，它其实更像  机器人的身体  ：\n\n    STM32 芯片   是大脑，负责组织所有工作\n    串口   是耳朵，负责听取电脑发来的消息\n    电机输出   是肌肉，负责让轮子转动\n    编码器和 IMU   是感觉器官，告诉大脑\"轮子转了多少\"\"身体有没有歪\"\n    蜂鸣器和 OLED 屏   帮助人了解机器人当前的状态\n\n每个部件只负责一小段任务，组合起来才完成一次运动。理解这个身体，不是为了记住每一块芯片的名字，而是为了知道：当电脑发来一条命令时，这条命令会经过哪些\"器官\"，最后怎样变成轮子转动。\n\n   STM32F407：机器人的大脑\n\n    普通电脑和嵌入式芯片有什么不同？\n\n在认识 STM32 之前，我们先想一个问题：你的笔记本电脑和机器人里的芯片，有什么不同？\n\n你的电脑有 CPU、硬盘、内存、USB 接口、Wi Fi 模块……这些东西分散在主板上，体积大、功耗高，需要风扇散热。但机器人不需要这么多功能——它不用打开浏览器、不用播放视频，它只需要做一件事：  接收命令，控制电机，读取传感器  。\n\n想象一下你的手机芯片：它把处理器、内存、通信模块全部集成在一块指甲盖大小的芯片里。机器人的控制芯片也是类似的思路，只不过它更专注于  控制硬件  ，而不是运行 App。这种\"把电脑缩小、专门用来控制设备\"的芯片，就叫  微控制器（microcontroller，简称 MCU）  。\n\n    认识 STM32F407\n\n  STM32F407   就是我们这个项目使用的 MCU。它里面包含了一台小型电脑需要的一切：\n\n:::callout 💡 零基础小课堂：芯片里的\"硬盘\"和\"草稿纸\"\n    Flash（闪存）  ——芯片的\"硬盘\"。你写好的程序会被存储在这里，断电也不会丢失。每次芯片通电，它就从 Flash 里读出程序开始执行。\n    RAM（随机存取存储器）  ——芯片的\"草稿纸\"。程序运行时产生的临时数据（比如当前电机速度、传感器读数）放在这里。断电后这些数据就清空了，就像擦掉草稿纸上的字。\n:::\n\n除了 Flash 和 RAM，STM32 还有很多  外设  ——串口、定时器、GPIO 等等。这些外设让芯片能和外界打交道：通过串口和电脑通信，通过定时器产生精确的控制信号，通过 GPIO 读取传感器。\n\n:::callout 💡 零基础小课堂：GPIO——万能接口\n  GPIO   的全称是 General Purpose Input/Output（通用输入输出口）。你可以把它想象成一排  可以自由分配工作的万能接口  ：有的接口被安排去读取开关状态，有的被安排去控制电机方向，有的被切换成串口功能。同一个接口在不同配置下可以做完全不同的事情——这种灵活性是 STM32 强大的地方。好在工程里已经把每个接口的用途写进了初始化代码，我们只需要知道\"这个接口现在被配成了什么功能\"就好。\n:::\n\nMCU 和普通电脑 CPU 的关键区别在于：它把\"计算\"和\"控制\"打包在了一起，而且非常重视  实时性  ——外界事件来了（比如串口收到一个字节），它需要在可预测的时间内做出反应，不能像电脑那样\"等一会儿再说\"。\n\n:::callout 💡 零基础小课堂：寄存器——芯片内部的\"控制开关\"\n你可能会在代码里看到\"寄存器\"这个词。  寄存器（register）   是芯片内部的一些小格子，每个格子里存着一个数字。往格子里写入不同的数字，就能控制硬件的不同行为——比如设置串口的通信速度、改变电机的输出大小。你可以把"
     },
     {
       "id": "01-hardware-origin-命令来到控制板门口",
       "title": "命令来到控制板门口",
       "chapter": "02",
-      "chapterTitle": "从通用小车到比赛底盘",
+      "chapterTitle": "认识机器人的身体：控制板、电机和传感器",
       "url": "chapters/01-hardware-origin.html#命令来到控制板门口",
       "body": ""
     },
     {
-      "id": "01-hardware-origin-stm32f407站在现场中央的指挥者",
-      "title": "STM32F407：站在现场中央的指挥者",
+      "id": "01-hardware-origin-stm32f407机器人的大脑",
+      "title": "STM32F407：机器人的大脑",
       "chapter": "02",
-      "chapterTitle": "从通用小车到比赛底盘",
-      "url": "chapters/01-hardware-origin.html#stm32f407站在现场中央的指挥者",
+      "chapterTitle": "认识机器人的身体：控制板、电机和传感器",
+      "url": "chapters/01-hardware-origin.html#stm32f407机器人的大脑",
+      "body": ""
+    },
+    {
+      "id": "01-hardware-origin-普通电脑和嵌入式芯片有什么不同",
+      "title": "普通电脑和嵌入式芯片有什么不同？",
+      "chapter": "02",
+      "chapterTitle": "认识机器人的身体：控制板、电机和传感器",
+      "url": "chapters/01-hardware-origin.html#普通电脑和嵌入式芯片有什么不同",
+      "body": ""
+    },
+    {
+      "id": "01-hardware-origin-认识-stm32f407",
+      "title": "认识 STM32F407",
+      "chapter": "02",
+      "chapterTitle": "认识机器人的身体：控制板、电机和传感器",
+      "url": "chapters/01-hardware-origin.html#认识-stm32f407",
+      "body": ""
+    },
+    {
+      "id": "01-hardware-origin-中断随时接听的quot来电quot",
+      "title": "中断：随时接听的&quot;来电&quot;",
+      "chapter": "02",
+      "chapterTitle": "认识机器人的身体：控制板、电机和传感器",
+      "url": "chapters/01-hardware-origin.html#中断随时接听的quot来电quot",
+      "body": ""
+    },
+    {
+      "id": "01-hardware-origin-systeminit开馆前逐间亮灯",
+      "title": "systemInit()：开馆前逐间亮灯",
+      "chapter": "02",
+      "chapterTitle": "认识机器人的身体：控制板、电机和传感器",
+      "url": "chapters/01-hardware-origin.html#systeminit开馆前逐间亮灯",
       "body": ""
     },
     {
       "id": "01-hardware-origin-uart1命令进入机器人的门",
       "title": "UART1：命令进入机器人的门",
       "chapter": "02",
-      "chapterTitle": "从通用小车到比赛底盘",
+      "chapterTitle": "认识机器人的身体：控制板、电机和传感器",
       "url": "chapters/01-hardware-origin.html#uart1命令进入机器人的门",
+      "body": ""
+    },
+    {
+      "id": "01-hardware-origin-什么是串口通信",
+      "title": "什么是串口通信？",
+      "chapter": "02",
+      "chapterTitle": "认识机器人的身体：控制板、电机和传感器",
+      "url": "chapters/01-hardware-origin.html#什么是串口通信",
+      "body": ""
+    },
+    {
+      "id": "01-hardware-origin-uart1-的具体配置",
+      "title": "UART1 的具体配置",
+      "chapter": "02",
+      "chapterTitle": "认识机器人的身体：控制板、电机和传感器",
+      "url": "chapters/01-hardware-origin.html#uart1-的具体配置",
+      "body": ""
+    },
+    {
+      "id": "01-hardware-origin-1152008n1通信的quot约定quot",
+      "title": "115200，8N1——通信的&quot;约定&quot;",
+      "chapter": "02",
+      "chapterTitle": "认识机器人的身体：控制板、电机和传感器",
+      "url": "chapters/01-hardware-origin.html#1152008n1通信的quot约定quot",
+      "body": ""
+    },
+    {
+      "id": "01-hardware-origin-uart3原厂保留的备用通道",
+      "title": "UART3：原厂保留的备用通道",
+      "chapter": "02",
+      "chapterTitle": "认识机器人的身体：控制板、电机和传感器",
+      "url": "chapters/01-hardware-origin.html#uart3原厂保留的备用通道",
       "body": ""
     },
     {
       "id": "01-hardware-origin-电机输出方向和力道分开表达",
       "title": "电机输出：方向和力道分开表达",
       "chapter": "02",
-      "chapterTitle": "从通用小车到比赛底盘",
+      "chapterTitle": "认识机器人的身体：控制板、电机和传感器",
       "url": "chapters/01-hardware-origin.html#电机输出方向和力道分开表达",
+      "body": ""
+    },
+    {
+      "id": "01-hardware-origin-方向控制h-桥",
+      "title": "方向控制：H 桥",
+      "chapter": "02",
+      "chapterTitle": "认识机器人的身体：控制板、电机和传感器",
+      "url": "chapters/01-hardware-origin.html#方向控制h-桥",
+      "body": ""
+    },
+    {
+      "id": "01-hardware-origin-力道控制pwm快速开关的水龙头",
+      "title": "力道控制：PWM——快速开关的水龙头",
+      "chapter": "02",
+      "chapterTitle": "认识机器人的身体：控制板、电机和传感器",
+      "url": "chapters/01-hardware-origin.html#力道控制pwm快速开关的水龙头",
+      "body": ""
+    },
+    {
+      "id": "01-hardware-origin-当前的开环控制",
+      "title": "当前的开环控制",
+      "chapter": "02",
+      "chapterTitle": "认识机器人的身体：控制板、电机和传感器",
+      "url": "chapters/01-hardware-origin.html#当前的开环控制",
+      "body": ""
+    },
+    {
+      "id": "01-hardware-origin-gear-参数功能正在quot分期实现quot",
+      "title": "gear 参数：功能正在&quot;分期实现&quot;",
+      "chapter": "02",
+      "chapterTitle": "认识机器人的身体：控制板、电机和传感器",
+      "url": "chapters/01-hardware-origin.html#gear-参数功能正在quot分期实现quot",
       "body": ""
     },
     {
       "id": "01-hardware-origin-从寄存器到真实转矩",
       "title": "从寄存器到真实转矩",
       "chapter": "02",
-      "chapterTitle": "从通用小车到比赛底盘",
+      "chapterTitle": "认识机器人的身体：控制板、电机和传感器",
       "url": "chapters/01-hardware-origin.html#从寄存器到真实转矩",
       "body": ""
     },
@@ -116,7 +244,7 @@
       "id": "01-hardware-origin-四个通道与四个轮位",
       "title": "四个通道与四个轮位",
       "chapter": "02",
-      "chapterTitle": "从通用小车到比赛底盘",
+      "chapterTitle": "认识机器人的身体：控制板、电机和传感器",
       "url": "chapters/01-hardware-origin.html#四个通道与四个轮位",
       "body": ""
     },
@@ -124,15 +252,39 @@
       "id": "01-hardware-origin-编码器让机器人知道轮子转了多少",
       "title": "编码器：让机器人知道轮子转了多少",
       "chapter": "02",
-      "chapterTitle": "从通用小车到比赛底盘",
+      "chapterTitle": "认识机器人的身体：控制板、电机和传感器",
       "url": "chapters/01-hardware-origin.html#编码器让机器人知道轮子转了多少",
+      "body": ""
+    },
+    {
+      "id": "01-hardware-origin-为什么需要知道轮子转了多少",
+      "title": "为什么需要知道轮子转了多少？",
+      "chapter": "02",
+      "chapterTitle": "认识机器人的身体：控制板、电机和传感器",
+      "url": "chapters/01-hardware-origin.html#为什么需要知道轮子转了多少",
+      "body": ""
+    },
+    {
+      "id": "01-hardware-origin-编码器是什么",
+      "title": "编码器是什么？",
+      "chapter": "02",
+      "chapterTitle": "认识机器人的身体：控制板、电机和传感器",
+      "url": "chapters/01-hardware-origin.html#编码器是什么",
+      "body": ""
+    },
+    {
+      "id": "01-hardware-origin-编码器怎么工作",
+      "title": "编码器怎么工作？",
+      "chapter": "02",
+      "chapterTitle": "认识机器人的身体：控制板、电机和传感器",
+      "url": "chapters/01-hardware-origin.html#编码器怎么工作",
       "body": ""
     },
     {
       "id": "01-hardware-origin-icm20948感受姿态变化",
       "title": "ICM20948：感受姿态变化",
       "chapter": "02",
-      "chapterTitle": "从通用小车到比赛底盘",
+      "chapterTitle": "认识机器人的身体：控制板、电机和传感器",
       "url": "chapters/01-hardware-origin.html#icm20948感受姿态变化",
       "body": ""
     },
@@ -140,7 +292,7 @@
       "id": "01-hardware-origin-从原厂小车到新的比赛业务",
       "title": "从原厂小车到新的比赛业务",
       "chapter": "02",
-      "chapterTitle": "从通用小车到比赛底盘",
+      "chapterTitle": "认识机器人的身体：控制板、电机和传感器",
       "url": "chapters/01-hardware-origin.html#从原厂小车到新的比赛业务",
       "body": ""
     },
@@ -148,47 +300,71 @@
       "id": "01-hardware-origin-小结",
       "title": "小结",
       "chapter": "02",
-      "chapterTitle": "从通用小车到比赛底盘",
+      "chapterTitle": "认识机器人的身体：控制板、电机和传感器",
       "url": "chapters/01-hardware-origin.html#小结",
       "body": ""
     },
     {
+      "id": "01-hardware-origin-本章新词",
+      "title": "本章新词",
+      "chapter": "02",
+      "chapterTitle": "认识机器人的身体：控制板、电机和传感器",
+      "url": "chapters/01-hardware-origin.html#本章新词",
+      "body": ""
+    },
+    {
       "id": "02-architecture-boot",
-      "title": "新的骨架：从上电到 app_task",
+      "title": "程序怎样开始运行：从按下电源到等待命令",
       "chapter": "03",
-      "chapterTitle": "新的骨架：从上电到 app_task",
+      "chapterTitle": "程序怎样开始运行：从按下电源到等待命令",
       "url": "chapters/02-architecture-boot.html",
-      "body": "\n   电源接通以后\n\n按下电源键的那一刻，控制板上的 STM32 还什么都没做，电脑端的  START MOTION  也还在屏幕上等待发送。对初学者来说，这个瞬间往往最容易被忽略，但它其实藏着整个程序的起点：处理器要先把自己和周围一圈设备都唤醒，然后进入一种能够长期、稳定、可预期运行的工作节奏。\n\n第一次打开大型嵌入式工程的人，通常会被成百上千个 C 文件吓到，心里直打鼓：\"这么多代码，到底从哪看起？\" 好消息是，真正决定程序从哪开始的故事入口往往非常朴素。处理器完成最底层的启动代码（启动文件里的汇编复位流程）之后，最终会跳进  USER/main.c  里的  main    函数。在当前的下位机仓库里， main    只干三件连贯的事：先初始化系统，再创建一个临时启动任务，最后把 FreeRTOS 调度器打开。\n\n   c\nint main void \n \n    systemInit  ;\n\n    xTaskCreate start task, \"start task\", 512,\n                NULL, 1, &StartTask Handler ;\n    vTaskStartScheduler  ;\n \n   \n\n这里的  xTaskCreate    是 FreeRTOS 提供的任务创建函数。它的参数从左到右依次是：任务函数  start task 、调试时显示的任务名称  \"start task\" 、分配给这个任务的栈大小  512 、传给任务函数的参数  NULL 、任务优先级  1 ，以及用来接收任务句柄的变量  &StartTask Handler 。\n\n  任务句柄（task handle）   可以把它理解成一张\"工牌\"：系统拿到这张工牌，就能在后续找到对应的任务，比如删除它、通知它，或者查询它的状态。 start task  在这里只负责搭把手，把真正的长期任务创建起来，所以工程也给它留了这张工牌，方便后面管理。\n\n    初学者小问：为什么 main 里不直接创建  app task ，还要绕一个  start task ？  \n  这是个好问题。在 FreeRTOS 里，调用  vTaskStartScheduler    之前，调度器还没开始工作，所有代码都按普通顺序执行。 start task  的模式让启动过程有一个明确的\"交接人\"：它运行在调度器启动之后，可以在临界区里安全地创建其他关键任务，然后自己功成身退。这种写法在 FreeRTOS 工程里很常见，后面我们还会看到它的好处。\n\n   systemInit：开馆前的设备检查\n\n systemInit    位于  USER/system.c 。注意它运行的时间点：此时 FreeRTOS 调度器还没有启动，处理器仍然按照传统的顺序执行方式一行一行跑下去。因此，这里所有的硬件准备都是\"串行\"完成的，代码写到哪就执行到哪，不会被其他任务打断。\n\n这就像是实验室每天开馆前的设备检查：先开总闸，再检查每一台仪器是否归位，最后才对外开放。如果顺序乱了，比如还没通电就去读传感器，结果往往不可预期。\n\n函数先设置 NVIC 中断优先级分组。NVIC 是 STM32 的中断管家，优先级分组决定了当多个中断同时到来时，谁更重要、谁可以打断谁。接下来用  delay init 168   初始化延时模块，让它基于 168 MHz 的系统时钟计算延时。\n\n再往后，代码依次初始化 I²C 与系统参数，然后打开 UART1 和 UART3，两个串口的波特率都设为  115200 。UART1 会承载新协议，它是电脑和控制板之间新的\"主通道\"；UART3 则是已经准备好的另一条串口通道，可能用于调试、日志或者其他外设通信。\n\n电机 PWM 随后以  MiniBalance PWM Init 16799, 0   启动。这里的数字看起来有点奇怪，为什么不是 16800 而是 16799？因为 TIM8 的计数器是\"从 0 数到 16799\"，一共数了 16800 个刻度。把自动重装载值设为 16799，配合 168 MHz 的时钟和预分频设置，最终可以让 PWM 频率落在 10 kHz，而四个 PWM 通道的满量程对应 16800。这个数值在后面把\"运动速度\"换算成\"PWM 占空比\"时会再次遇到。\n\n再往下，ICM20948（IMU 惯性测量单元）、蜂鸣器、使能按键、用户按键、OLED，以及 A 到 D 四路编码器依次初始化。每一件设备都像是控制板的一位员工，只有先完成入职培训，后面才能各司其职。\n\n最后， Buzzer AddTask 1,100   把一次蜂鸣器提示请求加入队列。不过这里有一个小小的\"伏笔\"：新的任务链目前还需要周期调"
+      "body": "\n:::callout 🔄 上一章回顾\n上一章我们认识了下位机的硬件：STM32 微控制器、电机驱动、编码器、IMU 等零件，以及它们在电路板上怎样连接。我们还第一次打开了 Keil 工程，看到了工程文件的大致结构。\n:::\n\n:::callout 🎯 本章你会学到\n  下位机上电后，程序从哪一行代码开始运行\n  FreeRTOS 是什么，它怎样帮芯片\"同时做好几件事\"\n   systemInit    做了哪些硬件准备工作\n   app task  怎样守在串口旁边，一个字节一个字节地等待命令\n  八个代码模块各自负责什么\n:::\n\n   电源接通以后\n\n按下电源键的那一刻，控制板上的 STM32 还什么都没做，电脑端的  START MOTION  也还在屏幕上等待发送。对初学者来说，这个瞬间往往最容易被忽略——但它其实藏着整个程序的起点。\n\n处理器要先把自己和周围的设备都唤醒，然后进入一种能够长期、稳定运行的工作节奏。这就好比一家店铺每天开门营业前，要先开灯、开空调、检查收银机，一切就绪后才能开门迎客。\n\n第一次打开大型嵌入式工程的人，通常会被成百上千个 C 文件吓到，心里直打鼓：\"这么多代码，到底从哪看起？\"不用担心，真正决定程序从哪开始的入口其实非常简单。\n\n处理器完成最底层的启动代码（启动文件里的汇编复位流程）之后，最终会跳进  USER/main.c  里的  main    函数。在当前的下位机仓库里， main    只干三件连贯的事：先初始化系统，再创建一个临时启动任务，最后把 FreeRTOS 调度器打开。\n\n   c\nint main void \n \n    systemInit  ;                          // 第一步：初始化所有硬件\n\n    xTaskCreate start task, \"start task\",  // 第二步：创建一个临时启动任务\n                512, NULL, 1,\n                &StartTask Handler ;\n\n    vTaskStartScheduler  ;                 // 第三步：启动 FreeRTOS 调度器，程序从此由调度器接管\n \n   \n\n这段代码只有三行调用，却构成了整个程序的骨架。接下来，我们一件一件地弄清楚它们分别在做什么。\n\n   一个芯片怎么同时做好几件事？\n\n在看代码之前，我们先想一个问题：机器人需要同时做很多事——等待电脑发来的命令、读取传感器数据、控制电机转动、检查安全状态……但 STM32 只有一个处理器核心，它一次只能做一件事。那它怎么\"同时\"做这么多事呢？\n\n答案是：  靠操作系统帮忙  。\n\n:::callout 💡 零基础小课堂：什么是操作系统？\n你的电脑之所以能一边播放音乐、一边打开浏览器、一边写文档，靠的就是  操作系统（Operating System，简称 OS）  在背后安排。操作系统的核心工作之一，就是把处理器的时间切成很多小片段，轮流分配给不同的程序，切换速度快到人类感觉不出来，看起来就像\"同时在做好几件事\"。\n:::\n\n我们的下位机用的操作系统叫   FreeRTOS（Free Real Time Operating System，自由实时操作系统）  。你可以把它想象成\"芯片里的任务管理员\"。\n\n打个比方：一个员工同时应付多个客户。他不是把所有客户的事情同时做完，而是先帮客户 A 处理一会儿，然后暂停，转去帮客户 B，再转去帮客户 C……每个人都觉得自己在被服务，其实员工只有一个人。FreeRTOS 就是那个帮芯片安排\"先服务谁、后服务谁\"的管理员。\n\n:::callout 💡 零基础小课堂：\"实时\"是什么意思？\n这里的\"实时\"不是指\"特别快\"，而是指\"  可预测地响应  \"。比如，如果传感器检测到机器人即将撞墙，系统必须在可预期的时间内做出反应，而不是\"可能很快、也可能很慢\"。FreeRTOS 的\"实时\"就是保证：该响应的事情，一定会在约定的时间内被处理到。\n:::\n\n在 FreeRTOS 的世界里，每一件持续要做的工作被称为一个  任务（Task）  。\n\n:::callout 💡 零基础小课堂：什么是\"任务\"？\n  任务  就是一个独立的工作岗位。比如\"守着串口等命令\"是一个任务，\"定时读取传感器\"是一个任务，\"控制电机转速\"也是一个任务。每个任务都有自己的代码、自己的临时存储空间，独立运行，互不干扰。FreeRTOS 的  调度器（Scheduler）  就像排班表，决定每个时刻该轮到哪个任务工作。\n:::\n\n   main   里的三步曲\n\n理解了 FreeRTOS 的基本概念，我们回到  ma"
     },
     {
       "id": "02-architecture-boot-电源接通以后",
       "title": "电源接通以后",
       "chapter": "03",
-      "chapterTitle": "新的骨架：从上电到 app_task",
+      "chapterTitle": "程序怎样开始运行：从按下电源到等待命令",
       "url": "chapters/02-architecture-boot.html#电源接通以后",
+      "body": ""
+    },
+    {
+      "id": "02-architecture-boot-一个芯片怎么同时做好几件事",
+      "title": "一个芯片怎么同时做好几件事？",
+      "chapter": "03",
+      "chapterTitle": "程序怎样开始运行：从按下电源到等待命令",
+      "url": "chapters/02-architecture-boot.html#一个芯片怎么同时做好几件事",
+      "body": ""
+    },
+    {
+      "id": "02-architecture-boot-main-里的三步曲",
+      "title": "main() 里的三步曲",
+      "chapter": "03",
+      "chapterTitle": "程序怎样开始运行：从按下电源到等待命令",
+      "url": "chapters/02-architecture-boot.html#main-里的三步曲",
       "body": ""
     },
     {
       "id": "02-architecture-boot-systeminit开馆前的设备检查",
       "title": "systemInit：开馆前的设备检查",
       "chapter": "03",
-      "chapterTitle": "新的骨架：从上电到 app_task",
+      "chapterTitle": "程序怎样开始运行：从按下电源到等待命令",
       "url": "chapters/02-architecture-boot.html#systeminit开馆前的设备检查",
       "body": ""
     },
     {
-      "id": "02-architecture-boot-freertos为持续工作安排时间",
-      "title": "FreeRTOS：为持续工作安排时间",
+      "id": "02-architecture-boot-start_task搭好舞台就退场",
+      "title": "start_task：搭好舞台就退场",
       "chapter": "03",
-      "chapterTitle": "新的骨架：从上电到 app_task",
-      "url": "chapters/02-architecture-boot.html#freertos为持续工作安排时间",
+      "chapterTitle": "程序怎样开始运行：从按下电源到等待命令",
+      "url": "chapters/02-architecture-boot.html#start_task搭好舞台就退场",
       "body": ""
     },
     {
       "id": "02-architecture-boot-任务与普通函数有什么区别",
       "title": "任务与普通函数有什么区别",
       "chapter": "03",
-      "chapterTitle": "新的骨架：从上电到 app_task",
+      "chapterTitle": "程序怎样开始运行：从按下电源到等待命令",
       "url": "chapters/02-architecture-boot.html#任务与普通函数有什么区别",
       "body": ""
     },
@@ -196,7 +372,7 @@
       "id": "02-architecture-boot-app_task一直守在收发室旁边",
       "title": "app_task：一直守在收发室旁边",
       "chapter": "03",
-      "chapterTitle": "新的骨架：从上电到 app_task",
+      "chapterTitle": "程序怎样开始运行：从按下电源到等待命令",
       "url": "chapters/02-architecture-boot.html#app_task一直守在收发室旁边",
       "body": ""
     },
@@ -204,7 +380,7 @@
       "id": "02-architecture-boot-一次循环只推进一小步",
       "title": "一次循环只推进一小步",
       "chapter": "03",
-      "chapterTitle": "新的骨架：从上电到 app_task",
+      "chapterTitle": "程序怎样开始运行：从按下电源到等待命令",
       "url": "chapters/02-architecture-boot.html#一次循环只推进一小步",
       "body": ""
     },
@@ -212,7 +388,7 @@
       "id": "02-architecture-boot-八个模块组成的新骨架",
       "title": "八个模块组成的新骨架",
       "chapter": "03",
-      "chapterTitle": "新的骨架：从上电到 app_task",
+      "chapterTitle": "程序怎样开始运行：从按下电源到等待命令",
       "url": "chapters/02-architecture-boot.html#八个模块组成的新骨架",
       "body": ""
     },
@@ -220,31 +396,47 @@
       "id": "02-architecture-boot-每层都守住自己的门",
       "title": "每层都守住自己的门",
       "chapter": "03",
-      "chapterTitle": "新的骨架：从上电到 app_task",
+      "chapterTitle": "程序怎样开始运行：从按下电源到等待命令",
       "url": "chapters/02-architecture-boot.html#每层都守住自己的门",
       "body": ""
     },
     {
+      "id": "02-architecture-boot-本章新词",
+      "title": "本章新词",
+      "chapter": "03",
+      "chapterTitle": "程序怎样开始运行：从按下电源到等待命令",
+      "url": "chapters/02-architecture-boot.html#本章新词",
+      "body": ""
+    },
+    {
       "id": "03-command-journey",
-      "title": "一条命令的旅程",
+      "title": "跟踪一条命令：从电脑到控制板的完整旅程",
       "chapter": "04",
-      "chapterTitle": "一条命令的旅程",
+      "chapterTitle": "跟踪一条命令：从电脑到控制板的完整旅程",
       "url": "chapters/03-command-journey.html",
-      "body": "\n   第一个字节抵达 PA10\n\n故事从  app task  的一次等待开始。\n\n此时的下位机正在 FreeRTOS 中正常运行， app task  已经完成了初始化，正循环等待新的命令帧。与此同时，上位机——可能是电脑上的调试助手，也可能是 RoboGame 主控程序——决定让机器人动起来。它把一条  START MOTION  命令写入串口。\n\n串口通信的本质是逐位发送的高低电平。电脑端的串口控制器按照约定的节奏把二进制数据转换成电信号，电信号沿着一根细细的导线（在开发板上通常就是 USB 转串口线）来到 STM32 的  PA10  引脚。 PA10  是 STM32F407 上  USART1  的默认 RX 引脚，也就是串口接收端。\n\nUART1 在本工程中的配置是  115200  波特率、8 位数据位、1 个停止位、无奇偶校验，简称 \"8 N 1\"。波特率  115200  表示每秒最多传输 115200 个比特位，实际每个字节大约需要  1 / 11520 ≈ 87 微秒 。串口硬件会按照这个节奏对  PA10  上的电平进行采样，把连续的高低变化恢复成一个一个字节。\n\n当一个新的字节被硬件接收并放入接收数据寄存器时， USART1  的  RXNE  标志位就会置位。 RXNE  可以读作   Receive Data Register Not Empty  ，直译就是\"接收数据寄存器不是空的\"，换句话说就是\"有新字节到了，快来取走\"。\n\n这时，STM32 会立即跳转到  USART1 IRQHandler   。  中断服务函数（Interrupt Service Routine，ISR）   是硬件事件发生时 CPU 会立刻放下手头工作去执行的一段小程序。你可以把它想象成家里的门铃：门铃一响，不管主人正在做饭还是看电视，都会先跑去开门看一眼。这里\"门铃\"就是  RXNE  标志，\"开门的人\"就是中断服务函数。\n\n   c\nint USART1 IRQHandler void \n \n    if  USART GetITStatus USART1, USART IT RXNE  != RESET   \n        transport uart rx from isr \n             uint8 t USART ReceiveData USART1  ;\n     \n    return 0;\n \n   \n\n这段中断函数非常短，只干一件关键的事情：\n\n1. 检查  USART IT RXNE  中断标志是否置位。\n2. 如果确实收到了新字节，就通过  USART ReceiveData USART1   把字节从硬件寄存器中读出来。\n3. 立刻调用  transport uart rx from isr   ，把字节交给 transport 层处理。\n\n注意这里没有任何协议解析、没有任何电机控制，甚至连 CRC 计算都没有。中断只做\"取字节、转交\"这两件事。为什么要这么设计？因为中断的优先级很高，它执行期间会打断普通任务。如果中断里塞入太多逻辑，后面新的字节来的时候可能就来不及接收，导致丢数据。把中断做得尽可能短、尽可能快，是嵌入式串口接收的常用做法。\n\n    初学者常见疑问  ：为什么一定要在中断里读数据？\n \n  因为  RXNE  标志被置位后，如果不及时读走  USART ReceiveData   ，下一个字节再来时可能会触发   ORE（Overrun Error，溢出错误）  ，新到的字节会被硬件丢掉。所以\"收到即读\"是串口中断的基本原则。读走之后，字节交给缓冲区，后续慢慢解析即可。\n\n   256 格的环形等候区\n\n中断收到的字节不会立刻被  app task  取走，而是先进入一个长度为  256  的数组  s rx buffer 。这个数组和两个下标一起，共同构成一个  环形缓冲区（ring buffer）  ，也常被称为\"循环队列\"。\n\n你可以把它想象成一圈首尾相接的候车座位：有新的乘客（字节）来时， head  指向当前可以入座的位置；有乘客离开时， tail  指向下一个该离开的位置。座位一共有 256 个，从  0  编号到  255 。当  head  走到  255  之后，下一个位置不是  256 ，而是绕回到  0 。\n\n   c\nstatic volatile uint16 t s rx head = 0U;\nstatic volatile uint16 t s rx tail = 0U;\nstatic uint8 t s rx buffer 256 ;\n   \n\n这里有两个关键点：\n\n   s rx head  由  中断  负责移动。每来一个"
+      "body": "\n:::callout 🔄 上一章回顾\n上一章我们了解了固件的整体架构：FreeRTOS 怎样管理多个任务、 app task  怎样在系统启动后开始工作、每个模块各自负责什么。现在  app task  已经准备就绪，正在循环等待新的命令——那么，一条命令到底长什么样、经过了哪些环节、最终怎么变成电机的转动？本章就来完整追踪这个过程。\n:::\n\n:::callout 🎯 本章你会学到\n  串口中断（ISR）是怎样在硬件收到字节时立刻响应的\n  环形缓冲区如何在\"快速接收\"和\"慢速处理\"之间充当缓冲垫\n  协议帧的格式——为什么裸字节需要\"包装\"才能成为命令\n  状态机怎样一步步把字节流拼成完整的帧\n  CRC 校验如何保护数据不被损坏\n  命令分发器怎样把命令交给正确的处理函数\n  ACK 回复怎样告诉上位机\"命令已收到并处理\"\n:::\n\n   第一个字节抵达 PA10\n\n故事从  app task  的一次等待开始。\n\n此时的下位机正在 FreeRTOS 中正常运行， app task  已经完成了初始化，正循环等待新的命令帧。与此同时，上位机——可能是电脑上的调试助手，也可能是 RoboGame 主控程序——决定让机器人动起来。它把一条  START MOTION  命令写入串口。\n\n串口通信的本质是逐位发送的高低电平。电脑端的串口控制器按照约定的节奏把二进制数据转换成电信号，电信号沿着一根细细的导线（在开发板上通常就是 USB 转串口线）来到 STM32 的  PA10  引脚。 PA10  是 STM32F407 上  USART1  的默认 RX 引脚，也就是串口接收端。\n\nUART1 在本工程中的配置是  115200  波特率、8 位数据位、1 个停止位、无奇偶校验，简称 \"8 N 1\"。波特率  115200  表示每秒最多传输 115200 个比特位，实际每个字节大约需要  1 / 11520 ≈ 87 微秒 。串口硬件会按照这个节奏对  PA10  上的电平进行采样，把连续的高低变化恢复成一个一个字节。\n\n    硬件怎样通知 CPU：\"有新数据到了\"\n\n当串口收到一个字节时，硬件会自动通知 CPU——不需要软件一直去轮询\"有没有新数据\"。具体来说，当一个新的字节被硬件接收并放入接收数据寄存器时， USART1  的  RXNE  标志位就会置位。 RXNE  的全称是   Receive Data Register Not Empty  ，翻译过来就是\"接收数据寄存器不是空的\"。你可以简单理解为硬件在说：  \"有新数据到了，快来取走！\"  \n\n这时，STM32 会立即跳转到一个特殊的函数去处理这件事。这个函数就是  中断服务函数（Interrupt Service Routine，简称 ISR）  ——硬件事件发生时，CPU 会立刻放下手头工作去执行的一小段程序。\n\n:::callout 💡 零基础小课堂\n你可以把 ISR 想象成家里的  门铃  ：门铃一响，不管主人正在做饭还是看电视，都会先跑去开门看一眼。在这里，\"门铃\"就是  RXNE  标志（有新数据到了），\"开门的人\"就是中断服务函数。门铃响了你必须马上去应门，不然快递员可能就走了——同理，如果不及时读走数据，下一个字节来时旧数据可能会被覆盖丢失。\n:::\n\n   c\n// USART1 的中断服务函数——每收到一个字节，硬件会自动调用这里\nint USART1 IRQHandler void \n \n    // 检查是否真的收到了新字节（RXNE 标志是否被置位）\n    if  USART GetITStatus USART1, USART IT RXNE  != RESET   \n        // 从硬件寄存器读出字节，并立刻交给 transport 层处理\n        transport uart rx from isr \n             uint8 t USART ReceiveData USART1  ;\n     \n    return 0; // 中断函数返回，CPU 回去继续之前的工作\n \n   \n\n这段中断函数非常短，只干一件关键的事情：\n\n1. 检查  USART IT RXNE  中断标志是否置位。\n2. 如果确实收到了新字节，就通过  USART ReceiveData USART1   把字节从硬件寄存器中读出来。\n3. 立刻调用  transport uart rx from isr   ，把字节交给 transport 层处理。\n\n注意这里没有任何协议解析、没有任何电机控制，甚至连 CRC 计算都没有。中断只做\"取字节、转交\"这两件事。为什么要这么设计？因为中断的优先级很高，它执行期间会打"
     },
     {
       "id": "03-command-journey-第一个字节抵达-pa10",
       "title": "第一个字节抵达 PA10",
       "chapter": "04",
-      "chapterTitle": "一条命令的旅程",
+      "chapterTitle": "跟踪一条命令：从电脑到控制板的完整旅程",
       "url": "chapters/03-command-journey.html#第一个字节抵达-pa10",
+      "body": ""
+    },
+    {
+      "id": "03-command-journey-硬件怎样通知-cpuquot有新数据到了quot",
+      "title": "硬件怎样通知 CPU：&quot;有新数据到了&quot;",
+      "chapter": "04",
+      "chapterTitle": "跟踪一条命令：从电脑到控制板的完整旅程",
+      "url": "chapters/03-command-journey.html#硬件怎样通知-cpuquot有新数据到了quot",
       "body": ""
     },
     {
       "id": "03-command-journey-256-格的环形等候区",
       "title": "256 格的环形等候区",
       "chapter": "04",
-      "chapterTitle": "一条命令的旅程",
+      "chapterTitle": "跟踪一条命令：从电脑到控制板的完整旅程",
       "url": "chapters/03-command-journey.html#256-格的环形等候区",
       "body": ""
     },
@@ -252,15 +444,31 @@
       "id": "03-command-journey-一封带封条的数字信件",
       "title": "一封带封条的数字信件",
       "chapter": "04",
-      "chapterTitle": "一条命令的旅程",
+      "chapterTitle": "跟踪一条命令：从电脑到控制板的完整旅程",
       "url": "chapters/03-command-journey.html#一封带封条的数字信件",
+      "body": ""
+    },
+    {
+      "id": "03-command-journey-如果没有协议会怎样",
+      "title": "如果没有协议会怎样？",
+      "chapter": "04",
+      "chapterTitle": "跟踪一条命令：从电脑到控制板的完整旅程",
+      "url": "chapters/03-command-journey.html#如果没有协议会怎样",
+      "body": ""
+    },
+    {
+      "id": "03-command-journey-信件的比喻",
+      "title": "信件的比喻",
+      "chapter": "04",
+      "chapterTitle": "跟踪一条命令：从电脑到控制板的完整旅程",
+      "url": "chapters/03-command-journey.html#信件的比喻",
       "body": ""
     },
     {
       "id": "03-command-journey-各部分的作用",
       "title": "各部分的作用",
       "chapter": "04",
-      "chapterTitle": "一条命令的旅程",
+      "chapterTitle": "跟踪一条命令：从电脑到控制板的完整旅程",
       "url": "chapters/03-command-journey.html#各部分的作用",
       "body": ""
     },
@@ -268,23 +476,55 @@
       "id": "03-command-journey-状态机怎样拼出完整帧",
       "title": "状态机怎样拼出完整帧",
       "chapter": "04",
-      "chapterTitle": "一条命令的旅程",
+      "chapterTitle": "跟踪一条命令：从电脑到控制板的完整旅程",
       "url": "chapters/03-command-journey.html#状态机怎样拼出完整帧",
+      "body": ""
+    },
+    {
+      "id": "03-command-journey-先理解什么是状态机",
+      "title": "先理解什么是状态机",
+      "chapter": "04",
+      "chapterTitle": "跟踪一条命令：从电脑到控制板的完整旅程",
+      "url": "chapters/03-command-journey.html#先理解什么是状态机",
+      "body": ""
+    },
+    {
+      "id": "03-command-journey-协议解析的状态机",
+      "title": "协议解析的状态机",
+      "chapter": "04",
+      "chapterTitle": "跟踪一条命令：从电脑到控制板的完整旅程",
+      "url": "chapters/03-command-journey.html#协议解析的状态机",
       "body": ""
     },
     {
       "id": "03-command-journey-逐个阶段解释",
       "title": "逐个阶段解释",
       "chapter": "04",
-      "chapterTitle": "一条命令的旅程",
+      "chapterTitle": "跟踪一条命令：从电脑到控制板的完整旅程",
       "url": "chapters/03-command-journey.html#逐个阶段解释",
+      "body": ""
+    },
+    {
+      "id": "03-command-journey-小端序数字的quot倒着写quot",
+      "title": "小端序：数字的&quot;倒着写&quot;",
+      "chapter": "04",
+      "chapterTitle": "跟踪一条命令：从电脑到控制板的完整旅程",
+      "url": "chapters/03-command-journey.html#小端序数字的quot倒着写quot",
+      "body": ""
+    },
+    {
+      "id": "03-command-journey-crc数据的quot防伪封条quot",
+      "title": "CRC：数据的&quot;防伪封条&quot;",
+      "chapter": "04",
+      "chapterTitle": "跟踪一条命令：从电脑到控制板的完整旅程",
+      "url": "chapters/03-command-journey.html#crc数据的quot防伪封条quot",
       "body": ""
     },
     {
       "id": "03-command-journey-把-start_motion-拆成真实字节",
       "title": "把 START_MOTION 拆成真实字节",
       "chapter": "04",
-      "chapterTitle": "一条命令的旅程",
+      "chapterTitle": "跟踪一条命令：从电脑到控制板的完整旅程",
       "url": "chapters/03-command-journey.html#把-start_motion-拆成真实字节",
       "body": ""
     },
@@ -292,7 +532,7 @@
       "id": "03-command-journey-分发器像一座接线台",
       "title": "分发器像一座接线台",
       "chapter": "04",
-      "chapterTitle": "一条命令的旅程",
+      "chapterTitle": "跟踪一条命令：从电脑到控制板的完整旅程",
       "url": "chapters/03-command-journey.html#分发器像一座接线台",
       "body": ""
     },
@@ -300,7 +540,7 @@
       "id": "03-command-journey-ack-沿原路返回",
       "title": "ACK 沿原路返回",
       "chapter": "04",
-      "chapterTitle": "一条命令的旅程",
+      "chapterTitle": "跟踪一条命令：从电脑到控制板的完整旅程",
       "url": "chapters/03-command-journey.html#ack-沿原路返回",
       "body": ""
     },
@@ -308,23 +548,31 @@
       "id": "03-command-journey-命令已经走到车轮面前",
       "title": "命令已经走到车轮面前",
       "chapter": "04",
-      "chapterTitle": "一条命令的旅程",
+      "chapterTitle": "跟踪一条命令：从电脑到控制板的完整旅程",
       "url": "chapters/03-command-journey.html#命令已经走到车轮面前",
       "body": ""
     },
     {
+      "id": "03-command-journey-本章新词",
+      "title": "本章新词",
+      "chapter": "04",
+      "chapterTitle": "跟踪一条命令：从电脑到控制板的完整旅程",
+      "url": "chapters/03-command-journey.html#本章新词",
+      "body": ""
+    },
+    {
       "id": "04-mecanum-motion",
-      "title": "四个轮子如何配合",
+      "title": "四个轮子如何配合：麦轮运动控制",
       "chapter": "05",
-      "chapterTitle": "四个轮子如何配合",
+      "chapterTitle": "四个轮子如何配合：麦轮运动控制",
       "url": "chapters/04-mecanum-motion.html",
-      "body": "\n   motion start motion：命令来到车轮前\n\n上一章里， START MOTION  已经穿过 USART1、接收缓冲区和协议解析器。命令分发器从协议载荷中拆出了两个参数：一个是  direction ，表示“往哪个方向走”；另一个是  gear ，表示“用哪个档位走”。现在，这条命令终于来到  LOWER CONTROLLER/MOTION/motion controller.c ，准备把一句抽象的“向前”翻译成四个电机都能听懂的信号。\n\n可以把底盘想象成一张桌子，四个电机就是抬桌子的四个人。领队只会喊“往前走”“向左挪”这种整体指令，桌子本身可听不懂人话；四个人必须分别知道自己该往哪个方向、用多大力气推。在麦轮底盘里， motion start motion    就是这个“领队”。它负责把“整车动作”拆解成“每个轮子该怎么转”，再交给更底层的 PWM 驱动去执行。\n\n   mermaid\nflowchart LR\n    A \"START MOTION<br/ direction + gear\"      B \"motion start motion  \" \n    B     C \"四个逻辑轮位的正负值\" \n    C     D \"轮位映射与方向校正\" \n    D     E \"A / B / C / D 电机通道\" \n    E     F \"方向引脚 + PWM\" \n   \n\n命令分发器里的调用非常短，只有一行：\n\n   c\nstatus = motion start motion args.direction, args.gear  ?\n    RESPONSE STATUS OK : RESPONSE STATUS BAD PAYLOAD;\n   \n\n这里  args.direction  和  args.gear  都来自上位机发下来的协议载荷。运动函数返回  true  时，分发器就回复一个 ACK OK；如果方向值无法识别，运动函数会先把底盘停下来，再返回  false ，分发器就会回复 BAD PAYLOAD。\n\n这种写法体现了很重要的一点：  通信层只负责“传话”和“回话”，真正让四个轮子怎么动的事情全部留在运动层处理  。初学者可能会想，为什么不在分发器里直接判断方向？因为那样会让通信代码里塞满电机细节；一旦换轮子、换底盘结构，通信层也得跟着改。把“命令”和“执行”分开，是大型嵌入式代码库里最常见的组织方式。\n\n   麦轮为什么能够横着走\n\n这个项目使用的是麦克纳姆轮，英文叫   Mecanum wheel  。普通轮子的主要滚动方向只能沿着车头前后，但麦轮外圈还有一排斜着安装的小滚子。你可以把它想象成一只鞋底上装了许多斜向小轮：大轮转动时，地面对车轮的反作用力会被分解成前后和左右两个方向。\n\n单看一只麦轮，它产生的侧向分量会让车身有偏移趋势；但四只轮子按合适的方向一起转时，有些分量会互相抵消，有些分量则会叠加起来。于是：\n\n  四个轮子同向转动，车就向前或向后走；\n  左右两侧斜向分量重新组合，车就能横着平移；\n  左右两侧反向配合，车就能在原地旋转。\n\n代码里并没有先写一大串力学公式，而是直接保存了经过整理的四轮符号组合。这里的正号和负号表示“逻辑轮位希望转动的方向”，数值大小表示 PWM 控制量。下面这张表是整章的核心，建议第一次看的时候对照实车位置多读几遍：\n\n  车身动作   左前   左后   右前   右后  \n           :      :      :      :  \n  前进   +3000   +3000   +3000   +3000  \n  后退    3000    3000    3000    3000  \n  左移    3000   +3000   +3000    3000  \n  右移   +3000    3000    3000   +3000  \n  顺时针旋转   +3000   +3000    3000    3000  \n  逆时针旋转    3000    3000   +3000   +3000  \n\n以向前命令为例，对应的源码非常直白：\n\n   c\ncase COMM ENUM MOVE DIRECTION FORWARD:\n    motion set wheel pwm +BOARD MOTION FIXED PWM,\n                         +BOARD MOTION FIXED PWM,\n                         +BOARD MOTION FIXED PWM,\n                         +BOARD MOTION FIXED"
+      "body": "\n:::callout 🔄 上一章回顾\n上一章我们追踪了一条  START MOTION  命令的完整旅程：它从上位机出发，经过 USART1 串口中断、环形缓冲区、协议状态机的逐字节解析，最终被命令分发器拆开，取出了  direction （方向）和  gear （档位）两个参数。现在，这条命令即将交给运动控制层——真正让轮子转起来的地方。\n:::\n\n:::callout 🎯 本章你会学到\n  麦克纳姆轮（麦轮）为什么能让机器人横着走\n  四个轮子的正转/反转组合如何实现前进、后退、平移和旋转\n  \"逻辑轮位\"和\"电机通道\"之间的映射与方向校正\n  PWM 值如何控制电机转速\n  停止命令做了什么，以及为什么安全意识很重要\n:::\n\n   motion start motion：命令来到车轮前\n\n上一章里， START MOTION  已经穿过 USART1、接收缓冲区和协议解析器。命令分发器从协议载荷中拆出了两个参数：一个是  direction ，表示\"往哪个方向走\"；另一个是  gear ，表示\"用哪个档位走\"。现在，这条命令终于来到  LOWER CONTROLLER/MOTION/motion controller.c ，准备把一句抽象的\"向前\"翻译成四个电机都能听懂的信号。\n\n可以把底盘想象成一张桌子，四个电机就是抬桌子的四个人。领队喊\"往前走\"，四个人就一起往前迈步；领队喊\"向左挪\"，每个人需要根据自己站的位置调整用力方向——有人往前推，有人往后拉，桌子才能整体平移。桌子本身可听不懂\"向左\"这种话，它只知道四个角各自受到的力。\n\n在麦轮底盘里， motion start motion    就是这个\"领队\"。它负责把\"整车动作\"拆解成\"每个轮子该怎么转\"，再交给更底层的 PWM 驱动去执行。\n\n   mermaid\nflowchart LR\n    A \"START MOTION<br/ direction + gear\"      B \"motion start motion  \" \n    B     C \"四个逻辑轮位的正负值\" \n    C     D \"轮位映射与方向校正\" \n    D     E \"A / B / C / D 电机通道\" \n    E     F \"方向引脚 + PWM\" \n   \n\n命令分发器里的调用非常短，只有一行：\n\n   c\n// 调用运动函数，把方向和档位传进去\n// 返回 true 表示方向有效 → 回复 OK\n// 返回 false 表示方向无法识别 → 回复 BAD PAYLOAD（载荷有误）\nstatus = motion start motion args.direction, args.gear  ?\n    RESPONSE STATUS OK : RESPONSE STATUS BAD PAYLOAD;\n   \n\n这里  args.direction  和  args.gear  都来自上位机发下来的协议载荷。运动函数返回  true  时，分发器就回复一个 ACK OK；如果方向值无法识别，运动函数会先把底盘停下来，再返回  false ，分发器就会回复 BAD PAYLOAD。\n\n这种写法体现了很重要的一点：  通信层只负责\"传话\"和\"回话\"，真正让四个轮子怎么动的事情全部留在运动层处理  。为什么不在分发器里直接判断方向？因为那样会让通信代码里塞满电机细节；一旦换轮子、换底盘结构，通信层也得跟着改。把\"命令\"和\"执行\"分开，是大型嵌入式代码库里最常见的组织方式。\n\n   麦轮为什么能够横着走\n\n    普通轮子的局限\n\n先想想普通轮子——比如自行车轮或汽车轮。它们只能沿着轮子滚动的方向前进或后退。想让车横着走？做不到，你只能先转弯再开过去。这就是普通轮子的局限：  运动方向被锁死在轮子滚动的方向上  。\n\n但是在机器人比赛中，我们经常需要底盘能够灵活地向任意方向移动——前后、左右、甚至斜着走。怎么办呢？\n\n    麦轮：给轮子装上\"斜滑轮\"\n\n这个项目使用的是  麦克纳姆轮（Mecanum wheel）  ，简称  麦轮  。你可能见过超市购物车下面的万向轮——它可以朝任何方向滑动。麦轮的思路有点类似，但更巧妙。\n\n:::callout 💡 零基础小课堂：麦克纳姆轮\n麦轮看起来和普通轮子很像，但仔细看会发现：轮子外圈装了一排  斜着的小滚子  （通常倾斜 45°）。当电机驱动大轮转动时，地面对这些小滚子的反作用力不是纯粹的前后方向，而是  被分解成了前后和左右两个分量  。\n\n你可以把它想象成穿着溜冰鞋站在地上：如果你的脚斜着用力蹬地，身体不会沿着脚的方向走，而是会往侧面滑——这就是力被分解的效果。麦轮上的小滚子就像一排微型\"溜冰鞋\"，让每个轮"
     },
     {
       "id": "04-mecanum-motion-motion_start_motion命令来到车轮前",
       "title": "motion_start_motion：命令来到车轮前",
       "chapter": "05",
-      "chapterTitle": "四个轮子如何配合",
+      "chapterTitle": "四个轮子如何配合：麦轮运动控制",
       "url": "chapters/04-mecanum-motion.html#motion_start_motion命令来到车轮前",
       "body": ""
     },
@@ -332,103 +580,295 @@
       "id": "04-mecanum-motion-麦轮为什么能够横着走",
       "title": "麦轮为什么能够横着走",
       "chapter": "05",
-      "chapterTitle": "四个轮子如何配合",
+      "chapterTitle": "四个轮子如何配合：麦轮运动控制",
       "url": "chapters/04-mecanum-motion.html#麦轮为什么能够横着走",
+      "body": ""
+    },
+    {
+      "id": "04-mecanum-motion-普通轮子的局限",
+      "title": "普通轮子的局限",
+      "chapter": "05",
+      "chapterTitle": "四个轮子如何配合：麦轮运动控制",
+      "url": "chapters/04-mecanum-motion.html#普通轮子的局限",
+      "body": ""
+    },
+    {
+      "id": "04-mecanum-motion-麦轮给轮子装上quot斜滑轮quot",
+      "title": "麦轮：给轮子装上&quot;斜滑轮&quot;",
+      "chapter": "05",
+      "chapterTitle": "四个轮子如何配合：麦轮运动控制",
+      "url": "chapters/04-mecanum-motion.html#麦轮给轮子装上quot斜滑轮quot",
+      "body": ""
+    },
+    {
+      "id": "04-mecanum-motion-四轮符号组合整章的核心",
+      "title": "四轮符号组合：整章的核心",
+      "chapter": "05",
+      "chapterTitle": "四个轮子如何配合：麦轮运动控制",
+      "url": "chapters/04-mecanum-motion.html#四轮符号组合整章的核心",
       "body": ""
     },
     {
       "id": "04-mecanum-motion-轮位和电机接口之间的翻译",
       "title": "轮位和电机接口之间的翻译",
       "chapter": "05",
-      "chapterTitle": "四个轮子如何配合",
+      "chapterTitle": "四个轮子如何配合：麦轮运动控制",
       "url": "chapters/04-mecanum-motion.html#轮位和电机接口之间的翻译",
       "body": ""
     },
     {
-      "id": "04-mecanum-motion-pwm-像快速开关",
-      "title": "PWM 像快速开关",
+      "id": "04-mecanum-motion-pwm-与占空比",
+      "title": "PWM 与占空比",
       "chapter": "05",
-      "chapterTitle": "四个轮子如何配合",
-      "url": "chapters/04-mecanum-motion.html#pwm-像快速开关",
+      "chapterTitle": "四个轮子如何配合：麦轮运动控制",
+      "url": "chapters/04-mecanum-motion.html#pwm-与占空比",
       "body": ""
     },
     {
       "id": "04-mecanum-motion-停止时发生了什么",
       "title": "停止时发生了什么",
       "chapter": "05",
-      "chapterTitle": "四个轮子如何配合",
+      "chapterTitle": "四个轮子如何配合：麦轮运动控制",
       "url": "chapters/04-mecanum-motion.html#停止时发生了什么",
       "body": ""
     },
     {
+      "id": "04-mecanum-motion-调试工具motion_test_motor_channels_loop",
+      "title": "调试工具：motion_test_motor_channels_loop()",
+      "chapter": "05",
+      "chapterTitle": "四个轮子如何配合：麦轮运动控制",
+      "url": "chapters/04-mecanum-motion.html#调试工具motion_test_motor_channels_loop",
+      "body": ""
+    },
+    {
+      "id": "04-mecanum-motion-本章小结",
+      "title": "本章小结",
+      "chapter": "05",
+      "chapterTitle": "四个轮子如何配合：麦轮运动控制",
+      "url": "chapters/04-mecanum-motion.html#本章小结",
+      "body": ""
+    },
+    {
+      "id": "04-mecanum-motion-本章新词",
+      "title": "本章新词",
+      "chapter": "05",
+      "chapterTitle": "四个轮子如何配合：麦轮运动控制",
+      "url": "chapters/04-mecanum-motion.html#本章新词",
+      "body": ""
+    },
+    {
       "id": "05-feedback-safety",
-      "title": "机器人如何感知并安全行动",
+      "title": "给机器人装上“眼睛”和“刹车”：反馈与安全",
       "chapter": "06",
-      "chapterTitle": "机器人如何感知并安全行动",
+      "chapterTitle": "给机器人装上“眼睛”和“刹车”：反馈与安全",
       "url": "chapters/05-feedback-safety.html",
-      "body": "\n   输出已经写下，接下来要知道动作结果\n\n上一章里， START MOTION  已经让程序向四路电机写入了固定的 PWM 值 3000。四路电机按照命令转了起来，底盘应该已经能够前后左右移动。但如果我们只做到这一步，其实还没有真正“控制”住机器人——我们只是把油门踏板踩到了固定位置，至于车实际跑多快、有没有跑偏、有没有打滑，程序暂时一无所知。\n\n这种“给出输出，然后持续保持”的方式叫  开环控制  ，英文是   open loop control  。开环控制就像我们闭着眼睛推一辆小车：双手用了多大的力气是知道的，但小车实际走到哪儿、有没有偏方向、是不是撞上了障碍，都只能靠猜。生活中也有很多开环例子：厨房里把燃气旋钮转到某个位置后等待三分钟，就是一种开环做法——火力大小已经给定，锅里的真实温度没有参与调节；如果锅底糊了或者水溢出来，炉子自己不会知道。\n\n机器人竞赛里，我们通常不希望机器人“盲开”。车身是否跑偏、轮子实际转速是多少、当前朝向是不是想要的朝向、机械结构是否走到了极限位置，这些信息最好都能回到控制程序里。这种“把动作结果送回去，再影响下一次动作”的机制叫  反馈  ，英文是   feedback  。反馈就像人的眼睛和耳朵：眼睛看到路走歪了，大脑立刻让手调整方向盘；耳朵听到电机声音不对，操作员会立刻停下来检查。\n\n当控制器不断比较“我想要的状态”和“我测到的状态”，再根据差距调整输出时，这个循环就叫  闭环控制  ，英文是   closed loop control  。闭环控制能大大提高机器人的稳定性和精度，也是后续从“能动”走向“可控”的关键。\n\n   mermaid\nflowchart LR\n    A \"目标：向前移动\"      B \"MOTION 计算四轮输出\" \n    B     C \"电机与车轮\" \n    C     D \"编码器 / IMU\" \n    D     E \"测得速度、距离、朝向\" \n    E     B\n   \n\n当前工程已经保留了产生反馈所需的底层硬件驱动，比如编码器定时器、IMU 初始化等。新的  SENSORS  层仍在搭建中，因此这些信号还没有进入  motion start motion    的控制循环。也就是说：现在我们能输出，也能读传感器，但“读了之后用来修正输出”这一步还没接上。\n\n    初学者常见疑问  ：开环控制是不是就没用？\n  \n  并不是。开环控制结构简单、响应快，在很多不需要精确跟踪目标的场景下完全够用。比如让底盘简单跑一段、让指示灯闪烁、让蜂鸣器发声，都不需要反馈。只有当我们要精确控制速度、位置、角度，或者环境干扰比较大（比如轮子打滑、地面不平）时，才需要引入闭环。\n\n   编码器记录车轮走过的刻度\n\n要让闭环跑起来，最直接的反馈来源就是  编码器  ，英文是   encoder  。编码器通常安装在电机轴或者轮轴上，随着转动产生一串电脉冲。它的效果很像自行车码表里的磁铁：车轮每转过一小段距离，计数器就多记一次。固定时间内的脉冲数可以帮助我们估算当前速度，累计脉冲数可以帮助我们估算已经走过的距离。\n\n为什么速度和距离都能从脉冲算出来？可以这么理解：编码器每转一圈会输出固定数量的脉冲，比如 500 个或 1000 个；而车轮转一圈走多远，又由轮胎直径决定。于是：\n\n    速度   ≈ 单位时间内的新增脉冲数 × 每个脉冲对应的轮周长；\n    距离   ≈ 累计脉冲数 × 每个脉冲对应的轮周长。\n\n这样一来，控制器就知道“我 commanded 3000 的 PWM，实际轮子转得够不够快”，然后再决定下一周期是加大 PWM 还是减小 PWM。\n\n USER/system.c  在上电初始化时依次调用  EncoderA Init   、 EncoderB Init   、 EncoderC Init    和  EncoderD Init   。四个接口分别使用 STM32 的不同定时器来计数脉冲。底层读取接口位于  HARDWARE/encoder.c ：\n\n   c\nshort Read Encoder ENCODER t e \n \n    Encoder TIM =  short ENCODER A TIM  CNT;\n    ENCODER A TIM  CNT = 0;\n    return Encoder TIM;\n \n   \n\n代码按传入的 A、B、C、D 选择对应定时器。读出计数后，它把计数器清零，下一次读取就得到下一个时间片里的新增脉冲。上面的片段只展示了 A 通道，完整函数对四个通道采用同样的处理。\n\n这里有几个细节值得新手注意：\n\n    为什么读完要清零？   因为定时器里的 CNT 是累计值。如果不定期清零，计数会"
+      "body": "\n:::callout 🔄 上一章回顾\n上一章我们跟着  START MOTION  命令进入了运动控制层，看到了麦克纳姆轮底盘如何把\"向前走\"这样的整体指令拆解成四个电机各自的转向和转速。现在四个轮子已经转起来了——但机器人真的知道自己跑了多快、有没有跑偏吗？\n:::\n\n:::callout 🎯 本章你会学到\n  什么是开环控制和闭环控制，为什么闭环更可靠\n  编码器如何测量轮子转速和距离\n  IMU（惯性测量单元）如何感知车身旋转和姿态\n  执行机构（升降、夹爪、推杆）的安全保护思路\n  命令超时、看门狗等安全机制为什么必不可少\n:::\n\n   输出已经写下，接下来要知道动作结果\n\n上一章里， START MOTION  已经让程序向四路电机写入了固定的 PWM 值 3000。四路电机按照命令转了起来，底盘应该已经能够前后左右移动。\n\n但如果我们只做到这一步，其实还没有真正\"控制\"住机器人——我们只是把油门踏板踩到了固定位置，至于车实际跑多快、有没有跑偏、有没有打滑，程序暂时一无所知。\n\n    开环控制：\"闭着眼睛开车\"\n\n这种\"给出输出，然后持续保持\"的方式叫  开环控制（Open Loop Control）  。开环控制就像我们闭着眼睛推一辆小车：双手用了多大的力气是知道的，但小车实际走到哪儿、有没有偏方向、是不是撞上了障碍，都只能靠猜。\n\n生活中也有很多开环例子：厨房里把燃气旋钮转到某个位置后等待三分钟，就是一种开环做法——火力大小已经给定，锅里的真实温度没有参与调节；如果锅底糊了或者水溢出来，炉子自己不会知道。\n\n    闭环控制：\"看着路开车\"\n\n机器人竞赛里，我们通常不希望机器人\"盲开\"。车身是否跑偏、轮子实际转速是多少、当前朝向是不是想要的朝向、机械结构是否走到了极限位置，这些信息最好都能回到控制程序里。\n\n这种\"把动作结果送回去，再影响下一次动作\"的机制叫  反馈（Feedback）  。\n\n:::callout 💡 零基础小课堂：什么是反馈？\n反馈就像你洗澡时调节水温的过程：你先拧旋钮调大热水（这是  输出  ），然后用手感受水流的温度（这是  反馈  ），如果水太烫就往冷水方向拧一点（这是  修正  ）。\n\n这个\"输出 → 感受 → 修正 → 再输出\"的循环，就是反馈的核心思想。机器人也是一样：给电机一个转速，通过传感器测量实际效果，再根据差距调整输出。\n:::\n\n当控制器不断比较\"我想要的状态\"和\"我测到的状态\"，再根据差距调整输出时，这个循环就叫  闭环控制（Closed Loop Control）  。闭环控制能大大提高机器人的稳定性和精度，也是后续从\"能动\"走向\"可控\"的关键。\n\n   mermaid\nflowchart LR\n    A \"目标：向前移动\"      B \"MOTION 计算四轮输出\" \n    B     C \"电机与车轮\" \n    C     D \"编码器 / IMU\" \n    D     E \"测得速度、距离、朝向\" \n    E     B\n   \n\n当前工程已经保留了产生反馈所需的底层硬件驱动，比如编码器定时器、IMU 初始化等。新的  SENSORS  层仍在搭建中，因此这些信号还没有进入  motion start motion    的控制循环。也就是说：现在我们能输出，也能读传感器，但\"读了之后用来修正输出\"这一步还没接上。\n\n    初学者常见疑问  ：开环控制是不是就没用？\n \n  并不是。开环控制结构简单、响应快，在很多不需要精确跟踪目标的场景下完全够用。比如让底盘简单跑一段、让指示灯闪烁、让蜂鸣器发声，都不需要反馈。只有当我们要精确控制速度、位置、角度，或者环境干扰比较大（比如轮子打滑、地面不平）时，才需要引入闭环。\n\n   编码器：给车轮装上\"计步器\"\n\n    为什么需要知道轮子转了多少？\n\n要让闭环跑起来，控制器必须知道一个关键信息：  每个轮子实际转了多快  。只有知道了实际转速，才能和目标转速做比较，然后决定是加大油门还是减小油门。\n\n想象你在跑步机上运动：屏幕显示你当前的速度是 5 km/h，而你设定的目标是 8 km/h，于是你加快步伐。这里的\"速度显示屏\"就扮演了反馈的角色。对机器人来说，扮演这个角色的就是  编码器（Encoder）  。\n\n    编码器是怎么工作的？\n\n编码器通常安装在电机轴或者轮轴上，随着转动产生一串电脉冲。它的效果很像自行车码表里的磁铁：车轮每转过一小段距离，计数器就多记一次。固定时间内的脉冲数可以帮助我们估算当前速度，累计脉冲数可以帮助我们估算已经走过的距离。\n\n为什么速度和距离都能从脉冲算出来？可以这么理解：编码器每转一圈会输出固定数量的脉冲，比如 500 个或 1000 个；而车轮转一圈走多远"
     },
     {
       "id": "05-feedback-safety-输出已经写下接下来要知道动作结果",
       "title": "输出已经写下，接下来要知道动作结果",
       "chapter": "06",
-      "chapterTitle": "机器人如何感知并安全行动",
+      "chapterTitle": "给机器人装上“眼睛”和“刹车”：反馈与安全",
       "url": "chapters/05-feedback-safety.html#输出已经写下接下来要知道动作结果",
       "body": ""
     },
     {
-      "id": "05-feedback-safety-编码器记录车轮走过的刻度",
-      "title": "编码器记录车轮走过的刻度",
+      "id": "05-feedback-safety-开环控制quot闭着眼睛开车quot",
+      "title": "开环控制：&quot;闭着眼睛开车&quot;",
       "chapter": "06",
-      "chapterTitle": "机器人如何感知并安全行动",
-      "url": "chapters/05-feedback-safety.html#编码器记录车轮走过的刻度",
+      "chapterTitle": "给机器人装上“眼睛”和“刹车”：反馈与安全",
+      "url": "chapters/05-feedback-safety.html#开环控制quot闭着眼睛开车quot",
       "body": ""
     },
     {
-      "id": "05-feedback-safety-imu-感受车身的转动",
-      "title": "IMU 感受车身的转动",
+      "id": "05-feedback-safety-闭环控制quot看着路开车quot",
+      "title": "闭环控制：&quot;看着路开车&quot;",
       "chapter": "06",
-      "chapterTitle": "机器人如何感知并安全行动",
-      "url": "chapters/05-feedback-safety.html#imu-感受车身的转动",
+      "chapterTitle": "给机器人装上“眼睛”和“刹车”：反馈与安全",
+      "url": "chapters/05-feedback-safety.html#闭环控制quot看着路开车quot",
       "body": ""
     },
     {
-      "id": "05-feedback-safety-升降夹爪和推杆是另一组手脚",
-      "title": "升降、夹爪和推杆是另一组手脚",
+      "id": "05-feedback-safety-编码器给车轮装上quot计步器quot",
+      "title": "编码器：给车轮装上&quot;计步器&quot;",
       "chapter": "06",
-      "chapterTitle": "机器人如何感知并安全行动",
-      "url": "chapters/05-feedback-safety.html#升降夹爪和推杆是另一组手脚",
+      "chapterTitle": "给机器人装上“眼睛”和“刹车”：反馈与安全",
+      "url": "chapters/05-feedback-safety.html#编码器给车轮装上quot计步器quot",
+      "body": ""
+    },
+    {
+      "id": "05-feedback-safety-为什么需要知道轮子转了多少",
+      "title": "为什么需要知道轮子转了多少？",
+      "chapter": "06",
+      "chapterTitle": "给机器人装上“眼睛”和“刹车”：反馈与安全",
+      "url": "chapters/05-feedback-safety.html#为什么需要知道轮子转了多少",
+      "body": ""
+    },
+    {
+      "id": "05-feedback-safety-编码器是怎么工作的",
+      "title": "编码器是怎么工作的？",
+      "chapter": "06",
+      "chapterTitle": "给机器人装上“眼睛”和“刹车”：反馈与安全",
+      "url": "chapters/05-feedback-safety.html#编码器是怎么工作的",
+      "body": ""
+    },
+    {
+      "id": "05-feedback-safety-编码器的初始化和读取",
+      "title": "编码器的初始化和读取",
+      "chapter": "06",
+      "chapterTitle": "给机器人装上“眼睛”和“刹车”：反馈与安全",
+      "url": "chapters/05-feedback-safety.html#编码器的初始化和读取",
+      "body": ""
+    },
+    {
+      "id": "05-feedback-safety-几个新手常问的细节",
+      "title": "几个新手常问的细节",
+      "chapter": "06",
+      "chapterTitle": "给机器人装上“眼睛”和“刹车”：反馈与安全",
+      "url": "chapters/05-feedback-safety.html#几个新手常问的细节",
+      "body": ""
+    },
+    {
+      "id": "05-feedback-safety-让编码器数据真正参与控制",
+      "title": "让编码器数据真正参与控制",
+      "chapter": "06",
+      "chapterTitle": "给机器人装上“眼睛”和“刹车”：反馈与安全",
+      "url": "chapters/05-feedback-safety.html#让编码器数据真正参与控制",
+      "body": ""
+    },
+    {
+      "id": "05-feedback-safety-imu感受车身的转动",
+      "title": "IMU：感受车身的转动",
+      "chapter": "06",
+      "chapterTitle": "给机器人装上“眼睛”和“刹车”：反馈与安全",
+      "url": "chapters/05-feedback-safety.html#imu感受车身的转动",
+      "body": ""
+    },
+    {
+      "id": "05-feedback-safety-编码器够了吗为什么还需要-imu",
+      "title": "编码器够了吗？为什么还需要 IMU？",
+      "chapter": "06",
+      "chapterTitle": "给机器人装上“眼睛”和“刹车”：反馈与安全",
+      "url": "chapters/05-feedback-safety.html#编码器够了吗为什么还需要-imu",
+      "body": ""
+    },
+    {
+      "id": "05-feedback-safety-九轴-imu-里有什么",
+      "title": "九轴 IMU 里有什么？",
+      "chapter": "06",
+      "chapterTitle": "给机器人装上“眼睛”和“刹车”：反馈与安全",
+      "url": "chapters/05-feedback-safety.html#九轴-imu-里有什么",
+      "body": ""
+    },
+    {
+      "id": "05-feedback-safety-零漂传感器的quot体重秤没归零quot",
+      "title": "零漂：传感器的&quot;体重秤没归零&quot;",
+      "chapter": "06",
+      "chapterTitle": "给机器人装上“眼睛”和“刹车”：反馈与安全",
+      "url": "chapters/05-feedback-safety.html#零漂传感器的quot体重秤没归零quot",
+      "body": ""
+    },
+    {
+      "id": "05-feedback-safety-传感器融合多个quot眼睛quot比一个更准",
+      "title": "传感器融合：多个&quot;眼睛&quot;比一个更准",
+      "chapter": "06",
+      "chapterTitle": "给机器人装上“眼睛”和“刹车”：反馈与安全",
+      "url": "chapters/05-feedback-safety.html#传感器融合多个quot眼睛quot比一个更准",
+      "body": ""
+    },
+    {
+      "id": "05-feedback-safety-执行机构机器人的quot手和手臂quot",
+      "title": "执行机构：机器人的&quot;手和手臂&quot;",
+      "chapter": "06",
+      "chapterTitle": "给机器人装上“眼睛”和“刹车”：反馈与安全",
+      "url": "chapters/05-feedback-safety.html#执行机构机器人的quot手和手臂quot",
+      "body": ""
+    },
+    {
+      "id": "05-feedback-safety-除了底盘还有什么会动",
+      "title": "除了底盘，还有什么会动？",
+      "chapter": "06",
+      "chapterTitle": "给机器人装上“眼睛”和“刹车”：反馈与安全",
+      "url": "chapters/05-feedback-safety.html#除了底盘还有什么会动",
+      "body": ""
+    },
+    {
+      "id": "05-feedback-safety-协议为执行机构准备的命令",
+      "title": "协议为执行机构准备的命令",
+      "chapter": "06",
+      "chapterTitle": "给机器人装上“眼睛”和“刹车”：反馈与安全",
+      "url": "chapters/05-feedback-safety.html#协议为执行机构准备的命令",
+      "body": ""
+    },
+    {
+      "id": "05-feedback-safety-限位开关机械结构的quot安全边界quot",
+      "title": "限位开关：机械结构的&quot;安全边界&quot;",
+      "chapter": "06",
+      "chapterTitle": "给机器人装上“眼睛”和“刹车”：反馈与安全",
+      "url": "chapters/05-feedback-safety.html#限位开关机械结构的quot安全边界quot",
       "body": ""
     },
     {
       "id": "05-feedback-safety-当前安全链已经走到哪里",
       "title": "当前安全链已经走到哪里",
       "chapter": "06",
-      "chapterTitle": "机器人如何感知并安全行动",
+      "chapterTitle": "给机器人装上“眼睛”和“刹车”：反馈与安全",
       "url": "chapters/05-feedback-safety.html#当前安全链已经走到哪里",
       "body": ""
     },
     {
-      "id": "05-feedback-safety-从能转走向可控",
-      "title": "从“能转”走向“可控”",
+      "id": "05-feedback-safety-命令超时quot外卖超时自动取消订单quot",
+      "title": "命令超时：&quot;外卖超时自动取消订单&quot;",
       "chapter": "06",
-      "chapterTitle": "机器人如何感知并安全行动",
-      "url": "chapters/05-feedback-safety.html#从能转走向可控",
+      "chapterTitle": "给机器人装上“眼睛”和“刹车”：反馈与安全",
+      "url": "chapters/05-feedback-safety.html#命令超时quot外卖超时自动取消订单quot",
+      "body": ""
+    },
+    {
+      "id": "05-feedback-safety-看门狗quot需要定时签到的值班室quot",
+      "title": "看门狗：&quot;需要定时签到的值班室&quot;",
+      "chapter": "06",
+      "chapterTitle": "给机器人装上“眼睛”和“刹车”：反馈与安全",
+      "url": "chapters/05-feedback-safety.html#看门狗quot需要定时签到的值班室quot",
+      "body": ""
+    },
+    {
+      "id": "05-feedback-safety-使能开关pe4-引脚上的物理钥匙",
+      "title": "使能开关：PE4 引脚上的物理钥匙",
+      "chapter": "06",
+      "chapterTitle": "给机器人装上“眼睛”和“刹车”：反馈与安全",
+      "url": "chapters/05-feedback-safety.html#使能开关pe4-引脚上的物理钥匙",
+      "body": ""
+    },
+    {
+      "id": "05-feedback-safety-从quot能转quot走向quot可控quot",
+      "title": "从&quot;能转&quot;走向&quot;可控&quot;",
+      "chapter": "06",
+      "chapterTitle": "给机器人装上“眼睛”和“刹车”：反馈与安全",
+      "url": "chapters/05-feedback-safety.html#从quot能转quot走向quot可控quot",
+      "body": ""
+    },
+    {
+      "id": "05-feedback-safety-本章新词",
+      "title": "本章新词",
+      "chapter": "06",
+      "chapterTitle": "给机器人装上“眼睛”和“刹车”：反馈与安全",
+      "url": "chapters/05-feedback-safety.html#本章新词",
       "body": ""
     },
     {
       "id": "06-progress-evidence",
-      "title": "项目走到哪一步了",
+      "title": "项目进度总览：哪些已经做好，哪些还在路上",
       "chapter": "07",
-      "chapterTitle": "项目走到哪一步了",
+      "chapterTitle": "项目进度总览：哪些已经做好，哪些还在路上",
       "url": "chapters/06-progress-evidence.html",
-      "body": "\n   把镜头从一条命令拉到整个仓库\n\n前面几章我们一直跟着  START MOTION  这条命令在代码里“行走”。它从 USART1 进入 STM32，经过协议解析和命令分发，最后让四路电机得到 PWM 信号。沿着这条路，我们已经看到一段完整的软件链路：串口收到字节、协议把它翻译成命令、分发器决定该做什么、运动模块把命令变成电机输出。\n\n现在把镜头拉远，问题自然变成：整个 RoboGame 2026 下位机项目，到底已经完成了哪些部分？哪些部分刚刚留好接口、还没填血肉？哪些结论还只是代码层面的推断，还需要真正把小车上电、把轮子放到地上才能证明？\n\n本章以 2026 年 7 月 14 日看到的仓库状态为准，Git 当前提交是  fc3ef5d 。这个提交本身产生于 2026 年 6 月 13 日，也就是说，虽然我们看到它时已经 7 月中旬，但代码本身停留在 6 月中旬的版本。状态判断时，我会优先查看当前源码和  USER/WHEELTEC.uvprojx  这两个“一手的代码证据”，然后再参考各模块的 README 与 Git 历史作为辅助说明。\n\n    初学者小提醒  ：为什么要把“代码里有”和“车上验证过”分开看？\n \n  很多刚接触嵌入式的小白容易把“代码写好了”和“功能完成了”混为一谈。实际上，一个功能从构思到真正可用，通常要跨过好几道门：\n  1.   设计阶段  ：脑子里想清楚要做什么；\n  2.   编码阶段  ：把想法写成  .c  /  .h  文件；\n  3.   入工程阶段  ：文件加入 Keil 工程，会被编译进固件；\n  4.   编译通过阶段  ：Keil 不报错，生成  .axf 、 .hex 、 .bin ；\n  5.   烧录阶段  ：把固件写到 STM32 的 Flash 里；\n  6.   单板验证阶段  ：上电后串口能收到 ACK，LED 会闪；\n  7.   整车验证阶段  ：电机真转、小车真走、机构真动。\n \n  每一道门都可能卡住。本章的目标就是把“到哪一道门了”这件事讲清楚，避免你误以为代码里写了闭环控制，车上就真的能跑闭环。\n\n完成度在嵌入式项目里有好几种不同含义。文件已经写好，只说明设计进入了代码；文件已经加入 Keil 工程，说明它会参与目标构建；编译通过、烧录成功、电机实转、整车联调，又是更进一步的证据。把这些证据分开记录，初学者就能清楚理解“代码里有”与“车上验证过”之间的距离，不会在调试时找错方向。\n\n   \n\n   从原厂小车工程长出新的下位机\n\n仓库不是从零开始写的。2026 年 4 月 30 日，项目导入了 WHEELTEC C50X 的原厂工程。这套原厂代码就像一辆已经能跑的“样板车”：电机能转、编码器能读、串口能发、IMU 能初始化、FreeRTOS 能调度、STM32 标准库也已经配好。对于刚接手的小白来说，这是一个非常宝贵的起点——你不需要自己从头写 PWM 驱动，也不用担心时钟树配错导致串口乱码。\n\n但原厂工程的问题也很典型：它是为了展示小车能力而写的，里面可能同时存在多个演示任务（比如平衡车任务、手柄遥控任务、OLED 显示任务），彼此耦合在一起，而且命名和目录结构不一定适合 RoboGame 的比赛逻辑。如果直接在上面加比赛代码，很容易写着写着就陷入“改一处、崩三处”的困境。\n\n所以 2026 年 6 月 6 日，项目做了一次关键的“整理手术”：重新整理商家源码，只保留  Mec Car  这一个目标，并创建了  LOWER CONTROLLER/  目录。电机、编码器、串口、IMU、FreeRTOS 和 STM32 标准库这些“底层器官”继续提供基础能力，而新的比赛业务代码则获得了单独、清楚的代码边界。你可以把它理解为：把原厂那辆整车的“底盘和动力系统”保留下来，但在上面重新搭了一个“比赛专用的驾驶舱和任务控制台”。\n\n随后一周的提交把工作台逐渐接通。我们按时间线来看一下：\n\n  时间   提交   留下的关键结果  \n                   \n  2026 04 30    813481c    导入 WHEELTEC 原厂工程  \n  2026 06 06    d87d486    重新整理商家源码基线  \n  2026 06 06    927d447    Keil 工程只保留  Mec Car  目标  \n  2026 06 06    c88087b    建立 APP、PROTOCOL、TRANSPORT、MOTION、SENSORS、ACTUATORS、BOARD、COMMON 的目录边界  \n  2026 06 08    be94cd7     app task 、UART 通道、协议解析、命令分发和响应链"
+      "body": "\n:::callout 🔄 上一章回顾\n上一章我们学习了反馈与安全机制——编码器如何充当\"计步器\"报告轮子转了多少、看门狗如何在程序卡死时自动重启、命令超时如何像\"外卖超时自动取消\"一样保护机器人。这些机制确保了机器人不会在失控时造成损害。\n:::\n\n:::callout 🎯 本章你会学到\n  如何通过 Git 历史了解项目的开发进程\n  17 条协议命令中，哪 6 条已经能工作，哪 11 条还在等待实现\n  八个新模块各自完成到了什么程度\n  \"代码写好了\"和\"车上验证过了\"之间到底有多大距离\n:::\n\n   把镜头从一条命令拉到整个仓库\n\n前面几章我们一直跟着  START MOTION  这条命令在代码里\"行走\"。它从 USART1 进入 STM32，经过协议解析和命令分发，最后让四路电机得到 PWM 信号。沿着这条路，我们看到了一段完整的软件链路：串口收到字节、协议把它翻译成命令、分发器决定该做什么、运动模块把命令变成电机输出。\n\n现在把镜头拉远，问一个自然的问题：整个 RoboGame 2026 下位机项目，到底已经完成了哪些部分？哪些部分刚刚留好接口、还没填入真正的业务逻辑？哪些结论还只是代码层面的推断，还需要真正把小车上电、把轮子放到地上才能证明？\n\n本章以 2026 年 7 月 14 日看到的仓库状态为准，  Git  （代码的时光机，每次修改都可以保存一个快照）当前  提交（commit）  是  fc3ef5d 。这个提交本身产生于 2026 年 6 月 13 日，也就是说，虽然我们看到它时已经 7 月中旬，但代码本身停留在 6 月中旬的版本。\n\n状态判断时，我会优先查看当前源码和  USER/WHEELTEC.uvprojx  这两个\"一手的代码证据\"，然后再参考各模块的 README 与 Git 历史作为辅助说明。\n\n:::callout 💡 零基础小课堂：什么是 Git？\n如果你从来没听说过 Git，不用担心，只需要记住几个概念：\n\n    Git   = 代码的时光机。每次修改代码后，你都可以保存一个\"快照\"，以后随时可以回到任何一个快照\n    提交（commit）   = 按下存档键。每次\"提交\"就是把当前代码状态保存下来\n    HEAD   = 当前最新的存档点。就像游戏里的\"最新存档\"\n    提交号  （如  fc3ef5d ）= 每个存档点的唯一编号，像身份证号一样不会重复\n\n慢慢来，后面看到这些词时就不会觉得陌生了。\n:::\n\n:::callout 💡 七道门——嵌入式功能从\"想到\"到\"做到\"要过几关？\n很多刚接触嵌入式的同学容易把\"代码写好了\"和\"功能完成了\"混为一谈。实际上，一个功能从构思到真正可用，通常要跨过好几道门：\n\n1.   设计阶段  ：脑子里想清楚要做什么\n2.   编码阶段  ：把想法写成  .c  /  .h  文件\n3.   入工程阶段  ：文件加入   Keil  （写嵌入式程序的专用编辑器）工程，会被编译进固件\n4.   编译通过阶段  ：Keil 不报错，生成  .axf 、 .hex 、 .bin  等文件\n5.   烧录阶段  ：把固件写到 STM32 的 Flash 里（  烧录  就是把程序写进芯片，就像往 U 盘里拷文件）\n6.   单板验证阶段  ：上电后串口能收到 ACK，LED 会闪\n7.   整车验证阶段  ：电机真转、小车真走、机构真动\n\n每一道门都可能卡住。本章的目标就是把\"到哪一道门了\"这件事讲清楚，避免你误以为代码里写了闭环控制，车上就真的能跑闭环。\n:::\n\n:::callout 💡 零基础小课堂：AXF / HEX / BIN 是什么？\n上面提到编译会生成三种文件，它们的关系是这样的：\n\n    AXF  ：带调试信息的程序文件——开发时用，可以设断点、看变量值\n    HEX  ：可以烧录进芯片的文件——烧录工具最常用的格式\n    BIN  ：最原始的程序文件——纯二进制数据，体积最小\n\n你可以把它们想象成同一篇文章的三种格式：AXF 是带批注的草稿，HEX 是排好版的印刷稿，BIN 是纯文字版。\n:::\n\n完成度在嵌入式项目里有好几种不同含义。文件已经写好，只说明设计进入了代码；文件已经加入 Keil 工程，说明它会参与目标构建；编译通过、烧录成功、电机实转、整车联调，又是更进一步的证据。\n\n把这些证据分开记录，初学者就能清楚理解\"代码里有\"与\"车上验证过\"之间的距离，不会在调试时找错方向。\n\n   \n\n   从原厂小车工程长出新的下位机\n\n仓库不是从零开始写的。2026 年 4 月 30 日，项目导入了 WHEELTEC C50X 的原厂工程。这套原厂代码就像一辆已经能跑的\"样板车\"：电机能转、编码器能读、串"
     },
     {
       "id": "06-progress-evidence-把镜头从一条命令拉到整个仓库",
       "title": "把镜头从一条命令拉到整个仓库",
       "chapter": "07",
-      "chapterTitle": "项目走到哪一步了",
+      "chapterTitle": "项目进度总览：哪些已经做好，哪些还在路上",
       "url": "chapters/06-progress-evidence.html#把镜头从一条命令拉到整个仓库",
       "body": ""
     },
@@ -436,7 +876,7 @@
       "id": "06-progress-evidence-从原厂小车工程长出新的下位机",
       "title": "从原厂小车工程长出新的下位机",
       "chapter": "07",
-      "chapterTitle": "项目走到哪一步了",
+      "chapterTitle": "项目进度总览：哪些已经做好，哪些还在路上",
       "url": "chapters/06-progress-evidence.html#从原厂小车工程长出新的下位机",
       "body": ""
     },
@@ -444,7 +884,7 @@
       "id": "06-progress-evidence-这条时间线告诉了我们什么",
       "title": "这条时间线告诉了我们什么？",
       "chapter": "07",
-      "chapterTitle": "项目走到哪一步了",
+      "chapterTitle": "项目进度总览：哪些已经做好，哪些还在路上",
       "url": "chapters/06-progress-evidence.html#这条时间线告诉了我们什么",
       "body": ""
     },
@@ -452,7 +892,7 @@
       "id": "06-progress-evidence-十七条命令分别走到了哪里",
       "title": "十七条命令分别走到了哪里",
       "chapter": "07",
-      "chapterTitle": "项目走到哪一步了",
+      "chapterTitle": "项目进度总览：哪些已经做好，哪些还在路上",
       "url": "chapters/06-progress-evidence.html#十七条命令分别走到了哪里",
       "body": ""
     },
@@ -460,7 +900,7 @@
       "id": "06-progress-evidence-已经能跑起来的六条命令",
       "title": "已经能跑起来的六条命令",
       "chapter": "07",
-      "chapterTitle": "项目走到哪一步了",
+      "chapterTitle": "项目进度总览：哪些已经做好，哪些还在路上",
       "url": "chapters/06-progress-evidence.html#已经能跑起来的六条命令",
       "body": ""
     },
@@ -468,7 +908,7 @@
       "id": "06-progress-evidence-已经留了接口还没实现的十一条命令",
       "title": "已经留了接口、还没实现的十一条命令",
       "chapter": "07",
-      "chapterTitle": "项目走到哪一步了",
+      "chapterTitle": "项目进度总览：哪些已经做好，哪些还在路上",
       "url": "chapters/06-progress-evidence.html#已经留了接口还没实现的十一条命令",
       "body": ""
     },
@@ -476,7 +916,7 @@
       "id": "06-progress-evidence-八个新模块的实际状态",
       "title": "八个新模块的实际状态",
       "chapter": "07",
-      "chapterTitle": "项目走到哪一步了",
+      "chapterTitle": "项目进度总览：哪些已经做好，哪些还在路上",
       "url": "chapters/06-progress-evidence.html#八个新模块的实际状态",
       "body": ""
     },
@@ -484,7 +924,7 @@
       "id": "06-progress-evidence-各模块的简单解读",
       "title": "各模块的简单解读",
       "chapter": "07",
-      "chapterTitle": "项目走到哪一步了",
+      "chapterTitle": "项目进度总览：哪些已经做好，哪些还在路上",
       "url": "chapters/06-progress-evidence.html#各模块的简单解读",
       "body": ""
     },
@@ -492,7 +932,7 @@
       "id": "06-progress-evidence-代码证据与实车证据之间",
       "title": "代码证据与实车证据之间",
       "chapter": "07",
-      "chapterTitle": "项目走到哪一步了",
+      "chapterTitle": "项目进度总览：哪些已经做好，哪些还在路上",
       "url": "chapters/06-progress-evidence.html#代码证据与实车证据之间",
       "body": ""
     },
@@ -500,7 +940,7 @@
       "id": "06-progress-evidence-两处需要同步更新的文档差异",
       "title": "两处需要同步更新的文档差异",
       "chapter": "07",
-      "chapterTitle": "项目走到哪一步了",
+      "chapterTitle": "项目进度总览：哪些已经做好，哪些还在路上",
       "url": "chapters/06-progress-evidence.html#两处需要同步更新的文档差异",
       "body": ""
     },
@@ -508,23 +948,31 @@
       "id": "06-progress-evidence-本章小结",
       "title": "本章小结",
       "chapter": "07",
-      "chapterTitle": "项目走到哪一步了",
+      "chapterTitle": "项目进度总览：哪些已经做好，哪些还在路上",
       "url": "chapters/06-progress-evidence.html#本章小结",
       "body": ""
     },
     {
+      "id": "06-progress-evidence-本章新词",
+      "title": "本章新词",
+      "chapter": "07",
+      "chapterTitle": "项目进度总览：哪些已经做好，哪些还在路上",
+      "url": "chapters/06-progress-evidence.html#本章新词",
+      "body": ""
+    },
+    {
       "id": "07-development-map",
-      "title": "继续把机器人做完整",
+      "title": "下一步怎么做：从能动到可控的完整路线图",
       "chapter": "08",
-      "chapterTitle": "继续把机器人做完整",
+      "chapterTitle": "下一步怎么做：从能动到可控的完整路线图",
       "url": "chapters/07-development-map.html",
-      "body": "\n   从已经走通的路继续向前\n\n故事开始的时候，上位机只发来一条简简单单的  START MOTION 。现在我们已经知道，这条命令会进入 USART1，经过协议解析和命令分发，再由  motion start motion    把 PWM 3000 写到四个电机通道。那一刻四个轮子应该开始转动——如果接线正确的话。\n\n这条链路看起来很短，但它其实证明了新架构的主干已经形成：上位机说得清楚，下位机听得懂，协议层没有丢包，运动层能把数字变成电机输出。就像盖房子时先搭好承重墙，墙稳了，后面才能放心地砌砖、装窗、布线。\n\n接下来的工作适合像搭桥一样进行。先确认脚下这一段能够稳定承重，再向前接下一段。每接通一个功能，就留下编译、通信和实机证据。这样遇到问题时，可以很快判断故障发生在协议层、任务调度、运动计算、接线还是机械结构上，而不至于一上来就“整车不动”然后无处下手。\n\n下面这张图是整个后续开发的大致顺序。你可以把它当成一份路线图，不一定要严格线性执行，但建议大体按这个方向推进：先让构建和通信稳定，再让车轮听话，然后加上安全和反馈，最后接入操作机构。\n\n   mermaid\nflowchart LR\n    A \"可重复构建\"      B \"协议冒烟测试\" \n    B     C \"单轮与轮位验证\" \n    C     D \"停止与安全联锁\" \n    D     E \"编码器闭环与档位\" \n    E     F \"航向与精确运动\" \n    F     G \"升降 / 夹爪 / 推杆\" \n    G     H \"整车联调记录\" \n   \n\n   先认识工程的几个入口\n\n第一次打开大型嵌入式仓库，很容易在几百个文件之间迷路。文件夹一层套一层，文件名看起来都差不多，函数名又特别长。其实对于初学者来说，最有效的阅读方式不是从第一行开始顺序读，而是沿着“一条命令到底怎么被处理”的实际路径去读。\n\n想象一下：上位机发了一个  START MOTION ，它像一封信，从串口进来，经过好几道门，最后变成电机输出。我们只需要跟着这封信走，就能把仓库里最核心的几条线索串起来。\n\n  入口   阅读时关注的内容  \n             \n   USER/WHEELTEC.uvprojx    芯片型号、编译器版本、目标名、源码分组和输出设置  \n   USER/main.c     systemInit   、FreeRTOS 启动和  app task  的创建  \n   USER/system.c    USART1、PWM、ICM20948、使能开关和四路编码器初始化  \n   LOWER CONTROLLER/APP/app main.c    字节怎样进入协议解析器  \n   LOWER CONTROLLER/APP/command dispatcher.c    17 条命令目前各自走向哪里  \n   LOWER CONTROLLER/BOARD/    USART1、115200、PWM 3000 和 A/D/B/C 轮位映射  \n   LOWER CONTROLLER/MOTION/motion controller.c    平移、旋转、停止和电机方向引脚  \n\n拿到仓库后，建议先双击  USER/WHEELTEC.uvprojx  打开 Keil，看看工程的“目录树”长什么样。注意芯片是不是 STM32F407VE，目标名是不是  Mec Car ，源码有没有按  HARDWARE 、 USER 、 LOWER CONTROLLER  这样分组。这一步不需要编译，只是熟悉战场。\n\n然后打开  main.c ，找到  systemInit    和 FreeRTOS 的任务创建代码。这里回答的问题是：程序上电后第一件事做什么？哪些任务在跑？ app task  是我们自己业务逻辑的入口，相当于整个下位机程序的“前台接待”。\n\n再往里面走， system.c  负责把各种硬件初始化好：串口、PWM、IMU、编码器、使能开关。可以把它理解为“开机自检和硬件准备工作”。\n\n真正处理命令的地方在  LOWER CONTROLLER/APP/ 。 app main.c  是接待处， command dispatcher.c  是分发窗口， motion controller.c  是执行车间。遇到“为什么车轮这样转”的问题，可以从  command dispatcher.c  跟到  motion controller.c ，再看  board motion config.h  和  HARDWARE/motor.h 。遇到“为什么收不到命令”的问题，可以从  board uart config.h  跟到  uart i"
+      "body": "\n:::callout 🔄 上一章回顾\n上一章我们把镜头从一条命令拉远到整个仓库，沿着 Git 历史和源码盘点了项目已经完成的部分、留好接口但还没填血肉的部分、以及等待实机验证的部分。现在我们知道了项目走到哪一步，该规划接下来怎么走了。\n:::\n\n:::callout 🎯 本章你会学到\n  如何在 Keil 中建立一次可复现的编译构建\n  通信验证的步骤和常见问题排查\n  四个电机通道的逐一测试方法\n  安全停止机制（运动许可）的设计思路\n    PID 控制的基本原理  ——让电机真正按目标速度运转\n  航向、操作机构的接入顺序\n:::\n\n   从已经走通的路继续向前\n\n故事开始的时候，上位机只发来一条简简单单的  START MOTION 。现在我们已经知道，这条命令会进入 USART1，经过协议解析和命令分发，再由  motion start motion    把 PWM 3000 写到四个电机通道。那一刻四个轮子应该开始转动——如果接线正确的话。\n\n这条链路看起来很短，但它证明了新架构的主干已经形成：上位机说得清楚，下位机听得懂，协议层没有丢包，运动层能把数字变成电机输出。就像盖房子时先搭好承重墙，墙稳了，后面才能放心地砌砖、装窗、布线。\n\n接下来的工作适合像搭桥一样进行。先确认脚下这一段能够稳定承重，再向前接下一段。每接通一个功能，就留下编译、通信和实机证据。这样遇到问题时，可以很快判断故障发生在协议层、任务调度、运动计算、接线还是机械结构上，而不至于一上来就\"整车不动\"然后无处下手。\n\n下面这张图是整个后续开发的大致顺序。你可以把它当成一份路线图，不一定要严格线性执行，但建议大体按这个方向推进：\n\n   mermaid\nflowchart LR\n    A \"可重复构建\"      B \"协议冒烟测试\" \n    B     C \"单轮与轮位验证\" \n    C     D \"停止与安全联锁\" \n    D     E \"编码器闭环与档位\" \n    E     F \"航向与精确运动\" \n    F     G \"升降 / 夹爪 / 推杆\" \n    G     H \"整车联调记录\" \n   \n\n先让构建和通信稳定，再让车轮听话，然后加上安全和反馈，最后接入操作机构。\n\n   先认识工程的几个入口\n\n第一次打开大型嵌入式仓库，很容易在几百个文件之间迷路。文件夹一层套一层，文件名看起来都差不多，函数名又特别长。\n\n其实对于初学者来说，最有效的阅读方式不是从第一行开始顺序读，而是沿着\"一条命令到底怎么被处理\"的实际路径去读。想象一下：上位机发了一个  START MOTION ，它像一封信，从串口进来，经过好几道门，最后变成电机输出。我们只需要跟着这封信走，就能把仓库里最核心的几条线索串起来。\n\n  入口   阅读时关注的内容   为什么要看这里  \n                   \n   USER/WHEELTEC.uvprojx    芯片型号、编译器版本、目标名、源码分组和输出设置   确认工程能在你的电脑上打开和编译  \n   USER/main.c     systemInit   、FreeRTOS 启动和  app task  的创建   了解程序上电后第一件事做什么  \n   USER/system.c    USART1、PWM、ICM20948、使能开关和四路编码器初始化   知道硬件外设在哪里被配置  \n   LOWER CONTROLLER/APP/app main.c    字节怎样进入协议解析器   跟踪\"收到串口数据后发生了什么\"  \n   LOWER CONTROLLER/APP/command dispatcher.c    17 条命令目前各自走向哪里   看到每条命令对应哪个处理函数  \n   LOWER CONTROLLER/BOARD/    USART1、115200、PWM 3000 和 A/D/B/C 轮位映射   确认硬件参数和轮位配置  \n   LOWER CONTROLLER/MOTION/motion controller.c    平移、旋转、停止和电机方向引脚   追踪运动命令如何变成电机输出  \n\n拿到仓库后，建议先双击  USER/WHEELTEC.uvprojx  打开 Keil，看看工程的\"目录树\"长什么样。注意芯片是不是 STM32F407VE，目标名是不是  Mec Car ，源码有没有按  HARDWARE 、 USER 、 LOWER CONTROLLER  这样分组。这一步不需要编译，只是熟悉战场。\n\n然后打开  main.c ，找到  systemInit    和 FreeRTOS 的任务创建代码。这里回答的问题是：程序上电后"
     },
     {
       "id": "07-development-map-从已经走通的路继续向前",
       "title": "从已经走通的路继续向前",
       "chapter": "08",
-      "chapterTitle": "继续把机器人做完整",
+      "chapterTitle": "下一步怎么做：从能动到可控的完整路线图",
       "url": "chapters/07-development-map.html#从已经走通的路继续向前",
       "body": ""
     },
@@ -532,7 +980,7 @@
       "id": "07-development-map-先认识工程的几个入口",
       "title": "先认识工程的几个入口",
       "chapter": "08",
-      "chapterTitle": "继续把机器人做完整",
+      "chapterTitle": "下一步怎么做：从能动到可控的完整路线图",
       "url": "chapters/07-development-map.html#先认识工程的几个入口",
       "body": ""
     },
@@ -540,23 +988,63 @@
       "id": "07-development-map-建立一次可以复现的构建",
       "title": "建立一次可以复现的构建",
       "chapter": "08",
-      "chapterTitle": "继续把机器人做完整",
+      "chapterTitle": "下一步怎么做：从能动到可控的完整路线图",
       "url": "chapters/07-development-map.html#建立一次可以复现的构建",
+      "body": ""
+    },
+    {
+      "id": "07-development-map-构建输出和自动化小工具",
+      "title": "构建输出和自动化小工具",
+      "chapter": "08",
+      "chapterTitle": "下一步怎么做：从能动到可控的完整路线图",
+      "url": "chapters/07-development-map.html#构建输出和自动化小工具",
+      "body": ""
+    },
+    {
+      "id": "07-development-map-axfhexbin-三种文件的区别",
+      "title": "AXF、HEX、BIN 三种文件的区别",
+      "chapter": "08",
+      "chapterTitle": "下一步怎么做：从能动到可控的完整路线图",
+      "url": "chapters/07-development-map.html#axfhexbin-三种文件的区别",
+      "body": ""
+    },
+    {
+      "id": "07-development-map-第一次构建的目标",
+      "title": "第一次构建的目标",
+      "chapter": "08",
+      "chapterTitle": "下一步怎么做：从能动到可控的完整路线图",
+      "url": "chapters/07-development-map.html#第一次构建的目标",
       "body": ""
     },
     {
       "id": "07-development-map-在车轮接触地面前验证通信",
       "title": "在车轮接触地面前验证通信",
       "chapter": "08",
-      "chapterTitle": "继续把机器人做完整",
+      "chapterTitle": "下一步怎么做：从能动到可控的完整路线图",
       "url": "chapters/07-development-map.html#在车轮接触地面前验证通信",
+      "body": ""
+    },
+    {
+      "id": "07-development-map-三条必测命令",
+      "title": "三条必测命令",
+      "chapter": "08",
+      "chapterTitle": "下一步怎么做：从能动到可控的完整路线图",
+      "url": "chapters/07-development-map.html#三条必测命令",
+      "body": ""
+    },
+    {
+      "id": "07-development-map-故意制造错误",
+      "title": "故意制造错误",
+      "chapter": "08",
+      "chapterTitle": "下一步怎么做：从能动到可控的完整路线图",
+      "url": "chapters/07-development-map.html#故意制造错误",
       "body": ""
     },
     {
       "id": "07-development-map-让四个通道依次说话",
       "title": "让四个通道依次说话",
       "chapter": "08",
-      "chapterTitle": "继续把机器人做完整",
+      "chapterTitle": "下一步怎么做：从能动到可控的完整路线图",
       "url": "chapters/07-development-map.html#让四个通道依次说话",
       "body": ""
     },
@@ -564,32 +1052,112 @@
       "id": "07-development-map-先把停止能力接牢",
       "title": "先把停止能力接牢",
       "chapter": "08",
-      "chapterTitle": "继续把机器人做完整",
+      "chapterTitle": "下一步怎么做：从能动到可控的完整路线图",
       "url": "chapters/07-development-map.html#先把停止能力接牢",
+      "body": ""
+    },
+    {
+      "id": "07-development-map-命令超时检查",
+      "title": "命令超时检查",
+      "chapter": "08",
+      "chapterTitle": "下一步怎么做：从能动到可控的完整路线图",
+      "url": "chapters/07-development-map.html#命令超时检查",
+      "body": ""
+    },
+    {
+      "id": "07-development-map-看门狗和复位",
+      "title": "看门狗和复位",
+      "chapter": "08",
+      "chapterTitle": "下一步怎么做：从能动到可控的完整路线图",
+      "url": "chapters/07-development-map.html#看门狗和复位",
       "body": ""
     },
     {
       "id": "07-development-map-用编码器把档位变成真实速度",
       "title": "用编码器把档位变成真实速度",
       "chapter": "08",
-      "chapterTitle": "继续把机器人做完整",
+      "chapterTitle": "下一步怎么做：从能动到可控的完整路线图",
       "url": "chapters/07-development-map.html#用编码器把档位变成真实速度",
+      "body": ""
+    },
+    {
+      "id": "07-development-map-从开环到闭环",
+      "title": "从开环到闭环",
+      "chapter": "08",
+      "chapterTitle": "下一步怎么做：从能动到可控的完整路线图",
+      "url": "chapters/07-development-map.html#从开环到闭环",
+      "body": ""
+    },
+    {
+      "id": "07-development-map-关键参数",
+      "title": "关键参数",
+      "chapter": "08",
+      "chapterTitle": "下一步怎么做：从能动到可控的完整路线图",
+      "url": "chapters/07-development-map.html#关键参数",
+      "body": ""
+    },
+    {
+      "id": "07-development-map-整定-pid-参数",
+      "title": "整定 PID 参数",
+      "chapter": "08",
+      "chapterTitle": "下一步怎么做：从能动到可控的完整路线图",
+      "url": "chapters/07-development-map.html#整定-pid-参数",
+      "body": ""
+    },
+    {
+      "id": "07-development-map-从闭环到精确运动",
+      "title": "从闭环到精确运动",
+      "chapter": "08",
+      "chapterTitle": "下一步怎么做：从能动到可控的完整路线图",
+      "url": "chapters/07-development-map.html#从闭环到精确运动",
       "body": ""
     },
     {
       "id": "07-development-map-再补航向和操作机构",
       "title": "再补航向和操作机构",
       "chapter": "08",
-      "chapterTitle": "继续把机器人做完整",
+      "chapterTitle": "下一步怎么做：从能动到可控的完整路线图",
       "url": "chapters/07-development-map.html#再补航向和操作机构",
+      "body": ""
+    },
+    {
+      "id": "07-development-map-航向控制",
+      "title": "航向控制",
+      "chapter": "08",
+      "chapterTitle": "下一步怎么做：从能动到可控的完整路线图",
+      "url": "chapters/07-development-map.html#航向控制",
+      "body": ""
+    },
+    {
+      "id": "07-development-map-操作机构",
+      "title": "操作机构",
+      "chapter": "08",
+      "chapterTitle": "下一步怎么做：从能动到可控的完整路线图",
+      "url": "chapters/07-development-map.html#操作机构",
+      "body": ""
+    },
+    {
+      "id": "07-development-map-整车联调记录",
+      "title": "整车联调记录",
+      "chapter": "08",
+      "chapterTitle": "下一步怎么做：从能动到可控的完整路线图",
+      "url": "chapters/07-development-map.html#整车联调记录",
       "body": ""
     },
     {
       "id": "07-development-map-小结与下一步",
       "title": "小结与下一步",
       "chapter": "08",
-      "chapterTitle": "继续把机器人做完整",
+      "chapterTitle": "下一步怎么做：从能动到可控的完整路线图",
       "url": "chapters/07-development-map.html#小结与下一步",
+      "body": ""
+    },
+    {
+      "id": "07-development-map-本章新词",
+      "title": "本章新词",
+      "chapter": "08",
+      "chapterTitle": "下一步怎么做：从能动到可控的完整路线图",
+      "url": "chapters/07-development-map.html#本章新词",
       "body": ""
     }
   ]

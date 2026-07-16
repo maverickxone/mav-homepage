@@ -70,64 +70,64 @@
       <a class="toc-card" href="chapters/00-preface.html">
         <div class="num"><strong>01</strong><span>CH. 01</span></div>
         <div>
-          <h3>开篇：一条命令，为什么需要下位机</h3>
-          <p>跟随一条 START_MOTION 命令进入机器人，认识上位机、下位机和整套固件的分工。</p>
+          <h3>开篇：一条命令的旅程</h3>
+          <p>跟随一条 START_MOTION 命令，认识机器人里的两台计算机如何分工合作，建立对整个项目的第一印象。</p>
         </div>
         <div class="read"><span>开始阅读</span><span>→</span></div>
       </a>
       <a class="toc-card" href="chapters/01-hardware-origin.html">
         <div class="num"><strong>02</strong><span>CH. 02</span></div>
         <div>
-          <h3>从通用小车到比赛底盘</h3>
-          <p>认识 STM32F407、四路电机、编码器、ICM20948 和麦轮底盘，理解原厂硬件怎样成为比赛机器人的身体。</p>
+          <h3>认识机器人的身体：控制板、电机和传感器</h3>
+          <p>走进机器人内部，认识它的大脑（STM32 控制芯片）、通信方式（串口）、肌肉（电机）和感觉器官（编码器、IMU），了解这些零件怎样协同工作。</p>
         </div>
         <div class="read"><span>开始阅读</span><span>→</span></div>
       </a>
       <a class="toc-card" href="chapters/02-architecture-boot.html">
         <div class="num"><strong>03</strong><span>CH. 03</span></div>
         <div>
-          <h3>新的骨架：从上电到 app_task</h3>
-          <p>沿着 main、systemInit 和 FreeRTOS 启动过程，读懂新下位机业务怎样开始等待第一条命令。</p>
+          <h3>程序怎样开始运行：从按下电源到等待命令</h3>
+          <p>跟着 main 函数出发，看看下位机上电后怎样一步步初始化硬件、创建任务，最终进入等待命令的状态。</p>
         </div>
         <div class="read"><span>开始阅读</span><span>→</span></div>
       </a>
       <a class="toc-card" href="chapters/03-command-journey.html">
         <div class="num"><strong>04</strong><span>CH. 04</span></div>
         <div>
-          <h3>一条命令的旅程</h3>
-          <p>逐字节追踪 START_MOTION，读懂 UART1 中断、环形缓冲区、协议状态机、CRC、命令分发与 ACK。</p>
+          <h3>跟踪一条命令：从电脑到控制板的完整旅程</h3>
+          <p>跟着一条 START_MOTION 命令，一步步走过串口中断、环形缓冲区、协议状态机、CRC 校验、命令分发和 ACK 回复的完整旅程。</p>
         </div>
         <div class="read"><span>开始阅读</span><span>→</span></div>
       </a>
       <a class="toc-card" href="chapters/04-mecanum-motion.html">
         <div class="num"><strong>05</strong><span>CH. 05</span></div>
         <div>
-          <h3>四个轮子如何配合</h3>
-          <p>跟随 START_MOTION 进入运动控制层，理解麦轮的方向组合、轮位映射、方向校正和 PWM。</p>
+          <h3>四个轮子如何配合：麦轮运动控制</h3>
+          <p>跟随 START_MOTION 命令来到车轮前，看看麦克纳姆轮如何让机器人前后左右任意移动，理解四轮符号组合、轮位映射和 PWM 输出。</p>
         </div>
         <div class="read"><span>开始阅读</span><span>→</span></div>
       </a>
       <a class="toc-card" href="chapters/05-feedback-safety.html">
         <div class="num"><strong>06</strong><span>CH. 06</span></div>
         <div>
-          <h3>机器人如何感知并安全行动</h3>
-          <p>从四路电机输出出发，认识编码器、IMU、执行机构，以及当前已经具备和仍待接入的安全保护。</p>
+          <h3>给机器人装上“眼睛”和“刹车”：反馈与安全</h3>
+          <p>机器人跑起来了，但它知道自己跑了多快吗？万一通信断了怎么办？本章带你认识编码器、IMU 和安全保护机制，让机器人从'能动'走向'可控'。</p>
         </div>
         <div class="read"><span>开始阅读</span><span>→</span></div>
       </a>
       <a class="toc-card" href="chapters/06-progress-evidence.html">
         <div class="num"><strong>07</strong><span>CH. 07</span></div>
         <div>
-          <h3>项目走到哪一步了</h3>
-          <p>沿着 Git 历史和当前源码查看项目进度，分清已经接通的链路、已有入口的模块和等待实机验证的部分。</p>
+          <h3>项目进度总览：哪些已经做好，哪些还在路上</h3>
+          <p>沿着代码仓库的修改历史和当前源码，看看项目已经完成了什么、还有什么在路上，学会区分'代码写好了'和'车上验证过了'的区别。</p>
         </div>
         <div class="read"><span>开始阅读</span><span>→</span></div>
       </a>
       <a class="toc-card" href="chapters/07-development-map.html">
         <div class="num"><strong>08</strong><span>CH. 08</span></div>
         <div>
-          <h3>继续把机器人做完整</h3>
-          <p>从 Keil 工程和源码入口出发，安排构建、通信、车轮、安全、闭环与执行机构的后续开发路线。</p>
+          <h3>下一步怎么做：从能动到可控的完整路线图</h3>
+          <p>从 Keil 工程入口出发，一步一步安排构建、通信、车轮、安全、闭环与操作机构的后续开发路线，帮助零基础同学把机器人从'能转'变成'可控'。</p>
         </div>
         <div class="read"><span>开始阅读</span><span>→</span></div>
       </a>

@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>四个轮子如何配合 — RoboGame 2026：从一条命令到四个车轮</title>
+<title>四个轮子如何配合：麦轮运动控制 — RoboGame 2026：从一条命令到四个车轮</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
@@ -55,28 +55,51 @@
 <div class="with-sidebar">
   <aside class="sidebar">
   <div class="chapter-num">CHAPTER 05</div>
-  <div class="chapter-name">四个轮子如何配合</div>
+  <div class="chapter-name">四个轮子如何配合：麦轮运动控制</div>
   <h4>目录</h4>
   <ul>
     <li><a href="#motion_start_motion命令来到车轮前">motion_start_motion：命令来到车轮前</a></li>
     <li><a href="#麦轮为什么能够横着走">麦轮为什么能够横着走</a></li>
+    <li><a href="#四轮符号组合整章的核心">四轮符号组合：整章的核心</a></li>
     <li><a href="#轮位和电机接口之间的翻译">轮位和电机接口之间的翻译</a></li>
-    <li><a href="#pwm-像快速开关">PWM 像快速开关</a></li>
+    <li><a href="#pwm-与占空比">PWM 与占空比</a></li>
     <li><a href="#停止时发生了什么">停止时发生了什么</a></li>
+    <li><a href="#调试工具motion_test_motor_channels_loop">调试工具：motion_test_motor_channels_loop()</a></li>
+    <li><a href="#本章小结">本章小结</a></li>
+    <li><a href="#本章新词">本章新词</a></li>
   </ul>
 </aside>
   <article class="chapter-body">
     <header class="chapter-head">
   <div class="chapter-head-meta">
     <span class="num">CHAPTER 05</span>
-    <span>≈ 24 MIN READ</span>
+    <span>≈ 26 MIN READ</span>
   </div>
-  <h1>四个轮子如何配合</h1>
+  <h1>四个轮子如何配合：麦轮运动控制</h1>
 
 </header>
-    <h2 id="motion_start_motion命令来到车轮前">motion_start_motion：命令来到车轮前</h2>
-<p>上一章里，<code>START_MOTION</code> 已经穿过 USART1、接收缓冲区和协议解析器。命令分发器从协议载荷中拆出了两个参数：一个是 <code>direction</code>，表示“往哪个方向走”；另一个是 <code>gear</code>，表示“用哪个档位走”。现在，这条命令终于来到 <code>LOWER_CONTROLLER/MOTION/motion_controller.c</code>，准备把一句抽象的“向前”翻译成四个电机都能听懂的信号。</p>
-<p>可以把底盘想象成一张桌子，四个电机就是抬桌子的四个人。领队只会喊“往前走”“向左挪”这种整体指令，桌子本身可听不懂人话；四个人必须分别知道自己该往哪个方向、用多大力气推。在麦轮底盘里，<code>motion_start_motion()</code> 就是这个“领队”。它负责把“整车动作”拆解成“每个轮子该怎么转”，再交给更底层的 PWM 驱动去执行。</p>
+    <div class="callout">
+<p class="callout-title">🔄 上一章回顾</p>
+
+<p>上一章我们追踪了一条 <code>START_MOTION</code> 命令的完整旅程：它从上位机出发，经过 USART1 串口中断、环形缓冲区、协议状态机的逐字节解析，最终被命令分发器拆开，取出了 <code>direction</code>（方向）和 <code>gear</code>（档位）两个参数。现在，这条命令即将交给运动控制层——真正让轮子转起来的地方。</p>
+</div>
+
+<div class="callout">
+<p class="callout-title">🎯 本章你会学到</p>
+
+<ul>
+<li>麦克纳姆轮（麦轮）为什么能让机器人横着走</li>
+<li>四个轮子的正转/反转组合如何实现前进、后退、平移和旋转</li>
+<li>&quot;逻辑轮位&quot;和&quot;电机通道&quot;之间的映射与方向校正</li>
+<li>PWM 值如何控制电机转速</li>
+<li>停止命令做了什么，以及为什么安全意识很重要</li>
+</ul>
+</div>
+
+<h2 id="motion_start_motion命令来到车轮前">motion_start_motion：命令来到车轮前</h2>
+<p>上一章里，<code>START_MOTION</code> 已经穿过 USART1、接收缓冲区和协议解析器。命令分发器从协议载荷中拆出了两个参数：一个是 <code>direction</code>，表示&quot;往哪个方向走&quot;；另一个是 <code>gear</code>，表示&quot;用哪个档位走&quot;。现在，这条命令终于来到 <code>LOWER_CONTROLLER/MOTION/motion_controller.c</code>，准备把一句抽象的&quot;向前&quot;翻译成四个电机都能听懂的信号。</p>
+<p>可以把底盘想象成一张桌子，四个电机就是抬桌子的四个人。领队喊&quot;往前走&quot;，四个人就一起往前迈步；领队喊&quot;向左挪&quot;，每个人需要根据自己站的位置调整用力方向——有人往前推，有人往后拉，桌子才能整体平移。桌子本身可听不懂&quot;向左&quot;这种话，它只知道四个角各自受到的力。</p>
+<p>在麦轮底盘里，<code>motion_start_motion()</code> 就是这个&quot;领队&quot;。它负责把&quot;整车动作&quot;拆解成&quot;每个轮子该怎么转&quot;，再交给更底层的 PWM 驱动去执行。</p>
 <div class="mermaid">flowchart LR
     A["START_MOTION<br/>direction + gear"] --> B["motion_start_motion()"]
     B --> C["四个逻辑轮位的正负值"]
@@ -84,19 +107,37 @@
     D --> E["A / B / C / D 电机通道"]
     E --> F["方向引脚 + PWM"]</div>
 <p>命令分发器里的调用非常短，只有一行：</p>
-<pre data-label="c"><code class="language-c">status = motion_start_motion(args.direction, args.gear) ?
+<pre data-label="c"><code class="language-c">// 调用运动函数，把方向和档位传进去
+// 返回 true 表示方向有效 → 回复 OK
+// 返回 false 表示方向无法识别 → 回复 BAD_PAYLOAD（载荷有误）
+status = motion_start_motion(args.direction, args.gear) ?
     RESPONSE_STATUS_OK : RESPONSE_STATUS_BAD_PAYLOAD;</code></pre>
 <p>这里 <code>args.direction</code> 和 <code>args.gear</code> 都来自上位机发下来的协议载荷。运动函数返回 <code>true</code> 时，分发器就回复一个 ACK OK；如果方向值无法识别，运动函数会先把底盘停下来，再返回 <code>false</code>，分发器就会回复 BAD_PAYLOAD。</p>
-<p>这种写法体现了很重要的一点：<strong>通信层只负责“传话”和“回话”，真正让四个轮子怎么动的事情全部留在运动层处理</strong>。初学者可能会想，为什么不在分发器里直接判断方向？因为那样会让通信代码里塞满电机细节；一旦换轮子、换底盘结构，通信层也得跟着改。把“命令”和“执行”分开，是大型嵌入式代码库里最常见的组织方式。</p>
+<p>这种写法体现了很重要的一点：<strong>通信层只负责&quot;传话&quot;和&quot;回话&quot;，真正让四个轮子怎么动的事情全部留在运动层处理</strong>。为什么不在分发器里直接判断方向？因为那样会让通信代码里塞满电机细节；一旦换轮子、换底盘结构，通信层也得跟着改。把&quot;命令&quot;和&quot;执行&quot;分开，是大型嵌入式代码库里最常见的组织方式。</p>
 <h2 id="麦轮为什么能够横着走">麦轮为什么能够横着走</h2>
-<p>这个项目使用的是麦克纳姆轮，英文叫 <strong>Mecanum wheel</strong>。普通轮子的主要滚动方向只能沿着车头前后，但麦轮外圈还有一排斜着安装的小滚子。你可以把它想象成一只鞋底上装了许多斜向小轮：大轮转动时，地面对车轮的反作用力会被分解成前后和左右两个方向。</p>
-<p>单看一只麦轮，它产生的侧向分量会让车身有偏移趋势；但四只轮子按合适的方向一起转时，有些分量会互相抵消，有些分量则会叠加起来。于是：</p>
+<h3 id="普通轮子的局限">普通轮子的局限</h3>
+<p>先想想普通轮子——比如自行车轮或汽车轮。它们只能沿着轮子滚动的方向前进或后退。想让车横着走？做不到，你只能先转弯再开过去。这就是普通轮子的局限：<strong>运动方向被锁死在轮子滚动的方向上</strong>。</p>
+<p>但是在机器人比赛中，我们经常需要底盘能够灵活地向任意方向移动——前后、左右、甚至斜着走。怎么办呢？</p>
+<h3 id="麦轮给轮子装上quot斜滑轮quot">麦轮：给轮子装上&quot;斜滑轮&quot;</h3>
+<p>这个项目使用的是<strong>麦克纳姆轮（Mecanum wheel）</strong>，简称<strong>麦轮</strong>。你可能见过超市购物车下面的万向轮——它可以朝任何方向滑动。麦轮的思路有点类似，但更巧妙。</p>
+<div class="callout">
+<p class="callout-title">💡 零基础小课堂：麦克纳姆轮</p>
+
+<p>麦轮看起来和普通轮子很像，但仔细看会发现：轮子外圈装了一排<strong>斜着的小滚子</strong>（通常倾斜 45°）。当电机驱动大轮转动时，地面对这些小滚子的反作用力不是纯粹的前后方向，而是<strong>被分解成了前后和左右两个分量</strong>。</p>
+<p>你可以把它想象成穿着溜冰鞋站在地上：如果你的脚斜着用力蹬地，身体不会沿着脚的方向走，而是会往侧面滑——这就是力被分解的效果。麦轮上的小滚子就像一排微型&quot;溜冰鞋&quot;，让每个轮子都能产生侧向的力。</p>
+</div>
+
+<p>单看一只麦轮，它产生的侧向分量会让车身有偏移趋势。但关键在于：<strong>四只轮子按合适的方向一起转时，有些分量会互相抵消，有些分量则会叠加起来</strong>。于是：</p>
 <ul>
-<li>四个轮子同向转动，车就向前或向后走；</li>
-<li>左右两侧斜向分量重新组合，车就能横着平移；</li>
-<li>左右两侧反向配合，车就能在原地旋转。</li>
+<li>四个轮子同向转动 → 侧向分量互相抵消 → 车就向前或向后走；</li>
+<li>对角线上的轮子反向配合 → 前后分量互相抵消 → 车就能横着平移；</li>
+<li>左右两侧反向旋转 → 车就能在原地旋转。</li>
 </ul>
-<p>代码里并没有先写一大串力学公式，而是直接保存了经过整理的四轮符号组合。这里的正号和负号表示“逻辑轮位希望转动的方向”，数值大小表示 PWM 控制量。下面这张表是整章的核心，建议第一次看的时候对照实车位置多读几遍：</p>
+<p>这就是麦轮底盘的魔力：<strong>不需要转向机构，只靠改变四个轮子的转动方向和速度，就能让车往任意方向移动</strong>。不用担心记不住所有组合——下面的表格会帮你整理清楚。</p>
+<h2 id="四轮符号组合整章的核心">四轮符号组合：整章的核心</h2>
+<p>代码里并没有先写一大串力学公式，而是直接保存了经过整理的四轮符号组合。在看表格之前，先搞清楚正号和负号的含义：</p>
+<p><strong>从车顶往下看，正号（+）表示轮子向前滚，负号（-）表示轮子向后滚。</strong> 数值大小（这里都是 3000）表示 PWM 控制量，也就是电机转速的强弱。</p>
+<p>下面这张表是整章的核心，建议第一次看的时候对照实车位置多读几遍：</p>
 <div class="table-wrap"><table><thead><tr>
 <th>车身动作</th>
 <th align="right">左前</th>
@@ -147,19 +188,27 @@
 <td align="right">+3000</td>
 </tr>
 </tbody></table></div>
+<p>拿&quot;前进&quot;来说——四个轮子全部向前滚（全是 +），很好理解。再看&quot;左移&quot;——左前和右后是负号（向后滚），左后和右前是正号（向前滚），对角线上的轮子方向相反，前后分量互相抵消，侧向分量向左叠加，车就横着往左走了。</p>
 <p>以向前命令为例，对应的源码非常直白：</p>
-<pre data-label="c"><code class="language-c">case COMM_ENUM_MOVE_DIRECTION_FORWARD:
-    motion_set_wheel_pwm(+BOARD_MOTION_FIXED_PWM,
-                         +BOARD_MOTION_FIXED_PWM,
-                         +BOARD_MOTION_FIXED_PWM,
-                         +BOARD_MOTION_FIXED_PWM);
-    return true;</code></pre>
-<p><code>motion_set_wheel_pwm()</code> 的四个参数依次是左前、左后、右前、右后。这里先谈的是“机器人身上的位置”，暂时还不关心电机线插在控制板的哪个接口。这个小小的分层非常有用：以后如果调整接线，只需修改板级配置，前进、后退、横移和旋转这些运动逻辑可以保持原样不动。</p>
+<pre data-label="c"><code class="language-c">case COMM_ENUM_MOVE_DIRECTION_FORWARD:        // 方向 = 前进
+    motion_set_wheel_pwm(+BOARD_MOTION_FIXED_PWM,  // 左前轮：正转（向前）
+                         +BOARD_MOTION_FIXED_PWM,  // 左后轮：正转（向前）
+                         +BOARD_MOTION_FIXED_PWM,  // 右前轮：正转（向前）
+                         +BOARD_MOTION_FIXED_PWM); // 右后轮：正转（向前）
+    return true;  // 返回 true，告诉分发器"方向有效"</code></pre>
+<p><code>motion_set_wheel_pwm()</code> 的四个参数依次是左前、左后、右前、右后。注意，这里谈的是&quot;机器人身上的位置&quot;（左前、右后这样的名字），暂时还不关心电机线插在控制板的哪个接口（A、B、C、D）。</p>
+<div class="callout callout-tip">
+<p class="callout-title">分层设计的好处</p>
+
+<p>运动算法只关心&quot;左前、右后&quot;这样的位置名，不关心电机插在控制板的哪个接口。这个小小的分层非常有用：以后如果调整接线，只需修改板级配置，前进、后退、横移和旋转这些运动逻辑可以保持原样不动。</p>
+</div>
+
 <blockquote><p><strong>初学者常见疑问</strong>：为什么前进时四个轮子的符号完全相同？
-因为这里的符号描述的是“从车身正上方看，轮子该往哪个方向转”。四个轮子都向前滚，车自然向前走。等到后面做轮位映射时，才会根据每个电机的实际安装方向决定要不要把符号翻过来。</p>
+因为这里的符号描述的是&quot;从车身正上方看，轮子该往哪个方向转&quot;。四个轮子都向前滚，车自然向前走。等到后面做轮位映射时，才会根据每个电机的实际安装方向决定要不要把符号翻过来。</p>
 </blockquote>
 <h2 id="轮位和电机接口之间的翻译">轮位和电机接口之间的翻译</h2>
-<p>机器人装配完成后，四只轮子在车身上的位置是清楚的：左前、左后、右前、右后。但控制板上的接口却叫 A、B、C、D，和车身位置没有必然的对应关系。当前的真实映射写在 <code>LOWER_CONTROLLER/BOARD/board_motion_config.h</code> 里：</p>
+<p>机器人装配完成后，四只轮子在车身上的位置是清楚的：左前、左后、右前、右后。但控制板上的接口却叫 A、B、C、D，和车身位置没有必然的对应关系——左前轮的电机线可能插在 A 口，也可能插在 D 口，这完全取决于实际接线。</p>
+<p>当前的真实映射写在 <code>LOWER_CONTROLLER/BOARD/board_motion_config.h</code> 里：</p>
 <div class="table-wrap"><table><thead><tr>
 <th>逻辑轮位</th>
 <th>电机通道</th>
@@ -186,8 +235,8 @@
 <td align="right">+1</td>
 </tr>
 </tbody></table></div>
-<p>方向系数可以理解为每个轮位旁边贴的一张“翻译卡”。同样是逻辑上的正转，由于电机安装朝向、减速箱方向或接线顺序不同，落到某个电机通道时可能需要翻成负转。当前左后轮和右前轮的方向系数是 <code>-1</code>，左前轮和右后轮是 <code>+1</code>。</p>
-<p>以“前进”为例，运动层先给四个逻辑轮位各写入 <code>+3000</code>；应用方向系数并映射到接口后，结果会变成：</p>
+<p>方向系数可以理解为每个轮位旁边贴的一张&quot;翻译卡&quot;。同样是逻辑上的&quot;正转&quot;，由于电机安装朝向、减速箱方向或接线顺序不同，落到某个电机通道时可能需要翻成&quot;反转&quot;。当前左后轮和右前轮的方向系数是 <code>-1</code>，左前轮和右后轮是 <code>+1</code>。</p>
+<p>以&quot;前进&quot;为例，运动层先给四个逻辑轮位各写入 <code>+3000</code>；应用方向系数并映射到接口后，结果会变成：</p>
 <div class="table-wrap"><table><thead><tr>
 <th>逻辑轮位</th>
 <th align="right">逻辑值</th>
@@ -224,55 +273,137 @@
 <td align="right">+3000</td>
 </tr>
 </tbody></table></div>
+<p>可以看到，虽然运动层说的是&quot;四个轮子都向前滚&quot;，但实际送给 D 和 B 通道的却是负值——因为这两个电机的安装方向和逻辑方向相反，需要&quot;翻译&quot;一下。</p>
 <p>随后 <code>motion_set_pwm()</code> 根据正负号设置每路电机的两个方向引脚，再把绝对值写入 <code>PWMA</code>、<code>PWMB</code>、<code>PWMC</code>、<code>PWMD</code>。源码里的乘法只有短短四行，却完成了非常关键的分层：</p>
-<pre data-label="c"><code class="language-c">front_left  *= BOARD_MOTION_FRONT_LEFT_DIR;
-rear_left   *= BOARD_MOTION_REAR_LEFT_DIR;
-front_right *= BOARD_MOTION_FRONT_RIGHT_DIR;
-rear_right  *= BOARD_MOTION_REAR_RIGHT_DIR;</code></pre>
-<p>这几行看起来只是乘以 <code>1</code> 或 <code>-1</code>，但它们把“车应该怎样走”和“电机实际怎样接”彻底隔开了。实机调试时，如果某只轮子转反了，最可能的做法不是去改前进或横移的运动组合，而是去板级配置里把对应的方向系数从 <code>+1</code> 改成 <code>-1</code>，或者反过来。运动组合仍然表达“前进、后退、横移、旋转”这些直观概念，阅读代码的人也能继续按照车身方向思考，而不是被 A、B、C、D 这些接口名字绕晕。</p>
-<blockquote><p><strong>初学者常见疑问</strong>：方向系数 <code>-1</code> 是不是表示电机在“倒着接”？
-可以这样理解，但更准确地说是“电机正转方向与逻辑正方向相反”。电机的正转方向由厂家、减速箱、安装面共同决定；代码里用一个系数把差异兜住，调试时只改一处宏定义即可。</p>
+<pre data-label="c"><code class="language-c">// 逻辑值 × 方向系数 = 实际输出值
+// 系数为 +1 时值不变；系数为 -1 时正负翻转
+front_left  *= BOARD_MOTION_FRONT_LEFT_DIR;   // 左前轮：×(+1)，不变
+rear_left   *= BOARD_MOTION_REAR_LEFT_DIR;    // 左后轮：×(-1)，正变负
+front_right *= BOARD_MOTION_FRONT_RIGHT_DIR;  // 右前轮：×(-1)，正变负
+rear_right  *= BOARD_MOTION_REAR_RIGHT_DIR;   // 右后轮：×(+1)，不变</code></pre>
+<p>这几行看起来只是乘以 <code>1</code> 或 <code>-1</code>，但它们把&quot;车应该怎样走&quot;和&quot;电机实际怎样接&quot;彻底隔开了。实机调试时，如果某只轮子转反了，最可能的做法不是去改前进或横移的运动组合，而是去板级配置里把对应的方向系数从 <code>+1</code> 改成 <code>-1</code>，或者反过来。</p>
+<p>运动组合仍然表达&quot;前进、后退、横移、旋转&quot;这些直观概念，阅读代码的人也能继续按照车身方向思考，而不是被 A、B、C、D 这些接口名字绕晕。</p>
+<blockquote><p><strong>初学者常见疑问</strong>：方向系数 <code>-1</code> 是不是表示电机在&quot;倒着接&quot;？
+可以这样理解，但更准确地说是&quot;电机正转方向与逻辑正方向相反&quot;。电机的正转方向由厂家、减速箱、安装面共同决定；代码里用一个系数把差异兜住，调试时只改一处宏定义即可。</p>
 </blockquote>
-<h2 id="pwm-像快速开关">PWM 像快速开关</h2>
-<p>PWM 的中文是<strong>脉宽调制</strong>，英文是 <strong>Pulse Width Modulation</strong>。最简单的理解方式是一个开关在极短时间里反复打开和关闭：一个周期里，打开时间越长，电机得到的平均驱动就越强。人眼看调光灯时感到的是亮度变化，电机感受到的则是平均电压和转矩变化。</p>
+<h2 id="pwm-与占空比">PWM 与占空比</h2>
+<p>还记得第 1 章讲过的 PWM 吗？它的中文是<strong>脉宽调制</strong>，英文是 <strong>Pulse Width Modulation</strong>——通过快速开关来控制电机的转速。开关打开的时间越长，电机得到的平均驱动就越强。</p>
+<div class="callout">
+<p class="callout-title">💡 零基础小课堂：占空比</p>
+
+<p>一个 PWM 周期里，&quot;打开&quot;时间占总时间的比例，叫做<strong>占空比（Duty Cycle）</strong>。比如一个周期是 100 毫秒，打开 18 毫秒、关闭 82 毫秒，占空比就是 18%。占空比越大，电机转得越快；占空比为 0 时，电机完全不转。</p>
+</div>
+
 <p>系统启动时会调用：</p>
-<pre data-label="c"><code class="language-c">MiniBalance_PWM_Init(16799, 0);</code></pre>
-<p>这里把 PWM 计数周期设为 16799，从 0 开始计数时一共有 16800 个刻度。因此仓库里把 <code>FULL_DUTYCYCLE</code> 写成 16800。当前板级固定值是 3000，大约占满量程的 18%。不过要注意，这个比例描述的是“控制量”，不是车速；实际车速还会受到电池电压、地面摩擦、负载和电机个体差异的影响。</p>
-<p>当前 <code>gear</code> 已经随命令进入 <code>motion_start_motion()</code>，函数开头用 <code>(void)gear;</code> 表示“这个参数我先保留，暂时不用”。这是一种常见的写法，用来告诉编译器“我知道有这个参数，后面会用到，现在别报未使用警告”。微速、慢速、快速三种档位在协议里已经有编码，但运动层目前统一输出 3000。以后如果接入档位表、速度闭环或者 PID，这个参数就有了落脚点。</p>
+<pre data-label="c"><code class="language-c">// 初始化 PWM 硬件
+// 16799 是计数周期（0 到 16799，共 16800 个刻度）
+// 0 是预分频值（不额外分频）
+MiniBalance_PWM_Init(16799, 0);</code></pre>
+<p>一共有 16800 个刻度，所以仓库里把 <code>FULL_DUTYCYCLE</code> 写成 16800。当前板级固定值是 3000，大约占满量程的 18%（3000 ÷ 16800 ≈ 18%）。</p>
+<p>不过要注意，这个比例描述的是&quot;控制量&quot;，不是车速；实际车速还会受到电池电压、地面摩擦、负载和电机个体差异的影响。</p>
+<p>当前 <code>gear</code> 已经随命令进入 <code>motion_start_motion()</code>，函数开头有这样一行：</p>
+<pre data-label="c"><code class="language-c">(void)gear;  // 告诉编译器：这个参数我收到了，但现在还不用它</code></pre>
+<div class="callout callout-tip">
+<p class="callout-title">关于 (void)gear 的写法</p>
+
+<p>如果你没学过 C 语言，这行可能看起来很奇怪。它的作用很简单：<strong>告诉编译器&quot;我知道有这个参数，暂时不用它，请不要报&#39;未使用变量&#39;的警告&quot;</strong>。这是 C 语言中一种常见的写法，不用担心，它不会产生任何实际效果。</p>
+</div>
+
+<p>微速、慢速、快速三种档位在协议里已经有编码，但运动层目前统一输出 3000。以后如果接入档位表、速度闭环或者 PID，这个参数就有了落脚点。</p>
 <blockquote><p><strong>为什么要先留一个档位参数却不实现？</strong>
-因为这是一个刚刚接手的代码仓库，作者选择先把“能走、能停、方向正确”跑通，再逐步加入速度分级。先把骨架搭稳，再填血肉，是调试大型项目时比较稳妥的节奏。</p>
+因为这是一个刚刚接手的代码仓库，作者选择先把&quot;能走、能停、方向正确&quot;跑通，再逐步加入速度分级。先把骨架搭稳，再填血肉，是调试大型项目时比较稳妥的节奏。</p>
 </blockquote>
 <h2 id="停止时发生了什么">停止时发生了什么</h2>
 <p>上位机发来 <code>STOP_MOTION</code> 后，命令分发器会调用 <code>motion_stop()</code>。这个函数把四路 PWM 清零，同时把 A、B、C、D 的方向引脚也清零：</p>
 <pre data-label="c"><code class="language-c">void motion_stop(void)
 {
-    PWMA = 0;
-    PWMB = 0;
-    PWMC = 0;
-    PWMD = 0;
+    // 第一步：把四路 PWM 全部设为 0，电机失去驱动电压
+    PWMA = 0;  // A 通道 PWM 清零
+    PWMB = 0;  // B 通道 PWM 清零
+    PWMC = 0;  // C 通道 PWM 清零
+    PWMD = 0;  // D 通道 PWM 清零
 
-    AIN1 = 0;
-    AIN2 = 0;
+    // 第二步：把方向引脚也清零，切断 H 桥电流路径
+    AIN1 = 0;  // A 通道方向引脚 1 清零
+    AIN2 = 0;  // A 通道方向引脚 2 清零
     /* B、C、D 方向引脚也在这里清零 */
 }</code></pre>
-<p>把 PWM 设成 0，电机就没有了驱动电压；把方向引脚也设成 0，可以切断 H 桥两端的电流路径，让电机进入自由滑行或制动状态。无效的平移方向和旋转方向同样会走到 <code>motion_stop()</code>，这样底盘在收到无法理解的方向码时就会回到停止状态，而不是继续执行上一个可能危险的命令。</p>
-<p>当前的持续运动还有一个很重要的特点：<code>START_MOTION</code> 设置 PWM 后，电机会一直保持这个输出，直到新的运动命令改写它，或者 <code>STOP_MOTION</code> 把它清零。换句话说，<strong>运动层没有内置超时自动停止</strong>。这对初学者调试时要特别注意：如果上位机程序崩溃或者通信断开，而底盘又处在运动状态，轮子会一直转下去。所以早期测试一定要把车轮架空，或者随时准备手动断电。</p>
-<p>运动文件里还留有 <code>motion_test_motor_channels_loop()</code>。它用 PWM 1200 让 A、B、C、D 四个通道依次运行一秒，最后停止两秒，再重新循环。这个函数非常适合在车轮悬空时检查每个通道和接线是否正常：如果 A 通道运行时右前轮在转，说明映射关系和预期不一样。当前 <code>main.c</code> 创建的是 <code>app_task</code>，并没有调用这段通道测试循环，但它作为一个调试入口被保留了下来。</p>
-<p><strong>本节小结</strong>：至此，那条“向前移动”的命令已经走完了一条完整的链路：</p>
+<p>把 PWM 设成 0，电机就没有了驱动电压；把方向引脚也设成 0，可以切断 H 桥（还记得第 1 章讲的&quot;四个开关控制电流方向&quot;吗？）两端的电流路径，让电机进入自由滑行或制动状态。</p>
+<p>无效的平移方向和旋转方向同样会走到 <code>motion_stop()</code>，这样底盘在收到无法理解的方向码时就会回到停止状态，而不是继续执行上一个可能危险的命令。</p>
+<div class="callout callout-warn">
+<p class="callout-title">⚠️ 安全警告：运动层没有内置超时自动停止</p>
+
+<p>当前的 <code>START_MOTION</code> 设置 PWM 后，电机会一直保持这个输出，直到新的运动命令改写它，或者 <code>STOP_MOTION</code> 把它清零。换句话说，<strong>如果上位机程序崩溃或者通信断开，而底盘又处在运动状态，轮子会一直转下去！</strong></p>
+<p>这对初学者调试时要特别注意：</p>
+<ul>
+<li>早期测试时一定要<strong>把车轮架空</strong>（用书本或盒子把车底盘垫起来）</li>
+<li>随时准备<strong>手动断电</strong>（拔电池或关总开关）</li>
+<li>不要让机器人在地面上无人看管地运行</li>
+</ul>
+</div>
+
+<h2 id="调试工具motion_test_motor_channels_loop">调试工具：motion_test_motor_channels_loop()</h2>
+<p>运动文件里还留有一个很实用的调试函数 <code>motion_test_motor_channels_loop()</code>。简单来说，它是一个<strong>电机接线检查工具</strong>：让 A、B、C、D 四个电机通道依次转动，方便你检查接线是否正确。</p>
+<p>具体来说，它用 PWM 1200 让 A、B、C、D 四个通道依次运行一秒，最后停止两秒，再重新循环。在车轮悬空时运行这个函数，你可以逐个观察：A 通道转的时候，是哪个轮子在动？如果 A 通道运行时右前轮在转，而你的配置表说 A 应该是左前轮——那说明映射关系和预期不一样，需要调整接线或修改配置。</p>
+<p>当前 <code>main.c</code> 创建的是 <code>app_task</code>，并没有调用这段通道测试循环，但它作为一个调试入口被保留了下来。</p>
+<h2 id="本章小结">本章小结</h2>
+<p>至此，那条&quot;向前移动&quot;的命令已经走完了一条完整的链路：</p>
 <ol>
 <li>从 <code>START_MOTION</code> 协议载荷中取出方向和档位；</li>
 <li>在运动控制层把方向翻译成四个逻辑轮位的符号和 PWM；</li>
 <li>通过方向系数把逻辑轮位映射到 A、B、C、D 电机通道；</li>
 <li>最后写入方向引脚和 PWM 寄存器，四个轮子开始转动。</li>
 </ol>
-<p>下一章会给这条控制链补上“眼睛”和“耳朵”——也就是传感器反馈和更完整的安全保护，让底盘不仅能动，还能知道自己是真的在往前走。</p>
+<p>下一章会给这条控制链补上&quot;眼睛&quot;和&quot;耳朵&quot;——也就是传感器反馈和更完整的安全保护，让底盘不仅能动，还能知道自己是真的在往前走。</p>
+<h2 id="本章新词">本章新词</h2>
+<div class="table-wrap"><table><thead><tr>
+<th>术语</th>
+<th>英文</th>
+<th>一句话解释</th>
+</tr>
+</thead><tbody><tr>
+<td>麦克纳姆轮 / 麦轮</td>
+<td>Mecanum wheel</td>
+<td>轮子外圈装了一排 45° 斜向小滚子，让底盘可以横着走</td>
+</tr>
+<tr>
+<td>占空比</td>
+<td>Duty Cycle</td>
+<td>一个 PWM 周期里&quot;打开&quot;时间占总时间的比例，控制电机转速</td>
+</tr>
+<tr>
+<td>逻辑轮位</td>
+<td>Logical wheel position</td>
+<td>用&quot;左前、左后、右前、右后&quot;描述轮子在车身上的位置</td>
+</tr>
+<tr>
+<td>电机通道</td>
+<td>Motor channel (A/B/C/D)</td>
+<td>控制板上的硬件接口编号，与逻辑轮位通过映射表对应</td>
+</tr>
+<tr>
+<td>方向系数</td>
+<td>Direction coefficient</td>
+<td>+1 或 -1，用来修正电机安装方向与逻辑方向之间的差异</td>
+</tr>
+<tr>
+<td>PWM 控制量</td>
+<td>PWM value</td>
+<td>写入硬件的数值，决定电机驱动的强弱（本章固定为 3000）</td>
+</tr>
+<tr>
+<td>(void)变量名</td>
+<td>(void) cast</td>
+<td>C 语言写法，告诉编译器&quot;我知道有这个参数，暂时不用&quot;</td>
+</tr>
+</tbody></table></div>
 
     <nav class="pager">  <a href="03-command-journey.html">
     <span class="label">← 上一章</span>
-    <span class="title">一条命令的旅程</span>
+    <span class="title">跟踪一条命令：从电脑到控制板的完整旅程</span>
   </a>  <a href="05-feedback-safety.html" class="next">
     <span class="label">下一章 →</span>
-    <span class="title">机器人如何感知并安全行动</span>
+    <span class="title">给机器人装上“眼睛”和“刹车”：反馈与安全</span>
   </a></nav>
   </article>
 </div>
