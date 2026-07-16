@@ -251,7 +251,7 @@ node blog-build.js
 4. **不要修改 `md2HTML/assets/` 里的模板 CSS/JS 除非明确要改所有书的默认样式**。
 5. **谨慎运行 `Mav/knowledge/sync-assets.sh`**。  
    行为（2026-07 起）：默认 **dry-run**；需 `--force` 才真正复制；会读取 `md2HTML/build-lock.yaml`，跳过已锁定的 `slug/assets/style.css|script.js`。  
-   源固定为 `ai-deep-learning-core/assets/`，会覆盖**未锁定**书籍的 `style.css` / `script.js`（例如 `browser-war` 的 assets **目前没有 lock**，跑 `--force` 仍可能抹掉其前端定制）。非明确需求不要执行。
+   源固定为 `ai-deep-learning-core/assets/`（⚠️ 2026-07 该书已移除，脚本现在指向已不存在的源目录；跑会损坏目标书）；源待替换或脚本待清理。跑 `--force` 会覆盖**未锁定**书籍的 `style.css` / `script.js`（例如 `browser-war` 的 assets **目前没有 lock**）。非明确需求不要执行。
 
 ---
 
@@ -281,16 +281,16 @@ node blog-build.js
 
 | slug | 标题 | 特殊说明 |
 |------|------|----------|
-| ai-math-principles | 人工智能与数学原理 | 7 章；`status: draft`，进入折叠书稿区 |
-| ai-math-foundations | AI 数学基础 | 8 章；`status: draft`；assets 锁定（style/script/quiz.css/quiz.js；**无** mermaid 资源锁，mermaid 走模板 CDN） |
-| ai-deep-learning-core | AI 深度学习核心 | 13 章；`status: draft`；assets 锁定（同上 quiz + style/script）；亦是 `sync-assets.sh` 的样式源 |
-| ai-computer-vision | AI 计算机视觉 | 5 章；`status: draft`；assets 锁定（quiz + style/script） |
-| ai-nlp-foundations | AI 自然语言处理基础 | 7 章；`status: draft`；assets 锁定（quiz + style/script） |
-| ai-transformers | AI Transformer 深度剖析 | 7 章；`status: draft`；assets 锁定（quiz + style/script） |
+| ai-math-principles | 人工智能与数学原理 | 7 章；`status: draft`；USTC 课程速通讲义，进入大一下学期课程讲义折叠区 |
+| ~~ai-math-foundations~~ | ~~AI 数学基础~~ | ~~8 章~~ —— 2026-07 移除（外部搬运、手册式、不适配） |
+| ~~ai-deep-learning-core~~ | ~~AI 深度学习核心~~ | ~~13 章；亦是 `sync-assets.sh` 的样式源~~ —— 2026-07 移除 |
+| ~~ai-computer-vision~~ | ~~AI 计算机视觉~~ | ~~5 章~~ —— 2026-07 移除 |
+| ~~ai-nlp-foundations~~ | ~~AI 自然语言处理基础~~ | ~~7 章~~ —— 2026-07 移除 |
+| ~~ai-transformers~~ | ~~AI Transformer 深度剖析~~ | ~~7 章~~ —— 2026-07 移除 |
 | d2l-toolbox | 深度学习前置工具箱 | 7 章；`status: draft` |
 | d2l-cnn | CNN实战篇 | 6 章；`status: draft` |
 | d2l-rnn | RNN实战篇 | 8 章；`status: draft` |
-| claude-d2l-to-rnn | 深度学习讲义 | 4 章；旧版合订；`catalog: false`、`status: draft`；折叠书稿区保留直达入口 |
+| ~~claude-d2l-to-rnn~~ | ~~深度学习讲义~~ | ~~4 章；旧版合订；`catalog: false`、`status: draft`~~ —— 2026-07 移除（与 D2L-Toolbox/CNN/RNN 大量重复） |
 | math-analysis | 数学分析讲义 | 6 章（第 8–13 章，下册）；“大一下学期课程讲义”折叠区；`script.js` 锁定 + `12-fourier-analysis.md` 锁定 |
 | data-structures | 数据结构：从指针到算法 | 9 章；原始 md/c 在 `markdown-backups/Data-Structures/_source/`，装配脚本 `_source/assemble.py` |
 | thermodynamics | 热学速通 | 6 章；课程讲义折叠区；`_figures/*.py` 生成 PNG；`script.js` 锁定 |
@@ -405,8 +405,8 @@ Mav/knowledge/projects/
 
 两个视图下方共用两个原生 `<details>` 折叠区（默认收起）：
 
-- **大一下学期课程讲义**：`thermodynamics`、`math-analysis`
-- **深度学习相关书稿**：10 本 `status: draft` 书稿 + 2 条 draft 旧路线（`from-zero-to-transformer`、`deep-learning-path`）
+- **大一下学期课程讲义**：`thermodynamics`、`math-analysis`、`ai-math-principles`
+- **深度学习相关书稿**：5 本 `status: draft` 书稿（D2L-Toolbox / D2L-CNN / D2L-RNN / 等） + 2 条 draft 旧路线（`from-zero-to-transformer`、`deep-learning-path`）
 
 新增 project 后需要：
 
