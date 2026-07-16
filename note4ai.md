@@ -1,6 +1,6 @@
 # note4ai.md
 
-> 最后更新：2026.07.14 15:40
+> 最后更新：2026.07.16
 
 本文件面向接手本项目的 AI agent，不是给人类线性阅读的文档。目标是让你读完之后对项目结构、构建系统、约束规则了如指掌。
 
@@ -26,14 +26,13 @@ mav-homepage/
 │   │   ├── html/*.html          ← 博客输出 HTML
 │   │   ├── blog-build.js        ← 博客构建脚本
 │   │   └── index.html           ← 博客列表页
-│   ├── knowledge/               ← 知识库输出（每本书一个子目录）
+│   ├── knowledge/               ← 知识库输出（每本书或 Series 一个子目录）
 │   │   ├── index.html           ← 知识库入口页（双模式：Projects / 全部书籍）
 │   │   ├── projects/            ← Project 详情页输出
 │   │   │   ├── manifest.json    ← 所有 project 的元数据（备用；首页不 fetch）
-│   │   │   ├── from-zero-to-transformer/index.html
 │   │   │   ├── how-computer-works/index.html
-│   │   │   ├── deep-learning-path/index.html
 │   │   │   └── digital-formats/index.html
+│   │   ├── deep-learning/       ← 深度学习 Series 输出（3 篇、21 章）
 │   │   ├── browser-war/         ← 示例书（有前端定制）
 │   │   ├── euv-lithography/     ← 示例书（有前端定制）
 │   │   ├── robogame2026/        ← RoboGame 2026 讲义
@@ -50,23 +49,27 @@ mav-homepage/
 │   │   ├── 01-chapter.md        ← 章节文件（带 front-matter）
 │   │   └── ...
 │   ├── RoboGame2026/            ← 工程实践讲义
+│   ├── Deep-Learning/           ← Series 源目录
+│   │   ├── series.yaml          ← Series 元数据与 Part 顺序
+│   │   ├── 01-toolbox/*.md      ← PART I 章节
+│   │   ├── 02-cnn/*.md          ← PART II 章节
+│   │   └── 03-rnn/*.md          ← PART III 章节
 │   ├── projects/                ← Project 数据源（YAML）
-│   │   ├── from-zero-to-transformer.yaml
 │   │   ├── how-computer-works.yaml
-│   │   ├── deep-learning-path.yaml
 │   │   └── digital-formats.yaml
 │   └── EUV-Lithography/
 ├── md2HTML/                     ← 静态站点生成器
-│   ├── build.js                 ← 主构建入口（书籍）
+│   ├── build.js                 ← 主构建入口（Book + Series）
 │   ├── build-projects.js        ← Project 构建脚本
 │   ├── build-all.sh             ← shell 包装（⚠️ `--all` 已禁用，传入会 exit 1）
 │   ├── build-lock.yaml          ← 白名单/锁定列表
 │   ├── inject-quiz.js           ← 遗留 quiz 注入脚本（兼容用，新书勿依赖）
 │   ├── convert-ai-lessons.js    ← AI 讲义转换辅助（非日常构建路径）
 │   ├── assets/                  ← 模板 CSS/JS（新书默认 style.css + script.js）
-│   ├── templates/               ← HTML 模板（chapter.html, index.html）
+│   ├── series-assets/           ← Series 专用 CSS（series.css）
+│   ├── templates/               ← Book 与 Series 的封面/章节模板
 │   └── lib/                     ← 核心模块
-│       ├── reader.js            ← 读取 book.yaml + .md 文件
+│       ├── reader.js            ← 读取 book.yaml / series.yaml + .md 文件
 │       ├── renderer.js          ← Markdown → HTML（基于 marked）
 │       ├── templates.js         ← 生成完整 HTML 页面 + copyAssets
 │       └── lock.js              ← 白名单管理
@@ -90,33 +93,36 @@ mav-homepage/
 ```bash
 cd md2HTML
 
-node build.js <Book-Name>              # 构建整本书
-node build.js <Book-Name>/chapter.md   # 只构建一章
-node build.js <Book-Name>/book.yaml    # 只构建封面
+node build.js --book <Book-Name>                     # 构建整本书
+node build.js --book <Book-Name>/chapter.md          # 只构建一章
+node build.js --book <Book-Name>/book.yaml           # 只构建书籍封面
+node build.js --series <Series-Name>                 # 构建完整 Series
+node build.js --series <Series-Name>/part/chapter.md # 只构建 Series 的一章
+node build.js --series <Series-Name>/series.yaml     # 只构建 Series 封面
 node build.js --lock <path>            # 锁定文件
 node build.js --unlock <path>          # 解锁文件
 node build.js --list-lock              # 查看锁定列表
-node build.js --force <Book-Name>      # 忽略锁定强制构建
+node build.js --force --book <Book-Name>             # 忽略锁定强制构建
 ```
+
+旧命令 `node build.js <Book-Name>` 继续按 Book 构建，等价于显式传入 `--book`。
 
 `./build-all.sh` 只是对 `node build.js "$@"` 的薄包装；**传入 `--all` 会被脚本拒绝并 exit 1**（故意移除批量全量构建）。
 
 ### 构建流程
 
-1. 读取 `markdown-backups/<Book-Name>/book.yaml` → 元信息
-2. 扫描同目录下所有顶层 `.md` 文件 → **按 front-matter 的 `chapter` 字段排序**（`reader.js`；不是最终按文件名排序）
-3. 对每个 `.md`：检查 `build-lock.yaml`，锁了就跳过；否则渲染 HTML 写入 `Mav/knowledge/<slug>/chapters/`
-4. 生成 `index.html`（封面页）——**整书 build 时封面与 `search-index.json` 会重写**，当前没有“锁住封面就不重建”的保护（仅 `book.yaml` 单路径构建封面时可用 `slug/index.html` 形式的锁；`BookName/book.yaml` 锁条目本身**不会**被 build 流程检查）
-5. `copyAssets()`：复制 `md2HTML/assets/`（默认仅 `style.css`、`script.js`）到输出 `assets/`，**会检查 lock**——锁了的 asset 文件跳过不覆盖
-6. 生成 `search-index.json`
+Book 构建读取 `book.yaml`，扫描同目录顶层 `.md`，按 front-matter 的 `chapter` 排序。Series 构建读取 `series.yaml`，按 `parts` 的顺序进入各 Part 的 `source` 子目录，再按每篇内部的 `chapter` 排序；输出时自动生成跨全系列连续的章节编号和 slug。
+
+两类构建都会检查章节 lock、渲染 Markdown、生成封面与 `search-index.json`。Book 复制 `md2HTML/assets/`；Series 额外复制 `md2HTML/series-assets/series.css`，使用独立的 Series 封面和章节模板。整本或整套构建会重写封面与搜索索引。
 
 ### build-lock.yaml 白名单机制
 
-两种路径格式，保护不同的东西：
+三种路径格式，保护不同的东西：
 
 | 格式 | 示例 | 效果 |
 |------|------|------|
 | `BookName/chapter.md` | `EUV-Lithography/01-overview.md` | 跳过该 .md 的 HTML 重新生成 |
+| `SeriesName/part/chapter.md` | `Deep-Learning/02-cnn/01-convolution-basics.md` | 跳过该 Series 章节的 HTML 重新生成 |
 | `slug/assets/filename` | `euv-lithography/assets/style.css` | `copyAssets` 跳过该文件 |
 
 **重要**：每一次 build 之前，需要考虑是否会对之前的前端进行覆盖，如果有覆盖风险，应该停止并给出提醒，通常采用 build 最小化，即优先 build 一个章节，之后是一本书，几乎不考虑重新 build all。
@@ -177,7 +183,29 @@ features:
   **注意**：`copyAssets()` **不会**从模板目录复制 quiz 文件（`md2HTML/assets/` 只有 `style.css` / `script.js`）。quiz 资源需事先放在该书 `Mav/knowledge/<slug>/assets/` 下，并建议 lock。新书优先用 `features: [quiz]`；遗留的 `inject-quiz.js` 仅作兼容，不要再依赖它注入 mermaid。
 - **Mermaid 不走 features**：章节模板默认加载 Mermaid CDN + `initialize`；`renderer.js` 把 ` ```mermaid ` 渲染为 `<div class="mermaid">`；`assets/script.js` 额外处理可能残留的 `<pre><code class="language-mermaid">`。book.yaml 里写 `features: [mermaid]` 目前无额外效果，可省略。
 
-### 输出结构（每本书）
+### series.yaml 字段
+
+Series 继续使用相同的 Markdown front-matter。每个 Part 的章节编号从 1 开始，构建器根据 Part 顺序生成全系列连续编号和输出 slug。
+
+```yaml
+title: "深度学习系列讲义"
+slug: deep-learning
+eyebrow: "Series · Deep Learning"   # 可选；封面小标题，缺省为 "Series"
+author: "Mav"
+description: "..."
+language: "ZH-CN"
+estimatedTime: "约 22 小时"
+parts:
+  - id: toolbox
+    label: "PART I"
+    title: "数学与 PyTorch 工具"
+    description: "..."
+    source: "01-toolbox"
+```
+
+`eyebrow` 显示在 Series 封面主标题上方。`parts[].id` 必须唯一并使用小写字母、数字和连字符；`source` 指向 Series 目录内的 Part 子目录。每个 Part 必须至少包含一章，内部 `chapter` 必须从 1 连续编号。
+
+### 输出结构（Book 与 Series）
 
 ```
 Mav/knowledge/<slug>/
@@ -189,6 +217,7 @@ Mav/knowledge/<slug>/
 └── assets/
     ├── style.css
     ├── script.js
+    ├── series.css            ← 仅 Series 输出
     ├── search-index.json
     ├── quiz.css / quiz.js  ← 可选；有 quiz 功能的书
     └── images/             ← 可选，手动放置
@@ -245,7 +274,7 @@ node blog-build.js
 
 ## 绝对禁止的操作
 
-1. **不要批量 build 全部书籍**。`md2HTML/build-all.sh --all` **已被脚本禁用**（传入会报错退出）；即便将来有人绕过，也会覆盖未锁定的前端定制。日常只 build 单章或单书。
+1. **不要批量 build 全部知识库**。`md2HTML/build-all.sh --all` **已被脚本禁用**（传入会报错退出）；即便将来有人绕过，也会覆盖未锁定的前端定制。日常只 build 单章、单书或一个明确的 Series。
 2. **不要动 `Mav/knowledge/claude-code/`**——纯手写 HTML，无 Markdown 源码。
 3. **不要未经确认就 commit/push**。
 4. **不要修改 `md2HTML/assets/` 里的模板 CSS/JS 除非明确要改所有书的默认样式**。
@@ -287,10 +316,9 @@ node blog-build.js
 | ~~ai-computer-vision~~ | ~~AI 计算机视觉~~ | ~~5 章~~ —— 2026-07 移除 |
 | ~~ai-nlp-foundations~~ | ~~AI 自然语言处理基础~~ | ~~7 章~~ —— 2026-07 移除 |
 | ~~ai-transformers~~ | ~~AI Transformer 深度剖析~~ | ~~7 章~~ —— 2026-07 移除 |
-| d2l-toolbox | 深度学习前置工具箱 | 7 章；`status: draft` |
-| d2l-cnn | CNN实战篇 | 6 章；`status: draft` |
-| d2l-rnn | RNN实战篇 | 8 章；`status: draft` |
-| ~~claude-d2l-to-rnn~~ | ~~深度学习讲义~~ | ~~4 章；旧版合订；`catalog: false`、`status: draft`~~ —— 2026-07 移除（与 D2L-Toolbox/CNN/RNN 大量重复） |
+| deep-learning | 深度学习系列讲义 | **Series**；3 篇、21 章；源为 `markdown-backups/Deep-Learning/series.yaml`；`status: published` |
+| ~~d2l-toolbox / d2l-cnn / d2l-rnn~~ | ~~三套独立 D2L 书稿~~ | 2026-07 合并进 `deep-learning` Series，旧源与旧产物移入废纸篓 |
+| ~~claude-d2l-to-rnn~~ | ~~深度学习讲义~~ | ~~4 章；旧版合订；`catalog: false`、`status: draft`~~ —— 2026-07 移除（内容已由深度学习 Series 承接） |
 | math-analysis | 数学分析讲义 | 6 章（第 8–13 章，下册）；“大一下学期课程讲义”折叠区；`script.js` 锁定 + `12-fourier-analysis.md` 锁定 |
 | data-structures | 数据结构：从指针到算法 | 9 章；原始 md/c 在 `markdown-backups/Data-Structures/_source/`，装配脚本 `_source/assemble.py` |
 | thermodynamics | 热学速通 | 6 章；课程讲义折叠区；`_figures/*.py` 生成 PNG；`script.js` 锁定 |
@@ -380,9 +408,7 @@ node build-projects.js <slug>       # 构建单个 project
 ```
 Mav/knowledge/projects/
 ├── manifest.json                          ← 所有 project 的元数据（首页不动态 fetch，仅备用）
-├── from-zero-to-transformer/index.html    ← 详情页（含 draft）
 ├── how-computer-works/index.html
-├── deep-learning-path/index.html
 └── digital-formats/index.html
 ```
 
@@ -390,23 +416,20 @@ Mav/knowledge/projects/
 
 | slug | 标题 | 状态 | 包含书籍 |
 |------|------|------|----------|
-| from-zero-to-transformer | 从零开始学 Transformer | draft | 数学基础 → DL核心 → CV → NLP → Transformers |
 | how-computer-works | 计算机是怎么工作的 | published | 硬件篇 → 服务器 → 浏览器 |
-| deep-learning-path | 深度学习从零到能读论文 | draft | 工具箱 → CNN → RNN |
 | digital-formats | 数字世界的底层格式 | published | PDF → 视频 → 浏览器 |
+
+旧的 `from-zero-to-transformer` 与 `deep-learning-path` 已由 `deep-learning` Series 取代，配置和输出页面移入废纸篓。
 
 ### 知识库首页 (index.html)
 
 路径 `Mav/knowledge/index.html`。两个 tab：
 
-1. **Projects** — 展示 published project 卡片（带路径圆点动画）+ 独立阅读区  
-2. **全部书籍** — 平铺 **13** 本主书卡片（不含课程讲义与 draft 书稿）：  
+1. **Projects** — 展示 published project 卡片（带路径圆点动画）+ Series + 独立阅读区
+2. **全部书籍** — 顶部展示 `deep-learning` Series，之后平铺 **13** 本主书卡片（不含课程讲义）：
    data-structures、robogame2026、claude-code、money-bank、bite-to-byte-硬件篇、blockchain-crypto、rust-book、git-guide、server-frontend-backend、video-screen、browser-war、euv-lithography、pdf-explained
 
-两个视图下方共用两个原生 `<details>` 折叠区（默认收起）：
-
-- **大一下学期课程讲义**：`thermodynamics`、`math-analysis`、`ai-math-principles`
-- **深度学习相关书稿**：5 本 `status: draft` 书稿（D2L-Toolbox / D2L-CNN / D2L-RNN / 等） + 2 条 draft 旧路线（`from-zero-to-transformer`、`deep-learning-path`）
+两个视图下方共用一个原生 `<details>` 折叠区：**大一下学期课程讲义**，包含 `thermodynamics`、`math-analysis`、`ai-math-principles`。旧的“深度学习相关书稿”折叠区已移除。
 
 新增 project 后需要：
 
@@ -427,7 +450,7 @@ Project 卡片由构建脚本根据 YAML 自动回填到：
 | 内容 | 是否自动 |
 |------|----------|
 | Project 主列表（`AUTO:PROJECTS`） | **自动**（`build-projects.js`；draft 过滤） |
-| 独立阅读、全部书籍、两个折叠区的**书籍**卡片 | **手动**改 `Mav/knowledge/index.html` |
+| Series、独立阅读、全部书籍、课程折叠区的卡片 | **手动**改 `Mav/knowledge/index.html` |
 | 书级 `book.yaml` 的 `status: draft` | **不**自动挪卡片；只作元数据 + 人工约定 |
 
 新增/移动书籍时务必同步改首页 HTML。
@@ -449,8 +472,11 @@ Project 卡片由构建脚本根据 YAML 自动回填到：
 | 需求 | 命令/位置 |
 |------|-----------|
 | 新建知识库书 | `markdown-backups/` 下建文件夹 + `book.yaml` + `.md` |
-| 构建单本书 | `cd md2HTML && node build.js <Book-Name>` |
-| 构建单章 | `cd md2HTML && node build.js <Book-Name>/chapter.md` |
+| 构建单本书 | `cd md2HTML && node build.js --book <Book-Name>` |
+| 构建单章 | `cd md2HTML && node build.js --book <Book-Name>/chapter.md` |
+| 新建 Series | `markdown-backups/` 下建文件夹 + `series.yaml` + Part 子目录中的 `.md` |
+| 构建 Series | `cd md2HTML && node build.js --series <Series-Name>` |
+| 构建 Series 单章 | `cd md2HTML && node build.js --series <Series-Name>/part/chapter.md` |
 | 增加独立书籍入口卡片 | 编辑 `Mav/knowledge/index.html` 的独立阅读和全部书籍区域（目前仍需手动） |
 | 新建 Project | `markdown-backups/projects/` 下建 `.yaml`，然后 `node build-projects.js` |
 | 构建 Project | `cd md2HTML && node build-projects.js` |

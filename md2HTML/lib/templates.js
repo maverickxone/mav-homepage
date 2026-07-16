@@ -5,12 +5,22 @@ const path = require('path');
 
 const TEMPLATES_DIR = path.join(__dirname, '..', 'templates');
 const ASSETS_DIR = path.join(__dirname, '..', 'assets');
+const SERIES_ASSETS_DIR = path.join(__dirname, '..', 'series-assets');
 
 /**
  * Read a template file.
  */
 function readTemplate(name) {
   return fs.readFileSync(path.join(TEMPLATES_DIR, name), 'utf-8');
+}
+
+function escapeHtml(value) {
+  return String(value == null ? '' : value)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
 }
 
 /**
@@ -59,6 +69,29 @@ ${links}
       <button class="nav-btn" id="settings-btn" aria-label="阅读设置">Aa</button>
       <a class="nav-btn" href="../index.html" aria-label="返回知识库">← 知识库</a>
       <a class="nav-btn" href="https://github.com/maverickxone/mav-homepage" target="_blank" rel="noopener" aria-label="GitHub" style="padding: 6px 8px;"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg></a>
+    </div>
+  </div>
+</nav>`;
+}
+
+function generateSeriesNav(series, isChapter, activePartId) {
+  const indexPrefix = isChapter ? '../' : '';
+  const knowledgeHref = isChapter ? '../../index.html' : '../index.html';
+  const links = series.parts.map(part => {
+    const active = part.id === activePartId ? ' class="active"' : '';
+    return `      <a href="${indexPrefix}index.html#part-${escapeHtml(part.id)}"${active}>${escapeHtml(part.label)}</a>`;
+  }).join('\n');
+
+  return `<nav class="topnav series-topnav" id="topnav">
+  <div class="topnav-inner">
+    <a class="brand" href="${indexPrefix}index.html">${escapeHtml(series.title)}</a>
+    <div class="nav-links">
+${links}
+    </div>
+    <div class="nav-controls">
+      <button class="nav-btn" id="search-btn" aria-label="搜索 (Ctrl+K)">⌘K</button>
+      <button class="nav-btn" id="settings-btn" aria-label="阅读设置">Aa</button>
+      <a class="nav-btn" href="${knowledgeHref}" aria-label="返回知识库">← 知识库</a>
     </div>
   </div>
 </nav>`;
@@ -138,6 +171,94 @@ function generatePager(chaptersMeta, currentIndex) {
   return html;
 }
 
+function generateSeriesSidebar(series, chapter, chaptersMeta, headings) {
+  const groups = series.parts.map(part => {
+    const links = chaptersMeta
+      .filter(item => item.partId === part.id)
+      .map(item => {
+        const active = item.slug === chapter.slug;
+        const num = String(item.frontmatter.chapter).padStart(2, '0');
+        const sectionLinks = active
+          ? headings
+            .filter(heading => heading.level === 2)
+            .map(heading => `          <li><a href="#${escapeHtml(heading.id)}">${escapeHtml(heading.text)}</a></li>`)
+            .join('\n')
+          : '';
+        const sections = sectionLinks
+          ? `\n        <ul class="series-section-links">\n${sectionLinks}\n        </ul>`
+          : '';
+
+        return `      <li class="series-chapter-item">
+        <a href="${escapeHtml(item.slug)}.html" data-chapter="${num}"${active ? ' class="active" aria-current="page"' : ''}>${escapeHtml(item.frontmatter.title || 'Untitled')}</a>${sections}
+      </li>`;
+      }).join('\n');
+
+    return `  <section class="series-sidebar-part">
+    <h4><span>${escapeHtml(part.label)}</span>${escapeHtml(part.title)}</h4>
+    <ul>
+${links}
+    </ul>
+  </section>`;
+  }).join('\n');
+
+  return `<aside class="sidebar series-sidebar">
+  <a class="series-sidebar-home" href="../index.html">系列目录</a>
+${groups}
+</aside>`;
+}
+
+function generateSeriesChapterHead(chapter) {
+  const num = String(chapter.frontmatter.chapter || '').padStart(2, '0');
+  const title = chapter.frontmatter.title || 'Untitled';
+  const readTime = chapter.frontmatter.readTime || '10';
+  const infoCutoff = chapter.frontmatter.infoCutoff
+    ? `  <div class="chapter-info-cutoff">${escapeHtml(chapter.frontmatter.infoCutoff)}</div>\n`
+    : '';
+
+  return `<header class="chapter-head series-chapter-head">
+  <div class="series-breadcrumb">${escapeHtml(chapter.part.label)} · ${escapeHtml(chapter.part.title)}</div>
+  <div class="chapter-head-meta">
+    <span class="num">CHAPTER ${num}</span>
+    <span>≈ ${escapeHtml(readTime)} MIN READ</span>
+  </div>
+  <h1>${escapeHtml(title)}</h1>
+${infoCutoff}</header>`;
+}
+
+function generateSeriesPager(chaptersMeta, currentIndex) {
+  const current = chaptersMeta[currentIndex];
+  const prev = currentIndex > 0 ? chaptersMeta[currentIndex - 1] : null;
+  const next = currentIndex < chaptersMeta.length - 1 ? chaptersMeta[currentIndex + 1] : null;
+
+  const renderLink = (item, direction) => {
+    if (!item) {
+      const label = direction === 'prev' ? '← 上一章' : '下一章 →';
+      return `  <a class="disabled${direction === 'next' ? ' next' : ''}"><span class="label">${label}</span><span class="title"></span></a>`;
+    }
+
+    const crossesPart = item.partId !== current.partId;
+    let label;
+    if (direction === 'prev') {
+      label = crossesPart ? `← 上一篇 · ${item.part.label}` : '← 上一章';
+    } else {
+      label = crossesPart ? `下一篇 · ${item.part.label} →` : '下一章 →';
+    }
+    const classes = [direction === 'next' ? 'next' : '', crossesPart ? 'cross-part' : '']
+      .filter(Boolean)
+      .join(' ');
+
+    return `  <a href="${escapeHtml(item.slug)}.html"${classes ? ` class="${classes}"` : ''}>
+    <span class="label">${escapeHtml(label)}</span>
+    <span class="title">${escapeHtml(item.frontmatter.title || '')}</span>
+  </a>`;
+  };
+
+  return `<nav class="pager series-pager">
+${renderLink(prev, 'prev')}
+${renderLink(next, 'next')}
+</nav>`;
+}
+
 /**
  * Generate settings popover.
  */
@@ -189,7 +310,7 @@ function generateSearchOverlay() {
 
 /**
  * Generate extra asset links based on book.features.
- * Supported features: quiz, mermaid.
+ * Supported features: quiz.
  */
 function generateFeatureAssets(features) {
   const list = Array.isArray(features) ? features : [];
@@ -228,6 +349,44 @@ function generateChaptersGrid(chaptersMeta) {
   }).join('\n');
 
   return `<div class="toc-grid">\n${cards}\n</div>`;
+}
+
+function generateSeriesParts(series, chaptersMeta) {
+  return series.parts.map(part => {
+    const chapters = chaptersMeta.filter(chapter => chapter.partId === part.id);
+    const cards = chapters.map(chapter => {
+      const num = String(chapter.frontmatter.chapter || '').padStart(2, '0');
+      const title = chapter.frontmatter.title || 'Untitled';
+      const description = chapter.frontmatter.description || '';
+      const readTime = chapter.frontmatter.readTime || '10';
+
+      return `        <li>
+          <a class="series-chapter-card toc-card" href="chapters/${escapeHtml(chapter.slug)}.html">
+            <span class="series-chapter-number">${num}</span>
+            <span class="series-chapter-copy">
+              <span class="series-chapter-meta">${escapeHtml(readTime)} MIN</span>
+              <h3>${escapeHtml(title)}</h3>
+              <p>${escapeHtml(description)}</p>
+            </span>
+            <span class="series-chapter-arrow" aria-hidden="true">→</span>
+          </a>
+        </li>`;
+    }).join('\n');
+
+    return `    <section class="series-part" id="part-${escapeHtml(part.id)}">
+      <header class="series-part-head">
+        <span class="series-part-label">${escapeHtml(part.label)}</span>
+        <div>
+          <h2>${escapeHtml(part.title)}</h2>
+          <p>${escapeHtml(part.description || '')}</p>
+        </div>
+        <span class="series-part-count">${chapters.length} 章</span>
+      </header>
+      <ol class="series-chapter-grid">
+${cards}
+      </ol>
+    </section>`;
+  }).join('\n');
 }
 
 /**
@@ -283,17 +442,67 @@ function buildIndexPage(book, chaptersMeta) {
     .replace('{{search_overlay}}', () => searchOverlay);
 }
 
+function buildSeriesChapterPage(series, chapter, chaptersMeta, currentIndex, headings, contentHtml) {
+  const template = readTemplate('series-chapter.html');
+  const nav = generateSeriesNav(series, true, chapter.partId);
+  const sidebar = generateSeriesSidebar(series, chapter, chaptersMeta, headings);
+  const chapterHead = generateSeriesChapterHead(chapter);
+  const pager = generateSeriesPager(chaptersMeta, currentIndex);
+  const settingsPop = generateSettingsPop();
+  const footer = generateFooter(series);
+  const searchOverlay = generateSearchOverlay();
+  const { extraHead, extraScripts } = generateFeatureAssets(series.features);
+
+  return template
+    .replace(/\{\{series_title\}\}/g, () => escapeHtml(series.title))
+    .replace(/\{\{chapter_title\}\}/g, () => escapeHtml(chapter.frontmatter.title || 'Untitled'))
+    .replace('{{nav}}', () => nav)
+    .replace('{{settings_pop}}', () => settingsPop)
+    .replace('{{sidebar}}', () => sidebar)
+    .replace('{{chapter_head}}', () => chapterHead)
+    .replace('{{content}}', () => contentHtml)
+    .replace('{{pager}}', () => pager)
+    .replace('{{footer}}', () => footer)
+    .replace('{{search_overlay}}', () => searchOverlay)
+    .replace('{{extra_head}}', () => extraHead)
+    .replace('{{extra_scripts}}', () => extraScripts);
+}
+
+function buildSeriesIndexPage(series, chaptersMeta) {
+  const template = readTemplate('series-index.html');
+  const nav = generateSeriesNav(series, false, null);
+  const parts = generateSeriesParts(series, chaptersMeta);
+  const settingsPop = generateSettingsPop();
+  const footer = generateFooter(series);
+  const searchOverlay = generateSearchOverlay();
+
+  const eyebrow = series.eyebrow || 'Series';
+
+  return template
+    .replace(/\{\{title\}\}/g, () => escapeHtml(series.title))
+    .replace(/\{\{eyebrow\}\}/g, () => escapeHtml(eyebrow))
+    .replace(/\{\{description\}\}/g, () => escapeHtml(series.description || ''))
+    .replace(/\{\{part_count\}\}/g, () => String(series.parts.length))
+    .replace(/\{\{chapter_count\}\}/g, () => String(chaptersMeta.length))
+    .replace(/\{\{estimated_time\}\}/g, () => escapeHtml(series.estimatedTime || ''))
+    .replace('{{nav}}', () => nav)
+    .replace('{{settings_pop}}', () => settingsPop)
+    .replace('{{parts}}', () => parts)
+    .replace('{{footer}}', () => footer)
+    .replace('{{search_overlay}}', () => searchOverlay);
+}
+
 /**
  * Copy assets to output directory.
  */
-function copyAssets(outputDir, slug) {
+function copyAssetDirectory(sourceDir, outputDir, slug) {
   const assetsOut = path.join(outputDir, 'assets');
   fs.mkdirSync(assetsOut, { recursive: true });
 
   const lock = require('./lock');
-  const files = fs.readdirSync(ASSETS_DIR);
+  const files = fs.readdirSync(sourceDir);
   files.forEach(file => {
-    const src = path.join(ASSETS_DIR, file);
+    const src = path.join(sourceDir, file);
     if (fs.statSync(src).isFile()) {
       const lockPath = slug ? `${slug}/assets/${file}` : file;
       if (lock.isLocked(lockPath)) {
@@ -302,6 +511,15 @@ function copyAssets(outputDir, slug) {
       fs.copyFileSync(src, path.join(assetsOut, file));
     }
   });
+}
+
+function copyAssets(outputDir, slug) {
+  copyAssetDirectory(ASSETS_DIR, outputDir, slug);
+}
+
+function copySeriesAssets(outputDir, slug) {
+  copyAssets(outputDir, slug);
+  copyAssetDirectory(SERIES_ASSETS_DIR, outputDir, slug);
 }
 
 /**
@@ -318,6 +536,7 @@ function buildSearchIndex(chapters) {
       title: ch.frontmatter.title || 'Untitled',
       chapter: num,
       chapterTitle: ch.frontmatter.title,
+      partTitle: ch.part ? ch.part.title : undefined,
       url: `chapters/${ch.slug}.html`,
       body: (ch.content || '').replace(/[#*`\[\](){}|>_~-]/g, ' ').substring(0, 2000)
     });
@@ -342,7 +561,11 @@ function buildSearchIndex(chapters) {
 module.exports = {
   buildChapterPage,
   buildIndexPage,
+  buildSeriesChapterPage,
+  buildSeriesIndexPage,
   copyAssets,
+  copySeriesAssets,
   buildSearchIndex,
-  generateChaptersGrid
+  generateChaptersGrid,
+  generateSeriesParts
 };

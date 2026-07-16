@@ -1,42 +1,5 @@
 [
   {
-    "title": "从零开始学 Transformer",
-    "slug": "from-zero-to-transformer",
-    "description": "从数学直觉到 Transformer 架构——每个算法从零手写一遍，再用框架跑一遍",
-    "status": "draft",
-    "statusNote": "未完成的深度学习路线，等待相关书稿统一整合。",
-    "order": 1,
-    "bookCount": 5,
-    "readTimeMinutes": 2970,
-    "books": [
-      {
-        "slug": "ai-math-foundations",
-        "title": "AI 数学基础",
-        "role": "数学底座：线代、微积分、概率、优化"
-      },
-      {
-        "slug": "ai-deep-learning-core",
-        "title": "AI 深度学习核心",
-        "role": "MLP：感知机、反向传播、写一个 mini 框架"
-      },
-      {
-        "slug": "ai-computer-vision",
-        "title": "AI 计算机视觉",
-        "role": "CNN：卷积、经典架构、图像分类"
-      },
-      {
-        "slug": "ai-nlp-foundations",
-        "title": "AI 自然语言处理基础",
-        "role": "RNN：词嵌入、序列模型、注意力机制"
-      },
-      {
-        "slug": "ai-transformers",
-        "title": "AI Transformer 深度剖析",
-        "role": "Transformer：Self-Attention → BERT → GPT"
-      }
-    ]
-  },
-  {
     "title": "计算机是怎么工作的",
     "slug": "how-computer-works",
     "description": "从晶体管到浏览器，一路向上——理解你每天用的这台机器",
@@ -60,33 +23,6 @@
         "slug": "browser-war",
         "title": "浏览器：从战争到垄断",
         "role": "终点：你每天打开的浏览器，背后是一场 30 年的战争"
-      }
-    ]
-  },
-  {
-    "title": "深度学习从零到能读论文",
-    "slug": "deep-learning-path",
-    "description": "从 PyTorch 张量运算到 Transformer，一步步建立动手能力",
-    "status": "draft",
-    "statusNote": "历史版本与未完成书稿，等待后续统一整合。",
-    "order": 3,
-    "bookCount": 3,
-    "readTimeMinutes": 431,
-    "books": [
-      {
-        "slug": "d2l-toolbox",
-        "title": "深度学习前置工具箱",
-        "role": "前置：PyTorch 基础和自动求导"
-      },
-      {
-        "slug": "d2l-cnn",
-        "title": "CNN实战篇：PyTorch图像处理与卷积神经网络",
-        "role": "图像：卷积神经网络的完整链路"
-      },
-      {
-        "slug": "d2l-rnn",
-        "title": "RNN实战篇：循环神经网络与序列数据处理",
-        "role": "序列：从 RNN 到注意力机制"
       }
     ]
   },

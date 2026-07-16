@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RNN 基础概念与数学原理 — 深度学习系列讲义</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" href="../assets/series.css">
+<link rel="stylesheet" id="hljs-light" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+<link rel="stylesheet" id="hljs-dark" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" media="not all">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+
+</head>
+<body class="series-page series-reader-page">
+
+<div class="progress-bar" id="progress-bar"></div>
+
+<nav class="topnav series-topnav" id="topnav">
+  <div class="topnav-inner">
+    <a class="brand" href="../index.html">深度学习系列讲义</a>
+    <div class="nav-links">
+      <a href="../index.html#part-toolbox">PART I</a>
+      <a href="../index.html#part-cnn">PART II</a>
+      <a href="../index.html#part-rnn" class="active">PART III</a>
+    </div>
+    <div class="nav-controls">
+      <button class="nav-btn" id="search-btn" aria-label="搜索 (Ctrl+K)">⌘K</button>
+      <button class="nav-btn" id="settings-btn" aria-label="阅读设置">Aa</button>
+      <a class="nav-btn" href="../../index.html" aria-label="返回知识库">← 知识库</a>
+    </div>
+  </div>
+</nav>
+<div class="settings-pop" id="settings-pop">
+  <h5>主题</h5>
+  <div class="row">
+    <button class="seg" data-theme-set="light">明亮</button>
+    <button class="seg" data-theme-set="dark">暗色</button>
+  </div>
+  <h5>字号</h5>
+  <div class="row">
+    <button class="seg" data-size-set="s">小</button>
+    <button class="seg" data-size-set="m">中</button>
+    <button class="seg" data-size-set="l">大</button>
+  </div>
+</div>
+
+<div class="with-sidebar series-reader">
+  <aside class="sidebar series-sidebar">
+  <a class="series-sidebar-home" href="../index.html">系列目录</a>
+  <section class="series-sidebar-part">
+    <h4><span>PART I</span>数学与 PyTorch 工具</h4>
+    <ul>
+      <li class="series-chapter-item">
+        <a href="01-why-pytorch.html" data-chapter="01">为什么学习 PyTorch</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="02-tensor-creation.html" data-chapter="02">张量的创建与基本操作</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="03-tensor-attributes.html" data-chapter="03">张量的属性</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="04-tensor-ops.html" data-chapter="04">张量的操作与变换</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="05-autograd.html" data-chapter="05">自动求导机制</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="06-nn-modules.html" data-chapter="06">神经网络基础模块</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="07-errors-exercises.html" data-chapter="07">常见错误与习题</a>
+      </li>
+    </ul>
+  </section>
+  <section class="series-sidebar-part">
+    <h4><span>PART II</span>卷积与视觉</h4>
+    <ul>
+      <li class="series-chapter-item">
+        <a href="08-convolution-basics.html" data-chapter="08">从零开始理解卷积</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="09-pytorch-conv.html" data-chapter="09">PyTorch 中的卷积操作</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="10-pooling-norm.html" data-chapter="10">池化层与归一化</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="11-data.html" data-chapter="11">数据增强与数据集加载</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="12-architecture.html" data-chapter="12">CNN 模型构建与迁移学习</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="13-training-eval.html" data-chapter="13">训练技巧与模型评估</a>
+      </li>
+    </ul>
+  </section>
+  <section class="series-sidebar-part">
+    <h4><span>PART III</span>序列与自然语言处理</h4>
+    <ul>
+      <li class="series-chapter-item">
+        <a href="14-rnn-math.html" data-chapter="14" class="active" aria-current="page">RNN 基础概念与数学原理</a>
+        <ul class="series-section-links">
+          <li><a href="#日常生活中的序列数据">日常生活中的序列数据</a></li>
+          <li><a href="#rnn的核心思想">RNN的核心思想</a></li>
+          <li><a href="#rnn的工作原理与结构">RNN的工作原理与结构</a></li>
+          <li><a href="#前向传播数学推导">前向传播数学推导</a></li>
+          <li><a href="#反向传播bptt数学推导">反向传播（BPTT）数学推导</a></li>
+          <li><a href="#梯度消失与梯度爆炸rnn的阿喀琉斯之踵">梯度消失与梯度爆炸——RNN的阿喀琉斯之踵</a></li>
+        </ul>
+      </li>
+      <li class="series-chapter-item">
+        <a href="15-numpy-rnn.html" data-chapter="15">用 NumPy 手写 RNN</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="16-pytorch-rnn.html" data-chapter="16">PyTorch 中的 RNN 实现</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="17-lstm-gru.html" data-chapter="17">LSTM 与 GRU</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="18-language-model.html" data-chapter="18">字符级语言模型</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="19-text-nlp.html" data-chapter="19">文本处理与情感分析</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="20-seq2seq.html" data-chapter="20">Seq2Seq 与注意力机制</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="21-advanced.html" data-chapter="21">高级主题与 Transformer 过渡</a>
+      </li>
+    </ul>
+  </section>
+</aside>
+  <article class="chapter-body">
+    <header class="chapter-head series-chapter-head">
+  <div class="series-breadcrumb">PART III · 序列与自然语言处理</div>
+  <div class="chapter-head-meta">
+    <span class="num">CHAPTER 14</span>
+    <span>≈ 25 MIN READ</span>
+  </div>
+  <h1>RNN 基础概念与数学原理</h1>
+</header>
+    <h2 id="日常生活中的序列数据">日常生活中的序列数据</h2>
+<p>序列数据在我们的生活中无处不在：</p>
+<p><strong>文本数据</strong>是最常见的序列。一句话中每个单词都不是独立的，&quot;我今天去图书馆看书&quot;，顺序决定语义。把顺序打乱变成&quot;图书馆看我去书&quot;，所有词都在，但完全无法理解——<strong>顺序是序列数据的本质特征</strong>。</p>
+<p><strong>时间序列数据</strong>同样无处不在。股票价格、气温变化、心电图信号，都是随时间变化的序列。某个时间点的值与之前的值有关联。</p>
+<p><strong>音频数据</strong>是时间轴上连续变化的信号。语音识别需要理解音频片段之间的时序关系。</p>
+<p><strong>视频数据</strong>是帧的序列，每一帧与前后帧紧密相关，动作识别依赖这种时序信息。</p>
+<h3 id="序列任务的5种类型">序列任务的5种类型</h3>
+<p>常规任务可以分成以下几种：</p>
+<pre><code>一对一 (one-to-one)：普通分类
+输入：[x] → 输出：[y]
+例子：图片分类（不是序列任务，CNN或MLP做）
+
+一对多 (one-to-many)：从一个输入生成序列
+输入：[x] → 输出：[y1, y2, y3, ...]
+例子：图片描述（给一张图片，生成一段话）
+
+多对一 (many-to-one)：从序列得到一个输出
+输入：[x1, x2, x3] → 输出：[y]
+例子：情感分析（一段话 → 正面/负面）
+
+多对多（同步）：每个时刻都有输出
+输入：[x1, x2, x3] → 输出：[y1, y2, y3]
+例子：词性标注（每个词 → 名词/动词/形容词...）
+
+多对多（异步）：输入完毕后才开始输出
+输入：[x1, x2, ..., xn] → 输出：[y1, y2, ..., ym]
+例子：机器翻译（读完英文句子，输出中文）</code></pre>
+<p>后4种类型对应了RNN的大部分实际应用场景。</p>
+<h3 id="序列数据-vs-图像数据">序列数据 vs 图像数据</h3>
+<div class="table-wrap"><table><thead><tr>
+<th>特征</th>
+<th>图像数据</th>
+<th>序列数据</th>
+</tr>
+</thead><tbody><tr>
+<td>数据结构</td>
+<td>网格（像素）</td>
+<td>链式（时间步）</td>
+</tr>
+<tr>
+<td>关键假设</td>
+<td>空间局部性</td>
+<td>时序依赖性</td>
+</tr>
+<tr>
+<td>关键挑战</td>
+<td>平移不变性</td>
+<td>变长、长程依赖</td>
+</tr>
+<tr>
+<td>主要模型</td>
+<td>CNN</td>
+<td>RNN/Transformer</td>
+</tr>
+<tr>
+<td>顺序重要吗</td>
+<td>否（可以小幅度旋转图片）</td>
+<td>是（不能打乱句子）</td>
+</tr>
+</tbody></table></div>
+<h3 id="传统方法的局限">传统方法的局限</h3>
+<p>在RNN出现之前，处理序列数据主要靠手工提取特征（词频、TF-IDF、n-gram），然后输入传统机器学习模型。核心问题有两个：</p>
+<p>首先，<strong>特征工程耗时耗力</strong>，不同任务需要完全不同的特征设计。</p>
+<p>其次，<strong>无法捕捉长距离依赖</strong>。&quot;虽然他昨天很晚才睡，但是今天他还是很早<strong>起床</strong>&quot;——要预测&quot;起床&quot;，需要记住很久之前的&quot;很晚才睡&quot;。n-gram只能捕捉局部信息，无法处理这类长距离关联。</p>
+<h2 id="rnn的核心思想">RNN的核心思想</h2>
+<p>RNN的核心思想是引入<strong>循环机制</strong>——网络有一个&quot;记忆&quot;（隐藏状态），每处理一个新输入，就将当前输入与之前的记忆结合，生成新的记忆和输出。</p>
+<hr>
+<h3 id="为什么需要rnn">为什么需要RNN</h3>
+<p>要理解RNN的必要性，我们先看看用全连接网络（FCN）处理序列会遇到什么问题。</p>
+<p><strong>问题1：输入长度固定</strong>。FCN要求固定大小的输入。但句子长度不固定——有的3个词，有的50个词。如果用最大长度padding，短句子会有大量无效信息。</p>
+<p><strong>问题2：无法利用顺序信息</strong>。FCN把所有输入一起处理，&quot;我爱你&quot;和&quot;你爱我&quot;会产生完全不同的语义，但如果我们只是把词向量加起来，这两者的结果是一样的。</p>
+<p><strong>问题3：参数数量随长度爆炸</strong>。如果序列长100，每个词100维，输入就是10000维，第一层全连接的参数量极大。</p>
+<p>RNN通过<strong>共享参数</strong>解决了这些问题。</p>
+<blockquote><p>🔍 <strong>深层思考：参数共享的深意</strong></p>
+<p>RNN在所有时间步使用同样的权重矩阵（W_ih, W_hh）。这不只是节省参数的技巧，背后有深刻的含义：</p>
+<p><strong>它是一种归纳偏置（Inductive Bias）</strong>。参数共享隐含地假设&quot;处理第t个词的规则与处理第t+5个词的规则相同&quot;。这就像我们阅读时，理解&quot;爱&quot;这个字的方法，不会因为它是句子的第2个字还是第8个字而不同。</p>
+<p><strong>它使RNN能泛化到任意长度序列</strong>。训练时序列长度可以是50，推理时可以是100，因为网络的&quot;规则&quot;是与位置无关的。</p>
+<p>类比：这就像用同一个for循环处理不同长度的数组，而不是把每次迭代写成不同的代码块。RNN就是序列处理的&quot;for循环&quot;。</p>
+</blockquote>
+<h2 id="rnn的工作原理与结构">RNN的工作原理与结构</h2>
+<p><strong>基本结构</strong>：</p>
+<pre><code>                     输出 y_1    输出 y_2    输出 y_3
+                       ↑           ↑           ↑
+隐藏状态: h_0 ——→ [ RNN ] ——→ [ RNN ] ——→ [ RNN ] ——→ h_3
+                       ↑           ↑           ↑
+                    输入 x_1    输入 x_2    输入 x_3
+
+每个 [ RNN ] 单元内部做同样的事情：
+输入: x_t（当前词）+ h_{t-1}（之前的记忆）
+输出: h_t（新记忆）+ y_t（当前时刻的输出，可选）</code></pre>
+<p>注意：所有时间步的 <code>[ RNN ]</code> 用的是<strong>完全相同的权重</strong>，只是输入不同。</p>
+<p><strong>循环与展开</strong>：</p>
+<p>RNN通常画成一个有自环的单元，这个&quot;自环&quot;就是隐藏状态传递给自己。当我们把它在时间维度上&quot;展开&quot;时，就变成了上面那个线性结构，看起来像一个很深的前馈网络——只不过每层用相同的权重。</p>
+<h2 id="前向传播数学推导">前向传播数学推导</h2>
+<p><strong>符号定义</strong>：</p>
+<div class="table-wrap"><table><thead><tr>
+<th>符号</th>
+<th>含义</th>
+<th>形状</th>
+</tr>
+</thead><tbody><tr>
+<td>x_t</td>
+<td>第t步输入向量</td>
+<td>(input_size,)</td>
+</tr>
+<tr>
+<td>h_t</td>
+<td>第t步隐藏状态</td>
+<td>(hidden_size,)</td>
+</tr>
+<tr>
+<td>y_t</td>
+<td>第t步输出</td>
+<td>(output_size,)</td>
+</tr>
+<tr>
+<td>W_ih</td>
+<td>输入→隐藏权重</td>
+<td>(hidden_size, input_size)</td>
+</tr>
+<tr>
+<td>W_hh</td>
+<td>隐藏→隐藏权重</td>
+<td>(hidden_size, hidden_size)</td>
+</tr>
+<tr>
+<td>W_hy</td>
+<td>隐藏→输出权重</td>
+<td>(output_size, hidden_size)</td>
+</tr>
+<tr>
+<td>b_h</td>
+<td>隐藏层偏置</td>
+<td>(hidden_size,)</td>
+</tr>
+</tbody></table></div>
+<p><strong>前向传播公式</strong>：</p>
+<pre><code>h_t = tanh(W_ih @ x_t + W_hh @ h_{t-1} + b_h)   ← 隐藏状态更新
+y_t = W_hy @ h_t + b_y                             ← 输出计算（可选）</code></pre>
+<p>其中 <code>@</code> 表示矩阵乘法，<code>tanh</code> 是双曲正切激活函数。</p>
+<p><strong>维度验证（以批量处理为例）</strong>：</p>
+<p>设 batch_size=B, hidden_size=H, input_size=D：</p>
+<pre><code>X_t @ W_ih.T:  (B, D)  @  (D, H)  = (B, H)  ✓
+h_{t-1} @ W_hh.T: (B, H) @ (H, H) = (B, H)  ✓
+相加后 tanh: (B, H) → (B, H)         ✓</code></pre>
+<p><strong>手动实现形状的验证</strong>：</p>
+<pre data-label="python"><code class="language-python">import torch
+import torch.nn as nn
+
+# 参数设置
+input_size = 10
+hidden_size = 20
+batch_size = 3
+
+# 手动创建权重（模拟nn.RNN的内部实现）
+W_ih = torch.randn(hidden_size, input_size)
+W_hh = torch.randn(hidden_size, hidden_size)
+b_h = torch.zeros(hidden_size)
+
+# 单个时间步的手动前向传播
+x_t = torch.randn(batch_size, input_size)
+h_prev = torch.zeros(batch_size, hidden_size)
+
+# 公式：h_t = tanh(x_t @ W_ih.T + h_{t-1} @ W_hh.T + b_h)
+h_next = torch.tanh(x_t @ W_ih.T + h_prev @ W_hh.T + b_h)
+print("手动计算的隐藏状态形状:", h_next.shape)  # (3, 20)
+</code></pre>
+<h2 id="反向传播bptt数学推导">反向传播（BPTT）数学推导</h2>
+<p>RNN的反向传播称为&quot;通过时间反向传播&quot;（Backpropagation Through Time, BPTT）。</p>
+<p><strong>核心思想</strong>：将RNN展开成一个普通的深度网络，然后从最后一个时间步开始反向传播梯度。</p>
+<p><strong>步骤分解</strong>：</p>
+<ol>
+<li>展开：把T步的RNN展开成一个T层的前馈网络</li>
+<li>计算每步损失：L = Σ_{t=1}^{T} L_t （这步比较关键）</li>
+<li>从t=T开始，向t=1反向传播</li>
+<li>累加所有时间步对参数的梯度</li>
+</ol>
+<p><strong>关键梯度推导</strong>：</p>
+<p>设 δ_t = ∂L/∂a_t（t时刻隐藏状态的梯度）</p>
+<p>对于最后一步T：</p>
+<pre><code>δ_T = (∂L_T/∂y_T) @ W_hy.T ⊙ tanh'(a_T)</code></pre>
+<p>其中 a_T = W_ih @ x_T + W_hh @ h_{T-1} + b_h，tanh&#39;(x) = 1 - tanh²(x)</p>
+<p>对于中间步骤 t（从T-1到1往回算）：</p>
+<pre><code>δ_t = (δ_{t+1} @ W_hh.T + ∂L_t/∂y_t @ W_hy.T) ⊙ tanh'(a_t)
+       ↑                    ↑
+    来自下一时刻的梯度    来自当前时刻输出损失的梯度</code></pre>
+<p><strong>参数梯度</strong>（对权重求梯度，需要对所有时间步求和）：</p>
+<pre><code>∂L/∂W_hh = Σ_{t=1}^{T} δ_t @ h_{t-1}.T   ← 关键：所有时间步梯度累加
+∂L/∂W_ih = Σ_{t=1}^{T} δ_t @ x_t.T
+∂L/∂b_h  = Σ_{t=1}^{T} δ_t</code></pre>
+<blockquote><p>💡 <strong>直觉理解BPTT</strong></p>
+<p>想象你在看一篇侦探小说，发现结尾写错了。现在你要找出是哪里的伏笔埋错了（从结尾往前找）。BPTT就是这个过程：从最终的&quot;写错了&quot;（损失函数）出发，一步步往前追溯&quot;责任&quot;（梯度），找到每个时间步、每个权重&quot;应该负多少责任&quot;（参数梯度）。</p>
+<p>关键点：由于RNN所有时间步共享权重，每个权重的最终梯度是它在所有时间步贡献的梯度之<strong>和</strong>。</p>
+</blockquote>
+<h2 id="梯度消失与梯度爆炸rnn的阿喀琉斯之踵">梯度消失与梯度爆炸——RNN的阿喀琉斯之踵</h2>
+<p>这是RNN面临的核心问题，也是LSTM和GRU被发明的直接原因。</p>
+<p><strong>为什么会发生</strong>：</p>
+<p>梯度从时间步T传播到时间步k，需要经过T-k次矩阵乘法：</p>
+<pre><code>δ_k ≈ δ_T × (W_hh)^(T-k)</code></pre>
+<p>设 W_hh 的最大特征值（谱范数）为 λ_max：</p>
+<ul>
+<li>若 λ_max &lt; 1：梯度随距离指数衰减 → <strong>梯度消失</strong></li>
+<li>若 λ_max &gt; 1：梯度随距离指数爆炸 → <strong>梯度爆炸</strong></li>
+</ul>
+<pre data-label="python"><code class="language-python">import numpy as np
+
+# 演示梯度消失
+W = np.random.randn(5, 5) * 0.5  # 谱范数 &lt; 1
+grad = np.ones(5)
+
+print("梯度随时间步传播的变化（梯度消失示例）：")
+for step in range(10):
+    grad = W.T @ grad
+    print(f"  步骤 {step+1}: 梯度范数 = {np.linalg.norm(grad):.6f}")
+# 你会看到梯度迅速趋近于0
+
+print("\n梯度随时间步传播的变化（梯度爆炸示例）：")
+W2 = np.random.randn(5, 5) * 2  # 谱范数 &gt; 1
+grad2 = np.ones(5)
+for step in range(10):
+    grad2 = W2.T @ grad2
+    print(f"  步骤 {step+1}: 梯度范数 = {np.linalg.norm(grad2):.2f}")
+# 你会看到梯度迅速爆炸</code></pre>
+<p><strong>梯度消失的实际影响</strong>：</p>
+<p>网络&quot;记不住&quot;很久之前的信息。在&quot;虽然这部电影剧情不太好，但演员表演非常出色，导演的镜头语言也很精彩，所以我还是<strong>喜欢</strong>这部电影&quot;这句话中，&quot;喜欢&quot;要依赖很久之前的&quot;演员表演非常出色&quot;，梯度消失的RNN很难学到这种关联。</p>
+<p><strong>梯度爆炸的实际影响</strong>：</p>
+<p>权重更新幅度极大，Loss突然变成NaN，训练完全失控。</p>
+<p>当时是采用了crossEntropy代替sigmoid。</p>
+<h3 id="深层思考为什么用tanh而不是relu">深层思考：为什么用tanh而不是ReLU？</h3>
+<p>这是个很好的问题，很多初学者会问。</p>
+<p><strong>tanh的优势</strong>：</p>
+<ol>
+<li><p><strong>有界</strong>：tanh输出范围在(-1, 1)。如果隐藏状态无界增长，经过多次时间步后数值会爆炸。tanh天然防止这种&quot;激活值爆炸&quot;。</p>
+</li>
+<li><p><strong>零中心化</strong>：tanh(0)=0，输出均值接近0。相比之下sigmoid输出均值约0.5，会引起梯度更新的&quot;锯齿效应&quot;。</p>
+</li>
+<li><p><strong>梯度合适</strong>：tanh&#39;(0)=1，在0附近梯度较大，有利于训练。</p>
+</li>
+</ol>
+<p><strong>ReLU在RNN中为什么不好用</strong>：</p>
+<pre data-label="python"><code class="language-python"># 设想用ReLU的RNN
+# h_t = ReLU(W_hh @ h_{t-1} + W_ih @ x_t)
+# 若W_hh的某个特征值 &gt; 1，则激活值会随时间步指数爆炸
+# tanh的饱和特性虽然会导致梯度消失，但至少激活值不会爆炸</code></pre>
+<p><strong>但也有ReLU RNN的研究</strong>：</p>
+<p>2015年，Le等人提出了IRNN（Identity RNN），将W_hh初始化为单位矩阵、使用ReLU激活，在某些任务上效果不错。核心思想是：单位矩阵初始化使W_hh的特征值都为1，梯度既不消失也不爆炸。</p>
+<blockquote><p>🔍 <strong>深层思考：激活函数选择的本质权衡</strong></p>
+<p>在RNN中，我们面临一个两难困境：</p>
+<ul>
+<li><strong>非线性太弱</strong>（如恒等激活）：RNN退化成线性系统，表达能力有限</li>
+<li><strong>非线性太强</strong>（如激活函数饱和区）：梯度消失，难以学习长距离依赖</li>
+</ul>
+<p>tanh是个折中：在0附近近似线性（利于梯度传播），远离0时饱和（防止爆炸）。</p>
+</blockquote>
+<hr>
+
+    <nav class="pager series-pager">
+  <a href="13-training-eval.html" class="cross-part">
+    <span class="label">← 上一篇 · PART II</span>
+    <span class="title">训练技巧与模型评估</span>
+  </a>
+  <a href="15-numpy-rnn.html" class="next">
+    <span class="label">下一章 →</span>
+    <span class="title">用 NumPy 手写 RNN</span>
+  </a>
+</nav>
+  </article>
+</div>
+
+<footer>
+  <div class="set">
+    <span>深度学习系列讲义</span>
+    <span>2026 · ZH-CN</span>
+  </div>
+  <div class="set">
+    <span>Mav</span>
+  </div>
+</footer>
+<div class="search-backdrop" id="search-overlay" role="dialog" aria-modal="true" aria-label="搜索" hidden>
+  <div class="search-modal">
+    <div class="search-input-wrap">
+      <input type="search" class="search-input" placeholder="搜索内容..." aria-label="搜索内容" autocomplete="off">
+      <kbd>ESC</kbd>
+    </div>
+    <div class="search-results" role="listbox" aria-label="搜索结果"></div>
+  </div>
+</div>
+
+<div class="side-panel" id="side-panel">
+  <div class="side-panel-resize" id="side-panel-resize"></div>
+  <div class="side-panel-header">
+    <div class="side-panel-tabs">
+      <button class="side-panel-tab active" data-mode="sidenote">补充</button>
+      <button class="side-panel-tab" data-mode="notepad">笔记</button>
+    </div>
+    <button class="side-panel-close" aria-label="关闭">×</button>
+  </div>
+  <div class="side-panel-body"></div>
+</div>
+<button class="notepad-fab" id="notepad-fab" aria-label="便利贴">✎</button>
+
+<button class="mtoc-fab" id="mtoc-fab" aria-label="系列目录">TOC</button>
+<div class="mtoc-drawer" id="mtoc-drawer">
+  <div class="mtoc-content series-sidebar"></div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/bash.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/typescript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/yaml.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/javascript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/json.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/python.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/css.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+<script>mermaid.initialize({startOnLoad:true, theme:'neutral', fontFamily:'Inter, sans-serif'});</script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}]});"></script>
+<script src="../assets/script.js"></script>
+
+</body>
+</html>

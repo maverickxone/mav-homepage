@@ -1,0 +1,672 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>数据增强与数据集加载 — 深度学习系列讲义</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" href="../assets/series.css">
+<link rel="stylesheet" id="hljs-light" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+<link rel="stylesheet" id="hljs-dark" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" media="not all">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+
+</head>
+<body class="series-page series-reader-page">
+
+<div class="progress-bar" id="progress-bar"></div>
+
+<nav class="topnav series-topnav" id="topnav">
+  <div class="topnav-inner">
+    <a class="brand" href="../index.html">深度学习系列讲义</a>
+    <div class="nav-links">
+      <a href="../index.html#part-toolbox">PART I</a>
+      <a href="../index.html#part-cnn" class="active">PART II</a>
+      <a href="../index.html#part-rnn">PART III</a>
+    </div>
+    <div class="nav-controls">
+      <button class="nav-btn" id="search-btn" aria-label="搜索 (Ctrl+K)">⌘K</button>
+      <button class="nav-btn" id="settings-btn" aria-label="阅读设置">Aa</button>
+      <a class="nav-btn" href="../../index.html" aria-label="返回知识库">← 知识库</a>
+    </div>
+  </div>
+</nav>
+<div class="settings-pop" id="settings-pop">
+  <h5>主题</h5>
+  <div class="row">
+    <button class="seg" data-theme-set="light">明亮</button>
+    <button class="seg" data-theme-set="dark">暗色</button>
+  </div>
+  <h5>字号</h5>
+  <div class="row">
+    <button class="seg" data-size-set="s">小</button>
+    <button class="seg" data-size-set="m">中</button>
+    <button class="seg" data-size-set="l">大</button>
+  </div>
+</div>
+
+<div class="with-sidebar series-reader">
+  <aside class="sidebar series-sidebar">
+  <a class="series-sidebar-home" href="../index.html">系列目录</a>
+  <section class="series-sidebar-part">
+    <h4><span>PART I</span>数学与 PyTorch 工具</h4>
+    <ul>
+      <li class="series-chapter-item">
+        <a href="01-why-pytorch.html" data-chapter="01">为什么学习 PyTorch</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="02-tensor-creation.html" data-chapter="02">张量的创建与基本操作</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="03-tensor-attributes.html" data-chapter="03">张量的属性</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="04-tensor-ops.html" data-chapter="04">张量的操作与变换</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="05-autograd.html" data-chapter="05">自动求导机制</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="06-nn-modules.html" data-chapter="06">神经网络基础模块</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="07-errors-exercises.html" data-chapter="07">常见错误与习题</a>
+      </li>
+    </ul>
+  </section>
+  <section class="series-sidebar-part">
+    <h4><span>PART II</span>卷积与视觉</h4>
+    <ul>
+      <li class="series-chapter-item">
+        <a href="08-convolution-basics.html" data-chapter="08">从零开始理解卷积</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="09-pytorch-conv.html" data-chapter="09">PyTorch 中的卷积操作</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="10-pooling-norm.html" data-chapter="10">池化层与归一化</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="11-data.html" data-chapter="11" class="active" aria-current="page">数据增强与数据集加载</a>
+        <ul class="series-section-links">
+          <li><a href="#图像变换与数据增强">图像变换与数据增强</a></li>
+          <li><a href="#torchvisiondatasets内置数据集">torchvision.datasets：内置数据集</a></li>
+          <li><a href="#dataset类自定义数据集">Dataset类：自定义数据集</a></li>
+          <li><a href="#dataloader批量数据加载">DataLoader：批量数据加载</a></li>
+        </ul>
+      </li>
+      <li class="series-chapter-item">
+        <a href="12-architecture.html" data-chapter="12">CNN 模型构建与迁移学习</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="13-training-eval.html" data-chapter="13">训练技巧与模型评估</a>
+      </li>
+    </ul>
+  </section>
+  <section class="series-sidebar-part">
+    <h4><span>PART III</span>序列与自然语言处理</h4>
+    <ul>
+      <li class="series-chapter-item">
+        <a href="14-rnn-math.html" data-chapter="14">RNN 基础概念与数学原理</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="15-numpy-rnn.html" data-chapter="15">用 NumPy 手写 RNN</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="16-pytorch-rnn.html" data-chapter="16">PyTorch 中的 RNN 实现</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="17-lstm-gru.html" data-chapter="17">LSTM 与 GRU</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="18-language-model.html" data-chapter="18">字符级语言模型</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="19-text-nlp.html" data-chapter="19">文本处理与情感分析</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="20-seq2seq.html" data-chapter="20">Seq2Seq 与注意力机制</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="21-advanced.html" data-chapter="21">高级主题与 Transformer 过渡</a>
+      </li>
+    </ul>
+  </section>
+</aside>
+  <article class="chapter-body">
+    <header class="chapter-head series-chapter-head">
+  <div class="series-breadcrumb">PART II · 卷积与视觉</div>
+  <div class="chapter-head-meta">
+    <span class="num">CHAPTER 11</span>
+    <span>≈ 25 MIN READ</span>
+  </div>
+  <h1>数据增强与数据集加载</h1>
+</header>
+    <p>数据增强是提升模型泛化能力的关键技术。torchvision.transforms提供了丰富的图像变换函数。</p>
+<h2 id="图像变换与数据增强">图像变换与数据增强</h2>
+<h3 id="transformscompose组合多个变换">transforms.Compose：组合多个变换</h3>
+<p>Compose用于将多个变换组合成管道。</p>
+<pre data-label="python"><code class="language-python">from torchvision import transforms
+
+# 创建变换管道
+transform = transforms.Compose([
+    transforms.ToTensor(),           # 1. 转为张量
+    transforms.Normalize([0.5], [0.5]),  # 2. 标准化
+    transforms.RandomHorizontalFlip(),   # 3. 随机翻转
+])
+
+# 应用变换
+from PIL import Image
+img = Image.open('cat.jpg')
+img_tensor = transform(img)
+print(img_tensor.shape)  # torch.Size([3, H, W])</code></pre>
+<h3 id="transformstotensor图像转张量">transforms.ToTensor：图像转张量</h3>
+<p>ToTensor将PIL Image或NumPy数组转换为PyTorch张量，并自动归一化到[0, 1]。</p>
+<pre data-label="python"><code class="language-python">from torchvision import transforms
+from PIL import Image
+import numpy as np
+
+# 从PIL Image转换
+img_pil = Image.open('cat.jpg')
+print("PIL Image:", img_pil.mode, img_pil.size)
+
+to_tensor = transforms.ToTensor()
+tensor = to_tensor(img_pil)
+print("Tensor:", tensor.shape, tensor.min(), tensor.max())
+# 自动转换为 (C, H, W)，值在 [0, 1]
+
+# 从NumPy数组转换
+img_np = np.array(img_pil)
+print("NumPy:", img_np.shape)
+tensor_np = to_tensor(img_np)
+print("Tensor from NumPy:", tensor_np.shape)
+
+# 转换前后对比
+print("\n=== 转换说明 ===")
+# PIL Image (H, W, C) [0-255]
+# NumPy   (H, W, C) [0-255]
+# Tensor  (C, H, W) [0, 1]</code></pre>
+<h3 id="transformsnormalize标准化">transforms.Normalize：标准化</h3>
+<p>Normalize使用均值和标准差对图像进行标准化。</p>
+<p><strong>数学公式</strong>：</p>
+<pre><code>normalized = (input - mean) / std</code></pre>
+<pre data-label="python"><code class="language-python"># ImageNet常用均值和标准差
+normalize = transforms.Normalize(
+    mean=[0.485, 0.456, 0.406],  # RGB通道的均值
+    std=[0.229, 0.224, 0.225]     # RGB通道的标准差
+)
+
+# 标准化流程
+x = torch.rand(3, 224, 224)  # [0, 1]
+x_normalized = normalize(x)
+
+print("标准化前: min={:.3f}, max={:.3f}".format(x.min(), x.max()))
+print("标准化后: min={:.3f}, max={:.3f}".format(x_normalized.min(), x_normalized.max()))
+# 标准化后值通常在 [-2, 2] 范围内</code></pre>
+<p><strong>训练和测试使用相同的标准化</strong>：</p>
+<pre data-label="python"><code class="language-python"># 定义标准化参数（ImageNet）
+imagenet_mean = [0.485, 0.456, 0.406]
+imagenet_std = [0.229, 0.224, 0.225]
+
+# 训练变换
+train_transform = transforms.Compose([
+    transforms.RandomResizedCrop(224),
+    transforms.RandomHorizontalFlip(),
+    transforms.ToTensor(),
+    transforms.Normalize(mean=imagenet_mean, std=imagenet_std),
+])
+
+# 测试变换（验证集、测试集）
+test_transform = transforms.Compose([
+    transforms.Resize(256),
+    transforms.CenterCrop(224),
+    transforms.ToTensor(),
+    transforms.Normalize(mean=imagenet_mean, std=imagenet_std),
+])
+
+# 使用变换
+train_dataset = datasets.FashionMNIST(
+    root='./data',
+    train=True,
+    transform=train_transform,
+    download=True
+)
+
+test_dataset = datasets.FashionMNIST(
+    root='./data',
+    train=False,
+    transform=test_transform,
+    download=True
+)</code></pre>
+<h3 id="transformsresize与transformscentercrop">transforms.Resize与transforms.CenterCrop</h3>
+<p>调整图像尺寸并裁剪。</p>
+<pre data-label="python"><code class="language-python"># Resize：调整图像大小
+resize = transforms.Resize(size=(224, 224))  # 调整为指定尺寸
+# 或者
+resize = transforms.Resize(size=224)  # 短边调整为224，保持比例
+
+# CenterCrop：中心裁剪
+center_crop = transforms.CenterCrop(size=(224, 224))
+
+# FiveCrop：四个角和中心裁剪（返回5个图像）
+five_crop = transforms.FiveCrop(size=(224, 224))
+
+# TenCrop：水平翻转后裁剪（返回10个图像）
+ten_crop = transforms.TenCrop(size=(224, 224), vertical_flip=False)
+
+# 组合使用
+transform = transforms.Compose([
+    transforms.Resize(256),
+    transforms.CenterCrop(224),
+    transforms.ToTensor(),
+])</code></pre>
+<h3 id="transformsrandomhorizontalflip随机水平翻转">transforms.RandomHorizontalFlip：随机水平翻转</h3>
+<p>随机水平翻转是数据增强中最常用、最有效的技术之一。</p>
+<pre data-label="python"><code class="language-python"># 随机水平翻转
+hflip = transforms.RandomHorizontalFlip(p=0.5)  # p: 翻转概率
+
+# 随机垂直翻转
+vflip = transforms.RandomVerticalFlip(p=0.5)
+
+# 实际应用
+img = Image.open('cat.jpg')
+flipped = hflip(img)</code></pre>
+<h3 id="transformsrandomrotation随机旋转">transforms.RandomRotation：随机旋转</h3>
+<pre data-label="python"><code class="language-python"># 随机旋转
+rotation = transforms.RandomRotation(degrees=15)  # -15到15度之间随机旋转
+rotation10 = transforms.RandomRotation(degrees=(10, 30))  # 10到30度之间随机旋转
+
+# 随机旋转（包含填充）
+rotation_fill = transforms.RandomRotation(
+    degrees=30,
+    fill=(255, 255, 255)  # 填充颜色
+)</code></pre>
+<h3 id="transformscolorjitter颜色抖动">transforms.ColorJitter：颜色抖动</h3>
+<pre data-label="python"><code class="language-python"># 颜色抖动
+color_jitter = transforms.ColorJitter(
+    brightness=0.2,    # 亮度调整范围
+    contrast=0.2,      # 对比度调整范围
+    saturation=0.2,    # 饱和度调整范围
+    hue=0.1           # 色调调整范围
+)
+
+# 单独使用
+brightness = transforms.ColorJitter(brightness=0.3)
+contrast = transforms.ColorJitter(contrast=0.3)
+saturation = transforms.ColorJitter(saturation=0.3)
+hue = transforms.ColorJitter(hue=0.1)</code></pre>
+<h3 id="transformsrandomaffine随机仿射变换">transforms.RandomAffine：随机仿射变换</h3>
+<pre data-label="python"><code class="language-python"># 随机仿射变换
+affine = transforms.RandomAffine(
+    degrees=15,              # 旋转角度
+    translate=(0.1, 0.1),   # 平移范围（相对于尺寸的比例）
+    scale=(0.9, 1.1),        # 缩放范围
+    shear=15                # 剪切角度
+)</code></pre>
+<h3 id="transformsrandomerasing随机擦除">transforms.RandomErasing：随机擦除</h3>
+<p>RandomErasing（随机擦除）是一种有效的正则化技术，模拟遮挡。</p>
+<pre data-label="python"><code class="language-python"># 随机擦除
+random_erase = transforms.RandomErasing(
+    p=0.5,                  # 擦除概率
+    scale=(0.02, 0.33),     # 擦除区域相对于图像的比例范围
+    ratio=(0.3, 3.3),       # 擦除区域宽高比范围
+    value=0                 # 擦除区域的值
+)
+
+# 在张量上应用
+to_tensor = transforms.ToTensor()
+img_tensor = to_tensor(img)
+erased = random_erase(img_tensor)</code></pre>
+<h3 id="综合数据增强示例">综合数据增强示例</h3>
+<pre data-label="python"><code class="language-python"># 完整的数据增强策略
+train_transform = transforms.Compose([
+    # 1. 随机大小裁剪并调整到224x224
+    transforms.RandomResizedCrop(
+        224,
+        scale=(0.8, 1.0),    # 裁剪区域为原图的80%-100%
+        ratio=(0.9, 1.1)     # 宽高比范围
+    ),
+
+    # 2. 随机水平翻转
+    transforms.RandomHorizontalFlip(p=0.5),
+
+    # 3. 随机旋转（-15到15度）
+    transforms.RandomRotation(15),
+
+    # 4. 颜色抖动
+    transforms.ColorJitter(
+        brightness=0.2,
+        contrast=0.2,
+        saturation=0.2,
+        hue=0.1
+    ),
+
+    # 5. 转换为张量
+    transforms.ToTensor(),
+
+    # 6. 标准化
+    transforms.Normalize(
+        mean=[0.485, 0.456, 0.406],
+        std=[0.229, 0.224, 0.225]
+    ),
+
+    # 7. 随机擦除
+    transforms.RandomErasing(p=0.3),
+])
+
+# 测试变换
+test_transform = transforms.Compose([
+    transforms.Resize(256),
+    transforms.CenterCrop(224),
+    transforms.ToTensor(),
+    transforms.Normalize(
+        mean=[0.485, 0.456, 0.406],
+        std=[0.229, 0.224, 0.225]
+    ),
+])</code></pre>
+<hr>
+<h2 id="torchvisiondatasets内置数据集">torchvision.datasets：内置数据集</h2>
+<p>PyTorch提供了常用的图像数据集，可以直接下载使用。</p>
+<pre data-label="python"><code class="language-python">from torchvision import datasets, transforms
+
+# Fashion-MNIST
+fashion_train = datasets.FashionMNIST(
+    root='./data',
+    train=True,
+    transform=transforms.ToTensor(),
+    download=True
+)
+
+fashion_test = datasets.FashionMNIST(
+    root='./data',
+    train=False,
+    transform=transforms.ToTensor(),
+    download=True
+)
+
+# CIFAR-10
+cifar10_train = datasets.CIFAR10(
+    root='./data',
+    train=True,
+    transform=transforms.ToTensor(),
+    download=True
+)
+
+cifar10_test = datasets.CIFAR10(
+    root='./data',
+    train=False,
+    transform=transforms.ToTensor(),
+    download=True
+)
+
+# ImageNet（需要手动下载）
+# imagenet_train = datasets.ImageNet(
+#     root='./data/imagenet',
+#     split='train',
+#     transform=transforms.ToTensor()
+# )
+
+# 查看数据集信息
+print("Fashion-MNIST训练集:", len(fashion_train))
+print("Fashion-MNIST测试集:", len(fashion_test))
+print("CIFAR-10类别:", datasets.CIFAR10.classes)</code></pre>
+<p><strong>常用数据集速查</strong>：</p>
+<div class="table-wrap"><table><thead><tr>
+<th>数据集</th>
+<th>类别数</th>
+<th>训练集大小</th>
+<th>图像大小</th>
+<th>说明</th>
+</tr>
+</thead><tbody><tr>
+<td>MNIST</td>
+<td>10</td>
+<td>60,000</td>
+<td>28x28</td>
+<td>手写数字</td>
+</tr>
+<tr>
+<td>Fashion-MNIST</td>
+<td>10</td>
+<td>60,000</td>
+<td>28x28</td>
+<td>服装分类</td>
+</tr>
+<tr>
+<td>CIFAR-10</td>
+<td>10</td>
+<td>50,000</td>
+<td>32x32</td>
+<td>通用物体</td>
+</tr>
+<tr>
+<td>CIFAR-100</td>
+<td>100</td>
+<td>50,000</td>
+<td>32x32</td>
+<td>100类物体</td>
+</tr>
+<tr>
+<td>ImageNet</td>
+<td>1000</td>
+<td>1.2M</td>
+<td>可变</td>
+<td>大规模图像</td>
+</tr>
+</tbody></table></div>
+<h2 id="dataset类自定义数据集">Dataset类：自定义数据集</h2>
+<p>当需要加载自己的数据时，需要自定义Dataset类。</p>
+<pre data-label="python"><code class="language-python">from torch.utils.data import Dataset
+from PIL import Image
+import os
+
+class CustomDataset(Dataset):
+    def __init__(self, root_dir, transform=None):
+        self.root_dir = root_dir
+        self.transform = transform
+        self.image_paths = []
+        self.labels = []
+
+        # 读取数据目录
+        for label_name in os.listdir(root_dir):
+            label_path = os.path.join(root_dir, label_name)
+            if os.path.isdir(label_path):
+                for img_name in os.listdir(label_path):
+                    if img_name.endswith(('.jpg', '.png', '.jpeg')):
+                        self.image_paths.append(os.path.join(label_path, img_name))
+                        self.labels.append(label_name)
+
+        # 创建标签到索引的映射
+        self.classes = sorted(list(set(self.labels)))
+        self.class_to_idx = {cls: idx for idx, cls in enumerate(self.classes)}
+
+    def __len__(self):
+        return len(self.image_paths)
+
+    def __getitem__(self, idx):
+        # 加载图像
+        img_path = self.image_paths[idx]
+        image = Image.open(img_path).convert('RGB')
+
+        # 应用变换
+        if self.transform:
+            image = self.transform(image)
+
+        # 获取标签
+        label = self.labels[idx]
+        label_idx = self.class_to_idx[label]
+
+        return image, label_idx
+
+# 使用自定义数据集
+custom_dataset = CustomDataset(
+    root_dir='./my_data/train',
+    transform=train_transform
+)
+
+print("数据集大小:", len(custom_dataset))
+print("类别:", custom_dataset.classes)</code></pre>
+<p><strong>处理文件夹结构</strong>：</p>
+<pre><code>my_data/
+├── train/
+│   ├── cat/
+│   │   ├── cat001.jpg
+│   │   ├── cat002.jpg
+│   │   └── ...
+│   ├── dog/
+│   │   ├── dog001.jpg
+│   │   └── ...
+│   └── ...
+└── val/
+    ├── cat/
+    └── dog/</code></pre>
+<h2 id="dataloader批量数据加载">DataLoader：批量数据加载</h2>
+<p>DataLoader是PyTorch中最重要的数据加载工具。</p>
+<pre data-label="python"><code class="language-python">from torch.utils.data import DataLoader
+
+# 基础用法
+train_loader = DataLoader(
+    dataset=train_dataset,
+    batch_size=32,
+    shuffle=True,
+    num_workers=4,
+    pin_memory=True,
+    drop_last=True
+)
+
+# 迭代数据
+for batch_idx, (images, labels) in enumerate(train_loader):
+    print("批次数:", batch_idx)
+    print("图像形状:", images.shape)    # [32, 3, 224, 224]
+    print("标签形状:", labels.shape)    # [32]
+    break</code></pre>
+<p><strong>DataLoader参数详解</strong>：</p>
+<div class="table-wrap"><table><thead><tr>
+<th>参数</th>
+<th>说明</th>
+<th>常用值</th>
+</tr>
+</thead><tbody><tr>
+<td>dataset</td>
+<td>数据集</td>
+<td>-</td>
+</tr>
+<tr>
+<td>batch_size</td>
+<td>批大小</td>
+<td>32, 64, 128</td>
+</tr>
+<tr>
+<td>shuffle</td>
+<td>是否打乱</td>
+<td>True(训练), False(测试)</td>
+</tr>
+<tr>
+<td>num_workers</td>
+<td>数据加载进程数</td>
+<td>4, 8</td>
+</tr>
+<tr>
+<td>pin_memory</td>
+<td>锁页内存，加快GPU传输</td>
+<td>True</td>
+</tr>
+<tr>
+<td>drop_last</td>
+<td>丢弃最后一个不完整batch</td>
+<td>True(训练), False(测试)</td>
+</tr>
+<tr>
+<td>collate_fn</td>
+<td>自定义批处理函数</td>
+<td>自定义</td>
+</tr>
+</tbody></table></div>
+<p><strong>多GPU数据加载</strong>：</p>
+<pre data-label="python"><code class="language-python"># 多GPU时使用DistributedSampler
+from torch.utils.data.distributed import DistributedSampler
+
+train_sampler = DistributedSampler(
+    dataset,
+    num_replicas=num_gpus,
+    rank=rank,
+    shuffle=True
+)
+
+train_loader = DataLoader(
+    dataset,
+    batch_size=batch_size,
+    sampler=train_sampler,
+    num_workers=4,
+    pin_memory=True
+)</code></pre>
+<hr>
+
+    <nav class="pager series-pager">
+  <a href="10-pooling-norm.html">
+    <span class="label">← 上一章</span>
+    <span class="title">池化层与归一化</span>
+  </a>
+  <a href="12-architecture.html" class="next">
+    <span class="label">下一章 →</span>
+    <span class="title">CNN 模型构建与迁移学习</span>
+  </a>
+</nav>
+  </article>
+</div>
+
+<footer>
+  <div class="set">
+    <span>深度学习系列讲义</span>
+    <span>2026 · ZH-CN</span>
+  </div>
+  <div class="set">
+    <span>Mav</span>
+  </div>
+</footer>
+<div class="search-backdrop" id="search-overlay" role="dialog" aria-modal="true" aria-label="搜索" hidden>
+  <div class="search-modal">
+    <div class="search-input-wrap">
+      <input type="search" class="search-input" placeholder="搜索内容..." aria-label="搜索内容" autocomplete="off">
+      <kbd>ESC</kbd>
+    </div>
+    <div class="search-results" role="listbox" aria-label="搜索结果"></div>
+  </div>
+</div>
+
+<div class="side-panel" id="side-panel">
+  <div class="side-panel-resize" id="side-panel-resize"></div>
+  <div class="side-panel-header">
+    <div class="side-panel-tabs">
+      <button class="side-panel-tab active" data-mode="sidenote">补充</button>
+      <button class="side-panel-tab" data-mode="notepad">笔记</button>
+    </div>
+    <button class="side-panel-close" aria-label="关闭">×</button>
+  </div>
+  <div class="side-panel-body"></div>
+</div>
+<button class="notepad-fab" id="notepad-fab" aria-label="便利贴">✎</button>
+
+<button class="mtoc-fab" id="mtoc-fab" aria-label="系列目录">TOC</button>
+<div class="mtoc-drawer" id="mtoc-drawer">
+  <div class="mtoc-content series-sidebar"></div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/bash.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/typescript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/yaml.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/javascript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/json.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/python.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/css.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+<script>mermaid.initialize({startOnLoad:true, theme:'neutral', fontFamily:'Inter, sans-serif'});</script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}]});"></script>
+<script src="../assets/script.js"></script>
+
+</body>
+</html>

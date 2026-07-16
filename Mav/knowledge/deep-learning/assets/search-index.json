@@ -1,0 +1,1977 @@
+{
+  "documents": [
+    {
+      "id": "01-why-pytorch",
+      "title": "为什么学习 PyTorch",
+      "chapter": "01",
+      "chapterTitle": "为什么学习 PyTorch",
+      "partTitle": "数学与 PyTorch 工具",
+      "url": "chapters/01-why-pytorch.html",
+      "body": "\n   深度学习框架的重要性\n\n在正式学习PyTorch之前，让我们先理解一个根本性的问题：  为什么要学习深度学习框架？  \n\n想象一下，如果让你从零开始写一个程序来识别图片中的猫，你需要做什么？\n\n首先，你需要理解猫的特征：耳朵的形状、眼睛的大小、毛发的纹理...然后你需要用数学公式来描述这些特征。当你想要优化这个系统时，你需要计算梯度来调整参数。这整个过程极其复杂且耗时。\n\n而  深度学习框架  正是为了解决这个问题而诞生的。它帮我们封装好了：\n    高效的数值计算  （矩阵运算、梯度计算等）\n    自动求导机制  （自动计算复杂函数的梯度）\n    GPU加速  （利用显卡并行计算，大幅提升速度）\n    现成的神经网络组件  （卷积层、循环层、注意力机制等）\n\n有了框架，我们就可以像搭积木一样构建自己的神经网络，把精力集中在  模型设计  和  数据处理  上，而不是底层实现。\n\n   为什么选择PyTorch？\n\nPyTorch是由Facebook（现Meta）的AI研究团队开发的深度学习框架。在2017年推出后，它迅速成为学术研究领域的  首选框架  。\n\n  PyTorch的核心特点  ：\n\n1.   动态计算图（Dynamic Computation Graph）  \n     什么是计算图？简单来说，它是用来记录我们执行了哪些操作的\"账本\"\n     动态图的特点是：  每次运行代码时，计算图都会重新构建  \n     这让调试变得非常直观——你可以像调试普通Python代码一样调试PyTorch代码\n     想象一下：你在写一段代码，中途想print一个变量的值看看对不对，这在PyTorch中完全没问题！\n\n2.   Python优先的设计理念  \n     PyTorch的API设计非常Pythonic（符合Python的风格）\n     如果你熟悉Python，学PyTorch会感觉非常自然\n     不需要学习额外的\"框架特定语言\"\n\n3.   GPU加速  \n     深度学习涉及大量的矩阵运算\n     GPU（显卡）特别擅长并行处理这类运算\n     使用GPU可以让训练速度提升  10倍甚至100倍  \n     举例：CPU训练一个模型需要几天，GPU可能只需要几小时\n\n4.   自动微分（Automatic Differentiation）  \n     这是深度学习框架最核心的功能\n     想象一下：你写了一个很复杂的神经网络（可能几百层）\n     如果让你手动计算梯度...这简直是不可能的任务\n     自动微分让我们只需要定义前向传播，框架会自动处理反向传播和梯度计算\n\n   张量：PyTorch的核心数据结构\n\nPyTorch的核心数据结构是  张量（Tensor）  。听起来很高大上，其实它就是我们熟悉的  多维数组  的学术说法：\n\n    0维张量  ：一个标量（数字），比如  5 \n    1维张量  ：一个向量，比如   1, 2, 3, 4, 5  \n    2维张量  ：一个矩阵，比如    1,2,3 ,  4,5,6   \n    3维张量  ：可以想象成一叠照片（比如RGB图像）\n    更高维  ：可以想象成视频（3D+时间维度）\n\n张量类似于NumPy的 ndarray ，但它额外支持：\n    GPU加速  ：可以在GPU上存储和计算\n    自动求导  ：可以追踪梯度\n\n   本笔记的学习路线\n\n本笔记是整个深度学习笔记系列的  基础篇  ，目标是：\n\n  第一章  ：掌握PyTorch的核心数据结构——张量（Tensor）的创建与基本操作\n\n  学会用  torch.tensor 、 torch.randn 、 torch.zeros  等函数创建张量\n  理解标量、向量、矩阵与高维张量的关系\n  掌握  torch.arange 、 torch.linspace  等序列创建函数\n\n  第二章  ：理解张量的属性\n\n  掌握  shape 、 dtype 、 device  三大核心属性\n  学会在不同设备（CPU/GPU）之间迁移张量\n\n  第三章  ：掌握张量的操作与变换\n\n  矩阵乘法（ @ 、 torch.matmul ）\n  形状变换（ reshape 、 view 、 squeeze 、 unsqueeze ）\n  张量合并（ cat 、 stack ）与数值提取（ item 、 numpy ）\n\n  第四章  ：理解自动求导机制\n\n  这是 PyTorch 最强大的特性\n  掌握  requires grad 、 backward 、 zero grad 、 no grad \n  理解计算图与梯度下降的联系\n\n  第五章  "
+    },
+    {
+      "id": "01-why-pytorch-深度学习框架的重要性",
+      "title": "深度学习框架的重要性",
+      "chapter": "01",
+      "chapterTitle": "为什么学习 PyTorch",
+      "url": "chapters/01-why-pytorch.html#深度学习框架的重要性",
+      "body": ""
+    },
+    {
+      "id": "01-why-pytorch-为什么选择pytorch",
+      "title": "为什么选择PyTorch？",
+      "chapter": "01",
+      "chapterTitle": "为什么学习 PyTorch",
+      "url": "chapters/01-why-pytorch.html#为什么选择pytorch",
+      "body": ""
+    },
+    {
+      "id": "01-why-pytorch-张量pytorch的核心数据结构",
+      "title": "张量：PyTorch的核心数据结构",
+      "chapter": "01",
+      "chapterTitle": "为什么学习 PyTorch",
+      "url": "chapters/01-why-pytorch.html#张量pytorch的核心数据结构",
+      "body": ""
+    },
+    {
+      "id": "01-why-pytorch-本笔记的学习路线",
+      "title": "本笔记的学习路线",
+      "chapter": "01",
+      "chapterTitle": "为什么学习 PyTorch",
+      "url": "chapters/01-why-pytorch.html#本笔记的学习路线",
+      "body": ""
+    },
+    {
+      "id": "02-tensor-creation",
+      "title": "张量的创建与基本操作",
+      "chapter": "02",
+      "chapterTitle": "张量的创建与基本操作",
+      "partTitle": "数学与 PyTorch 工具",
+      "url": "chapters/02-tensor-creation.html",
+      "body": "\n  本章目标  ：掌握PyTorch中最基本的张量创建方法，理解张量这一核心数据结构\n\n   什么是张量 Tensor ？\n\n在开始学习PyTorch之前，我们首先要理解一个核心概念：  张量（Tensor）  。\n\n    从熟悉的概念出发\n\n回想一下你学过的数据结构：\n\n    标量（Scalar）  ：一个单独的数，比如  5 、 3.14 、 1958 \n  \n    在Python中就是一个普通的变量\n    维度：0维\n  \n    向量（Vector）  ：一串有序的数，比如   1, 2, 3, 4, 5  \n    可以理解为一行数字，或者一列数字\n    维度：1维\n\n    矩阵（Matrix）  ：由行和列组成的数表，比如：\n     \n    1, 2, 3 ,\n    4, 5, 6  \n     \n    维度：2维\n\n    张量（Tensor）  ：矩阵的推广，可以是任意维度\n  \n    3维张量：可以想象成一叠卡片，每张卡片是一个矩阵（或者之前提及的RGB图片）\n    4维张量：可以想象成一本相册（每本相册有多页，每页有矩阵）\n    ...\n\n    张量的维度\n\nPyTorch中，张量的维度（dimension）也称为  轴（axis  ）。让我们用具体例子来理解：\n\n   python\nimport torch\n\n  0维张量：标量\nscalar = torch.tensor 5 \nprint f\"标量:  scalar , 维度:  scalar.ndim , 形状:  scalar.shape \" \n  输出：标量: tensor 5 , 维度: 0, 形状: torch.Size    \n\n  1维张量：向量\nvector = torch.tensor  1, 2, 3, 4, 5  \nprint f\"向量:  vector , 维度:  vector.ndim , 形状:  vector.shape \" \n  输出：向量: tensor  1, 2, 3, 4, 5  , 维度: 1, 形状: torch.Size  5  \n\n  2维张量：矩阵\nmatrix = torch.tensor   1, 2, 3 ,\n                        4, 5, 6   \nprint f\"矩阵维度:  matrix.ndim , 形状:  matrix.shape \" \n  输出：矩阵维度: 2, 形状: torch.Size  2, 3  \n  解释：有2行3列\n\n  3维张量\ntensor 3d = torch.tensor    1, 2 ,  3, 4  ,\n                            5, 6 ,  7, 8    \nprint f\"3维张量维度:  tensor 3d.ndim , 形状:  tensor 3d.shape \" \n  输出：3维张量维度: 3, 形状: torch.Size  2, 2, 2  \n  解释：2个2x2的矩阵\n\n  Mav’s tips：快速判断高维张量是几维，只需看开头有几个' '嵌套即可。\n   \n\n    为什么要用张量？\n\n你可能会问：Python已经有列表（list）和NumPy数组了，为什么还需要张量？\n\n  关键区别  ：\n\n  特性   Python列表   NumPy数组   PyTorch张量  \n                                            \n  执行速度   慢   快   快  \n  GPU加速   ❌   ❌   ✅  \n  自动求导   ❌   ❌   ✅  \n  深度学习   不适用   可用     专为深度学习设计    \n\n  简单来说  ：PyTorch张量 = NumPy数组 + GPU加速 + 自动求导，它就是为深度学习“定制”的。\n\n这就是为什么深度学习需要专门的张量数据结构！\n\n   \n\n   torch.tensor：创建张量的核心函数\n\n现在我们正式学习如何创建张量。 torch.tensor 是PyTorch中创建张量最直接的方式。\n\n   python\nimport torch\n\n  创建一维张量（向量）\nvec = torch.tensor  1, 2, 3, 4, 5  \nprint vec     tensor  1, 2, 3, 4, 5  \n\n  创建二维张量（矩阵）\nmatrix = torch.tensor   1, 2, 3 ,\n                        4, 5, 6   \nprint matrix \n  tensor   1, 2, 3 ,\n       "
+    },
+    {
+      "id": "02-tensor-creation-什么是张量tensor",
+      "title": "什么是张量(Tensor)？",
+      "chapter": "02",
+      "chapterTitle": "张量的创建与基本操作",
+      "url": "chapters/02-tensor-creation.html#什么是张量tensor",
+      "body": ""
+    },
+    {
+      "id": "02-tensor-creation-从熟悉的概念出发",
+      "title": "从熟悉的概念出发",
+      "chapter": "02",
+      "chapterTitle": "张量的创建与基本操作",
+      "url": "chapters/02-tensor-creation.html#从熟悉的概念出发",
+      "body": ""
+    },
+    {
+      "id": "02-tensor-creation-张量的维度",
+      "title": "张量的维度",
+      "chapter": "02",
+      "chapterTitle": "张量的创建与基本操作",
+      "url": "chapters/02-tensor-creation.html#张量的维度",
+      "body": ""
+    },
+    {
+      "id": "02-tensor-creation-为什么要用张量",
+      "title": "为什么要用张量？",
+      "chapter": "02",
+      "chapterTitle": "张量的创建与基本操作",
+      "url": "chapters/02-tensor-creation.html#为什么要用张量",
+      "body": ""
+    },
+    {
+      "id": "02-tensor-creation-torchtensor创建张量的核心函数",
+      "title": "torch.tensor：创建张量的核心函数",
+      "chapter": "02",
+      "chapterTitle": "张量的创建与基本操作",
+      "url": "chapters/02-tensor-creation.html#torchtensor创建张量的核心函数",
+      "body": ""
+    },
+    {
+      "id": "02-tensor-creation-torchrandntorchzerostorchones创建特殊张量",
+      "title": "torch.randn、torch.zeros、torch.ones：创建特殊张量",
+      "chapter": "02",
+      "chapterTitle": "张量的创建与基本操作",
+      "url": "chapters/02-tensor-creation.html#torchrandntorchzerostorchones创建特殊张量",
+      "body": ""
+    },
+    {
+      "id": "02-tensor-creation-torchrandn随机正态分布",
+      "title": "torch.randn：随机正态分布",
+      "chapter": "02",
+      "chapterTitle": "张量的创建与基本操作",
+      "url": "chapters/02-tensor-creation.html#torchrandn随机正态分布",
+      "body": ""
+    },
+    {
+      "id": "02-tensor-creation-torchzeros-和-torchones",
+      "title": "torch.zeros 和 torch.ones",
+      "chapter": "02",
+      "chapterTitle": "张量的创建与基本操作",
+      "url": "chapters/02-tensor-creation.html#torchzeros-和-torchones",
+      "body": ""
+    },
+    {
+      "id": "02-tensor-creation-torchfull-和-torcheye",
+      "title": "torch.full 和 torch.eye",
+      "chapter": "02",
+      "chapterTitle": "张量的创建与基本操作",
+      "url": "chapters/02-tensor-creation.html#torchfull-和-torcheye",
+      "body": ""
+    },
+    {
+      "id": "02-tensor-creation-torcharange和torchlinspace创建序列张量",
+      "title": "torch.arange和torch.linspace：创建序列张量",
+      "chapter": "02",
+      "chapterTitle": "张量的创建与基本操作",
+      "url": "chapters/02-tensor-creation.html#torcharange和torchlinspace创建序列张量",
+      "body": ""
+    },
+    {
+      "id": "02-tensor-creation-torcharange不含结束值的等差数列",
+      "title": "torch.arange：不含结束值的等差数列",
+      "chapter": "02",
+      "chapterTitle": "张量的创建与基本操作",
+      "url": "chapters/02-tensor-creation.html#torcharange不含结束值的等差数列",
+      "body": ""
+    },
+    {
+      "id": "02-tensor-creation-torchlinspace含结束值的等差数列",
+      "title": "torch.linspace：含结束值的等差数列",
+      "chapter": "02",
+      "chapterTitle": "张量的创建与基本操作",
+      "url": "chapters/02-tensor-creation.html#torchlinspace含结束值的等差数列",
+      "body": ""
+    },
+    {
+      "id": "03-tensor-attributes",
+      "title": "张量的属性",
+      "chapter": "03",
+      "chapterTitle": "张量的属性",
+      "partTitle": "数学与 PyTorch 工具",
+      "url": "chapters/03-tensor-attributes.html",
+      "body": "\n  本章目标  ：掌握查看和理解张量属性的方法\n\n   shape：查看张量的形状\n\nshape是张量  最重要  的属性之一，表示张量在各个维度上的大小。\n\n   python\n  创建不同形状的张量\nvec = torch.tensor  1, 2, 3  \nmatrix = torch.randn 3, 4 \ntensor 3d = torch.randn 2, 3, 4 \ntensor 4d = torch.randn 5, 2, 3, 4 \n\nprint vec.shape          torch.Size  3  \nprint matrix.shape       torch.Size  3, 4  \nprint tensor 3d.shape    torch.Size  2, 3, 4  \nprint tensor 4d.shape    torch.Size  5, 2, 3, 4  \n   \n\n  深度学习中张量形状的约定  ：\n\n  数据类型   形状   含义  \n                          \n  图像数据     N, C, H, W     批量大小N，通道C，高H，宽W  \n  文本数据     N, L     批量N，序列长度L  \n  文本embedding     N, L, D     批量N，长度L，维度D  \n  批量矩阵     N, M     批量N，特征M  \n\n  示例  ：\n   python\n  32张RGB图像，每张224x224\nimages = torch.randn 32, 3, 224, 224 \nprint images.shape     torch.Size  32, 3, 224, 224  \n  N=32（32张图）, C=3（RGB三通道）, H=224, W=224\n   \n\n    调试技巧  ：当形状不匹配时，PyTorch会抛出错误。理解每个张量在各维度的含义是调试神经网络的基础。\n\n   \n\n   dtype：查看张量的数据类型\n\ndtype表示张量中元素的  数据类型  。不同的数据类型占用不同的内存，也影响计算的精度和速度。\n\n   python\n  查看张量的数据类型\nint tensor = torch.tensor  1, 2, 3  \nfloat tensor = torch.tensor  1.0, 2.0, 3.0  \nbool tensor = torch.tensor  True, False, True  \n\nprint int tensor.dtype      torch.int64\nprint float tensor.dtype    torch.float32\nprint bool tensor.dtype     torch.bool\n   \n\n  常用数据类型速查表  ：\n\n  dtype   名称   用途  \n                       \n   torch.float32  /  torch.float    32位浮点   默认类型，训练常用  \n   torch.float64  /  torch.double    64位浮点   高精度计算  \n   torch.float16  /  torch.half    16位浮点   GPU加速、混合精度训练  \n   torch.int32    32位整数   通用整数  \n   torch.int64  /  torch.long    64位整数   索引、大整数  \n   torch.int8    8位整数   量化  \n   torch.uint8    无符号8位整数   图像像素（0 255）  \n   torch.bool    布尔   条件判断  \n\n    实践建议  ：训练时通常使用float32，推理时可用float16加速，处理图像时用uint8。\n\n   \n\n   device：查看张量存储的设备\n\ndevice表示张量存储的设备，可以是  CPU  或  GPU  。\n\n   python\n  查看张量所在的设备\ncpu tensor = torch.randn 3, 4 \nprint cpu tensor.device     cpu\n\n  尝试移动到GPU（如果有GPU的话）\nif torch.cuda.is available  :\n    gpu tensor = cpu tensor.cuda      或 cpu tensor.to 'cuda' \n    print gpu tensor.device     cuda:0\n   \n\n  设备处理最"
+    },
+    {
+      "id": "03-tensor-attributes-shape查看张量的形状",
+      "title": "shape：查看张量的形状",
+      "chapter": "03",
+      "chapterTitle": "张量的属性",
+      "url": "chapters/03-tensor-attributes.html#shape查看张量的形状",
+      "body": ""
+    },
+    {
+      "id": "03-tensor-attributes-dtype查看张量的数据类型",
+      "title": "dtype：查看张量的数据类型",
+      "chapter": "03",
+      "chapterTitle": "张量的属性",
+      "url": "chapters/03-tensor-attributes.html#dtype查看张量的数据类型",
+      "body": ""
+    },
+    {
+      "id": "03-tensor-attributes-device查看张量存储的设备",
+      "title": "device：查看张量存储的设备",
+      "chapter": "03",
+      "chapterTitle": "张量的属性",
+      "url": "chapters/03-tensor-attributes.html#device查看张量存储的设备",
+      "body": ""
+    },
+    {
+      "id": "04-tensor-ops",
+      "title": "张量的操作与变换",
+      "chapter": "04",
+      "chapterTitle": "张量的操作与变换",
+      "partTitle": "数学与 PyTorch 工具",
+      "url": "chapters/04-tensor-ops.html",
+      "body": "\n  本章目标  ：掌握张量的核心操作，为后续神经网络打下基础\n\n   torch.matmul：矩阵乘法的核心函数\n\ntorch.matmul是PyTorch中进行  矩阵乘法  的核心函数。这是深度学习中最基本的运算，无论是神经网络的线性层、全连接层，还是注意力机制，都离不开矩阵乘法。\n\n  维度规则  ：如果矩阵A的形状是 m, n ，矩阵B的形状是 n, k ，则结果矩阵的形状是 m, k 。\n\n   python\n  基本的矩阵乘法\nA = torch.randn 2, 3     2行3列\nB = torch.randn 3, 4     3行4列\nC = torch.matmul A, B     结果是2行4列\nprint C.shape     torch.Size  2, 4  \n\n  向量与矩阵相乘\nvector = torch.randn 3         形状  3, \nmatrix = torch.randn 3, 4     形状  3, 4 \nresult = torch.matmul vector, matrix     结果形状  4, \nprint result.shape     torch.Size  4  \n\n  批量矩阵乘法（用于CNN、RNN等）\nA batch = torch.randn 10, 3, 4     10个3x4的矩阵\nB batch = torch.randn 10, 4, 5     10个4x5的矩阵\nC batch = torch.matmul A batch, B batch     10个3x5的矩阵\nprint C batch.shape     torch.Size  10, 3, 5  \n   \n\n  相关函数对比  ：\n\n  函数   作用   示例  \n                      \n   torch.matmul    通用矩阵乘法（推荐）   支持批量、广播  \n   torch.mm    二维矩阵乘法   只支持2D  \n   torch.mul    元素 wise乘法（逐元素）     1,2     3,4  =  3,8    \n   torch.dot    向量点积    1 4 + 2 5 + 3 6 = 32   \n\n   python\na = torch.tensor  1, 2, 3  \nb = torch.tensor  4, 5, 6  \n\n  点积：对应元素相乘后求和\nprint torch.dot a, b          tensor 32 \n\n  元素 wise乘法：逐元素相乘\nprint torch.mul a, b           tensor  4, 10, 18  \n\n  矩阵乘法（二维）\nA = torch.tensor   1, 2 ,  3, 4   \nB = torch.tensor   5, 6 ,  7, 8   \nprint torch.mm A, B  \n  tensor   19, 22 ,\n           43, 50   \n   \n\n   \n\n   @ 运算符：矩阵乘法的便捷写法\n\n在Python中，  @运算符  是矩阵乘法的简写形式（PEP 465）。它就是 torch.matmul 的运算符重载版本。\n\n   python\nA = torch.randn 3, 4 \nB = torch.randn 4, 5 \n\n  两种写法完全等价\nC1 = torch.matmul A, B \nC2 = A @ B\n\nprint torch.allclose C1, C2      True\n   \n\n  实际应用  ：\n\n   python\n  示例：手动实现一个简单的线性层\nclass LinearLayer:\n    def   init   self, input dim, output dim :\n        self.weights = torch.randn input dim, output dim    0.01\n        self.bias = torch.zeros output dim \n\n    def forward self, x :\n        return x @ self.weights + self.bias\n\n  使用\nlinear = LinearLayer 784, 256 \nx = torch.randn 32, 784     batch size=32, input dim=784\noutput = linear.forward x \nprint output.shape     torch"
+    },
+    {
+      "id": "04-tensor-ops-torchmatmul矩阵乘法的核心函数",
+      "title": "torch.matmul：矩阵乘法的核心函数",
+      "chapter": "04",
+      "chapterTitle": "张量的操作与变换",
+      "url": "chapters/04-tensor-ops.html#torchmatmul矩阵乘法的核心函数",
+      "body": ""
+    },
+    {
+      "id": "04-tensor-ops--运算符矩阵乘法的便捷写法",
+      "title": "@ 运算符：矩阵乘法的便捷写法",
+      "chapter": "04",
+      "chapterTitle": "张量的操作与变换",
+      "url": "chapters/04-tensor-ops.html#-运算符矩阵乘法的便捷写法",
+      "body": ""
+    },
+    {
+      "id": "04-tensor-ops-reshape和view改变张量形状",
+      "title": "reshape和view：改变张量形状",
+      "chapter": "04",
+      "chapterTitle": "张量的操作与变换",
+      "url": "chapters/04-tensor-ops.html#reshape和view改变张量形状",
+      "body": ""
+    },
+    {
+      "id": "04-tensor-ops-item和numpy提取张量中的数值",
+      "title": "item和numpy：提取张量中的数值",
+      "chapter": "04",
+      "chapterTitle": "张量的操作与变换",
+      "url": "chapters/04-tensor-ops.html#item和numpy提取张量中的数值",
+      "body": ""
+    },
+    {
+      "id": "04-tensor-ops-item张量转python标量",
+      "title": "item()：张量转Python标量",
+      "chapter": "04",
+      "chapterTitle": "张量的操作与变换",
+      "url": "chapters/04-tensor-ops.html#item张量转python标量",
+      "body": ""
+    },
+    {
+      "id": "04-tensor-ops-numpy张量转numpy数组",
+      "title": "numpy()：张量转NumPy数组",
+      "chapter": "04",
+      "chapterTitle": "张量的操作与变换",
+      "url": "chapters/04-tensor-ops.html#numpy张量转numpy数组",
+      "body": ""
+    },
+    {
+      "id": "05-autograd",
+      "title": "自动求导机制",
+      "chapter": "05",
+      "chapterTitle": "自动求导机制",
+      "partTitle": "数学与 PyTorch 工具",
+      "url": "chapters/05-autograd.html",
+      "body": "\n  本章目标  ：理解PyTorch的核心优势——自动微分\n\n  这是PyTorch最强大的特性！有了它，你无需手动计算复杂梯度，只需要定义前向传播，PyTorch会自动处理反向传播。\n\n   梯度是什么？为什么重要？\n\n在深入学习PyTorch的自动求导机制之前，我们先来理解一个核心概念：  梯度（Gradient）  。\n\n    直观理解梯度\n\n想象一下你在一座山上，想找到山顶（或者最低点——山谷）。梯度就像是告诉你  应该往哪个方向走  才能最快到达目的地。\n\n  数学定义  ：梯度是  函数在某一点上变化最快的方向  \n\n  对于函数 $f x $，梯度 $\\nabla f$ 指向函数值  增加最快  的方向\n  如果你想  最小化  一个函数（比如损失函数），你需要往梯度的  反方向  走\n\n    梯度在深度学习中的作用\n\n在深度学习中，我们的目标是  最小化损失函数  （Loss Function）。\n\n  训练过程  ：\n1.   前向传播（Forward Pass）  ：输入数据通过网络，计算输出\n2.   计算损失（Compute Loss）  ：比较网络输出和真实标签，得到一个\"错误程度\"\n3.   反向传播（Backward Pass）  ：计算损失对每个参数的梯度\n4.   更新参数  ：根据梯度调整参数，让损失变小\n5. 重复以上步骤...\n\n  这就是梯度下降（Gradient Descent）的核心思想  ！\n\n$$w  new  = w  old    \\alpha \\cdot \\nabla L$$\n\n其中 $\\alpha$ 是学习率（learning rate），控制每一步走多远。\n\n    手动计算梯度的痛苦\n\n假设你有一个两层神经网络：\n\n   \n输入    第一层 权重W1     激活函数    第二层 权重W2     输出\n   \n\n要手动计算损失对W1的梯度，你需要：\n1. 写出完整的数学公式\n2. 应用链式法则（Chain Rule）\n3. 一步步求导...\n\n对于一个现代神经网络，可能有  几亿个参数  ！手动计算完全不现实。\n\n  这就是为什么需要自动求导！  \n\n   \n\n   requires grad：开启梯度追踪\n\n requires grad 决定PyTorch是否自动跟踪对该张量的操作。\n\n   python\n  默认创建的张量不追踪梯度\nx = torch.tensor  1.0, 2.0, 3.0  \nprint x.requires grad     False\n\n  创建时开启梯度追踪\nx = torch.tensor  1.0, 2.0, 3.0 , requires grad=True \nprint x.requires grad     True\n\n  后续修改\nx = torch.tensor  1.0, 2.0, 3.0  \nx.requires grad = True\nprint x.requires grad     True\n   \n\n  实际使用  ：通常不需要手动设置，而是通过神经网络的参数自动获得。\n\n   python\n  神经网络层会自动追踪梯度\nlinear = nn.Linear 3, 1 \nprint linear.weight.requires grad     True\nprint linear.bias.requires grad       True\n   \n\n   \n\n   backward：自动计算梯度\n\nbackward  根据计算图  自动计算  所有requires grad=True的张量的梯度。\n\n  Mav's Tips：  一个注意点， backward   只能作用于标量，常见的办法是像下文中对张量y进行 sum   操作，得到标量z，最后对z进行反向传播。\n\n   python\n  简单的梯度计算示例\nx = torch.tensor  1.0, 2.0, 3.0 , requires grad=True \ny = x    2         y = x^2\nz = y.sum          z = 1^2 + 2^2 + 3^2 = 14\n\n  反向传播\nz.backward  \n\n  查看梯度：dz/dx = 2x\nprint x.grad     tensor  2., 4., 6.  \n  d z /d x 0   = 2   1 = 2\n  d z /d x 1   = 2   2 = 4\n  d z /d x 2   = 2   3 = 6\n   \n\n  模拟神经网络梯度计算  ：\n\n   python\n  模拟一个简单的神经网络前向传播\nx = torch.randn"
+    },
+    {
+      "id": "05-autograd-梯度是什么为什么重要",
+      "title": "梯度是什么？为什么重要？",
+      "chapter": "05",
+      "chapterTitle": "自动求导机制",
+      "url": "chapters/05-autograd.html#梯度是什么为什么重要",
+      "body": ""
+    },
+    {
+      "id": "05-autograd-直观理解梯度",
+      "title": "直观理解梯度",
+      "chapter": "05",
+      "chapterTitle": "自动求导机制",
+      "url": "chapters/05-autograd.html#直观理解梯度",
+      "body": ""
+    },
+    {
+      "id": "05-autograd-梯度在深度学习中的作用",
+      "title": "梯度在深度学习中的作用",
+      "chapter": "05",
+      "chapterTitle": "自动求导机制",
+      "url": "chapters/05-autograd.html#梯度在深度学习中的作用",
+      "body": ""
+    },
+    {
+      "id": "05-autograd-手动计算梯度的痛苦",
+      "title": "手动计算梯度的痛苦",
+      "chapter": "05",
+      "chapterTitle": "自动求导机制",
+      "url": "chapters/05-autograd.html#手动计算梯度的痛苦",
+      "body": ""
+    },
+    {
+      "id": "05-autograd-requires_grad开启梯度追踪",
+      "title": "requires_grad：开启梯度追踪",
+      "chapter": "05",
+      "chapterTitle": "自动求导机制",
+      "url": "chapters/05-autograd.html#requires_grad开启梯度追踪",
+      "body": ""
+    },
+    {
+      "id": "05-autograd-backward自动计算梯度",
+      "title": "backward：自动计算梯度",
+      "chapter": "05",
+      "chapterTitle": "自动求导机制",
+      "url": "chapters/05-autograd.html#backward自动计算梯度",
+      "body": ""
+    },
+    {
+      "id": "05-autograd-grad查看计算出的梯度",
+      "title": "grad：查看计算出的梯度",
+      "chapter": "05",
+      "chapterTitle": "自动求导机制",
+      "url": "chapters/05-autograd.html#grad查看计算出的梯度",
+      "body": ""
+    },
+    {
+      "id": "05-autograd-zero_grad清零梯度",
+      "title": "zero_grad：清零梯度",
+      "chapter": "05",
+      "chapterTitle": "自动求导机制",
+      "url": "chapters/05-autograd.html#zero_grad清零梯度",
+      "body": ""
+    },
+    {
+      "id": "05-autograd-no_grad临时关闭梯度计算",
+      "title": "no_grad：临时关闭梯度计算",
+      "chapter": "05",
+      "chapterTitle": "自动求导机制",
+      "url": "chapters/05-autograd.html#no_grad临时关闭梯度计算",
+      "body": ""
+    },
+    {
+      "id": "06-nn-modules",
+      "title": "神经网络基础模块",
+      "chapter": "06",
+      "chapterTitle": "神经网络基础模块",
+      "partTitle": "数学与 PyTorch 工具",
+      "url": "chapters/06-nn-modules.html",
+      "body": "\n  本章目标  ：掌握PyTorch中构建神经网络的核心组件\n\n   神经网络是什么？\n\n在开始学习PyTorch的神经网络模块之前，我们先来理解一个根本性的问题：  神经网络到底是什么？  \n\n    神经网络的直观理解\n\n想象一下你有一堆  乐高积木  。每个积木块只能做很简单的事情（比如把输入乘以某个数然后加起来）。但是当你把这些积木块  堆叠  在一起时，它们就能完成非常复杂的事情！\n\n神经网络就是这样一个\"积木系统\"：\n\n    神经元（Neuron）  ：最基本单元，类似乐高积木块\n    层（Layer）  ：由多个神经元组成\n    网络（Network）  ：由多层组成\n\n    神经元的工作原理\n\n一个最简单的神经元（也称为  感知机  或  线性单元  ）是这样工作的：\n\n   \n输入 x    乘以权重 w    加上偏置 b    输出 y\n   \n\n数学公式：\n$$y = w \\cdot x + b$$\n\n或者用向量形式：\n$$y = \\mathbf w ^T \\mathbf x  + b$$\n\n其中：\n  $\\mathbf x $ 是输入向量（比如一张图片的所有像素值）\n  $\\mathbf w $ 是权重向量（决定每个输入有多重要）\n  $b$ 是偏置（调整输出的基准）\n  $y$ 是输出\n\n    为什么要多层？\n\n单层神经元只能做  线性变换  ——也就是说，它只能学会画一条直线（或者一个平面）。\n\n但现实世界的问题往往  不是线性的  ！比如：\n  识别猫和狗：不能简单地用一条直线分开\n  下棋：需要复杂的策略\n\n  解决方法  ：堆叠多层！每加一层，网络就能学习更复杂的模式。\n\n这就是为什么我们需要  深度学习  ——\"深度\"指的就是层数多！\n\n    PyTorch中的神经网络\n\nPyTorch为神经网络提供了完整的工具箱：\n\n  组件   作用  \n               \n   nn.Linear    线性变换（全连接层）  \n   nn.Conv2d    卷积层（处理图像）  \n   nn.RNN  /  nn.LSTM    循环层（处理序列）  \n   nn.ReLU  /  nn.Sigmoid    激活函数  \n   nn.CrossEntropyLoss    损失函数  \n   torch.optim    优化器  \n\n接下来，让我们逐一学习这些组件！\n\n   \n\n   nn.Linear：线性变换层\n\n nn.Linear 是PyTorch中最基本的神经网络层，也称为  全连接层（Fully Connected Layer）  或  密集层（Dense Layer）  。\n\n  数学公式  ：\n$$\\mathbf y  = \\mathbf x  \\mathbf W ^T + \\mathbf b $$\n\n或者更详细地：\n$$y i = \\sum  j=1 ^ n  x j \\cdot W  ij  + b i$$\n\n其中：\n  $\\mathbf x $：输入向量，形状为   batch size, input dim  \n  $\\mathbf W $：权重矩阵，形状为   output dim, input dim  \n  $\\mathbf b $：偏置向量，形状为   output dim,  \n  $\\mathbf y $：输出向量，形状为   batch size, output dim  \n\n   python\nimport torch.nn as nn\n\n  创建一个线性层\n  输入维度3，输出维度2\nlinear = nn.Linear 3, 2 \n\n  查看线性层的参数\nprint \"权重形状:\", linear.weight.shape     torch.Size  2, 3  \nprint \"偏置形状:\", linear.bias.shape       torch.Size  2  \n\n  前向传播\nx = torch.randn 4, 3     批量大小4，输入维度3\noutput = linear x         输出维度2\nprint \"输出形状:\", output.shape     torch.Size  4, 2  \n   \n\n  手动验证  ：\n\n   python\n  验证nn.Linear的计算\nlinear = nn.Linear 3, 2 \nx = torch.randn 4, 3 \n\n  PyTorch的实现\noutput pytorch = linear x \n\n  手动计算：y = xW^T + b\nxWt = x @ linear.weight.t  \noutput manual = xWt +"
+    },
+    {
+      "id": "06-nn-modules-神经网络是什么",
+      "title": "神经网络是什么？",
+      "chapter": "06",
+      "chapterTitle": "神经网络基础模块",
+      "url": "chapters/06-nn-modules.html#神经网络是什么",
+      "body": ""
+    },
+    {
+      "id": "06-nn-modules-神经网络的直观理解",
+      "title": "神经网络的直观理解",
+      "chapter": "06",
+      "chapterTitle": "神经网络基础模块",
+      "url": "chapters/06-nn-modules.html#神经网络的直观理解",
+      "body": ""
+    },
+    {
+      "id": "06-nn-modules-神经元的工作原理",
+      "title": "神经元的工作原理",
+      "chapter": "06",
+      "chapterTitle": "神经网络基础模块",
+      "url": "chapters/06-nn-modules.html#神经元的工作原理",
+      "body": ""
+    },
+    {
+      "id": "06-nn-modules-为什么要多层",
+      "title": "为什么要多层？",
+      "chapter": "06",
+      "chapterTitle": "神经网络基础模块",
+      "url": "chapters/06-nn-modules.html#为什么要多层",
+      "body": ""
+    },
+    {
+      "id": "06-nn-modules-pytorch中的神经网络",
+      "title": "PyTorch中的神经网络",
+      "chapter": "06",
+      "chapterTitle": "神经网络基础模块",
+      "url": "chapters/06-nn-modules.html#pytorch中的神经网络",
+      "body": ""
+    },
+    {
+      "id": "06-nn-modules-nnlinear线性变换层",
+      "title": "nn.Linear：线性变换层",
+      "chapter": "06",
+      "chapterTitle": "神经网络基础模块",
+      "url": "chapters/06-nn-modules.html#nnlinear线性变换层",
+      "body": ""
+    },
+    {
+      "id": "06-nn-modules-1-第三方库",
+      "title": "1. 第三方库",
+      "chapter": "06",
+      "chapterTitle": "神经网络基础模块",
+      "url": "chapters/06-nn-modules.html#1-第三方库",
+      "body": ""
+    },
+    {
+      "id": "06-nn-modules-类的继承",
+      "title": "类的继承",
+      "chapter": "06",
+      "chapterTitle": "神经网络基础模块",
+      "url": "chapters/06-nn-modules.html#类的继承",
+      "body": ""
+    },
+    {
+      "id": "06-nn-modules-3super-的作用",
+      "title": "3.super() 的作用",
+      "chapter": "06",
+      "chapterTitle": "神经网络基础模块",
+      "url": "chapters/06-nn-modules.html#3super-的作用",
+      "body": ""
+    },
+    {
+      "id": "06-nn-modules-4-为什么-pytorch-要用继承而不是直接调用",
+      "title": "4. 为什么 PyTorch 要用继承而不是直接调用",
+      "chapter": "06",
+      "chapterTitle": "神经网络基础模块",
+      "url": "chapters/06-nn-modules.html#4-为什么-pytorch-要用继承而不是直接调用",
+      "body": ""
+    },
+    {
+      "id": "06-nn-modules-nnmodule神经网络基类",
+      "title": "nn.Module：神经网络基类",
+      "chapter": "06",
+      "chapterTitle": "神经网络基础模块",
+      "url": "chapters/06-nn-modules.html#nnmodule神经网络基类",
+      "body": ""
+    },
+    {
+      "id": "06-nn-modules-nnsequential快速搭建网络",
+      "title": "nn.Sequential：快速搭建网络",
+      "chapter": "06",
+      "chapterTitle": "神经网络基础模块",
+      "url": "chapters/06-nn-modules.html#nnsequential快速搭建网络",
+      "body": ""
+    },
+    {
+      "id": "06-nn-modules-nncrossentropyloss交叉熵损失",
+      "title": "nn.CrossEntropyLoss：交叉熵损失",
+      "chapter": "06",
+      "chapterTitle": "神经网络基础模块",
+      "url": "chapters/06-nn-modules.html#nncrossentropyloss交叉熵损失",
+      "body": ""
+    },
+    {
+      "id": "06-nn-modules-torchoptim优化器",
+      "title": "torch.optim：优化器",
+      "chapter": "06",
+      "chapterTitle": "神经网络基础模块",
+      "url": "chapters/06-nn-modules.html#torchoptim优化器",
+      "body": ""
+    },
+    {
+      "id": "07-errors-exercises",
+      "title": "常见错误与习题",
+      "chapter": "07",
+      "chapterTitle": "常见错误与习题",
+      "partTitle": "数学与 PyTorch 工具",
+      "url": "chapters/07-errors-exercises.html",
+      "body": "   常见错误与解决方案\n\n    形状不匹配错误\n\n   python\n  错误：矩阵乘法维度不匹配\nA = torch.randn 2, 3 \nB = torch.randn 5, 4 \nC = A @ B    RuntimeError: mat1 and mat2 shapes cannot be multiplied\n\n  解决：确保维度匹配\nB = torch.randn 3, 4 \nC = A @ B    正确： 2,3  @  3,4      2,4 \n   \n\n    设备不匹配错误\n\n   python\n  错误：模型在GPU，数据在CPU\nmodel = nn.Linear 10, 2 .cuda  \ndata = torch.randn 2, 10     默认在CPU\noutput = model data     RuntimeError: Expected all tensors to be on the same device\n\n  解决：将数据移到GPU\ndata = data.cuda  \n  或\ndata = data.to 'cuda' \n   \n\n    梯度未清零\n\n   python\n  错误：梯度累积导致训练异常\nfor epoch in range 10 :\n    loss = net x \n    loss.backward  \n    optimizer.step      忘记清零！\n\n  解决：每次迭代前清零\nfor epoch in range 10 :\n    optimizer.zero grad  \n    loss = net x \n    loss.backward  \n    optimizer.step  \n   \n\n    类型不匹配\n\n   python\n  错误：类型不匹配\nx = torch.randn 3, 4, dtype=torch.float32 \nweight = torch.randn 4, 2, dtype=torch.float64 \noutput = x @ weight    RuntimeError\n\n  解决：确保类型一致\nweight = weight.float      或 dtype=torch.float32\n   \n\n   \n\n   总结与下一步\n\n    本篇笔记核心要点\n\n1.   张量创建  ：torch.tensor, torch.randn, torch.zeros, torch.ones\n2.   张量属性  ：shape, dtype, device\n3.   张量操作  ：矩阵乘法 @, matmul 、形状变换 reshape 、类型转换 item, numpy \n4.   自动求导  ：requires grad, backward, grad, zero grad, no grad\n5.   神经网络模块  ：nn.Linear, nn.Module, nn.Sequential, CrossEntropyLoss, optim\n\n    下一步学习建议\n\n    数据加载  ：学习torch.utils.data.DataLoader和Dataset\n    图像处理  ：学习torchvision.transforms\n    CNN搭建  ：学习nn.Conv2d, nn.MaxPool2d\n    实战项目  ：尝试Fashion MNIST分类\n\n    快速查阅表\n\n   python\n  创建张量\ntorch.tensor  1,2,3               从列表创建\ntorch.randn 3, 4                   随机正态\ntorch.zeros 3, 4                   全零\ntorch.ones 3, 4                    全一\n\n  属性\ntensor.shape                       形状\ntensor.dtype                       类型\ntensor.device                      设备\n\n  操作\nx @ w                             矩阵乘法\nx.reshape  1                      形状变换\nx.item                            转标量\nx.numpy                           转numpy\n\n  自动求导\nx.requires grad = True            开启追踪\nloss.back"
+    },
+    {
+      "id": "07-errors-exercises-常见错误与解决方案",
+      "title": "常见错误与解决方案",
+      "chapter": "07",
+      "chapterTitle": "常见错误与习题",
+      "url": "chapters/07-errors-exercises.html#常见错误与解决方案",
+      "body": ""
+    },
+    {
+      "id": "07-errors-exercises-形状不匹配错误",
+      "title": "形状不匹配错误",
+      "chapter": "07",
+      "chapterTitle": "常见错误与习题",
+      "url": "chapters/07-errors-exercises.html#形状不匹配错误",
+      "body": ""
+    },
+    {
+      "id": "07-errors-exercises-设备不匹配错误",
+      "title": "设备不匹配错误",
+      "chapter": "07",
+      "chapterTitle": "常见错误与习题",
+      "url": "chapters/07-errors-exercises.html#设备不匹配错误",
+      "body": ""
+    },
+    {
+      "id": "07-errors-exercises-梯度未清零",
+      "title": "梯度未清零",
+      "chapter": "07",
+      "chapterTitle": "常见错误与习题",
+      "url": "chapters/07-errors-exercises.html#梯度未清零",
+      "body": ""
+    },
+    {
+      "id": "07-errors-exercises-类型不匹配",
+      "title": "类型不匹配",
+      "chapter": "07",
+      "chapterTitle": "常见错误与习题",
+      "url": "chapters/07-errors-exercises.html#类型不匹配",
+      "body": ""
+    },
+    {
+      "id": "07-errors-exercises-总结与下一步",
+      "title": "总结与下一步",
+      "chapter": "07",
+      "chapterTitle": "常见错误与习题",
+      "url": "chapters/07-errors-exercises.html#总结与下一步",
+      "body": ""
+    },
+    {
+      "id": "07-errors-exercises-本篇笔记核心要点",
+      "title": "本篇笔记核心要点",
+      "chapter": "07",
+      "chapterTitle": "常见错误与习题",
+      "url": "chapters/07-errors-exercises.html#本篇笔记核心要点",
+      "body": ""
+    },
+    {
+      "id": "07-errors-exercises-下一步学习建议",
+      "title": "下一步学习建议",
+      "chapter": "07",
+      "chapterTitle": "常见错误与习题",
+      "url": "chapters/07-errors-exercises.html#下一步学习建议",
+      "body": ""
+    },
+    {
+      "id": "07-errors-exercises-快速查阅表",
+      "title": "快速查阅表",
+      "chapter": "07",
+      "chapterTitle": "常见错误与习题",
+      "url": "chapters/07-errors-exercises.html#快速查阅表",
+      "body": ""
+    },
+    {
+      "id": "07-errors-exercises-习题",
+      "title": "习题",
+      "chapter": "07",
+      "chapterTitle": "常见错误与习题",
+      "url": "chapters/07-errors-exercises.html#习题",
+      "body": ""
+    },
+    {
+      "id": "07-errors-exercises-习题参考解答",
+      "title": "习题参考解答",
+      "chapter": "07",
+      "chapterTitle": "常见错误与习题",
+      "url": "chapters/07-errors-exercises.html#习题参考解答",
+      "body": ""
+    },
+    {
+      "id": "08-convolution-basics",
+      "title": "从零开始理解卷积",
+      "chapter": "08",
+      "chapterTitle": "从零开始理解卷积",
+      "partTitle": "卷积与视觉",
+      "url": "chapters/08-convolution-basics.html",
+      "body": "\n卷积神经网络（Convolutional Neural Network，CNN）是深度学习在计算机视觉领域取得突破的核心技术。从2012年AlexNet在ImageNet竞赛中一举夺冠开始，CNN就成了图像分类、目标检测、语义分割等视觉任务的标配。\n\n与全连接层相比，CNN具有以下优势：\n\n  参数效率  ：全连接层将每个像素作为独立输入，参数数量巨大；而卷积层通过权重共享，大幅减少参数数量。\n\n  空间不变性  ：卷积操作具有平移不变性，无论物体出现在图像的哪个位置，都能被有效识别。\n\n  层次化特征提取  ：CNN能够自动从浅层的边缘、纹理，到深层的物体部件，最终形成完整的物体表示。\n\n本章将系统介绍PyTorch中CNN相关的核心函数，从卷积层、池化层，到数据增强、模型构建，再到训练技巧，帮助你全面掌握CNN的PyTorch实现。\n\n   \n\n\n    本章学习目标  ：\n  1. 理解图像在计算机中是如何表示的（像素、通道）\n  2. 理解卷积操作的核心思想——\"滑动窗口\"做点积\n  3. 掌握卷积的数学公式\n  4. 理解常见卷积核的作用\n  5. 理解通道、滤波器、特征图三个核心概念\n\n本章是整个CNN的基础。如果你是零基础学习者，请一定要仔细阅读这一章，因为它会帮助你建立起对卷积神经网络的直观理解。  卷积的核心思想非常简单：它就像一个拿着\"放大镜\"的人，在图像上从左到右、从上到下滑动，每滑到一个位置，就提取出该区域的特征。  \n\n   \n\n   图像在计算机中是如何表示的？\n\n在深入卷积之前，我们首先需要理解图像在计算机中是如何存储的。\n\n    灰度图像：一张二维的\"数字表格\"\n\n想象一张普通的黑白照片（比如手写的数字\"3\"）。如果你用一个放大镜靠近看，你会发现这张照片实际上是由很多很多小格子组成的。每个小格子有一个数值，表示该点的亮度。\n\n  举例说明  ：\n\n假设我们有一张非常小的灰度图像，只有5×5个像素（5行5列）：\n\n   \n图像矩阵（5×5）：\n  255, 255, 255, 255, 255 ,     第1行（白色）\n  255, 255,   0, 255, 255 ,     第2行（中间是黑色）\n  255, 255,   0, 255, 255 ,     第3行（中间是黑色）\n  255, 255,   0, 255, 255 ,     第4行（中间是黑色）\n  255, 255, 255, 255, 255       第5行（白色）\n   \n\n在这个矩阵中：\n    255   表示白色（最亮）\n    0   表示黑色（最暗）\n  中间的3个\"0\"形成了一条竖线，看起来就像数字\"1\"\n\n这就是灰度图像的本质：  一个二维数组（矩阵）  ，每个元素是一个0 255之间的整数。\n\n在PyTorch中，这样一张灰度图像表示为形状为   1, H, W   的张量：\n   H  = 高度（行数）\n   W  = 宽度（列数）\n   1  = 通道数（灰度图只有1个通道）\n\n   python\nimport torch\n\n  创建上面那个\"数字1\"的5×5灰度图像\n  注意：PyTorch中图像的形状是  通道数, 高度, 宽度 \ngray image = torch.tensor    255, 255, 255, 255, 255 ,\n                             255, 255,   0, 255, 255 ,\n                             255, 255,   0, 255, 255 ,\n                             255, 255,   0, 255, 255 ,\n                             255, 255, 255, 255, 255   , dtype=torch.float32 \n\nprint \"灰度图像形状:\", gray image.shape     torch.Size  1, 5, 5  \n   \n\n    小提示  ：实际使用中，我们通常会将像素值归一化到0 1之间（除以255），这样计算更方便。\n\n    彩色图像：三个\"图层\"的叠加\n\n现实中的彩色照片比灰度图复杂得多。计算机中表示彩色图像最常用的方法是  RGB模型  ——每 个像素位置实际上存储了三个数值：红色 Red 、绿色 Green 、蓝色 Blue 的强度。\n\n你可以把RGB图像想象成  三张透明的玻璃纸叠在一起  ：\n  第一张玻璃纸只显示红色信息\n  第二张玻璃纸只显示绿色信息\n  第三张玻璃纸只显示蓝色信息\n  三张叠加起来，就看到了彩色的图像\n\n  举例说明  "
+    },
+    {
+      "id": "08-convolution-basics-图像在计算机中是如何表示的",
+      "title": "图像在计算机中是如何表示的？",
+      "chapter": "08",
+      "chapterTitle": "从零开始理解卷积",
+      "url": "chapters/08-convolution-basics.html#图像在计算机中是如何表示的",
+      "body": ""
+    },
+    {
+      "id": "08-convolution-basics-灰度图像一张二维的quot数字表格quot",
+      "title": "灰度图像：一张二维的&quot;数字表格&quot;",
+      "chapter": "08",
+      "chapterTitle": "从零开始理解卷积",
+      "url": "chapters/08-convolution-basics.html#灰度图像一张二维的quot数字表格quot",
+      "body": ""
+    },
+    {
+      "id": "08-convolution-basics-彩色图像三个quot图层quot的叠加",
+      "title": "彩色图像：三个&quot;图层&quot;的叠加",
+      "chapter": "08",
+      "chapterTitle": "从零开始理解卷积",
+      "url": "chapters/08-convolution-basics.html#彩色图像三个quot图层quot的叠加",
+      "body": ""
+    },
+    {
+      "id": "08-convolution-basics-批量图像张量的批量处理",
+      "title": "批量图像：张量的批量处理",
+      "chapter": "08",
+      "chapterTitle": "从零开始理解卷积",
+      "url": "chapters/08-convolution-basics.html#批量图像张量的批量处理",
+      "body": ""
+    },
+    {
+      "id": "08-convolution-basics-什么是卷积用一个具体的例子来解释",
+      "title": "什么是卷积？用一个具体的例子来解释",
+      "chapter": "08",
+      "chapterTitle": "从零开始理解卷积",
+      "url": "chapters/08-convolution-basics.html#什么是卷积用一个具体的例子来解释",
+      "body": ""
+    },
+    {
+      "id": "08-convolution-basics-核心思想滑动窗口-点积",
+      "title": "核心思想：滑动窗口 + 点积",
+      "chapter": "08",
+      "chapterTitle": "从零开始理解卷积",
+      "url": "chapters/08-convolution-basics.html#核心思想滑动窗口-点积",
+      "body": ""
+    },
+    {
+      "id": "08-convolution-basics-用pytorch代码来验证",
+      "title": "用PyTorch代码来验证",
+      "chapter": "08",
+      "chapterTitle": "从零开始理解卷积",
+      "url": "chapters/08-convolution-basics.html#用pytorch代码来验证",
+      "body": ""
+    },
+    {
+      "id": "08-convolution-basics-卷积的数学公式与物理意义",
+      "title": "卷积的数学公式与物理意义",
+      "chapter": "08",
+      "chapterTitle": "从零开始理解卷积",
+      "url": "chapters/08-convolution-basics.html#卷积的数学公式与物理意义",
+      "body": ""
+    },
+    {
+      "id": "08-convolution-basics-数学公式",
+      "title": "数学公式",
+      "chapter": "08",
+      "chapterTitle": "从零开始理解卷积",
+      "url": "chapters/08-convolution-basics.html#数学公式",
+      "body": ""
+    },
+    {
+      "id": "08-convolution-basics-物理意义特征提取",
+      "title": "物理意义：特征提取",
+      "chapter": "08",
+      "chapterTitle": "从零开始理解卷积",
+      "url": "chapters/08-convolution-basics.html#物理意义特征提取",
+      "body": ""
+    },
+    {
+      "id": "08-convolution-basics-常见卷积核类型及其作用",
+      "title": "常见卷积核类型及其作用",
+      "chapter": "08",
+      "chapterTitle": "从零开始理解卷积",
+      "url": "chapters/08-convolution-basics.html#常见卷积核类型及其作用",
+      "body": ""
+    },
+    {
+      "id": "08-convolution-basics-边缘检测卷积核",
+      "title": "边缘检测卷积核",
+      "chapter": "08",
+      "chapterTitle": "从零开始理解卷积",
+      "url": "chapters/08-convolution-basics.html#边缘检测卷积核",
+      "body": ""
+    },
+    {
+      "id": "08-convolution-basics-锐化卷积核",
+      "title": "锐化卷积核",
+      "chapter": "08",
+      "chapterTitle": "从零开始理解卷积",
+      "url": "chapters/08-convolution-basics.html#锐化卷积核",
+      "body": ""
+    },
+    {
+      "id": "08-convolution-basics-模糊平滑卷积核",
+      "title": "模糊/平滑卷积核",
+      "chapter": "08",
+      "chapterTitle": "从零开始理解卷积",
+      "url": "chapters/08-convolution-basics.html#模糊平滑卷积核",
+      "body": ""
+    },
+    {
+      "id": "08-convolution-basics-用代码验证各种卷积核的效果",
+      "title": "用代码验证各种卷积核的效果",
+      "chapter": "08",
+      "chapterTitle": "从零开始理解卷积",
+      "url": "chapters/08-convolution-basics.html#用代码验证各种卷积核的效果",
+      "body": ""
+    },
+    {
+      "id": "08-convolution-basics-通道滤波器和特征图三个核心概念",
+      "title": "通道、滤波器和特征图：三个核心概念",
+      "chapter": "08",
+      "chapterTitle": "从零开始理解卷积",
+      "url": "chapters/08-convolution-basics.html#通道滤波器和特征图三个核心概念",
+      "body": ""
+    },
+    {
+      "id": "08-convolution-basics-通道channel",
+      "title": "通道（Channel）",
+      "chapter": "08",
+      "chapterTitle": "从零开始理解卷积",
+      "url": "chapters/08-convolution-basics.html#通道channel",
+      "body": ""
+    },
+    {
+      "id": "08-convolution-basics-滤波器卷积核filterkernel",
+      "title": "滤波器/卷积核（Filter/Kernel）",
+      "chapter": "08",
+      "chapterTitle": "从零开始理解卷积",
+      "url": "chapters/08-convolution-basics.html#滤波器卷积核filterkernel",
+      "body": ""
+    },
+    {
+      "id": "08-convolution-basics-特征图feature-map",
+      "title": "特征图（Feature Map）",
+      "chapter": "08",
+      "chapterTitle": "从零开始理解卷积",
+      "url": "chapters/08-convolution-basics.html#特征图feature-map",
+      "body": ""
+    },
+    {
+      "id": "08-convolution-basics-三者关系总结",
+      "title": "三者关系总结",
+      "chapter": "08",
+      "chapterTitle": "从零开始理解卷积",
+      "url": "chapters/08-convolution-basics.html#三者关系总结",
+      "body": ""
+    },
+    {
+      "id": "08-convolution-basics-完整的卷积过程一个滤波器的视角",
+      "title": "完整的卷积过程：一个滤波器的视角",
+      "chapter": "08",
+      "chapterTitle": "从零开始理解卷积",
+      "url": "chapters/08-convolution-basics.html#完整的卷积过程一个滤波器的视角",
+      "body": ""
+    },
+    {
+      "id": "09-pytorch-conv",
+      "title": "PyTorch 中的卷积操作",
+      "chapter": "09",
+      "chapterTitle": "PyTorch 中的卷积操作",
+      "partTitle": "卷积与视觉",
+      "url": "chapters/09-pytorch-conv.html",
+      "body": "\n    本章学习目标  ：\n  1. 掌握  nn.Conv2d  的用法\n  2. 理解  kernel size 、 stride 、 padding 、 groups 、 dilation  等参数\n  3. 掌握卷积输出尺寸的计算公式\n\n在第一章中，我们理解了卷积的原理。现在我们学习如何在PyTorch中实现卷积操作。\n\n   nn.Conv2d：二维卷积层\n\n nn.Conv2d  是PyTorch中实现二维卷积的核心类。\n\n   python\nimport torch.nn as nn\n\n  基础用法\nconv = nn.Conv2d in channels=3, out channels=64, kernel size=3, padding=1 \n\n  参数说明：\n  in channels: 输入通道数（RGB图像为3，灰度图为1）\n  out channels: 输出通道数（卷积核的数量，也等于输出特征图的数量）\n  kernel size: 卷积核大小（3表示3x3，也可以是5, 7等奇数）\n  padding: 填充层数（用于保持图像尺寸）\n   \n\n  Mav's Tips：  Padding是指在最外层填充一些像素，通常是空白的。\n\n  前向传播  ：\n\n   python\n  输入形状： batch size, channels, height, width \nx = torch.randn 8, 3, 224, 224     8张RGB图像，224x224\n\n  通过卷积层\noutput = conv x \nprint output.shape     torch.Size  8, 64, 224, 224  \n  输出：batch size=8, 通道数=64, 高度=224, 宽度=224\n   \n\n  卷积层的内部结构  ：\n\n   python\n  查看卷积层的参数\nconv = nn.Conv2d 3, 64, kernel size=3, padding=1 \nprint \"权重形状:\", conv.weight.shape      torch.Size  64, 3, 3, 3  \nprint \"偏置形状:\", conv.bias.shape        torch.Size  64  \n\n  权重形状解释：\n  64个卷积核，每个卷积核3个通道（对应RGB），每个卷积核3x3大小\n   \n\n   卷积层的参数详解\n\n nn.Conv2d  有多个重要参数，理解它们对于设计网络结构非常重要。\n\n    kernel size：卷积核大小\n\n卷积核决定了卷积操作提取特征的\"视野范围\"。常见的卷积核大小有1×1、3×3、5×5、7×7等。\n\n   python\n  1x1卷积：用于改变通道数，类似全连接\nconv 1x1 = nn.Conv2d 256, 64, kernel size=1 \n\n  3x3卷积：最常用的卷积核大小\nconv 3x3 = nn.Conv2d 64, 128, kernel size=3, padding=1 \n\n  5x5卷积：更大的感受野\nconv 5x5 = nn.Conv2d 64, 128, kernel size=5, padding=2 \n\n  可以使用元组指定不同的高宽核\nconv rect = nn.Conv2d 64, 128, kernel size= 3, 5 , padding= 1, 2  \n   \n\n    感受野（Receptive Field）  ：指的是卷积神经网络中，一个输出像素点\"看\"到的输入区域的大小。3×3的卷积核，感受野就是3×3；5×5的卷积核，感受野就是5×5。\n\n    stride：步长\n\n stride  控制卷积核在图像上滑动的步长。stride=1时逐像素移动，stride=2时每次移动2个像素（输出尺寸减半）。\n\n   python\n  stride=1（默认）：保持尺寸\nconv s1 = nn.Conv2d 3, 64, kernel size=3, stride=1, padding=1 \nx = torch.randn 1, 3, 224, 224 \nprint conv s1 x .shape     torch.Size  1, 64, 224, 224  \n\n  stride=2：尺寸减半\nconv s2 = nn.Conv2d 3, 64, kernel size=3, stride=2, padding=1 \nprint conv s2 x .shape     torch.Size  1, 64, 112, 112  \n\n  stride=3：尺寸变为原来的1/3\ncon"
+    },
+    {
+      "id": "09-pytorch-conv-nnconv2d二维卷积层",
+      "title": "nn.Conv2d：二维卷积层",
+      "chapter": "09",
+      "chapterTitle": "PyTorch 中的卷积操作",
+      "url": "chapters/09-pytorch-conv.html#nnconv2d二维卷积层",
+      "body": ""
+    },
+    {
+      "id": "09-pytorch-conv-卷积层的参数详解",
+      "title": "卷积层的参数详解",
+      "chapter": "09",
+      "chapterTitle": "PyTorch 中的卷积操作",
+      "url": "chapters/09-pytorch-conv.html#卷积层的参数详解",
+      "body": ""
+    },
+    {
+      "id": "09-pytorch-conv-kernel_size卷积核大小",
+      "title": "kernel_size：卷积核大小",
+      "chapter": "09",
+      "chapterTitle": "PyTorch 中的卷积操作",
+      "url": "chapters/09-pytorch-conv.html#kernel_size卷积核大小",
+      "body": ""
+    },
+    {
+      "id": "09-pytorch-conv-stride步长",
+      "title": "stride：步长",
+      "chapter": "09",
+      "chapterTitle": "PyTorch 中的卷积操作",
+      "url": "chapters/09-pytorch-conv.html#stride步长",
+      "body": ""
+    },
+    {
+      "id": "09-pytorch-conv-padding填充",
+      "title": "padding：填充",
+      "chapter": "09",
+      "chapterTitle": "PyTorch 中的卷积操作",
+      "url": "chapters/09-pytorch-conv.html#padding填充",
+      "body": ""
+    },
+    {
+      "id": "09-pytorch-conv-groups分组卷积",
+      "title": "groups：分组卷积",
+      "chapter": "09",
+      "chapterTitle": "PyTorch 中的卷积操作",
+      "url": "chapters/09-pytorch-conv.html#groups分组卷积",
+      "body": ""
+    },
+    {
+      "id": "09-pytorch-conv-dilation空洞卷积",
+      "title": "dilation：空洞卷积",
+      "chapter": "09",
+      "chapterTitle": "PyTorch 中的卷积操作",
+      "url": "chapters/09-pytorch-conv.html#dilation空洞卷积",
+      "body": ""
+    },
+    {
+      "id": "09-pytorch-conv-卷积输出尺寸计算",
+      "title": "卷积输出尺寸计算",
+      "chapter": "09",
+      "chapterTitle": "PyTorch 中的卷积操作",
+      "url": "chapters/09-pytorch-conv.html#卷积输出尺寸计算",
+      "body": ""
+    },
+    {
+      "id": "10-pooling-norm",
+      "title": "池化层与归一化",
+      "chapter": "10",
+      "chapterTitle": "池化层与归一化",
+      "partTitle": "卷积与视觉",
+      "url": "chapters/10-pooling-norm.html",
+      "body": "\n池化层（Pooling Layer）用于降低特征图的空间尺寸，同时保留重要信息。池化操作可以增强网络的平移不变性，减少计算量，并帮助控制过拟合。\n\n   nn.MaxPool2d：最大池化\n\n最大池化选取每个池化窗口中的最大值，是最常用的池化方式。\n\n   python\nimport torch.nn as nn\n\n  基础用法\nmaxpool = nn.MaxPool2d kernel size=2, stride=2 \n\n  参数说明：\n  kernel size: 池化窗口大小（2表示2x2）\n  stride: 步长（默认等于kernel size，即不重叠）\n  padding: 填充\n  dilation: 空洞率\n  return indices: 是否返回最大值的索引（用于MaxUnpool）\n   \n\n   python\n  输入\nx = torch.randn 1, 1, 4, 4 \nprint \"输入:\\n\", x \n  tensor      0.2341,  0.2341,  0.0116,  1.0414 ,\n             0.7376,  0.5123,  0.2134,  0.3894 ,\n             1.5151,  0.0160,  0.4503,  0.0131 ,\n             0.4530,  0.0339,  0.3623,  0.1413     \n\n  最大池化\noutput = maxpool x \nprint \"输出:\\n\", output \n  tensor      0.2341,  0.3894 ,\n             0.0160,  0.4503     \n   \n\n  池化后尺寸计算  ：\n\n   python\n  池化尺寸计算公式\ndef calc pool output size H, W, kernel size=2, stride=2, padding=0, dilation=1 :\n    H out =   H + 2 padding   dilation  kernel size 1    1  // stride  + 1\n    W out =   W + 2 padding   dilation  kernel size 1    1  // stride  + 1\n    return H out, W out\n\n  常见配置\nH, W = 224, 224\n\n  2x2池化，stride=2\nH out, W out = calc pool output size H, W, kernel size=2, stride=2 \nprint f\"2x2池化，stride=2:  H out x W out \"     112x112\n\n  3x3池化，stride=2\nH out, W out = calc pool output size H, W, kernel size=3, stride=2, padding=1 \nprint f\"3x3池化，stride=2，padding=1:  H out x W out \"     112x112\n   \n\n  实际应用  ：\n\n   python\nclass CNNWithPooling nn.Module :\n    def   init   self :\n        super  .  init    \n          卷积层\n        self.conv1 = nn.Conv2d 3, 32, kernel size=3, padding=1 \n        self.conv2 = nn.Conv2d 32, 64, kernel size=3, padding=1 \n\n          池化层\n        self.pool = nn.MaxPool2d kernel size=2, stride=2 \n\n          全连接层\n        self.fc1 = nn.Linear 64   28   28, 256 \n        self.fc2 = nn.Linear 256, 10 \n\n    def forward self, x :\n          224x224    112x112\n        x = self.pool torch.relu self.conv1 x   \n\n          112x112    56x56\n        x = self.pool torch.relu self.conv2 x   \n\n          展平\n        x = x."
+    },
+    {
+      "id": "10-pooling-norm-nnmaxpool2d最大池化",
+      "title": "nn.MaxPool2d：最大池化",
+      "chapter": "10",
+      "chapterTitle": "池化层与归一化",
+      "url": "chapters/10-pooling-norm.html#nnmaxpool2d最大池化",
+      "body": ""
+    },
+    {
+      "id": "10-pooling-norm-nnavgpool2d平均池化",
+      "title": "nn.AvgPool2d：平均池化",
+      "chapter": "10",
+      "chapterTitle": "池化层与归一化",
+      "url": "chapters/10-pooling-norm.html#nnavgpool2d平均池化",
+      "body": ""
+    },
+    {
+      "id": "10-pooling-norm-nnadaptiveavgpool2d自适应池化",
+      "title": "nn.AdaptiveAvgPool2d：自适应池化",
+      "chapter": "10",
+      "chapterTitle": "池化层与归一化",
+      "url": "chapters/10-pooling-norm.html#nnadaptiveavgpool2d自适应池化",
+      "body": ""
+    },
+    {
+      "id": "10-pooling-norm-nnbatchnorm2d批归一化",
+      "title": "nn.BatchNorm2d：批归一化",
+      "chapter": "10",
+      "chapterTitle": "池化层与归一化",
+      "url": "chapters/10-pooling-norm.html#nnbatchnorm2d批归一化",
+      "body": ""
+    },
+    {
+      "id": "10-pooling-norm-nndropout正则化",
+      "title": "nn.Dropout：正则化",
+      "chapter": "10",
+      "chapterTitle": "池化层与归一化",
+      "url": "chapters/10-pooling-norm.html#nndropout正则化",
+      "body": ""
+    },
+    {
+      "id": "10-pooling-norm-nnlayernorm层归一化",
+      "title": "nn.LayerNorm：层归一化",
+      "chapter": "10",
+      "chapterTitle": "池化层与归一化",
+      "url": "chapters/10-pooling-norm.html#nnlayernorm层归一化",
+      "body": ""
+    },
+    {
+      "id": "11-data",
+      "title": "数据增强与数据集加载",
+      "chapter": "11",
+      "chapterTitle": "数据增强与数据集加载",
+      "partTitle": "卷积与视觉",
+      "url": "chapters/11-data.html",
+      "body": "\n数据增强是提升模型泛化能力的关键技术。torchvision.transforms提供了丰富的图像变换函数。\n\n   图像变换与数据增强\n\n    transforms.Compose：组合多个变换\n\nCompose用于将多个变换组合成管道。\n\n   python\nfrom torchvision import transforms\n\n  创建变换管道\ntransform = transforms.Compose  \n    transforms.ToTensor  ,             1. 转为张量\n    transforms.Normalize  0.5 ,  0.5  ,    2. 标准化\n    transforms.RandomHorizontalFlip  ,     3. 随机翻转\n  \n\n  应用变换\nfrom PIL import Image\nimg = Image.open 'cat.jpg' \nimg tensor = transform img \nprint img tensor.shape     torch.Size  3, H, W  \n   \n\n    transforms.ToTensor：图像转张量\n\nToTensor将PIL Image或NumPy数组转换为PyTorch张量，并自动归一化到 0, 1 。\n\n   python\nfrom torchvision import transforms\nfrom PIL import Image\nimport numpy as np\n\n  从PIL Image转换\nimg pil = Image.open 'cat.jpg' \nprint \"PIL Image:\", img pil.mode, img pil.size \n\nto tensor = transforms.ToTensor  \ntensor = to tensor img pil \nprint \"Tensor:\", tensor.shape, tensor.min  , tensor.max   \n  自动转换为  C, H, W ，值在  0, 1 \n\n  从NumPy数组转换\nimg np = np.array img pil \nprint \"NumPy:\", img np.shape \ntensor np = to tensor img np \nprint \"Tensor from NumPy:\", tensor np.shape \n\n  转换前后对比\nprint \"\\n=== 转换说明 ===\" \n  PIL Image  H, W, C   0 255 \n  NumPy    H, W, C   0 255 \n  Tensor   C, H, W   0, 1 \n   \n\n    transforms.Normalize：标准化\n\nNormalize使用均值和标准差对图像进行标准化。\n\n  数学公式  ：\n\n   \nnormalized =  input   mean  / std\n   \n\n   python\n  ImageNet常用均值和标准差\nnormalize = transforms.Normalize \n    mean= 0.485, 0.456, 0.406 ,    RGB通道的均值\n    std= 0.229, 0.224, 0.225        RGB通道的标准差\n \n\n  标准化流程\nx = torch.rand 3, 224, 224      0, 1 \nx normalized = normalize x \n\nprint \"标准化前: min= :.3f , max= :.3f \".format x.min  , x.max    \nprint \"标准化后: min= :.3f , max= :.3f \".format x normalized.min  , x normalized.max    \n  标准化后值通常在   2, 2  范围内\n   \n\n  训练和测试使用相同的标准化  ：\n\n   python\n  定义标准化参数（ImageNet）\nimagenet mean =  0.485, 0.456, 0.406 \nimagenet std =  0.229, 0.224, 0.225 \n\n  训练变换\ntrain transform = transforms.Compose  \n    transforms.RandomResizedCrop 224 ,\n    transforms.RandomHorizontalFlip  ,\n    transforms.ToTensor  ,\n    transform"
+    },
+    {
+      "id": "11-data-图像变换与数据增强",
+      "title": "图像变换与数据增强",
+      "chapter": "11",
+      "chapterTitle": "数据增强与数据集加载",
+      "url": "chapters/11-data.html#图像变换与数据增强",
+      "body": ""
+    },
+    {
+      "id": "11-data-transformscompose组合多个变换",
+      "title": "transforms.Compose：组合多个变换",
+      "chapter": "11",
+      "chapterTitle": "数据增强与数据集加载",
+      "url": "chapters/11-data.html#transformscompose组合多个变换",
+      "body": ""
+    },
+    {
+      "id": "11-data-transformstotensor图像转张量",
+      "title": "transforms.ToTensor：图像转张量",
+      "chapter": "11",
+      "chapterTitle": "数据增强与数据集加载",
+      "url": "chapters/11-data.html#transformstotensor图像转张量",
+      "body": ""
+    },
+    {
+      "id": "11-data-transformsnormalize标准化",
+      "title": "transforms.Normalize：标准化",
+      "chapter": "11",
+      "chapterTitle": "数据增强与数据集加载",
+      "url": "chapters/11-data.html#transformsnormalize标准化",
+      "body": ""
+    },
+    {
+      "id": "11-data-transformsresize与transformscentercrop",
+      "title": "transforms.Resize与transforms.CenterCrop",
+      "chapter": "11",
+      "chapterTitle": "数据增强与数据集加载",
+      "url": "chapters/11-data.html#transformsresize与transformscentercrop",
+      "body": ""
+    },
+    {
+      "id": "11-data-transformsrandomhorizontalflip随机水平翻转",
+      "title": "transforms.RandomHorizontalFlip：随机水平翻转",
+      "chapter": "11",
+      "chapterTitle": "数据增强与数据集加载",
+      "url": "chapters/11-data.html#transformsrandomhorizontalflip随机水平翻转",
+      "body": ""
+    },
+    {
+      "id": "11-data-transformsrandomrotation随机旋转",
+      "title": "transforms.RandomRotation：随机旋转",
+      "chapter": "11",
+      "chapterTitle": "数据增强与数据集加载",
+      "url": "chapters/11-data.html#transformsrandomrotation随机旋转",
+      "body": ""
+    },
+    {
+      "id": "11-data-transformscolorjitter颜色抖动",
+      "title": "transforms.ColorJitter：颜色抖动",
+      "chapter": "11",
+      "chapterTitle": "数据增强与数据集加载",
+      "url": "chapters/11-data.html#transformscolorjitter颜色抖动",
+      "body": ""
+    },
+    {
+      "id": "11-data-transformsrandomaffine随机仿射变换",
+      "title": "transforms.RandomAffine：随机仿射变换",
+      "chapter": "11",
+      "chapterTitle": "数据增强与数据集加载",
+      "url": "chapters/11-data.html#transformsrandomaffine随机仿射变换",
+      "body": ""
+    },
+    {
+      "id": "11-data-transformsrandomerasing随机擦除",
+      "title": "transforms.RandomErasing：随机擦除",
+      "chapter": "11",
+      "chapterTitle": "数据增强与数据集加载",
+      "url": "chapters/11-data.html#transformsrandomerasing随机擦除",
+      "body": ""
+    },
+    {
+      "id": "11-data-综合数据增强示例",
+      "title": "综合数据增强示例",
+      "chapter": "11",
+      "chapterTitle": "数据增强与数据集加载",
+      "url": "chapters/11-data.html#综合数据增强示例",
+      "body": ""
+    },
+    {
+      "id": "11-data-torchvisiondatasets内置数据集",
+      "title": "torchvision.datasets：内置数据集",
+      "chapter": "11",
+      "chapterTitle": "数据增强与数据集加载",
+      "url": "chapters/11-data.html#torchvisiondatasets内置数据集",
+      "body": ""
+    },
+    {
+      "id": "11-data-dataset类自定义数据集",
+      "title": "Dataset类：自定义数据集",
+      "chapter": "11",
+      "chapterTitle": "数据增强与数据集加载",
+      "url": "chapters/11-data.html#dataset类自定义数据集",
+      "body": ""
+    },
+    {
+      "id": "11-data-dataloader批量数据加载",
+      "title": "DataLoader：批量数据加载",
+      "chapter": "11",
+      "chapterTitle": "数据增强与数据集加载",
+      "url": "chapters/11-data.html#dataloader批量数据加载",
+      "body": ""
+    },
+    {
+      "id": "12-architecture",
+      "title": "CNN 模型构建与迁移学习",
+      "chapter": "12",
+      "chapterTitle": "CNN 模型构建与迁移学习",
+      "partTitle": "卷积与视觉",
+      "url": "chapters/12-architecture.html",
+      "body": "\n   经典LeNet模型实现\n\nLeNet是1998年Yann LeCun提出的第一个卷积神经网络，是现代CNN的开山之作。\n\n   python\nimport torch.nn as nn\n\nclass LeNet nn.Module :\n    def   init   self, num classes=10 :\n        super  .  init    \n\n          特征提取部分\n        self.features = nn.Sequential \n              C1: 第一卷积层\n            nn.Conv2d 1, 6, kernel size=5, padding=2 ,    28x28    28x28\n            nn.ReLU inplace=True ,\n            nn.AvgPool2d kernel size=2, stride=2 ,        28x28    14x14\n\n              C3: 第二卷积层\n            nn.Conv2d 6, 16, kernel size=5 ,              14x14    10x10\n            nn.ReLU inplace=True ,\n            nn.AvgPool2d kernel size=2, stride=2 ,        10x10    5x5\n         \n\n          分类器部分\n        self.classifier = nn.Sequential \n            nn.Flatten  ,\n            nn.Linear 16   5   5, 120 ,\n            nn.ReLU inplace=True ,\n            nn.Linear 120, 84 ,\n            nn.ReLU inplace=True ,\n            nn.Linear 84, num classes \n         \n\n    def forward self, x :\n        x = self.features x \n        x = self.classifier x \n        return x\n\n  测试\nmodel = LeNet num classes=10 \nx = torch.randn 1, 1, 28, 28 \noutput = model x \nprint \"输出形状:\", output.shape     torch.Size  1, 10  \n\n  打印模型结构\nprint model \n   \n\n  LeNet架构图  ：\n\n   \n输入  1, 28, 28 \n    ↓\nConv2d 1, 6, 5x5  + ReLU + AvgPool  →   6, 14, 14 \n    ↓\nConv2d 6, 16, 5x5  + ReLU + AvgPool  →   16, 5, 5 \n    ↓\nFlatten  →   400 \n    ↓\nLinear 400, 120  + ReLU  →   120 \n    ↓\nLinear 120, 84  + ReLU  →   84 \n    ↓\nLinear 84, 10   →   10 \n   \n\n   \n\n   AlexNet模型实现\n\nAlexNet在2012年ImageNet竞赛中取得突破性成绩，标志着深度学习的复兴。\n\n   python\nclass AlexNet nn.Module :\n    def   init   self, num classes=1000 :\n        super  .  init    \n\n        self.features = nn.Sequential \n              Conv1\n            nn.Conv2d 3, 96, kernel size=11, stride=4, padding=2 ,\n            nn.ReLU inplace=True ,\n            nn.MaxPool2d kernel size=3, stride=2 ,    224    55\n\n              Conv2\n            nn.Conv2d 96, 256, kernel size=5, padding=2 ,\n            nn.ReLU inplace=Tru"
+    },
+    {
+      "id": "12-architecture-经典lenet模型实现",
+      "title": "经典LeNet模型实现",
+      "chapter": "12",
+      "chapterTitle": "CNN 模型构建与迁移学习",
+      "url": "chapters/12-architecture.html#经典lenet模型实现",
+      "body": ""
+    },
+    {
+      "id": "12-architecture-alexnet模型实现",
+      "title": "AlexNet模型实现",
+      "chapter": "12",
+      "chapterTitle": "CNN 模型构建与迁移学习",
+      "url": "chapters/12-architecture.html#alexnet模型实现",
+      "body": ""
+    },
+    {
+      "id": "12-architecture-vgg模型实现",
+      "title": "VGG模型实现",
+      "chapter": "12",
+      "chapterTitle": "CNN 模型构建与迁移学习",
+      "url": "chapters/12-architecture.html#vgg模型实现",
+      "body": ""
+    },
+    {
+      "id": "12-architecture-resnet残差网络",
+      "title": "ResNet残差网络",
+      "chapter": "12",
+      "chapterTitle": "CNN 模型构建与迁移学习",
+      "url": "chapters/12-architecture.html#resnet残差网络",
+      "body": ""
+    },
+    {
+      "id": "12-architecture-torchvisionmodels预训练模型",
+      "title": "torchvision.models：预训练模型",
+      "chapter": "12",
+      "chapterTitle": "CNN 模型构建与迁移学习",
+      "url": "chapters/12-architecture.html#torchvisionmodels预训练模型",
+      "body": ""
+    },
+    {
+      "id": "12-architecture-特征提取冻结主干网络",
+      "title": "特征提取：冻结主干网络",
+      "chapter": "12",
+      "chapterTitle": "CNN 模型构建与迁移学习",
+      "url": "chapters/12-architecture.html#特征提取冻结主干网络",
+      "body": ""
+    },
+    {
+      "id": "12-architecture-微调解冻部分层",
+      "title": "微调：解冻部分层",
+      "chapter": "12",
+      "chapterTitle": "CNN 模型构建与迁移学习",
+      "url": "chapters/12-architecture.html#微调解冻部分层",
+      "body": ""
+    },
+    {
+      "id": "12-architecture-模型保存与加载",
+      "title": "模型保存与加载",
+      "chapter": "12",
+      "chapterTitle": "CNN 模型构建与迁移学习",
+      "url": "chapters/12-architecture.html#模型保存与加载",
+      "body": ""
+    },
+    {
+      "id": "13-training-eval",
+      "title": "训练技巧与模型评估",
+      "chapter": "13",
+      "chapterTitle": "训练技巧与模型评估",
+      "partTitle": "卷积与视觉",
+      "url": "chapters/13-training-eval.html",
+      "body": "\n   学习率调度器\n\n学习率调度器可以根据训练进程动态调整学习率。\n\n   python\nimport torch.optim as optim\n\n  1. StepLR：固定步长衰减\noptimizer = optim.SGD model.parameters  , lr=0.1 \nscheduler = optim.lr scheduler.StepLR optimizer, step size=10, gamma=0.1 \n\nfor epoch in range 100 :\n    train ... \n    scheduler.step  \n    print f\"Epoch  epoch : LR =  scheduler.get last lr   0  \" \n\n  2. MultiStepLR：多个里程碑衰减\nscheduler = optim.lr scheduler.MultiStepLR \n    optimizer, milestones= 30, 60, 90 , gamma=0.1\n \n\n  3. CosineAnnealingLR：余弦退火\nscheduler = optim.lr scheduler.CosineAnnealingLR \n    optimizer, T max=50, eta min=1e 6\n \n\n  4. ReduceLROnPlateau：监控指标下降时调整\nscheduler = optim.lr scheduler.ReduceLROnPlateau \n    optimizer, mode='min', factor=0.1, patience=5\n \n\n  训练循环\nfor epoch in range 100 :\n    train loss = train ... \n    val loss = validate ... \n\n    scheduler.step val loss     根据验证损失调整\n\n  5. Warmup策略：学习率预热\nclass WarmupScheduler:\n    def   init   self, optimizer, warmup epochs, base lr :\n        self.optimizer = optimizer\n        self.warmup epochs = warmup epochs\n        self.base lr = base lr\n\n    def step self, epoch :\n        if epoch < self.warmup epochs:\n            lr = self.base lr    epoch + 1  / self.warmup epochs\n            for param group in self.optimizer.param groups:\n                param group 'lr'  = lr\n   \n\n   早停策略\n\n早停（Early Stopping）防止过拟合。\n\n   python\nclass EarlyStopping:\n    def   init   self, patience=7, min delta=0, mode='min' :\n        self.patience = patience\n        self.min delta = min delta\n        self.mode = mode\n        self.counter = 0\n        self.best score = None\n        self.early stop = False\n\n    def   call   self, score :\n        if self.best score is None:\n            self.best score = score\n        elif self. is improvement score :\n            self.best score = score\n            self.counter = 0\n        else:\n            self.counter += 1\n            if self.counter  = self.patience:\n                self.early stop = True\n\n        return self.early stop\n\n    def  is improve"
+    },
+    {
+      "id": "13-training-eval-学习率调度器",
+      "title": "学习率调度器",
+      "chapter": "13",
+      "chapterTitle": "训练技巧与模型评估",
+      "url": "chapters/13-training-eval.html#学习率调度器",
+      "body": ""
+    },
+    {
+      "id": "13-training-eval-早停策略",
+      "title": "早停策略",
+      "chapter": "13",
+      "chapterTitle": "训练技巧与模型评估",
+      "url": "chapters/13-training-eval.html#早停策略",
+      "body": ""
+    },
+    {
+      "id": "13-training-eval-梯度裁剪",
+      "title": "梯度裁剪",
+      "chapter": "13",
+      "chapterTitle": "训练技巧与模型评估",
+      "url": "chapters/13-training-eval.html#梯度裁剪",
+      "body": ""
+    },
+    {
+      "id": "13-training-eval-混合精度训练",
+      "title": "混合精度训练",
+      "chapter": "13",
+      "chapterTitle": "训练技巧与模型评估",
+      "url": "chapters/13-training-eval.html#混合精度训练",
+      "body": ""
+    },
+    {
+      "id": "13-training-eval-完整的训练流程",
+      "title": "完整的训练流程",
+      "chapter": "13",
+      "chapterTitle": "训练技巧与模型评估",
+      "url": "chapters/13-training-eval.html#完整的训练流程",
+      "body": ""
+    },
+    {
+      "id": "13-training-eval-混淆矩阵",
+      "title": "混淆矩阵",
+      "chapter": "13",
+      "chapterTitle": "训练技巧与模型评估",
+      "url": "chapters/13-training-eval.html#混淆矩阵",
+      "body": ""
+    },
+    {
+      "id": "13-training-eval-分类报告",
+      "title": "分类报告",
+      "chapter": "13",
+      "chapterTitle": "训练技巧与模型评估",
+      "url": "chapters/13-training-eval.html#分类报告",
+      "body": ""
+    },
+    {
+      "id": "13-training-eval-学习曲线可视化",
+      "title": "学习曲线可视化",
+      "chapter": "13",
+      "chapterTitle": "训练技巧与模型评估",
+      "url": "chapters/13-training-eval.html#学习曲线可视化",
+      "body": ""
+    },
+    {
+      "id": "13-training-eval-中间层特征可视化",
+      "title": "中间层特征可视化",
+      "chapter": "13",
+      "chapterTitle": "训练技巧与模型评估",
+      "url": "chapters/13-training-eval.html#中间层特征可视化",
+      "body": ""
+    },
+    {
+      "id": "13-training-eval-grad-cam梯度加权类激活映射",
+      "title": "Grad-CAM：梯度加权类激活映射",
+      "chapter": "13",
+      "chapterTitle": "训练技巧与模型评估",
+      "url": "chapters/13-training-eval.html#grad-cam梯度加权类激活映射",
+      "body": ""
+    },
+    {
+      "id": "13-training-eval-常见错误与解决方案",
+      "title": "常见错误与解决方案",
+      "chapter": "13",
+      "chapterTitle": "训练技巧与模型评估",
+      "url": "chapters/13-training-eval.html#常见错误与解决方案",
+      "body": ""
+    },
+    {
+      "id": "13-training-eval-图像维度错误",
+      "title": "图像维度错误",
+      "chapter": "13",
+      "chapterTitle": "训练技巧与模型评估",
+      "url": "chapters/13-training-eval.html#图像维度错误",
+      "body": ""
+    },
+    {
+      "id": "13-training-eval-标准化不一致",
+      "title": "标准化不一致",
+      "chapter": "13",
+      "chapterTitle": "训练技巧与模型评估",
+      "url": "chapters/13-training-eval.html#标准化不一致",
+      "body": ""
+    },
+    {
+      "id": "13-training-eval-gpu内存不足",
+      "title": "GPU内存不足",
+      "chapter": "13",
+      "chapterTitle": "训练技巧与模型评估",
+      "url": "chapters/13-training-eval.html#gpu内存不足",
+      "body": ""
+    },
+    {
+      "id": "13-training-eval-模型eval模式忘记切换",
+      "title": "模型eval模式忘记切换",
+      "chapter": "13",
+      "chapterTitle": "训练技巧与模型评估",
+      "url": "chapters/13-training-eval.html#模型eval模式忘记切换",
+      "body": ""
+    },
+    {
+      "id": "13-training-eval-cnn训练快速查阅表",
+      "title": "CNN训练快速查阅表",
+      "chapter": "13",
+      "chapterTitle": "训练技巧与模型评估",
+      "url": "chapters/13-training-eval.html#cnn训练快速查阅表",
+      "body": ""
+    },
+    {
+      "id": "13-training-eval-总结与下一步",
+      "title": "总结与下一步",
+      "chapter": "13",
+      "chapterTitle": "训练技巧与模型评估",
+      "url": "chapters/13-training-eval.html#总结与下一步",
+      "body": ""
+    },
+    {
+      "id": "13-training-eval-本篇笔记核心要点",
+      "title": "本篇笔记核心要点",
+      "chapter": "13",
+      "chapterTitle": "训练技巧与模型评估",
+      "url": "chapters/13-training-eval.html#本篇笔记核心要点",
+      "body": ""
+    },
+    {
+      "id": "13-training-eval-下一步学习建议",
+      "title": "下一步学习建议",
+      "chapter": "13",
+      "chapterTitle": "训练技巧与模型评估",
+      "url": "chapters/13-training-eval.html#下一步学习建议",
+      "body": ""
+    },
+    {
+      "id": "13-training-eval-推荐资源",
+      "title": "推荐资源",
+      "chapter": "13",
+      "chapterTitle": "训练技巧与模型评估",
+      "url": "chapters/13-training-eval.html#推荐资源",
+      "body": ""
+    },
+    {
+      "id": "14-rnn-math",
+      "title": "RNN 基础概念与数学原理",
+      "chapter": "14",
+      "chapterTitle": "RNN 基础概念与数学原理",
+      "partTitle": "序列与自然语言处理",
+      "url": "chapters/14-rnn-math.html",
+      "body": "\n   日常生活中的序列数据\n\n序列数据在我们的生活中无处不在：\n\n  文本数据  是最常见的序列。一句话中每个单词都不是独立的，\"我今天去图书馆看书\"，顺序决定语义。把顺序打乱变成\"图书馆看我去书\"，所有词都在，但完全无法理解——  顺序是序列数据的本质特征  。\n\n  时间序列数据  同样无处不在。股票价格、气温变化、心电图信号，都是随时间变化的序列。某个时间点的值与之前的值有关联。\n\n  音频数据  是时间轴上连续变化的信号。语音识别需要理解音频片段之间的时序关系。\n\n  视频数据  是帧的序列，每一帧与前后帧紧密相关，动作识别依赖这种时序信息。\n\n    序列任务的5种类型\n\n常规任务可以分成以下几种：\n\n   \n一对一  one to one ：普通分类\n输入： x  → 输出： y \n例子：图片分类（不是序列任务，CNN或MLP做）\n\n一对多  one to many ：从一个输入生成序列\n输入： x  → 输出： y1, y2, y3, ... \n例子：图片描述（给一张图片，生成一段话）\n\n多对一  many to one ：从序列得到一个输出\n输入： x1, x2, x3  → 输出： y \n例子：情感分析（一段话 → 正面/负面）\n\n多对多（同步）：每个时刻都有输出\n输入： x1, x2, x3  → 输出： y1, y2, y3 \n例子：词性标注（每个词 → 名词/动词/形容词...）\n\n多对多（异步）：输入完毕后才开始输出\n输入： x1, x2, ..., xn  → 输出： y1, y2, ..., ym \n例子：机器翻译（读完英文句子，输出中文）\n   \n\n后4种类型对应了RNN的大部分实际应用场景。\n\n    序列数据 vs 图像数据\n\n  特征   图像数据   序列数据  \n                            \n  数据结构   网格（像素）   链式（时间步）  \n  关键假设   空间局部性   时序依赖性  \n  关键挑战   平移不变性   变长、长程依赖  \n  主要模型   CNN   RNN/Transformer  \n  顺序重要吗   否（可以小幅度旋转图片）   是（不能打乱句子）  \n\n    传统方法的局限\n\n在RNN出现之前，处理序列数据主要靠手工提取特征（词频、TF IDF、n gram），然后输入传统机器学习模型。核心问题有两个：\n\n首先，  特征工程耗时耗力  ，不同任务需要完全不同的特征设计。\n\n其次，  无法捕捉长距离依赖  。\"虽然他昨天很晚才睡，但是今天他还是很早  起床  \"——要预测\"起床\"，需要记住很久之前的\"很晚才睡\"。n gram只能捕捉局部信息，无法处理这类长距离关联。\n\n   RNN的核心思想\n\nRNN的核心思想是引入  循环机制  ——网络有一个\"记忆\"（隐藏状态），每处理一个新输入，就将当前输入与之前的记忆结合，生成新的记忆和输出。\n\n   \n\n\n    为什么需要RNN\n\n要理解RNN的必要性，我们先看看用全连接网络（FCN）处理序列会遇到什么问题。\n\n  问题1：输入长度固定  。FCN要求固定大小的输入。但句子长度不固定——有的3个词，有的50个词。如果用最大长度padding，短句子会有大量无效信息。\n\n  问题2：无法利用顺序信息  。FCN把所有输入一起处理，\"我爱你\"和\"你爱我\"会产生完全不同的语义，但如果我们只是把词向量加起来，这两者的结果是一样的。\n\n  问题3：参数数量随长度爆炸  。如果序列长100，每个词100维，输入就是10000维，第一层全连接的参数量极大。\n\nRNN通过  共享参数  解决了这些问题。\n\n  🔍   深层思考：参数共享的深意  \n \n  RNN在所有时间步使用同样的权重矩阵（W ih, W hh）。这不只是节省参数的技巧，背后有深刻的含义：\n \n    它是一种归纳偏置（Inductive Bias）  。参数共享隐含地假设\"处理第t个词的规则与处理第t+5个词的规则相同\"。这就像我们阅读时，理解\"爱\"这个字的方法，不会因为它是句子的第2个字还是第8个字而不同。\n \n    它使RNN能泛化到任意长度序列  。训练时序列长度可以是50，推理时可以是100，因为网络的\"规则\"是与位置无关的。\n \n  类比：这就像用同一个for循环处理不同长度的数组，而不是把每次迭代写成不同的代码块。RNN就是序列处理的\"for循环\"。\n\n\n   RNN的工作原理与结构\n\n  基本结构  ：\n\n   \n                     输出 y 1    输出 y 2    输出 y 3\n                       ↑           ↑           ↑"
+    },
+    {
+      "id": "14-rnn-math-日常生活中的序列数据",
+      "title": "日常生活中的序列数据",
+      "chapter": "14",
+      "chapterTitle": "RNN 基础概念与数学原理",
+      "url": "chapters/14-rnn-math.html#日常生活中的序列数据",
+      "body": ""
+    },
+    {
+      "id": "14-rnn-math-序列任务的5种类型",
+      "title": "序列任务的5种类型",
+      "chapter": "14",
+      "chapterTitle": "RNN 基础概念与数学原理",
+      "url": "chapters/14-rnn-math.html#序列任务的5种类型",
+      "body": ""
+    },
+    {
+      "id": "14-rnn-math-序列数据-vs-图像数据",
+      "title": "序列数据 vs 图像数据",
+      "chapter": "14",
+      "chapterTitle": "RNN 基础概念与数学原理",
+      "url": "chapters/14-rnn-math.html#序列数据-vs-图像数据",
+      "body": ""
+    },
+    {
+      "id": "14-rnn-math-传统方法的局限",
+      "title": "传统方法的局限",
+      "chapter": "14",
+      "chapterTitle": "RNN 基础概念与数学原理",
+      "url": "chapters/14-rnn-math.html#传统方法的局限",
+      "body": ""
+    },
+    {
+      "id": "14-rnn-math-rnn的核心思想",
+      "title": "RNN的核心思想",
+      "chapter": "14",
+      "chapterTitle": "RNN 基础概念与数学原理",
+      "url": "chapters/14-rnn-math.html#rnn的核心思想",
+      "body": ""
+    },
+    {
+      "id": "14-rnn-math-为什么需要rnn",
+      "title": "为什么需要RNN",
+      "chapter": "14",
+      "chapterTitle": "RNN 基础概念与数学原理",
+      "url": "chapters/14-rnn-math.html#为什么需要rnn",
+      "body": ""
+    },
+    {
+      "id": "14-rnn-math-rnn的工作原理与结构",
+      "title": "RNN的工作原理与结构",
+      "chapter": "14",
+      "chapterTitle": "RNN 基础概念与数学原理",
+      "url": "chapters/14-rnn-math.html#rnn的工作原理与结构",
+      "body": ""
+    },
+    {
+      "id": "14-rnn-math-前向传播数学推导",
+      "title": "前向传播数学推导",
+      "chapter": "14",
+      "chapterTitle": "RNN 基础概念与数学原理",
+      "url": "chapters/14-rnn-math.html#前向传播数学推导",
+      "body": ""
+    },
+    {
+      "id": "14-rnn-math-反向传播bptt数学推导",
+      "title": "反向传播（BPTT）数学推导",
+      "chapter": "14",
+      "chapterTitle": "RNN 基础概念与数学原理",
+      "url": "chapters/14-rnn-math.html#反向传播bptt数学推导",
+      "body": ""
+    },
+    {
+      "id": "14-rnn-math-梯度消失与梯度爆炸rnn的阿喀琉斯之踵",
+      "title": "梯度消失与梯度爆炸——RNN的阿喀琉斯之踵",
+      "chapter": "14",
+      "chapterTitle": "RNN 基础概念与数学原理",
+      "url": "chapters/14-rnn-math.html#梯度消失与梯度爆炸rnn的阿喀琉斯之踵",
+      "body": ""
+    },
+    {
+      "id": "14-rnn-math-深层思考为什么用tanh而不是relu",
+      "title": "深层思考：为什么用tanh而不是ReLU？",
+      "chapter": "14",
+      "chapterTitle": "RNN 基础概念与数学原理",
+      "url": "chapters/14-rnn-math.html#深层思考为什么用tanh而不是relu",
+      "body": ""
+    },
+    {
+      "id": "15-numpy-rnn",
+      "title": "用 NumPy 手写 RNN",
+      "chapter": "15",
+      "chapterTitle": "用 NumPy 手写 RNN",
+      "partTitle": "序列与自然语言处理",
+      "url": "chapters/15-numpy-rnn.html",
+      "body": "\n    本章定位  ：你刚刚学完 RNN 的数学原理和 BPTT，脑子里有公式，但公式还是\"符号\"，不是\"代码\"。本章的目标只有一个：  用 NumPy 把第一章的公式原原本本地写成可以运行的代码  ，不借助任何深度学习框架。完成之后，你再去看  nn.RNN ，会发现它只是帮你把这些步骤打了个包——而不是什么魔法。\n\n      \n\n   为什么要在 PyTorch 之前手写一遍\n\n如果你学过 Michael Nielsen 的《神经网络与深度学习》，你应该有印象：他用 NumPy 手写了 MLP 的前向传播和反向传播，每一步矩阵怎么乘、梯度怎么传，都清清楚楚。你看完之后，再去用 PyTorch 的  nn.Linear ，就知道它在帮你做什么。\n\n nn.RNN  也是一样。它把循环、矩阵乘法、激活函数、多时间步全部封装进去，你只需要喂数据，它吐输出。这对工程很好，但对学习来说，  如果你不知道里面发生了什么， nn.RNN  就只是一个黑盒  。\n\n所以本章我们先不用 PyTorch。只用 NumPy，只实现  前向传播  ，把第一章的这个公式彻底变成代码：\n\n$$h t = \\tanh!\\left W  ih , x t + b  ih  + W  hh , h  t 1  + b  hh \\right $$\n\n反向传播（BPTT）的代码实现我们暂时跳过——因为 PyTorch 的 autograd 会帮我们处理，而且手写 BPTT 的代码复杂度远高于前向传播，容易喧宾夺主。本章的核心目标是：  让公式和代码之间不再有距离感  。\n\n      \n\n   动手实现\n\n    准备工作\n\n   python\nimport numpy as np\n\n  固定随机种子，保证每次运行结果一致，方便调试\nnp.random.seed 42 \n   \n\n然后定义好我们要用的所有维度。这几个数字对应的就是第一章讲过的概念，先把它们写下来：\n\n   python\ninput size  = 4     x t 的维度：每个时间步输入向量有多长\nhidden size = 3     h t 的维度：隐藏状态向量有多长\nseq len     = 5     序列长度：一共有多少个时间步\nbatch size  = 1     先处理单条序列，batch=1，之后再推广\n   \n\n  这里故意把维度取得很小（4、3、5），是为了让你之后打印出来能一眼看清楚每个矩阵的内容，而不是被一大堆数字淹没。\n\n      \n\n    第一步：初始化权重和偏置\n\n回忆公式里有四个可学习的参数：$W  ih $、$W  hh $、$b  ih $、$b  hh $。\n\n用公式推一下每个参数的形状：\n\n  $W  ih $ 负责把输入 $x t$（ input size  维）变换到隐藏空间（ hidden size  维），所以形状是 $ \\text hidden size ,\\ \\text input size  $\n  $W  hh $ 负责把上一步的隐藏状态 $h  t 1 $（ hidden size  维）映射回隐藏空间（ hidden size  维），所以形状是 $ \\text hidden size ,\\ \\text hidden size  $\n  $b  ih $ 和 $b  hh $ 都是偏置，形状都是 $ \\text hidden size , $\n\n   python\n  W ih：输入到隐藏层的权重矩阵，形状  hidden size, input size \nW ih = np.random.randn hidden size, input size    0.1\n\n  W hh：隐藏层到隐藏层的权重矩阵，形状  hidden size, hidden size \nW hh = np.random.randn hidden size, hidden size    0.1\n\n  b ih：输入分支的偏置，形状  hidden size, \nb ih = np.zeros hidden size \n\n  b hh：隐藏分支的偏置，形状  hidden size, \nb hh = np.zeros hidden size \n\nprint \"W ih shape:\", W ih.shape       3, 4 \nprint \"W hh shape:\", W hh.shape       3, 3 \nprint \"b ih shape:\", b ih.shape       3, \nprint \"b hh shape:\", b hh.shape       3, \n   \n\n   0.1  是为了让初始权重偏小，避免 tanh"
+    },
+    {
+      "id": "15-numpy-rnn-为什么要在-pytorch-之前手写一遍",
+      "title": "为什么要在 PyTorch 之前手写一遍",
+      "chapter": "15",
+      "chapterTitle": "用 NumPy 手写 RNN",
+      "url": "chapters/15-numpy-rnn.html#为什么要在-pytorch-之前手写一遍",
+      "body": ""
+    },
+    {
+      "id": "15-numpy-rnn-动手实现",
+      "title": "动手实现",
+      "chapter": "15",
+      "chapterTitle": "用 NumPy 手写 RNN",
+      "url": "chapters/15-numpy-rnn.html#动手实现",
+      "body": ""
+    },
+    {
+      "id": "15-numpy-rnn-准备工作",
+      "title": "准备工作",
+      "chapter": "15",
+      "chapterTitle": "用 NumPy 手写 RNN",
+      "url": "chapters/15-numpy-rnn.html#准备工作",
+      "body": ""
+    },
+    {
+      "id": "15-numpy-rnn-第一步初始化权重和偏置",
+      "title": "第一步：初始化权重和偏置",
+      "chapter": "15",
+      "chapterTitle": "用 NumPy 手写 RNN",
+      "url": "chapters/15-numpy-rnn.html#第一步初始化权重和偏置",
+      "body": ""
+    },
+    {
+      "id": "15-numpy-rnn-第二步准备输入序列和初始隐藏状态",
+      "title": "第二步：准备输入序列和初始隐藏状态",
+      "chapter": "15",
+      "chapterTitle": "用 NumPy 手写 RNN",
+      "url": "chapters/15-numpy-rnn.html#第二步准备输入序列和初始隐藏状态",
+      "body": ""
+    },
+    {
+      "id": "15-numpy-rnn-第三步手写单个时间步的计算",
+      "title": "第三步：手写单个时间步的计算",
+      "chapter": "15",
+      "chapterTitle": "用 NumPy 手写 RNN",
+      "url": "chapters/15-numpy-rnn.html#第三步手写单个时间步的计算",
+      "body": ""
+    },
+    {
+      "id": "15-numpy-rnn-第四步把单步计算展开成完整序列",
+      "title": "第四步：把单步计算展开成完整序列",
+      "chapter": "15",
+      "chapterTitle": "用 NumPy 手写 RNN",
+      "url": "chapters/15-numpy-rnn.html#第四步把单步计算展开成完整序列",
+      "body": ""
+    },
+    {
+      "id": "15-numpy-rnn-与-pytorch-对比验证",
+      "title": "与 PyTorch 对比验证",
+      "chapter": "15",
+      "chapterTitle": "用 NumPy 手写 RNN",
+      "url": "chapters/15-numpy-rnn.html#与-pytorch-对比验证",
+      "body": ""
+    },
+    {
+      "id": "15-numpy-rnn-第五步和-pytorch-的-nnrnn-对比验证",
+      "title": "第五步：和 PyTorch 的 nn.RNN 对比验证",
+      "chapter": "15",
+      "chapterTitle": "用 NumPy 手写 RNN",
+      "url": "chapters/15-numpy-rnn.html#第五步和-pytorch-的-nnrnn-对比验证",
+      "body": ""
+    },
+    {
+      "id": "15-numpy-rnn-把手写代码整理成一个函数",
+      "title": "把手写代码整理成一个函数",
+      "chapter": "15",
+      "chapterTitle": "用 NumPy 手写 RNN",
+      "url": "chapters/15-numpy-rnn.html#把手写代码整理成一个函数",
+      "body": ""
+    },
+    {
+      "id": "15-numpy-rnn-小结",
+      "title": "小结",
+      "chapter": "15",
+      "chapterTitle": "用 NumPy 手写 RNN",
+      "url": "chapters/15-numpy-rnn.html#小结",
+      "body": ""
+    },
+    {
+      "id": "16-pytorch-rnn",
+      "title": "PyTorch 中的 RNN 实现",
+      "chapter": "16",
+      "chapterTitle": "PyTorch 中的 RNN 实现",
+      "partTitle": "序列与自然语言处理",
+      "url": "chapters/16-pytorch-rnn.html",
+      "body": "\n   nn.RNN：基础循环层\n\n    从公式到代码：先建立映射关系\n\n你已经知道RNN在每个时间步做的事情可以用一个公式描述：\n$$\nh t = \\tanh W  ih  x t + b  ih  + W  hh  h  t 1  + b  hh  \n$$\n其中：\n\n  $x t $ 是当前时间步的输入\n  $h  t 1  $ 是上一时间步传来的隐藏状态\n  $W  ih  $、$W  hh  $ 是两个权重矩阵\n  $b  ih  $、$b  hh  $ 是偏置\n  $h t $ 是当前时间步输出的隐藏状态\n\n  PyTorch的  nn.RNN  就是把这个公式封装好了。   你不需要手写矩阵乘法，不需要手动循环时间步—— nn.RNN  帮你全部搞定。你只需要告诉它几个关键的\"尺寸信息\"，它就能自动构建好所有参数，并在前向传播时跑完整个序列。\n\n      \n\n    第一步：创建一个 RNN 层\n\npython\n\n   python\nimport torch.nn as nn\n\nrnn = nn.RNN input size=10, hidden size=20 \n   \n\n就这一行，一个完整的RNN层就建好了。但这里有两个参数需要你理解清楚，因为它们直接对应公式里的维度：\n\n   input size=10    — 每个时间步，你喂给RNN的向量有多长。\n\n比如你在处理文字，每个词被表示成一个10维的向量，那  input size=10 。这对应公式里 $x t $ 的维度。\n\n   hidden size=20    — 隐藏状态向量的长度。\n\n这是RNN\"记忆\"的容量，也是每个时间步输出的向量长度。它决定了 $h t $ 的维度，同时也决定了 $W  hh  $ 是一个 $20 \\times 20 $ 的方阵（因为 $h  t 1  $ 也是20维的）。\n\n  💡   直觉类比  ： input size  是\"耳朵能听多少信息\"， hidden size  是\"大脑有多大的工作记忆\"。\n\n      \n\n    第二步：理解数据的形状（Shape）\n\n在把数据喂给RNN之前，你必须先搞清楚PyTorch期望的数据格式。\n\nRNN处理的是  序列数据  ，所以输入天然有三个维度：\n\n  维度         含义                       示例                  \n                                                                \n  batch size   一次处理多少条序列         5句话同时处理         \n  seq len      每条序列有多少个时间步     每句话10个词          \n  input size   每个时间步输入向量的维度   每个词用10维向量表示  \n\n当你设置  batch first=True  时（  推荐初学者始终开启  ），输入张量的形状就是：\n\n   \n batch size, seq len, input size \n      5    ,   10   ,    10\n   \n\n如果不开启（默认），形状是   seq len, batch size, input size  ，顺序不同，容易搞混，所以我们先统一用  batch first=True 。\n\n      \n\n    第三步：构造输入数据\n\npython\n\n   python\nimport torch\n\nbatch size = 5\nseq len = 10\ninput size = 10    与创建RNN时一致\n\nx = torch.randn batch size, seq len, input size \n   \n\n torch.randn ...   生成服从标准正态分布的随机张量，这里我们用随机数来模拟\"真实数据\"。实际项目里这里会是词嵌入、传感器读数等。\n\n现在  x  的形状是   5, 10, 10  ，含义是：5条序列，每条序列10个时间步，每个时间步一个10维向量。\n\n      \n\n    第四步：前向传播，拿到输出\n\npython\n\n   python\noutput, hidden = rnn x \n   \n\n注意这里返回了  两个东西  ，这是初学者经常感到困惑的地方。让我们仔细拆解。\n\n   output    — 每一个时间步的隐藏状态，全部打包在一起。\n\nRNN从 $t=1 $ 跑到 $t=10 $，每步都产生一个 $h t $，  output  把这10个 $h t $ 全部存下来了。形状是：\n\n   \n batch size,"
+    },
+    {
+      "id": "16-pytorch-rnn-nnrnn基础循环层",
+      "title": "nn.RNN：基础循环层",
+      "chapter": "16",
+      "chapterTitle": "PyTorch 中的 RNN 实现",
+      "url": "chapters/16-pytorch-rnn.html#nnrnn基础循环层",
+      "body": ""
+    },
+    {
+      "id": "16-pytorch-rnn-从公式到代码先建立映射关系",
+      "title": "从公式到代码：先建立映射关系",
+      "chapter": "16",
+      "chapterTitle": "PyTorch 中的 RNN 实现",
+      "url": "chapters/16-pytorch-rnn.html#从公式到代码先建立映射关系",
+      "body": ""
+    },
+    {
+      "id": "16-pytorch-rnn-第一步创建一个-rnn-层",
+      "title": "第一步：创建一个 RNN 层",
+      "chapter": "16",
+      "chapterTitle": "PyTorch 中的 RNN 实现",
+      "url": "chapters/16-pytorch-rnn.html#第一步创建一个-rnn-层",
+      "body": ""
+    },
+    {
+      "id": "16-pytorch-rnn-第二步理解数据的形状shape",
+      "title": "第二步：理解数据的形状（Shape）",
+      "chapter": "16",
+      "chapterTitle": "PyTorch 中的 RNN 实现",
+      "url": "chapters/16-pytorch-rnn.html#第二步理解数据的形状shape",
+      "body": ""
+    },
+    {
+      "id": "16-pytorch-rnn-第三步构造输入数据",
+      "title": "第三步：构造输入数据",
+      "chapter": "16",
+      "chapterTitle": "PyTorch 中的 RNN 实现",
+      "url": "chapters/16-pytorch-rnn.html#第三步构造输入数据",
+      "body": ""
+    },
+    {
+      "id": "16-pytorch-rnn-第四步前向传播拿到输出",
+      "title": "第四步：前向传播，拿到输出",
+      "chapter": "16",
+      "chapterTitle": "PyTorch 中的 RNN 实现",
+      "url": "chapters/16-pytorch-rnn.html#第四步前向传播拿到输出",
+      "body": ""
+    },
+    {
+      "id": "16-pytorch-rnn-第五步理解参数数量",
+      "title": "第五步：理解参数数量",
+      "chapter": "16",
+      "chapterTitle": "PyTorch 中的 RNN 实现",
+      "url": "chapters/16-pytorch-rnn.html#第五步理解参数数量",
+      "body": ""
+    },
+    {
+      "id": "16-pytorch-rnn-第六步认识其余参数",
+      "title": "第六步：认识其余参数",
+      "chapter": "16",
+      "chapterTitle": "PyTorch 中的 RNN 实现",
+      "url": "chapters/16-pytorch-rnn.html#第六步认识其余参数",
+      "body": ""
+    },
+    {
+      "id": "16-pytorch-rnn-完整实践代码",
+      "title": "完整实践代码",
+      "chapter": "16",
+      "chapterTitle": "PyTorch 中的 RNN 实现",
+      "url": "chapters/16-pytorch-rnn.html#完整实践代码",
+      "body": ""
+    },
+    {
+      "id": "16-pytorch-rnn-nnrnncell单个时间步的精细控制",
+      "title": "nn.RNNCell：单个时间步的精细控制",
+      "chapter": "16",
+      "chapterTitle": "PyTorch 中的 RNN 实现",
+      "url": "chapters/16-pytorch-rnn.html#nnrnncell单个时间步的精细控制",
+      "body": ""
+    },
+    {
+      "id": "16-pytorch-rnn-多层rnn与双向rnn",
+      "title": "多层RNN与双向RNN",
+      "chapter": "16",
+      "chapterTitle": "PyTorch 中的 RNN 实现",
+      "url": "chapters/16-pytorch-rnn.html#多层rnn与双向rnn",
+      "body": ""
+    },
+    {
+      "id": "16-pytorch-rnn-隐藏状态的初始化与管理",
+      "title": "隐藏状态的初始化与管理",
+      "chapter": "16",
+      "chapterTitle": "PyTorch 中的 RNN 实现",
+      "url": "chapters/16-pytorch-rnn.html#隐藏状态的初始化与管理",
+      "body": ""
+    },
+    {
+      "id": "17-lstm-gru",
+      "title": "LSTM 与 GRU",
+      "chapter": "17",
+      "chapterTitle": "LSTM 与 GRU",
+      "partTitle": "序列与自然语言处理",
+      "url": "chapters/17-lstm-gru.html",
+      "body": "\n   LSTM的诞生背景——从问题出发\n\n标准RNN在长序列上存在严重的梯度消失问题。1997年，Sepp Hochreiter和Jürgen Schmidhuber提出LSTM，其设计动机来自一个核心问题：\n\n  如何让信息在时间序列中\"无损\"传播？  \n\n  关键洞察  ：梯度消失的根本原因是信息在每个时间步都经过乘法变换（矩阵乘法 + 非线性函数），导致梯度连乘后消失。\n\n  LSTM的解决方案  ：引入一条\"高速公路\"——细胞状态（Cell State），信息可以通过这条通道直接流动，只经过加法操作，梯度几乎不衰减。\n\n  💡   直觉：LSTM像什么？  \n \n  想象你在读一本书，同时在用便签纸记录重要信息：\n \n      细胞状态 C t  ：便签纸本身，可以长期保存信息\n      遗忘门  ：你决定擦掉便签上哪些不再相关的内容\n      输入门  ：你决定把当前页的什么内容写到便签上\n      输出门  ：你根据便签内容，决定当前怎么理解这页内容\n      隐藏状态 h t  ：你当前的\"工作记忆\"，用于即时推理\n \n  标准RNN只有h t（工作记忆），没有便签纸，所以很容易忘事。\n\n   LSTM门的数学原理\n\nLSTM有两种\"记忆\"：\n    细胞状态 C t  ：长期记忆（\"便签纸\"）\n    隐藏状态 h t  ：短期记忆（\"当前工作状态\"）\n\n  遗忘门（Forget Gate）  ：\n\n决定从细胞状态中丢弃多少信息。\n\n   \nf t = σ W f ·  h  t 1 , x t  + b f \n   \n\n  σ 是 sigmoid 函数，输出  0, 1 \n  f t 接近1：保留大部分信息\n  f t 接近0：丢弃大部分信息\n\n  🔍   为什么门用 sigmoid，值用 tanh？  \n \n      门  （遗忘门、输入门、输出门）输出  0, 1  范围的值，用于控制信息的\"比例\"——0%到100%通过。这是 sigmoid 的用途，因为它的输出天然在  0, 1 。\n \n      值  （候选细胞状态、最终输出）输出   1, 1  范围的值，表示\"方向\"和\"强度\"。tanh 能输出正负值，使模型能增加或减少记忆。如果用 sigmoid，细胞状态只能单调增加。\n \n  这是一种精妙的设计：sigmoid 是\"阀门\"，tanh 是\"水流方向和大小\"。\n\n  输入门（Input Gate）  ：\n\n决定将什么新信息写入细胞状态。\n\n   \ni t  = σ W i ·  h  t 1 , x t  + b i    ← 决定\"更新哪些位置\"\nC̃ t = tanh W C ·  h  t 1 , x t  + b C   ← 候选新内容（ 1到1）\n   \n\n  细胞状态更新  ：\n\n   \nC t = f t ⊙ C  t 1  + i t ⊙ C̃ t\n       ↑                 ↑\n  保留旧记忆          写入新信息\n   \n\n这是LSTM最关键的一步！这个加法操作使梯度可以\"直接\"流过，不经过非线性函数的压缩。\n\n  输出门（Output Gate）  ：\n\n决定从细胞状态中\"读出\"什么。\n\n   \no t = σ W o ·  h  t 1 , x t  + b o \nh t = o t ⊙ tanh C t \n   \n\n   LSTM前向传播：完整手动实现\n\n   python\nimport torch\nimport torch.nn as nn\n\ndef lstm cell manual x t, h prev, c prev, weight ih, weight hh, bias ih, bias hh :\n    \"\"\"\n    手动实现单个LSTM时间步（与nn.LSTMCell等价）\n\n    参数：\n    x t:        batch, input size \n    h prev:     batch, hidden size \n    c prev:     batch, hidden size \n    weight ih:  4   hidden size, input size   ← PyTorch将4个门的权重合并\n    weight hh:  4   hidden size, hidden size \n    bias ih:    4   hidden size, \n    bias hh:    4   hidden size, \n\n    返回：\n    h next:  batch, hidden size \n    c next:  batch, hidden size \n   "
+    },
+    {
+      "id": "17-lstm-gru-lstm的诞生背景从问题出发",
+      "title": "LSTM的诞生背景——从问题出发",
+      "chapter": "17",
+      "chapterTitle": "LSTM 与 GRU",
+      "url": "chapters/17-lstm-gru.html#lstm的诞生背景从问题出发",
+      "body": ""
+    },
+    {
+      "id": "17-lstm-gru-lstm门的数学原理",
+      "title": "LSTM门的数学原理",
+      "chapter": "17",
+      "chapterTitle": "LSTM 与 GRU",
+      "url": "chapters/17-lstm-gru.html#lstm门的数学原理",
+      "body": ""
+    },
+    {
+      "id": "17-lstm-gru-lstm前向传播完整手动实现",
+      "title": "LSTM前向传播：完整手动实现",
+      "chapter": "17",
+      "chapterTitle": "LSTM 与 GRU",
+      "url": "chapters/17-lstm-gru.html#lstm前向传播完整手动实现",
+      "body": ""
+    },
+    {
+      "id": "17-lstm-gru-lstm反向传播梯度高速公路",
+      "title": "LSTM反向传播：梯度高速公路",
+      "chapter": "17",
+      "chapterTitle": "LSTM 与 GRU",
+      "url": "chapters/17-lstm-gru.html#lstm反向传播梯度高速公路",
+      "body": ""
+    },
+    {
+      "id": "17-lstm-gru-pytorch中的lstm实现",
+      "title": "PyTorch中的LSTM实现",
+      "chapter": "17",
+      "chapterTitle": "LSTM 与 GRU",
+      "url": "chapters/17-lstm-gru.html#pytorch中的lstm实现",
+      "body": ""
+    },
+    {
+      "id": "17-lstm-gru-实践技巧遗忘门偏置初始化",
+      "title": "实践技巧：遗忘门偏置初始化",
+      "chapter": "17",
+      "chapterTitle": "LSTM 与 GRU",
+      "url": "chapters/17-lstm-gru.html#实践技巧遗忘门偏置初始化",
+      "body": ""
+    },
+    {
+      "id": "17-lstm-gru-lstm变体peephole连接",
+      "title": "LSTM变体：Peephole连接",
+      "chapter": "17",
+      "chapterTitle": "LSTM 与 GRU",
+      "url": "chapters/17-lstm-gru.html#lstm变体peephole连接",
+      "body": ""
+    },
+    {
+      "id": "17-lstm-gru-gru的设计哲学",
+      "title": "GRU的设计哲学",
+      "chapter": "17",
+      "chapterTitle": "LSTM 与 GRU",
+      "url": "chapters/17-lstm-gru.html#gru的设计哲学",
+      "body": ""
+    },
+    {
+      "id": "17-lstm-gru-gru数学公式",
+      "title": "GRU数学公式",
+      "chapter": "17",
+      "chapterTitle": "LSTM 与 GRU",
+      "url": "chapters/17-lstm-gru.html#gru数学公式",
+      "body": ""
+    },
+    {
+      "id": "17-lstm-gru-gru-vs-lstm-全面对比",
+      "title": "GRU vs LSTM 全面对比",
+      "chapter": "17",
+      "chapterTitle": "LSTM 与 GRU",
+      "url": "chapters/17-lstm-gru.html#gru-vs-lstm-全面对比",
+      "body": ""
+    },
+    {
+      "id": "17-lstm-gru-pytorch实现对比",
+      "title": "PyTorch实现对比",
+      "chapter": "17",
+      "chapterTitle": "LSTM 与 GRU",
+      "url": "chapters/17-lstm-gru.html#pytorch实现对比",
+      "body": ""
+    },
+    {
+      "id": "18-language-model",
+      "title": "字符级语言模型",
+      "chapter": "18",
+      "chapterTitle": "字符级语言模型",
+      "partTitle": "序列与自然语言处理",
+      "url": "chapters/18-language-model.html",
+      "body": "\n这一章介绍RNN最经典、最能体现其本质的应用：  字符级语言模型  。它能让RNN学会写诗、生成代码、甚至模仿莎士比亚。\n\n   什么是语言模型\n\n  语言模型（Language Model）  ：给定一段文本的前缀，预测下一个字符（或词）是什么。\n\n   \n输入：  \"今 天 天 气 真\"\n预测下一个字符：P 好  = 0.3, P 不  = 0.25, P 很  = 0.2, ...\n\n依次往后：\n输入：  \"今 天 天 气 真 好\"\n预测：  P ，  = 0.4, P 啊  = 0.2, ...\n   \n\n语言模型既是一个独立的任务，也是生成文本的基础工具。\n\n  为什么叫字符级（Character level）  ？\n\n  词级语言模型：以词为单位，词汇表大（几万到几十万），每步预测下一个词\n  字符级语言模型：以字符（字母/汉字）为单位，词汇表小（几百个），每步预测下一个字符\n\n字符级模型的优势：词汇表极小（英文只有95个可打印ASCII字符），天然处理未知词（OOV），能学到拼写规律。\n\n   困惑度（Perplexity）：衡量语言模型的标准\n\n  困惑度  是衡量语言模型好坏的标准指标。\n\n直觉理解：如果模型在每个位置需要在 k 个字符中\"猜\"，困惑度就约等于 k。困惑度越低，模型越确定，预测越准。\n\n数学定义：\n   \nPerplexity = exp 平均每字符的交叉熵损失 \n           = exp L \n   \n\n  随机猜测（均匀分布）：困惑度 = 词汇表大小（英文字符 ≈ 95）\n  好的字符级模型：困惑度 < 10\n  完美模型：困惑度 = 1\n\n   python\nimport math\n\ndef compute perplexity model, data loader, criterion, device :\n    model.eval  \n    total loss = 0\n    total tokens = 0\n\n    with torch.no grad  :\n        for x, y in data loader:\n            x, y = x.to device , y.to device \n            output,   = model x \n            loss = criterion output.view  1, output.size  1  , y.view  1  \n            total loss += loss.item     y.numel  \n            total tokens += y.numel  \n\n    avg loss = total loss / total tokens\n    perplexity = math.exp avg loss \n    return perplexity\n   \n\n   字符级RNN实现\n\n   python\nimport torch\nimport torch.nn as nn\nimport numpy as np\n\n  ===== 数据准备 =====\n  读取文本（这里用一个简单例子，实际可以是任何文本）\ntext = \"\"\"\n人之初，性本善。性相近，习相远。\n苟不教，性乃迁。教之道，贵以专。\n昔孟母，择邻处。子不学，断机杼。\n窦燕山，有义方。教五子，名俱扬。\n养不教，父之过。教不严，师之惰。\n\"\"\"\n\n  建立字符词汇表\nchars = sorted set text  \nvocab size = len chars \nchar2idx =  ch: i for i, ch in enumerate chars  \nidx2char =  i: ch for ch, i in char2idx.items   \n\nprint f\"词汇表大小:  vocab size \" \nprint f\"文本长度:  len text  \" \n\n  将文本转换为索引序列\nencoded =  char2idx ch  for ch in text \n\n\n  ===== 数据集 =====\nclass CharDataset torch.utils.data.Dataset :\n    def   init   self, encoded, seq len :\n        self.data = encoded\n        self.seq len = seq len\n\n    def   len   self :\n        return len self.data    self.seq len\n\n    def   g"
+    },
+    {
+      "id": "18-language-model-什么是语言模型",
+      "title": "什么是语言模型",
+      "chapter": "18",
+      "chapterTitle": "字符级语言模型",
+      "url": "chapters/18-language-model.html#什么是语言模型",
+      "body": ""
+    },
+    {
+      "id": "18-language-model-困惑度perplexity衡量语言模型的标准",
+      "title": "困惑度（Perplexity）：衡量语言模型的标准",
+      "chapter": "18",
+      "chapterTitle": "字符级语言模型",
+      "url": "chapters/18-language-model.html#困惑度perplexity衡量语言模型的标准",
+      "body": ""
+    },
+    {
+      "id": "18-language-model-字符级rnn实现",
+      "title": "字符级RNN实现",
+      "chapter": "18",
+      "chapterTitle": "字符级语言模型",
+      "url": "chapters/18-language-model.html#字符级rnn实现",
+      "body": ""
+    },
+    {
+      "id": "18-language-model-文本生成温度采样",
+      "title": "文本生成：温度采样",
+      "chapter": "18",
+      "chapterTitle": "字符级语言模型",
+      "url": "chapters/18-language-model.html#文本生成温度采样",
+      "body": ""
+    },
+    {
+      "id": "19-text-nlp",
+      "title": "文本处理与情感分析",
+      "chapter": "19",
+      "chapterTitle": "文本处理与情感分析",
+      "partTitle": "序列与自然语言处理",
+      "url": "chapters/19-text-nlp.html",
+      "body": "\n   文本预处理完整流程\n\n在实际项目中，文本预处理往往占据大量工作。\n\n  步骤1：分词（Tokenization）  \n\n   python\nimport re\n\n  英文分词（按空格和标点分割）\ndef tokenize en text :\n    text = text.lower  \n    tokens = re.findall r\"\\b \\w' +\\b\", text \n    return tokens\n\n  中文分词（需要jieba或类似工具）\nimport jieba\ndef tokenize zh text :\n    return list jieba.cut text  \n\n  测试\nen text = \"I love natural language processing! It's amazing.\"\nprint \"英文分词:\", tokenize en en text  \n   'i', 'love', 'natural', 'language', 'processing', \"it's\", 'amazing' \n\nzh text = \"我爱自然语言处理，它真的很神奇！\"\nprint \"中文分词:\", tokenize zh zh text  \n   \n\n  步骤2：建立词汇表  \n\n   python\nfrom collections import Counter\n\nclass Vocabulary:\n    \"\"\"词汇表：管理词到索引的映射\"\"\"\n    SPECIAL TOKENS =  '<pad ', '<unk ', '<sos ', '<eos ' \n    PAD IDX = 0\n    UNK IDX = 1\n    SOS IDX = 2\n    EOS IDX = 3\n\n    def   init   self, min freq=1, max size=None :\n        self.min freq = min freq\n        self.max size = max size\n        self.word2idx =   \n        self.idx2word =   \n        self.word count = Counter  \n\n    def build self, sentences :\n        \"\"\"从句子列表构建词汇表\"\"\"\n        for sentence in sentences:\n            self.word count.update sentence \n\n          添加特殊token\n        for i, tok in enumerate self.SPECIAL TOKENS :\n            self.word2idx tok  = i\n            self.idx2word i  = tok\n\n          按频率排序，过滤低频词\n        sorted words = sorted self.word count.items  ,\n                              key=lambda x:  x 1  \n        idx = len self.SPECIAL TOKENS \n        for word, count in sorted words:\n            if count < self.min freq:\n                break\n            if self.max size and idx  = self.max size:\n                break\n            self.word2idx word  = idx\n            self.idx2word idx  = word\n            idx += 1\n\n        print f\"词汇表构建完成： len self.word2idx   个词\" \n        return self\n\n    def encode self, word :\n        return self.word2idx.get word, self.UNK IDX \n\n    def decode self, idx :\n        return self.idx2word.get idx, '<unk ' \n\n    def sentence to indices self, sentence, add sos=False, add "
+    },
+    {
+      "id": "19-text-nlp-文本预处理完整流程",
+      "title": "文本预处理完整流程",
+      "chapter": "19",
+      "chapterTitle": "文本处理与情感分析",
+      "url": "chapters/19-text-nlp.html#文本预处理完整流程",
+      "body": ""
+    },
+    {
+      "id": "19-text-nlp-one-hot编码的问题与词嵌入的优势",
+      "title": "One-Hot编码的问题与词嵌入的优势",
+      "chapter": "19",
+      "chapterTitle": "文本处理与情感分析",
+      "url": "chapters/19-text-nlp.html#one-hot编码的问题与词嵌入的优势",
+      "body": ""
+    },
+    {
+      "id": "19-text-nlp-word2vec词嵌入的训练方法",
+      "title": "Word2Vec：词嵌入的训练方法",
+      "chapter": "19",
+      "chapterTitle": "文本处理与情感分析",
+      "url": "chapters/19-text-nlp.html#word2vec词嵌入的训练方法",
+      "body": ""
+    },
+    {
+      "id": "19-text-nlp-使用预训练词向量",
+      "title": "使用预训练词向量",
+      "chapter": "19",
+      "chapterTitle": "文本处理与情感分析",
+      "url": "chapters/19-text-nlp.html#使用预训练词向量",
+      "body": ""
+    },
+    {
+      "id": "19-text-nlp-完整数据流水线",
+      "title": "完整数据流水线",
+      "chapter": "19",
+      "chapterTitle": "文本处理与情感分析",
+      "url": "chapters/19-text-nlp.html#完整数据流水线",
+      "body": ""
+    },
+    {
+      "id": "19-text-nlp-基于bilstm注意力的文本分类模型",
+      "title": "基于BiLSTM+注意力的文本分类模型",
+      "chapter": "19",
+      "chapterTitle": "文本处理与情感分析",
+      "url": "chapters/19-text-nlp.html#基于bilstm注意力的文本分类模型",
+      "body": ""
+    },
+    {
+      "id": "19-text-nlp-训练与评估",
+      "title": "训练与评估",
+      "chapter": "19",
+      "chapterTitle": "文本处理与情感分析",
+      "url": "chapters/19-text-nlp.html#训练与评估",
+      "body": ""
+    },
+    {
+      "id": "19-text-nlp-推理对新文本进行预测",
+      "title": "推理：对新文本进行预测",
+      "chapter": "19",
+      "chapterTitle": "文本处理与情感分析",
+      "url": "chapters/19-text-nlp.html#推理对新文本进行预测",
+      "body": ""
+    },
+    {
+      "id": "20-seq2seq",
+      "title": "Seq2Seq 与注意力机制",
+      "chapter": "20",
+      "chapterTitle": "Seq2Seq 与注意力机制",
+      "partTitle": "序列与自然语言处理",
+      "url": "chapters/20-seq2seq.html",
+      "body": "\n   Seq2Seq架构\n\nSeq2Seq用于将一个序列映射到另一个（可能不同长度的）序列，是机器翻译、文本摘要、对话系统的基础。\n\n   \n编码阶段：\n\"I love you\" → Encoder →  上下文向量 c \n\n解码阶段（自回归）：\n c  → Decoder → \"我\"\n \"我\", c  → Decoder → \"爱\"\n \"我\", \"爱\", c  → Decoder → \"你\"\n \"我\", \"爱\", \"你\", c  → Decoder → \"<eos \"（结束）\n   \n\n  信息瓶颈问题  ：\n\n标准Seq2Seq的致命缺陷：编码器必须将整个输入序列的信息  压缩  到一个固定长度的向量中（LSTM的最后一个隐藏状态）。对于长句子，这个向量根本装不下所有信息。\n\n这就是  注意力机制  被发明的原因。\n\n   Bahdanau注意力（Additive Attention）\n\nBahdanau等人在2015年提出：解码器在每一步不只依赖固定的上下文向量，而是动态地\"关注\"编码器序列的不同位置。\n\n   \n解码\"我\"时：主要看 \"I\"\n解码\"爱\"时：主要看 \"love\"\n解码\"你\"时：主要看 \"you\"\n   \n\n  数学公式  ：\n\n设编码器所有隐藏状态为 h 1, ..., h T，解码器当前隐藏状态为 s  t 1 。\n\n   \n步骤1：计算注意力分数（能量）\n    e  t,i  = v^T · tanh W s · s  t 1  + W h · h i + b \n                 ↑  s  t 1 和h i的\"兼容性\"\n\n步骤2：Softmax得到注意力权重\n    α  t,i  = softmax e  t,1 , ..., e  t,T   i\n\n步骤3：加权求和，得到上下文向量\n    c t = Σ i α  t,i  · h i\n   \n\n  完整实现  ：\n\n   python\nclass BahdanauAttention nn.Module :\n    \"\"\"Bahdanau注意力（加性注意力）\"\"\"\n    def   init   self, encoder hidden dim, decoder hidden dim, attention dim :\n        super  .  init    \n        self.W encoder = nn.Linear encoder hidden dim, attention dim, bias=False \n        self.W decoder = nn.Linear decoder hidden dim, attention dim, bias=False \n        self.v = nn.Linear attention dim, 1, bias=False \n\n    def forward self, decoder hidden, encoder outputs, encoder mask=None :\n        \"\"\"\n        decoder hidden:  batch, decoder hidden dim \n        encoder outputs:  batch, src len, encoder hidden dim \n        encoder mask:  batch, src len ，True表示padding位置\n\n        返回：\n        context:  batch, encoder hidden dim    上下文向量\n        weights:  batch, src len    注意力权重（可用于可视化）\n        \"\"\"\n        src len = encoder outputs.size 1 \n\n          将decoder隐藏状态扩展为  batch, src len, decoder hidden dim \n        decoder hidden = decoder hidden.unsqueeze 1 .repeat 1, src len, 1 \n\n          计算能量\n        energy = self.v \n            torch.tanh self.W encoder encoder outputs  +\n                       self.W decoder decoder hidden  \n         .squeeze  1      batch, src len \n\n          Ma"
+    },
+    {
+      "id": "20-seq2seq-seq2seq架构",
+      "title": "Seq2Seq架构",
+      "chapter": "20",
+      "chapterTitle": "Seq2Seq 与注意力机制",
+      "url": "chapters/20-seq2seq.html#seq2seq架构",
+      "body": ""
+    },
+    {
+      "id": "20-seq2seq-bahdanau注意力additive-attention",
+      "title": "Bahdanau注意力（Additive Attention）",
+      "chapter": "20",
+      "chapterTitle": "Seq2Seq 与注意力机制",
+      "url": "chapters/20-seq2seq.html#bahdanau注意力additive-attention",
+      "body": ""
+    },
+    {
+      "id": "20-seq2seq-seq2seq训练teacher-forcing与exposure-bias",
+      "title": "Seq2Seq训练：Teacher Forcing与Exposure Bias",
+      "chapter": "20",
+      "chapterTitle": "Seq2Seq 与注意力机制",
+      "url": "chapters/20-seq2seq.html#seq2seq训练teacher-forcing与exposure-bias",
+      "body": ""
+    },
+    {
+      "id": "20-seq2seq-beam-search解码",
+      "title": "Beam Search解码",
+      "chapter": "20",
+      "chapterTitle": "Seq2Seq 与注意力机制",
+      "url": "chapters/20-seq2seq.html#beam-search解码",
+      "body": ""
+    },
+    {
+      "id": "21-advanced",
+      "title": "高级主题与 Transformer 过渡",
+      "chapter": "21",
+      "chapterTitle": "高级主题与 Transformer 过渡",
+      "partTitle": "序列与自然语言处理",
+      "url": "chapters/21-advanced.html",
+      "body": "\n   变长序列处理：Pack和Pad\n\n实际中，同一个batch里的序列长度不同，需要padding。但让LSTM处理padding位置是浪费，而且会影响最终隐藏状态。\n\n   python\nfrom torch.nn.utils.rnn import pack padded sequence, pad packed sequence\n\nclass EfficientLSTM nn.Module :\n    def   init   self, input size, hidden size :\n        super  .  init    \n        self.lstm = nn.LSTM input size, hidden size, batch first=True \n\n    def forward self, x, lengths :\n        \"\"\"\n        x:  batch, max len, input size    已padding的序列\n        lengths:  batch,    每个序列的真实长度\n        \"\"\"\n          按长度降序排序（pack padded sequence的要求）\n        lengths sorted, sort idx = lengths.sort descending=True \n        x sorted = x sort idx \n\n          打包：告诉LSTM每个序列实际多长，不处理padding\n        packed = pack padded sequence \n            x sorted, lengths sorted.cpu  , batch first=True\n         \n\n          LSTM只处理有效token\n        packed output,  h n, c n  = self.lstm packed \n\n          解包：还原padding格式\n        output,   = pad packed sequence packed output, batch first=True \n\n          还原排序\n         , unsort idx = sort idx.sort  \n        output = output unsort idx \n        h n = h n :, unsort idx, : \n        c n = c n :, unsort idx, : \n\n        return output,  h n, c n \n   \n\n   训练技巧\n\n    梯度裁剪的正确方式\n\n   python\n  ❌ 错误：按元素裁剪（改变梯度方向）\nfor param in model.parameters  :\n    if param.grad is not None:\n        param.grad.data.clamp   1, 1 \n\n  ✅ 正确：按全局范数裁剪（只改变幅度，不改变方向）\ntorch.nn.utils.clip grad norm  model.parameters  , max norm=1.0 \n   \n\n  🔍   为什么全局范数裁剪更好  \n \n  按元素裁剪时，大梯度被截断，小梯度不变，这会改变梯度的方向（各个维度之间的比例变了）。梯度方向决定了参数更新的\"走向\"，改变方向可能导致模型往错误的方向更新。\n \n  全局范数裁剪计算所有参数梯度的L2范数，如果超过阈值，等比例缩放所有梯度。这样梯度方向不变，只是走的步子小一点，是更合理的选择。\n\n    深层RNN与残差连接\n\n   python\nclass DeepBiLSTM nn.Module :\n    \"\"\"多层BiLSTM，层间有残差连接\"\"\"\n    def   init   self, input size, hidden size, num layers, dropout=0.3 :\n        super  .  init    \n        self.layers = nn.ModuleList  \n        self.layer norms = nn.ModuleList  \n        self.projs = nn.ModuleList  \n\n        for i in range num layers :\n            in size = input size if i == 0 else hidden si"
+    },
+    {
+      "id": "21-advanced-变长序列处理pack和pad",
+      "title": "变长序列处理：Pack和Pad",
+      "chapter": "21",
+      "chapterTitle": "高级主题与 Transformer 过渡",
+      "url": "chapters/21-advanced.html#变长序列处理pack和pad",
+      "body": ""
+    },
+    {
+      "id": "21-advanced-训练技巧",
+      "title": "训练技巧",
+      "chapter": "21",
+      "chapterTitle": "高级主题与 Transformer 过渡",
+      "url": "chapters/21-advanced.html#训练技巧",
+      "body": ""
+    },
+    {
+      "id": "21-advanced-梯度裁剪的正确方式",
+      "title": "梯度裁剪的正确方式",
+      "chapter": "21",
+      "chapterTitle": "高级主题与 Transformer 过渡",
+      "url": "chapters/21-advanced.html#梯度裁剪的正确方式",
+      "body": ""
+    },
+    {
+      "id": "21-advanced-深层rnn与残差连接",
+      "title": "深层RNN与残差连接",
+      "chapter": "21",
+      "chapterTitle": "高级主题与 Transformer 过渡",
+      "url": "chapters/21-advanced.html#深层rnn与残差连接",
+      "body": ""
+    },
+    {
+      "id": "21-advanced-layer-normalization-in-rnn",
+      "title": "Layer Normalization in RNN",
+      "chapter": "21",
+      "chapterTitle": "高级主题与 Transformer 过渡",
+      "url": "chapters/21-advanced.html#layer-normalization-in-rnn",
+      "body": ""
+    },
+    {
+      "id": "21-advanced-学习率调度策略",
+      "title": "学习率调度策略",
+      "chapter": "21",
+      "chapterTitle": "高级主题与 Transformer 过渡",
+      "url": "chapters/21-advanced.html#学习率调度策略",
+      "body": ""
+    },
+    {
+      "id": "21-advanced-dropout策略",
+      "title": "Dropout策略",
+      "chapter": "21",
+      "chapterTitle": "高级主题与 Transformer 过渡",
+      "url": "chapters/21-advanced.html#dropout策略",
+      "body": ""
+    },
+    {
+      "id": "21-advanced-时间序列的特点",
+      "title": "时间序列的特点",
+      "chapter": "21",
+      "chapterTitle": "高级主题与 Transformer 过渡",
+      "url": "chapters/21-advanced.html#时间序列的特点",
+      "body": ""
+    },
+    {
+      "id": "21-advanced-时间序列预测",
+      "title": "时间序列预测",
+      "chapter": "21",
+      "chapterTitle": "高级主题与 Transformer 过渡",
+      "url": "chapters/21-advanced.html#时间序列预测",
+      "body": ""
+    },
+    {
+      "id": "21-advanced-滑动窗口构建数据集",
+      "title": "滑动窗口构建数据集",
+      "chapter": "21",
+      "chapterTitle": "高级主题与 Transformer 过渡",
+      "url": "chapters/21-advanced.html#滑动窗口构建数据集",
+      "body": ""
+    },
+    {
+      "id": "21-advanced-lstm时间序列预测模型",
+      "title": "LSTM时间序列预测模型",
+      "chapter": "21",
+      "chapterTitle": "高级主题与 Transformer 过渡",
+      "url": "chapters/21-advanced.html#lstm时间序列预测模型",
+      "body": ""
+    },
+    {
+      "id": "21-advanced-rnn的根本局限",
+      "title": "RNN的根本局限",
+      "chapter": "21",
+      "chapterTitle": "高级主题与 Transformer 过渡",
+      "url": "chapters/21-advanced.html#rnn的根本局限",
+      "body": ""
+    },
+    {
+      "id": "21-advanced-从-rnn-到-transformer",
+      "title": "从 RNN 到 Transformer",
+      "chapter": "21",
+      "chapterTitle": "高级主题与 Transformer 过渡",
+      "url": "chapters/21-advanced.html#从-rnn-到-transformer",
+      "body": ""
+    },
+    {
+      "id": "21-advanced-注意力机制取代循环",
+      "title": "注意力机制取代循环",
+      "chapter": "21",
+      "chapterTitle": "高级主题与 Transformer 过渡",
+      "url": "chapters/21-advanced.html#注意力机制取代循环",
+      "body": ""
+    },
+    {
+      "id": "21-advanced-rnn仍然有价值吗",
+      "title": "RNN仍然有价值吗？",
+      "chapter": "21",
+      "chapterTitle": "高级主题与 Transformer 过渡",
+      "url": "chapters/21-advanced.html#rnn仍然有价值吗",
+      "body": ""
+    },
+    {
+      "id": "21-advanced-常见错误与解决方案",
+      "title": "常见错误与解决方案",
+      "chapter": "21",
+      "chapterTitle": "高级主题与 Transformer 过渡",
+      "url": "chapters/21-advanced.html#常见错误与解决方案",
+      "body": ""
+    },
+    {
+      "id": "21-advanced-错误1维度混乱",
+      "title": "错误1：维度混乱",
+      "chapter": "21",
+      "chapterTitle": "高级主题与 Transformer 过渡",
+      "url": "chapters/21-advanced.html#错误1维度混乱",
+      "body": ""
+    },
+    {
+      "id": "21-advanced-错误2隐藏状态管理不当",
+      "title": "错误2：隐藏状态管理不当",
+      "chapter": "21",
+      "chapterTitle": "高级主题与 Transformer 过渡",
+      "url": "chapters/21-advanced.html#错误2隐藏状态管理不当",
+      "body": ""
+    },
+    {
+      "id": "21-advanced-错误3测试集时忘记torchno_grad",
+      "title": "错误3：测试集时忘记torch.no_grad()",
+      "chapter": "21",
+      "chapterTitle": "高级主题与 Transformer 过渡",
+      "url": "chapters/21-advanced.html#错误3测试集时忘记torchno_grad",
+      "body": ""
+    },
+    {
+      "id": "21-advanced-错误4损失函数包含padding位置",
+      "title": "错误4：损失函数包含Padding位置",
+      "chapter": "21",
+      "chapterTitle": "高级主题与 Transformer 过渡",
+      "url": "chapters/21-advanced.html#错误4损失函数包含padding位置",
+      "body": ""
+    },
+    {
+      "id": "21-advanced-错误5双向lstm隐藏状态拼接错误",
+      "title": "错误5：双向LSTM隐藏状态拼接错误",
+      "chapter": "21",
+      "chapterTitle": "高级主题与 Transformer 过渡",
+      "url": "chapters/21-advanced.html#错误5双向lstm隐藏状态拼接错误",
+      "body": ""
+    },
+    {
+      "id": "21-advanced-错误6梯度爆炸导致loss变nan",
+      "title": "错误6：梯度爆炸导致Loss变NaN",
+      "chapter": "21",
+      "chapterTitle": "高级主题与 Transformer 过渡",
+      "url": "chapters/21-advanced.html#错误6梯度爆炸导致loss变nan",
+      "body": ""
+    },
+    {
+      "id": "21-advanced-rnn快速查阅表",
+      "title": "RNN快速查阅表",
+      "chapter": "21",
+      "chapterTitle": "高级主题与 Transformer 过渡",
+      "url": "chapters/21-advanced.html#rnn快速查阅表",
+      "body": ""
+    },
+    {
+      "id": "21-advanced-总结与下一步",
+      "title": "总结与下一步",
+      "chapter": "21",
+      "chapterTitle": "高级主题与 Transformer 过渡",
+      "url": "chapters/21-advanced.html#总结与下一步",
+      "body": ""
+    },
+    {
+      "id": "21-advanced-本章知识树",
+      "title": "本章知识树",
+      "chapter": "21",
+      "chapterTitle": "高级主题与 Transformer 过渡",
+      "url": "chapters/21-advanced.html#本章知识树",
+      "body": ""
+    },
+    {
+      "id": "21-advanced-下一步学习路线",
+      "title": "下一步学习路线",
+      "chapter": "21",
+      "chapterTitle": "高级主题与 Transformer 过渡",
+      "url": "chapters/21-advanced.html#下一步学习路线",
+      "body": ""
+    }
+  ]
+}

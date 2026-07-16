@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{{title}}</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/style.css">
+<link rel="stylesheet" href="assets/series.css">
+</head>
+<body class="series-page">
+
+<div class="progress-bar" id="progress-bar"></div>
+
+{{nav}}
+{{settings_pop}}
+
+<main class="series-cover">
+  <header class="series-hero">
+    <div class="series-eyebrow">{{eyebrow}}</div>
+    <h1>{{title}}</h1>
+    <p>{{description}}</p>
+    <div class="series-stats" aria-label="系列规模">
+      <span>{{part_count}} 篇</span>
+      <span aria-hidden="true">·</span>
+      <span>{{chapter_count}} 章</span>
+      <span aria-hidden="true">·</span>
+      <span>{{estimated_time}}</span>
+    </div>
+  </header>
+
+  <div class="series-parts">
+{{parts}}
+  </div>
+</main>
+
+{{footer}}
+{{search_overlay}}
+
+<script src="assets/script.js"></script>
+</body>
+</html>

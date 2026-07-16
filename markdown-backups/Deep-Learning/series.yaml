@@ -1,0 +1,26 @@
+title: "深度学习系列讲义"
+slug: deep-learning
+type: series
+eyebrow: "Series · Deep Learning"
+author: "Mav"
+description: "三篇连续讲清深度学习的实践基础：先掌握数学与 PyTorch 工具，再进入卷积视觉，最后学习序列模型与自然语言处理。"
+language: "ZH-CN"
+version: "1.0.0"
+status: published
+estimatedTime: "约 22 小时"
+parts:
+  - id: toolbox
+    label: "PART I"
+    title: "数学与 PyTorch 工具"
+    description: "张量、自动求导、神经网络模块：搭建模型之前需要掌握的基础工具。"
+    source: "01-toolbox"
+  - id: cnn
+    label: "PART II"
+    title: "卷积与视觉"
+    description: "从卷积核、池化和数据增强出发，走到经典 CNN、迁移学习与完整训练。"
+    source: "02-cnn"
+  - id: rnn
+    label: "PART III"
+    title: "序列与自然语言处理"
+    description: "从 RNN、LSTM 和 GRU 出发，学习语言模型、文本任务、Seq2Seq 与注意力。"
+    source: "03-rnn"

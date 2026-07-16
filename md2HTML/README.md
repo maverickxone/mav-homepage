@@ -17,6 +17,17 @@ markdown-backups/Browser-War/    →    Mav/knowledge/browser-war/
                                       └── assets/search-index.json
 ```
 
+系列讲义使用同一条渲染链路，入口配置改为 `series.yaml`，章节按 Part 分目录：
+
+```
+markdown-backups/Deep-Learning/  →    Mav/knowledge/deep-learning/
+├── series.yaml                       ├── index.html（Series 封面）
+├── 01-toolbox/*.md                   ├── chapters/01-*.html ... 07-*.html
+├── 02-cnn/*.md                       ├── chapters/08-*.html ... 13-*.html
+└── 03-rnn/*.md                       ├── chapters/14-*.html ... 21-*.html
+                                      └── assets/style.css, series.css, script.js
+```
+
 **重要**：md2HTML 只是初始构建工具。构建完成后，你可能会对输出的 HTML 做手动前端优化（改布局、加自定义组件等）。一旦做了手动优化，就把对应的 md 源文件加入白名单，防止下次 build 覆盖你的修改。
 
 ---
@@ -29,16 +40,19 @@ md2HTML/
 ├── build-all.sh          # Shell 薄包装（方便终端少打字）
 ├── build-lock.yaml       # 白名单（锁定的源文件列表）
 ├── lib/                  # 模块化逻辑
-│   ├── reader.js         # 读取：book.yaml、md 文件、frontmatter 解析
+│   ├── reader.js         # 读取：book.yaml / series.yaml、md、frontmatter
 │   ├── renderer.js       # 转换：Markdown → HTML（含扩展语法处理）
 │   ├── templates.js      # 模板：读取 HTML 模板、填充组件、生成页面
 │   └── lock.js           # 白名单：读取、检查、增删锁定条目
-├── templates/            # HTML 骨架（构建时消费，不出现在输出中）
+├── templates/            # Book 与 Series 的 HTML 骨架
 │   ├── chapter.html      # 章节页模板（含 {{content}} 等占位符）
-│   └── index.html        # 封面页模板
+│   ├── index.html        # Book 封面页模板
+│   ├── series-chapter.html
+│   └── series-index.html
 ├── assets/               # 静态资源（构建时原样复制到输出目录）
 │   ├── style.css         # 通用设计系统（所有书共享）
 │   └── script.js         # 交互逻辑（主题切换、搜索、进度条等）
+├── series-assets/        # Series 专用样式（series.css）
 ├── content/              # [遗留] 旧版构建的临时目录，现已不使用
 ├── dist/                 # [遗留] 旧版构建的输出目录，现已不使用
 ├── node_modules/         # Node.js 依赖
@@ -53,7 +67,7 @@ md2HTML/
 ### 构建整本书
 
 ```bash
-node build.js Browser-War
+node build.js --book Browser-War
 ```
 
 读取 `markdown-backups/Browser-War/` 下所有 md 和 yaml，生成完整网站到 `Mav/knowledge/browser-war/`。白名单中的 md 会被跳过。
@@ -61,7 +75,7 @@ node build.js Browser-War
 ### 构建单个章节
 
 ```bash
-node build.js Browser-War/02-engine-war.md
+node build.js --book Browser-War/02-engine-war.md
 ```
 
 只重新生成第二章的 HTML。适用于：修改了某章 md 内容后，只更新那一章。
@@ -71,16 +85,26 @@ node build.js Browser-War/02-engine-war.md
 ### 构建封面
 
 ```bash
-node build.js Browser-War/book.yaml
+node build.js --book Browser-War/book.yaml
 ```
 
 只重新生成 `index.html`（封面页）。适用于：修改了 book.yaml 的标题或描述后更新封面。
 
+### 构建 Series
+
+```bash
+node build.js --series Deep-Learning
+node build.js --series Deep-Learning/02-cnn/01-convolution-basics.md
+node build.js --series Deep-Learning/series.yaml
+```
+
+三个命令分别构建完整 Series、Series 中的一章、Series 封面。Part 内的章节号从 1 开始，输出时会按 Part 顺序转换为全系列连续编号。
+
 ### 强制构建（忽略白名单）
 
 ```bash
-node build.js --force Browser-War
-node build.js --force Browser-War/01-browser-history.md
+node build.js --force --book Browser-War
+node build.js --force --series Deep-Learning
 ```
 
 无视白名单，强制从 md 重新生成 HTML。**会覆盖你的手动优化**，谨慎使用。
@@ -88,9 +112,11 @@ node build.js --force Browser-War/01-browser-history.md
 ### Shell 包装
 
 ```bash
-./build-all.sh Browser-War              # 等价于 node build.js Browser-War
-./build-all.sh --all                    # 构建所有书（白名单仍然生效）
+./build-all.sh --book Browser-War
+./build-all.sh --series Deep-Learning
 ```
+
+`--all` 已禁用，脚本收到该参数会直接退出。
 
 ---
 
@@ -127,12 +153,12 @@ node build.js --list-lock
 
 ### 典型工作流
 
-1. 写完一本书的 md → `node build.js Browser-War` 生成全部 HTML
+1. 写完一本书的 md → `node build.js --book Browser-War` 生成全部 HTML
 2. 在浏览器里阅读第一章 → 发现想优化时间线的前端展示
 3. 直接修改 `Mav/knowledge/browser-war/chapters/01-browser-history.html`
 4. 锁定：`node build.js --lock Browser-War/01-browser-history.md`
 5. 之后阅读第二章 → 发现内容有错 → 修改 md
-6. 重新构建：`node build.js Browser-War`（第一章被跳过，第二章正常重建）
+6. 重新构建：`node build.js --book Browser-War`（第一章被跳过，第二章正常重建）
 
 ---
 
@@ -146,6 +172,26 @@ author: "Mav"
 description: "从 1990 年第一个浏览器到 2026 年 Chromium 一统天下。"
 language: "ZH-CN"
 ```
+
+### series.yaml（Series 必需）
+
+```yaml
+title: "深度学习系列讲义"
+slug: deep-learning
+eyebrow: "Series · Deep Learning"   # 可选；封面小标题，缺省为 "Series"
+author: "Mav"
+description: "..."
+language: "ZH-CN"
+estimatedTime: "约 22 小时"
+parts:
+  - id: toolbox
+    label: "PART I"
+    title: "数学与 PyTorch 工具"
+    description: "..."
+    source: "01-toolbox"
+```
+
+`parts` 顺序就是阅读顺序。`source` 指向 Series 目录内的 Part 子目录；每个 Part 至少包含一章，内部 frontmatter 的 `chapter` 必须从 1 连续编号。`eyebrow` 为封面主标题上方的小标签，可省略。
 
 ### 章节 Markdown（必需）
 
@@ -206,8 +252,8 @@ description: "从 Mosaic 到 Chrome，三十年里发生了什么。"
 
 | 文件 | 职责 |
 |------|------|
-| `build.js` | 入口。解析命令行参数，判断构建模式（整书/单章/封面），调用其他模块 |
-| `lib/reader.js` | 读取 book.yaml、读取 md 文件列表、解析 frontmatter |
+| `build.js` | 入口。通过 `--book` / `--series` 选择构建类型，再处理完整内容、单章或封面 |
+| `lib/reader.js` | 读取 book.yaml / series.yaml、读取 md 文件列表、解析 frontmatter |
 | `lib/renderer.js` | Markdown → HTML 转换。配置 marked 渲染器、处理扩展语法（callout/tabs/collapsible）、提取标题 |
 | `lib/templates.js` | 读取 HTML 模板、生成页面组件（nav、sidebar、pager、footer、搜索框）、填充模板、复制 assets |
 | `lib/lock.js` | 白名单的 CRUD：读取 build-lock.yaml、检查某文件是否锁定、添加/移除条目 |
@@ -229,7 +275,7 @@ description: "从 Mosaic 到 Chrome，三十年里发生了什么。"
 ## 注意事项
 
 - `content/` 和 `dist/` 是旧版遗留目录，新版 build 不再使用它们，可以忽略
-- `assets/style.css` 是**通用设计系统**，所有书共享。如果某本书需要特殊样式（如时间线组件），应该直接写在那本书输出端的 HTML 或 CSS 里，而不是改模板端
+- `assets/style.css` 是 Book 与 Series 共用的设计系统；`series-assets/series.css` 只进入 Series 输出
 - build 整本书时会覆盖输出目录的 `assets/`（style.css 和 script.js），所以特殊样式不要放在输出端的 style.css 里——要么内联到 HTML 的 `<style>` 标签，要么放在单独的 CSS 文件里
 
 ---

@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>自动求导机制 — 深度学习系列讲义</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" href="../assets/series.css">
+<link rel="stylesheet" id="hljs-light" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+<link rel="stylesheet" id="hljs-dark" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" media="not all">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+
+</head>
+<body class="series-page series-reader-page">
+
+<div class="progress-bar" id="progress-bar"></div>
+
+<nav class="topnav series-topnav" id="topnav">
+  <div class="topnav-inner">
+    <a class="brand" href="../index.html">深度学习系列讲义</a>
+    <div class="nav-links">
+      <a href="../index.html#part-toolbox" class="active">PART I</a>
+      <a href="../index.html#part-cnn">PART II</a>
+      <a href="../index.html#part-rnn">PART III</a>
+    </div>
+    <div class="nav-controls">
+      <button class="nav-btn" id="search-btn" aria-label="搜索 (Ctrl+K)">⌘K</button>
+      <button class="nav-btn" id="settings-btn" aria-label="阅读设置">Aa</button>
+      <a class="nav-btn" href="../../index.html" aria-label="返回知识库">← 知识库</a>
+    </div>
+  </div>
+</nav>
+<div class="settings-pop" id="settings-pop">
+  <h5>主题</h5>
+  <div class="row">
+    <button class="seg" data-theme-set="light">明亮</button>
+    <button class="seg" data-theme-set="dark">暗色</button>
+  </div>
+  <h5>字号</h5>
+  <div class="row">
+    <button class="seg" data-size-set="s">小</button>
+    <button class="seg" data-size-set="m">中</button>
+    <button class="seg" data-size-set="l">大</button>
+  </div>
+</div>
+
+<div class="with-sidebar series-reader">
+  <aside class="sidebar series-sidebar">
+  <a class="series-sidebar-home" href="../index.html">系列目录</a>
+  <section class="series-sidebar-part">
+    <h4><span>PART I</span>数学与 PyTorch 工具</h4>
+    <ul>
+      <li class="series-chapter-item">
+        <a href="01-why-pytorch.html" data-chapter="01">为什么学习 PyTorch</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="02-tensor-creation.html" data-chapter="02">张量的创建与基本操作</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="03-tensor-attributes.html" data-chapter="03">张量的属性</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="04-tensor-ops.html" data-chapter="04">张量的操作与变换</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="05-autograd.html" data-chapter="05" class="active" aria-current="page">自动求导机制</a>
+        <ul class="series-section-links">
+          <li><a href="#梯度是什么为什么重要">梯度是什么？为什么重要？</a></li>
+          <li><a href="#requires_grad开启梯度追踪">requires_grad：开启梯度追踪</a></li>
+          <li><a href="#backward自动计算梯度">backward：自动计算梯度</a></li>
+          <li><a href="#grad查看计算出的梯度">grad：查看计算出的梯度</a></li>
+          <li><a href="#zero_grad清零梯度">zero_grad：清零梯度</a></li>
+          <li><a href="#no_grad临时关闭梯度计算">no_grad：临时关闭梯度计算</a></li>
+        </ul>
+      </li>
+      <li class="series-chapter-item">
+        <a href="06-nn-modules.html" data-chapter="06">神经网络基础模块</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="07-errors-exercises.html" data-chapter="07">常见错误与习题</a>
+      </li>
+    </ul>
+  </section>
+  <section class="series-sidebar-part">
+    <h4><span>PART II</span>卷积与视觉</h4>
+    <ul>
+      <li class="series-chapter-item">
+        <a href="08-convolution-basics.html" data-chapter="08">从零开始理解卷积</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="09-pytorch-conv.html" data-chapter="09">PyTorch 中的卷积操作</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="10-pooling-norm.html" data-chapter="10">池化层与归一化</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="11-data.html" data-chapter="11">数据增强与数据集加载</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="12-architecture.html" data-chapter="12">CNN 模型构建与迁移学习</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="13-training-eval.html" data-chapter="13">训练技巧与模型评估</a>
+      </li>
+    </ul>
+  </section>
+  <section class="series-sidebar-part">
+    <h4><span>PART III</span>序列与自然语言处理</h4>
+    <ul>
+      <li class="series-chapter-item">
+        <a href="14-rnn-math.html" data-chapter="14">RNN 基础概念与数学原理</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="15-numpy-rnn.html" data-chapter="15">用 NumPy 手写 RNN</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="16-pytorch-rnn.html" data-chapter="16">PyTorch 中的 RNN 实现</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="17-lstm-gru.html" data-chapter="17">LSTM 与 GRU</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="18-language-model.html" data-chapter="18">字符级语言模型</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="19-text-nlp.html" data-chapter="19">文本处理与情感分析</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="20-seq2seq.html" data-chapter="20">Seq2Seq 与注意力机制</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="21-advanced.html" data-chapter="21">高级主题与 Transformer 过渡</a>
+      </li>
+    </ul>
+  </section>
+</aside>
+  <article class="chapter-body">
+    <header class="chapter-head series-chapter-head">
+  <div class="series-breadcrumb">PART I · 数学与 PyTorch 工具</div>
+  <div class="chapter-head-meta">
+    <span class="num">CHAPTER 05</span>
+    <span>≈ 18 MIN READ</span>
+  </div>
+  <h1>自动求导机制</h1>
+</header>
+    <p><strong>本章目标</strong>：理解PyTorch的核心优势——自动微分</p>
+<blockquote><p>这是PyTorch最强大的特性！有了它，你无需手动计算复杂梯度，只需要定义前向传播，PyTorch会自动处理反向传播。</p>
+</blockquote>
+<h2 id="梯度是什么为什么重要">梯度是什么？为什么重要？</h2>
+<p>在深入学习PyTorch的自动求导机制之前，我们先来理解一个核心概念：<strong>梯度（Gradient）</strong>。</p>
+<h3 id="直观理解梯度">直观理解梯度</h3>
+<p>想象一下你在一座山上，想找到山顶（或者最低点——山谷）。梯度就像是告诉你<strong>应该往哪个方向走</strong>才能最快到达目的地。</p>
+<p><strong>数学定义</strong>：梯度是<strong>函数在某一点上变化最快的方向</strong></p>
+<ul>
+<li>对于函数 $f(x)$，梯度 $\nabla f$ 指向函数值<strong>增加最快</strong>的方向</li>
+<li>如果你想<strong>最小化</strong>一个函数（比如损失函数），你需要往梯度的<strong>反方向</strong>走</li>
+</ul>
+<h3 id="梯度在深度学习中的作用">梯度在深度学习中的作用</h3>
+<p>在深度学习中，我们的目标是<strong>最小化损失函数</strong>（Loss Function）。</p>
+<p><strong>训练过程</strong>：</p>
+<ol>
+<li><strong>前向传播（Forward Pass）</strong>：输入数据通过网络，计算输出</li>
+<li><strong>计算损失（Compute Loss）</strong>：比较网络输出和真实标签，得到一个&quot;错误程度&quot;</li>
+<li><strong>反向传播（Backward Pass）</strong>：计算损失对每个参数的梯度</li>
+<li><strong>更新参数</strong>：根据梯度调整参数，让损失变小</li>
+<li>重复以上步骤...</li>
+</ol>
+<p><strong>这就是梯度下降（Gradient Descent）的核心思想</strong>！</p>
+<p>$$w_{new} = w_{old} - \alpha \cdot \nabla L$$</p>
+<p>其中 $\alpha$ 是学习率（learning rate），控制每一步走多远。</p>
+<h3 id="手动计算梯度的痛苦">手动计算梯度的痛苦</h3>
+<p>假设你有一个两层神经网络：</p>
+<pre><code>输入 -&gt; 第一层(权重W1) -&gt; 激活函数 -&gt; 第二层(权重W2) -&gt; 输出</code></pre>
+<p>要手动计算损失对W1的梯度，你需要：</p>
+<ol>
+<li>写出完整的数学公式</li>
+<li>应用链式法则（Chain Rule）</li>
+<li>一步步求导...</li>
+</ol>
+<p>对于一个现代神经网络，可能有<strong>几亿个参数</strong>！手动计算完全不现实。</p>
+<p><strong>这就是为什么需要自动求导！</strong></p>
+<hr>
+<h2 id="requires_grad开启梯度追踪">requires_grad：开启梯度追踪</h2>
+<p><code>requires_grad</code>决定PyTorch是否自动跟踪对该张量的操作。</p>
+<pre data-label="python"><code class="language-python"># 默认创建的张量不追踪梯度
+x = torch.tensor([1.0, 2.0, 3.0])
+print(x.requires_grad)  # False
+
+# 创建时开启梯度追踪
+x = torch.tensor([1.0, 2.0, 3.0], requires_grad=True)
+print(x.requires_grad)  # True
+
+# 后续修改
+x = torch.tensor([1.0, 2.0, 3.0])
+x.requires_grad = True
+print(x.requires_grad)  # True</code></pre>
+<p><strong>实际使用</strong>：通常不需要手动设置，而是通过神经网络的参数自动获得。</p>
+<pre data-label="python"><code class="language-python"># 神经网络层会自动追踪梯度
+linear = nn.Linear(3, 1)
+print(linear.weight.requires_grad)  # True
+print(linear.bias.requires_grad)    # True</code></pre>
+<hr>
+<h2 id="backward自动计算梯度">backward：自动计算梯度</h2>
+<p>backward()根据计算图<strong>自动计算</strong>所有requires_grad=True的张量的梯度。</p>
+<p>**Mav&#39;s Tips：**一个注意点，<code>backward()</code>只能作用于标量，常见的办法是像下文中对张量y进行<code>sum()</code>操作，得到标量z，最后对z进行反向传播。</p>
+<pre data-label="python"><code class="language-python"># 简单的梯度计算示例
+x = torch.tensor([1.0, 2.0, 3.0], requires_grad=True)
+y = x ** 2       # y = x^2
+z = y.sum()      # z = 1^2 + 2^2 + 3^2 = 14
+
+# 反向传播
+z.backward()
+
+# 查看梯度：dz/dx = 2x
+print(x.grad)  # tensor([2., 4., 6.])
+# d(z)/d(x[0]) = 2 * 1 = 2
+# d(z)/d(x[1]) = 2 * 2 = 4
+# d(z)/d(x[2]) = 2 * 3 = 6</code></pre>
+<p><strong>模拟神经网络梯度计算</strong>：</p>
+<pre data-label="python"><code class="language-python"># 模拟一个简单的神经网络前向传播
+x = torch.randn(1, 3, requires_grad=True)  # 输入
+w = torch.randn(3, 1, requires_grad=True)  # 权重
+b = torch.randn(1, requires_grad=True)      # 偏置
+
+# 前向传播
+y = x @ w + b  # 矩阵乘法 + 偏置
+loss = y.sum()  # 损失
+
+# 反向传播
+loss.backward()
+
+# 查看梯度
+print("x的梯度:", x.grad)
+print("w的梯度:", w.grad)
+print("b的梯度:", b.grad)</code></pre>
+<hr>
+<h2 id="grad查看计算出的梯度">grad：查看计算出的梯度</h2>
+<p>grad属性存储通过backward()计算出的梯度值。</p>
+<pre data-label="python"><code class="language-python"># 创建需要梯度的张量
+x = torch.tensor([2.0, 3.0], requires_grad=True)
+
+# 进行一些计算
+y = x[0] ** 2 + 2 * x[1]
+y.backward()
+
+# 查看梯度
+print(x.grad)  # tensor([4., 2.])
+# dy/dx[0] = 2*x[0] = 4
+# dy/dx[1] = 2 = 2</code></pre>
+<hr>
+<p><strong>⚠️ 重要：梯度累积特性</strong></p>
+<p>在PyTorch中，梯度会<strong>累积</strong>而不是被替换。每次调用backward()时，新计算的梯度会加到现有的grad值上。</p>
+<pre data-label="python"><code class="language-python"># 梯度累积示例
+x = torch.tensor([1.0], requires_grad=True)
+
+for i in range(3):
+    y = x ** 2
+    y.backward()
+    print(f"第{i+1}次反向传播后, grad = {x.grad}")
+
+# 输出：
+# 第1次反向传播后, grad = tensor([2.])
+# 第2次反向传播后, grad = tensor([4.])  # 2 + 2
+# 第3次反向传播后, grad = tensor([6.])  # 4 + 2</code></pre>
+<hr>
+<h2 id="zero_grad清零梯度">zero_grad：清零梯度</h2>
+<p>由于PyTorch默认累积梯度，训练循环中每次参数更新前<strong>必须清零梯度</strong>。</p>
+<pre data-label="python"><code class="language-python"># 标准的训练循环
+optimizer = torch.optim.SGD(net.parameters(), lr=0.01)
+
+for data, target in dataloader:
+    # 1. 前向传播
+    output = net(data)
+    loss = criterion(output, target)
+
+    # 2. 清零梯度（重要！！！）
+    optimizer.zero_grad()
+
+    # 3. 反向传播
+    loss.backward()
+
+    # 4. 更新参数
+    optimizer.step()</code></pre>
+<p><strong>三种清零梯度的方式</strong>：</p>
+<pre data-label="python"><code class="language-python"># 方法1：使用优化器（推荐）
+optimizer.zero_grad()
+
+# 方法2：直接对参数操作
+for param in net.parameters():
+    param.grad.zero_()
+
+# 方法3：将grad设为None（更高效）
+for param in net.parameters():
+    param.grad = None</code></pre>
+<hr>
+<h2 id="no_grad临时关闭梯度计算">no_grad：临时关闭梯度计算</h2>
+<p>torch.no_grad()是上下文管理器，用于<strong>临时关闭梯度计算</strong>。这在评估阶段特别重要，可以节省内存和计算资源。</p>
+<pre data-label="python"><code class="language-python">net = nn.Linear(3, 1)
+x = torch.randn(2, 3)
+
+# 训练模式：需要计算梯度
+output = net(x)
+print(output.requires_grad)  # True
+
+# 推理模式：不需要计算梯度
+with torch.no_grad():
+    output = net(x)
+    print(output.requires_grad)  # False</code></pre>
+<p><strong>典型应用场景</strong>：</p>
+<pre data-label="python"><code class="language-python"># 评估模式
+net.eval()  # 设置为评估模式
+with torch.no_grad():
+    for data, target in test_loader:
+        output = net(data)
+        # ... 计算准确率等指标</code></pre>
+<blockquote><p><strong>补充</strong>：<code>torch.inference_mode()</code>是<code>no_grad()</code>的更严格版本，在PyTorch 1.9+中推荐使用，性能更好。</p>
+</blockquote>
+<hr>
+
+    <nav class="pager series-pager">
+  <a href="04-tensor-ops.html">
+    <span class="label">← 上一章</span>
+    <span class="title">张量的操作与变换</span>
+  </a>
+  <a href="06-nn-modules.html" class="next">
+    <span class="label">下一章 →</span>
+    <span class="title">神经网络基础模块</span>
+  </a>
+</nav>
+  </article>
+</div>
+
+<footer>
+  <div class="set">
+    <span>深度学习系列讲义</span>
+    <span>2026 · ZH-CN</span>
+  </div>
+  <div class="set">
+    <span>Mav</span>
+  </div>
+</footer>
+<div class="search-backdrop" id="search-overlay" role="dialog" aria-modal="true" aria-label="搜索" hidden>
+  <div class="search-modal">
+    <div class="search-input-wrap">
+      <input type="search" class="search-input" placeholder="搜索内容..." aria-label="搜索内容" autocomplete="off">
+      <kbd>ESC</kbd>
+    </div>
+    <div class="search-results" role="listbox" aria-label="搜索结果"></div>
+  </div>
+</div>
+
+<div class="side-panel" id="side-panel">
+  <div class="side-panel-resize" id="side-panel-resize"></div>
+  <div class="side-panel-header">
+    <div class="side-panel-tabs">
+      <button class="side-panel-tab active" data-mode="sidenote">补充</button>
+      <button class="side-panel-tab" data-mode="notepad">笔记</button>
+    </div>
+    <button class="side-panel-close" aria-label="关闭">×</button>
+  </div>
+  <div class="side-panel-body"></div>
+</div>
+<button class="notepad-fab" id="notepad-fab" aria-label="便利贴">✎</button>
+
+<button class="mtoc-fab" id="mtoc-fab" aria-label="系列目录">TOC</button>
+<div class="mtoc-drawer" id="mtoc-drawer">
+  <div class="mtoc-content series-sidebar"></div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/bash.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/typescript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/yaml.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/javascript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/json.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/python.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/css.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+<script>mermaid.initialize({startOnLoad:true, theme:'neutral', fontFamily:'Inter, sans-serif'});</script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}]});"></script>
+<script src="../assets/script.js"></script>
+
+</body>
+</html>

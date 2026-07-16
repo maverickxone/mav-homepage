@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PyTorch 中的 RNN 实现 — 深度学习系列讲义</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" href="../assets/series.css">
+<link rel="stylesheet" id="hljs-light" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+<link rel="stylesheet" id="hljs-dark" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" media="not all">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+
+</head>
+<body class="series-page series-reader-page">
+
+<div class="progress-bar" id="progress-bar"></div>
+
+<nav class="topnav series-topnav" id="topnav">
+  <div class="topnav-inner">
+    <a class="brand" href="../index.html">深度学习系列讲义</a>
+    <div class="nav-links">
+      <a href="../index.html#part-toolbox">PART I</a>
+      <a href="../index.html#part-cnn">PART II</a>
+      <a href="../index.html#part-rnn" class="active">PART III</a>
+    </div>
+    <div class="nav-controls">
+      <button class="nav-btn" id="search-btn" aria-label="搜索 (Ctrl+K)">⌘K</button>
+      <button class="nav-btn" id="settings-btn" aria-label="阅读设置">Aa</button>
+      <a class="nav-btn" href="../../index.html" aria-label="返回知识库">← 知识库</a>
+    </div>
+  </div>
+</nav>
+<div class="settings-pop" id="settings-pop">
+  <h5>主题</h5>
+  <div class="row">
+    <button class="seg" data-theme-set="light">明亮</button>
+    <button class="seg" data-theme-set="dark">暗色</button>
+  </div>
+  <h5>字号</h5>
+  <div class="row">
+    <button class="seg" data-size-set="s">小</button>
+    <button class="seg" data-size-set="m">中</button>
+    <button class="seg" data-size-set="l">大</button>
+  </div>
+</div>
+
+<div class="with-sidebar series-reader">
+  <aside class="sidebar series-sidebar">
+  <a class="series-sidebar-home" href="../index.html">系列目录</a>
+  <section class="series-sidebar-part">
+    <h4><span>PART I</span>数学与 PyTorch 工具</h4>
+    <ul>
+      <li class="series-chapter-item">
+        <a href="01-why-pytorch.html" data-chapter="01">为什么学习 PyTorch</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="02-tensor-creation.html" data-chapter="02">张量的创建与基本操作</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="03-tensor-attributes.html" data-chapter="03">张量的属性</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="04-tensor-ops.html" data-chapter="04">张量的操作与变换</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="05-autograd.html" data-chapter="05">自动求导机制</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="06-nn-modules.html" data-chapter="06">神经网络基础模块</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="07-errors-exercises.html" data-chapter="07">常见错误与习题</a>
+      </li>
+    </ul>
+  </section>
+  <section class="series-sidebar-part">
+    <h4><span>PART II</span>卷积与视觉</h4>
+    <ul>
+      <li class="series-chapter-item">
+        <a href="08-convolution-basics.html" data-chapter="08">从零开始理解卷积</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="09-pytorch-conv.html" data-chapter="09">PyTorch 中的卷积操作</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="10-pooling-norm.html" data-chapter="10">池化层与归一化</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="11-data.html" data-chapter="11">数据增强与数据集加载</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="12-architecture.html" data-chapter="12">CNN 模型构建与迁移学习</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="13-training-eval.html" data-chapter="13">训练技巧与模型评估</a>
+      </li>
+    </ul>
+  </section>
+  <section class="series-sidebar-part">
+    <h4><span>PART III</span>序列与自然语言处理</h4>
+    <ul>
+      <li class="series-chapter-item">
+        <a href="14-rnn-math.html" data-chapter="14">RNN 基础概念与数学原理</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="15-numpy-rnn.html" data-chapter="15">用 NumPy 手写 RNN</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="16-pytorch-rnn.html" data-chapter="16" class="active" aria-current="page">PyTorch 中的 RNN 实现</a>
+        <ul class="series-section-links">
+          <li><a href="#nnrnn基础循环层">nn.RNN：基础循环层</a></li>
+          <li><a href="#nnrnncell单个时间步的精细控制">nn.RNNCell：单个时间步的精细控制</a></li>
+          <li><a href="#多层rnn与双向rnn">多层RNN与双向RNN</a></li>
+          <li><a href="#隐藏状态的初始化与管理">隐藏状态的初始化与管理</a></li>
+        </ul>
+      </li>
+      <li class="series-chapter-item">
+        <a href="17-lstm-gru.html" data-chapter="17">LSTM 与 GRU</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="18-language-model.html" data-chapter="18">字符级语言模型</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="19-text-nlp.html" data-chapter="19">文本处理与情感分析</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="20-seq2seq.html" data-chapter="20">Seq2Seq 与注意力机制</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="21-advanced.html" data-chapter="21">高级主题与 Transformer 过渡</a>
+      </li>
+    </ul>
+  </section>
+</aside>
+  <article class="chapter-body">
+    <header class="chapter-head series-chapter-head">
+  <div class="series-breadcrumb">PART III · 序列与自然语言处理</div>
+  <div class="chapter-head-meta">
+    <span class="num">CHAPTER 16</span>
+    <span>≈ 20 MIN READ</span>
+  </div>
+  <h1>PyTorch 中的 RNN 实现</h1>
+</header>
+    <h2 id="nnrnn基础循环层">nn.RNN：基础循环层</h2>
+<h3 id="从公式到代码先建立映射关系">从公式到代码：先建立映射关系</h3>
+<p>你已经知道RNN在每个时间步做的事情可以用一个公式描述：
+$$
+h_t = \tanh(W_{ih} x_t + b_{ih} + W_{hh} h_{t-1} + b_{hh})
+$$
+其中：</p>
+<ul>
+<li>$x_t $ 是当前时间步的输入</li>
+<li>$h_{t-1} $ 是上一时间步传来的隐藏状态</li>
+<li>$W_{ih} $、$W_{hh} $ 是两个权重矩阵</li>
+<li>$b_{ih} $、$b_{hh} $ 是偏置</li>
+<li>$h_t $ 是当前时间步输出的隐藏状态</li>
+</ul>
+<p><strong>PyTorch的 <code>nn.RNN</code> 就是把这个公式封装好了。</strong> 你不需要手写矩阵乘法，不需要手动循环时间步——<code>nn.RNN</code> 帮你全部搞定。你只需要告诉它几个关键的&quot;尺寸信息&quot;，它就能自动构建好所有参数，并在前向传播时跑完整个序列。</p>
+<hr>
+<h3 id="第一步创建一个-rnn-层">第一步：创建一个 RNN 层</h3>
+<p>python</p>
+<pre data-label="python"><code class="language-python">import torch.nn as nn
+
+rnn = nn.RNN(input_size=10, hidden_size=20)</code></pre>
+<p>就这一行，一个完整的RNN层就建好了。但这里有两个参数需要你理解清楚，因为它们直接对应公式里的维度：</p>
+<p><strong><code>input_size=10</code></strong> — 每个时间步，你喂给RNN的向量有多长。</p>
+<p>比如你在处理文字，每个词被表示成一个10维的向量，那 <code>input_size=10</code>。这对应公式里 $x_t $ 的维度。</p>
+<p><strong><code>hidden_size=20</code></strong> — 隐藏状态向量的长度。</p>
+<p>这是RNN&quot;记忆&quot;的容量，也是每个时间步输出的向量长度。它决定了 $h_t $ 的维度，同时也决定了 $W_{hh} $ 是一个 $20 \times 20 $ 的方阵（因为 $h_{t-1} $ 也是20维的）。</p>
+<blockquote><p>💡 <strong>直觉类比</strong>：<code>input_size</code> 是&quot;耳朵能听多少信息&quot;，<code>hidden_size</code> 是&quot;大脑有多大的工作记忆&quot;。</p>
+</blockquote>
+<hr>
+<h3 id="第二步理解数据的形状shape">第二步：理解数据的形状（Shape）</h3>
+<p>在把数据喂给RNN之前，你必须先搞清楚PyTorch期望的数据格式。</p>
+<p>RNN处理的是<strong>序列数据</strong>，所以输入天然有三个维度：</p>
+<div class="table-wrap"><table><thead><tr>
+<th>维度</th>
+<th>含义</th>
+<th>示例</th>
+</tr>
+</thead><tbody><tr>
+<td>batch_size</td>
+<td>一次处理多少条序列</td>
+<td>5句话同时处理</td>
+</tr>
+<tr>
+<td>seq_len</td>
+<td>每条序列有多少个时间步</td>
+<td>每句话10个词</td>
+</tr>
+<tr>
+<td>input_size</td>
+<td>每个时间步输入向量的维度</td>
+<td>每个词用10维向量表示</td>
+</tr>
+</tbody></table></div>
+<p>当你设置 <code>batch_first=True</code> 时（<strong>推荐初学者始终开启</strong>），输入张量的形状就是：</p>
+<pre><code>(batch_size, seq_len, input_size)
+      5    ,   10   ,    10</code></pre>
+<p>如果不开启（默认），形状是 <code>(seq_len, batch_size, input_size)</code>，顺序不同，容易搞混，所以我们先统一用 <code>batch_first=True</code>。</p>
+<hr>
+<h3 id="第三步构造输入数据">第三步：构造输入数据</h3>
+<p>python</p>
+<pre data-label="python"><code class="language-python">import torch
+
+batch_size = 5
+seq_len = 10
+input_size = 10  # 与创建RNN时一致
+
+x = torch.randn(batch_size, seq_len, input_size)</code></pre>
+<p><code>torch.randn(...)</code> 生成服从标准正态分布的随机张量，这里我们用随机数来模拟&quot;真实数据&quot;。实际项目里这里会是词嵌入、传感器读数等。</p>
+<p>现在 <code>x</code> 的形状是 <code>(5, 10, 10)</code>，含义是：5条序列，每条序列10个时间步，每个时间步一个10维向量。</p>
+<hr>
+<h3 id="第四步前向传播拿到输出">第四步：前向传播，拿到输出</h3>
+<p>python</p>
+<pre data-label="python"><code class="language-python">output, hidden = rnn(x)</code></pre>
+<p>注意这里返回了<strong>两个东西</strong>，这是初学者经常感到困惑的地方。让我们仔细拆解。</p>
+<p><strong><code>output</code></strong> — 每一个时间步的隐藏状态，全部打包在一起。</p>
+<p>RNN从 $t=1 $ 跑到 $t=10 $，每步都产生一个 $h_t $， <code>output</code> 把这10个 $h_t $ 全部存下来了。形状是：</p>
+<pre><code>(batch_size, seq_len, hidden_size)
+      5    ,   10   ,    20</code></pre>
+<p><strong><code>hidden</code></strong> — 只保留<strong>最后一个时间步</strong>的隐藏状态 $h_{T} $。</p>
+<p>你可以把它理解成&quot;读完整个序列之后，RNN脑子里的最终记忆&quot;。形状是：</p>
+<pre><code>(num_layers * num_directions, batch_size, hidden_size)
+              1              ,      5    ,    20</code></pre>
+<p><code>num_layers=1</code>（单层）、<code>num_directions=1</code>（单向），所以第一个维度是1。</p>
+<blockquote><p>💡 <strong>关键关系</strong>：对于单向、单层RNN，<code>hidden[0]</code> 和 <code>output[:, -1, :]</code> 是<strong>完全相同的</strong>，都是最后一个时间步的隐藏状态。<code>hidden</code> 只是PyTorch单独把它拿出来方便你用。</p>
+</blockquote>
+<hr>
+<h3 id="第五步理解参数数量">第五步：理解参数数量</h3>
+<p>创建好RNN后，你可以查看它到底有多少个可训练参数：</p>
+<p>python</p>
+<pre data-label="python"><code class="language-python">total_params = sum(p.numel() for p in rnn.parameters())
+print(f"RNN参数总数: {total_params}")  # 640</code></pre>
+<p>为什么是640？对照公式算一下：</p>
+<ul>
+<li>$W_{ih} $ 的形状： <code>hidden_size × input_size</code> = $20 \times 10 = 200 $</li>
+<li>$W_{hh} $ 的形状： <code>hidden_size × hidden_size</code> = $20 \times 20 = 400 $</li>
+<li>$b_{ih} $ 的形状： <code>hidden_size</code> = $20 $</li>
+<li>$b_{hh} $ 的形状： <code>hidden_size</code> = $20 $</li>
+</ul>
+<p>合计：$200 + 400 + 20 + 20 = \mathbf{640} $</p>
+<p>这个计算帮助你验证：你对网络结构的理解是否和PyTorch的实现一致。</p>
+<hr>
+<h3 id="第六步认识其余参数">第六步：认识其余参数</h3>
+<p>除了 <code>input_size</code> 和 <code>hidden_size</code>，<code>nn.RNN</code> 还有几个常用参数，我们逐一说明：</p>
+<p><strong><code>num_layers</code></strong> — 堆叠多少层RNN。</p>
+<pre><code>输入 x ──→ RNN层1 ──→ RNN层2 ──→ ... ──→ 输出</code></pre>
+<p>每一层的输出作为下一层的输入。层数越多，网络表达能力越强，但也更难训练。初学阶段用默认值 <code>1</code> 即可。</p>
+<p><strong><code>nonlinearity</code></strong> — 激活函数，可选 <code>&#39;tanh&#39;</code>（默认）或 <code>&#39;relu&#39;</code>。</p>
+<p>对应公式里的 $\tanh $。改成 <code>&#39;relu&#39;</code> 有时训练更快，但梯度爆炸的风险更大。</p>
+<p><strong><code>dropout</code></strong> — 多层RNN时，层与层之间随机&quot;丢弃&quot;一部分神经元的概率。</p>
+<p>这是一种正则化手段，防止过拟合。<code>num_layers=1</code> 时设置 <code>dropout</code> 无效（只有一层，没有&quot;层间&quot;可以dropout）。</p>
+<p><strong><code>bidirectional</code></strong> — 是否双向。</p>
+<p>普通RNN只从左往右看序列；双向RNN同时从左往右和从右往左各跑一遍，然后把两个方向的隐藏状态拼接起来。<code>num_directions</code> 变成2，所以 <code>hidden</code> 的第一个维度变成 <code>num_layers * 2</code>。</p>
+<hr>
+<h3 id="完整实践代码">完整实践代码</h3>
+<p>理解了以上每一步之后，再来看完整的代码就会清晰很多：</p>
+<pre data-label="python"><code class="language-python">import torch
+import torch.nn as nn
+
+# 创建RNN
+rnn = nn.RNN(
+    input_size=10,      # 每个时间步输入向量的维度
+    hidden_size=20,     # 隐藏状态的维度（也是输出维度）
+    num_layers=1,       # 堆叠RNN层数
+    batch_first=True,   # True：输入形状 (batch, seq, feature)
+                        # False：输入形状 (seq, batch, feature)
+    nonlinearity='tanh',# 激活函数：'tanh' 或 'relu'
+    dropout=0.0,        # 多层RNN时，层间的dropout概率
+    bidirectional=False # 是否双向
+)
+
+# 查看参数数量
+total_params = sum(p.numel() for p in rnn.parameters())
+print(f"RNN参数总数: {total_params}")
+# = hidden_size * (input_size + hidden_size) + hidden_size * 2（偏置）
+# = 20 * (10 + 20) + 40 = 640
+
+# 输入
+batch_size = 5
+seq_len = 10
+x = torch.randn(batch_size, seq_len, input_size)
+
+# 前向传播
+output, hidden = rnn(x)
+
+# output: 所有时间步的隐藏状态
+# 形状: (batch, seq_len, hidden_size)
+print("Output shape:", output.shape)  # torch.Size([5, 10, 20])
+
+# hidden: 最后一个时间步的隐藏状态
+# 形状: (num_layers * num_directions, batch, hidden_size)
+print("Hidden shape:", hidden.shape)  # torch.Size([1, 5, 20])</code></pre>
+<p><strong>output vs hidden 的选择</strong>：</p>
+<pre data-label="python"><code class="language-python"># 场景1：文本分类（只需要最终表示）
+# 使用 hidden，因为只需要最后时刻的记忆
+final_repr = hidden[-1]  # (batch, hidden_size)
+
+# 场景2：命名实体识别（每个词都需要标注）
+# 使用 output，因为需要每个时刻的输出
+per_token_repr = output  # (batch, seq_len, hidden_size)
+
+# 场景3：只取最后时刻的output（等价于hidden[-1]，对于单向）
+last_output = output[:, -1, :]  # (batch, hidden_size)</code></pre>
+<p>总结成一句话：<strong>分类任务用 <code>hidden</code>，序列标注任务用 <code>output</code></strong>。场景3则验证了前面说的等价关系：<code>hidden[-1]</code> 和 <code>output[:, -1, :]</code> 结果一样，PyTorch只是把最终状态单独抽出来放进 <code>hidden</code> 方便你取用。</p>
+<blockquote><p>⚠️ <strong>注意</strong>：<code>hidden[-1]</code> 中的 <code>-1</code> 是Python的负索引，表示取最后一层（当 <code>num_layers=1</code> 时，就是第0层，也就是唯一一层）。如果你使用多层RNN，<code>hidden</code> 的第一个维度会有多个元素，分别对应每一层的最终隐藏状态。</p>
+</blockquote>
+<h2 id="nnrnncell单个时间步的精细控制">nn.RNNCell：单个时间步的精细控制</h2>
+<p>有时候我们需要更细粒度的控制，比如根据前一步的输出决定下一步的输入。</p>
+<pre data-label="python"><code class="language-python">rnn_cell = nn.RNNCell(
+    input_size=10,
+    hidden_size=20,
+    nonlinearity='tanh'
+)
+
+# 手动循环
+batch_size, seq_len = 3, 8
+x = torch.randn(batch_size, seq_len, 10)
+h_t = torch.zeros(batch_size, 20)  # 初始隐藏状态
+
+outputs = []
+for t in range(seq_len):
+    h_t = rnn_cell(x[:, t, :], h_t)  # 输入当前词，输出新隐藏状态
+    outputs.append(h_t)
+
+output = torch.stack(outputs, dim=1)  # (batch, seq_len, hidden_size)
+print("手动RNN输出形状:", output.shape)</code></pre>
+<p><strong>什么时候用 RNNCell 而不是 RNN</strong>：</p>
+<ul>
+<li>需要在时间步之间插入自定义逻辑（如：条件判断）</li>
+<li>实现beam search时，需要逐步生成</li>
+<li>学习/调试时，想看清楚每个时间步发生了什么</li>
+</ul>
+<h2 id="多层rnn与双向rnn">多层RNN与双向RNN</h2>
+<p><strong>多层RNN（Stacked RNN）</strong>：</p>
+<pre data-label="python"><code class="language-python"># 2层RNN：第1层的output作为第2层的input
+rnn_2layer = nn.RNN(input_size=10, hidden_size=20, num_layers=2, batch_first=True)
+
+x = torch.randn(3, 5, 10)
+output, hidden = rnn_2layer(x)
+
+# output: 最顶层（第2层）的所有时刻输出
+print("Output shape:", output.shape)   # (3, 5, 20)
+
+# hidden: 所有层最后时刻的隐藏状态
+print("Hidden shape:", hidden.shape)   # (2, 3, 20)
+# hidden[0] = 第1层最后时刻的隐藏状态
+# hidden[1] = 第2层最后时刻的隐藏状态</code></pre>
+<p><strong>双向RNN（Bidirectional RNN）</strong>：</p>
+<pre><code>前向RNN: x_1 → x_2 → x_3 → x_4
+                              ↓ 捕捉"已看到的信息"
+后向RNN: x_1 ← x_2 ← x_3 ← x_4
+         ↑ 捕捉"之后会看到的信息"
+
+在每个时刻，将前向和后向的隐藏状态拼接，得到双向隐藏状态。</code></pre>
+<pre data-label="python"><code class="language-python">birnn = nn.RNN(input_size=10, hidden_size=20, num_layers=1,
+               batch_first=True, bidirectional=True)
+
+x = torch.randn(3, 5, 10)
+output, hidden = birnn(x)
+
+# output: (batch, seq_len, hidden_size * 2)
+# 前hidden_size个维度是前向，后hidden_size个维度是后向
+print("BiRNN Output:", output.shape)   # (3, 5, 40)
+
+# hidden: (num_layers * 2, batch, hidden_size)
+print("BiRNN Hidden:", hidden.shape)   # (2, 3, 20)
+# hidden[0] = 前向最后时刻
+# hidden[1] = 后向最后时刻（即x_1时刻，因为后向是从末尾开始的）</code></pre>
+<blockquote><p>🔍 <strong>深层思考：双向RNN的代价</strong></p>
+<p>双向RNN的优势很明显：每个位置的表示同时包含&quot;已看到&quot;和&quot;将要看到&quot;的信息，这对于NER（命名实体识别）、词性标注等任务非常有帮助。</p>
+<p>但它有一个重要限制：<strong>无法用于实时/流式场景</strong>。因为后向RNN需要看到整个序列才能开始计算。如果你在做语音识别，需要实时转文字，就不能用双向RNN（用户还没说完，你无法知道&quot;后面会说什么&quot;）。</p>
+<p>Transformer的双向注意力机制也有同样的限制，这是为什么GPT用单向（因果）注意力，而BERT用双向注意力的原因。</p>
+</blockquote>
+<h2 id="隐藏状态的初始化与管理">隐藏状态的初始化与管理</h2>
+<pre data-label="python"><code class="language-python"># 方式1：零初始化（最常用，通常效果足够好）
+h_0 = torch.zeros(num_layers, batch_size, hidden_size)
+
+# 方式2：可学习的初始状态（有时能提升性能）
+class RNNWithLearnedInit(nn.Module):
+    def __init__(self, input_size, hidden_size):
+        super().__init__()
+        self.rnn = nn.RNN(input_size, hidden_size, batch_first=True)
+        # 可学习的初始隐藏状态（注意：与batch无关）
+        self.h0 = nn.Parameter(torch.zeros(1, 1, hidden_size))
+
+    def forward(self, x):
+        batch_size = x.size(0)
+        # 扩展到整个batch
+        h0 = self.h0.expand(-1, batch_size, -1).contiguous()
+        output, hidden = self.rnn(x, h0)
+        return output, hidden
+
+# 方式3：处理连续序列时，传递上一步的隐藏状态（如语言模型）
+# 注意：需要 .detach() 截断梯度，否则梯度会无限追溯到训练开始
+hidden = None
+for batch in data_loader:
+    output, hidden = model(batch, hidden)
+    hidden = hidden.detach()  # 截断梯度，防止内存泄漏
+    loss = criterion(output, target)
+    # ...</code></pre>
+<hr>
+
+    <nav class="pager series-pager">
+  <a href="15-numpy-rnn.html">
+    <span class="label">← 上一章</span>
+    <span class="title">用 NumPy 手写 RNN</span>
+  </a>
+  <a href="17-lstm-gru.html" class="next">
+    <span class="label">下一章 →</span>
+    <span class="title">LSTM 与 GRU</span>
+  </a>
+</nav>
+  </article>
+</div>
+
+<footer>
+  <div class="set">
+    <span>深度学习系列讲义</span>
+    <span>2026 · ZH-CN</span>
+  </div>
+  <div class="set">
+    <span>Mav</span>
+  </div>
+</footer>
+<div class="search-backdrop" id="search-overlay" role="dialog" aria-modal="true" aria-label="搜索" hidden>
+  <div class="search-modal">
+    <div class="search-input-wrap">
+      <input type="search" class="search-input" placeholder="搜索内容..." aria-label="搜索内容" autocomplete="off">
+      <kbd>ESC</kbd>
+    </div>
+    <div class="search-results" role="listbox" aria-label="搜索结果"></div>
+  </div>
+</div>
+
+<div class="side-panel" id="side-panel">
+  <div class="side-panel-resize" id="side-panel-resize"></div>
+  <div class="side-panel-header">
+    <div class="side-panel-tabs">
+      <button class="side-panel-tab active" data-mode="sidenote">补充</button>
+      <button class="side-panel-tab" data-mode="notepad">笔记</button>
+    </div>
+    <button class="side-panel-close" aria-label="关闭">×</button>
+  </div>
+  <div class="side-panel-body"></div>
+</div>
+<button class="notepad-fab" id="notepad-fab" aria-label="便利贴">✎</button>
+
+<button class="mtoc-fab" id="mtoc-fab" aria-label="系列目录">TOC</button>
+<div class="mtoc-drawer" id="mtoc-drawer">
+  <div class="mtoc-content series-sidebar"></div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/bash.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/typescript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/yaml.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/javascript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/json.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/python.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/css.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+<script>mermaid.initialize({startOnLoad:true, theme:'neutral', fontFamily:'Inter, sans-serif'});</script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}]});"></script>
+<script src="../assets/script.js"></script>
+
+</body>
+</html>

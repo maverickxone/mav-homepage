@@ -13,14 +13,8 @@
 
 | 主题 | 章节 | 状态 |
 |------|:----:|:----:|
-| AI 数学基础 | 8 | draft |
-| AI 深度学习核心 | 13 | draft |
-| AI 计算机视觉 | 5 | draft |
-| AI 自然语言处理基础 | 7 | draft |
-| AI Transformer 深度剖析 | 7 | draft |
-| 深度学习前置工具箱（PyTorch） | 7 | draft |
-| CNN 实战篇 | 6 | draft |
-| RNN 实战篇 | 8 | draft |
+| 深度学习系列讲义（3 篇） | 21 | published |
+| 人工智能与数学原理（USTC 课程讲义） | 7 | draft |
 
 **计算机系统 / Web**
 
@@ -75,16 +69,11 @@
 - **计算机是怎么工作的** — 硬件篇 → 服务器 → 浏览器
 - **数字世界的底层格式** — PDF → 视频 → 浏览器
 
-**草稿 / 待整理**
-
-- **从零开始学 Transformer** — 数学基础 → DL核心 → CV → NLP → Transformers
-- **深度学习从零到能读论文** — DL 工具箱 → CNN → RNN
-
 ## 项目结构
 
 ```
 Mav/                    ← Nginx root（线上站点）
-markdown-backups/       ← Markdown 源文件（每本书一个文件夹）
+markdown-backups/       ← Markdown 源文件（Book 或 Series 各一个文件夹）
 md2HTML/                ← 构建工具（marked + gray-matter → HTML）
 server/                 ← 后端 API（评论/点赞，Express + SQLite）
 ```
@@ -94,16 +83,19 @@ server/                 ← 后端 API（评论/点赞，Express + SQLite）
 `md2HTML/` 是这个网站的核心构建工具，把 Markdown 源文件转换为完整的 HTML 阅读页面。
 这样节省不少 token，同时 HTML 也比 md 文档更具观赏性。
 
-- 读取 `book.yaml`（元数据）+ `.md`（章节内容，带 front-matter）
+- 读取 `book.yaml` 或 `series.yaml`（元数据）+ `.md`（章节内容，带 front-matter）
 - 渲染为带目录、搜索、代码高亮、Mermaid 图表的 HTML 页面
 - 自动生成封面目录页 + 全文搜索索引
+- Series 支持 Part 分组、全局连续章节编号和跨 Part 翻页
 - 支持 build-lock 白名单机制（锁定已定制的文件，防止重新构建覆盖）
 - 支持扩展语法：`:::callout`、`:::callout-tip`、`:::callout-warn`、`:::tabs`、`:::collapsible`、`:::quiz`
 
 ```bash
 cd md2HTML
-node build.js <Book-Name>        # 构建单本书
-node build.js <Book-Name>/ch.md  # 只构建一章
+node build.js --book <Book-Name>             # 构建单本书
+node build.js --book <Book-Name>/ch.md       # 只构建书籍的一章
+node build.js --series <Series-Name>         # 构建完整系列讲义
+node build.js --series <Series-Name>/part/ch.md # 只构建系列的一章
 node build-projects.js            # 构建 Project 页面
 ```
 

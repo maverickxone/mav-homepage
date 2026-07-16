@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>深度学习系列讲义</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/style.css">
+<link rel="stylesheet" href="assets/series.css">
+</head>
+<body class="series-page">
+
+<div class="progress-bar" id="progress-bar"></div>
+
+<nav class="topnav series-topnav" id="topnav">
+  <div class="topnav-inner">
+    <a class="brand" href="index.html">深度学习系列讲义</a>
+    <div class="nav-links">
+      <a href="index.html#part-toolbox">PART I</a>
+      <a href="index.html#part-cnn">PART II</a>
+      <a href="index.html#part-rnn">PART III</a>
+    </div>
+    <div class="nav-controls">
+      <button class="nav-btn" id="search-btn" aria-label="搜索 (Ctrl+K)">⌘K</button>
+      <button class="nav-btn" id="settings-btn" aria-label="阅读设置">Aa</button>
+      <a class="nav-btn" href="../index.html" aria-label="返回知识库">← 知识库</a>
+    </div>
+  </div>
+</nav>
+<div class="settings-pop" id="settings-pop">
+  <h5>主题</h5>
+  <div class="row">
+    <button class="seg" data-theme-set="light">明亮</button>
+    <button class="seg" data-theme-set="dark">暗色</button>
+  </div>
+  <h5>字号</h5>
+  <div class="row">
+    <button class="seg" data-size-set="s">小</button>
+    <button class="seg" data-size-set="m">中</button>
+    <button class="seg" data-size-set="l">大</button>
+  </div>
+</div>
+
+<main class="series-cover">
+  <header class="series-hero">
+    <div class="series-eyebrow">Series · Deep Learning</div>
+    <h1>深度学习系列讲义</h1>
+    <p>三篇连续讲清深度学习的实践基础：先掌握数学与 PyTorch 工具，再进入卷积视觉，最后学习序列模型与自然语言处理。</p>
+    <div class="series-stats" aria-label="系列规模">
+      <span>3 篇</span>
+      <span aria-hidden="true">·</span>
+      <span>21 章</span>
+      <span aria-hidden="true">·</span>
+      <span>约 22 小时</span>
+    </div>
+  </header>
+
+  <div class="series-parts">
+    <section class="series-part" id="part-toolbox">
+      <header class="series-part-head">
+        <span class="series-part-label">PART I</span>
+        <div>
+          <h2>数学与 PyTorch 工具</h2>
+          <p>张量、自动求导、神经网络模块：搭建模型之前需要掌握的基础工具。</p>
+        </div>
+        <span class="series-part-count">7 章</span>
+      </header>
+      <ol class="series-chapter-grid">
+        <li>
+          <a class="series-chapter-card toc-card" href="chapters/01-why-pytorch.html">
+            <span class="series-chapter-number">01</span>
+            <span class="series-chapter-copy">
+              <span class="series-chapter-meta">8 MIN</span>
+              <h3>为什么学习 PyTorch</h3>
+              <p>深度学习框架的重要性、PyTorch 核心特点、张量概念与学习路线。</p>
+            </span>
+            <span class="series-chapter-arrow" aria-hidden="true">→</span>
+          </a>
+        </li>
+        <li>
+          <a class="series-chapter-card toc-card" href="chapters/02-tensor-creation.html">
+            <span class="series-chapter-number">02</span>
+            <span class="series-chapter-copy">
+              <span class="series-chapter-meta">15 MIN</span>
+              <h3>张量的创建与基本操作</h3>
+              <p>torch.tensor、randn、zeros、ones、arange、linspace，理解标量/向量/矩阵/高维张量。</p>
+            </span>
+            <span class="series-chapter-arrow" aria-hidden="true">→</span>
+          </a>
+        </li>
+        <li>
+          <a class="series-chapter-card toc-card" href="chapters/03-tensor-attributes.html">
+            <span class="series-chapter-number">03</span>
+            <span class="series-chapter-copy">
+              <span class="series-chapter-meta">8 MIN</span>
+              <h3>张量的属性</h3>
+              <p>shape、dtype、device 三大核心属性，CPU/GPU 设备迁移与类型转换。</p>
+            </span>
+            <span class="series-chapter-arrow" aria-hidden="true">→</span>
+          </a>
+        </li>
+        <li>
+          <a class="series-chapter-card toc-card" href="chapters/04-tensor-ops.html">
+            <span class="series-chapter-number">04</span>
+            <span class="series-chapter-copy">
+              <span class="series-chapter-meta">12 MIN</span>
+              <h3>张量的操作与变换</h3>
+              <p>矩阵乘法、reshape/view/squeeze、张量拼接（cat/stack）与数值提取。</p>
+            </span>
+            <span class="series-chapter-arrow" aria-hidden="true">→</span>
+          </a>
+        </li>
+        <li>
+          <a class="series-chapter-card toc-card" href="chapters/05-autograd.html">
+            <span class="series-chapter-number">05</span>
+            <span class="series-chapter-copy">
+              <span class="series-chapter-meta">18 MIN</span>
+              <h3>自动求导机制</h3>
+              <p>requires_grad、backward、计算图、梯度累积、no_grad、detach 与梯度下降实战。</p>
+            </span>
+            <span class="series-chapter-arrow" aria-hidden="true">→</span>
+          </a>
+        </li>
+        <li>
+          <a class="series-chapter-card toc-card" href="chapters/06-nn-modules.html">
+            <span class="series-chapter-number">06</span>
+            <span class="series-chapter-copy">
+              <span class="series-chapter-meta">25 MIN</span>
+              <h3>神经网络基础模块</h3>
+              <p>nn.Linear、激活函数、损失函数、优化器，用 nn.Module 和 nn.Sequential 搭建网络。</p>
+            </span>
+            <span class="series-chapter-arrow" aria-hidden="true">→</span>
+          </a>
+        </li>
+        <li>
+          <a class="series-chapter-card toc-card" href="chapters/07-errors-exercises.html">
+            <span class="series-chapter-number">07</span>
+            <span class="series-chapter-copy">
+              <span class="series-chapter-meta">10 MIN</span>
+              <h3>常见错误与习题</h3>
+              <p>PyTorch 典型报错解决、总结回顾与自测习题。</p>
+            </span>
+            <span class="series-chapter-arrow" aria-hidden="true">→</span>
+          </a>
+        </li>
+      </ol>
+    </section>
+    <section class="series-part" id="part-cnn">
+      <header class="series-part-head">
+        <span class="series-part-label">PART II</span>
+        <div>
+          <h2>卷积与视觉</h2>
+          <p>从卷积核、池化和数据增强出发，走到经典 CNN、迁移学习与完整训练。</p>
+        </div>
+        <span class="series-part-count">6 章</span>
+      </header>
+      <ol class="series-chapter-grid">
+        <li>
+          <a class="series-chapter-card toc-card" href="chapters/08-convolution-basics.html">
+            <span class="series-chapter-number">08</span>
+            <span class="series-chapter-copy">
+              <span class="series-chapter-meta">30 MIN</span>
+              <h3>从零开始理解卷积</h3>
+              <p>图像的像素表示、卷积的滑动窗口直觉、数学公式、常见卷积核、通道与特征图。</p>
+            </span>
+            <span class="series-chapter-arrow" aria-hidden="true">→</span>
+          </a>
+        </li>
+        <li>
+          <a class="series-chapter-card toc-card" href="chapters/09-pytorch-conv.html">
+            <span class="series-chapter-number">09</span>
+            <span class="series-chapter-copy">
+              <span class="series-chapter-meta">15 MIN</span>
+              <h3>PyTorch 中的卷积操作</h3>
+              <p>nn.Conv2d 详解、卷积参数（stride/padding/dilation/groups）、输出尺寸计算。</p>
+            </span>
+            <span class="series-chapter-arrow" aria-hidden="true">→</span>
+          </a>
+        </li>
+        <li>
+          <a class="series-chapter-card toc-card" href="chapters/10-pooling-norm.html">
+            <span class="series-chapter-number">10</span>
+            <span class="series-chapter-copy">
+              <span class="series-chapter-meta">25 MIN</span>
+              <h3>池化层与归一化</h3>
+              <p>MaxPool2d、AvgPool2d、自适应池化、BatchNorm、Dropout、LayerNorm。</p>
+            </span>
+            <span class="series-chapter-arrow" aria-hidden="true">→</span>
+          </a>
+        </li>
+        <li>
+          <a class="series-chapter-card toc-card" href="chapters/11-data.html">
+            <span class="series-chapter-number">11</span>
+            <span class="series-chapter-copy">
+              <span class="series-chapter-meta">25 MIN</span>
+              <h3>数据增强与数据集加载</h3>
+              <p>transforms 系列变换、数据增强策略、ImageFolder、自定义 Dataset、DataLoader。</p>
+            </span>
+            <span class="series-chapter-arrow" aria-hidden="true">→</span>
+          </a>
+        </li>
+        <li>
+          <a class="series-chapter-card toc-card" href="chapters/12-architecture.html">
+            <span class="series-chapter-number">12</span>
+            <span class="series-chapter-copy">
+              <span class="series-chapter-meta">30 MIN</span>
+              <h3>CNN 模型构建与迁移学习</h3>
+              <p>LeNet、AlexNet、VGG、ResNet 实现，预训练模型、特征提取、微调与模型保存。</p>
+            </span>
+            <span class="series-chapter-arrow" aria-hidden="true">→</span>
+          </a>
+        </li>
+        <li>
+          <a class="series-chapter-card toc-card" href="chapters/13-training-eval.html">
+            <span class="series-chapter-number">13</span>
+            <span class="series-chapter-copy">
+              <span class="series-chapter-meta">30 MIN</span>
+              <h3>训练技巧与模型评估</h3>
+              <p>学习率调度、早停、混合精度、GradCAM 可视化、常见错误与速查表。</p>
+            </span>
+            <span class="series-chapter-arrow" aria-hidden="true">→</span>
+          </a>
+        </li>
+      </ol>
+    </section>
+    <section class="series-part" id="part-rnn">
+      <header class="series-part-head">
+        <span class="series-part-label">PART III</span>
+        <div>
+          <h2>序列与自然语言处理</h2>
+          <p>从 RNN、LSTM 和 GRU 出发，学习语言模型、文本任务、Seq2Seq 与注意力。</p>
+        </div>
+        <span class="series-part-count">8 章</span>
+      </header>
+      <ol class="series-chapter-grid">
+        <li>
+          <a class="series-chapter-card toc-card" href="chapters/14-rnn-math.html">
+            <span class="series-chapter-number">14</span>
+            <span class="series-chapter-copy">
+              <span class="series-chapter-meta">25 MIN</span>
+              <h3>RNN 基础概念与数学原理</h3>
+              <p>序列数据的本质、RNN 核心思想、前向传播推导、BPTT 反向传播与梯度消失问题。</p>
+            </span>
+            <span class="series-chapter-arrow" aria-hidden="true">→</span>
+          </a>
+        </li>
+        <li>
+          <a class="series-chapter-card toc-card" href="chapters/15-numpy-rnn.html">
+            <span class="series-chapter-number">15</span>
+            <span class="series-chapter-copy">
+              <span class="series-chapter-meta">20 MIN</span>
+              <h3>用 NumPy 手写 RNN</h3>
+              <p>从公式到代码，用 NumPy 实现 RNN 前向传播，与 PyTorch nn.RNN 对比验证。</p>
+            </span>
+            <span class="series-chapter-arrow" aria-hidden="true">→</span>
+          </a>
+        </li>
+        <li>
+          <a class="series-chapter-card toc-card" href="chapters/16-pytorch-rnn.html">
+            <span class="series-chapter-number">16</span>
+            <span class="series-chapter-copy">
+              <span class="series-chapter-meta">20 MIN</span>
+              <h3>PyTorch 中的 RNN 实现</h3>
+              <p>nn.RNN 参数详解、输入输出格式、多层与双向 RNN、隐藏状态管理。</p>
+            </span>
+            <span class="series-chapter-arrow" aria-hidden="true">→</span>
+          </a>
+        </li>
+        <li>
+          <a class="series-chapter-card toc-card" href="chapters/17-lstm-gru.html">
+            <span class="series-chapter-number">17</span>
+            <span class="series-chapter-copy">
+              <span class="series-chapter-meta">25 MIN</span>
+              <h3>LSTM 与 GRU</h3>
+              <p>LSTM 门控机制与梯度高速公路、GRU 简化设计、手动实现与 PyTorch 对比。</p>
+            </span>
+            <span class="series-chapter-arrow" aria-hidden="true">→</span>
+          </a>
+        </li>
+        <li>
+          <a class="series-chapter-card toc-card" href="chapters/18-language-model.html">
+            <span class="series-chapter-number">18</span>
+            <span class="series-chapter-copy">
+              <span class="series-chapter-meta">15 MIN</span>
+              <h3>字符级语言模型</h3>
+              <p>语言模型的训练目标、困惑度、字符级 RNN 实现与温度采样文本生成。</p>
+            </span>
+            <span class="series-chapter-arrow" aria-hidden="true">→</span>
+          </a>
+        </li>
+        <li>
+          <a class="series-chapter-card toc-card" href="chapters/19-text-nlp.html">
+            <span class="series-chapter-number">19</span>
+            <span class="series-chapter-copy">
+              <span class="series-chapter-meta">25 MIN</span>
+              <h3>文本处理与情感分析</h3>
+              <p>分词与词汇表、词嵌入（Word2Vec）、预训练向量、BiLSTM 文本分类实战。</p>
+            </span>
+            <span class="series-chapter-arrow" aria-hidden="true">→</span>
+          </a>
+        </li>
+        <li>
+          <a class="series-chapter-card toc-card" href="chapters/20-seq2seq.html">
+            <span class="series-chapter-number">20</span>
+            <span class="series-chapter-copy">
+              <span class="series-chapter-meta">20 MIN</span>
+              <h3>Seq2Seq 与注意力机制</h3>
+              <p>编码器-解码器架构、Bahdanau 注意力、Teacher Forcing 与 Beam Search。</p>
+            </span>
+            <span class="series-chapter-arrow" aria-hidden="true">→</span>
+          </a>
+        </li>
+        <li>
+          <a class="series-chapter-card toc-card" href="chapters/21-advanced.html">
+            <span class="series-chapter-number">21</span>
+            <span class="series-chapter-copy">
+              <span class="series-chapter-meta">30 MIN</span>
+              <h3>高级主题与 Transformer 过渡</h3>
+              <p>训练技巧、时间序列预测、从 RNN 到 Transformer 的演进、常见错误与速查表。</p>
+            </span>
+            <span class="series-chapter-arrow" aria-hidden="true">→</span>
+          </a>
+        </li>
+      </ol>
+    </section>
+  </div>
+</main>
+
+<footer>
+  <div class="set">
+    <span>深度学习系列讲义</span>
+    <span>2026 · ZH-CN</span>
+  </div>
+  <div class="set">
+    <span>Mav</span>
+  </div>
+</footer>
+<div class="search-backdrop" id="search-overlay" role="dialog" aria-modal="true" aria-label="搜索" hidden>
+  <div class="search-modal">
+    <div class="search-input-wrap">
+      <input type="search" class="search-input" placeholder="搜索内容..." aria-label="搜索内容" autocomplete="off">
+      <kbd>ESC</kbd>
+    </div>
+    <div class="search-results" role="listbox" aria-label="搜索结果"></div>
+  </div>
+</div>
+
+<script src="assets/script.js"></script>
+</body>
+</html>
