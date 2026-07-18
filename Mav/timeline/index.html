@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>时间线 — Mav</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/style.css">
+<style>
+/* ════════════════════════════════════════════════════════════
+   Timeline 专属样式（本页手写维护，无构建脚本）
+
+   原则：条目以「事件」为单位，不以书为单位。
+   书只是事件的产物，合并列在事件的 note 里（可加链接）。
+
+   条目分三个重量级：
+   L  .tl-entry--card   重点条目：卡片，长描述 + meta 行，可带旁白
+   M  .tl-entry         标准条目：标题 + 一句话
+   S  .tl-entry--mini   速记条目：只有一行
+   任何条目都可以附 .tl-aside 旁白（第一人称的一句碎碎念）
+
+   左轨元信息统一为 mono 前缀「07 · 事」（月份 + 类型）
+   类型取值：书 / 文 / 事
+   ════════════════════════════════════════════════════════════ */
+
+.tl-sub {
+  color: var(--ink-soft); max-width: 560px;
+  margin-bottom: var(--space-7) !important;
+}
+
+/* ---------- NOW 块 ---------- */
+.now-box {
+  border: 1px solid var(--line-2);
+  padding: var(--space-5);
+  margin-bottom: var(--space-8);
+}
+.now-head {
+  display: flex; align-items: center; gap: var(--space-3);
+  font-family: var(--mono); font-size: 11px; letter-spacing: 0.14em;
+  text-transform: uppercase; color: var(--muted);
+  margin-bottom: var(--space-3);
+}
+.now-dot {
+  width: 7px; height: 7px; border-radius: 50%;
+  background: var(--ink); flex-shrink: 0;
+  animation: now-pulse 2.4s ease-in-out infinite;
+}
+@keyframes now-pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.25; } }
+.now-box p { color: var(--ink-2); line-height: 1.7; margin-bottom: 0; }
+
+/* ---------- 时间轴主体 ---------- */
+.tl {
+  position: relative;
+  padding-left: var(--space-6);
+}
+.tl::before {
+  content: "";
+  position: absolute; left: 4px; top: 0; bottom: 0;
+  width: 1px; background: var(--line);
+}
+
+/* 未来学期（待续，置于最顶，虚线向上） */
+.tl-future {
+  position: relative;
+  padding-bottom: var(--space-8);
+}
+.tl-future::before {
+  content: "";
+  position: absolute; left: calc(-1 * var(--space-6) + 4px); top: -8px; bottom: 0;
+  width: 0; border-left: 1px dashed var(--line-2);
+  background: var(--bg);
+}
+.tl-future .tl-term-label { color: var(--muted-2); }
+.tl-future .tl-term-marker {
+  background: var(--bg); border: 1px dashed var(--muted-2);
+}
+.tl-future .tl-term-meta { color: var(--muted-2); }
+
+/* 学期 / 假期区块 */
+.tl-term { position: relative; padding-bottom: var(--space-8); }
+.tl-term-header {
+  display: flex; align-items: baseline; justify-content: space-between;
+  gap: var(--space-4); margin-bottom: var(--space-5);
+}
+.tl-term-marker {
+  position: absolute; left: calc(-1 * var(--space-6)); top: 10px;
+  width: 9px; height: 9px; background: var(--ink);
+}
+.tl-term--break .tl-term-marker {           /* 假期：空心方块 */
+  background: var(--bg); border: 1px solid var(--ink);
+}
+.tl-term-label {
+  font-size: var(--text-lg); font-weight: var(--weight-semibold);
+  letter-spacing: -0.01em; color: var(--ink);
+}
+.tl-term-meta {
+  font-family: var(--mono); font-size: 11px; letter-spacing: 0.1em;
+  text-transform: uppercase; color: var(--muted); white-space: nowrap;
+}
+.tl-term-theme {
+  font-size: var(--text-sm); color: var(--ink-soft); line-height: 1.6;
+  margin: calc(-1 * var(--space-3)) 0 var(--space-4) !important;
+}
+.tl-courses {
+  font-family: var(--mono); font-size: 11px; letter-spacing: 0.05em;
+  color: var(--muted); margin-bottom: var(--space-5);
+}
+
+/* ---------- 条目：通用骨架 ----------
+   两列：左轨 mono 前缀「07 · 事」 + 正文。
+   文字条目用 baseline 对齐（前缀与标题共享基线）；
+   卡片条目是块级元素，改用 start + 固定内边距校准。 */
+.tl-entries {
+  list-style: none;
+  padding-left: 0 !important;
+  margin-bottom: 0 !important;
+}
+.tl-entry {
+  position: relative;
+  display: grid; grid-template-columns: 52px 1fr;
+  gap: var(--space-3); align-items: baseline;
+  padding: var(--space-4) 0;
+  margin-bottom: 0 !important;
+  line-height: 1.6;
+}
+.tl-entry::before {                         /* 轴上的小圆点 */
+  content: "";
+  position: absolute; left: calc(-1 * var(--space-6) + 2px); top: 26px;
+  width: 5px; height: 5px; border-radius: 50%;
+  background: var(--bg); border: 1px solid var(--line-2);
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+.tl-entry:hover::before { background: var(--ink); border-color: var(--ink); }
+
+.tl-meta {
+  font-family: var(--mono); font-size: 11px; letter-spacing: 0.04em;
+  color: var(--muted); white-space: nowrap;
+}
+.tl-body { min-width: 0; }
+.tl-title {
+  font-size: var(--text-base); font-weight: var(--weight-medium);
+  color: var(--ink); line-height: 1.6;
+}
+a.tl-title:hover { color: var(--ink); }
+a.tl-title:hover .tl-title-text { border-bottom: 1px solid var(--line-2); }
+.tl-arrow {
+  font-family: var(--mono); font-size: var(--text-xs); color: var(--muted);
+  margin-left: var(--space-2);
+  display: inline-block; transition: transform 0.15s ease, color 0.15s ease;
+}
+a.tl-title:hover .tl-arrow { transform: translateX(3px); color: var(--ink); }
+.tl-note {
+  font-size: var(--text-sm); color: var(--ink-soft);
+  line-height: 1.6;
+  margin: var(--space-1) 0 0 !important;
+}
+.tl-note a {                                /* note 里的书籍链接 */
+  color: var(--ink-soft);
+  border-bottom: 1px solid var(--line-2);
+}
+.tl-note a:hover { color: var(--ink); border-bottom-color: var(--ink-soft); }
+
+/* ---------- 旁白：任何条目都能附一句 ---------- */
+.tl-aside {
+  padding-left: var(--space-4);
+  border-left: 2px solid var(--line-2);
+  font-size: var(--text-sm); color: var(--muted);
+  line-height: 1.6;
+  margin: var(--space-3) 0 0 !important;
+}
+
+/* ---------- L：重点条目（卡片） ---------- */
+.tl-entry--card { padding: var(--space-4) 0; align-items: start; }
+.tl-entry--card::before {                   /* 实心大圆点，对齐卡片内标题行 */
+  width: 7px; height: 7px;
+  left: calc(-1 * var(--space-6) + 1px); top: 50px;
+  background: var(--ink); border-color: var(--ink);
+}
+.tl-entry--card .tl-meta {
+  padding-top: 25px;                        /* 边框 1px + 卡片内边距 24px */
+  line-height: 25.6px;                      /* 与卡片内标题首行对齐 */
+}
+.tl-card {
+  display: block;
+  border: 1px solid var(--line);
+  padding: var(--space-5);
+  color: var(--ink);
+  transition: background 0.2s ease, border-color 0.2s ease;
+}
+a.tl-card:hover { background: var(--bg-soft); border-color: var(--line-2); color: var(--ink); }
+a.tl-card:hover .tl-arrow { transform: translateX(3px); color: var(--ink); }
+.tl-card .tl-title { display: block; margin-bottom: var(--space-2); }
+.tl-card-desc {
+  font-size: var(--text-sm); color: var(--ink-soft);
+  line-height: 1.7;
+  margin-bottom: 0 !important;
+}
+.tl-card-meta {
+  font-family: var(--mono); font-size: 11px; letter-spacing: 0.08em;
+  text-transform: uppercase; color: var(--muted);
+  margin-top: var(--space-4); padding-top: var(--space-3);
+  border-top: 1px solid var(--line);
+}
+
+/* ---------- S：速记条目（一行流） ---------- */
+.tl-entry--mini { padding: var(--space-3) 0; }
+.tl-entry--mini::before { top: 21px; }
+.tl-entry--mini .tl-title {
+  font-size: var(--text-sm); font-weight: var(--weight-normal); color: var(--ink-2);
+}
+
+/* ---------- 起点 ---------- */
+.tl-origin {
+  position: relative;
+  font-family: var(--mono); font-size: 11px; letter-spacing: 0.1em;
+  text-transform: uppercase; color: var(--muted-2);
+  padding-bottom: var(--space-5);
+}
+.tl-origin::before {
+  content: "";
+  position: absolute; left: calc(-1 * var(--space-6) + 1px); top: 5px;
+  width: 7px; height: 7px; border-radius: 50%; background: var(--line-2);
+}
+
+/* ---------- 响应式 ---------- */
+@media (max-width: 600px) {
+  .tl-entry { grid-template-columns: 1fr; gap: var(--space-1); }
+  .tl-entry::before { top: 24px; }
+  .tl-entry--mini::before { top: 19px; }
+  .tl-entry--card .tl-meta { padding-top: 0; line-height: 1.6; }
+  .tl-entry--card::before { top: 21px; }
+  .tl-term-header { flex-direction: column; gap: var(--space-1); }
+}
+</style>
+</head>
+<body>
+
+<nav class="topnav">
+  <div class="topnav-inner">
+    <a class="brand" href="../index.html">← Mav</a>
+    <div class="nav-links">
+      <a href="../about/index.html">关于我</a>
+      <a href="../knowledge/index.html">知识库</a>
+      <a href="../timeline/index.html" class="active">时间线</a>
+    </div>
+  </div>
+</nav>
+
+<main class="page-wrap">
+
+  <span class="eyebrow">Timeline</span>
+  <h1>时间线</h1>
+  <p class="tl-sub">
+    按学期串起来的一切——发生的事、做过的项目、写下的东西。
+    不是 commit log，是给人看的版本。
+  </p>
+
+  <!-- ════ NOW：现在进行时，每学期改一次 ════ -->
+  <div class="now-box">
+    <div class="now-head">
+      <span class="now-dot"></span>
+      <span>Now · 2026 暑假</span>
+    </div>
+    <p>
+      这个暑假的三条线：RoboGame 备赛、开始学强化学习、提前预习大二上的课程。
+      知识库也顺手做了一轮大重构。
+    </p>
+  </div>
+
+  <!-- ════ 时间轴主体 ════
+       维护方式：手写。以「事件」为条目单位，书只是事件的产物，
+       合并列在 note 里；学期内新的在上。
+       左轨前缀「月份 · 类型」，类型：书 / 文 / 事。
+
+       ── L 重点（每学期至多一两个）────────────────
+       <li class="tl-entry tl-entry--card">
+         <span class="tl-meta">07 · 事</span>
+         <div class="tl-body">
+           <a class="tl-card" href="...">
+             <span class="tl-title"><span class="tl-title-text">标题</span><span class="tl-arrow">→</span></span>
+             <p class="tl-card-desc">两三句描述，讲清来龙去脉。</p>
+             <div class="tl-card-meta">meta · meta · meta</div>
+           </a>
+           <p class="tl-aside">可选：一句第一人称旁白。</p>
+         </div>
+       </li>
+
+       ── M 标准 ──────────────────────────────────
+       <li class="tl-entry">
+         <span class="tl-meta">06 · 事</span>
+         <div class="tl-body">
+           <a class="tl-title" href="..."><span class="tl-title-text">标题</span><span class="tl-arrow">→</span></a>
+           <p class="tl-note">一句话说明，书名可以直接 <a href="...">加链接</a>。</p>
+         </div>
+       </li>
+
+       ── S 速记（一行流，小事用）──────────────────
+       <li class="tl-entry tl-entry--mini">
+         <span class="tl-meta">07 · 事</span>
+         <div class="tl-body">
+           <span class="tl-title"><span class="tl-title-text">一句话完事</span></span>
+         </div>
+       </li>
+
+       （无链接时 a 换 span，去掉 tl-arrow）
+       ─────────────────────────────────────────────
+  -->
+  <div class="tl">
+
+    <!-- 未来：待续 -->
+    <div class="tl-future">
+      <div class="tl-term-header">
+        <span class="tl-term-marker"></span>
+        <span class="tl-term-label">大二上</span>
+        <span class="tl-term-meta">2026 秋 · 待续</span>
+      </div>
+    </div>
+
+    <!-- ═══ 2026 暑假（进行中） ═══ -->
+    <section class="tl-term tl-term--break">
+      <div class="tl-term-header">
+        <span class="tl-term-marker"></span>
+        <span class="tl-term-label">2026 暑假</span>
+        <span class="tl-term-meta">进行中</span>
+      </div>
+      <ul class="tl-entries">
+
+        <li class="tl-entry tl-entry--card">
+          <span class="tl-meta">07 · 事</span>
+          <div class="tl-body">
+            <a class="tl-card" href="../knowledge/robogame2026/index.html">
+              <span class="tl-title"><span class="tl-title-text">RoboGame 2026 备赛</span><span class="tl-arrow">→</span></span>
+              <p class="tl-card-desc">
+                暑假的主线项目。负责下位机——串口通信、协议栈、麦克纳姆轮
+                运动控制的固件开发与维护。把整条链路整理成了八章讲义
+                《从命令到车轮》，正赛在大二上学期。
+              </p>
+              <div class="tl-card-meta">下位机固件 · 通信协议 · 麦轮控制 · 讲义 8 章</div>
+            </a>
+            <p class="tl-aside">第一次把「写代码」和「轮子真的转起来」连在了一起。</p>
+          </div>
+        </li>
+
+        <li class="tl-entry">
+          <span class="tl-meta">07 · 事</span>
+          <div class="tl-body">
+            <span class="tl-title"><span class="tl-title-text">开始学习强化学习</span></span>
+            <p class="tl-note">还没真正展开，先立个起点——后面会有一本书来记录。</p>
+          </div>
+        </li>
+
+        <li class="tl-entry">
+          <span class="tl-meta">07 · 事</span>
+          <div class="tl-body">
+            <span class="tl-title"><span class="tl-title-text">预习大二上：计算机原理与嵌入式系统</span></span>
+            <p class="tl-note">提前啃下学期的课，马上会有一本新书出现在知识库。</p>
+          </div>
+        </li>
+
+        <li class="tl-entry tl-entry--mini">
+          <span class="tl-meta">07 · 书</span>
+          <div class="tl-body">
+            <a class="tl-title" href="../knowledge/deep-learning/index.html">
+              <span class="tl-title-text">把旧的深度学习书稿合并成《深度学习系列讲义》（3 篇 21 章）</span><span class="tl-arrow">→</span>
+            </a>
+          </div>
+        </li>
+
+        <li class="tl-entry tl-entry--mini">
+          <span class="tl-meta">07 · 事</span>
+          <div class="tl-body">
+            <span class="tl-title"><span class="tl-title-text">知识库大扫除：下架几本不满意的书稿，书目分级整理</span></span>
+          </div>
+        </li>
+
+      </ul>
+    </section>
+
+    <!-- ═══ 大一下 · 2026 春 ═══ -->
+    <section class="tl-term">
+      <div class="tl-term-header">
+        <span class="tl-term-marker"></span>
+        <span class="tl-term-label">大一下</span>
+        <span class="tl-term-meta">2026.02 — 2026.06</span>
+      </div>
+      <p class="tl-term-theme">这学期遇到了 Claude Code——从此笔记都长成了书。</p>
+      <div class="tl-courses">课程 — 热学 · 数学分析 B2 · 人工智能导论 …</div>
+      <ul class="tl-entries">
+
+        <li class="tl-entry">
+          <span class="tl-meta">06 · 事</span>
+          <div class="tl-body">
+            <span class="tl-title"><span class="tl-title-text">第一台 MacBook Air</span></span>
+            <p class="tl-note">从 Windows 切换到 macOS 生态，一次久违的「用得开心」。</p>
+            <p class="tl-aside">这件事值得单独写一篇博客，先欠着。</p>
+          </div>
+        </li>
+
+        <li class="tl-entry">
+          <span class="tl-meta">06 · 书</span>
+          <div class="tl-body">
+            <span class="tl-title"><span class="tl-title-text">期末周：四门课的复习都做成了书</span></span>
+            <p class="tl-note">
+              <a href="../knowledge/thermodynamics/index.html">热学速通</a>、<a href="../knowledge/math-analysis/index.html">数学分析讲义（下册）</a>、<a href="../knowledge/ai-math-principles/index.html">人工智能与数学原理</a>、<a href="../knowledge/data-structures/index.html">数据结构：从指针到算法</a>。
+            </p>
+          </div>
+        </li>
+
+        <li class="tl-entry">
+          <span class="tl-meta">05 · 事</span>
+          <div class="tl-body">
+            <a class="tl-title" href="../knowledge/index.html">
+              <span class="tl-title-text">知识库上线 Project 功能</span><span class="tl-arrow">→</span>
+            </a>
+            <p class="tl-note">
+              书之上的聚合层：把相关的书按阅读顺序串成学习路径，配上前置知识、
+              核心概念和「读完你能做到什么」。知识库从书架变成了路线图。
+            </p>
+          </div>
+        </li>
+
+        <li class="tl-entry">
+          <span class="tl-meta">05 · 书</span>
+          <div class="tl-body">
+            <span class="tl-title"><span class="tl-title-text">课余的兴趣探索</span></span>
+            <p class="tl-note">
+              把好奇的东西各写成了一本书：<a href="../knowledge/pdf-explained/index.html">PDF 文件格式</a>、<a href="../knowledge/euv-lithography/index.html">EUV 光刻机</a>、<a href="../knowledge/browser-war/index.html">浏览器战争史</a>。
+            </p>
+          </div>
+        </li>
+
+        <li class="tl-entry">
+          <span class="tl-meta">05 · 事</span>
+          <div class="tl-body">
+            <span class="tl-title"><span class="tl-title-text">阅读体验升级</span></span>
+            <p class="tl-note">章节页加入侧边笔记面板和 Tips，上线评论与点赞后端（Express + SQLite）。</p>
+          </div>
+        </li>
+
+        <li class="tl-entry tl-entry--mini">
+          <span class="tl-meta">05 · 文</span>
+          <div class="tl-body">
+            <a class="tl-title" href="../blog/html/广州签证.html">
+              <span class="tl-title-text">广州签证之旅</span><span class="tl-arrow">→</span>
+            </a>
+          </div>
+        </li>
+
+        <li class="tl-entry tl-entry--card">
+          <span class="tl-meta">05 · 事</span>
+          <div class="tl-body">
+            <a class="tl-card" href="../blog/html/2026-05-16-build-journey.html">
+              <span class="tl-title"><span class="tl-title-text">mav-ustc.dev 上线</span><span class="tl-arrow">→</span></span>
+              <p class="tl-card-desc">
+                和 Claude Code 一起，从零搭起这个网站：自己写的静态生成器
+                md2HTML、首发的 8 本书稿（Claude Code 指南、区块链、Git、Rust……）、
+                博客与部署链路。从此写下的东西有了固定的家。
+                完整踩坑记录在《个人主页搭建历程》。
+              </p>
+              <div class="tl-card-meta">首发 8 本书 · 自建静态生成器 · Nginx 自部署 · 全站开源</div>
+            </a>
+          </div>
+        </li>
+
+        <li class="tl-entry tl-entry--mini">
+          <span class="tl-meta">05 · 文</span>
+          <div class="tl-body">
+            <a class="tl-title" href="../blog/html/2026-05-14-claude-code.html">
+              <span class="tl-title-text">Claude Code 真好用</span><span class="tl-arrow">→</span>
+            </a>
+          </div>
+        </li>
+
+      </ul>
+    </section>
+
+    <!-- ═══ 大一上 · 2025 秋 ═══ -->
+    <section class="tl-term">
+      <div class="tl-term-header">
+        <span class="tl-term-marker"></span>
+        <span class="tl-term-label">大一上</span>
+        <span class="tl-term-meta">2025.09 — 2026.01</span>
+      </div>
+      <ul class="tl-entries">
+
+        <li class="tl-entry">
+          <span class="tl-meta">12 · 事</span>
+          <div class="tl-body">
+            <span class="tl-title"><span class="tl-title-text">开始学习深度学习</span></span>
+            <p class="tl-note">
+              从 MLP 和卷积神经网络起步。这条线一直延伸到今天，也还没有走完——
+              起点记在这里。
+            </p>
+          </div>
+        </li>
+
+        <li class="tl-entry">
+          <span class="tl-meta">12 · 事</span>
+          <div class="tl-body">
+            <a class="tl-title" href="https://github.com/maverickxone/Homework-IC-Network" target="_blank" rel="noopener">
+              <span class="tl-title-text">集成电路导论课程网站</span><span class="tl-arrow">↗</span>
+            </a>
+            <p class="tl-note">课程大作业，第一个独立上线的网站。一切的起点。</p>
+          </div>
+        </li>
+
+      </ul>
+    </section>
+
+    <!-- 起点 -->
+    <div class="tl-origin">2025.09 · 入学 USTC</div>
+
+  </div>
+
+</main>
+
+<footer>
+  <div class="footer-inner">
+    <span>Mav · 2026</span>
+    <span>Built with Claude and curiosity.</span>
+  </div>
+</footer>
+
+<script src="../assets/script.js"></script>
+</body>
+</html>

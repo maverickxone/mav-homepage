@@ -316,7 +316,7 @@ ${items}
     <div class="nav-links">
       <a href="../../../about/index.html">关于我</a>
       <a href="../../index.html" class="active">知识库</a>
-      <a href="../../../blog/index.html">博客</a>
+      <a href="../../../timeline/index.html">时间线</a>
     </div>
   </div>
 </nav>

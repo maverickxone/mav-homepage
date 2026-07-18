@@ -21,11 +21,12 @@ mav-homepage/
 ├── Mav/                         ← Nginx root，线上站点
 │   ├── index.html               ← 主页
 │   ├── about/index.html         ← 关于我
-│   ├── blog/                    ← 博客系统
-│   │   ├── posts/*.md           ← 博客源文件（Markdown + front-matter）
-│   │   ├── html/*.html          ← 博客输出 HTML
-│   │   ├── blog-build.js        ← 博客构建脚本
-│   │   └── index.html           ← 博客列表页
+│   ├── timeline/index.html      ← 时间线板块（手写维护，无构建脚本）
+│   ├── blog/                    ← 长文详情页（列表已并入时间线）
+│   │   ├── posts/*.md           ← 长文源文件（Markdown + front-matter）
+│   │   ├── html/*.html          ← 长文输出 HTML
+│   │   ├── blog-build.js        ← 只生成详情页（不再改 index/主页）
+│   │   └── index.html           ← 手写的「已并入时间线」提示页
 │   ├── knowledge/               ← 知识库输出（每本书或 Series 一个子目录）
 │   │   ├── index.html           ← 知识库入口页（双模式：Projects / 全部书籍）
 │   │   ├── projects/            ← Project 详情页输出
@@ -225,19 +226,41 @@ Mav/knowledge/<slug>/
 
 ---
 
-## 博客系统
+## 时间线板块（2026-07 起，取代博客列表）
 
-位置：`Mav/blog/`
+位置：`Mav/timeline/index.html`。**手写维护，没有构建脚本**——一个自包含 HTML（挂全站 `assets/style.css` + 页内内联时间线专属 CSS）。
+
+结构：NOW 块（现在进行时，每学期改一次）→ 未来学期「待续」→ 按学期/假期分区的条目（新的在上）→ 起点（2025.09 入学）。
+
+条目分三个重量级（模板在页面 HTML 注释里，直接复制改字段）：
+
+| 级别 | class | 用途 |
+|------|-------|------|
+| L | `tl-entry tl-entry--card` | 重点条目（卡片 + 长描述 + meta 行），每学期至多一两个 |
+| M | `tl-entry` | 标准条目（标题 + 一句话） |
+| S | `tl-entry tl-entry--mini` | 速记条目（一行） |
+
+- **条目以「事件」为单位，不以书为单位**：书是事件的产物，合并列在 note 里（可加链接），不要一书一条
+- 左轨 mono 前缀 `07 · 书`（月份 + 类型），类型：书 / 文 / 事
+- 任何条目可附 `.tl-aside` 旁白（第一人称一句话）
+- 学期方块实心、假期空心；条目粒度控制在每学期 ≤15 条
+- 垂直对齐是固定像素校准的（首行 25.6px 等），改字号需同步调 `::before` 的 top 值
+- 主页「最近动态」(`Mav/index.html` 的 `recent-list`) 现在**手写维护**，与时间线同步更新
+
+## 博客（残留：只出详情页）
+
+`Mav/blog/` 的列表页已并入时间线；`blog/index.html` 是手写的迁移提示页，**不要用脚本重新生成**。
 
 ```bash
 cd Mav/blog
-node blog-build.js
+node blog-build.js   # 只生成 html/*.html 详情页（导航指向时间线）
 ```
 
 - 源文件：`posts/*.md`（带 front-matter: title + date）
-- 输出：`html/*.html` + 更新 `blog/index.html` + 更新主页最近动态
-- 以 `BUILD-` 开头的 .md 文件**不出现在博客列表**中
-- 特例：`BUILD-JOURNEY-0516.md` 仍会被单独构建为 `html/build-journey.html`（硬编码特例，不是列表项）
+- `blog-build.js` **不再**改写 `blog/index.html` 和主页最近动态（相关函数已删除）
+- 以 `BUILD-` 开头的 .md 不会生成普通详情页
+- 特例：`BUILD-JOURNEY-0516.md` 仍会被单独构建为 `html/build-journey.html`
+- 发新长文流程：写 `posts/*.md` → `node blog-build.js` → 在时间线里**手动加一条**指向它
 
 ---
 
@@ -480,7 +503,8 @@ Project 卡片由构建脚本根据 YAML 自动回填到：
 | 增加独立书籍入口卡片 | 编辑 `Mav/knowledge/index.html` 的独立阅读和全部书籍区域（目前仍需手动） |
 | 新建 Project | `markdown-backups/projects/` 下建 `.yaml`，然后 `node build-projects.js` |
 | 构建 Project | `cd md2HTML && node build-projects.js` |
-| 发博客 | `Mav/blog/posts/` 下写 `.md`，然后 `cd Mav/blog && node blog-build.js` |
+| 发长文 | `Mav/blog/posts/` 下写 `.md`，`cd Mav/blog && node blog-build.js`，再手动在时间线加条目 |
+| 更新时间线 | 手改 `Mav/timeline/index.html`（条目模板在页内注释里），同步主页 `recent-list` |
 | 锁定文件 | `cd md2HTML && node build.js --lock <path>` |
 | 解锁文件 | `cd md2HTML && node build.js --unlock <path>` |
 | 查看所有锁 | `cd md2HTML && node build.js --list-lock` |
