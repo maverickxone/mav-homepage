@@ -1,0 +1,16 @@
+title: "Large Language Models"
+slug: large-language-models
+type: series
+eyebrow: "Series · LLM"
+author: "Mav"
+description: "从 2020 年只会续写的 GPT-3，到 2026 年能做高强度推理与编程的大模型，这六年发生了什么。系列沿一条主线展开：模型长什么样（架构演化）、怎么炼出来的（预训练与后训练）、跑在什么上面（算力与推理）、谁在做（产业地图）。连载中，当前已发布第一卷：架构演化。"
+language: "ZH-CN"
+version: "0.1.0"
+status: published
+estimatedTime: "约 6 小时（第一卷）"
+parts:
+  - id: architecture
+    label: "PART I"
+    title: "架构演化"
+    description: "从你在课本里学到的原版 Transformer 出发，逐个部件看清 2026 年的大模型骨架：残差流、归一化、RoPE、注意力的省钱史、MoE，以及怎么读懂一次模型发布。"
+    source: "01-architecture"

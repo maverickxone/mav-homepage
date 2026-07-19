@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>课本尽头的 Transformer——把它真正数一遍 — Large Language Models</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" href="../assets/series.css">
+<link rel="stylesheet" id="hljs-light" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+<link rel="stylesheet" id="hljs-dark" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" media="not all">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+
+</head>
+<body class="series-page series-reader-page">
+
+<div class="progress-bar" id="progress-bar"></div>
+
+<nav class="topnav series-topnav" id="topnav">
+  <div class="topnav-inner">
+    <a class="brand" href="../index.html">Large Language Models</a>
+    <div class="nav-links">
+      <a href="../index.html#part-architecture" class="active">PART I</a>
+    </div>
+    <div class="nav-controls">
+      <button class="nav-btn" id="search-btn" aria-label="搜索 (Ctrl+K)">⌘K</button>
+      <button class="nav-btn" id="settings-btn" aria-label="阅读设置">Aa</button>
+      <a class="nav-btn" href="../../index.html" aria-label="返回知识库">← 知识库</a>
+    </div>
+  </div>
+</nav>
+<div class="settings-pop" id="settings-pop">
+  <h5>主题</h5>
+  <div class="row">
+    <button class="seg" data-theme-set="light">明亮</button>
+    <button class="seg" data-theme-set="dark">暗色</button>
+  </div>
+  <h5>字号</h5>
+  <div class="row">
+    <button class="seg" data-size-set="s">小</button>
+    <button class="seg" data-size-set="m">中</button>
+    <button class="seg" data-size-set="l">大</button>
+  </div>
+</div>
+
+<div class="with-sidebar series-reader">
+  <aside class="sidebar series-sidebar">
+  <a class="series-sidebar-home" href="../index.html">系列目录</a>
+  <section class="series-sidebar-part">
+    <h4><span>PART I</span>架构演化</h4>
+    <ul>
+      <li class="series-chapter-item">
+        <a href="01-from-transformer-to-gpt.html" data-chapter="01" class="active" aria-current="page">课本尽头的 Transformer——把它真正数一遍</a>
+        <ul class="series-section-links">
+          <li><a href="#11-一个-token-的旅程从文字到概率">1.1 一个 token 的旅程：从文字到概率</a></li>
+          <li><a href="#12-打开一层参数账本">1.2 打开一层：参数账本</a></li>
+          <li><a href="#13-三条路线同一套积木三种搭法">1.3 三条路线：同一套积木，三种搭法</a></li>
+          <li><a href="#14-为什么是-decoder-only-赢了">1.4 为什么是 decoder-only 赢了</a></li>
+          <li><a href="#15-gpt-1-到-gpt-3把quot猜下一个词quot推到极限">1.5 GPT-1 到 GPT-3：把&amp;quot;猜下一个词&amp;quot;推到极限</a></li>
+        </ul>
+      </li>
+      <li class="series-chapter-item">
+        <a href="02-residual-stream.html" data-chapter="02">残差流——理解一切改动的地基</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="03-norms-and-activations.html" data-chapter="03">稳定性之战——归一化与激活函数</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="04-positional-encoding.html" data-chapter="04">位置的难题——从正弦波到 RoPE 与长上下文</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="05-attention-evolution.html" data-chapter="05">注意力的账单——KV cache 与一部省钱史</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="06-moe-basics.html" data-chapter="06">分而治之——MoE 的基本机制</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="07-moe-modern.html" data-chapter="07">MoE 的分水岭——DeepSeek 配方与 2026 年的主流形态</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="08-reading-a-release.html" data-chapter="08">读懂一次发布——参数量、基模与版本语义</a>
+      </li>
+    </ul>
+  </section>
+</aside>
+  <article class="chapter-body">
+    <header class="chapter-head series-chapter-head">
+  <div class="series-breadcrumb">PART I · 架构演化</div>
+  <div class="chapter-head-meta">
+    <span class="num">CHAPTER 01</span>
+    <span>≈ 40 MIN READ</span>
+  </div>
+  <h1>课本尽头的 Transformer——把它真正数一遍</h1>
+</header>
+    <p>2020 年 5 月，OpenAI 发布了 GPT-3。如果你穿越回去试用它，多半会失望：它不会回答问题——你问它&quot;法国的首都是哪里？&quot;，它可能反问你&quot;德国的首都是哪里？意大利的首都是哪里？&quot;，因为它唯一会做的事情是<strong>续写</strong>：给它一段文字，它猜下一个词应该是什么。它没有对话的概念，没有&quot;任务&quot;的概念，更谈不上推理。而 2026 年的今天，同一条技术路线上的模型可以独立完成数学竞赛题、重构上万行的代码库、阅读几百页的文档后写出分析报告。</p>
+<p>这六年里发生了什么？这是整个系列要回答的问题。而这第一卷回答其中最基础的一半：<strong>模型本身长什么样，它的骨架是怎么一步步从课本里那个原版 Transformer，演化成今天这副样子的。</strong></p>
+<p>你已经学过 Transformer 的基础理论——知道注意力机制在做什么，知道 encoder 和 decoder 是什么架构。这正是本卷的起点。但在出发之前，我们要先做一件你的课本大概率没有带你做过的事：<strong>把一个 Transformer 的参数真正数一遍</strong>。不是背&quot;GPT-3 有 1750 亿参数&quot;这句话，而是搞清楚这 1750 亿个数字分别放在哪几个矩阵里、每个矩阵为什么是那个形状。这件事看起来枯燥，却是理解后面一切的钥匙——因为 2020 年之后几乎每一项架构改进，本质上都是在对这本&quot;参数账本&quot;和它对应的&quot;计算账单&quot;动手术。你不先看清账本，就看不懂手术。</p>
+<h2 id="11-一个-token-的旅程从文字到概率">1.1 一个 token 的旅程：从文字到概率</h2>
+<p>先建立全局图景。一个 decoder-only 的语言模型（GPT 系就是这种，本卷后面会解释这个选择），从输入到输出只做一件事：<strong>给定前面所有 token，输出下一个 token 的概率分布</strong>。整条流水线是：</p>
+<p>$$
+\text{文字} \xrightarrow{\text{tokenizer}} \text{token 序列} \xrightarrow{\text{embedding}} \text{向量序列} \xrightarrow{N \times \text{Transformer 块}} \text{向量序列} \xrightarrow{\text{unembedding}} \text{概率分布}
+$$</p>
+<p>我们一站一站走。</p>
+<p><strong>第一站：tokenizer。</strong> 模型不认识文字，只认识编号。tokenizer 的工作是把文字切成一个个 token，每个 token 对应词表里的一个编号。现代模型基本都用 BPE（Byte Pair Encoding，字节对编码）这一族算法：从单个字节出发，反复把语料中最常一起出现的相邻片段合并成新的 token，直到词表达到预定大小。结果是常见词（比如 &quot;the&quot;、&quot;的&quot;）独占一个 token，生僻词被拆成几段（&quot;tokenization&quot; 可能被切成 &quot;token&quot; + &quot;ization&quot;）。词表大小是个设计选择：早年 GPT-2 用约 5 万，2026 年的主流模型普遍在 12 万到 20 万之间——词表越大，同样一段话切出的 token 越少，处理多语言越从容，但代价马上会在参数账本上看到。</p>
+<p><strong>第二站：embedding。</strong> 词表里每个 token 配一个向量，全部堆起来就是 embedding 矩阵 $W_E \in \mathbb{R}^{V \times d}$，其中 $V$ 是词表大小，$d$ 是模型的隐藏维度（hidden dimension，也叫 $d_{\text{model}}$）。输入序列里的每个 token 按编号查表取出自己的向量，于是长度为 $T$ 的 token 序列变成了 $T \times d$ 的矩阵。从这一刻起直到最后一层，模型内部流动的所有信息都是这种形状的向量序列。$d$ 是模型最重要的一个超参数——它是模型内部&quot;工作台&quot;的宽度，后面你会看到几乎所有矩阵的形状都由它决定。</p>
+<p><strong>第三站：$N$ 层 Transformer 块。</strong> 这是模型的主体。每一块内部是你熟悉的两个子层：一个（自）注意力层，一个前馈网络（FFN，也常叫 MLP 层），每个子层配残差连接和归一化。向量序列进去，同样形状的向量序列出来，如此重复 $N$ 次。$N$ 就是模型的深度，GPT-3 是 96 层，2026 年的旗舰模型普遍在 60 到 100 多层之间。</p>
+<p><strong>第四站：unembedding。</strong> 最后一层输出的向量要变回&quot;词表上的概率分布&quot;。做法是乘一个 $d \times V$ 的矩阵（常叫 unembedding 或 LM head），得到 $V$ 个分数（logits），再过一个 softmax 变成概率。很多模型直接复用 embedding 矩阵的转置来做这件事（称为 weight tying，权重绑定），省下一份参数。</p>
+<p>到这里，全局图景就有了：<strong>语言模型 = 查表 + $N$ 层同构的块 + 再查一次表</strong>。真正的&quot;智能&quot;全部藏在中间那 $N$ 层里。接下来我们打开一层，把里面每个矩阵数清楚。</p>
+<h2 id="12-打开一层参数账本">1.2 打开一层：参数账本</h2>
+<p>设隐藏维度为 $d$。一个标准 Transformer 块里有两类参数。</p>
+<p><strong>注意力层的四个投影矩阵。</strong> 注意力的计算你已经学过：每个位置的向量分别乘 $W_Q, W_K, W_V$ 得到 query、key、value，用 query 和 key 的点积算出注意力权重，加权求和 value，最后乘输出投影 $W_O$ 拼回去。多头注意力只是把 $d$ 维切成 $h$ 份并行做这件事，不改变参数总量。所以注意力层的参数就是四个 $d \times d$ 的矩阵：</p>
+<p>$$
+\text{注意力参数} = 4d^2
+$$</p>
+<p><strong>FFN 的两个矩阵。</strong> 前馈网络先把向量升维到 $d_{ff}$，过一个非线性激活，再降回 $d$。原版 Transformer 的惯例是 $d_{ff} = 4d$：</p>
+<p>$$
+\text{FFN 参数} = d \times d_{ff} + d_{ff} \times d = 8d^2
+$$</p>
+<p>把两者加起来，<strong>一层 Transformer 块约 $12d^2$ 个参数</strong>（归一化层的参数只有 $2d$ 量级，九牛一毛，忽略）。整个模型再加上 embedding：</p>
+<p>$$
+\text{总参数} \approx \underbrace{N \times 12d^2}_{\text{主体}} + \underbrace{V \times d}_{\text{embedding}}
+$$</p>
+<p>这个公式值得你记住——它是全卷的参照系。我们用它验算两个真实模型。</p>
+<p><strong>GPT-2 small</strong>：$d = 768$，$N = 12$，$V \approx 50000$。主体 $12 \times 12 \times 768^2 \approx 0.85$ 亿，embedding $50000 \times 768 \approx 0.38$ 亿，合计约 1.2 亿——官方数字 124M，对上了。注意一个耐人寻味的比例：这个小模型有<strong>三分之一的参数花在了 embedding 上</strong>。</p>
+<p><strong>GPT-3</strong>：$d = 12288$，$N = 96$，$V \approx 50000$。主体 $96 \times 12 \times 12288^2 \approx 1740$ 亿，embedding 约 6 亿，合计约 1750 亿——也对上了。这次 embedding 只占 <strong>0.35%</strong>。</p>
+<p>两次验算给出了第一个重要洞察：<strong>模型变大，是&quot;变宽变深&quot;，而 embedding 基本不动</strong>——词表大小不随模型规模涨。小模型里 embedding 是大头，大模型里它可以忽略不计。以后你听到&quot;7B 模型&quot;和&quot;70B 模型&quot;，应该立刻反应出：它们的差距全在 $N \times 12d^2$ 这一项上，即工作台的宽度和层数。</p>
+<p>再看一眼 $12d^2$ 的内部构成：$4d^2$ 在注意力，$8d^2$ 在 FFN。也就是说，<strong>一个标准 dense 模型约三分之二的参数住在 FFN 里</strong>。这个比例现在只是个冷知识，但请记住它——第六章讲 MoE 时你会明白，为什么&quot;把模型做稀疏&quot;的手术刀不约而同地全部落在 FFN 上。</p>
+<div class="callout">
+<p class="callout-title">账本之外还有一本账单</p>
+
+<p>参数（账本）决定模型&quot;多大&quot;，但每生成一个 token 花多少计算（账单）是另一本账。粗略地说，生成一个 token 的计算量约为 $2 \times$ 参数量次浮点运算——每个参数参与一次乘法和一次加法。但注意力有一项特殊开销随上下文长度增长，它不记在参数账本上，却会在长文本时主导账单。这本&quot;计算账单&quot;我们留到第五章算清，它是理解 2023 年之后一大半架构改动的钥匙。</p>
+</div>
+
+<h2 id="13-三条路线同一套积木三种搭法">1.3 三条路线：同一套积木，三种搭法</h2>
+<p>参数账本数清了，现在回到 2018 年前后的一个岔路口。原版 Transformer（2017 年的 &quot;Attention Is All You Need&quot;）是为机器翻译设计的 encoder-decoder 结构：encoder 读源语言句子，decoder 一边看 encoder 的输出一边生成目标语言。但很快人们意识到，这套积木可以只用一半，而且用哪一半、怎么用，决定了模型&quot;天生适合做什么&quot;。三条路线就此分岔。</p>
+<p><strong>Encoder-only：BERT 路线（2018）。</strong> 只留 encoder 那一摞。encoder 的注意力是双向的——每个位置能看到全句的前后文。这样的模型没法自然地&quot;生成&quot;文字（生成需要一个词一个词往外吐，而它一眼看全句），所以 BERT 发明了完形填空式的训练目标：随机遮住句子里 15% 的 token，让模型猜被遮住的是什么。练出来的模型极擅长<strong>理解</strong>——把一句话变成一个高质量的向量表示，再接一个小分类头就能做情感分析、相似度判断、实体识别。2019 到 2021 年，BERT 系是 NLP 的绝对主流。</p>
+<p><strong>Encoder-decoder：T5 路线（2019）。</strong> 保留完整结构，把所有 NLP 任务统一改写成&quot;文本进、文本出&quot;：翻译、摘要、问答都是 encoder 读题、decoder 写答案。这条路线在&quot;给定输入、产出输出&quot;的任务上非常强，逻辑也最符合直觉——理解和生成分工明确，各用各的模块。</p>
+<p><strong>Decoder-only：GPT 路线（2018）。</strong> 只留 decoder 那一摞，而且把它简化了：原版 decoder 里那个盯着 encoder 输出看的交叉注意力（cross-attention）没有了对象，直接删掉，只剩带因果掩码（causal mask）的自注意力——每个位置只能看到自己和左边的 token，看不到右边。训练目标也是三条路线里最朴素的：<strong>下一词预测</strong>（next-token prediction）。给模型看海量文本，在每一个位置上让它猜下一个 token，猜错就调参数。没有遮盖技巧，没有任务改写，就是从左到右一路猜下去。</p>
+<p>站在 2019 年看，GPT 路线是三条里最不起眼的：BERT 在各种理解任务的榜单上碾压同规模的 GPT，encoder-decoder 在生成任务上更是名门正统。但到了 2023 年，天平彻底倒向 decoder-only——今天你叫得出名字的大模型，GPT、Claude、Gemini、DeepSeek、Qwen、Kimi，清一色是 decoder-only。为什么？</p>
+<h2 id="14-为什么是-decoder-only-赢了">1.4 为什么是 decoder-only 赢了</h2>
+<p>这个问题没有一锤定音的单一答案，但有几股力量方向一致，合力足够清晰。</p>
+<p><strong>第一，训练信号最稠密，而且不需要人。</strong> 下一词预测在序列的<strong>每一个位置</strong>上都产生一次预测、一次损失、一次学习信号——一段 1000 个 token 的文本就是 1000 道练习题。BERT 的完形填空每句只有 15% 的位置在学习；而 causal mask 让 decoder-only 一次前向就能并行地在所有位置上算损失，没有一个 token 被浪费。更关键的是，这个任务的&quot;标准答案&quot;就是文本自己的下一个词——<strong>互联网上的每一段文字天然自带标签</strong>。当竞争变成&quot;谁能把更多数据喂进更大的模型&quot;（下一卷讲 scaling laws 时你会看到这就是 2020 年之后的主旋律），训练信号的密度和数据的零成本就成了压倒性优势。</p>
+<p><strong>第二，一个模型通吃所有任务的方式最自然。</strong> BERT 每换一个任务要换一个头、重新微调；T5 要把任务改写成固定格式。而 GPT-3 展示了第三种可能：<strong>把任务用自然语言写在输入里</strong>。你想让它翻译，就在前文里给两个翻译的例子，它续写第三个；你想让它分类，就把问题描述成一段待续写的文字。这就是 in-context learning（上下文学习）——不改参数、不换结构，纯靠&quot;续写&quot;完成任务。这个能力是在 GPT-3 的实验中被<strong>发现</strong>而不是被设计出来的，它一出现，&quot;一个模型 + 不同提示词 = 所有任务&quot;的产品形态就成立了，而这个形态只有 decoder-only 支持得最彻底。</p>
+<p><strong>第三，生成时的计算可以完美复用。</strong> 生成是一个 token 一个 token 进行的。causal mask 保证了一个性质：前面 token 的内部计算结果不依赖后面的 token，所以生成第 1001 个 token 时，前 1000 个 token 算过的 key 和 value 可以原封不动地缓存复用——这就是 KV cache，第五章的主角。双向注意力没有这个性质：每来一个新 token，所有旧位置的表示都得重算。对于&quot;以对话和生成为主要形态&quot;的产品，这是效率上的生死差距。</p>
+<p><strong>第四，工程上最简单，而简单在超大规模下是美德。</strong> 一摞完全同构的块，没有 encoder 和 decoder 之间的接口，没有交叉注意力，切分到几千张卡上做并行训练时最规整。当模型冲向千亿、万亿参数，任何结构上的不对称都会变成分布式训练的麻烦。历史一再表明：在&quot;够用&quot;的前提下，<strong>更简单、更可扩展的方案总是跑赢更精巧的方案</strong>——这条规律本卷还会反复出现。</p>
+<div class="callout callout-tip">
+<p class="callout-title">产业一瞥</p>
+
+<p>&quot;赢&quot;的边界值得说清楚：encoder 并没有灭绝。2026 年你用的语义搜索、RAG 检索里的 embedding 模型，很多仍是 encoder 或由 decoder 改造的双向结构——&quot;把一段话变成一个向量&quot;这件事，双向注意力仍然是自然选择。decoder-only 赢下的是&quot;通用生成式大模型&quot;这个主赛道，而这个主赛道恰好成了整个行业。</p>
+</div>
+
+<h2 id="15-gpt-1-到-gpt-3把quot猜下一个词quot推到极限">1.5 GPT-1 到 GPT-3：把&quot;猜下一个词&quot;推到极限</h2>
+<p>路线选定之后，OpenAI 做的事情用一句话就能概括：把同一个配方连续放大三次。</p>
+<p>**GPT-1（2018，1.17 亿参数）**证明了配方成立：先在无标注文本上做&quot;下一词预测&quot;的预训练，再针对具体任务微调，效果超过从零训练。此时它的定位还是&quot;BERT 的同类竞品&quot;，且处于下风。</p>
+<p>**GPT-2（2019，15 亿参数）**放大 10 倍，出现了苗头：不微调，纯靠续写，就能凑合完成摘要、翻译、问答。OpenAI 在论文标题里押上了自己的判断——语言模型是无监督的多任务学习者（unsupervised multitask learners）。当时学界多数人不以为然。</p>
+<p>**GPT-3（2020，1750 亿参数）**再放大 100 倍，苗头变成了海啸：few-shot 的 in-context learning 全面成立，一个从没为任何任务微调过的模型，在几十个任务上接近甚至超过专门微调的模型。更重要的是随规模浮现的定量规律——模型每大一个数量级，损失就沿一条可预测的直线下降（scaling laws，第二卷主角）。&quot;大力出奇迹&quot;从口号变成了可以写进商业计划书的公式。</p>
+<p>但请回到本章开头那个场景：GPT-3 依然只是一台<strong>续写机器</strong>。它满腹经纶——1750 亿参数里压进了半个互联网的知识——却完全不知道&quot;有人在向它提问&quot;意味着什么。它不听指令、会一本正经地胡说、你问东它答西。从&quot;满腹经纶的续写机&quot;到&quot;能干活的助手&quot;，中间还隔着一整套后训练技术（第四卷），而从&quot;助手&quot;到&quot;推理者&quot;又隔着一次范式跃迁。这些是后面几卷的故事。</p>
+<p>本卷的任务更基础：即使只看骨架，2026 年的模型和 GPT-3 也已经大不相同。GPT-3 用的还是原版 Transformer 的配置：标准多头注意力、学习式绝对位置编码、Post-LN 归一化、稠密 FFN。这套配置在往更大规模、更长上下文推进的路上接连撞墙，于是被逐个部件地替换。预览一下 2026 年一个典型旗舰模型的配方，你可以把它当作本卷的地图：</p>
+<ul>
+<li><strong>归一化和激活函数</strong>换成了 Pre-Norm + RMSNorm + SwiGLU——为了在几万卡月的训练里不崩。这是<strong>第三章</strong>。</li>
+<li><strong>位置编码</strong>换成了 RoPE——顺便解锁了十万 token 级的长上下文。这是<strong>第四章</strong>。</li>
+<li><strong>注意力</strong>从 MHA 演化到 GQA、MLA，再到稀疏与线性混合——为了压住 KV cache 这张失控的账单。这是<strong>第五章</strong>。</li>
+<li><strong>FFN</strong> 从稠密变成了 MoE 混合专家——万亿总参数、只激活几百亿，用稀疏化把&quot;变大&quot;和&quot;变贵&quot;解耦。这是<strong>第六、七章</strong>。</li>
+<li>而要看懂这一切改动为什么可行、改在哪里，你需要先换一副眼镜——把 Transformer 看成一条&quot;残差流&quot;。这是<strong>第二章</strong>，我们马上出发。</li>
+</ul>
+<p>读完本卷，你再看到一次模型发布——&quot;总参数 1T、激活 32B、MLA 注意力、256 专家 top-8 路由、原生 256K 上下文&quot;——这串黑话的每一个词你都将知道它是什么、为什么在那里、代价和收益各是什么。第八章会专门带你完整地读一次真实发布。</p>
+<hr>
+<h3 id="本章要点">本章要点</h3>
+<ul>
+<li>语言模型的全部结构：embedding（$V \times d$）→ $N$ 层同构 Transformer 块 → unembedding。总参数 $\approx N \times 12d^2 + Vd$。</li>
+<li>一层之内：注意力占 $4d^2$，FFN 占 $8d^2$——<strong>三分之二的参数在 FFN</strong>，这是日后 MoE 手术的下刀处。</li>
+<li>模型变大靠加宽（$d$）加深（$N$），embedding 占比随规模急剧缩小。</li>
+<li>三条路线中 decoder-only 胜出，合力来自：训练信号最稠密且数据免费、in-context learning 使&quot;一个模型通吃所有任务&quot;、KV cache 使生成高效、结构最简单最好并行。</li>
+<li>GPT-1→2→3 是同一配方连放大三次；GPT-3 证明了规模的力量，但仍只是续写机器——架构上它也还是&quot;原版配置&quot;，本卷逐章讲清它的每个部件后来被换成了什么、为什么。</li>
+</ul>
+
+    <nav class="pager series-pager">
+  <a class="disabled"><span class="label">← 上一章</span><span class="title"></span></a>
+  <a href="02-residual-stream.html" class="next">
+    <span class="label">下一章 →</span>
+    <span class="title">残差流——理解一切改动的地基</span>
+  </a>
+</nav>
+  </article>
+</div>
+
+<footer>
+  <div class="set">
+    <span>Large Language Models</span>
+    <span>2026 · ZH-CN</span>
+  </div>
+  <div class="set">
+    <span>Mav</span>
+  </div>
+</footer>
+<div class="search-backdrop" id="search-overlay" role="dialog" aria-modal="true" aria-label="搜索" hidden>
+  <div class="search-modal">
+    <div class="search-input-wrap">
+      <input type="search" class="search-input" placeholder="搜索内容..." aria-label="搜索内容" autocomplete="off">
+      <kbd>ESC</kbd>
+    </div>
+    <div class="search-results" role="listbox" aria-label="搜索结果"></div>
+  </div>
+</div>
+
+<div class="side-panel" id="side-panel">
+  <div class="side-panel-resize" id="side-panel-resize"></div>
+  <div class="side-panel-header">
+    <div class="side-panel-tabs">
+      <button class="side-panel-tab active" data-mode="sidenote">补充</button>
+      <button class="side-panel-tab" data-mode="notepad">笔记</button>
+    </div>
+    <button class="side-panel-close" aria-label="关闭">×</button>
+  </div>
+  <div class="side-panel-body"></div>
+</div>
+<button class="notepad-fab" id="notepad-fab" aria-label="便利贴">✎</button>
+
+<button class="mtoc-fab" id="mtoc-fab" aria-label="系列目录">TOC</button>
+<div class="mtoc-drawer" id="mtoc-drawer">
+  <div class="mtoc-content series-sidebar"></div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/bash.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/typescript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/yaml.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/javascript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/json.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/python.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/css.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+<script>mermaid.initialize({startOnLoad:true, theme:'neutral', fontFamily:'Inter, sans-serif'});</script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}]});"></script>
+<script src="../assets/script.js"></script>
+
+</body>
+</html>

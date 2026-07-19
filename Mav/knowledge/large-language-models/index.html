@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Large Language Models</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/style.css">
+<link rel="stylesheet" href="assets/series.css">
+</head>
+<body class="series-page">
+
+<div class="progress-bar" id="progress-bar"></div>
+
+<nav class="topnav series-topnav" id="topnav">
+  <div class="topnav-inner">
+    <a class="brand" href="index.html">Large Language Models</a>
+    <div class="nav-links">
+      <a href="index.html#part-architecture">PART I</a>
+    </div>
+    <div class="nav-controls">
+      <button class="nav-btn" id="search-btn" aria-label="搜索 (Ctrl+K)">⌘K</button>
+      <button class="nav-btn" id="settings-btn" aria-label="阅读设置">Aa</button>
+      <a class="nav-btn" href="../index.html" aria-label="返回知识库">← 知识库</a>
+    </div>
+  </div>
+</nav>
+<div class="settings-pop" id="settings-pop">
+  <h5>主题</h5>
+  <div class="row">
+    <button class="seg" data-theme-set="light">明亮</button>
+    <button class="seg" data-theme-set="dark">暗色</button>
+  </div>
+  <h5>字号</h5>
+  <div class="row">
+    <button class="seg" data-size-set="s">小</button>
+    <button class="seg" data-size-set="m">中</button>
+    <button class="seg" data-size-set="l">大</button>
+  </div>
+</div>
+
+<main class="series-cover">
+  <header class="series-hero">
+    <div class="series-eyebrow">Series · LLM</div>
+    <h1>Large Language Models</h1>
+    <p>从 2020 年只会续写的 GPT-3，到 2026 年能做高强度推理与编程的大模型，这六年发生了什么。系列沿一条主线展开：模型长什么样（架构演化）、怎么炼出来的（预训练与后训练）、跑在什么上面（算力与推理）、谁在做（产业地图）。连载中，当前已发布第一卷：架构演化。</p>
+    <div class="series-stats" aria-label="系列规模">
+      <span>1 篇</span>
+      <span aria-hidden="true">·</span>
+      <span>8 章</span>
+      <span aria-hidden="true">·</span>
+      <span>约 6 小时（第一卷）</span>
+    </div>
+  </header>
+
+  <div class="series-parts">
+    <section class="series-part" id="part-architecture">
+      <header class="series-part-head">
+        <span class="series-part-label">PART I</span>
+        <div>
+          <h2>架构演化</h2>
+          <p>从你在课本里学到的原版 Transformer 出发，逐个部件看清 2026 年的大模型骨架：残差流、归一化、RoPE、注意力的省钱史、MoE，以及怎么读懂一次模型发布。</p>
+        </div>
+        <span class="series-part-count">8 章</span>
+      </header>
+      <ol class="series-chapter-grid">
+        <li>
+          <a class="series-chapter-card toc-card" href="chapters/01-from-transformer-to-gpt.html">
+            <span class="series-chapter-number">01</span>
+            <span class="series-chapter-copy">
+              <span class="series-chapter-meta">40 MIN</span>
+              <h3>课本尽头的 Transformer——把它真正数一遍</h3>
+              <p>从你熟悉的 Transformer 出发，逐个矩阵数清参数都在哪，看懂 BERT、T5、GPT 三条路线的分岔，以及 decoder-only 为什么赢了。</p>
+            </span>
+            <span class="series-chapter-arrow" aria-hidden="true">→</span>
+          </a>
+        </li>
+        <li>
+          <a class="series-chapter-card toc-card" href="chapters/02-residual-stream.html">
+            <span class="series-chapter-number">02</span>
+            <span class="series-chapter-copy">
+              <span class="series-chapter-meta">35 MIN</span>
+              <h3>残差流——理解一切改动的地基</h3>
+              <p>换一副眼镜看 Transformer：模型的主体不是一摞层，而是一条贯穿始终的残差流，每一层只是在上面读写信息。这个视角是理解后面所有架构手术的地基。</p>
+            </span>
+            <span class="series-chapter-arrow" aria-hidden="true">→</span>
+          </a>
+        </li>
+        <li>
+          <a class="series-chapter-card toc-card" href="chapters/03-norms-and-activations.html">
+            <span class="series-chapter-number">03</span>
+            <span class="series-chapter-copy">
+              <span class="series-chapter-meta">40 MIN</span>
+              <h3>稳定性之战——归一化与激活函数</h3>
+              <p>一次万卡月级别的预训练最怕中途崩掉。归一化从 LayerNorm 到 RMSNorm、激活函数从 ReLU 到 SwiGLU 的演化，都是这场稳定性之战的战果。</p>
+            </span>
+            <span class="series-chapter-arrow" aria-hidden="true">→</span>
+          </a>
+        </li>
+        <li>
+          <a class="series-chapter-card toc-card" href="chapters/04-positional-encoding.html">
+            <span class="series-chapter-number">04</span>
+            <span class="series-chapter-copy">
+              <span class="series-chapter-meta">45 MIN</span>
+              <h3>位置的难题——从正弦波到 RoPE 与长上下文</h3>
+              <p>注意力天生不知道 token 的先后顺序。位置编码的解法从正弦波演化到 RoPE，而对 RoPE 的持续改造，直接解锁了这个时代最重要的产品能力之一：长上下文。</p>
+            </span>
+            <span class="series-chapter-arrow" aria-hidden="true">→</span>
+          </a>
+        </li>
+        <li>
+          <a class="series-chapter-card toc-card" href="chapters/05-attention-evolution.html">
+            <span class="series-chapter-number">05</span>
+            <span class="series-chapter-copy">
+              <span class="series-chapter-meta">50 MIN</span>
+              <h3>注意力的账单——KV cache 与一部省钱史</h3>
+              <p>生成每个 token 都要翻阅全部历史，KV cache 由此成为吞金兽。从 MQA、GQA 到 MLA，再到 2026 年稀疏与线性两条前沿路线，注意力的演化史就是一部围绕这张账单的省钱史。</p>
+            </span>
+            <span class="series-chapter-arrow" aria-hidden="true">→</span>
+          </a>
+        </li>
+        <li>
+          <a class="series-chapter-card toc-card" href="chapters/06-moe-basics.html">
+            <span class="series-chapter-number">06</span>
+            <span class="series-chapter-copy">
+              <span class="series-chapter-meta">45 MIN</span>
+              <h3>分而治之——MoE 的基本机制</h3>
+              <p>dense 模型的每个参数为每个 token 全勤工作，这既是力量也是枷锁。MoE 用&#39;很大的模型、只激活一小部分&#39;打破枷锁——本章讲清路由、专家与负载均衡这套机制到底怎么工作。</p>
+            </span>
+            <span class="series-chapter-arrow" aria-hidden="true">→</span>
+          </a>
+        </li>
+        <li>
+          <a class="series-chapter-card toc-card" href="chapters/07-moe-modern.html">
+            <span class="series-chapter-number">07</span>
+            <span class="series-chapter-copy">
+              <span class="series-chapter-meta">45 MIN</span>
+              <h3>MoE 的分水岭——DeepSeek 配方与 2026 年的主流形态</h3>
+              <p>细粒度专家、共享专家、不收税的均衡术——2024 年 DeepSeek 的三项改造把 MoE 调校成了量产引擎。看懂这套配方，就看懂了 2026 年几乎所有旗舰模型的参数表。</p>
+            </span>
+            <span class="series-chapter-arrow" aria-hidden="true">→</span>
+          </a>
+        </li>
+        <li>
+          <a class="series-chapter-card toc-card" href="chapters/08-reading-a-release.html">
+            <span class="series-chapter-number">08</span>
+            <span class="series-chapter-copy">
+              <span class="series-chapter-meta">45 MIN</span>
+              <h3>读懂一次发布——参数量、基模与版本语义</h3>
+              <p>全卷的零件拼装成实战能力：像从业者一样逐行读懂一份模型发布——每个数字什么意思、哪些是新基模哪些是后训练更新、以及 2026 年 7 月 Kimi K3 发布的完整解读。</p>
+            </span>
+            <span class="series-chapter-arrow" aria-hidden="true">→</span>
+          </a>
+        </li>
+      </ol>
+    </section>
+  </div>
+</main>
+
+<footer>
+  <div class="set">
+    <span>Large Language Models</span>
+    <span>2026 · ZH-CN</span>
+  </div>
+  <div class="set">
+    <span>Mav</span>
+  </div>
+</footer>
+<div class="search-backdrop" id="search-overlay" role="dialog" aria-modal="true" aria-label="搜索" hidden>
+  <div class="search-modal">
+    <div class="search-input-wrap">
+      <input type="search" class="search-input" placeholder="搜索内容..." aria-label="搜索内容" autocomplete="off">
+      <kbd>ESC</kbd>
+    </div>
+    <div class="search-results" role="listbox" aria-label="搜索结果"></div>
+  </div>
+</div>
+
+<script src="assets/script.js"></script>
+</body>
+</html>

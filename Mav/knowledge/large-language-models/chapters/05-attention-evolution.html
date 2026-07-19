@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>注意力的账单——KV cache 与一部省钱史 — Large Language Models</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" href="../assets/series.css">
+<link rel="stylesheet" id="hljs-light" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+<link rel="stylesheet" id="hljs-dark" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" media="not all">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+
+</head>
+<body class="series-page series-reader-page">
+
+<div class="progress-bar" id="progress-bar"></div>
+
+<nav class="topnav series-topnav" id="topnav">
+  <div class="topnav-inner">
+    <a class="brand" href="../index.html">Large Language Models</a>
+    <div class="nav-links">
+      <a href="../index.html#part-architecture" class="active">PART I</a>
+    </div>
+    <div class="nav-controls">
+      <button class="nav-btn" id="search-btn" aria-label="搜索 (Ctrl+K)">⌘K</button>
+      <button class="nav-btn" id="settings-btn" aria-label="阅读设置">Aa</button>
+      <a class="nav-btn" href="../../index.html" aria-label="返回知识库">← 知识库</a>
+    </div>
+  </div>
+</nav>
+<div class="settings-pop" id="settings-pop">
+  <h5>主题</h5>
+  <div class="row">
+    <button class="seg" data-theme-set="light">明亮</button>
+    <button class="seg" data-theme-set="dark">暗色</button>
+  </div>
+  <h5>字号</h5>
+  <div class="row">
+    <button class="seg" data-size-set="s">小</button>
+    <button class="seg" data-size-set="m">中</button>
+    <button class="seg" data-size-set="l">大</button>
+  </div>
+</div>
+
+<div class="with-sidebar series-reader">
+  <aside class="sidebar series-sidebar">
+  <a class="series-sidebar-home" href="../index.html">系列目录</a>
+  <section class="series-sidebar-part">
+    <h4><span>PART I</span>架构演化</h4>
+    <ul>
+      <li class="series-chapter-item">
+        <a href="01-from-transformer-to-gpt.html" data-chapter="01">课本尽头的 Transformer——把它真正数一遍</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="02-residual-stream.html" data-chapter="02">残差流——理解一切改动的地基</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="03-norms-and-activations.html" data-chapter="03">稳定性之战——归一化与激活函数</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="04-positional-encoding.html" data-chapter="04">位置的难题——从正弦波到 RoPE 与长上下文</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="05-attention-evolution.html" data-chapter="05" class="active" aria-current="page">注意力的账单——KV cache 与一部省钱史</a>
+        <ul class="series-section-links">
+          <li><a href="#51-两种工作模式训练在quot改卷quot生成在quot写作quot">5.1 两种工作模式：训练在&amp;quot;改卷&amp;quot;，生成在&amp;quot;写作&amp;quot;</a></li>
+          <li><a href="#52-把账单算出来">5.2 把账单算出来</a></li>
+          <li><a href="#53-第一刀砍-kv-头mqa-与-gqa">5.3 第一刀：砍 KV 头——MQA 与 GQA</a></li>
+          <li><a href="#54-第二刀压缩mla-的低秩魔法">5.4 第二刀：压缩——MLA 的低秩魔法</a></li>
+          <li><a href="#55-第三刀干脆别全看稀疏注意力">5.5 第三刀：干脆别全看——稀疏注意力</a></li>
+          <li><a href="#56-第四刀换掉数学线性注意力与混合架构">5.6 第四刀：换掉数学——线性注意力与混合架构</a></li>
+          <li><a href="#57-2026-年的三派格局">5.7 2026 年的三派格局</a></li>
+        </ul>
+      </li>
+      <li class="series-chapter-item">
+        <a href="06-moe-basics.html" data-chapter="06">分而治之——MoE 的基本机制</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="07-moe-modern.html" data-chapter="07">MoE 的分水岭——DeepSeek 配方与 2026 年的主流形态</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="08-reading-a-release.html" data-chapter="08">读懂一次发布——参数量、基模与版本语义</a>
+      </li>
+    </ul>
+  </section>
+</aside>
+  <article class="chapter-body">
+    <header class="chapter-head series-chapter-head">
+  <div class="series-breadcrumb">PART I · 架构演化</div>
+  <div class="chapter-head-meta">
+    <span class="num">CHAPTER 05</span>
+    <span>≈ 50 MIN READ</span>
+  </div>
+  <h1>注意力的账单——KV cache 与一部省钱史</h1>
+</header>
+    <p>第一章埋过一个伏笔：参数账本之外还有一本计算账单，其中注意力有一项特殊开销，不记在参数上，却会在长文本时主导一切。现在到了把这本账单摊开的时候。这一章的主线只有一个问题——<strong>生成一个 token，到底贵在哪里？</strong>——而 2019 年至今整条注意力演化线（MQA → GQA → MLA → 稀疏 → 线性混合），全部是对这个问题步步紧逼的回答。读完这一章，你将能看懂 2026 年架构讨论中最热闹、也最没有共识的那个战场。</p>
+<h2 id="51-两种工作模式训练在quot改卷quot生成在quot写作quot">5.1 两种工作模式：训练在&quot;改卷&quot;，生成在&quot;写作&quot;</h2>
+<p>先建立一个多数课本不强调、却是理解一切的区分：同一个模型，训练和生成时的计算模式完全不同。</p>
+<p><strong>训练时是并行改卷。<strong>一段 4000 token 的文本整段进入模型，因果掩码保证每个位置只看左边，于是 4000 个位置的&quot;下一词预测&quot;可以在一次前向中</strong>同时</strong>计算、同时算损失。GPU 最擅长这种大矩阵乘法，算力被喂得满满当当。</p>
+<p><strong>生成时是逐字写作。<strong>回答用户时，下一个词依赖上一个词，只能一个 token 一个 token 地吐。每生成一个 token 都要完整跑一遍模型——而这一遍里，注意力层需要当前 token 的 query 与</strong>历史上每一个 token</strong> 的 key、value 做计算。历史怎么来？如果每一步都从头重算前文所有位置的 k、v，生成第 $t$ 个 token 的代价就正比于 $t$，整段回答的总代价正比于长度的平方——不可接受。</p>
+<p>好在第一章讲过 decoder-only 的一个天赋：因果掩码使前文 token 的 k、v 不依赖后文，算一次就永远有效。于是标准做法是把它们全部<strong>缓存</strong>下来，每步只算新 token 的 q、k、v，然后查缓存。这份缓存就是 <strong>KV cache</strong>。它把生成从&quot;每步重算历史&quot;救成&quot;每步查一次表&quot;，是所有大模型推理服务的基石。</p>
+<p>但代价是显存。KV cache 要为<strong>每一层</strong>、<strong>每一个注意力头</strong>、<strong>每一个历史 token</strong> 存两个向量。它像写作时摊在桌面上的全部草稿——你写得越长，桌面堆得越高。</p>
+<h2 id="52-把账单算出来">5.2 把账单算出来</h2>
+<p>KV cache 到底多大？公式很朴素：</p>
+<p>$$
+\text{KV cache} = 2 \times N_{\text{层}} \times h_{kv} \times d_{\text{head}} \times T \times (\text{每元素字节数})
+$$</p>
+<p>其中 $h_{kv}$ 是 KV 头数、$d_{\text{head}}$ 是每头维度、$T$ 是已有 token 数。代两个真实模型（16 位精度，每元素 2 字节）：</p>
+<ul>
+<li><strong>Llama-2-7B</strong>（标准 MHA：32 层，32 头 × 128 维）：每 token 约 <strong>512 KB</strong>。看着不大？乘上 4K 上下文就是 2 GB——快赶上半个模型本体了；如果想同时服务 50 个这样的对话，光缓存就要 100 GB，比一张 H100 的全部显存（80 GB）还多。</li>
+<li>如果一个 <strong>70B 级模型</strong>保持 MHA（80 层，64 头 × 128 维），每 token 约 <strong>2.5 MB</strong>，128K 长上下文的一条对话就要 320 GB 缓存——<strong>桌面比房间还大</strong>，长上下文根本无从谈起。</li>
+</ul>
+<p>这本账单解释了推理服务的核心矛盾。生成阶段每步的计算量其实不大（矩阵乘向量），真正的瓶颈是<strong>搬运</strong>：每生成一个 token，都要把全部模型权重和全部 KV cache 从显存读一遍。工程上称之为访存受限（memory-bound）——GPU 的算力在等数据，显存带宽和容量才是王座。KV cache 越大，单卡能同时服务的对话越少、能支撑的上下文越短，<strong>每个 token 的成本就越高</strong>。API 按 token 计价的背后，这本账单是最大的成本项之一。</p>
+<p>于是问题清晰了：**能不能少存点？**接下来的三代技术，是三种越来越狠的答案。</p>
+<h2 id="53-第一刀砍-kv-头mqa-与-gqa">5.3 第一刀：砍 KV 头——MQA 与 GQA</h2>
+<p>第一个观察来自 2019 年（又是 Shazeer，SwiGLU 的那位）：多头注意力里，$h$ 个头各存一套 k、v，但实验发现——<strong>query 必须多样，key 和 value 未必</strong>。让所有 query 头共享<strong>同一组</strong> k、v，即 MQA（Multi-Query Attention），KV cache 直接除以头数（32 头就是缩 32 倍）。代价是质量有可测的下降：所有头被迫从同一套&quot;索引&quot;里取信息，第二章讲的&quot;不同头读写不同子空间&quot;的多样性被压缩了。</p>
+<p>2023 年的 GQA（Grouped-Query Attention）在两个极端之间取中：把 $h$ 个 query 头分成 $g$ 组，组内共享一套 k、v。$g = h$ 回到 MHA，$g = 1$ 就是 MQA，中间可调。Llama 2 70B 首次大规模采用：64 个 query 头共 8 组 KV——缓存缩 8 倍，质量几乎无损。刚才那笔 2.5 MB/token 的账，GQA 之后变成 <strong>320 KB/token</strong>，128K 上下文从 320 GB 降到 40 GB，勉强可用了。GQA 论文还有一个漂亮的工程贡献：不必从头训练，用约 5% 的额外算力就能把现成 MHA 模型&quot;改装&quot;成 GQA。低成本、低风险、收益确定，GQA 迅速成为 2023–2024 年开源模型的标配。</p>
+<p>GQA 的逻辑是&quot;少存几套&quot;，天花板显而易见：组数砍到底就是 MQA，质量损失兜底。想再省一个数量级，需要换思路。</p>
+<h2 id="54-第二刀压缩mla-的低秩魔法">5.4 第二刀：压缩——MLA 的低秩魔法</h2>
+<p>2024 年 DeepSeek-V2 提出的 MLA（Multi-head Latent Attention，多头潜在注意力）换了一个根本不同的问题：不问&quot;存几套&quot;，问&quot;<strong>每套能不能存小点</strong>&quot;。</p>
+<p>思路是<strong>低秩压缩</strong>。与其缓存每个 token 完整的 k、v（合计几万维），不如训练一个降维矩阵，把它们<strong>联合压缩</strong>成一个几百维的潜在向量 $c$，只缓存 $c$；用的时候再由上投影矩阵从 $c$ 恢复出各头的 k、v。这个想法能成立，靠的正是第二章的&quot;空间经济学&quot;：各头的 k、v 本就存在大量子空间冗余，信息的真实维度远低于表面维度，压缩掉的多是冗余。</p>
+<p>数字令人瞠目。DeepSeek-V2/V3 的配置：128 个头、每头 128 维，标准 MHA 每层每 token 要缓存 $2 \times 128 \times 128 = 32768$ 个元素；MLA 只缓存 512 维的潜在向量，外加一小段 64 维的位置通道（下述），合计 <strong>576 个元素——压缩约 57 倍</strong>。落到整机账单上：DeepSeek-V3 这个 671B 的庞然大物，每 token 的 KV cache 约 <strong>69 KB</strong>——比 Llama-2-7B 这个小它百倍的模型还小一个数量级。V2 论文报告：相比自家上一代 67B dense 模型，KV cache 减少 93.3%，最大生成吞吐提升 5.76 倍。</p>
+<p>两个精妙的细节值得一讲，它们最能体现这类工作的工程品味。**其一，&quot;恢复&quot;其实不用真做。**上投影矩阵是线性的，数学上可以吸收进 query 投影和输出投影里——推理时直接在潜在空间算注意力，压缩几乎不添额外计算。**其二，RoPE 和压缩打架。**上一章讲的 RoPE 要对 k 按位置旋转，而旋转依赖位置、无法被吸收进静态的投影矩阵。MLA 的解法是&quot;解耦&quot;：把维度劈成两部分，大头（512 维）不带位置信息、走压缩通道，小尾巴（64 维）专门携带 RoPE、原样缓存。位置信息被隔离在一条窄通道里——又一次&quot;把信息放在唯一用得到它的地方&quot;。</p>
+<p>最反直觉的是质量：消融实验里 MLA 不仅不输，甚至<strong>略优于</strong>标准 MHA（而同压缩量级的 GQA/MQA 明显更差）。一个可能的解释：低秩瓶颈迫使模型把 KV 信息组织得更紧凑高效，压缩本身成了一种正则。无论如何，&quot;省 57 倍还不掉点&quot;让 MLA 成了 GQA 之后最重要的注意力革新，Kimi K2 等模型直接沿用。</p>
+<div class="callout">
+<p class="callout-title">顺便安利一道思维体操</p>
+
+<p>MLA 每层 576 个元素、61 层、fp16——你可以自己乘一乘验证 69 KB/token 这个数，再算算 128K 上下文的一条对话占多少显存（答案：约 8.6 GB）。这类&quot;信封背面&quot;估算是从业者的日常基本功，材料都在本章了。</p>
+</div>
+
+<h2 id="55-第三刀干脆别全看稀疏注意力">5.5 第三刀：干脆别全看——稀疏注意力</h2>
+<p>MQA、GQA、MLA 省的都是<strong>存储</strong>，但注意力还有另一半开销：<strong>计算</strong>仍是每个 query 对全部历史逐一打分，代价随长度平方增长。上下文冲向 1M 时，这一项成了新的主导。2025 年起，前沿转向一个更激进的问题：每个 token 真的需要看全部历史吗？</p>
+<p>注意力权重的实证分布早就给出了暗示：绝大多数权重集中在极少数 token 上，大部分历史在大部分时刻是&quot;陪跑&quot;。稀疏注意力的目标就是<strong>只算真正相关的那一小撮</strong>，难点全在&quot;怎么便宜又准地找出这一小撮&quot;——如果找它们的开销赶上全量注意力，就白忙了。2025 年两个代表方案给出不同解法：DeepSeek 的 <strong>NSA</strong> 用三条并行分支组合（压缩的粗粒度全局扫描 + 按块挑选的细粒度精读 + 滑动窗口保底近邻），且从预训练第一步就用稀疏模式（&quot;原生可训练&quot;），并把选择的粒度对齐到 GPU 访存友好的块上；月之暗面的 <strong>MoBA</strong> 则把上下文切块后用类似 MoE 路由的门控挑出 top 几个相关块。</p>
+<p>真正进入生产线的是 DeepSeek-V3.2（2025 年 9 月）的 <strong>DSA</strong>：训练一个极轻量的&quot;闪电索引器&quot;（lightning indexer，少量头、低精度）给历史 token 快速打相关性分，主注意力（仍是 MLA）只在得分最高的约两千个 token 上计算。复杂度从 $O(L^2)$ 降到 $O(L \cdot k)$。更值得注意的是引入方式：不是重新训练，而是在现成 V3.1 模型上<strong>续训改装</strong>——先冻结主干、训练索引器去模仿完整注意力的分布，再联合微调。效果立竿见影：长上下文推理成本大降，DeepSeek 的 API 直接降价一半以上，而基准成绩基本持平。此后 DSA 路线开始外溢：智谱 GLM-5 成为第一个跟进的旗舰，DeepSeek 自家的 V4 则把压缩与稀疏选择结合得更深。<strong>&quot;稀疏&quot;由此从论文概念变成了 2026 年的生产路线之一。</strong></p>
+<h2 id="56-第四刀换掉数学线性注意力与混合架构">5.6 第四刀：换掉数学——线性注意力与混合架构</h2>
+<p>最后一条路线动的是注意力的数学本身。有一族&quot;线性注意力&quot;机制（可以粗略理解为 RNN 思想的现代复活）：不保留全部历史，而是把历史<strong>滚动压缩</strong>进一个固定大小的状态里，每来一个新 token 就按&quot;该记住什么、该遗忘什么&quot;的规则更新状态。它的诱惑是致命的：计算随长度<strong>线性</strong>增长，KV cache 不随长度增长——账单上最凶的两项同时消失。</p>
+<p>代价同样致命：固定大小的状态是有损压缩，&quot;从三十万字前精确找回某个细节&quot;这类<strong>检索</strong>任务，恰恰是滚动压缩最容易丢的。纯线性模型多年来始终打不过 Transformer，业界最终收敛到一个务实的折中——<strong>混合</strong>：大部分层用线性注意力（便宜），间插少量全注意力层（精确检索保底）。2025–26 年，这个配方在多家旗舰上收敛出了惊人一致的比例——<strong>约 3:1</strong>：阿里 Qwen3-Next 及其后的 Qwen3.5，每三层线性（Gated DeltaNet）配一层标准注意力；月之暗面从 Kimi Linear 实验（KDA 线性层与 MLA 全注意力 3:1）走到 2026 年 7 月刚发布的旗舰 <strong>K3</strong>，把这套混合架构第一次推上了万亿级参数的量产，官方称 1M 上下文的解码最多快 6 倍。</p>
+<p>而这条路线上最有教育意义的一课来自 MiniMax 的&quot;回退&quot;。他家 2025 年上半年的 M1 是线性混合路线的先锋，但年底的 M2 却<strong>退回了全注意力</strong>，并罕见地发博客解释：小规模实验和常规基准上混合注意力与全注意力打平，但规模放大后，在多跳推理、检索、复杂 agent 任务上出现了明确劣化——&quot;没有任何一个高效注意力变体，在生产环境的全谱任务上可靠追平全注意力&quot;。这个故事的价值在于暴露了第三章讲过的那个困境的另一面：<strong>小规模实验不仅测不出&quot;会不会崩&quot;，也测不出&quot;高级能力掉不掉&quot;</strong>。评测基准覆盖不到的角落，才是架构冒险真正的风险所在。（后记：MiniMax 没有放弃效率，2026 年的 M3 换道去了稀疏注意力——从&quot;线性&quot;跳到了另一条船。）</p>
+<h2 id="57-2026-年的三派格局">5.7 2026 年的三派格局</h2>
+<p>把整章收拢。围绕&quot;注意力的账单&quot;，2026 年年中的旗舰模型分成了三派，而且罕见地<strong>没有任何一派占据压倒性优势</strong>：</p>
+<ul>
+<li><strong>保守派</strong>：全注意力（GQA 或 MLA）加长上下文工程。多数闭源旗舰据信在此，MiniMax M2 用行动投了票。逻辑：能力上限优先，账单靠 infra 消化。</li>
+<li><strong>稀疏派</strong>：DSA 一系，保留注意力的数学形式，稀疏化&quot;看哪里&quot;。DeepSeek V3.2/V4、GLM-5、MiniMax M3。逻辑：检索能力保真，计算按需分配。</li>
+<li><strong>线性混合派</strong>：约 3:1 的线性+全注意力分层混合。Qwen3-Next/3.5、Kimi K3。逻辑：让账单的增长曲线从根本上变平，用少量全注意力层兜住检索。</li>
+</ul>
+<p>有人把 2026 年的这个局面总结成一句话：&quot;关于注意力，大家又没有共识了&quot;（Nobody agrees on attention anymore）。这在架构高度同质化的今天是一道罕见的风景——它说明这本账单仍在重塑架构，胜负未分，你正在见证一场进行中的分岔。</p>
+<p>注意力这条线讲完了。但你可能已经注意到，本章反复出现的那些模型——DeepSeek-V3 的 671B、Kimi K3 的 2.8T——它们的&quot;总参数&quot;大得吓人，&quot;激活参数&quot;却只有几十分之一。这就是另一半故事：参数账本那边，FFN 发生了一场更彻底的革命。下一章，MoE。</p>
+<hr>
+<h3 id="本章要点">本章要点</h3>
+<ul>
+<li>训练是并行改卷，生成是逐字写作；KV cache 用&quot;缓存历史 k/v&quot;换掉&quot;每步重算&quot;，是推理的基石，也是显存吞金兽。</li>
+<li>账单公式：$2 N h_{kv} d_{\text{head}} T \times$ 字节数。MHA 的 7B 模型约 512 KB/token；70B 级 MHA 在 128K 下需数百 GB，不可行。</li>
+<li>三代省钱术：GQA 少存几套（Llama-2-70B 8 组 KV，省 8 倍，可低成本改装）；MLA 低秩压缩成潜在向量（576 元素/层/token，省约 57 倍，质量反而不降，RoPE 走解耦窄通道）；稀疏注意力只算相关的一小撮（DSA：轻量索引器选 top-k，已生产化并外溢至 GLM）。</li>
+<li>线性注意力把历史滚动压缩进固定状态，检索是软肋；务实解是约 3:1 的混合分层（Qwen3.5、Kimi K3），MiniMax M2 的回退证明其风险：小规模实验测不出高级能力的劣化。</li>
+<li>2026 三派并立：保守全注意力 / 稀疏 / 线性混合——注意力是当下架构分歧最大的部件。</li>
+<li>decode 是访存受限的：显存带宽与 KV cache 大小直接决定吞吐与成本——这是&quot;API 为什么那样计价&quot;的架构侧答案。</li>
+</ul>
+
+    <nav class="pager series-pager">
+  <a href="04-positional-encoding.html">
+    <span class="label">← 上一章</span>
+    <span class="title">位置的难题——从正弦波到 RoPE 与长上下文</span>
+  </a>
+  <a href="06-moe-basics.html" class="next">
+    <span class="label">下一章 →</span>
+    <span class="title">分而治之——MoE 的基本机制</span>
+  </a>
+</nav>
+  </article>
+</div>
+
+<footer>
+  <div class="set">
+    <span>Large Language Models</span>
+    <span>2026 · ZH-CN</span>
+  </div>
+  <div class="set">
+    <span>Mav</span>
+  </div>
+</footer>
+<div class="search-backdrop" id="search-overlay" role="dialog" aria-modal="true" aria-label="搜索" hidden>
+  <div class="search-modal">
+    <div class="search-input-wrap">
+      <input type="search" class="search-input" placeholder="搜索内容..." aria-label="搜索内容" autocomplete="off">
+      <kbd>ESC</kbd>
+    </div>
+    <div class="search-results" role="listbox" aria-label="搜索结果"></div>
+  </div>
+</div>
+
+<div class="side-panel" id="side-panel">
+  <div class="side-panel-resize" id="side-panel-resize"></div>
+  <div class="side-panel-header">
+    <div class="side-panel-tabs">
+      <button class="side-panel-tab active" data-mode="sidenote">补充</button>
+      <button class="side-panel-tab" data-mode="notepad">笔记</button>
+    </div>
+    <button class="side-panel-close" aria-label="关闭">×</button>
+  </div>
+  <div class="side-panel-body"></div>
+</div>
+<button class="notepad-fab" id="notepad-fab" aria-label="便利贴">✎</button>
+
+<button class="mtoc-fab" id="mtoc-fab" aria-label="系列目录">TOC</button>
+<div class="mtoc-drawer" id="mtoc-drawer">
+  <div class="mtoc-content series-sidebar"></div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/bash.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/typescript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/yaml.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/javascript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/json.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/python.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/css.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+<script>mermaid.initialize({startOnLoad:true, theme:'neutral', fontFamily:'Inter, sans-serif'});</script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}]});"></script>
+<script src="../assets/script.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>残差流——理解一切改动的地基 — Large Language Models</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" href="../assets/series.css">
+<link rel="stylesheet" id="hljs-light" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+<link rel="stylesheet" id="hljs-dark" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" media="not all">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+
+</head>
+<body class="series-page series-reader-page">
+
+<div class="progress-bar" id="progress-bar"></div>
+
+<nav class="topnav series-topnav" id="topnav">
+  <div class="topnav-inner">
+    <a class="brand" href="../index.html">Large Language Models</a>
+    <div class="nav-links">
+      <a href="../index.html#part-architecture" class="active">PART I</a>
+    </div>
+    <div class="nav-controls">
+      <button class="nav-btn" id="search-btn" aria-label="搜索 (Ctrl+K)">⌘K</button>
+      <button class="nav-btn" id="settings-btn" aria-label="阅读设置">Aa</button>
+      <a class="nav-btn" href="../../index.html" aria-label="返回知识库">← 知识库</a>
+    </div>
+  </div>
+</nav>
+<div class="settings-pop" id="settings-pop">
+  <h5>主题</h5>
+  <div class="row">
+    <button class="seg" data-theme-set="light">明亮</button>
+    <button class="seg" data-theme-set="dark">暗色</button>
+  </div>
+  <h5>字号</h5>
+  <div class="row">
+    <button class="seg" data-size-set="s">小</button>
+    <button class="seg" data-size-set="m">中</button>
+    <button class="seg" data-size-set="l">大</button>
+  </div>
+</div>
+
+<div class="with-sidebar series-reader">
+  <aside class="sidebar series-sidebar">
+  <a class="series-sidebar-home" href="../index.html">系列目录</a>
+  <section class="series-sidebar-part">
+    <h4><span>PART I</span>架构演化</h4>
+    <ul>
+      <li class="series-chapter-item">
+        <a href="01-from-transformer-to-gpt.html" data-chapter="01">课本尽头的 Transformer——把它真正数一遍</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="02-residual-stream.html" data-chapter="02" class="active" aria-current="page">残差流——理解一切改动的地基</a>
+        <ul class="series-section-links">
+          <li><a href="#21-从quot层层变换quot到quot一条传送带quot">2.1 从&amp;quot;层层变换&amp;quot;到&amp;quot;一条传送带&amp;quot;</a></li>
+          <li><a href="#22-读和写两类工人各干什么">2.2 读和写：两类工人各干什么</a></li>
+          <li><a href="#23-传送带上的空间经济学">2.3 传送带上的空间经济学</a></li>
+          <li><a href="#24-用新眼镜重看老朋友归一化站在哪里">2.4 用新眼镜重看老朋友：归一化站在哪里</a></li>
+        </ul>
+      </li>
+      <li class="series-chapter-item">
+        <a href="03-norms-and-activations.html" data-chapter="03">稳定性之战——归一化与激活函数</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="04-positional-encoding.html" data-chapter="04">位置的难题——从正弦波到 RoPE 与长上下文</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="05-attention-evolution.html" data-chapter="05">注意力的账单——KV cache 与一部省钱史</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="06-moe-basics.html" data-chapter="06">分而治之——MoE 的基本机制</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="07-moe-modern.html" data-chapter="07">MoE 的分水岭——DeepSeek 配方与 2026 年的主流形态</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="08-reading-a-release.html" data-chapter="08">读懂一次发布——参数量、基模与版本语义</a>
+      </li>
+    </ul>
+  </section>
+</aside>
+  <article class="chapter-body">
+    <header class="chapter-head series-chapter-head">
+  <div class="series-breadcrumb">PART I · 架构演化</div>
+  <div class="chapter-head-meta">
+    <span class="num">CHAPTER 02</span>
+    <span>≈ 35 MIN READ</span>
+  </div>
+  <h1>残差流——理解一切改动的地基</h1>
+</header>
+    <p>上一章结尾说，要看懂 2020 年之后的架构改动，需要先换一副眼镜。这一章就来配这副眼镜。</p>
+<p>它要解决的问题是这样的：课本教你的 Transformer 是&quot;一层摞一层&quot;的画法——输入进第一层，第一层的输出进第二层，如此往复。这个画法没有错，但它会让你在面对真实模型时接连产生困惑：为什么 96 层的网络训得动，而你在课本上学过深层网络会梯度消失？为什么归一化放在子层前面还是后面是个天大的事（第三章）？为什么注意力头可以被砍掉大半而模型几乎无损（第五章）？为什么 FFN 可以被拆成几百个&quot;专家&quot;还照常工作（第六章）？这些问题在&quot;一层摞一层&quot;的图景里都显得神秘，而在本章的新图景里都是自然而然的。</p>
+<p>这副新眼镜叫<strong>残差流</strong>（residual stream）。它并不是一项新技术——模型还是那个模型，一个权重都没变——它是一种<strong>看待方式</strong>，来自可解释性研究社区，如今已经是从业者讨论架构时的默认语言。师兄们说&quot;这个信息写进残差流了&quot;、&quot;这一层在从残差流里读什么&quot;，说的就是它。</p>
+<h2 id="21-从quot层层变换quot到quot一条传送带quot">2.1 从&quot;层层变换&quot;到&quot;一条传送带&quot;</h2>
+<p>回想残差连接的定义。你在学 ResNet 或 Transformer 时都见过：子层的输出不是直接替换输入，而是<strong>加</strong>在输入上：</p>
+<p>$$
+x_{\text{out}} = x_{\text{in}} + F(x_{\text{in}})
+$$</p>
+<p>课本对它的标准解释是&quot;缓解梯度消失，让深层网络可训练&quot;。这个解释是对的，但它把残差连接讲成了一个辅助技巧、一根&quot;扶手&quot;。现在我们把主次颠倒过来，这是本章最关键的一步：</p>
+<p><strong>不要把模型看成&quot;一摞层，层间有捷径&quot;；要把它看成&quot;一条从输入直通输出的传送带，每一层只是站在传送带旁边的工人&quot;。</strong></p>
+<p>看看数据实际的流动路径就明白这个颠倒的道理。一个 token 的向量从 embedding 出发，经过 $N$ 层到达 unembedding。把每一层的残差连接展开写：</p>
+<p>$$
+x_N = x_0 + \sum_{i=1}^{N} F_i(x_{i-1})
+$$</p>
+<p>最终送去预测下一个词的向量 $x_N$，是<strong>初始 embedding 加上每一层贡献的增量之和</strong>。没有任何一层能&quot;垄断&quot;这个向量——每一层只是往上面<strong>加</strong>了一点东西。这条贯穿始终、不断被累加的向量通道，就是残差流。它的宽度就是上一章的隐藏维度 $d$：GPT-3 是 12288 维，这条 12288 维的传送带从第一层不间断地延伸到第 96 层。</p>
+<p>在这幅图景里，注意力层和 FFN 层的角色变成了：<strong>从传送带上读取信息（读），计算出一个增量，再把增量放回传送带（写）</strong>。读，是子层入口处对 $x$ 做的那次线性投影；写，是子层出口处加回去的那个 $F(x)$。层与层之间不直接对话——第 40 层不会把结果&quot;交给&quot;第 41 层，它只是把结果写到传送带上，后面任何一层想用就自己去读。传送带是所有层共享的公告栏。</p>
+<p>这个图景立刻回答了本章开头的第一个困惑：**为什么 96 层训得动？**因为梯度沿着传送带本身传播时畅通无阻——$x + F(x)$ 对 $x$ 的导数里有一个恒等项，损失的梯度可以原封不动地从第 96 层直达 embedding，每一层的 $F_i$ 只是在这条主干道旁&quot;各自领各自的梯度&quot;。深度不再是梯度的障碍，因为梯度根本不需要穿过每一层的变换，它走的是传送带。</p>
+<div class="callout">
+<p class="callout-title">一个值得较真的细节</p>
+
+<p>既然每层只是&quot;加一点增量&quot;，那把某一层整个删掉会怎样？答案出人意料：对训练好的大模型，删掉中间某一层，输出常常只是轻微变差而不是崩溃——因为传送带上其他层写入的信息还在。这类实验（layer dropping / layer skipping）反复验证了残差流图景的真实性：层是传送带的修饰者，不是链条上缺一不可的环节。当然，&quot;轻微变差&quot;不等于&quot;没用&quot;，几十层的增量叠加起来就是模型的全部本事。</p>
+</div>
+
+<h2 id="22-读和写两类工人各干什么">2.2 读和写：两类工人各干什么</h2>
+<p>传送带图景里，注意力层和 FFN 层都是&quot;读—算—写&quot;的工人，但两者的分工有质的不同，这个不同值得仔细品味。</p>
+<p><strong>注意力层是搬运工：在位置之间搬运信息。</strong> 记住一个关键事实：残差流不是一条，而是<strong>每个 token 位置各有一条</strong>——长度为 $T$ 的序列就是 $T$ 条并排的传送带。而注意力是整个模型里<strong>唯一</strong>能跨传送带搬东西的部件。它的读写可以精确地拆开看：$W_Q$ 和 $W_K$ 负责&quot;决定从哪几条传送带搬&quot;（query 与 key 的点积算出注意力分布），$W_V$ 负责&quot;从源传送带上读出什么&quot;，$W_O$ 负责&quot;把搬来的东西以什么形式写回本位置的传送带&quot;。多头注意力就是 $h$ 个独立的搬运工同时开工，各自盯着不同的源头、搬运不同的内容，最后把各自的增量加到同一条传送带上。</p>
+<p><strong>FFN 是加工站：只在本位置就地加工。</strong> FFN 对每个位置独立地做同一个变换，不看任何其他位置。它从本条传送带读出向量，升维、过非线性、降维，把结果写回来。它在整个模型里扮演&quot;知识存储与加工&quot;的角色——大量实证研究发现，事实性知识（&quot;巴黎是法国的首都&quot;这类关联）主要存在 FFN 的权重里。上一章说过 FFN 占了三分之二的参数，现在你可以这样理解：<strong>模型的大部分&quot;知识容量&quot;住在加工站里，而搬运工负责在合适的时机把相关信息运到需要它的位置上</strong>。</p>
+<p>于是，Transformer 的一次前向传播可以叙述成一条流水线故事：embedding 把每个 token 的&quot;字面身份&quot;放上各自的传送带；底部的层做基础加工（这个词在这个语境里是什么意思）；中部的层通过注意力反复搬运和组合（把&quot;法国&quot;搬到&quot;首都&quot;旁边，把代词和它指代的对象连起来），并用 FFN 注入相关知识；顶部的层把传送带上积累的所有信息汇总成&quot;下一个词是什么&quot;的判断。第 $T$ 个位置的传送带在到达顶端时，已经装载了从整个前文搬运、加工、提炼出的一切——unembedding 读取它，给出概率分布。</p>
+<h2 id="23-传送带上的空间经济学">2.3 传送带上的空间经济学</h2>
+<p>残差流是所有层共享的公告栏，这马上引出一个问题：<strong>它够用吗？</strong></p>
+<p>传送带只有 $d$ 维。而要写上去的东西很多：token 的词义、位置信息、语法角色、前文搬来的指代关系、FFN 注入的知识……几十层、几十个注意力头都在往同一条 $d$ 维的带子上写。这些信息互不覆盖的前提是它们大体占据不同的方向（子空间）——一个 12288 维的空间里可以塞下远超 12288 个&quot;几乎互相垂直&quot;的方向，高维空间的这个反直觉性质（近似正交方向的数量随维度指数增长）是整件事成立的数学基础。模型学会把不同类型的信息编码到不同的子空间里：某些方向存放位置信息，某些方向存放&quot;这是一个人名&quot;，某些方向存放当前句子的情感倾向。每个注意力头、每个 FFN 只读自己关心的那几个子空间，也只往特定的子空间里写。</p>
+<p>但空间终究是有限的、<strong>拥挤的</strong>。可解释性研究把这种拥挤称为叠加（superposition）：模型要表示的特征远多于维度数，只能让特征之间有少量重叠干扰，靠冗余和纠错扛过去。这就是&quot;空间经济学&quot;：传送带上寸土寸金，每一层写入的东西都在和其他层竞争带宽。</p>
+<p>这个视角能解释很多现象。为什么 $d$ 要随模型规模一起涨（GPT-2 small 的 768 维到 GPT-3 的 12288 维）？因为更大的模型要处理更复杂的任务，需要在传送带上同时保有更多中间结果，带宽必须跟上。为什么第五章会讲到&quot;砍掉一部分注意力头的 K、V 而模型几乎无损&quot;？因为很多头本来就在读写相近的子空间，信息有冗余。为什么第六章的 MoE 可以只激活一小部分专家？因为对某一个具体 token，传送带上需要的加工只涉及少数子空间，大部分&quot;知识&quot;跟它无关。</p>
+<div class="callout callout-tip">
+<p class="callout-title">产业一瞥</p>
+
+<p>残差流这套语言起源于 Anthropic 2021 年的可解释性论文（&quot;A Mathematical Framework for Transformer Circuits&quot;），最初是研究者用来逆向工程模型内部机制的工具。有意思的是，它后来反向塑造了架构设计的讨论方式——2026 年你去读任何一家的技术报告或架构讨论，&quot;往残差流里写&quot;&quot;从残差流里读&quot;已是不需要解释的通用黑话。一套为&quot;理解模型&quot;发明的语言，成了&quot;设计模型&quot;的母语。</p>
+</div>
+
+<h2 id="24-用新眼镜重看老朋友归一化站在哪里">2.4 用新眼镜重看老朋友：归一化站在哪里</h2>
+<p>配好眼镜，我们马上试戴一次，看一个真实的架构决策——这也是通往第三章的桥。</p>
+<p>课本里的原版 Transformer 把归一化放在子层<strong>之后</strong>、且在残差相加<strong>之后</strong>（Post-LN）：</p>
+<p>$$
+x_{\text{out}} = \text{LN}\big(x_{\text{in}} + F(x_{\text{in}})\big)
+$$</p>
+<p>用传送带图景看这个式子，你应该立刻感到不安：<strong>归一化直接架在了传送带上</strong>。每经过一层，传送带上的全部内容——不只是本层写入的增量，而是从 embedding 起累积的一切——都要被强行拉伸缩放一次。96 层就是 96 次。传送带不再是畅通的主干道，梯度每走一层都要穿过一次归一化的变换，&quot;恒等直达&quot;的性质被破坏了。深层 Post-LN 模型难训练、必须靠小心翼翼的学习率 warmup 才能起步，根源就在这里。</p>
+<p>而现代模型（从 GPT-2 起）都改用 Pre-LN：归一化挪到子层<strong>之前</strong>，作用在&quot;工人读取的副本&quot;上，而不是传送带本身：</p>
+<p>$$
+x_{\text{out}} = x_{\text{in}} + F\big(\text{LN}(x_{\text{in}})\big)
+$$</p>
+<p>传送带上只有干净的加法，从头到尾无人拦截；归一化变成了每个工人上岗前给自己的输入做标准化。一个看似微小的位置调换，背后是&quot;保护传送带的畅通&quot;这个原则——这是残差流视角给出的第一个设计准则，也是后面章节反复出现的母题：<strong>动工人可以，动传送带要非常小心。</strong></p>
+<p>至于归一化本身为什么必要、LayerNorm 又如何演化成 RMSNorm、训练稳定性之战还有哪些战场——那是下一章的正文。带上这副眼镜，我们出发。</p>
+<hr>
+<h3 id="本章要点">本章要点</h3>
+<ul>
+<li>残差流视角：模型的主干是每个位置一条、宽度为 $d$ 的&quot;传送带&quot;，从 embedding 直通 unembedding；$x_N = x_0 + \sum_i F_i$，每层只是读取传送带、计算增量、加回去。</li>
+<li>梯度沿传送带恒等直达，这是几十上百层可训练的根本原因；层是&quot;修饰者&quot;而非&quot;链条环节&quot;。</li>
+<li>分工：注意力是唯一跨位置搬运信息的部件（$W_Q,W_K$ 定位、$W_V$ 读、$W_O$ 写）；FFN 就地加工、存储知识，且占三分之二参数。</li>
+<li>传送带带宽（$d$ 维）是稀缺资源，信息以近似正交的子空间共存（叠加）；许多架构现象——砍头无损、MoE 可行、$d$ 随规模增长——都是这套&quot;空间经济学&quot;的推论。</li>
+<li>第一次试戴眼镜：Post-LN 把归一化架在传送带上、破坏畅通性，Pre-LN 把它挪给&quot;工人的读取副本&quot;——保护传送带，是贯穿全卷的设计准则。</li>
+</ul>
+
+    <nav class="pager series-pager">
+  <a href="01-from-transformer-to-gpt.html">
+    <span class="label">← 上一章</span>
+    <span class="title">课本尽头的 Transformer——把它真正数一遍</span>
+  </a>
+  <a href="03-norms-and-activations.html" class="next">
+    <span class="label">下一章 →</span>
+    <span class="title">稳定性之战——归一化与激活函数</span>
+  </a>
+</nav>
+  </article>
+</div>
+
+<footer>
+  <div class="set">
+    <span>Large Language Models</span>
+    <span>2026 · ZH-CN</span>
+  </div>
+  <div class="set">
+    <span>Mav</span>
+  </div>
+</footer>
+<div class="search-backdrop" id="search-overlay" role="dialog" aria-modal="true" aria-label="搜索" hidden>
+  <div class="search-modal">
+    <div class="search-input-wrap">
+      <input type="search" class="search-input" placeholder="搜索内容..." aria-label="搜索内容" autocomplete="off">
+      <kbd>ESC</kbd>
+    </div>
+    <div class="search-results" role="listbox" aria-label="搜索结果"></div>
+  </div>
+</div>
+
+<div class="side-panel" id="side-panel">
+  <div class="side-panel-resize" id="side-panel-resize"></div>
+  <div class="side-panel-header">
+    <div class="side-panel-tabs">
+      <button class="side-panel-tab active" data-mode="sidenote">补充</button>
+      <button class="side-panel-tab" data-mode="notepad">笔记</button>
+    </div>
+    <button class="side-panel-close" aria-label="关闭">×</button>
+  </div>
+  <div class="side-panel-body"></div>
+</div>
+<button class="notepad-fab" id="notepad-fab" aria-label="便利贴">✎</button>
+
+<button class="mtoc-fab" id="mtoc-fab" aria-label="系列目录">TOC</button>
+<div class="mtoc-drawer" id="mtoc-drawer">
+  <div class="mtoc-content series-sidebar"></div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/bash.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/typescript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/yaml.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/javascript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/json.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/python.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/css.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+<script>mermaid.initialize({startOnLoad:true, theme:'neutral', fontFamily:'Inter, sans-serif'});</script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}]});"></script>
+<script src="../assets/script.js"></script>
+
+</body>
+</html>
