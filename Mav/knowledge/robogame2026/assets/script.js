@@ -1047,4 +1047,164 @@
     });
   })();
 
+  // ---------- 13. Mermaid lightbox (click to zoom) ----------
+  (function () {
+    'use strict';
+
+    let overlay = null;
+    let stage = null;
+    let content = null;
+    let scale = 1;
+    let tx = 0;
+    let ty = 0;
+    let naturalW = 0;
+    let naturalH = 0;
+
+    function applyTransform() {
+      content.style.transform = 'translate(' + tx + 'px, ' + ty + 'px) scale(' + scale + ')';
+    }
+
+    function clampScale(s) {
+      return Math.min(10, Math.max(0.1, s));
+    }
+
+    // Zoom keeping the stage point (px, py) fixed under the cursor
+    function zoomAt(px, py, factor) {
+      const next = clampScale(scale * factor);
+      const ratio = next / scale;
+      tx = px - (px - tx) * ratio;
+      ty = py - (py - ty) * ratio;
+      scale = next;
+      applyTransform();
+    }
+
+    function fitToStage() {
+      const rect = stage.getBoundingClientRect();
+      const pad = 60;
+      scale = clampScale(Math.min(
+        1,
+        (rect.width - pad * 2) / naturalW,
+        (rect.height - pad * 2) / naturalH
+      ));
+      tx = (rect.width - naturalW * scale) / 2;
+      ty = (rect.height - naturalH * scale) / 2;
+      applyTransform();
+    }
+
+    function close() {
+      overlay.setAttribute('hidden', '');
+      document.body.style.overflow = '';
+      content.innerHTML = '';
+    }
+
+    function open(svg) {
+      const box = svg.viewBox && svg.viewBox.baseVal;
+      naturalW = (box && box.width) || svg.getBoundingClientRect().width;
+      naturalH = (box && box.height) || svg.getBoundingClientRect().height;
+      if (!naturalW || !naturalH) return;
+
+      const clone = svg.cloneNode(true);
+      clone.removeAttribute('style');
+      clone.setAttribute('width', naturalW);
+      clone.setAttribute('height', naturalH);
+      content.innerHTML = '';
+      content.appendChild(clone);
+      content.style.width = naturalW + 'px';
+      content.style.height = naturalH + 'px';
+
+      overlay.removeAttribute('hidden');
+      document.body.style.overflow = 'hidden';
+      fitToStage();
+    }
+
+    function init() {
+      overlay = document.createElement('div');
+      overlay.className = 'mermaid-lightbox';
+      overlay.setAttribute('hidden', '');
+      overlay.innerHTML =
+        '<div class="mermaid-lightbox-toolbar">' +
+        '<button type="button" data-mlb="out" title="缩小">−</button>' +
+        '<button type="button" data-mlb="in" title="放大">+</button>' +
+        '<button type="button" data-mlb="reset" title="适应窗口">适应窗口</button>' +
+        '<button type="button" data-mlb="close" title="关闭">×</button>' +
+        '</div>' +
+        '<div class="mermaid-lightbox-stage">' +
+        '<div class="mermaid-lightbox-content"></div>' +
+        '</div>';
+      document.body.appendChild(overlay);
+      stage = overlay.querySelector('.mermaid-lightbox-stage');
+      content = overlay.querySelector('.mermaid-lightbox-content');
+
+      overlay.querySelector('[data-mlb="close"]').addEventListener('click', close);
+      overlay.querySelector('[data-mlb="in"]').addEventListener('click', function () {
+        const r = stage.getBoundingClientRect();
+        zoomAt(r.width / 2, r.height / 2, 1.25);
+      });
+      overlay.querySelector('[data-mlb="out"]').addEventListener('click', function () {
+        const r = stage.getBoundingClientRect();
+        zoomAt(r.width / 2, r.height / 2, 0.8);
+      });
+      overlay.querySelector('[data-mlb="reset"]').addEventListener('click', fitToStage);
+
+      document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape' && !overlay.hasAttribute('hidden')) close();
+      });
+
+      // Wheel zoom around the cursor
+      stage.addEventListener('wheel', function (e) {
+        e.preventDefault();
+        const r = stage.getBoundingClientRect();
+        zoomAt(e.clientX - r.left, e.clientY - r.top, e.deltaY < 0 ? 1.15 : 1 / 1.15);
+      }, { passive: false });
+
+      // Drag to pan; a plain click on empty backdrop closes
+      let dragging = false;
+      let moved = false;
+      let startX = 0;
+      let startY = 0;
+      let startTx = 0;
+      let startTy = 0;
+
+      stage.addEventListener('pointerdown', function (e) {
+        dragging = true;
+        moved = false;
+        startX = e.clientX;
+        startY = e.clientY;
+        startTx = tx;
+        startTy = ty;
+        stage.setPointerCapture(e.pointerId);
+        stage.classList.add('dragging');
+      });
+      stage.addEventListener('pointermove', function (e) {
+        if (!dragging) return;
+        const dx = e.clientX - startX;
+        const dy = e.clientY - startY;
+        if (Math.abs(dx) + Math.abs(dy) > 4) moved = true;
+        tx = startTx + dx;
+        ty = startTy + dy;
+        applyTransform();
+      });
+      stage.addEventListener('pointerup', function (e) {
+        dragging = false;
+        stage.classList.remove('dragging');
+        if (!moved && e.target === stage) close();
+      });
+      stage.addEventListener('pointercancel', function () {
+        dragging = false;
+        stage.classList.remove('dragging');
+      });
+    }
+
+    // Delegated click: open the lightbox for any rendered mermaid diagram
+    document.addEventListener('click', function (e) {
+      if (overlay && !overlay.hasAttribute('hidden')) return;
+      const container = e.target.closest('.mermaid');
+      if (!container) return;
+      const svg = container.querySelector('svg');
+      if (!svg) return;
+      if (!overlay) init();
+      open(svg);
+    });
+  })();
+
 })();

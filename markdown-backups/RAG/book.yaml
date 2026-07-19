@@ -1,0 +1,6 @@
+title: "检索增强生成（RAG）"
+author: "Mav"
+description: "从大语言模型的知识边界出发，讲清检索、切块、重排与评估的原理，回望 2026 年 RAG 的现实形态，最后动手构建一个属于自己的知识库问答系统。"
+language: "ZH-CN"
+version: "1.0.0"
+status: published

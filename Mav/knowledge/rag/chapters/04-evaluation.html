@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RAG 系统的评估：指标、测试集与 LLM 裁判 — 检索增强生成（RAG）</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" id="hljs-light" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+<link rel="stylesheet" id="hljs-dark" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" media="not all">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+
+</head>
+<body>
+
+<div class="progress-bar" id="progress-bar"></div>
+
+<nav class="topnav" id="topnav">
+  <div class="topnav-inner">
+    <a class="brand" href="../index.html">检索增强生成（RAG）</a>
+    <div class="nav-links">
+      <a href="01-why-rag.html">01</a>
+      <a href="02-retrieval.html">02</a>
+      <a href="03-chunking-reranking.html">03</a>
+      <a href="04-evaluation.html" class="active">04</a>
+      <a href="05-rag-in-2026.html">05</a>
+      <a href="06-hands-on.html">06</a>
+      <a href="07-appendix.html">07</a>
+    </div>
+    <div class="nav-controls">
+      <button class="nav-btn" id="search-btn" aria-label="搜索 (Ctrl+K)">⌘K</button>
+      <button class="nav-btn" id="settings-btn" aria-label="阅读设置">Aa</button>
+      <a class="nav-btn" href="../../index.html" aria-label="返回知识库">← 知识库</a>
+      <a class="nav-btn" href="https://github.com/maverickxone/mav-homepage" target="_blank" rel="noopener" aria-label="GitHub" style="padding: 6px 8px;"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg></a>
+    </div>
+  </div>
+</nav>
+<div class="settings-pop" id="settings-pop">
+  <h5>主题</h5>
+  <div class="row">
+    <button class="seg" data-theme-set="light">明亮</button>
+    <button class="seg" data-theme-set="dark">暗色</button>
+  </div>
+  <h5>字号</h5>
+  <div class="row">
+    <button class="seg" data-size-set="s">小</button>
+    <button class="seg" data-size-set="m">中</button>
+    <button class="seg" data-size-set="l">大</button>
+  </div>
+</div>
+
+<div class="with-sidebar">
+  <aside class="sidebar">
+  <div class="chapter-num">CHAPTER 04</div>
+  <div class="chapter-name">RAG 系统的评估：指标、测试集与 LLM 裁判</div>
+  <h4>目录</h4>
+  <ul>
+    <li><a href="#41-没有评估的-rag-是玄学">4.1 没有评估的 RAG 是玄学</a></li>
+    <li><a href="#42-先拆开检索失败还是生成失败">4.2 先拆开：检索失败还是生成失败</a></li>
+    <li><a href="#43-检索指标找没找到排得靠不靠前">4.3 检索指标：找没找到、排得靠不靠前</a></li>
+    <li><a href="#44-生成指标拿着正确的资料答得好不好">4.4 生成指标：拿着正确的资料，答得好不好</a></li>
+    <li><a href="#45-llm-as-judge让模型当裁判">4.5 LLM-as-judge：让模型当裁判</a></li>
+    <li><a href="#46-测试集从语料反向造题">4.6 测试集：从语料反向造题</a></li>
+  </ul>
+</aside>
+  <article class="chapter-body">
+    <header class="chapter-head">
+  <div class="chapter-head-meta">
+    <span class="num">CHAPTER 04</span>
+    <span>≈ 35 MIN READ</span>
+  </div>
+  <h1>RAG 系统的评估：指标、测试集与 LLM 裁判</h1>
+
+</header>
+    <h2 id="41-没有评估的-rag-是玄学">4.1 没有评估的 RAG 是玄学</h2>
+<p>上一章结尾留了一个问题：流水线上旋钮这么多——块大小、overlap、top-k、混合检索的配比、要不要重排——怎么知道拧了之后是好是坏？</p>
+<p>大多数人的实际做法是：改完参数，随手问两三个问题，看看答案顺不顺眼，顺眼就算改进成功。这个做法的问题不在于不严谨，在于<strong>它会系统性地骗你</strong>。两三个问题的样本，方差大到任何结论都可能是噪声；&quot;顺眼&quot;这个标准，会被答案的流畅度和自信程度带偏——而流畅和自信恰恰是大模型最不缺的东西，一个引用了错误段落的答案照样可以文采斐然。于是你调了一星期参数，每次都&quot;感觉好了一点&quot;，实际效果原地踏步甚至倒退，这就是&quot;玄学调参&quot;的典型现场。</p>
+<p>出路只有一条，跟所有实验学科一样：<strong>固定一套测试题，固定一套打分标准，每次改动前后各跑一遍，比较分数</strong>。本章就讲这三件事怎么做：失败怎么归因（4.2）、检索和生成各用什么指标（4.3、4.4）、打分和出题怎么自动化（4.5、4.6）。</p>
+<h2 id="42-先拆开检索失败还是生成失败">4.2 先拆开：检索失败还是生成失败</h2>
+<p>RAG 是两段式流水线，端到端地看&quot;答案对不对&quot;是不够的——同样是答错，病根可能在完全不同的地方，药方也完全不同。诊断的第一步永远是<strong>拆开归因</strong>：</p>
+<p><strong>检索失败</strong>：相关的块压根没被找回来。模型巧妇难为无米之炊，要么老实说&quot;资料里没有&quot;，要么更糟——退回参数化知识开始编。这时候该修的是检索层：换切块策略、调 top-k、加混合检索、加重排。<strong>去调 prompt 是没有用的</strong>，米都没有，怎么改锅都煮不出饭。</p>
+<p><strong>生成失败</strong>：相关的块明明找回来了、就在 prompt 里，模型却没用上、用错了，或者掺进了资料之外的私货。这时候该修的是生成层：改 prompt 指令、要求引用编号、换模型。<strong>去调检索是没有用的</strong>，米已经在锅里了。</p>
+<p>反过来还有一种容易漏诊的情况：<strong>端到端答对了，不代表系统是好的</strong>。模型可能靠参数化知识蒙对了答案，检索层实际上完全失灵——换一个私有领域的问题立刻现形。所以严肃的评估要<strong>分层打分</strong>：检索单独一套指标（找没找到），生成单独一套指标（用没用好），端到端再来一套（最终对不对）。</p>
+<h2 id="43-检索指标找没找到排得靠不靠前">4.3 检索指标：找没找到、排得靠不靠前</h2>
+<p>检索评估需要一个前提：对每个测试问题，预先标注好语料库里<strong>哪些块是相关的</strong>（这个标注集叫 golden set，怎么造它是 4.6 节的事）。有了标注，指标都是简单的数数。</p>
+<p><strong>Recall@k（召回率）</strong>：相关的块里，有多少被排进了前 $k$ 名——</p>
+<p>$$
+\mathrm{Recall}@k = \frac{|\{\text{相关块}\} \cap \{\text{top-}k\}|}{|\{\text{相关块}\}|}
+$$</p>
+<p>这是 RAG 里<strong>最重要</strong>的检索指标，原因很直接：进不了 top-k 就进不了 prompt，模型就永远看不到。Recall@k 低，下游一切免谈。</p>
+<p><strong>Precision@k（精确率）</strong>：前 $k$ 名里有多少是真相关的——</p>
+<p>$$
+\mathrm{Precision}@k = \frac{|\{\text{相关块}\} \cap \{\text{top-}k\}|}{k}
+$$</p>
+<p>它衡量的是 prompt 的&quot;干净程度&quot;。精确率低意味着 prompt 里塞满了无关块——第 1 章讲过的上下文污染。召回和精确天然此消彼长：$k$ 开大，召回涨、精确跌。RAG 的典型取舍是<strong>优先保召回</strong>（漏了就彻底没救，脏一点模型还有机会自己甄别），再靠重排序把精确率拉回来——这正是第 3 章两阶段架构&quot;宁滥勿缺 + 精选排准&quot;的量化表达。</p>
+<p><strong>MRR（Mean Reciprocal Rank，平均倒数排名）</strong>：第一个相关块排在第几名——</p>
+<p>$$
+\mathrm{MRR} = \frac{1}{|Q|} \sum_{i=1}^{|Q|} \frac{1}{\mathrm{rank}_i}
+$$</p>
+<p>其中 $\mathrm{rank}_i$ 是第 $i$ 个问题的首个相关块的名次。排第 1 得 1 分，排第 5 只得 0.2 分。它关心<strong>位置</strong>：同样是&quot;找到了&quot;，排在第 1 和排在第 8 对模型的实际影响不同（lost in the middle 又见面了）。此外还有把&quot;多个相关块、相关程度有梯度&quot;都考虑进去的 NDCG，搜索引擎评估的主力指标，RAG 场景通常用前三个就够了。</p>
+<p>这些指标的价值在于<strong>它们把检索层隔离成一个可以独立优化的模块</strong>：不用跑生成、不用人看答案，改一版切块策略，几秒钟跑完全部测试题的 Recall@5，数字说话。调优循环的大部分迭代应该发生在这一层——快、便宜、信号干净。</p>
+<h2 id="44-生成指标拿着正确的资料答得好不好">4.4 生成指标：拿着正确的资料，答得好不好</h2>
+<p>生成层的评估维度不同——这里没有&quot;标准排名&quot;可对，评的是答案的<strong>质量</strong>，主要看三个维度：</p>
+<p><strong>忠实度（faithfulness）</strong>：答案里的每一个论断，是否都能在检索出的资料里找到依据。这是 RAG 生成评估的核心指标，直接对应我们做 RAG 的初衷——<strong>答案必须来自资料，而不是模型的自由发挥</strong>。忠实度低的表现俗称&quot;资料外幻觉&quot;：资料说了 A 和 B，答案却冒出了资料里没有的 C。注意忠实度<strong>不等于</strong>正确性：如果检索回来的资料本身是错的，一个忠实的答案也是错的——但那是检索层或语料本身的锅，归因要分清。</p>
+<p><strong>答案相关性（answer relevance）</strong>：答案是否正面回应了所问的问题。模型有时会忠实地大段复述资料，却答非所问——每句话都有出处，就是没回答问题。</p>
+<p><strong>引用质量（citation quality）</strong>：如果系统要求模型标注引用（第 6 章的实战会这么做），还要检查引用是否落在真正支撑该论断的块上。引用既是给用户的可验证性，也是免费的评估信号——引用错位往往是忠实度问题的前兆。</p>
+<h2 id="45-llm-as-judge让模型当裁判">4.5 LLM-as-judge：让模型当裁判</h2>
+<p>指标定义好了，谁来打分？忠实度这种指标，要把答案逐句和资料比对——人来做又慢又贵，规则匹配又根本做不了（同一个意思有无数种说法）。2023 年之后的标准答案是：<strong>让另一个 LLM 来打分</strong>，即 <strong>LLM-as-judge</strong>。</p>
+<p>做法直白：把问题、检索出的资料、系统的答案一起交给一个裁判模型，配一份明确的评分规程（rubric），让它输出判断。一个忠实度裁判的 prompt 骨架大致是：</p>
+<blockquote><p>下面是资料和一个基于资料的回答。请把回答拆成一条条独立论断，逐条判断：该论断能否从资料中得到支持？对每条给出&quot;支持 / 不支持 / 资料未涉及&quot;的判定和依据，最后输出不支持论断的比例。</p>
+</blockquote>
+<p>实践中有几条经验能显著提高裁判的可靠性。<strong>评分规程要具体</strong>：&quot;给答案打 1-10 分&quot;这种模糊指令，裁判分数会大幅漂移；拆成一条条二元判断（支持/不支持），一致性立刻上来。<strong>首选二元或三元判定而不是打分</strong>，分数粒度越细越不稳定。<strong>要求先说理由再给结论</strong>，强迫裁判展示比对过程，既提高质量也便于人工抽查。</p>
+<p>同时要清醒地知道裁判自己的偏差。<strong>位置偏差</strong>：对比两个答案时，裁判系统性偏爱先出现的那个——解法是交换顺序跑两遍取平均。<strong>自恋偏差（self-preference）</strong>：模型偏爱自己（或同家族模型）生成的文本——裁判尽量别用与生成器同源的模型。<strong>长度偏差</strong>：更长、更详尽的答案容易得高分，哪怕内容并不更对。<strong>校准</strong>：LLM 裁判不是免检产品，上岗前抽几十个样本人工标注一遍，对比裁判与人工的一致率——一致率够高（比如 90% 以上）才放心让它自动跑。裁判不是替代人类判断，而是把人类判断<strong>放大</strong>：你人工校准 50 条，它替你按同一标准跑 5000 条。</p>
+<h2 id="46-测试集从语料反向造题">4.6 测试集：从语料反向造题</h2>
+<p>最后一块拼图：测试题从哪来？手写当然最好——你最清楚用户会问什么——但手写几百道题并标注相关块，工作量劝退。好在 RAG 评估有一个得天独厚的捷径：<strong>从语料反向生成</strong>。</p>
+<p>流程是评估流水线的逆向：从语料库随机抽一个块，让 LLM 依据这个块出一道&quot;答案就在块中&quot;的问题——于是<strong>问题与相关块的配对是天然免费的</strong>，golden set 的标注成本直接归零。批量跑一遍，几百道带标注的测试题就有了。第 6 章会实际操作。</p>
+<p>反向造题有两个要当心的坑。<strong>其一，问题分布偏移</strong>：由块生成的问题往往措辞与原文过于贴近（造题模型会不自觉地复用原文用词），检索难度系统性偏低，测出来的 Recall 虚高。缓解办法是在造题 prompt 里明确要求换一种说法提问、模拟真实用户的口吻，并混入一部分手写的真实问题作对照。<strong>其二，覆盖不了跨块问题</strong>：单块造题天然都是&quot;局部问题&quot;，而真实用户会问需要综合多个块甚至多篇文档的&quot;全局问题&quot;——这类问题恰恰是 RAG 的难点（第 5 章讲 GraphRAG 时再展开）。测试集里要刻意补充一些。</p>
+<p>另外，测试集是<strong>资产</strong>，要跟代码一样管理：入版本库、持续补充线上遇到的真实 badcase、定期审查过时的题。评估驱动的调优循环最终长这样：</p>
+<div class="mermaid">flowchart LR
+  A[改动一个变量<br>切块/top-k/重排/prompt] --> B[跑固定测试集]
+  B --> C{分层看指标}
+  C -->|Recall@k 变差| D[回滚，问题在检索层]
+  C -->|忠实度变差| E[回滚，问题在生成层]
+  C -->|指标提升| F[保留改动]
+  D --> A
+  E --> A
+  F --> A</div>
+<p>一次改一个变量，每次都过数字这一关——RAG 调优从此告别玄学。原理层面的三章（检索、工程细节、评估）到此配齐，下一章把镜头拉远，看看这套技术在 2026 年的真实世界里活成了什么样子。</p>
+<div class="callout callout-tip">
+<p class="callout-title">本章要点</p>
+
+<ul>
+<li>凭几个问题的&quot;顺眼程度&quot;调参会被系统性误导；评估 = 固定测试集 + 固定指标 + 改动前后对比。</li>
+<li>失败先归因：检索失败修检索（调 prompt 没用），生成失败修 prompt（调检索没用）；答对也可能是蒙的，要分层打分。</li>
+<li>检索指标：Recall@k 是生命线（进不了 top-k 就进不了 prompt），Precision@k 看 prompt 干净度，MRR 看排位；策略是先保召回、靠重排拉精确。</li>
+<li>生成指标：忠实度（论断皆有据）为核心，辅以答案相关性与引用质量；忠实 ≠ 正确，归因要分清。</li>
+<li>LLM-as-judge：具体规程 + 二元判定 + 先理由后结论；警惕位置/自恋/长度偏差，上岗前人工校准。</li>
+<li>测试集从语料反向生成，标注免费；注意措辞偏移与跨块问题的覆盖，把测试集当资产维护。</li>
+</ul>
+</div>
+
+    <nav class="pager">  <a href="03-chunking-reranking.html">
+    <span class="label">← 上一章</span>
+    <span class="title">切块与重排：决定检索质量的工程细节</span>
+  </a>  <a href="05-rag-in-2026.html" class="next">
+    <span class="label">下一章 →</span>
+    <span class="title">2026 年的 RAG：Agentic 检索、GraphRAG 与长上下文之争</span>
+  </a></nav>
+  </article>
+</div>
+
+<footer>
+  <div class="set">
+    <span>检索增强生成（RAG）</span>
+    <span>2026 · ZH-CN</span>
+  </div>
+  <div class="set">
+    <span>Mav</span>
+  </div>
+</footer>
+<div class="search-backdrop" id="search-overlay" role="dialog" aria-modal="true" aria-label="搜索" hidden>
+  <div class="search-modal">
+    <div class="search-input-wrap">
+      <input type="search" class="search-input" placeholder="搜索内容..." aria-label="搜索内容" autocomplete="off">
+      <kbd>ESC</kbd>
+    </div>
+    <div class="search-results" role="listbox" aria-label="搜索结果"></div>
+  </div>
+</div>
+
+<!-- Side Panel -->
+<div class="side-panel" id="side-panel">
+  <div class="side-panel-resize" id="side-panel-resize"></div>
+  <div class="side-panel-header">
+    <div class="side-panel-tabs">
+      <button class="side-panel-tab active" data-mode="sidenote">补充</button>
+      <button class="side-panel-tab" data-mode="notepad">笔记</button>
+    </div>
+    <button class="side-panel-close" aria-label="关闭">×</button>
+  </div>
+  <div class="side-panel-body"></div>
+</div>
+<button class="notepad-fab" id="notepad-fab" aria-label="便利贴">✎</button>
+
+<!-- Mobile TOC -->
+<button class="mtoc-fab" id="mtoc-fab" aria-label="目录">TOC</button>
+<div class="mtoc-drawer" id="mtoc-drawer">
+  <div class="mtoc-content"></div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/bash.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/typescript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/yaml.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/javascript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/json.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/python.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/css.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+<script>mermaid.initialize({startOnLoad:true, theme:'neutral', fontFamily:'Inter, sans-serif'});</script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}]});"></script>
+<script src="../assets/script.js"></script>
+
+</body>
+</html>

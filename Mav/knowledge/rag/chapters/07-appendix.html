@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>附录：工具生态速查与延伸阅读 — 检索增强生成（RAG）</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" id="hljs-light" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+<link rel="stylesheet" id="hljs-dark" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" media="not all">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+
+</head>
+<body>
+
+<div class="progress-bar" id="progress-bar"></div>
+
+<nav class="topnav" id="topnav">
+  <div class="topnav-inner">
+    <a class="brand" href="../index.html">检索增强生成（RAG）</a>
+    <div class="nav-links">
+      <a href="01-why-rag.html">01</a>
+      <a href="02-retrieval.html">02</a>
+      <a href="03-chunking-reranking.html">03</a>
+      <a href="04-evaluation.html">04</a>
+      <a href="05-rag-in-2026.html">05</a>
+      <a href="06-hands-on.html">06</a>
+      <a href="07-appendix.html" class="active">07</a>
+    </div>
+    <div class="nav-controls">
+      <button class="nav-btn" id="search-btn" aria-label="搜索 (Ctrl+K)">⌘K</button>
+      <button class="nav-btn" id="settings-btn" aria-label="阅读设置">Aa</button>
+      <a class="nav-btn" href="../../index.html" aria-label="返回知识库">← 知识库</a>
+      <a class="nav-btn" href="https://github.com/maverickxone/mav-homepage" target="_blank" rel="noopener" aria-label="GitHub" style="padding: 6px 8px;"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg></a>
+    </div>
+  </div>
+</nav>
+<div class="settings-pop" id="settings-pop">
+  <h5>主题</h5>
+  <div class="row">
+    <button class="seg" data-theme-set="light">明亮</button>
+    <button class="seg" data-theme-set="dark">暗色</button>
+  </div>
+  <h5>字号</h5>
+  <div class="row">
+    <button class="seg" data-size-set="s">小</button>
+    <button class="seg" data-size-set="m">中</button>
+    <button class="seg" data-size-set="l">大</button>
+  </div>
+</div>
+
+<div class="with-sidebar">
+  <aside class="sidebar">
+  <div class="chapter-num">CHAPTER 07</div>
+  <div class="chapter-name">附录：工具生态速查与延伸阅读</div>
+  <h4>目录</h4>
+  <ul>
+    <li><a href="#a1-向量数据库什么时候才真的需要">A.1 向量数据库：什么时候才真的需要</a></li>
+    <li><a href="#a2-框架langchainllamaindex-与quot不用框架quot">A.2 框架：LangChain、LlamaIndex 与&quot;不用框架&quot;</a></li>
+    <li><a href="#a3-embedding-模型选型">A.3 Embedding 模型选型</a></li>
+    <li><a href="#a4-延伸阅读">A.4 延伸阅读</a></li>
+  </ul>
+</aside>
+  <article class="chapter-body">
+    <header class="chapter-head">
+  <div class="chapter-head-meta">
+    <span class="num">CHAPTER 07</span>
+    <span>≈ 18 MIN READ</span>
+  </div>
+  <h1>附录：工具生态速查与延伸阅读</h1>
+
+</header>
+    <h2 id="a1-向量数据库什么时候才真的需要">A.1 向量数据库：什么时候才真的需要</h2>
+<p>第 2 章和第 6 章反复演示了&quot;numpy 就够&quot;，这里把升级的判断标准和选型图谱补全。触发升级的信号（满足任意一条再考虑，否则继续用 .npy）：向量数量到了<strong>百万级</strong>、内存开始装不下；需要<strong>频繁增删改</strong>（numpy 方案改一条要重写整个文件）；<strong>多进程/多用户并发</strong>访问；需要<strong>元数据过滤</strong>与向量检索深度结合（&quot;只在标签为 X 且日期晚于 Y 的块里找&quot;）。</p>
+<p>到了那一步，2026 年的主要选项按形态分三类：</p>
+<div class="table-wrap"><table><thead><tr>
+<th>类型</th>
+<th>代表</th>
+<th>适合</th>
+</tr>
+</thead><tbody><tr>
+<td>嵌入式库（进程内，无服务）</td>
+<td>FAISS、Chroma、LanceDB</td>
+<td>单机应用、原型；FAISS 是 ANN 算法的事实标准库</td>
+</tr>
+<tr>
+<td>独立服务（自部署）</td>
+<td>Qdrant、Milvus、Weaviate</td>
+<td>生产环境、需要水平扩展</td>
+</tr>
+<tr>
+<td>托管云服务</td>
+<td>Pinecone、各大云厂商的向量服务</td>
+<td>不想运维；按量付费</td>
+</tr>
+<tr>
+<td>现有数据库的向量扩展</td>
+<td>pgvector（PostgreSQL）、Redis、Elasticsearch</td>
+<td><strong>已经在用这些数据库时的首选</strong>——少一个组件永远是好架构</td>
+</tr>
+</tbody></table></div>
+<p>最后一行值得展开一句：如果你的系统里已经有 PostgreSQL，pgvector 几乎总是比引入一个专门的向量数据库更明智——向量和业务数据同库、同事务、同备份，运维成本近乎为零。&quot;专用向量数据库 vs 现有数据库加扩展&quot;是 2024 年后生态里真实发生的路线竞争，目前后者在中小规模场景明显占了上风。</p>
+<h2 id="a2-框架langchainllamaindex-与quot不用框架quot">A.2 框架：LangChain、LlamaIndex 与&quot;不用框架&quot;</h2>
+<p>正文通篇没用框架，附录把话说完整。<strong>LangChain</strong> 是 LLM 应用的通用编排框架，RAG 只是它的一个子场景；<strong>LlamaIndex</strong> 则以数据接入和索引为核心，天生更贴 RAG，内置了正文讲过的大部分技巧（small-to-big、多种切块器、评估模块）的现成实现；<strong>Haystack</strong> 在传统 IR 团队里口碑较好。</p>
+<p>用不用框架的判断，和&quot;用不用向量数据库&quot;同构：<strong>框架解决的是集成的广度，不是检索的质量</strong>。它们的价值在连接器多（一百种数据源、一百种向量库开箱即用）、原型快；代价是抽象层厚，出了问题要隔着几层包装去排查，而 RAG 调优恰恰是不断拆开细节看的过程。所以合理的路径是：<strong>学习和调优期用裸代码</strong>（正文的做法——两百行本来也不多），<strong>集成期按需上框架</strong>，且始终确保你知道每层抽象下面发生了什么。反过来&quot;先用框架搭起来再说&quot;的路径，常见结局是系统能跑但效果平庸，且没人说得清瓶颈在哪一环。</p>
+<h2 id="a3-embedding-模型选型">A.3 Embedding 模型选型</h2>
+<p>几个真正影响决策的维度，按重要性排：</p>
+<p><strong>中文/多语言质量。</strong> 各家模型在英文基准上的差距远小于在中文上的差距。选型前务必在<strong>自己的语料</strong>上跑第 4 章的 Recall 评估——榜单（MTEB 等公开基准）只能划定候选范围，不能代替实测，况且榜单存在被&quot;应试训练&quot;污染的老问题。</p>
+<p><strong>商用 API 还是开源自部署。</strong> API（Voyage、OpenAI、Cohere 等）免运维、质量稳定，代价是数据出境到服务商和按量付费；开源模型（BGE、GTE、Qwen-embedding 等系列）数据不出门、量大时更便宜，代价是要自己管 GPU 推理。个人与原型选 API，数据敏感或超大规模选自部署，是常规判断。</p>
+<p><strong>维度与存储。</strong> 维度大多在 512～4096 之间，维度翻倍意味着存储和检索计算翻倍，而质量收益通常远小于线性。部分模型支持&quot;套娃表示学习&quot;（Matryoshka），同一向量可按需截断使用——大库存储紧张时是实用特性。</p>
+<p><strong>一条铁律。</strong> 换 embedding 模型 = <strong>全库重新向量化</strong>：不同模型的向量空间互不兼容，哪怕维度相同也不能混用。所以选型宜早不宜迟，中途更换的成本是完整重建一遍索引。</p>
+<h2 id="a4-延伸阅读">A.4 延伸阅读</h2>
+<p>按&quot;接着本书往下读&quot;的顺序编排，而非按发表时间：</p>
+<ol>
+<li><strong>Lewis et al., <em>Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks</em>, 2020.</strong> RAG 的命名之作。今天读它的价值主要是历史性的——看看&quot;检索器与生成器联合训练&quot;的原始形态，对比第 5 章讲的松耦合现状，能真切感到这个领域五年里换了人间。</li>
+<li><strong>Liu et al., <em>Lost in the Middle: How Language Models Use Long Contexts</em>, 2023.</strong> 第 1 章&quot;大海捞针&quot;讨论的出处，实验设计干净利落，值得作为&quot;如何做扎实的 LLM 行为实验&quot;的范文来读。</li>
+<li><strong>Robertson &amp; Zaragoza, <em>The Probabilistic Relevance Framework: BM25 and Beyond</em>, 2009.</strong> BM25 作者亲撰的综述。第 2 章只给了公式和直觉，这里有完整的概率推导——词法检索五十年功力的浓缩。</li>
+<li><strong>Gao et al., <em>Precise Zero-Shot Dense Retrieval without Relevance Labels</em>, 2022.</strong> HyDE 的原论文，第 3 章&quot;用幻觉治幻觉&quot;的出处，短小精悍。</li>
+<li><strong>Anthropic, <em>Introducing Contextual Retrieval</em>, 2024（技术博客）.</strong> 第 3 章上下文增强一节的主要参考，附有不同语料规模下的消融数据，工程参考价值高于多数论文。</li>
+<li><strong>Edge et al., <em>From Local to Global: A Graph RAG Approach to Query-Focused Summarization</em>, 2024.</strong> GraphRAG 原论文，第 5 章全局性问题的完整方案，微软已开源配套实现。</li>
+<li><strong>RAGAS 文档与论文（<em>RAGAS: Automated Evaluation of Retrieval Augmented Generation</em>, 2023）.</strong> 第 4 章那套指标（忠实度、答案相关性等）的自动化实现，可以直接接到第 6 章的实战代码后面用。</li>
+</ol>
+<p>读完这一份清单，你对 RAG 的理解就完成了从&quot;读过一本科普&quot;到&quot;摸到研究与工程前沿&quot;的换挡。剩下的部分——也是最重要的部分——是回到第 6 章那两百行代码，用你自己的数据把每一个想法试一遍。开卷考试的要义，终究是要亲手翻书。</p>
+
+    <nav class="pager">  <a href="06-hands-on.html">
+    <span class="label">← 上一章</span>
+    <span class="title">实战：从零构建知识库问答系统</span>
+  </a>  <a class="disabled next"><span class="label">下一章 →</span><span class="title"></span></a></nav>
+  </article>
+</div>
+
+<footer>
+  <div class="set">
+    <span>检索增强生成（RAG）</span>
+    <span>2026 · ZH-CN</span>
+  </div>
+  <div class="set">
+    <span>Mav</span>
+  </div>
+</footer>
+<div class="search-backdrop" id="search-overlay" role="dialog" aria-modal="true" aria-label="搜索" hidden>
+  <div class="search-modal">
+    <div class="search-input-wrap">
+      <input type="search" class="search-input" placeholder="搜索内容..." aria-label="搜索内容" autocomplete="off">
+      <kbd>ESC</kbd>
+    </div>
+    <div class="search-results" role="listbox" aria-label="搜索结果"></div>
+  </div>
+</div>
+
+<!-- Side Panel -->
+<div class="side-panel" id="side-panel">
+  <div class="side-panel-resize" id="side-panel-resize"></div>
+  <div class="side-panel-header">
+    <div class="side-panel-tabs">
+      <button class="side-panel-tab active" data-mode="sidenote">补充</button>
+      <button class="side-panel-tab" data-mode="notepad">笔记</button>
+    </div>
+    <button class="side-panel-close" aria-label="关闭">×</button>
+  </div>
+  <div class="side-panel-body"></div>
+</div>
+<button class="notepad-fab" id="notepad-fab" aria-label="便利贴">✎</button>
+
+<!-- Mobile TOC -->
+<button class="mtoc-fab" id="mtoc-fab" aria-label="目录">TOC</button>
+<div class="mtoc-drawer" id="mtoc-drawer">
+  <div class="mtoc-content"></div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/bash.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/typescript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/yaml.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/javascript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/json.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/python.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/css.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+<script>mermaid.initialize({startOnLoad:true, theme:'neutral', fontFamily:'Inter, sans-serif'});</script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}]});"></script>
+<script src="../assets/script.js"></script>
+
+</body>
+</html>

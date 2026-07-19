@@ -340,6 +340,7 @@ node blog-build.js   # 只生成 html/*.html 详情页（导航指向时间线�
 | ~~ai-nlp-foundations~~ | ~~AI 自然语言处理基础~~ | ~~7 章~~ —— 2026-07 移除 |
 | ~~ai-transformers~~ | ~~AI Transformer 深度剖析~~ | ~~7 章~~ —— 2026-07 移除 |
 | deep-learning | 深度学习系列讲义 | **Series**；3 篇、21 章；源为 `markdown-backups/Deep-Learning/series.yaml`；`status: published` |
+| rag | 检索增强生成（RAG） | 7 章；`status: published`；v1.0.0；AI 工程实践；从幻觉/检索/切块/重排/评估到 2026 年 agentic 检索之争，末章两百行 Python 手搓知识库问答 |
 | ~~d2l-toolbox / d2l-cnn / d2l-rnn~~ | ~~三套独立 D2L 书稿~~ | 2026-07 合并进 `deep-learning` Series，旧源与旧产物移入废纸篓 |
 | ~~claude-d2l-to-rnn~~ | ~~深度学习讲义~~ | ~~4 章；旧版合订；`catalog: false`、`status: draft`~~ —— 2026-07 移除（内容已由深度学习 Series 承接） |
 | math-analysis | 数学分析讲义 | 6 章（第 8–13 章，下册）；“大一下学期课程讲义”折叠区；`script.js` 锁定 + `12-fourier-analysis.md` 锁定 |
@@ -449,8 +450,8 @@ Mav/knowledge/projects/
 路径 `Mav/knowledge/index.html`。两个 tab：
 
 1. **Projects** — 展示 published project 卡片（带路径圆点动画）+ Series + 独立阅读区
-2. **全部书籍** — 顶部展示 `deep-learning` Series，之后平铺 **13** 本主书卡片（不含课程讲义）：
-   data-structures、robogame2026、claude-code、money-bank、bite-to-byte-硬件篇、blockchain-crypto、rust-book、git-guide、server-frontend-backend、video-screen、browser-war、euv-lithography、pdf-explained
+2. **全部书籍** — 顶部展示 `deep-learning` Series，之后平铺 **14** 本主书卡片（不含课程讲义）：
+   rag、data-structures、robogame2026、claude-code、money-bank、bite-to-byte-硬件篇、blockchain-crypto、rust-book、git-guide、server-frontend-backend、video-screen、browser-war、euv-lithography、pdf-explained
 
 两个视图下方共用一个原生 `<details>` 折叠区：**大一下学期课程讲义**，包含 `thermodynamics`、`math-analysis`、`ai-math-principles`。旧的“深度学习相关书稿”折叠区已移除。
 

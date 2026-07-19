@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>实战：从零构建知识库问答系统 — 检索增强生成（RAG）</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" id="hljs-light" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+<link rel="stylesheet" id="hljs-dark" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" media="not all">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+
+</head>
+<body>
+
+<div class="progress-bar" id="progress-bar"></div>
+
+<nav class="topnav" id="topnav">
+  <div class="topnav-inner">
+    <a class="brand" href="../index.html">检索增强生成（RAG）</a>
+    <div class="nav-links">
+      <a href="01-why-rag.html">01</a>
+      <a href="02-retrieval.html">02</a>
+      <a href="03-chunking-reranking.html">03</a>
+      <a href="04-evaluation.html">04</a>
+      <a href="05-rag-in-2026.html">05</a>
+      <a href="06-hands-on.html" class="active">06</a>
+      <a href="07-appendix.html">07</a>
+    </div>
+    <div class="nav-controls">
+      <button class="nav-btn" id="search-btn" aria-label="搜索 (Ctrl+K)">⌘K</button>
+      <button class="nav-btn" id="settings-btn" aria-label="阅读设置">Aa</button>
+      <a class="nav-btn" href="../../index.html" aria-label="返回知识库">← 知识库</a>
+      <a class="nav-btn" href="https://github.com/maverickxone/mav-homepage" target="_blank" rel="noopener" aria-label="GitHub" style="padding: 6px 8px;"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg></a>
+    </div>
+  </div>
+</nav>
+<div class="settings-pop" id="settings-pop">
+  <h5>主题</h5>
+  <div class="row">
+    <button class="seg" data-theme-set="light">明亮</button>
+    <button class="seg" data-theme-set="dark">暗色</button>
+  </div>
+  <h5>字号</h5>
+  <div class="row">
+    <button class="seg" data-size-set="s">小</button>
+    <button class="seg" data-size-set="m">中</button>
+    <button class="seg" data-size-set="l">大</button>
+  </div>
+</div>
+
+<div class="with-sidebar">
+  <aside class="sidebar">
+  <div class="chapter-num">CHAPTER 06</div>
+  <div class="chapter-name">实战：从零构建知识库问答系统</div>
+  <h4>目录</h4>
+  <ul>
+    <li><a href="#61-目标与技术栈">6.1 目标与技术栈</a></li>
+    <li><a href="#62-环境准备">6.2 环境准备</a></li>
+    <li><a href="#63-第一步读取与切块">6.3 第一步：读取与切块</a></li>
+    <li><a href="#64-第二步向量化与索引">6.4 第二步：向量化与索引</a></li>
+    <li><a href="#65-第三步混合检索">6.5 第三步：混合检索</a></li>
+    <li><a href="#66-第四步生成与引用">6.6 第四步：生成与引用</a></li>
+    <li><a href="#67-第五步跑起来">6.7 第五步：跑起来</a></li>
+    <li><a href="#68-第六步评估别跳过这一步">6.8 第六步：评估——别跳过这一步</a></li>
+    <li><a href="#69-成本账与下一步">6.9 成本账与下一步</a></li>
+  </ul>
+</aside>
+  <article class="chapter-body">
+    <header class="chapter-head">
+  <div class="chapter-head-meta">
+    <span class="num">CHAPTER 06</span>
+    <span>≈ 55 MIN READ</span>
+  </div>
+  <h1>实战：从零构建知识库问答系统</h1>
+
+</header>
+    <h2 id="61-目标与技术栈">6.1 目标与技术栈</h2>
+<p>这一章只做一件事：<strong>给你自己的资料库，从零写一个能跑的问答机器人</strong>。输入一个问题，它检索你的文档、给出带出处引用的回答。前五章的每个概念——切块、embedding、余弦相似度、BM25、RRF 融合、忠实度约束、反向造题评估——都会在代码里再出现一次，这次是以可执行的形式。</p>
+<p>技术栈刻意选到最轻：</p>
+<ul>
+<li><strong>Python + numpy</strong>，不用 LangChain 或 LlamaIndex 这类框架。不是框架不好，而是框架会把本书讲的每个环节都包装成一行不透明的调用——学习阶段，亲手写那两百行比调用框架收获大一个数量级。框架的定位见附录。</li>
+<li><strong>Embedding 用 Voyage AI 的 API</strong>（生成模型那家 Anthropic 官方推荐的 embedding 服务，对中文支持好）。这里有个值得知道的行业细节：Anthropic 自己不提供 embedding 端点，所以一条 RAG 流水线里 embedding 模型和生成模型来自两家是常态——<strong>这两个组件本来就是独立解耦的</strong>，正好印证第 2 章的架构图。</li>
+<li><strong>生成用 Claude API</strong>。</li>
+<li><strong>不用向量数据库</strong>——第 2 章说过，万级块的规模，numpy 点积就是完全体。我们用行动验证。</li>
+</ul>
+<p>语料就用我自己的 Markdown 书稿库（也就是你正在读的这个知识库的源文件，十几本书、几百个章节文件）。你换成任何一个装满 Markdown/纯文本的目录都一样能跑。</p>
+<h2 id="62-环境准备">6.2 环境准备</h2>
+<pre data-label="bash"><code class="language-bash">pip install anthropic voyageai numpy rank_bm25 jieba</code></pre>
+<p><code>rank_bm25</code> 是一个几百行的纯 Python BM25 实现；<code>jieba</code> 负责中文分词——BM25 按&quot;词&quot;统计，中文不分词就没有&quot;词&quot;可言。</p>
+<p>两个 API key 写进环境变量（两家官网注册即得，Voyage 有免费额度）：</p>
+<pre data-label="bash"><code class="language-bash">export ANTHROPIC_API_KEY="sk-ant-..."
+export VOYAGE_API_KEY="pa-..."</code></pre>
+<p>项目就两个文件：<code>build_index.py</code>（离线建索引，语料变了才重跑）和 <code>chat.py</code>（在线问答，日常使用）。对应第 1 章流水线图的离线/在线两段。</p>
+<h2 id="63-第一步读取与切块">6.3 第一步：读取与切块</h2>
+<p>第 3 章的结论直接落地：<strong>语料是 Markdown，就沿着标题结构切</strong>。每个 <code>##</code> 小节天然是一个主题聚焦、语义完整的块；个别超长小节再按段落二次切分，并给每个块拼上&quot;书名 &gt; 章节&quot;的元数据前缀（第 3 章的最便宜一招）。</p>
+<pre data-label="python"><code class="language-python"># build_index.py（第一部分）
+import json, re
+from pathlib import Path
+
+CORPUS_DIR = Path("/Users/mav/Projects/mav-homepage/markdown-backups")  # 换成你的目录
+MAX_CHARS = 1800          # 单块字符上限，超了按段落二切
+
+def strip_frontmatter(text: str) -&gt; str:
+    return re.sub(r"^---\n.*?\n---\n", "", text, flags=re.S)
+
+def split_long(text: str, limit: int) -&gt; list[str]:
+    """超长小节按空行二次切分，尽量在段落边界下刀。"""
+    parts, buf = [], ""
+    for para in text.split("\n\n"):
+        if len(buf) + len(para) &gt; limit and buf:
+            parts.append(buf.strip()); buf = ""
+        buf += para + "\n\n"
+    if buf.strip():
+        parts.append(buf.strip())
+    return parts
+
+def chunk_file(md_path: Path) -&gt; list[dict]:
+    book = md_path.parent.name
+    text = strip_frontmatter(md_path.read_text(encoding="utf-8"))
+    m = re.search(r'title:\s*"?([^"\n]+)"?', md_path.read_text(encoding="utf-8"))
+    chapter = m.group(1) if m else md_path.stem
+    chunks = []
+    # 按 ## 小节切分；sections[0] 是首个小节标题前的引言
+    sections = re.split(r"\n(?=## )", text)
+    for sec in sections:
+        sec = sec.strip()
+        if len(sec) &lt; 80:                      # 跳过空小节
+            continue
+        title_line = sec.splitlines()[0].lstrip("# ").strip()
+        for piece in split_long(sec, MAX_CHARS):
+            chunks.append({
+                "book": book, "chapter": chapter, "section": title_line,
+                # 元数据前缀：让块向量带上出处信息（第 3 章 3.3 节）
+                "text": f"《{book}》 &gt; {chapter} &gt; {title_line}\n{piece}",
+            })
+    return chunks
+
+all_chunks = []
+for md in sorted(CORPUS_DIR.rglob("*.md")):
+    if md.name.startswith("_") or ".backup." in str(md):
+        continue
+    all_chunks.extend(chunk_file(md))
+print(f"共 {len(all_chunks)} 个块")</code></pre>
+<p>在我的书库上跑出来大约两千个块——记住这个数量级，后面算成本和检索延迟都用得上。</p>
+<h2 id="64-第二步向量化与索引">6.4 第二步：向量化与索引</h2>
+<p>把每个块送进 embedding API。两个第 2 章埋过伏笔的细节：Voyage 的接口区分 <code>input_type=&quot;document&quot;</code>（建库时）和 <code>&quot;query&quot;</code>（查询时），模型对文档和查询用了不对称的编码，实测对检索质量有可感知的提升；拿到向量后<strong>立刻归一化</strong>，此后余弦相似度 = 点积。</p>
+<pre data-label="python"><code class="language-python"># build_index.py（第二部分）
+import numpy as np
+import voyageai
+
+vo = voyageai.Client()   # 自动读 VOYAGE_API_KEY
+
+texts = [c["text"] for c in all_chunks]
+vectors = []
+for i in range(0, len(texts), 64):            # 分批，单次请求别太大
+    batch = texts[i : i + 64]
+    result = vo.embed(batch, model="voyage-3.5", input_type="document")
+    vectors.extend(result.embeddings)
+    print(f"  embedded {i + len(batch)}/{len(texts)}")
+
+emb = np.array(vectors, dtype=np.float32)
+emb /= np.linalg.norm(emb, axis=1, keepdims=True)   # 归一化：余弦 → 点积
+
+np.save("index_emb.npy", emb)
+Path("index_chunks.json").write_text(
+    json.dumps(all_chunks, ensure_ascii=False), encoding="utf-8")
+print(f"索引完成：{emb.shape[0]} 个向量，维度 {emb.shape[1]}")</code></pre>
+<p>运行 <code>python build_index.py</code>，几分钟后目录下多出两个文件——一个 numpy 矩阵、一个 JSON 元数据。<strong>这就是全部的&quot;向量数据库&quot;</strong>：两千个 1024 维向量共约 8 MB，整个索引连一张照片都没有大。</p>
+<h2 id="65-第三步混合检索">6.5 第三步：混合检索</h2>
+<p>在线侧开工。第 2 章的架构原样搬进代码：一路向量检索（懂语义），一路 BM25（抓精确词），RRF 融合。</p>
+<pre data-label="python"><code class="language-python"># chat.py（第一部分）
+import json
+import jieba
+import numpy as np
+import voyageai
+from pathlib import Path
+from rank_bm25 import BM25Okapi
+
+vo = voyageai.Client()
+emb = np.load("index_emb.npy")
+chunks = json.loads(Path("index_chunks.json").read_text(encoding="utf-8"))
+
+# BM25 索引：中文先分词（在内存中现建，两千个块秒级完成）
+bm25 = BM25Okapi([list(jieba.cut(c["text"])) for c in chunks])
+
+def search(query: str, k: int = 6) -&gt; list[int]:
+    # 一路：向量检索 —— 一次矩阵点积扫全库（第 2 章的"窗户纸"）
+    q = np.array(vo.embed([query], model="voyage-3.5",
+                          input_type="query").embeddings[0])
+    q /= np.linalg.norm(q)
+    vec_rank = np.argsort(emb @ q)[::-1][:50]
+
+    # 二路：BM25
+    bm_scores = bm25.get_scores(list(jieba.cut(query)))
+    bm_rank = np.argsort(bm_scores)[::-1][:50]
+
+    # RRF 融合（第 2 章 2.5 节公式，K=60）
+    K, fused = 60, {}
+    for rank_list in (vec_rank, bm_rank):
+        for r, idx in enumerate(rank_list):
+            fused[int(idx)] = fused.get(int(idx), 0) + 1 / (K + r + 1)
+    return sorted(fused, key=fused.get, reverse=True)[:k]</code></pre>
+<p><code>emb @ q</code> 那一行值得多看一眼：它对两千个块做了完整的暴力检索，耗时以毫秒计。个人知识库规模下，检索延迟的大头其实是查询那一次 embedding API 调用的网络往返，本地计算可以忽略不计。</p>
+<h2 id="66-第四步生成与引用">6.6 第四步：生成与引用</h2>
+<p>把检索结果组装进 prompt，交给 Claude。System prompt 里写死两条纪律，都是第 1、4 章反复强调的原则：<strong>只依据资料回答</strong>（忠实度），<strong>标注引用编号</strong>（可溯源）：</p>
+<pre data-label="python"><code class="language-python"># chat.py（第二部分）
+import anthropic
+
+client = anthropic.Anthropic()   # 自动读 ANTHROPIC_API_KEY
+
+SYSTEM = """你是一个基于资料库回答问题的助手。规则：
+1. 只依据【资料】中的内容回答。资料里没有的信息，明确说"资料中没有提到"，不要用你自己的知识补充。
+2. 回答中的每个要点都用 [编号] 标注它依据哪条资料。
+3. 回答结束后另起一行，列出所引用资料的出处（书名和章节）。"""
+
+def answer(question: str) -&gt; str:
+    idxs = search(question)
+    context = "\n\n".join(
+        f"[{i + 1}] 出处：《{chunks[j]['book']}》{chunks[j]['chapter']} · {chunks[j]['section']}\n"
+        + chunks[j]["text"]
+        for i, j in enumerate(idxs)
+    )
+    resp = client.messages.create(
+        model="claude-opus-4-8",
+        max_tokens=8192,
+        system=SYSTEM,
+        messages=[{"role": "user",
+                   "content": f"【资料】\n{context}\n\n【问题】{question}"}],
+    )
+    return "".join(b.text for b in resp.content if b.type == "text")</code></pre>
+<h2 id="67-第五步跑起来">6.7 第五步：跑起来</h2>
+<p>收尾一个最简单的交互循环：</p>
+<pre data-label="python"><code class="language-python"># chat.py（第三部分）
+if __name__ == "__main__":
+    print("知识库问答（输入 q 退出）")
+    while True:
+        question = input("\n&gt; ").strip()
+        if question in ("q", "quit", ""):
+            break
+        print(answer(question))</code></pre>
+<p><code>python chat.py</code>，问它一个你确定在自己资料里的问题：</p>
+<blockquote><p><strong>&gt; 卡诺热机的效率公式是什么？</strong></p>
+<p>卡诺热机（可逆热机）的效率为 η = 1 − T₂/T₁，其中 T₁、T₂ 分别是高温与低温热源的温度 [1]。这一效率是在相同两热源之间工作的一切热机的上限，且与工质种类无关 [1][3]。……</p>
+<p>引用出处：[1]《Thermodynamics》热力学第二定律与熵 · 3.6 卡诺定理……</p>
+</blockquote>
+<p>一个属于你自己的、带引用、可溯源的问答系统，跑起来了。总代码量：不到两百行。</p>
+<h2 id="68-第六步评估别跳过这一步">6.8 第六步：评估——别跳过这一步</h2>
+<p>第 4 章苦口婆心的部分，五十行代码就能兑现。用&quot;从语料反向造题&quot;构造测试集——妙处在于<strong>每道题的正确出处块是免费已知的</strong>，Recall@k 可以全自动计算：</p>
+<pre data-label="python"><code class="language-python"># evaluate.py
+import json, random
+import anthropic
+from pathlib import Path
+from chat import search, chunks   # 复用在线侧的检索
+
+client = anthropic.Anthropic()
+random.seed(42)
+
+def make_question(chunk_text: str) -&gt; str:
+    resp = client.messages.create(
+        model="claude-opus-4-8", max_tokens=1024,
+        messages=[{"role": "user", "content":
+            "根据下面这段资料出一道问答题，要求：答案就在资料中；"
+            "提问措辞不要照抄原文用词，模拟一个没读过原文的读者的问法。"
+            "只输出问题本身。\n\n" + chunk_text}],
+    )
+    return "".join(b.text for b in resp.content if b.type == "text").strip()
+
+# 随机抽 20 个块造题，golden 标注（题目 ↔ 来源块）免费自带
+test_set = []
+for j in random.sample(range(len(chunks)), 20):
+    test_set.append({"question": make_question(chunks[j]["text"]), "gold": j})
+Path("test_set.json").write_text(json.dumps(test_set, ensure_ascii=False))
+
+# Recall@k：来源块是否被检索进了 top-k
+for k in (3, 6, 10):
+    hits = sum(t["gold"] in search(t["question"], k) for t in test_set)
+    print(f"Recall@{k}: {hits / len(test_set):.0%}")</code></pre>
+<p>我这套语料首次跑出来的典型结果是 Recall@6 在八九成上下——<strong>剩下那一两成没召回的题，就是你最该盯着看的东西</strong>。逐个打印 badcase，你大概率会看到第 3 章预言过的经典病灶：跨小节的问题、被二次切分拆散的长节、以及造题模型换了说法之后向量没跟上的词汇失配。此后的一切改动——换块大小、调 top-k、给检索加重排——都先跑一遍这个脚本再下结论。二十道题的测试集当然粗糙，但<strong>它已经比&quot;随手问两个问题看看顺不顺眼&quot;科学一个量级</strong>，而且会随着你补充 badcase 越来越锋利。</p>
+<h2 id="69-成本账与下一步">6.9 成本账与下一步</h2>
+<p>最后算笔账（按 2026 年主流价位的量级，避免虚指）：<strong>建索引</strong>——两千个块约一百多万 token，embedding 单价约每百万 token 零点零几美元，一次性成本<strong>不到一杯瑞幸</strong>；<strong>每次提问</strong>——6 个块加问题约四五千 token 输入、几百 token 输出，按 Claude 的价目折算约几美分。个人知识库的 RAG，成本完全不构成门槛。</p>
+<p>这套两百行的系统是一个诚实的骨架，每一处简化都对应一个第 3、5 章讲过的升级方向，不妨按性价比排个序留作练习：给检索结果接一个 rerank API（第 3 章说过的性价比之王，改动最小）；把&quot;检索小块、喂大块&quot;的 small-to-big 加进 <code>answer()</code>（命中块后把整个小节送进 prompt）；对话历史 + 查询浓缩，把单轮问答升级成多轮；最后，把 <code>search()</code> 包装成 tool 交给模型自主调用——你就亲手把它推进到了第 5 章的 agentic 形态。</p>
+<div class="callout callout-tip">
+<p class="callout-title">本章要点</p>
+
+<ul>
+<li>两个文件、约两百行、零框架：<code>build_index.py</code>（切块 → embedding → numpy 索引）+ <code>chat.py</code>（混合检索 → RRF → 带引用生成）。</li>
+<li>沿 Markdown 标题结构切块 + 元数据前缀；向量归一化后余弦即点积，万级块的&quot;向量数据库&quot;就是一个 8 MB 的 .npy 文件。</li>
+<li>System prompt 两条纪律：只依据资料回答、逐点标注引用——忠实度与可溯源性从第一天就内建。</li>
+<li>反向造题让 Recall@k 全自动可测；badcase 清单比指标本身更有信息量。</li>
+<li>成本量级：建库不到一杯咖啡，单次问答几美分；升级路线：重排 → small-to-big → 多轮浓缩 → agentic。</li>
+</ul>
+</div>
+
+    <nav class="pager">  <a href="05-rag-in-2026.html">
+    <span class="label">← 上一章</span>
+    <span class="title">2026 年的 RAG：Agentic 检索、GraphRAG 与长上下文之争</span>
+  </a>  <a href="07-appendix.html" class="next">
+    <span class="label">下一章 →</span>
+    <span class="title">附录：工具生态速查与延伸阅读</span>
+  </a></nav>
+  </article>
+</div>
+
+<footer>
+  <div class="set">
+    <span>检索增强生成（RAG）</span>
+    <span>2026 · ZH-CN</span>
+  </div>
+  <div class="set">
+    <span>Mav</span>
+  </div>
+</footer>
+<div class="search-backdrop" id="search-overlay" role="dialog" aria-modal="true" aria-label="搜索" hidden>
+  <div class="search-modal">
+    <div class="search-input-wrap">
+      <input type="search" class="search-input" placeholder="搜索内容..." aria-label="搜索内容" autocomplete="off">
+      <kbd>ESC</kbd>
+    </div>
+    <div class="search-results" role="listbox" aria-label="搜索结果"></div>
+  </div>
+</div>
+
+<!-- Side Panel -->
+<div class="side-panel" id="side-panel">
+  <div class="side-panel-resize" id="side-panel-resize"></div>
+  <div class="side-panel-header">
+    <div class="side-panel-tabs">
+      <button class="side-panel-tab active" data-mode="sidenote">补充</button>
+      <button class="side-panel-tab" data-mode="notepad">笔记</button>
+    </div>
+    <button class="side-panel-close" aria-label="关闭">×</button>
+  </div>
+  <div class="side-panel-body"></div>
+</div>
+<button class="notepad-fab" id="notepad-fab" aria-label="便利贴">✎</button>
+
+<!-- Mobile TOC -->
+<button class="mtoc-fab" id="mtoc-fab" aria-label="目录">TOC</button>
+<div class="mtoc-drawer" id="mtoc-drawer">
+  <div class="mtoc-content"></div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/bash.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/typescript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/yaml.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/javascript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/json.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/python.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/css.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+<script>mermaid.initialize({startOnLoad:true, theme:'neutral', fontFamily:'Inter, sans-serif'});</script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}]});"></script>
+<script src="../assets/script.js"></script>
+
+</body>
+</html>

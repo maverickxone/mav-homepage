@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>检索：从关键词匹配到向量搜索 — 检索增强生成（RAG）</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" id="hljs-light" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+<link rel="stylesheet" id="hljs-dark" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" media="not all">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+
+</head>
+<body>
+
+<div class="progress-bar" id="progress-bar"></div>
+
+<nav class="topnav" id="topnav">
+  <div class="topnav-inner">
+    <a class="brand" href="../index.html">检索增强生成（RAG）</a>
+    <div class="nav-links">
+      <a href="01-why-rag.html">01</a>
+      <a href="02-retrieval.html" class="active">02</a>
+      <a href="03-chunking-reranking.html">03</a>
+      <a href="04-evaluation.html">04</a>
+      <a href="05-rag-in-2026.html">05</a>
+      <a href="06-hands-on.html">06</a>
+      <a href="07-appendix.html">07</a>
+    </div>
+    <div class="nav-controls">
+      <button class="nav-btn" id="search-btn" aria-label="搜索 (Ctrl+K)">⌘K</button>
+      <button class="nav-btn" id="settings-btn" aria-label="阅读设置">Aa</button>
+      <a class="nav-btn" href="../../index.html" aria-label="返回知识库">← 知识库</a>
+      <a class="nav-btn" href="https://github.com/maverickxone/mav-homepage" target="_blank" rel="noopener" aria-label="GitHub" style="padding: 6px 8px;"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg></a>
+    </div>
+  </div>
+</nav>
+<div class="settings-pop" id="settings-pop">
+  <h5>主题</h5>
+  <div class="row">
+    <button class="seg" data-theme-set="light">明亮</button>
+    <button class="seg" data-theme-set="dark">暗色</button>
+  </div>
+  <h5>字号</h5>
+  <div class="row">
+    <button class="seg" data-size-set="s">小</button>
+    <button class="seg" data-size-set="m">中</button>
+    <button class="seg" data-size-set="l">大</button>
+  </div>
+</div>
+
+<div class="with-sidebar">
+  <aside class="sidebar">
+  <div class="chapter-num">CHAPTER 02</div>
+  <div class="chapter-name">检索：从关键词匹配到向量搜索</div>
+  <h4>目录</h4>
+  <ul>
+    <li><a href="#21-问题定义在草堆里找那几根针">2.1 问题定义：在草堆里找那几根针</a></li>
+    <li><a href="#22-词法检索tf-idfbm25-与倒排索引">2.2 词法检索：TF-IDF、BM25 与倒排索引</a></li>
+    <li><a href="#23-语义检索把quot找相关quot变成quot找相近quot">2.3 语义检索：把&quot;找相关&quot;变成&quot;找相近&quot;</a></li>
+    <li><a href="#24-向量检索的工程从暴力扫描到-ann-索引">2.4 向量检索的工程：从暴力扫描到 ANN 索引</a></li>
+    <li><a href="#25-混合检索全都要然后融合">2.5 混合检索：全都要，然后融合</a></li>
+  </ul>
+</aside>
+  <article class="chapter-body">
+    <header class="chapter-head">
+  <div class="chapter-head-meta">
+    <span class="num">CHAPTER 02</span>
+    <span>≈ 45 MIN READ</span>
+  </div>
+  <h1>检索：从关键词匹配到向量搜索</h1>
+
+</header>
+    <h2 id="21-问题定义在草堆里找那几根针">2.1 问题定义：在草堆里找那几根针</h2>
+<p>先把检索这件事定义清楚。给定一个<strong>查询</strong>（query，用户的问题）和一个<strong>语料库</strong>（corpus，切好块的全部文档，规模从几千到几十亿条不等），检索的任务是：按与查询的相关程度给语料库里的每一条打分，返回得分最高的 $k$ 条。所有检索系统——从 1970 年代的图书馆检索系统到 Google 再到 RAG 的检索层——做的都是这一件事，区别只在**&quot;相关&quot;怎么定义、怎么算得快**。</p>
+<p>对&quot;相关&quot;的两种定义方式，把检索技术分成了两大家族：<strong>词法检索</strong>（lexical retrieval）认为查询和文档共享的<strong>词</strong>越多、越重要，就越相关；<strong>语义检索</strong>（semantic retrieval）认为查询和文档的<strong>含义</strong>越接近就越相关，哪怕用词完全不同。这两个家族一个发展了五十多年，一个是近十年 deep learning 的产物，而 2026 年生产系统的标准答案是：<strong>两个都要</strong>。本章按这个顺序讲。</p>
+<h2 id="22-词法检索tf-idfbm25-与倒排索引">2.2 词法检索：TF-IDF、BM25 与倒排索引</h2>
+<h3 id="词频与逆文档频率">词频与逆文档频率</h3>
+<p>最直觉的相关性定义：查询里的词在文档里出现得越多，文档越相关。这就是<strong>词频</strong>（term frequency, TF）。但它立刻遇到一个问题——&quot;的&quot;、&quot;是&quot;、&quot;了&quot;在每篇文档里都大量出现，按词频排序会被这些废词淹没。</p>
+<p>修正的思路同样直觉：一个词越是<strong>只在少数文档里出现</strong>，它的区分度就越高。&quot;熵&quot;只出现在几篇文档里，那么包含&quot;熵&quot;的文档对查询&quot;熵&quot;就非常相关；&quot;的&quot;出现在所有文档里，就不携带任何区分信息。这就是<strong>逆文档频率</strong>（inverse document frequency, IDF）。设语料库共 $N$ 篇文档，其中 $n(q)$ 篇包含词 $q$，一个常用的 IDF 形式是：</p>
+<p>$$
+\mathrm{IDF}(q) = \ln\!\left(\frac{N - n(q) + 0.5}{n(q) + 0.5} + 1\right)
+$$</p>
+<p>词越稀有，$n(q)$ 越小，IDF 越大。TF 和 IDF 相乘，就是经典的 <strong>TF-IDF</strong> 权重：既奖励&quot;在这篇文档里出现多&quot;，又奖励&quot;在整个语料库里出现少&quot;。</p>
+<h3 id="bm25五十年词法检索的集大成者">BM25：五十年词法检索的集大成者</h3>
+<p>TF-IDF 还有两处不够精细，把它们修好，就得到了词法检索的事实标准 <strong>BM25</strong>（Best Matching 25，名字来自它是一系列实验公式中的第 25 号）：</p>
+<p>$$
+\mathrm{score}(D, Q) = \sum_{q_i \in Q} \mathrm{IDF}(q_i) \cdot \frac{f(q_i, D)\,(k_1 + 1)}{f(q_i, D) + k_1\left(1 - b + b\,\dfrac{|D|}{\mathrm{avgdl}}\right)}
+$$</p>
+<p>公式看着密，其实只在 TF-IDF 上做了两个修正，各对应一个参数：</p>
+<p><strong>词频饱和（参数 $k_1$）。</strong> 朴素 TF 是线性的：一个词出现 100 次，得分就是出现 10 次的 10 倍。这不合理——出现 10 次已经充分说明文档与这个词相关，再多出现 90 次不该再加多少分。BM25 的分式结构让词频的贡献<strong>饱和</strong>：当 $f(q_i, D) \to \infty$ 时，整个分式趋于 $k_1 + 1$，封顶了。$k_1$（通常取 1.2 到 2.0）控制饱和的快慢。</p>
+<p><strong>长度归一化（参数 $b$）。</strong> 长文档天然包含更多词，按裸词频排序会系统性偏向长文档。分母里的 $|D| / \mathrm{avgdl}$（文档长度除以平均长度）对长文档施加惩罚，$b$（通常取 0.75）控制惩罚力度：$b = 1$ 完全归一化，$b = 0$ 完全不管长度。</p>
+<h3 id="倒排索引为什么词法检索快得不讲道理">倒排索引：为什么词法检索快得不讲道理</h3>
+<p>BM25 的另一半优势在工程上。如果对每个查询都遍历全部文档算一遍分数，语料库大了根本撑不住。词法检索的解法是<strong>倒排索引</strong>（inverted index）：离线时建一张&quot;词 → 包含它的文档列表&quot;的映射表，就像书末的索引页。查询来了，只需取出查询词对应的几个文档列表、在它们的并集上算分——绝大多数文档连碰都不用碰。配合倒排索引，BM25 在亿级文档上做到毫秒级响应，这是它统治搜索引擎几十年的底气。</p>
+<h3 id="词法检索的天花板">词法检索的天花板</h3>
+<p>但词法检索有一个原理性的盲区：<strong>它只认字，不认意思</strong>。查询&quot;如何申请退学&quot;，文档里写的是&quot;学籍注销办法&quot;——语义几乎相同，共享的实词却是零，BM25 给出的分数接近于零。同义词（&quot;电脑&quot;与&quot;计算机&quot;）、上下位词（&quot;苹果手机&quot;与&quot;iPhone&quot;）、跨语言、乃至同一个意思的不同句式，词法检索一概处理不了。这个问题在 IR 文献里叫<strong>词汇失配</strong>（vocabulary mismatch），修修补补的方案（同义词表、查询扩展）搞了几十年，都治标不治本。治本的方案要等到 embedding 出现。</p>
+<div class="callout">
+<p class="callout-title">BM25 的现代价值</p>
+
+<p>别因为 BM25&quot;古老&quot;就轻视它。它精确匹配专有名词、代码标识符、型号编号的能力至今无可替代（&quot;HTTP 429&quot;就该字面命中&quot;HTTP 429&quot;，向量检索反而可能给你&quot;HTTP 503&quot;，因为语义太相近了）；它不需要训练、不需要调用模型、可解释、极快。2.5 节会看到，它在 2026 年的生产系统里活得很好。</p>
+</div>
+
+<h2 id="23-语义检索把quot找相关quot变成quot找相近quot">2.3 语义检索：把&quot;找相关&quot;变成&quot;找相近&quot;</h2>
+<h3 id="从词到向量">从词到向量</h3>
+<p>第 1 章铺垫过语义检索的核心思想，现在正式展开。一个 <strong>embedding 模型</strong>把任意一段文本映射为 $d$ 维实向量：</p>
+<p>$$
+E: \text{文本} \longrightarrow \mathbb{R}^d
+$$</p>
+<p>关键不在映射本身（随便一个函数都能把文本变成向量），而在这个映射<strong>被训练得让语义相近的文本落在相近的位置</strong>。做到这一点的主流方法是<strong>对比学习</strong>（contrastive learning）：准备大量&quot;相关文本对&quot;（问题与它的答案、同一文档的相邻段落、译文对等），训练时让配对文本的向量相互拉近、让不相关文本的向量相互推远。常用的 InfoNCE 损失长这样：</p>
+<p>$$
+\mathcal{L} = -\log \frac{e^{\,\mathrm{sim}(q,\, d^+)/\tau}}{\sum_{d \in \{d^+,\, d^-_1, \ldots, d^-_n\}} e^{\,\mathrm{sim}(q,\, d)/\tau}}
+$$</p>
+<p>其中 $d^+$ 是与查询 $q$ 配对的正样本，$d^-_i$ 是负样本，$\tau$ 是温度参数。直觉上这就是一个分类任务：在一堆候选里，把&quot;真正相关的那个&quot;的相似度顶上去。在海量文本对上这样训练之后，模型学到的向量空间就自带了我们想要的性质——&quot;退学申请&quot;和&quot;学籍注销&quot;被大量语料中的共现模式拉到了一起，尽管它们没有一个字相同。</p>
+<p>2026 年你几乎不需要自己训练 embedding 模型：商用 API（如 Voyage、OpenAI 的 embedding 端点）和开源模型（如 BGE 系列）都是拿来即用的，输入文本，返回向量。你需要理解的是怎么<strong>用</strong>这些向量。</p>
+<h3 id="余弦相似度">余弦相似度</h3>
+<p>有了向量，&quot;相关&quot;就量化成了&quot;相近&quot;。最常用的度量是<strong>余弦相似度</strong>——两个向量夹角的余弦：</p>
+<p>$$
+\cos(\mathbf{u}, \mathbf{v}) = \frac{\mathbf{u} \cdot \mathbf{v}}{\lVert \mathbf{u} \rVert \, \lVert \mathbf{v} \rVert}
+$$</p>
+<p>取值范围 $[-1, 1]$，方向完全相同为 1，正交为 0。用夹角而不用欧氏距离，是因为我们关心的是向量的<strong>方向</strong>（语义内容）而非长度。实践中有一个人人都用的技巧：把所有向量预先归一化成单位长度（$\lVert \mathbf{v} \rVert = 1$），此后余弦相似度就退化成简单的<strong>点积</strong> $\mathbf{u} \cdot \mathbf{v}$——而一个查询向量对整个语料库矩阵的点积，就是一次矩阵乘向量运算，numpy 一行写完。第 6 章的实战代码正是这么做的。</p>
+<p>于是语义检索的完整流程为：离线把每个文档块过一遍 embedding 模型、存下向量；在线把查询也变成向量，与所有文档向量算相似度，取 top-k。词汇失配问题就此消解——比较发生在语义空间里，字面重不重合根本不进入计算。</p>
+<h3 id="语义检索自己的软肋">语义检索自己的软肋</h3>
+<p>公平起见，语义检索的弱点也要摆出来。其一，前面说过的<strong>精确匹配能力差</strong>：专名、编号、代码符号这类&quot;一个字都不能差&quot;的查询，向量空间里的&quot;相近&quot;反而成了干扰。其二，<strong>一个向量装不下一整段话的全部</strong>：embedding 把变长文本压成定长向量，本质是有损压缩，一段话谈了三件事，向量只能是三者的某种平均——这个问题与切块策略深度纠缠，留到第 3 章。其三，<strong>领域外退化</strong>：embedding 模型的&quot;语义&quot;来自训练语料，遇到训练时没见过的专业领域（小众学科术语、公司内部黑话），向量质量会明显下降。</p>
+<h2 id="24-向量检索的工程从暴力扫描到-ann-索引">2.4 向量检索的工程：从暴力扫描到 ANN 索引</h2>
+<h3 id="先捅破一层窗户纸">先捅破一层窗户纸</h3>
+<p>&quot;向量数据库&quot;这个词在 2023 年前后被炒得神乎其神，仿佛是什么全新物种。捅破窗户纸：<strong>向量检索最朴素的实现就是一次矩阵乘法</strong>。把 $N$ 个文档向量摞成矩阵 $M \in \mathbb{R}^{N \times d}$，查询向量为 $\mathbf{q}$，那么 $M\mathbf{q}$ 一次算出全部相似度，排序取前 k。这叫<strong>暴力检索</strong>（brute-force / flat search），复杂度 $O(Nd)$，结果是<strong>精确</strong>的。</p>
+<p>关键的数量级感觉：$N$ 是几万、$d$ 是一千出头时，$M\mathbf{q}$ 就是几千万次浮点乘加——现代 CPU 上<strong>毫秒级</strong>的事。也就是说，个人知识库、一门课的资料、一家小公司的文档这种规模，<strong>numpy 加一个 .npy 文件就是完全体</strong>，任何数据库都不需要。第 6 章会用行动证明这一点。</p>
+<h3 id="规模大了怎么办近似最近邻">规模大了怎么办：近似最近邻</h3>
+<p>当 $N$ 到了千万、上亿，暴力扫描扛不住了，就需要<strong>近似最近邻</strong>（Approximate Nearest Neighbor, ANN）索引：牺牲一点点精确性（可能漏掉真正的 top-k 中的个别项），换取几个数量级的速度。两类主流思路值得知道名字和直觉：</p>
+<p><strong>IVF（倒排文件索引）</strong>：先把全部向量聚类成若干簇，查询时只在离查询最近的几个簇里做暴力检索。相当于先确定&quot;这个问题大概属于哪几个片区&quot;，再片区内细找。</p>
+<p><strong>HNSW（分层可导航小世界图）</strong>：把向量连成一张多层图，上层稀疏、下层稠密。查询从顶层入口出发，每一步跳向邻居中离查询更近的节点，逐层下沉、逐步逼近。像先看世界地图定位到城市，再看城市地图找到街道。HNSW 是 2026 年各类向量库的默认索引，查询复杂度约 $O(\log N)$。</p>
+<p>所谓<strong>向量数据库</strong>（Milvus、Qdrant、Pinecone 这些名字你多少听过），本质就是：ANN 索引 + 元数据过滤（&quot;只在 2024 年之后的文档里找&quot;）+ 增删改查 + 持久化 + 分布式——是<strong>围绕向量检索的一整套数据库工程</strong>，而不是什么新的检索原理。什么时候需要它？向量多到内存装不下、需要频繁增删、多人并发访问——一句话，遇到<strong>数据库问题</strong>的时候。只是做检索，用不上。</p>
+<h2 id="25-混合检索全都要然后融合">2.5 混合检索：全都要，然后融合</h2>
+<p>回顾两大家族的攻防：BM25 精确但认字不认义，向量检索懂语义但抓不准专名。注意它们的失效场景<strong>恰好互补</strong>——这就是为什么 2026 年生产系统的标准配置是<strong>混合检索</strong>（hybrid search）：同一个查询，同时跑 BM25 和向量检索，再把两路结果融合成一个排名。</p>
+<p>融合有个小障碍：BM25 分数和余弦相似度量纲完全不同，不能直接相加。最流行的解法干脆绕开分数，只用<strong>排名</strong>——<strong>倒数排名融合</strong>（Reciprocal Rank Fusion, RRF）：</p>
+<p>$$
+\mathrm{RRF}(d) = \sum_{r \in \text{各路检索}} \frac{1}{k + \mathrm{rank}_r(d)}
+$$</p>
+<p>文档 $d$ 在每一路检索里的名次为 $\mathrm{rank}_r(d)$（不在结果里就不贡献分数），$k$ 是平滑常数，约定俗成取 60。直觉：在<strong>任何一路</strong>名列前茅的文档都能拿到不错的融合分，在<strong>多路同时</strong>靠前的文档得分最高。RRF 简单、无需调参、效果稳健，是混合检索的默认选择。</p>
+<p>至此，检索层的地图画完了：</p>
+<div class="mermaid">flowchart TD
+  Q[查询] --> L[词法检索 BM25<br>倒排索引·认字]
+  Q --> S[语义检索 embedding<br>向量相似度·认义]
+  L --> F[RRF 融合]
+  S --> F
+  F --> K[top-k 候选块]</div>
+<p>但一个尖锐的问题还悬着：图里的&quot;文档块&quot;是从哪来的？一本书怎么切成块，切多大，从哪里下刀？这些看似琐碎的决定，实际效果上的影响常常<strong>超过检索算法本身的选择</strong>。这就是下一章的主题。</p>
+<div class="callout callout-tip">
+<p class="callout-title">本章要点</p>
+
+<ul>
+<li>检索 = 给定查询，从语料库按相关性取 top-k；两大家族对&quot;相关&quot;的定义不同：词法认字，语义认义。</li>
+<li>BM25 = TF-IDF + 词频饱和（$k_1$）+ 长度归一化（$b$），配倒排索引，快且擅长精确匹配；死穴是词汇失配。</li>
+<li>语义检索靠对比学习训练的 embedding 把文本映射进向量空间，余弦相似度（归一化后即点积）度量相关性；死穴是专名匹配与有损压缩。</li>
+<li>万级向量用 numpy 暴力检索即可（毫秒级）；ANN（HNSW/IVF）与向量数据库是<strong>规模</strong>问题的解，不是检索原理的升级。</li>
+<li>两家族失效场景互补 → 混合检索 + RRF 融合是 2026 年的标准配置。</li>
+</ul>
+</div>
+
+    <nav class="pager">  <a href="01-why-rag.html">
+    <span class="label">← 上一章</span>
+    <span class="title">为什么需要 RAG：大语言模型的知识边界</span>
+  </a>  <a href="03-chunking-reranking.html" class="next">
+    <span class="label">下一章 →</span>
+    <span class="title">切块与重排：决定检索质量的工程细节</span>
+  </a></nav>
+  </article>
+</div>
+
+<footer>
+  <div class="set">
+    <span>检索增强生成（RAG）</span>
+    <span>2026 · ZH-CN</span>
+  </div>
+  <div class="set">
+    <span>Mav</span>
+  </div>
+</footer>
+<div class="search-backdrop" id="search-overlay" role="dialog" aria-modal="true" aria-label="搜索" hidden>
+  <div class="search-modal">
+    <div class="search-input-wrap">
+      <input type="search" class="search-input" placeholder="搜索内容..." aria-label="搜索内容" autocomplete="off">
+      <kbd>ESC</kbd>
+    </div>
+    <div class="search-results" role="listbox" aria-label="搜索结果"></div>
+  </div>
+</div>
+
+<!-- Side Panel -->
+<div class="side-panel" id="side-panel">
+  <div class="side-panel-resize" id="side-panel-resize"></div>
+  <div class="side-panel-header">
+    <div class="side-panel-tabs">
+      <button class="side-panel-tab active" data-mode="sidenote">补充</button>
+      <button class="side-panel-tab" data-mode="notepad">笔记</button>
+    </div>
+    <button class="side-panel-close" aria-label="关闭">×</button>
+  </div>
+  <div class="side-panel-body"></div>
+</div>
+<button class="notepad-fab" id="notepad-fab" aria-label="便利贴">✎</button>
+
+<!-- Mobile TOC -->
+<button class="mtoc-fab" id="mtoc-fab" aria-label="目录">TOC</button>
+<div class="mtoc-drawer" id="mtoc-drawer">
+  <div class="mtoc-content"></div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/bash.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/typescript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/yaml.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/javascript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/json.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/python.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/css.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+<script>mermaid.initialize({startOnLoad:true, theme:'neutral', fontFamily:'Inter, sans-serif'});</script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}]});"></script>
+<script src="../assets/script.js"></script>
+
+</body>
+</html>

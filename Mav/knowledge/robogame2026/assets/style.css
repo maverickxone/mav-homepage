@@ -3605,3 +3605,82 @@ kbd {
 [data-theme="dark"] .quiz-option.wrong {
   background: rgba(201, 60, 55, 0.1);
 }
+
+/* ============================================================
+   Mermaid Lightbox (click to zoom)
+   ============================================================ */
+.mermaid {
+  position: relative;
+  cursor: zoom-in;
+  margin: var(--space-5) 0;
+  text-align: center;
+}
+.mermaid::after {
+  content: '点击放大';
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.05em;
+  color: var(--ink-soft);
+  background: var(--bg-elev);
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  padding: 2px 8px;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  pointer-events: none;
+}
+.mermaid:hover::after { opacity: 1; }
+
+.mermaid-lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  background: rgba(18, 18, 18, 0.85);
+  display: flex;
+}
+.mermaid-lightbox[hidden] { display: none; }
+.mermaid-lightbox-stage {
+  position: relative;
+  flex: 1;
+  overflow: hidden;
+  cursor: grab;
+  touch-action: none;
+}
+.mermaid-lightbox-stage.dragging { cursor: grabbing; }
+.mermaid-lightbox-content {
+  position: absolute;
+  top: 0;
+  left: 0;
+  transform-origin: 0 0;
+  background: #ffffff;
+  border-radius: 6px;
+  padding: 16px;
+  box-shadow: 0 24px 80px -12px rgba(0, 0, 0, 0.55);
+}
+.mermaid-lightbox-toolbar {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  z-index: 2;
+  display: flex;
+  gap: 8px;
+}
+.mermaid-lightbox-toolbar button {
+  font-family: var(--sans);
+  font-size: 13px;
+  line-height: 1;
+  color: var(--ink-2);
+  background: var(--bg-elev);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 8px 12px;
+  cursor: pointer;
+  transition: border-color 0.15s ease, color 0.15s ease;
+}
+.mermaid-lightbox-toolbar button:hover {
+  color: var(--ink);
+  border-color: var(--ink-soft);
+}
