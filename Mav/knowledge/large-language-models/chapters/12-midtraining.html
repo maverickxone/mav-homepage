@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>后半场——mid-training、退火与长上下文课程 — Large Language Models</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" href="../assets/series.css">
+<link rel="stylesheet" id="hljs-light" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+<link rel="stylesheet" id="hljs-dark" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" media="not all">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+
+</head>
+<body class="series-page series-reader-page">
+
+<div class="progress-bar" id="progress-bar"></div>
+
+<nav class="topnav series-topnav" id="topnav">
+  <div class="topnav-inner">
+    <a class="brand" href="../index.html">Large Language Models</a>
+    <div class="nav-links">
+      <a href="../index.html#part-architecture">PART I</a>
+      <a href="../index.html#part-pretraining" class="active">PART II</a>
+      <a href="../index.html#part-rl-crash-course">PART III</a>
+      <a href="../index.html#part-post-training">PART IV</a>
+      <a href="../index.html#part-compute-inference">PART V</a>
+      <a href="../index.html#part-industry-map">PART VI</a>
+    </div>
+    <div class="nav-controls">
+      <button class="nav-btn" id="search-btn" aria-label="搜索 (Ctrl+K)">⌘K</button>
+      <button class="nav-btn" id="settings-btn" aria-label="阅读设置">Aa</button>
+      <a class="nav-btn" href="../../index.html" aria-label="返回知识库">← 知识库</a>
+    </div>
+  </div>
+</nav>
+<div class="settings-pop" id="settings-pop">
+  <h5>主题</h5>
+  <div class="row">
+    <button class="seg" data-theme-set="light">明亮</button>
+    <button class="seg" data-theme-set="dark">暗色</button>
+  </div>
+  <h5>字号</h5>
+  <div class="row">
+    <button class="seg" data-size-set="s">小</button>
+    <button class="seg" data-size-set="m">中</button>
+    <button class="seg" data-size-set="l">大</button>
+  </div>
+</div>
+
+<div class="with-sidebar series-reader">
+  <aside class="sidebar series-sidebar">
+  <a class="series-sidebar-home" href="../index.html">系列目录</a>
+  <section class="series-sidebar-part">
+    <h4><span>PART I</span>架构演化</h4>
+    <ul>
+      <li class="series-chapter-item">
+        <a href="01-from-transformer-to-gpt.html" data-chapter="01">课本尽头的 Transformer——把它真正数一遍</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="02-residual-stream.html" data-chapter="02">残差流——理解一切改动的地基</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="03-norms-and-activations.html" data-chapter="03">稳定性之战——归一化与激活函数</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="04-positional-encoding.html" data-chapter="04">位置的难题——从正弦波到 RoPE 与长上下文</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="05-attention-evolution.html" data-chapter="05">注意力的账单——KV cache 与一部省钱史</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="06-moe-basics.html" data-chapter="06">分而治之——MoE 的基本机制</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="07-moe-modern.html" data-chapter="07">MoE 的分水岭——DeepSeek 配方与 2026 年的主流形态</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="08-reading-a-release.html" data-chapter="08">读懂一次发布——参数量、基模与版本语义</a>
+      </li>
+    </ul>
+  </section>
+  <section class="series-sidebar-part">
+    <h4><span>PART II</span>预训练</h4>
+    <ul>
+      <li class="series-chapter-item">
+        <a href="09-scaling-laws.html" data-chapter="09">规模的法则——从赌注到公式</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="10-data-pipeline.html" data-chapter="10">备菜间——几十万亿 token 从哪来</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="11-training-run.html" data-chapter="11">厨房里的三个月——损失、优化器与一场不能崩的马拉松</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="12-midtraining.html" data-chapter="12" class="active" aria-current="page">后半场——mid-training、退火与长上下文课程</a>
+        <ul class="series-section-links">
+          <li><a href="#41-退火黄金时段理论">4.1 退火：黄金时段理论</a></li>
+          <li><a href="#42-数据课程先什么后什么本身就是配方">4.2 数据课程：先什么后什么，本身就是配方</a></li>
+          <li><a href="#43-长上下文扩展课程的终章">4.3 长上下文扩展：课程的终章</a></li>
+          <li><a href="#44-边界的消融一个二分法的黄昏">4.4 边界的消融：一个二分法的黄昏</a></li>
+        </ul>
+      </li>
+      <li class="series-chapter-item">
+        <a href="13-parallelism.html" data-chapter="13">把模型摊开——并行训练、万卡集群与预训练的黄昏</a>
+      </li>
+    </ul>
+  </section>
+  <section class="series-sidebar-part">
+    <h4><span>PART III</span>强化学习速成</h4>
+    <ul>
+      <li class="series-chapter-item">
+        <a href="14-another-way-to-learn.html" data-chapter="14">另一种学习——从「有标准答案」到「只有后果」</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="15-value-functions.html" data-chapter="15">给未来定价——回报、价值函数与贝尔曼方程</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="16-policy-gradient.html" data-chapter="16">顺着后果爬坡——策略梯度与 REINFORCE</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="17-actor-critic-trust-region.html" data-chapter="17">教练与护栏——Actor-Critic、重要性采样与信任域</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="18-ppo-and-llm.html" data-chapter="18">PPO 与会师——通往大模型的最后一站</a>
+      </li>
+    </ul>
+  </section>
+  <section class="series-sidebar-part">
+    <h4><span>PART IV</span>后训练</h4>
+    <ul>
+      <li class="series-chapter-item">
+        <a href="19-sft-instruction-tuning.html" data-chapter="19">从续写到听话——SFT 与指令微调</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="20-reward-models-rlhf.html" data-chapter="20">学会分辨好坏——奖励模型与 RLHF 全流程</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="21-dpo-direct-preference.html" data-chapter="21">把 RL 短路——DPO 与直接偏好优化</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="22-rlaif-constitutional.html" data-chapter="22">让 AI 教 AI——RLAIF、宪法与评判者</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="23-reasoning-models.html" data-chapter="23">第二次质变——从 o1 到 R1 的推理革命</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="24-reasoning-craft-and-reefs.html" data-chapter="24">想多久、想什么——推理时代的工艺与暗礁</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="25-distillation-lora-versions.html" data-chapter="25">兑现与迭代——蒸馏、LoRA 与小版本的秘密</a>
+      </li>
+    </ul>
+  </section>
+  <section class="series-sidebar-part">
+    <h4><span>PART V</span>算力与推理</h4>
+    <ul>
+      <li class="series-chapter-item">
+        <a href="26-gpu-anatomy.html" data-chapter="26">认识铁疙瘩——GPU、带宽与算力的三重账</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="27-memory-math-quantization.html" data-chapter="27">跑得动吗——显存数学与量化速算手册</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="28-inference-factory-pricing.html" data-chapter="28">推理工厂与价格标签——从 GPU 到账单</a>
+      </li>
+    </ul>
+  </section>
+  <section class="series-sidebar-part">
+    <h4><span>PART VI</span>2026 产业地图</h4>
+    <ul>
+      <li class="series-chapter-item">
+        <a href="29-us-frontier-labs.html" data-chapter="29">三巨头的分野——OpenAI、Anthropic 与 Google</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="30-china-open-weight.html" data-chapter="30">开源的中国时刻——一场反向的阳谋</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="31-model-genealogy.html" data-chapter="31">谁是谁的孩子——模型谱系与换代节奏</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="32-geopolitics-power.html" data-chapter="32">芯片、稀土与电表——算力的地缘战争</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="33-business-and-money.html" data-chapter="33">钱从哪来，又烧向何处——商业模式与泡沫之辩</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="34-finale-and-frontier.html" data-chapter="34">六年，与之后——回望、前沿与写给你的话</a>
+      </li>
+    </ul>
+  </section>
+</aside>
+  <article class="chapter-body">
+    <header class="chapter-head series-chapter-head">
+  <div class="series-breadcrumb">PART II · 预训练</div>
+  <div class="chapter-head-meta">
+    <span class="num">CHAPTER 12</span>
+    <span>≈ 45 MIN READ</span>
+  </div>
+  <h1>后半场——mid-training、退火与长上下文课程</h1>
+</header>
+    <p>前两章把预训练讲成了一场连续的马拉松，但这幅图景漏了一个近两年才被行业看清的事实：<strong>马拉松的最后几公里，跑法完全不同</strong>。同样的集群、同样的目标函数，数据换了、学习率的走法换了、目的也换了——这段&quot;后半场&quot;如今有了自己的名字：<strong>mid-training</strong>（中期训练）。这个词 2024 年之前几乎不存在，2025 年起频繁出现在技术报告和招聘启事里，2026 年的你如果想听懂师兄们聊训练，它是绕不开的词汇。这一章讲清它包含什么、为什么有效、以及它如何动摇了&quot;预训练/后训练&quot;这个本卷开篇就建立的二分法。</p>
+<p>先交代术语的实情：mid-training 是个<strong>边界模糊的工程词</strong>，各家用法不完全一致。公约数是：<strong>介于大规模预训练和后训练之间、以&quot;数据课程 + 学习率再设计&quot;为核心的所有阶段</strong>——典型包括退火、长上下文扩展，有时还包括高质量数据的专项强化。下面按这三块拆开。</p>
+<h2 id="41-退火黄金时段理论">4.1 退火：黄金时段理论</h2>
+<p>上一章留了个钩子：WSD 调度的衰减段&quot;藏着一整套工艺&quot;。现在揭开。</p>
+<p><strong>退火</strong>（annealing）指训练末段学习率从恒定值一路衰减到接近零的那几个星期。经验发现是：这段时间里模型对数据<strong>格外敏感</strong>——同样一批高质量数据，放在退火段喂，对最终能力的提升远大于混在主训练里喂。一个有用的直觉（借物理的退火意象）：高学习率时期，参数在损失地形上大步跳跃，学到的是粗轮廓，细节随学随忘；学习率降下来，参数的走动越来越小，<strong>此时喂进去的东西会被&quot;细密地刻&quot;进最终落点附近</strong>。退火段是整个预训练的黄金时段——收官前的最后雕琢。</p>
+<p>于是各家不约而同地在退火段做同一件事：<strong>换好菜</strong>。把数学、代码、教科书级文本、竞赛题解这些最贵最稀缺的数据，在这几周里大幅上采样。第二章说过高质量数据总量有限、反复吃会过拟合——退火给出了最优雅的用法：<strong>平时吃粗粮打底子，最后几周吃细粮定型</strong>。公开配方里能看到这个共识的不同变奏：Llama 3 在退火段上采样高质量数据、学习率线性归零；OLMo 2（目前唯一全开放的复现级配方）专门调制了一份以数学为主的&quot;退火餐&quot;数据集；DeepSeek 的阶梯式衰减、Kimi 的 WSD 衰减段，承担的都是同一职能。</p>
+<p>退火还催生了两个漂亮的衍生技巧。**其一，退火当探针。**想知道某份新数据集值不值得买/爬/造？不必从头训练——从恒定段拉一个 checkpoint，把候选数据混进一小段退火跑下来，看基准涨不涨。Llama 3 团队就用这法子给数据集&quot;验货&quot;（几千万 token 的退火就能让数学基准显著变化）。上一章说 WSD 的恒定段&quot;随时可以分叉结账&quot;，价值正在于此：<strong>退火从一次性的收官动作，变成了可反复重放的实验平台</strong>——这是 WSD 取代 cosine 的深层原因。**其二，终点平均。**训练最后阶段取多个 checkpoint 把权重直接平均（model souping / Polyak 平均），相当于把落点附近的几次&quot;采样&quot;合成一个更稳的中心，白捡一点泛化。OLMo 2 甚至用三种数据顺序各跑一遍退火、再平均三个终点。</p>
+<h2 id="42-数据课程先什么后什么本身就是配方">4.2 数据课程：先什么后什么，本身就是配方</h2>
+<p>退火是&quot;课程&quot;思想最浓缩的体现，把它推广开：<strong>整场预训练的数据顺序都可以编排</strong>——这叫数据课程（data curriculum）。第二章讲了配比（各类数据占多少），课程是它的时间维度：<strong>什么阶段喂什么</strong>。</p>
+<p>公开案例里最清晰的是 Qwen3 的三段式：先用约 30T token 的通用语料打底；再用约 5T 的&quot;强化餐&quot;——STEM、代码、推理数据显著上采样；最后做长上下文扩展。逻辑与人类教育异曲同工：先通识、后专项、最后练&quot;长篇阅读&quot;。而 2026 年的多模态基模又给课程加了新的一段——文本先行还是图文混合先行、多模态 token 何时进入，都是课程设计的新自由度。</p>
+<p>课程为什么有效？回到第三章的压缩视角：模型的学习是&quot;先抓高频规律、再抠低频细节&quot;的过程，课程设计等于顺着这个节奏递材料——地基期给广度，敏感期给深度。反过来这也解释了为什么<strong>数据顺序是被随机化保护的</strong>：除了刻意的课程编排，同一阶段内部必须充分打乱——上一章 spike 剧本里&quot;跳过几百个 batch 就没事&quot;暗示过，特定的数据顺序本身能把训练带进坏状态。课程是宏观的编排加微观的随机，两层缺一不可。</p>
+<h2 id="43-长上下文扩展课程的终章">4.3 长上下文扩展：课程的终章</h2>
+<p>第一卷第四章从<strong>架构侧</strong>讲过长上下文（RoPE 的 base、YaRN）；现在补上<strong>训练侧</strong>的另一半——它在课程表里的位置和成本结构。</p>
+<p>先看三份真实课程表。<strong>Llama 3 405B</strong>：主训练全程 8K 窗口，之后用约 800B token、分六个阶段把窗口逐级推到 128K。<strong>DeepSeek-V3</strong>：主训练 4K 跑完全部 14.8T，再用 YaRN 分两阶段扩到 32K、128K——整个扩展只花了主训练<strong>约 4%</strong> 的算力。<strong>Qwen3</strong>：30T + 5T 之后，末段扩到 32K（更长靠部署期外推）。三份表格的共同结构：<strong>短窗口跑主体、长窗口只跑零头</strong>。</p>
+<p>为什么这样排？两个原因都见过铺垫。成本上，注意力开销随长度平方增长，全程 128K 训练是天文数字的浪费——而语言的绝大多数规律（语法、事实、局部推理）在 4K 窗口内就学得到，何必为它们付长窗口的钱。数据上，真正的长依赖样本（整本书、大代码库）本来就稀缺，只够喂几百 B。于是&quot;长上下文&quot;在训练里的本质是一门<strong>短期速成课</strong>：模型先在短窗口里学会语言本身，再用少量长材料学会&quot;把已有能力铺到十万 token 上&quot;——位置编码换大 base（第一卷的知识在此接轨），配上真实长文档，几个阶段渐进拉伸。</p>
+<p>2026 年的新趋势把这门课和架构彻底焊在了一起：旗舰们的 1M 上下文（Kimi K3、DeepSeek-V4、GLM-5.2）不再是&quot;训完再拉伸&quot;，而是稀疏/线性注意力（第一卷第五章的三派）从架构上把长窗口的账单压平之后、在训练课程里原生安排的。<strong>架构决定了你付不付得起长窗口的学费，课程决定了你怎么上这门课</strong>——两卷的线索在这里合流。</p>
+<h2 id="44-边界的消融一个二分法的黄昏">4.4 边界的消融：一个二分法的黄昏</h2>
+<p>最后谈谈 mid-training 这个词背后真正的行业变化——它不只是新术语，是<strong>训练流程观的改变</strong>。</p>
+<p>本系列开篇建立过一个清晰的二分：预训练造基模（能力天花板），后训练做加工（兑现产品能力）。这个二分在 2023 年是准确的，但 mid-training 的兴起让边界两侧开始互相渗透。从预训练侧看：退火段大量上采样&quot;题解式&quot;数据、推理强化阶段刻意喂思维链体裁的语料——这些做法的意图已经不是&quot;压缩互联网&quot;，而是<strong>为后训练预置能力接口</strong>（第四卷你会看到，基模里有没有埋好推理的种子，直接决定强化学习能不能把推理能力&quot;点燃&quot;）。从组织侧看：2026 年招聘页上 &quot;mid-training engineer&quot; 已是独立岗位，职责恰好横跨旧边界——既要懂数据管线，又要懂下游对齐的需求。</p>
+<p>所以对&quot;什么是 mid-training&quot;最诚实的回答是：<strong>它是预训练与后训练之间正在生长的缓冲带</strong>，是&quot;两阶段&quot;流程图向&quot;多阶段连续课程&quot;演化的中间产物。你现在拥有的图景应该是一条渐变的流水线：海量粗粮打地基 → 强化餐提能力 → 退火细刻 → 长上下文拉伸 → （交给后训练继续）。每一段的数据、学习率、窗口长度都是独立设计的变量——&quot;训练一个基模&quot;在 2026 年是一份多幕剧本，而不是一个按钮。</p>
+<p>基模到这里就完整出炉了。下一章是本卷终章，处理两个收尾问题：这一切发生在什么样的钢铁之上——万卡集群与并行策略；以及悬在整个预训练头顶的大哉问——scaling 到头了吗。</p>
+<hr>
+<h3 id="本章要点">本章要点</h3>
+<ul>
+<li>mid-training：预训练与后训练之间、以数据课程+学习率再设计为核心的阶段总称；2024 年前几乎不存在的词，2026 年已是独立岗位。边界模糊是其本性，各家口径不一。</li>
+<li>退火 = 黄金时段：低学习率期数据被&quot;细密刻入&quot;，故末段大幅上采样数学/代码/教科书级细粮；&quot;粗粮打底、细粮定型&quot;是高质量数据的最优用法。</li>
+<li>两个衍生技巧：退火当数据价值探针（WSD 恒定段可反复分叉结账——WSD 胜过 cosine 的深层原因）；终点 checkpoint 平均（souping）白捡泛化。</li>
+<li>数据课程 = 配比的时间维度：Qwen3 三段式（30T 通用→5T 强化→长上下文）；宏观编排 + 微观随机，两层缺一不可。</li>
+<li>长上下文是短期速成课：短窗口跑主体、长窗口跑零头（DeepSeek 扩展仅花 ~4% 算力）；2026 年 1M 上下文 = 稀疏/线性架构把学费压平后的原生课程，与第一卷合流。</li>
+<li>二分法的黄昏：退火与推理强化在为后训练预置接口，&quot;预训练 vs 后训练&quot;正演化为多幕连续剧本。</li>
+</ul>
+
+    <nav class="pager series-pager">
+  <a href="11-training-run.html">
+    <span class="label">← 上一章</span>
+    <span class="title">厨房里的三个月——损失、优化器与一场不能崩的马拉松</span>
+  </a>
+  <a href="13-parallelism.html" class="next">
+    <span class="label">下一章 →</span>
+    <span class="title">把模型摊开——并行训练、万卡集群与预训练的黄昏</span>
+  </a>
+</nav>
+  </article>
+</div>
+
+<footer>
+  <div class="set">
+    <span>Large Language Models</span>
+    <span>2026 · ZH-CN</span>
+  </div>
+  <div class="set">
+    <span>Mav</span>
+  </div>
+</footer>
+<div class="search-backdrop" id="search-overlay" role="dialog" aria-modal="true" aria-label="搜索" hidden>
+  <div class="search-modal">
+    <div class="search-input-wrap">
+      <input type="search" class="search-input" placeholder="搜索内容..." aria-label="搜索内容" autocomplete="off">
+      <kbd>ESC</kbd>
+    </div>
+    <div class="search-results" role="listbox" aria-label="搜索结果"></div>
+  </div>
+</div>
+
+<div class="side-panel" id="side-panel">
+  <div class="side-panel-resize" id="side-panel-resize"></div>
+  <div class="side-panel-header">
+    <div class="side-panel-tabs">
+      <button class="side-panel-tab active" data-mode="sidenote">补充</button>
+      <button class="side-panel-tab" data-mode="notepad">笔记</button>
+    </div>
+    <button class="side-panel-close" aria-label="关闭">×</button>
+  </div>
+  <div class="side-panel-body"></div>
+</div>
+<button class="notepad-fab" id="notepad-fab" aria-label="便利贴">✎</button>
+
+<button class="mtoc-fab" id="mtoc-fab" aria-label="系列目录">TOC</button>
+<div class="mtoc-drawer" id="mtoc-drawer">
+  <div class="mtoc-content series-sidebar"></div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/bash.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/typescript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/yaml.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/javascript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/json.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/python.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/css.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+<script>mermaid.initialize({startOnLoad:true, theme:'neutral', fontFamily:'Inter, sans-serif'});</script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}]});"></script>
+<script src="../assets/script.js"></script>
+
+</body>
+</html>

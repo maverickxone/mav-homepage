@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>三巨头的分野——OpenAI、Anthropic 与 Google — Large Language Models</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" href="../assets/series.css">
+<link rel="stylesheet" id="hljs-light" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+<link rel="stylesheet" id="hljs-dark" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" media="not all">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+
+</head>
+<body class="series-page series-reader-page">
+
+<div class="progress-bar" id="progress-bar"></div>
+
+<nav class="topnav series-topnav" id="topnav">
+  <div class="topnav-inner">
+    <a class="brand" href="../index.html">Large Language Models</a>
+    <div class="nav-links">
+      <a href="../index.html#part-architecture">PART I</a>
+      <a href="../index.html#part-pretraining">PART II</a>
+      <a href="../index.html#part-rl-crash-course">PART III</a>
+      <a href="../index.html#part-post-training">PART IV</a>
+      <a href="../index.html#part-compute-inference">PART V</a>
+      <a href="../index.html#part-industry-map" class="active">PART VI</a>
+    </div>
+    <div class="nav-controls">
+      <button class="nav-btn" id="search-btn" aria-label="搜索 (Ctrl+K)">⌘K</button>
+      <button class="nav-btn" id="settings-btn" aria-label="阅读设置">Aa</button>
+      <a class="nav-btn" href="../../index.html" aria-label="返回知识库">← 知识库</a>
+    </div>
+  </div>
+</nav>
+<div class="settings-pop" id="settings-pop">
+  <h5>主题</h5>
+  <div class="row">
+    <button class="seg" data-theme-set="light">明亮</button>
+    <button class="seg" data-theme-set="dark">暗色</button>
+  </div>
+  <h5>字号</h5>
+  <div class="row">
+    <button class="seg" data-size-set="s">小</button>
+    <button class="seg" data-size-set="m">中</button>
+    <button class="seg" data-size-set="l">大</button>
+  </div>
+</div>
+
+<div class="with-sidebar series-reader">
+  <aside class="sidebar series-sidebar">
+  <a class="series-sidebar-home" href="../index.html">系列目录</a>
+  <section class="series-sidebar-part">
+    <h4><span>PART I</span>架构演化</h4>
+    <ul>
+      <li class="series-chapter-item">
+        <a href="01-from-transformer-to-gpt.html" data-chapter="01">课本尽头的 Transformer——把它真正数一遍</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="02-residual-stream.html" data-chapter="02">残差流——理解一切改动的地基</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="03-norms-and-activations.html" data-chapter="03">稳定性之战——归一化与激活函数</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="04-positional-encoding.html" data-chapter="04">位置的难题——从正弦波到 RoPE 与长上下文</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="05-attention-evolution.html" data-chapter="05">注意力的账单——KV cache 与一部省钱史</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="06-moe-basics.html" data-chapter="06">分而治之——MoE 的基本机制</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="07-moe-modern.html" data-chapter="07">MoE 的分水岭——DeepSeek 配方与 2026 年的主流形态</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="08-reading-a-release.html" data-chapter="08">读懂一次发布——参数量、基模与版本语义</a>
+      </li>
+    </ul>
+  </section>
+  <section class="series-sidebar-part">
+    <h4><span>PART II</span>预训练</h4>
+    <ul>
+      <li class="series-chapter-item">
+        <a href="09-scaling-laws.html" data-chapter="09">规模的法则——从赌注到公式</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="10-data-pipeline.html" data-chapter="10">备菜间——几十万亿 token 从哪来</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="11-training-run.html" data-chapter="11">厨房里的三个月——损失、优化器与一场不能崩的马拉松</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="12-midtraining.html" data-chapter="12">后半场——mid-training、退火与长上下文课程</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="13-parallelism.html" data-chapter="13">把模型摊开——并行训练、万卡集群与预训练的黄昏</a>
+      </li>
+    </ul>
+  </section>
+  <section class="series-sidebar-part">
+    <h4><span>PART III</span>强化学习速成</h4>
+    <ul>
+      <li class="series-chapter-item">
+        <a href="14-another-way-to-learn.html" data-chapter="14">另一种学习——从「有标准答案」到「只有后果」</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="15-value-functions.html" data-chapter="15">给未来定价——回报、价值函数与贝尔曼方程</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="16-policy-gradient.html" data-chapter="16">顺着后果爬坡——策略梯度与 REINFORCE</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="17-actor-critic-trust-region.html" data-chapter="17">教练与护栏——Actor-Critic、重要性采样与信任域</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="18-ppo-and-llm.html" data-chapter="18">PPO 与会师——通往大模型的最后一站</a>
+      </li>
+    </ul>
+  </section>
+  <section class="series-sidebar-part">
+    <h4><span>PART IV</span>后训练</h4>
+    <ul>
+      <li class="series-chapter-item">
+        <a href="19-sft-instruction-tuning.html" data-chapter="19">从续写到听话——SFT 与指令微调</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="20-reward-models-rlhf.html" data-chapter="20">学会分辨好坏——奖励模型与 RLHF 全流程</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="21-dpo-direct-preference.html" data-chapter="21">把 RL 短路——DPO 与直接偏好优化</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="22-rlaif-constitutional.html" data-chapter="22">让 AI 教 AI——RLAIF、宪法与评判者</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="23-reasoning-models.html" data-chapter="23">第二次质变——从 o1 到 R1 的推理革命</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="24-reasoning-craft-and-reefs.html" data-chapter="24">想多久、想什么——推理时代的工艺与暗礁</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="25-distillation-lora-versions.html" data-chapter="25">兑现与迭代——蒸馏、LoRA 与小版本的秘密</a>
+      </li>
+    </ul>
+  </section>
+  <section class="series-sidebar-part">
+    <h4><span>PART V</span>算力与推理</h4>
+    <ul>
+      <li class="series-chapter-item">
+        <a href="26-gpu-anatomy.html" data-chapter="26">认识铁疙瘩——GPU、带宽与算力的三重账</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="27-memory-math-quantization.html" data-chapter="27">跑得动吗——显存数学与量化速算手册</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="28-inference-factory-pricing.html" data-chapter="28">推理工厂与价格标签——从 GPU 到账单</a>
+      </li>
+    </ul>
+  </section>
+  <section class="series-sidebar-part">
+    <h4><span>PART VI</span>2026 产业地图</h4>
+    <ul>
+      <li class="series-chapter-item">
+        <a href="29-us-frontier-labs.html" data-chapter="29" class="active" aria-current="page">三巨头的分野——OpenAI、Anthropic 与 Google</a>
+        <ul class="series-section-links">
+          <li><a href="#11-openai消费之王的甜蜜与负担">1.1 OpenAI：消费之王的甜蜜与负担</a></li>
+          <li><a href="#12-anthropic企业侧的镜像">1.2 Anthropic：企业侧的镜像</a></li>
+          <li><a href="#13-一纸行政令模型即受管辖的基础设施">1.3 一纸行政令：模型即受管辖的基础设施</a></li>
+          <li><a href="#14-google唯一的全栈玩家">1.4 Google：唯一的全栈玩家</a></li>
+          <li><a href="#15-三种活法一个赌局">1.5 三种活法，一个赌局</a></li>
+        </ul>
+      </li>
+      <li class="series-chapter-item">
+        <a href="30-china-open-weight.html" data-chapter="30">开源的中国时刻——一场反向的阳谋</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="31-model-genealogy.html" data-chapter="31">谁是谁的孩子——模型谱系与换代节奏</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="32-geopolitics-power.html" data-chapter="32">芯片、稀土与电表——算力的地缘战争</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="33-business-and-money.html" data-chapter="33">钱从哪来，又烧向何处——商业模式与泡沫之辩</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="34-finale-and-frontier.html" data-chapter="34">六年，与之后——回望、前沿与写给你的话</a>
+      </li>
+    </ul>
+  </section>
+</aside>
+  <article class="chapter-body">
+    <header class="chapter-head series-chapter-head">
+  <div class="series-breadcrumb">PART VI · 2026 产业地图</div>
+  <div class="chapter-head-meta">
+    <span class="num">CHAPTER 29</span>
+    <span>≈ 45 MIN READ</span>
+  </div>
+  <h1>三巨头的分野——OpenAI、Anthropic 与 Google</h1>
+</header>
+    <p>前五卷讲的都是&quot;事&quot;——架构、训练、推理的技术演化。收官这一卷讲&quot;人&quot;：造出这些模型的公司在争夺什么、靠什么活着、被什么约束。这是全书时效性最强的一卷，卷首必须挂一个免责声明：<strong>以下是截至 2026 年 7 月的一张快照</strong>，公司估值、模型排名、政策边界都在按月变化——但比具体数字更值得你带走的，是读懂这张地图的框架。</p>
+<p>先从美国前沿阵营开始。有意思的是，尽管 OpenAI、Anthropic、Google 造的是同一类东西、技术上高度趋同（第一卷讲过架构的同质化），它们的<strong>活法却截然不同</strong>。这一章的主线就是：<strong>技术趋同，商业分野</strong>——三家的差异不在模型里，在商业模式里。</p>
+<h2 id="11-openai消费之王的甜蜜与负担">1.1 OpenAI：消费之王的甜蜜与负担</h2>
+<p>OpenAI 是这个时代最响亮的名字，它的定位可以用一个数字概括：ChatGPT 的周活用户接近<strong>九亿</strong>——这是消费互联网级别的体量，让它成为不折不扣的&quot;AI 界的消费之王&quot;。它的收入结构也随之定型：<strong>订阅制是主引擎</strong>（ChatGPT 的个人版、专业版占了大头），API 是副业。</p>
+<p>这个定位有甜蜜的一面，也有沉重的一面，而沉重的一面恰好把你前几卷学的东西串了起来。<strong>消费订阅是一门&quot;用得越多越亏&quot;的生意</strong>：用户付固定月费，但每一次对话都在消耗第五卷讲过的推理算力——重度用户的账单可能远超其月费。当第四卷末尾那条&quot;agent token 暴涨&quot;的曲线撞上&quot;固定月费&quot;的商业模式，毛利就被推理成本持续啃噬。这解释了 OpenAI 的一个关键产品决策：GPT-5 的<strong>统一 router 架构</strong>（第三卷谱系里见过）——用户不再自己选模型，系统按问题难度自动路由到合适的档位。表面是简化体验，里子是<strong>成本控制</strong>：把简单问题分流给便宜的小模型，别让用户用旗舰去问&quot;今天星期几&quot;。router 是商业模式倒逼出的技术选择，这是&quot;技术服务于商业&quot;的清晰一例。</p>
+<p>OpenAI 的另一条主线是它与微软的关系演化，这是一个关于&quot;算力绑定如何塑造公司命运&quot;的故事（第一卷&quot;约束塑造创新&quot;的商业版）。它起家时深度依附微软的 Azure 云和资金，2025 年底完成了一次重大重组——非营利基金会通过治理权保留控制、微软成为最大股东之一；2026 年双方又松绑了独家绑定，OpenAI 从此可以在<strong>任意云上</strong>提供服务。这一松绑直接打开了一个此前不可能的局面：2026 年 3 月，OpenAI 完成了一轮史上最大的私募融资（金额以千亿美元计、投后估值超八千亿），<strong>三大云厂商——微软、亚马逊、英伟达——全部入局</strong>。一家公司同时被三个本该是对手的巨头下注，这本身就是 2026 年 AI 资本格局的缩影。</p>
+<h2 id="12-anthropic企业侧的镜像">1.2 Anthropic：企业侧的镜像</h2>
+<p>如果说 OpenAI 是消费之王，Anthropic 就是它精确的<strong>镜像</strong>——两家的收入结构几乎完全对调：Anthropic 约七成以上收入来自 <strong>API 与企业客户</strong>，消费订阅只占一成多。它服务的是把 Claude 嵌进自己产品和工作流的开发者与公司（第五卷讲过，编程类用途在 2026 年占了 token 消耗的一半，而 Claude 在编程能力上的口碑正是它企业侧的护城河）。</p>
+<p>这个镜像对照是理解整个行业的一把钥匙，值得记牢。<strong>消费订阅（OpenAI）规模巨大但毛利被推理成本压制；企业 API（Anthropic）客单价高、毛利结构更健康，但代价是必须持续保持模型领先</strong>——企业选你是因为你此刻最强，一旦被超越，切换成本远低于消费者更换习惯。所以两家的战略性格截然不同：OpenAI 要守住用户习惯和分发，Anthropic 要守住能力排行榜。这也解释了第四卷你见过的 Claude 分层命名（Haiku &lt; Sonnet &lt; Opus &lt; 新的 Mythos 级）——在按 token 计费的世界里，<strong>能力分层就是价格歧视工具</strong>：让企业按任务难度选档，简单活用便宜档、关键活用旗舰档，厂商则从每一档里榨取对应的毛利。</p>
+<p>Anthropic 的算力路线也自成一格：它不押注单一硬件，而是让 Claude <strong>同时跑在亚马逊的 Trainium、谷歌的 TPU 和英伟达的 GPU 三种芯片上</strong>（第五卷讲过这三家的自研芯片）——一种独有的&quot;三芯多云&quot;对冲。其中与亚马逊的绑定尤其深：一个用上百万颗 Trainium 芯片、代号 Project Rainier 的超大集群专门训练和服务 Claude，亚马逊承诺的技术投入以千亿美元计。</p>
+<h2 id="13-一纸行政令模型即受管辖的基础设施">1.3 一纸行政令：模型即受管辖的基础设施</h2>
+<p>Anthropic 在 2026 年 6 月主演了本卷最具标志性的一幕，它把一个抽象的道理砸成了具体事件：<strong>前沿模型已经是受地缘政治直接管辖的基础设施，而不只是一个软件产品。</strong></p>
+<p>时间线值得精确复述。6 月 9 日，Anthropic 发布 Claude Fable 5——新启用的、高于 Opus 的 Mythos 级里首个公开可用的模型。三天后的 6 月 12 日傍晚，美国政府依&quot;国家安全授权&quot;下达出口管制指令，要求暂停<strong>任何外国国民</strong>（包括境内的外籍人士，甚至包括 Anthropic 自己的外籍员工）访问 Fable 5 和 Mythos 5。为了合规，Anthropic 只能做一件事：<strong>对全球所有客户全面下线这两个模型</strong>。触发点是一份安全报告——有研究员发现了一种绕过 Fable 5 安全护栏的&quot;越狱&quot;方法，能诱导它识别软件漏洞并给出可利用的代码；Anthropic 辩称这只是一种狭窄的、其他模型也普遍具备的能力，但在国安框架下，辩解不影响执行。停摆持续了约<strong>十九天</strong>：6 月 26 日部分美国机构恢复访问，6 月 30 日商务部解除管制，7 月 1 日全球恢复。</p>
+<p>这件事的分量在于它揭示的结构性事实。你在第一卷学过&quot;约束塑造创新&quot;，在第五卷学过出口管制怎么削芯片——但那些都是作用在<strong>硬件和训练</strong>上的约束。Fable 5 事件是第一次，约束直接作用在<strong>一个已经上线的模型本身</strong>：一纸行政令，让一个最前沿的 AI 能力在全球范围内消失了三周。模型不再只是公司的产品，它成了国家安全清单上的受控物项——这个认知是理解本卷后面地缘章节（第 4 章）的总前提。</p>
+<h2 id="14-google唯一的全栈玩家">1.4 Google：唯一的全栈玩家</h2>
+<p>第三家 Google（连同它的 DeepMind）走的是与前两家都不同的第三条路，而它的独特之处在于一个别人都不具备的身份：<strong>唯一同时握有前沿模型、自研芯片、自营超大云、和十亿级分发入口的玩家</strong>。</p>
+<p>拆开看这四张牌的威力。<strong>自研模型</strong>（Gemini 线）不必多说。<strong>自研芯片</strong>（TPU，第五卷讲过）意味着它是&quot;人人抢英伟达 GPU&quot;时代里唯一不必挤那道门的巨头——单位算力成本结构性地更低；2025 年底它甚至做了一件耐人寻味的事：把最多一百万颗 TPU 的巨额算力<strong>卖给了自己的竞争对手 Anthropic</strong>——既自用摊薄研发、又外供赚钱，一石二鸟。<strong>自营云</strong>（Google Cloud 的 Vertex AI）让 Gemini 有现成的企业变现管道。而最厉害的是第四张牌——<strong>分发</strong>：搜索、安卓、Workspace 办公套件，这些是数十亿人<strong>已经在用</strong>的产品。OpenAI 和 Anthropic 要一个用户一个用户地获客，Google 只需把 Gemini 塞进人们本就离不开的入口。</p>
+<p>但全栈不等于全胜。Google 的短板恰恰在最不该短的地方——<strong>产品化交付的节奏</strong>。它技术底子最深（DeepMind 的 AlphaFold 拿了诺贝尔化学奖，科学 AI 无人能及），但旗舰模型的迭代节奏一再反复：2026 年它的一款旗舰因基模的结构性缺陷被推倒重建、连续跳票（第三卷谱系里提过这个&quot;换基模可能失败&quot;的公开案例）。技术最强却交付最磕绊，Google 的处境成了一句行业常谈的注脚——<strong>做出前沿模型和稳定地把它交到用户手里，是两种不同的能力</strong>。</p>
+<h2 id="15-三种活法一个赌局">1.5 三种活法，一个赌局</h2>
+<p>把三家收拢，一张对照表就是本章的骨架，也是理解整个前沿阵营的地图：</p>
+<div class="table-wrap"><table><thead><tr>
+<th></th>
+<th>OpenAI</th>
+<th>Anthropic</th>
+<th>Google</th>
+</tr>
+</thead><tbody><tr>
+<td>收入主引擎</td>
+<td>消费订阅（约七成）</td>
+<td>企业 API（约七成以上）</td>
+<td>云 + 办公 + 搜索捆绑</td>
+</tr>
+<tr>
+<td>护城河</td>
+<td>品牌、习惯、九亿周活</td>
+<td>模型能力领先（尤其编程）</td>
+<td>全栈自持 + 存量分发</td>
+</tr>
+<tr>
+<td>命门</td>
+<td>推理成本啃毛利</td>
+<td>必须持续保持领先</td>
+<td>产品化交付节奏</td>
+</tr>
+<tr>
+<td>算力路线</td>
+<td>多云合建（如 Stargate）</td>
+<td>三芯多云对冲（Rainier+TPU+GPU）</td>
+<td>自研 TPU</td>
+</tr>
+</tbody></table></div>
+<p>三种活法背后，是同一个尚未见分晓的赌局。它们的共同处境值得你记住，因为它是本卷收官章要深挖的伏笔：<strong>没有一家真正赚钱</strong>——两强都在深度亏损中扩张，靠一级市场持续输血。它们赌的是同一件事：<strong>现在烧掉的钱，会在未来某个能力临界点之后连本带利赚回来</strong>。这个赌局成不成立，是 2026 年 AI 世界最大的悬念——第 5 章算钱、第 6 章论断，我们后面见。</p>
+<p>下一章转向太平洋对岸：一群选择了完全不同打法的公司——把最强的模型免费开源出去。这在美国巨头看来近乎自杀，为什么在中国成了主流？</p>
+<hr>
+<h3 id="本章要点">本章要点</h3>
+<ul>
+<li>本卷是&quot;截至 2026 年 7 月的快照&quot;；主线是技术趋同、商业分野——三巨头差异不在模型里，在商业模式里。</li>
+<li>OpenAI = 消费之王（ChatGPT 近九亿周活、订阅主导）；命门是&quot;用得越多越亏&quot;，GPT-5 的统一 router 是成本倒逼的技术选择；2026 年史上最大私募轮，三大云厂商全部入局。</li>
+<li>Anthropic = OpenAI 的镜像（七成以上企业 API）；毛利结构更好但必须持续领先；Claude 分层命名 = 价格歧视工具；三芯多云对冲（Rainier/TPU/GPU）。</li>
+<li>Fable 5 事件（2026-06，约 19 天全球停摆）：一纸行政令让前沿模型全球下线——约束第一次直接作用于已上线的模型本身，模型成了国安受控物项。</li>
+<li>Google = 唯一全栈玩家（模型+TPU+云+十亿级分发，甚至把 TPU 卖给对手 Anthropic）；短板在产品化交付节奏（旗舰推倒重建的公开案例）。</li>
+<li>共同赌局：三种活法、无一真正盈利，都赌&quot;现在烧的钱在未来能力临界点后赚回&quot;——收官章的伏笔。</li>
+</ul>
+
+    <nav class="pager series-pager">
+  <a href="28-inference-factory-pricing.html" class="cross-part">
+    <span class="label">← 上一篇 · PART V</span>
+    <span class="title">推理工厂与价格标签——从 GPU 到账单</span>
+  </a>
+  <a href="30-china-open-weight.html" class="next">
+    <span class="label">下一章 →</span>
+    <span class="title">开源的中国时刻——一场反向的阳谋</span>
+  </a>
+</nav>
+  </article>
+</div>
+
+<footer>
+  <div class="set">
+    <span>Large Language Models</span>
+    <span>2026 · ZH-CN</span>
+  </div>
+  <div class="set">
+    <span>Mav</span>
+  </div>
+</footer>
+<div class="search-backdrop" id="search-overlay" role="dialog" aria-modal="true" aria-label="搜索" hidden>
+  <div class="search-modal">
+    <div class="search-input-wrap">
+      <input type="search" class="search-input" placeholder="搜索内容..." aria-label="搜索内容" autocomplete="off">
+      <kbd>ESC</kbd>
+    </div>
+    <div class="search-results" role="listbox" aria-label="搜索结果"></div>
+  </div>
+</div>
+
+<div class="side-panel" id="side-panel">
+  <div class="side-panel-resize" id="side-panel-resize"></div>
+  <div class="side-panel-header">
+    <div class="side-panel-tabs">
+      <button class="side-panel-tab active" data-mode="sidenote">补充</button>
+      <button class="side-panel-tab" data-mode="notepad">笔记</button>
+    </div>
+    <button class="side-panel-close" aria-label="关闭">×</button>
+  </div>
+  <div class="side-panel-body"></div>
+</div>
+<button class="notepad-fab" id="notepad-fab" aria-label="便利贴">✎</button>
+
+<button class="mtoc-fab" id="mtoc-fab" aria-label="系列目录">TOC</button>
+<div class="mtoc-drawer" id="mtoc-drawer">
+  <div class="mtoc-content series-sidebar"></div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/bash.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/typescript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/yaml.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/javascript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/json.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/python.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/css.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+<script>mermaid.initialize({startOnLoad:true, theme:'neutral', fontFamily:'Inter, sans-serif'});</script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}]});"></script>
+<script src="../assets/script.js"></script>
+
+</body>
+</html>

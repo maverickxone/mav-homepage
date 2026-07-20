@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>芯片、稀土与电表——算力的地缘战争 — Large Language Models</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" href="../assets/series.css">
+<link rel="stylesheet" id="hljs-light" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+<link rel="stylesheet" id="hljs-dark" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" media="not all">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+
+</head>
+<body class="series-page series-reader-page">
+
+<div class="progress-bar" id="progress-bar"></div>
+
+<nav class="topnav series-topnav" id="topnav">
+  <div class="topnav-inner">
+    <a class="brand" href="../index.html">Large Language Models</a>
+    <div class="nav-links">
+      <a href="../index.html#part-architecture">PART I</a>
+      <a href="../index.html#part-pretraining">PART II</a>
+      <a href="../index.html#part-rl-crash-course">PART III</a>
+      <a href="../index.html#part-post-training">PART IV</a>
+      <a href="../index.html#part-compute-inference">PART V</a>
+      <a href="../index.html#part-industry-map" class="active">PART VI</a>
+    </div>
+    <div class="nav-controls">
+      <button class="nav-btn" id="search-btn" aria-label="搜索 (Ctrl+K)">⌘K</button>
+      <button class="nav-btn" id="settings-btn" aria-label="阅读设置">Aa</button>
+      <a class="nav-btn" href="../../index.html" aria-label="返回知识库">← 知识库</a>
+    </div>
+  </div>
+</nav>
+<div class="settings-pop" id="settings-pop">
+  <h5>主题</h5>
+  <div class="row">
+    <button class="seg" data-theme-set="light">明亮</button>
+    <button class="seg" data-theme-set="dark">暗色</button>
+  </div>
+  <h5>字号</h5>
+  <div class="row">
+    <button class="seg" data-size-set="s">小</button>
+    <button class="seg" data-size-set="m">中</button>
+    <button class="seg" data-size-set="l">大</button>
+  </div>
+</div>
+
+<div class="with-sidebar series-reader">
+  <aside class="sidebar series-sidebar">
+  <a class="series-sidebar-home" href="../index.html">系列目录</a>
+  <section class="series-sidebar-part">
+    <h4><span>PART I</span>架构演化</h4>
+    <ul>
+      <li class="series-chapter-item">
+        <a href="01-from-transformer-to-gpt.html" data-chapter="01">课本尽头的 Transformer——把它真正数一遍</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="02-residual-stream.html" data-chapter="02">残差流——理解一切改动的地基</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="03-norms-and-activations.html" data-chapter="03">稳定性之战——归一化与激活函数</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="04-positional-encoding.html" data-chapter="04">位置的难题——从正弦波到 RoPE 与长上下文</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="05-attention-evolution.html" data-chapter="05">注意力的账单——KV cache 与一部省钱史</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="06-moe-basics.html" data-chapter="06">分而治之——MoE 的基本机制</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="07-moe-modern.html" data-chapter="07">MoE 的分水岭——DeepSeek 配方与 2026 年的主流形态</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="08-reading-a-release.html" data-chapter="08">读懂一次发布——参数量、基模与版本语义</a>
+      </li>
+    </ul>
+  </section>
+  <section class="series-sidebar-part">
+    <h4><span>PART II</span>预训练</h4>
+    <ul>
+      <li class="series-chapter-item">
+        <a href="09-scaling-laws.html" data-chapter="09">规模的法则——从赌注到公式</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="10-data-pipeline.html" data-chapter="10">备菜间——几十万亿 token 从哪来</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="11-training-run.html" data-chapter="11">厨房里的三个月——损失、优化器与一场不能崩的马拉松</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="12-midtraining.html" data-chapter="12">后半场——mid-training、退火与长上下文课程</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="13-parallelism.html" data-chapter="13">把模型摊开——并行训练、万卡集群与预训练的黄昏</a>
+      </li>
+    </ul>
+  </section>
+  <section class="series-sidebar-part">
+    <h4><span>PART III</span>强化学习速成</h4>
+    <ul>
+      <li class="series-chapter-item">
+        <a href="14-another-way-to-learn.html" data-chapter="14">另一种学习——从「有标准答案」到「只有后果」</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="15-value-functions.html" data-chapter="15">给未来定价——回报、价值函数与贝尔曼方程</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="16-policy-gradient.html" data-chapter="16">顺着后果爬坡——策略梯度与 REINFORCE</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="17-actor-critic-trust-region.html" data-chapter="17">教练与护栏——Actor-Critic、重要性采样与信任域</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="18-ppo-and-llm.html" data-chapter="18">PPO 与会师——通往大模型的最后一站</a>
+      </li>
+    </ul>
+  </section>
+  <section class="series-sidebar-part">
+    <h4><span>PART IV</span>后训练</h4>
+    <ul>
+      <li class="series-chapter-item">
+        <a href="19-sft-instruction-tuning.html" data-chapter="19">从续写到听话——SFT 与指令微调</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="20-reward-models-rlhf.html" data-chapter="20">学会分辨好坏——奖励模型与 RLHF 全流程</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="21-dpo-direct-preference.html" data-chapter="21">把 RL 短路——DPO 与直接偏好优化</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="22-rlaif-constitutional.html" data-chapter="22">让 AI 教 AI——RLAIF、宪法与评判者</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="23-reasoning-models.html" data-chapter="23">第二次质变——从 o1 到 R1 的推理革命</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="24-reasoning-craft-and-reefs.html" data-chapter="24">想多久、想什么——推理时代的工艺与暗礁</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="25-distillation-lora-versions.html" data-chapter="25">兑现与迭代——蒸馏、LoRA 与小版本的秘密</a>
+      </li>
+    </ul>
+  </section>
+  <section class="series-sidebar-part">
+    <h4><span>PART V</span>算力与推理</h4>
+    <ul>
+      <li class="series-chapter-item">
+        <a href="26-gpu-anatomy.html" data-chapter="26">认识铁疙瘩——GPU、带宽与算力的三重账</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="27-memory-math-quantization.html" data-chapter="27">跑得动吗——显存数学与量化速算手册</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="28-inference-factory-pricing.html" data-chapter="28">推理工厂与价格标签——从 GPU 到账单</a>
+      </li>
+    </ul>
+  </section>
+  <section class="series-sidebar-part">
+    <h4><span>PART VI</span>2026 产业地图</h4>
+    <ul>
+      <li class="series-chapter-item">
+        <a href="29-us-frontier-labs.html" data-chapter="29">三巨头的分野——OpenAI、Anthropic 与 Google</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="30-china-open-weight.html" data-chapter="30">开源的中国时刻——一场反向的阳谋</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="31-model-genealogy.html" data-chapter="31">谁是谁的孩子——模型谱系与换代节奏</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="32-geopolitics-power.html" data-chapter="32" class="active" aria-current="page">芯片、稀土与电表——算力的地缘战争</a>
+        <ul class="series-section-links">
+          <li><a href="#41-一场四年的猫鼠博弈">4.1 一场四年的猫鼠博弈</a></li>
+          <li><a href="#42-批而未交当买卖双方都不想成交">4.2 批而未交：当买卖双方都不想成交</a></li>
+          <li><a href="#43-中国手里也有牌稀土与反垄断">4.3 中国手里也有牌：稀土与反垄断</a></li>
+          <li><a href="#44-国产替代天花板从quot造芯quot移到了quot内存quot">4.4 国产替代：天花板从&amp;quot;造芯&amp;quot;移到了&amp;quot;内存&amp;quot;</a></li>
+          <li><a href="#45-军备竞赛与终极瓶颈电">4.5 军备竞赛与终极瓶颈：电</a></li>
+          <li><a href="#46-反转美国缺电中国缺脑">4.6 反转：美国缺电，中国缺脑</a></li>
+        </ul>
+      </li>
+      <li class="series-chapter-item">
+        <a href="33-business-and-money.html" data-chapter="33">钱从哪来，又烧向何处——商业模式与泡沫之辩</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="34-finale-and-frontier.html" data-chapter="34">六年，与之后——回望、前沿与写给你的话</a>
+      </li>
+    </ul>
+  </section>
+</aside>
+  <article class="chapter-body">
+    <header class="chapter-head series-chapter-head">
+  <div class="series-breadcrumb">PART VI · 2026 产业地图</div>
+  <div class="chapter-head-meta">
+    <span class="num">CHAPTER 32</span>
+    <span>≈ 50 MIN READ</span>
+  </div>
+  <h1>芯片、稀土与电表——算力的地缘战争</h1>
+</header>
+    <p>前三章讲了模型和造模型的公司。这一章往下挖一层，挖到模型背后的钢铁与国界。你在第五卷已经算过芯片和电力的技术账；这一章讲的是它们的<strong>政治账</strong>——当算力成为国家竞争力的核心，芯片、稀土和电表就都成了武器。这是全书地缘色彩最浓的一章，也是&quot;约束塑造创新&quot;这个贯穿全书的主题（第一卷第七章埋下、之后反复回响）的总兑现。</p>
+<h2 id="41-一场四年的猫鼠博弈">4.1 一场四年的猫鼠博弈</h2>
+<p>出口管制的故事，最好讲成一条&quot;堵洞—钻洞—再堵&quot;的博弈主线。它的核心逻辑一句话就能抓住：<strong>管制的对象在一路上移</strong>。</p>
+<p>**第一轮（2022）卡的是一根线。**美国禁售最强的 A100/H100，英伟达推出特供版 H800——只削掉了 NVLink 互联带宽，算力不动。结果你已经知道：DeepSeek 用这批&quot;阉割互联&quot;的卡，靠&quot;不用张量并行&quot;的绕行设计（第二卷）照样训出了 V3。管制目标落空。</p>
+<p>**第二轮（2023）卡的是一颗芯。**H800 也禁了，特供再降级为 H20——这次直接把算力砍到 H100 的约 15%。但阴差阳错的是，H20 的显存和带宽反而给足了，无意中成了一张&quot;推理神器&quot;（第五卷讲过推理吃带宽不吃算力）。</p>
+<p><strong>第三轮（2025–2026）卡的是一套系统、一片地理。<strong>发现单卡怎么削都堵不住，美国转向卡整个体系——把管制延伸到中国公司在</strong>海外的数据中心</strong>、要求向&quot;总部在中国的实体&quot;的任何芯片转移都要许可，堵上通过海外子公司买卡的漏洞。到 2026 年 7 月，执行层面甚至下沉到让英伟达<strong>自己当海关</strong>：对新加坡、马来西亚、日本的客户做严格合规审查，据报过半老客户没通过。</p>
+<p>一根线 → 一颗芯 → 一套系统一片地理。每堵一个洞，就把中国往国产替代推深一步——这是管制最深刻的悖论。</p>
+<h2 id="42-批而未交当买卖双方都不想成交">4.2 批而未交：当买卖双方都不想成交</h2>
+<p>2026 年初有一幕，把这场博弈的荒诞感推到了顶点，值得单独讲，因为它标志着&quot;管制走到了尽头&quot;。</p>
+<p>美国政府批准了 H200 对华销售（附加出口税、限定获批公司和额度）。按理说这是松绑。但接下来发生的事出人意料：<strong>中国工信部随即下令国内 AI 企业抵制新获批的 H200、优先用国产芯片</strong>，海关口头通知&quot;H200 不准入境&quot;。于是出现了一个前所未有的僵局——<strong>美方法律上放行、中方执行上拒收</strong>，一批崭新的出口许可证成了废纸。</p>
+<p>这个&quot;批而未交&quot;的场面意味深长。它说明管制已经把市场推过了一个临界点：美国终于愿意卖了，中国却已经不想买了——因为过去几年的封锁，逼着中国把国产替代的决心和产能都建立了起来，此刻放进 H200 反而会动摇国产芯片的市场。管制的本意是延缓中国 AI，实际效果却是亲手催熟了它的竞争对手。连英伟达 CEO 黄仁勋都公开承认，公司在中国的市场份额已经&quot;归零&quot;，而美国的出口政策&quot;已经在很大程度上事与愿违&quot;——这是被管制的厂商对管制最尖锐的否定。</p>
+<h2 id="43-中国手里也有牌稀土与反垄断">4.3 中国手里也有牌：稀土与反垄断</h2>
+<p>2023 年，这还是美国单方面出牌的游戏。到 2026 年，它变成了<strong>双向的清单战</strong>——因为中国发现自己手里也攥着对方的命门。</p>
+<p><strong>稀土</strong>是中国的对称武器。2026 年，中国把数家美国公司列入出口管制清单，并且把新一轮稀土管制<strong>回溯到 14 纳米制程和存储工艺</strong>——精准卡住美方和盟友的成熟制程与存储产业。分析点破了这张牌的性质：中国的稀土牌&quot;<strong>不是关于稀缺，而是关于控制</strong>&quot;——用可逆、临时的限制维持定价权、逼对方回到谈判桌，同时劝退西方对替代供应链的长期投资。与此同时，中国对英伟达启动了反垄断调查、对高通的 AI 芯片行为立案——把美国最强的两家芯片公司拉进了自己的监管程序。</p>
+<p>于是格局清晰了：<strong>芯片对稀土，许可证对反垄断</strong>。两边都在把供应链当武器，&quot;脱钩&quot;从口号变成了互相拉清单的日常。有个精辟的框架这样区分两种武器：美国的半导体管制是&quot;慢烧&quot;——长期、结构性、难以逆转；中国的稀土管制是&quot;快烧&quot;——短期、可逆、见效快。慢烧更持久，快烧更灵活，各有各的威慑。</p>
+<h2 id="44-国产替代天花板从quot造芯quot移到了quot内存quot">4.4 国产替代：天花板从&quot;造芯&quot;移到了&quot;内存&quot;</h2>
+<p>管制的最大后果，是把中国最大的芯片买家群体整体推向了国产——2026 年，中国企业的 AI 芯片预算已有近半转向国产，华为在中国市场的出货<strong>首次超过英伟达</strong>。但国产替代的真实进度，需要破除一个常见误解：<strong>问题早已不是&quot;中国能不能造出 AI 芯片&quot;</strong>——能，华为昇腾 910C 单芯约为 H100 的四到六成，差距在缩小。</p>
+<p>真正的瓶颈藏在一个更隐蔽的地方：<strong>高带宽显存（HBM）</strong>。这正是第五卷末尾埋的线索——这个时代最稀缺的商品从算力变成了带宽和显存，卡点也跟着挪了过去。产业分析给出的判断很硬：中芯国际有能力为超过一百万颗昇腾供应芯片本体，但<strong>国产 HBM 的供给把实际产量压到了三十万颗以下</strong>。换句话说，国产算力的天花板已经从&quot;能不能造芯&quot;，转移到了&quot;<strong>有没有内存</strong>&quot;。这是理解 2026 年中国算力处境最重要的一句话。</p>
+<p>而与英伟达的真实差距是<strong>分层</strong>的，不能只比单卡参数——这一点写进你的认知框架：<strong>单芯</strong>规格差距在缩小；<strong>内存供应链</strong>是短期最难补的硬约束；<strong>软件生态</strong>（英伟达 CUDA 的五百万开发者、四百个库 vs 国产生态）差距最大、最难量化；<strong>集群规模与稳定性</strong>——&quot;让几万颗芯片稳定跑三个月&quot;的系统工程能力。中国的应对是第五卷讲过的 CloudMatrix 路线——<strong>用系统规模和电力换单芯差距</strong>（用五倍的芯片数、四倍的功耗，堆出超过英伟达机架的总算力）。这个&quot;用电力换算力&quot;的打法能不能成立，取决于中国有没有足够便宜、足够多的电——而这恰好引出本章最出人意料的反转。</p>
+<h2 id="45-军备竞赛与终极瓶颈电">4.5 军备竞赛与终极瓶颈：电</h2>
+<p>先把军备竞赛的尺度立起来。2026 年，吉瓦（GW，百万千瓦）级的单体数据中心不再是孤例——全球预计有至少五个投运，分属不同巨头。单站造价约三百亿美元一吉瓦，相当于一个中等国家的年度基建。超大科技公司一年的资本开支动辄六七百亿美元，全行业合计逾七千亿美元。&quot;算力即国力&quot;从一句口号，变成了以万亿计的国家级投入。</p>
+<p>但堆到这个尺度，瓶颈就从芯片转移到了一个最古老的东西——<strong>电</strong>。2026 年全球数据中心用电将超过一千太瓦时，比整个日本的全国用电还多。而在美国，这堵墙已经撞上了，并且以最刺痛普通人的方式：<strong>电费单</strong>。数据中心的用电需求推高了批发电价，美国居民电价的涨幅超过通胀两倍；某个区域电力市场的监督机构直接点名，数据中心是导致居民电费上涨两百多亿美元的&quot;主要原因&quot;——而由于数据中心能自动避峰，这笔钱居民几乎要不回来。政客开始就此发难，七成美国人反对在自家附近建数据中心，多个州在考虑临时禁建。<strong>2026 年 AI 公众形象的转折点，不是某个模型，而是电费单——AI 第一次以&quot;涨你家电费&quot;的方式，走进了普通人的生活。</strong></p>
+<p>美国的应对是押注核电：科技巨头绕过公共电网，直接与核电站签二十年长约、重启退役机组、出资扶持小型堆。但这些远水救不了近渴——小型堆是 2030 年之后的故事，而电网接入的排队已经长达数年。有估计称，未来三年美国数据中心面临几十吉瓦的电力缺口。</p>
+<h2 id="46-反转美国缺电中国缺脑">4.6 反转：美国缺电，中国缺脑</h2>
+<p>现在讲这一章、也是整个地缘叙事的关键反转，它把前面所有线索拧成了一句话：</p>
+<p><strong>美国有最好的&quot;脑&quot;（芯片），却越来越缺&quot;肌肉&quot;（电力）；中国有充沛的&quot;肌肉&quot;，却被管制卡住了&quot;脑&quot;。</strong></p>
+<p>这个对照是结构性的。中国这一侧：仅 2024 一年就新增了五百多吉瓦发电装机，建成了几十条跨省的特高压输电线路、能把西部的电直送东部的算力中心；它的体制习惯&quot;先于需求建设&quot;、集中调度，很少受排队和成本分摊之困。美国这一侧：芯片和模型领先，但电力增长受制于碎片化的监管、多年的并网排队、输电瓶颈和居民成本分摊的政治争议。</p>
+<p>于是 2026 年的这盘棋，本质上是一场对赌：**美国赌的是中国永远缺芯——只要卡死 HBM 和先进制程，中国的电力再多也喂不饱算力；中国赌的是美国永远缺电——只要 CloudMatrix 式的&quot;用电力换算力&quot;能跑通，芯片的单卡劣势就能被系统规模和廉价电力抹平。**谁对，取决于两个赛跑：中国突破 HBM 瓶颈快，还是美国解决电力瓶颈快。这是一场没有终局哨声的比赛，也是理解未来几年 AI 格局最重要的一条主线。</p>
+<p>芯片、稀土、电表讲完了。但支撑这一切疯狂投入的，终究是钱。下一章我们算一算这本总账：这些万亿美元的豪赌，到底有没有对应的收入——以及那个越来越多人问出口的问题：这会不会是一场泡沫？</p>
+<hr>
+<h3 id="本章要点">本章要点</h3>
+<ul>
+<li>管制猫鼠博弈的主线是&quot;对象上移&quot;：卡互联（H800，被绕过）→卡算力（H20，成推理神器）→卡系统与地理（海外子公司、厂商当海关）；每堵一洞就把中国推向国产替代。</li>
+<li>&quot;批而未交&quot;（2026 初 H200）：美方放行、中方拒收——管制走到尽头，反而催熟竞争对手；黄仁勋承认中国份额&quot;归零&quot;、政策&quot;事与愿违&quot;。</li>
+<li>双向清单战：中国以稀土（回溯到 14nm、&quot;关于控制而非稀缺&quot;）和反垄断调查对等施压；美国&quot;慢烧&quot;（结构性）vs 中国&quot;快烧&quot;（可逆灵活）。</li>
+<li>国产替代真瓶颈是 HBM 不是造芯：天花板从&quot;能不能造芯&quot;移到&quot;有没有内存&quot;（产量被压到 30 万颗以下）；差距分四层——单芯（缩小中）、内存、软件生态（最大）、集群系统能力。</li>
+<li>军备竞赛撞上电力墙：吉瓦级站点、七千亿美元年投入；美国电费单成 AI 公众转折点（居民多付、社区反对、押注核电但远水难救近渴）。</li>
+<li>终极反转：美国有脑缺电，中国有电缺脑；一场对赌——美国赌中国永远缺芯，中国赌美国永远缺电，胜负取决于 HBM 突破快还是电力瓶颈解得快。</li>
+</ul>
+
+    <nav class="pager series-pager">
+  <a href="31-model-genealogy.html">
+    <span class="label">← 上一章</span>
+    <span class="title">谁是谁的孩子——模型谱系与换代节奏</span>
+  </a>
+  <a href="33-business-and-money.html" class="next">
+    <span class="label">下一章 →</span>
+    <span class="title">钱从哪来，又烧向何处——商业模式与泡沫之辩</span>
+  </a>
+</nav>
+  </article>
+</div>
+
+<footer>
+  <div class="set">
+    <span>Large Language Models</span>
+    <span>2026 · ZH-CN</span>
+  </div>
+  <div class="set">
+    <span>Mav</span>
+  </div>
+</footer>
+<div class="search-backdrop" id="search-overlay" role="dialog" aria-modal="true" aria-label="搜索" hidden>
+  <div class="search-modal">
+    <div class="search-input-wrap">
+      <input type="search" class="search-input" placeholder="搜索内容..." aria-label="搜索内容" autocomplete="off">
+      <kbd>ESC</kbd>
+    </div>
+    <div class="search-results" role="listbox" aria-label="搜索结果"></div>
+  </div>
+</div>
+
+<div class="side-panel" id="side-panel">
+  <div class="side-panel-resize" id="side-panel-resize"></div>
+  <div class="side-panel-header">
+    <div class="side-panel-tabs">
+      <button class="side-panel-tab active" data-mode="sidenote">补充</button>
+      <button class="side-panel-tab" data-mode="notepad">笔记</button>
+    </div>
+    <button class="side-panel-close" aria-label="关闭">×</button>
+  </div>
+  <div class="side-panel-body"></div>
+</div>
+<button class="notepad-fab" id="notepad-fab" aria-label="便利贴">✎</button>
+
+<button class="mtoc-fab" id="mtoc-fab" aria-label="系列目录">TOC</button>
+<div class="mtoc-drawer" id="mtoc-drawer">
+  <div class="mtoc-content series-sidebar"></div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/bash.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/typescript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/yaml.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/javascript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/json.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/python.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/css.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+<script>mermaid.initialize({startOnLoad:true, theme:'neutral', fontFamily:'Inter, sans-serif'});</script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}]});"></script>
+<script src="../assets/script.js"></script>
+
+</body>
+</html>

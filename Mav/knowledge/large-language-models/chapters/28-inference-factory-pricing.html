@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>推理工厂与价格标签——从 GPU 到账单 — Large Language Models</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" href="../assets/series.css">
+<link rel="stylesheet" id="hljs-light" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+<link rel="stylesheet" id="hljs-dark" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" media="not all">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+
+</head>
+<body class="series-page series-reader-page">
+
+<div class="progress-bar" id="progress-bar"></div>
+
+<nav class="topnav series-topnav" id="topnav">
+  <div class="topnav-inner">
+    <a class="brand" href="../index.html">Large Language Models</a>
+    <div class="nav-links">
+      <a href="../index.html#part-architecture">PART I</a>
+      <a href="../index.html#part-pretraining">PART II</a>
+      <a href="../index.html#part-rl-crash-course">PART III</a>
+      <a href="../index.html#part-post-training">PART IV</a>
+      <a href="../index.html#part-compute-inference" class="active">PART V</a>
+      <a href="../index.html#part-industry-map">PART VI</a>
+    </div>
+    <div class="nav-controls">
+      <button class="nav-btn" id="search-btn" aria-label="搜索 (Ctrl+K)">⌘K</button>
+      <button class="nav-btn" id="settings-btn" aria-label="阅读设置">Aa</button>
+      <a class="nav-btn" href="../../index.html" aria-label="返回知识库">← 知识库</a>
+    </div>
+  </div>
+</nav>
+<div class="settings-pop" id="settings-pop">
+  <h5>主题</h5>
+  <div class="row">
+    <button class="seg" data-theme-set="light">明亮</button>
+    <button class="seg" data-theme-set="dark">暗色</button>
+  </div>
+  <h5>字号</h5>
+  <div class="row">
+    <button class="seg" data-size-set="s">小</button>
+    <button class="seg" data-size-set="m">中</button>
+    <button class="seg" data-size-set="l">大</button>
+  </div>
+</div>
+
+<div class="with-sidebar series-reader">
+  <aside class="sidebar series-sidebar">
+  <a class="series-sidebar-home" href="../index.html">系列目录</a>
+  <section class="series-sidebar-part">
+    <h4><span>PART I</span>架构演化</h4>
+    <ul>
+      <li class="series-chapter-item">
+        <a href="01-from-transformer-to-gpt.html" data-chapter="01">课本尽头的 Transformer——把它真正数一遍</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="02-residual-stream.html" data-chapter="02">残差流——理解一切改动的地基</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="03-norms-and-activations.html" data-chapter="03">稳定性之战——归一化与激活函数</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="04-positional-encoding.html" data-chapter="04">位置的难题——从正弦波到 RoPE 与长上下文</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="05-attention-evolution.html" data-chapter="05">注意力的账单——KV cache 与一部省钱史</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="06-moe-basics.html" data-chapter="06">分而治之——MoE 的基本机制</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="07-moe-modern.html" data-chapter="07">MoE 的分水岭——DeepSeek 配方与 2026 年的主流形态</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="08-reading-a-release.html" data-chapter="08">读懂一次发布——参数量、基模与版本语义</a>
+      </li>
+    </ul>
+  </section>
+  <section class="series-sidebar-part">
+    <h4><span>PART II</span>预训练</h4>
+    <ul>
+      <li class="series-chapter-item">
+        <a href="09-scaling-laws.html" data-chapter="09">规模的法则——从赌注到公式</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="10-data-pipeline.html" data-chapter="10">备菜间——几十万亿 token 从哪来</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="11-training-run.html" data-chapter="11">厨房里的三个月——损失、优化器与一场不能崩的马拉松</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="12-midtraining.html" data-chapter="12">后半场——mid-training、退火与长上下文课程</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="13-parallelism.html" data-chapter="13">把模型摊开——并行训练、万卡集群与预训练的黄昏</a>
+      </li>
+    </ul>
+  </section>
+  <section class="series-sidebar-part">
+    <h4><span>PART III</span>强化学习速成</h4>
+    <ul>
+      <li class="series-chapter-item">
+        <a href="14-another-way-to-learn.html" data-chapter="14">另一种学习——从「有标准答案」到「只有后果」</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="15-value-functions.html" data-chapter="15">给未来定价——回报、价值函数与贝尔曼方程</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="16-policy-gradient.html" data-chapter="16">顺着后果爬坡——策略梯度与 REINFORCE</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="17-actor-critic-trust-region.html" data-chapter="17">教练与护栏——Actor-Critic、重要性采样与信任域</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="18-ppo-and-llm.html" data-chapter="18">PPO 与会师——通往大模型的最后一站</a>
+      </li>
+    </ul>
+  </section>
+  <section class="series-sidebar-part">
+    <h4><span>PART IV</span>后训练</h4>
+    <ul>
+      <li class="series-chapter-item">
+        <a href="19-sft-instruction-tuning.html" data-chapter="19">从续写到听话——SFT 与指令微调</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="20-reward-models-rlhf.html" data-chapter="20">学会分辨好坏——奖励模型与 RLHF 全流程</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="21-dpo-direct-preference.html" data-chapter="21">把 RL 短路——DPO 与直接偏好优化</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="22-rlaif-constitutional.html" data-chapter="22">让 AI 教 AI——RLAIF、宪法与评判者</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="23-reasoning-models.html" data-chapter="23">第二次质变——从 o1 到 R1 的推理革命</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="24-reasoning-craft-and-reefs.html" data-chapter="24">想多久、想什么——推理时代的工艺与暗礁</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="25-distillation-lora-versions.html" data-chapter="25">兑现与迭代——蒸馏、LoRA 与小版本的秘密</a>
+      </li>
+    </ul>
+  </section>
+  <section class="series-sidebar-part">
+    <h4><span>PART V</span>算力与推理</h4>
+    <ul>
+      <li class="series-chapter-item">
+        <a href="26-gpu-anatomy.html" data-chapter="26">认识铁疙瘩——GPU、带宽与算力的三重账</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="27-memory-math-quantization.html" data-chapter="27">跑得动吗——显存数学与量化速算手册</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="28-inference-factory-pricing.html" data-chapter="28" class="active" aria-current="page">推理工厂与价格标签——从 GPU 到账单</a>
+        <ul class="series-section-links">
+          <li><a href="#31-两阶段一次调用的两种物理">3.1 两阶段：一次调用的两种物理</a></li>
+          <li><a href="#32-工厂的五件套">3.2 工厂的五件套</a></li>
+          <li><a href="#33-价格标签解剖学">3.3 价格标签解剖学</a></li>
+          <li><a href="#34-一张著名的账本成本毛利与雪崩式降价">3.4 一张著名的账本：成本、毛利与雪崩式降价</a></li>
+          <li><a href="#35-收束推理时代的总账">3.5 收束：推理时代的总账</a></li>
+        </ul>
+      </li>
+    </ul>
+  </section>
+  <section class="series-sidebar-part">
+    <h4><span>PART VI</span>2026 产业地图</h4>
+    <ul>
+      <li class="series-chapter-item">
+        <a href="29-us-frontier-labs.html" data-chapter="29">三巨头的分野——OpenAI、Anthropic 与 Google</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="30-china-open-weight.html" data-chapter="30">开源的中国时刻——一场反向的阳谋</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="31-model-genealogy.html" data-chapter="31">谁是谁的孩子——模型谱系与换代节奏</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="32-geopolitics-power.html" data-chapter="32">芯片、稀土与电表——算力的地缘战争</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="33-business-and-money.html" data-chapter="33">钱从哪来，又烧向何处——商业模式与泡沫之辩</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="34-finale-and-frontier.html" data-chapter="34">六年，与之后——回望、前沿与写给你的话</a>
+      </li>
+    </ul>
+  </section>
+</aside>
+  <article class="chapter-body">
+    <header class="chapter-head series-chapter-head">
+  <div class="series-breadcrumb">PART V · 算力与推理</div>
+  <div class="chapter-head-meta">
+    <span class="num">CHAPTER 28</span>
+    <span>≈ 45 MIN READ</span>
+  </div>
+  <h1>推理工厂与价格标签——从 GPU 到账单</h1>
+</header>
+    <p>前两章解决了&quot;跑得动吗&quot;；这一章看真实的生产现场——<strong>推理工厂</strong>：几万个用户的请求同时涌向一个集群，工程师怎么把每一分显存与每一毫秒榨干。这一章有一条贯穿的暗线值得先亮出来：<strong>API 价格表不是市场部拍的数字，而是这座工厂成本结构的公开化石</strong>——每一条定价规则背后，都站着一项本章要讲的技术。读完后你再看任何一家的价格页，看到的将是一份工程结构图。</p>
+<h2 id="31-两阶段一次调用的两种物理">3.1 两阶段：一次调用的两种物理</h2>
+<p>一次 API 调用在工厂里其实是两道完全不同的工序，这个区分是全章的地基（第一卷 5.1 节埋的种子在此发芽）：</p>
+<p><strong>Prefill（预填充）</strong>：把你的整段 prompt 一次性并行算完、填好 KV cache。几千个 token 同时过一遍模型——大矩阵乘法，GPU 算力被打满，是<strong>算力受限</strong>的工序。它决定你等待首字出现的时间（TTFT，首 token 延迟）。</p>
+<p><strong>Decode（解码）</strong>：逐 token 生成回答。每个 token 都要把全部权重和不断变长的 KV cache 从显存读一遍，而计算只有薄薄一层——<strong>访存受限</strong>（第一卷的老结论），GPU 算力大量空转。它决定后续每个字蹦出来的节奏（TPOT，逐 token 间隔）。</p>
+<p>同一块 GPU、同一个模型，两道工序的瓶颈资源完全不同：prefill 吃算力，decode 吃带宽和显存容量。<strong>这个物理差异是本章一切工程与一切定价的总根源</strong>——请带着它读完全章。</p>
+<h2 id="32-工厂的五件套">3.2 工厂的五件套</h2>
+<p>围绕两阶段的矛盾，2023–2026 年的推理工程沉淀出一套标准工艺，每件都可以用&quot;解决什么浪费&quot;一句话看穿：</p>
+<p><strong>连续批处理</strong>——解决&quot;等最慢的人&quot;。朴素做法是把一批请求捆在一起跑、整批等最长的那条生成完，短请求白白占着 GPU。连续批处理改为<strong>每生成一步就动态换人</strong>：谁完成谁下车、新请求随时上车。这一项改进的实测吞吐提升最高达二十倍量级，如今是所有引擎的空气般的默认。</p>
+<p><strong>分页 KV cache</strong>——解决&quot;显存碎片&quot;。早期系统按最大可能长度给每个请求预留连续显存，实测 60–80% 的 KV 显存被白白浪费。vLLM 的 PagedAttention 把操作系统的内存分页思想搬进来：KV cache 切成小块按需分配，浪费降到 4% 以下——同一张卡能塞下大一倍的批量，吞吐翻了数倍。开源推理引擎 vLLM 靠这一招起家，成了行业事实标准。</p>
+<p><strong>Prefill-Decode 分离</strong>——解决&quot;两道工序互相踩脚&quot;。既然物理特性不同，混在同一批 GPU 上跑就会互相干扰（一个几万 token 的长 prefill 挤进来，同批所有用户的出字节奏集体卡顿）。2025–26 年的主线方案干脆<strong>分厂</strong>：一个 GPU 池专跑 prefill、一个专跑 decode，中间传递 KV cache，两池独立扩缩容、甚至独立选型（prefill 池要算力猛的卡，decode 池要带宽大显存多的卡）。到 2026 年，几乎所有生产级服务栈都建立在分离架构上；Kimi 公开过的生产数字可作标本：K2 在 128 张卡上以 PD 分离加大规模专家并行运行，预填充与解码吞吐各达每秒二十多万 token。有分析说得透彻：这个技术 2024 年论文就齐了，2025 年才普及——<strong>拐点不是技术性的，是经济性的</strong>：产品上量之后，延迟抖动就是可度量的收入损失。</p>
+<p><strong>投机解码</strong>——解决&quot;decode 一次只走一步&quot;。第一卷第八章讲过 MTP 自带&quot;草稿员&quot;；2026 年的生产形态正是它：旗舰模型发布时就带训练好的 MTP 草稿头，推理引擎自动检测启用，解码提速两三倍。当年&quot;投机解码要额外找一个分布匹配的小草稿模型&quot;的工程难题，被&quot;训练时顺手交付&quot;化解了。</p>
+<p><strong>前缀缓存</strong>——解决&quot;重复劳动&quot;。大量请求共享相同的开头：系统提示词、多轮对话的历史、agent 每次工具调用都重发的全部上下文。把这些前缀的 KV cache 存下来跨请求复用，命中即跳过整段 prefill。在 agent 时代（同一段上下文反复出现几十次），这一项从锦上添花变成了成本结构的决定因素——记住它，两节之后它会以另一个面目出现在你的账单上。</p>
+<h2 id="33-价格标签解剖学">3.3 价格标签解剖学</h2>
+<p>现在翻开 2026 年年中的价格页（单位：美元/百万 token，输入/输出）：闭源旗舰档 GPT-5.6 顶配 $5/$30、Claude Fable 5 $10/$50；主力档 Claude Sonnet 5 $3/$15、Gemini 3.1 Pro $2/$12；开源系则是另一个世界——DeepSeek V4 仅 $0.4/$0.9，把旗舰级能力打到美系的十分之一上下（一个有趣的例外：Kimi K3 定价 $3/$15，与 Sonnet 5 分毫不差——开源模型第一次按闭源旗舰定价，这是产品自信的宣言，第六卷再谈）。在这张表上，本章的技术逐条显影：</p>
+<p><strong>为什么输出比输入贵 5 倍上下？</strong>（各家输出/输入比清一色落在 2–6 倍）现在你可以秒答：<strong>输入走 prefill，输出走 decode</strong>。输入 token 被并行处理、GPU 时间摊薄到几千 token 上，每 token 占用的机器秒极低；输出 token 每个都要完整读一遍权重加 KV cache，访存受限、利用率低，每 token 的机器秒高一个量级。定价比就是两道工序的成本比——<strong>价格表是 prefill/decode 物理差异的化石</strong>。顺带一提：推理模型的思考 token 也按输出计价，这是&quot;想得久&quot;在账单上的直接投影。</p>
+<p>**为什么缓存命中打一折？**各家的 prompt caching 通行价约为输入价的 0.1 倍（DeepSeek 激进到约五十分之一）。机制你刚学过：厂商替你保存了前缀的 KV cache，命中即跳过那段 prefill——你付的不再是计算费，是存取费。3.2 节的前缀缓存技术，在账单上的投影就是这行折扣。对 agent 类应用（每步都携带全部历史）这是决定性的：<strong>会不会用缓存，成本差十倍</strong>。</p>
+<p>**为什么批量接口一律五折？**各家 Batch API（异步、24 小时内交付）统一半价。逻辑藏在&quot;闲置率&quot;里：集群的负载有波峰波谷，批量任务可以调度去填低谷的闲置算力——边际成本极低，五折卖仍然赚。<strong>闲置率这个纯运营指标，直接价格化了。</strong></p>
+<h2 id="34-一张著名的账本成本毛利与雪崩式降价">3.4 一张著名的账本：成本、毛利与雪崩式降价</h2>
+<p>每 token 的成本到底怎么构成？拆解框架一行写尽：<strong>每 token 成本 ≈ GPU 每小时全成本（折旧为大头 + 电力 + 运维）÷ 每小时产出的 token 数</strong>。分子相对刚性，全部戏剧性都在分母——而分母由本章的五件套决定：这一代推理引擎把典型 GPU 利用率从三四成抬到七八成，<strong>软件优化直接等价于成本减半再减半</strong>。</p>
+<p>行业只有一次头部厂商公开过这本账，值得作为标本细读。2025 年 3 月，DeepSeek 在开源周结尾公布了自家推理集群的运行数据：按每卡每小时 2 美元的租赁价折算，日均推理成本约 8.7 万美元，而按 R1 牌价折算的理论日收入约 56 万美元——<strong>理论成本利润率 545%</strong>。两个解读都要拿稳：一方面，它证明了在 PD 分离、大规模专家并行、高利用率的极致工程下，推理服务的毛利空间可以非常可观（这也是他们敢把价格打到地板的底气）；另一方面，官方自己加了粗体注脚——<strong>实际收入远低于此</strong>（网页和 App 免费、实际定价低于牌价、错峰折扣）。&quot;理论&quot;二字承担了全部重量，但这份账本仍是理解推理经济学最好的一手材料。</p>
+<p>毛利空间的另一面是降价空间。同等能力的推理价格正在以远超摩尔定律的速度崩落：行业测算的中位数约为<strong>每年降几十倍</strong>；最常被引用的锚点是&quot;GPT-4 级能力&quot;——2023 年上市时 30 美元/百万输入 token，2026 年同水平能力只要三五毛，<strong>三年约百倍</strong>。这条雪崩曲线是全书多条线索的合流：架构省钱史（第一卷）、低精度与蒸馏（第四卷）、本章的工厂工艺，三股力共同压出来的。</p>
+<h2 id="35-收束推理时代的总账">3.5 收束：推理时代的总账</h2>
+<p>最后把镜头拉到最远。2026 年有一个安静但根本的转折被多方数据确认：<strong>全球 AI 算力的大头已经从训练转向推理</strong>——占比约三分之二，且一个模型全生命周期的算力开销里推理占八九成。驱动力正是第四卷结尾那条曲线：agent 时代来了。一个数据点足以说明烈度：在最大的第三方模型路由平台上，<strong>agent 产生的 token 量已在 2026 年初超过人类直接对话的 token 量</strong>，单次 agent 任务的消耗是普通聊天的十几倍到千倍，编程类用途占了总量的一半。</p>
+<p>这个总账反过来照亮了全书：现在你彻底明白了，为什么第一卷讲的几乎每一项架构革新（GQA、MLA、稀疏注意力、MoE）刀刃都对着<strong>推理</strong>账单，为什么厂商肯为 QAT 和 MTP 在训练里买单——<strong>因为训练花的是一次性的钱，推理花的是永远的钱，而&quot;永远&quot;正在指数增长</strong>。算力的故事讲到这里，&quot;跑在什么上面&quot;的常识账已经齐了。剩下最后一卷：这些钢铁、这些账单、这些模型背后的<strong>人与公司</strong>——2026 年的产业地图，全书的收官之卷。</p>
+<hr>
+<h3 id="本章要点">本章要点</h3>
+<ul>
+<li>两阶段是总根源：prefill 算力受限（决定首字延迟）、decode 访存受限（决定出字节奏），瓶颈资源不同。</li>
+<li>工厂五件套：连续批处理（逐步换人，吞吐提升可达二十倍）、分页 KV cache（碎片浪费 60–80%→&lt;4%）、PD 分离（2025–26 主线，分厂各优化，拐点是经济性的）、投机解码（MTP 草稿头交付化，2–3×）、前缀缓存（agent 时代的成本决定因素）。</li>
+<li>价格表 = 成本结构化石：输出贵 5 倍 = decode/prefill 的机器秒之比；缓存一折 = 前缀缓存商业化（付存取费不付计算费）；批量五折 = 闲置率价格化。三档格局：闭源旗舰 / 主力 / 开源系（约 1/10 价）。</li>
+<li>成本 = GPU 小时全成本 ÷ 每小时 token 产出；引擎把利用率从三四成抬到七八成。DeepSeek 545% 理论利润率账本：毛利空间真实、&quot;理论&quot;二字沉重。同能力价格年降数十倍，GPT-4 级三年约百倍。</li>
+<li>总账转折：推理已占 AI 算力约 2/3、生命周期开销八九成；agent token 超过人类对话 token——训练是一次性的钱，推理是永远的钱，这解释了第一卷以来的一切省钱史。</li>
+</ul>
+
+    <nav class="pager series-pager">
+  <a href="27-memory-math-quantization.html">
+    <span class="label">← 上一章</span>
+    <span class="title">跑得动吗——显存数学与量化速算手册</span>
+  </a>
+  <a href="29-us-frontier-labs.html" class="next cross-part">
+    <span class="label">下一篇 · PART VI →</span>
+    <span class="title">三巨头的分野——OpenAI、Anthropic 与 Google</span>
+  </a>
+</nav>
+  </article>
+</div>
+
+<footer>
+  <div class="set">
+    <span>Large Language Models</span>
+    <span>2026 · ZH-CN</span>
+  </div>
+  <div class="set">
+    <span>Mav</span>
+  </div>
+</footer>
+<div class="search-backdrop" id="search-overlay" role="dialog" aria-modal="true" aria-label="搜索" hidden>
+  <div class="search-modal">
+    <div class="search-input-wrap">
+      <input type="search" class="search-input" placeholder="搜索内容..." aria-label="搜索内容" autocomplete="off">
+      <kbd>ESC</kbd>
+    </div>
+    <div class="search-results" role="listbox" aria-label="搜索结果"></div>
+  </div>
+</div>
+
+<div class="side-panel" id="side-panel">
+  <div class="side-panel-resize" id="side-panel-resize"></div>
+  <div class="side-panel-header">
+    <div class="side-panel-tabs">
+      <button class="side-panel-tab active" data-mode="sidenote">补充</button>
+      <button class="side-panel-tab" data-mode="notepad">笔记</button>
+    </div>
+    <button class="side-panel-close" aria-label="关闭">×</button>
+  </div>
+  <div class="side-panel-body"></div>
+</div>
+<button class="notepad-fab" id="notepad-fab" aria-label="便利贴">✎</button>
+
+<button class="mtoc-fab" id="mtoc-fab" aria-label="系列目录">TOC</button>
+<div class="mtoc-drawer" id="mtoc-drawer">
+  <div class="mtoc-content series-sidebar"></div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/bash.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/typescript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/yaml.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/javascript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/json.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/python.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/css.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+<script>mermaid.initialize({startOnLoad:true, theme:'neutral', fontFamily:'Inter, sans-serif'});</script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}]});"></script>
+<script src="../assets/script.js"></script>
+
+</body>
+</html>

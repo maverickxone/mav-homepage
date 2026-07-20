@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>给未来定价——回报、价值函数与贝尔曼方程 — Large Language Models</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" href="../assets/series.css">
+<link rel="stylesheet" id="hljs-light" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+<link rel="stylesheet" id="hljs-dark" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" media="not all">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+
+</head>
+<body class="series-page series-reader-page">
+
+<div class="progress-bar" id="progress-bar"></div>
+
+<nav class="topnav series-topnav" id="topnav">
+  <div class="topnav-inner">
+    <a class="brand" href="../index.html">Large Language Models</a>
+    <div class="nav-links">
+      <a href="../index.html#part-architecture">PART I</a>
+      <a href="../index.html#part-pretraining">PART II</a>
+      <a href="../index.html#part-rl-crash-course" class="active">PART III</a>
+      <a href="../index.html#part-post-training">PART IV</a>
+      <a href="../index.html#part-compute-inference">PART V</a>
+      <a href="../index.html#part-industry-map">PART VI</a>
+    </div>
+    <div class="nav-controls">
+      <button class="nav-btn" id="search-btn" aria-label="搜索 (Ctrl+K)">⌘K</button>
+      <button class="nav-btn" id="settings-btn" aria-label="阅读设置">Aa</button>
+      <a class="nav-btn" href="../../index.html" aria-label="返回知识库">← 知识库</a>
+    </div>
+  </div>
+</nav>
+<div class="settings-pop" id="settings-pop">
+  <h5>主题</h5>
+  <div class="row">
+    <button class="seg" data-theme-set="light">明亮</button>
+    <button class="seg" data-theme-set="dark">暗色</button>
+  </div>
+  <h5>字号</h5>
+  <div class="row">
+    <button class="seg" data-size-set="s">小</button>
+    <button class="seg" data-size-set="m">中</button>
+    <button class="seg" data-size-set="l">大</button>
+  </div>
+</div>
+
+<div class="with-sidebar series-reader">
+  <aside class="sidebar series-sidebar">
+  <a class="series-sidebar-home" href="../index.html">系列目录</a>
+  <section class="series-sidebar-part">
+    <h4><span>PART I</span>架构演化</h4>
+    <ul>
+      <li class="series-chapter-item">
+        <a href="01-from-transformer-to-gpt.html" data-chapter="01">课本尽头的 Transformer——把它真正数一遍</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="02-residual-stream.html" data-chapter="02">残差流——理解一切改动的地基</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="03-norms-and-activations.html" data-chapter="03">稳定性之战——归一化与激活函数</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="04-positional-encoding.html" data-chapter="04">位置的难题——从正弦波到 RoPE 与长上下文</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="05-attention-evolution.html" data-chapter="05">注意力的账单——KV cache 与一部省钱史</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="06-moe-basics.html" data-chapter="06">分而治之——MoE 的基本机制</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="07-moe-modern.html" data-chapter="07">MoE 的分水岭——DeepSeek 配方与 2026 年的主流形态</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="08-reading-a-release.html" data-chapter="08">读懂一次发布——参数量、基模与版本语义</a>
+      </li>
+    </ul>
+  </section>
+  <section class="series-sidebar-part">
+    <h4><span>PART II</span>预训练</h4>
+    <ul>
+      <li class="series-chapter-item">
+        <a href="09-scaling-laws.html" data-chapter="09">规模的法则——从赌注到公式</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="10-data-pipeline.html" data-chapter="10">备菜间——几十万亿 token 从哪来</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="11-training-run.html" data-chapter="11">厨房里的三个月——损失、优化器与一场不能崩的马拉松</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="12-midtraining.html" data-chapter="12">后半场——mid-training、退火与长上下文课程</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="13-parallelism.html" data-chapter="13">把模型摊开——并行训练、万卡集群与预训练的黄昏</a>
+      </li>
+    </ul>
+  </section>
+  <section class="series-sidebar-part">
+    <h4><span>PART III</span>强化学习速成</h4>
+    <ul>
+      <li class="series-chapter-item">
+        <a href="14-another-way-to-learn.html" data-chapter="14">另一种学习——从「有标准答案」到「只有后果」</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="15-value-functions.html" data-chapter="15" class="active" aria-current="page">给未来定价——回报、价值函数与贝尔曼方程</a>
+        <ul class="series-section-links">
+          <li><a href="#21-回报先把quot总收成quot定义清楚">2.1 回报：先把&amp;quot;总收成&amp;quot;定义清楚</a></li>
+          <li><a href="#22-价值函数评估局面的函数">2.2 价值函数：评估局面的函数</a></li>
+          <li><a href="#23-贝尔曼方程价值的递归结构">2.3 贝尔曼方程：价值的递归结构</a></li>
+          <li><a href="#24-从经验中学价值蒙特卡洛与时序差分">2.4 从经验中学价值：蒙特卡洛与时序差分</a></li>
+          <li><a href="#25-岔路口的告示牌价值之路与策略之路">2.5 岔路口的告示牌：价值之路与策略之路</a></li>
+        </ul>
+      </li>
+      <li class="series-chapter-item">
+        <a href="16-policy-gradient.html" data-chapter="16">顺着后果爬坡——策略梯度与 REINFORCE</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="17-actor-critic-trust-region.html" data-chapter="17">教练与护栏——Actor-Critic、重要性采样与信任域</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="18-ppo-and-llm.html" data-chapter="18">PPO 与会师——通往大模型的最后一站</a>
+      </li>
+    </ul>
+  </section>
+  <section class="series-sidebar-part">
+    <h4><span>PART IV</span>后训练</h4>
+    <ul>
+      <li class="series-chapter-item">
+        <a href="19-sft-instruction-tuning.html" data-chapter="19">从续写到听话——SFT 与指令微调</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="20-reward-models-rlhf.html" data-chapter="20">学会分辨好坏——奖励模型与 RLHF 全流程</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="21-dpo-direct-preference.html" data-chapter="21">把 RL 短路——DPO 与直接偏好优化</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="22-rlaif-constitutional.html" data-chapter="22">让 AI 教 AI——RLAIF、宪法与评判者</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="23-reasoning-models.html" data-chapter="23">第二次质变——从 o1 到 R1 的推理革命</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="24-reasoning-craft-and-reefs.html" data-chapter="24">想多久、想什么——推理时代的工艺与暗礁</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="25-distillation-lora-versions.html" data-chapter="25">兑现与迭代——蒸馏、LoRA 与小版本的秘密</a>
+      </li>
+    </ul>
+  </section>
+  <section class="series-sidebar-part">
+    <h4><span>PART V</span>算力与推理</h4>
+    <ul>
+      <li class="series-chapter-item">
+        <a href="26-gpu-anatomy.html" data-chapter="26">认识铁疙瘩——GPU、带宽与算力的三重账</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="27-memory-math-quantization.html" data-chapter="27">跑得动吗——显存数学与量化速算手册</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="28-inference-factory-pricing.html" data-chapter="28">推理工厂与价格标签——从 GPU 到账单</a>
+      </li>
+    </ul>
+  </section>
+  <section class="series-sidebar-part">
+    <h4><span>PART VI</span>2026 产业地图</h4>
+    <ul>
+      <li class="series-chapter-item">
+        <a href="29-us-frontier-labs.html" data-chapter="29">三巨头的分野——OpenAI、Anthropic 与 Google</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="30-china-open-weight.html" data-chapter="30">开源的中国时刻——一场反向的阳谋</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="31-model-genealogy.html" data-chapter="31">谁是谁的孩子——模型谱系与换代节奏</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="32-geopolitics-power.html" data-chapter="32">芯片、稀土与电表——算力的地缘战争</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="33-business-and-money.html" data-chapter="33">钱从哪来，又烧向何处——商业模式与泡沫之辩</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="34-finale-and-frontier.html" data-chapter="34">六年，与之后——回望、前沿与写给你的话</a>
+      </li>
+    </ul>
+  </section>
+</aside>
+  <article class="chapter-body">
+    <header class="chapter-head series-chapter-head">
+  <div class="series-breadcrumb">PART III · 强化学习速成</div>
+  <div class="chapter-head-meta">
+    <span class="num">CHAPTER 15</span>
+    <span>≈ 50 MIN READ</span>
+  </div>
+  <h1>给未来定价——回报、价值函数与贝尔曼方程</h1>
+</header>
+    <p>上一章末尾留下的关卡是：奖励延迟而稀疏，决策却要每一步都做——第 40 步该往哪走，取决于三百步之后的胜负。要跨过这道关卡，RL 发明了它最核心的概念工具：<strong>价值</strong>（value）。这一章把它从零建起来。请耐心对待这一章，它是全卷数学密度最高的一章，但每个式子都会先讲清&quot;为什么需要&quot;再写&quot;是什么&quot;——而且它的回报丰厚：价值的语言一旦建立，后面三章的一切（advantage、critic、GRPO 的组内基线）都只是它的变奏。</p>
+<h2 id="21-回报先把quot总收成quot定义清楚">2.1 回报：先把&quot;总收成&quot;定义清楚</h2>
+<p>从最容易的问题开始：一条<strong>已经走完</strong>的轨迹，收成怎么算？上一章说是&quot;沿途奖励之和&quot;，现在补上一个必要的修饰。定义从时刻 $t$ 起的<strong>回报</strong>（return）：</p>
+<p>$$
+G_t = r_{t+1} + \gamma\, r_{t+2} + \gamma^2 r_{t+3} + \cdots = \sum_{k=0}^{\infty} \gamma^k\, r_{t+k+1}
+$$</p>
+<p>新面孔是 $\gamma$（gamma，折扣因子），一个 0 到 1 之间的数：下一步的奖励打一次折，下下步打两次折，越远折得越狠。为什么要打折？三层理由，从实用到深刻：</p>
+<p><strong>数学收敛</strong>。任务如果没有明确终点（机器人一直巡逻），奖励无穷多项加起来可能发散；$\gamma < 1$ 让无穷级数收敛成有限数（每步奖励有界时，总和不超过 $r_{\max}/(1-\gamma)$），一切分析才有立足点。<strong>未来不确定</strong>。转移是随机的、模型是近似的，十步之后的预言远不如下一步可靠——折扣是对&quot;远期承诺&quot;的合理怀疑。<strong>现值直觉</strong>。和金融里一模一样：明年的一百块不等于今天的一百块，利率就是时间的折价。$\gamma$ 就是 RL 世界的贴现率。</p>
+<p>$\gamma$ 的取值直接塑造性格：$\gamma = 0$ 的智能体极度短视，只认下一步的即时奖励；$\gamma \to 1$ 则极有远见，为了终局愿意忍受眼前的负分。实践里常取 0.99 上下；而语言模型的场景（一次生成、有明确终点、奖励在末尾）通常干脆取 $\gamma = 1$——不打折，因为回合有限、且我们只关心最终成果。这个细节现在看是脚注，第五章会变成正文。</p>
+<h2 id="22-价值函数评估局面的函数">2.2 价值函数：评估局面的函数</h2>
+<p>回报是<strong>事后</strong>的记账——轨迹走完才能算。但决策需要<strong>事前</strong>的判断：站在此刻，往下会怎样？于是定义全卷最重要的概念，<strong>状态价值函数</strong>：</p>
+<p>$$
+V^\pi(s) = \mathbb{E}_\pi\big[\,G_t \mid s_t = s\,\big]
+$$</p>
+<p>读法：<strong>从状态 $s$ 出发、此后一直按策略 $\pi$ 行动，能拿到的回报的期望</strong>。三个成分各有分量。&quot;期望&quot;——策略和环境都可能随机，同一起点走出的未来是一束可能性，$V$ 是这束可能性的加权平均。&quot;按策略 $\pi$&quot;——价值从来不是状态孤立的属性，而是<strong>状态与策略的合谋</strong>：同一个棋局，在高手手里价值连城，在菜鸟手里一文不值，所以记号里那个上标 $\pi$ 一刻不能省。&quot;从 $s$ 出发&quot;——它给每个状态标了价，把&quot;这个局面好不好&quot;从一句棋感变成了一个数。</p>
+<p>围棋解说员说&quot;白棋此刻胜率 72%&quot;，就是在报一个 $V(s)$；你玩游戏时心里那句&quot;这波稳了&quot;，也是一次粗糙的价值评估。<strong>价值函数就是直觉的数学化</strong>：把&quot;局面判断&quot;这种说不清道不明的能力，定义成一个原则上可以计算、可以学习的函数。</p>
+<p>紧接着一个孪生概念，<strong>动作价值函数</strong>：</p>
+<p>$$
+Q^\pi(s, a) = \mathbb{E}_\pi\big[\,G_t \mid s_t = s,\ a_t = a\,\big]
+$$</p>
+<p>与 $V$ 只差一点：先<strong>指定第一步动作是 $a$</strong>，之后再按 $\pi$ 行动。$V(s)$ 回答&quot;这个局面值多少&quot;，$Q(s,a)$ 回答&quot;这个局面下走这一步值多少&quot;。两者的关系很自然：$V$ 是 $Q$ 按策略的加权平均——$V^\pi(s) = \sum_a \pi(a|s)\, Q^\pi(s,a)$，局面的价值等于各种走法价值的期望。</p>
+<p>为什么要两个函数？因为它们回答的问题不同，而<strong>两者的差</strong>恰好回答第三个、也是最关键的问题：&quot;走这一步，比平常水平好多少？&quot;——$Q^\pi(s,a) - V^\pi(s)$。这个差值下一章会正式登场并获得一个名字（advantage，优势），它是策略改进的方向盘。这里先埋下伏笔：<strong>$V$ 用来评估局面，$Q$ 用来评估动作，$Q-V$ 用来指导改进。</strong></p>
+<h2 id="23-贝尔曼方程价值的递归结构">2.3 贝尔曼方程：价值的递归结构</h2>
+<p>定义有了，怎么算？按定义硬算意味着枚举从 $s$ 出发的所有未来轨迹——指数爆炸，死路。出路藏在价值的一个漂亮结构里，它是本章的技术核心。</p>
+<p>观察回报的定义，把第一项拆出来：</p>
+<p>$$
+G_t = r_{t+1} + \gamma\,(r_{t+2} + \gamma\, r_{t+3} + \cdots) = r_{t+1} + \gamma\, G_{t+1}
+$$</p>
+<p><strong>回报天生是递归的</strong>：今天起的总收成 = 今天的收成 + 打折后的&quot;明天起的总收成&quot;。两边取期望，就得到<strong>贝尔曼期望方程</strong>（Bellman equation）：</p>
+<p>$$
+V^\pi(s) = \mathbb{E}\big[\, r_{t+1} + \gamma\, V^\pi(s_{t+1}) \mid s_t = s \,\big]
+$$</p>
+<p>一个状态的价值 = 即时奖励 + 折扣后的<strong>下一个状态的价值</strong>（的期望）。无穷远的未来被折叠进了&quot;下一站&quot;——不必看到底，只需看一步，前提是下一站的价值已知。这个&quot;用价值定义价值&quot;的自指结构之所以成立，靠的正是上一章的马尔可夫性：下一站的价值只取决于下一站本身，与怎么到达无关，所以未来可以被&quot;打包&quot;。</p>
+<p>一定要亲手算一次才有体感。设想一条三格走廊 $A \to B \to C$，$C$ 是出口：策略固定为&quot;一直向右&quot;，每步奖励 $-1$、到达 $C$ 得 $+10$ 并结束，取 $\gamma = 0.9$。从终点倒着用贝尔曼方程：$B$ 到 $C$ 一步收 $+10$，无后续，$V(B) = 10$；$A$ 走一步花 $-1$ 到达 $B$，所以 $V(A) = -1 + 0.9 \times V(B) = -1 + 9 = 8$。就这么朴素：<strong>价值从奖励处发源，沿着转移结构折扣着向外传播</strong>。真实算法本质上都在做这件事的大规模版本——把奖励的信息，经由贝尔曼方程，传播到每一个状态头上。</p>
+<p>（顺带一提：把方程里的&quot;按策略平均&quot;换成&quot;取最优动作&quot;，就得到刻画<strong>最优</strong>价值的贝尔曼最优方程——理论上解它就解了整个 MDP。这条&quot;先求最优价值、再反推策略&quot;的路线是 RL 的另半壁江山，我们在 2.5 节会说明为什么本卷不走它。）</p>
+<h2 id="24-从经验中学价值蒙特卡洛与时序差分">2.4 从经验中学价值：蒙特卡洛与时序差分</h2>
+<p>贝尔曼方程需要知道转移概率和奖励函数——迷宫的地图。但真实世界（以及语言模型面对的世界）没有地图：你不知道 $P(s'|s,a)$，只能靠<strong>亲身经历的轨迹</strong>来估计价值。怎么从经验里学 $V$？两条路线，它们的对比是 RL 里最经典的一组权衡。</p>
+<p><strong>蒙特卡洛（MC）：走完再算。<strong>最直白的办法——想知道 $V(s)$ 是期望回报？那就从 $s$ 出发走完很多条轨迹，把实际拿到的回报 $G$ 平均。它诚实（用真实回报，不引入任何假设，无偏），但有两个代价：必须</strong>等回合结束</strong>才能学（下完整盘棋才更新一次）；而且<strong>方差大</strong>——单条轨迹的回报受一路上所有随机性的累积影响，同一起点的两次经历可能天差地别，要平均很多条才稳。</p>
+<p>**时序差分（TD）：走一步就学。**换个思路，把贝尔曼方程从&quot;定义&quot;用作&quot;校验&quot;：走一步，拿到 $r$、到达 $s'$，用现有的估计拼出一个目标值 $r + \gamma V(s')$，跟出发前的估计 $V(s)$ 一比：</p>
+<p>$$
+\delta = \underbrace{r + \gamma V(s')}_{\text{走一步后的新认识}} - \underbrace{V(s)}_{\text{原来的认识}}
+$$</p>
+<p>这个 $\delta$ 叫 <strong>TD 误差</strong>，直觉含义是<strong>惊讶程度</strong>：实际经历比预想的好，$\delta > 0$，把 $V(s)$ 上调一点；比预想的差就下调。每走一步都能学，不用等终局；方差也小（只涉及一步的随机性）。代价是引入了偏差：目标值里的 $V(s')$ 是自己的估计——<strong>用自己的猜测来更新自己的猜测</strong>（术语叫 bootstrap，自举）。估计不准时，误差会顺着更新传播。</p>
+<p>MC 无偏但高方差、TD 低方差但有偏——<strong>偏差-方差的跷跷板</strong>，深度学习课上的老熟人在 RL 里换了个舞台。请把 TD 误差这个量记牢到条件反射的程度：$\delta$ 衡量&quot;这一步带来的实际进展超出预期多少&quot;——下一章你会发现，它几乎就是&quot;这个动作比平常好多少&quot;（advantage）的现成估计，是连接价值世界与策略世界的那座桥。</p>
+<h2 id="25-岔路口的告示牌价值之路与策略之路">2.5 岔路口的告示牌：价值之路与策略之路</h2>
+<p>本章结束前，站上一个重要的岔路口。有了价值，通往&quot;好策略&quot;的路分成两条。</p>
+<p><strong>价值路线</strong>：不直接学策略，先学 $Q(s,a)$，然后策略就是&quot;每步选 $Q$ 最大的动作&quot;。这条路线的名将是 Q-learning 和它的深度版 DQN——2013 年从像素学会打几十款雅达利游戏、点燃深度强化学习热潮的正是它。<strong>策略路线</strong>：跳过&quot;给所有动作估值&quot;，直接参数化策略 $\pi_\theta(a|s)$ 本身、直接优化它——这是下一章的主题。</p>
+<p>本卷的主干走策略路线，原因值得说透，因为它正是 RL 与语言模型接轨的方式。<strong>其一，我们手里已经有一个策略</strong>：语言模型本身就是 $\pi_\theta(a|s)$——一个由几百亿参数编码、经过预训练的强大策略。从它出发做改进，远比从头学一张 Q 表自然。<strong>其二，语言需要随机策略</strong>：价值路线的&quot;选 Q 最大者&quot;是确定性的（同一状态永远同一动作），而生成任务需要保持一个健康的概率分布——多样性、创造性、对同一问题的多种解法，都住在分布里。<strong>其三，实践检验</strong>：在超大动作空间、超长轨迹的语言场景里，策略梯度一系久经生产验证，价值路线没有站住脚。所以对 Q-learning/DQN，你只需知道&quot;存在这条支线、DQN 是它的高光时刻&quot;即可——我们的火车不停靠这一站。</p>
+<p>但注意一个精细的区分，它预示了后面两章的结构：<strong>不走价值路线 ≠ 不用价值函数</strong>。策略路线优化的是策略，但沿途急需价值函数来降低学习信号的噪声（那正是 $\delta$ 和 advantage 的用武之地）——价值将以&quot;辅助评估员&quot;的身份贯穿到底。评估的语言已经齐备，下一章开始学习&quot;改进&quot;：怎么顺着后果的梯度，直接雕琢策略本身。</p>
+<hr>
+<h3 id="本章要点">本章要点</h3>
+<ul>
+<li>回报 $G_t = \sum_k \gamma^k r_{t+k+1}$：折扣的三层理由（收敛、不确定性、现值）；$\gamma$ 塑造远见程度；语言模型场景常取 $\gamma=1$。</li>
+<li>$V^\pi(s)$ = 从 $s$ 按 $\pi$ 走的期望回报（局面估值，依赖策略）；$Q^\pi(s,a)$ = 指定第一步动作的版本（动作估值）；$Q-V$ 预告为改进的方向盘。</li>
+<li>贝尔曼方程 $V^\pi(s) = \mathbb{E}[r + \gamma V^\pi(s')]$：回报的递归结构 + 马尔可夫性 ⇒ 未来可折叠进&quot;下一站&quot;；价值从奖励发源、沿转移传播（走廊例：$V(B)=10, V(A)=8$）。</li>
+<li>无地图时从经验学：MC 走完再算（无偏、高方差、须等终局）vs TD 走一步就学（低方差、有偏、自举）；TD 误差 $\delta = r + \gamma V(s') - V(s)$ = &quot;惊讶程度&quot;，是通往 advantage 的桥。</li>
+<li>岔路选择：价值路线（Q-learning/DQN，本卷不走）vs 策略路线（直接优化 $\pi_\theta$，语言模型天然是策略、需要随机性）；但策略路线仍雇用价值函数当评估员。</li>
+</ul>
+
+    <nav class="pager series-pager">
+  <a href="14-another-way-to-learn.html">
+    <span class="label">← 上一章</span>
+    <span class="title">另一种学习——从「有标准答案」到「只有后果」</span>
+  </a>
+  <a href="16-policy-gradient.html" class="next">
+    <span class="label">下一章 →</span>
+    <span class="title">顺着后果爬坡——策略梯度与 REINFORCE</span>
+  </a>
+</nav>
+  </article>
+</div>
+
+<footer>
+  <div class="set">
+    <span>Large Language Models</span>
+    <span>2026 · ZH-CN</span>
+  </div>
+  <div class="set">
+    <span>Mav</span>
+  </div>
+</footer>
+<div class="search-backdrop" id="search-overlay" role="dialog" aria-modal="true" aria-label="搜索" hidden>
+  <div class="search-modal">
+    <div class="search-input-wrap">
+      <input type="search" class="search-input" placeholder="搜索内容..." aria-label="搜索内容" autocomplete="off">
+      <kbd>ESC</kbd>
+    </div>
+    <div class="search-results" role="listbox" aria-label="搜索结果"></div>
+  </div>
+</div>
+
+<div class="side-panel" id="side-panel">
+  <div class="side-panel-resize" id="side-panel-resize"></div>
+  <div class="side-panel-header">
+    <div class="side-panel-tabs">
+      <button class="side-panel-tab active" data-mode="sidenote">补充</button>
+      <button class="side-panel-tab" data-mode="notepad">笔记</button>
+    </div>
+    <button class="side-panel-close" aria-label="关闭">×</button>
+  </div>
+  <div class="side-panel-body"></div>
+</div>
+<button class="notepad-fab" id="notepad-fab" aria-label="便利贴">✎</button>
+
+<button class="mtoc-fab" id="mtoc-fab" aria-label="系列目录">TOC</button>
+<div class="mtoc-drawer" id="mtoc-drawer">
+  <div class="mtoc-content series-sidebar"></div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/bash.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/typescript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/yaml.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/javascript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/json.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/python.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/css.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+<script>mermaid.initialize({startOnLoad:true, theme:'neutral', fontFamily:'Inter, sans-serif'});</script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}]});"></script>
+<script src="../assets/script.js"></script>
+
+</body>
+</html>

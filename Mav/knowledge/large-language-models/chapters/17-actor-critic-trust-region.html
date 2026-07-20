@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>教练与护栏——Actor-Critic、重要性采样与信任域 — Large Language Models</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" href="../assets/series.css">
+<link rel="stylesheet" id="hljs-light" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+<link rel="stylesheet" id="hljs-dark" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" media="not all">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+
+</head>
+<body class="series-page series-reader-page">
+
+<div class="progress-bar" id="progress-bar"></div>
+
+<nav class="topnav series-topnav" id="topnav">
+  <div class="topnav-inner">
+    <a class="brand" href="../index.html">Large Language Models</a>
+    <div class="nav-links">
+      <a href="../index.html#part-architecture">PART I</a>
+      <a href="../index.html#part-pretraining">PART II</a>
+      <a href="../index.html#part-rl-crash-course" class="active">PART III</a>
+      <a href="../index.html#part-post-training">PART IV</a>
+      <a href="../index.html#part-compute-inference">PART V</a>
+      <a href="../index.html#part-industry-map">PART VI</a>
+    </div>
+    <div class="nav-controls">
+      <button class="nav-btn" id="search-btn" aria-label="搜索 (Ctrl+K)">⌘K</button>
+      <button class="nav-btn" id="settings-btn" aria-label="阅读设置">Aa</button>
+      <a class="nav-btn" href="../../index.html" aria-label="返回知识库">← 知识库</a>
+    </div>
+  </div>
+</nav>
+<div class="settings-pop" id="settings-pop">
+  <h5>主题</h5>
+  <div class="row">
+    <button class="seg" data-theme-set="light">明亮</button>
+    <button class="seg" data-theme-set="dark">暗色</button>
+  </div>
+  <h5>字号</h5>
+  <div class="row">
+    <button class="seg" data-size-set="s">小</button>
+    <button class="seg" data-size-set="m">中</button>
+    <button class="seg" data-size-set="l">大</button>
+  </div>
+</div>
+
+<div class="with-sidebar series-reader">
+  <aside class="sidebar series-sidebar">
+  <a class="series-sidebar-home" href="../index.html">系列目录</a>
+  <section class="series-sidebar-part">
+    <h4><span>PART I</span>架构演化</h4>
+    <ul>
+      <li class="series-chapter-item">
+        <a href="01-from-transformer-to-gpt.html" data-chapter="01">课本尽头的 Transformer——把它真正数一遍</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="02-residual-stream.html" data-chapter="02">残差流——理解一切改动的地基</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="03-norms-and-activations.html" data-chapter="03">稳定性之战——归一化与激活函数</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="04-positional-encoding.html" data-chapter="04">位置的难题——从正弦波到 RoPE 与长上下文</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="05-attention-evolution.html" data-chapter="05">注意力的账单——KV cache 与一部省钱史</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="06-moe-basics.html" data-chapter="06">分而治之——MoE 的基本机制</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="07-moe-modern.html" data-chapter="07">MoE 的分水岭——DeepSeek 配方与 2026 年的主流形态</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="08-reading-a-release.html" data-chapter="08">读懂一次发布——参数量、基模与版本语义</a>
+      </li>
+    </ul>
+  </section>
+  <section class="series-sidebar-part">
+    <h4><span>PART II</span>预训练</h4>
+    <ul>
+      <li class="series-chapter-item">
+        <a href="09-scaling-laws.html" data-chapter="09">规模的法则——从赌注到公式</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="10-data-pipeline.html" data-chapter="10">备菜间——几十万亿 token 从哪来</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="11-training-run.html" data-chapter="11">厨房里的三个月——损失、优化器与一场不能崩的马拉松</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="12-midtraining.html" data-chapter="12">后半场——mid-training、退火与长上下文课程</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="13-parallelism.html" data-chapter="13">把模型摊开——并行训练、万卡集群与预训练的黄昏</a>
+      </li>
+    </ul>
+  </section>
+  <section class="series-sidebar-part">
+    <h4><span>PART III</span>强化学习速成</h4>
+    <ul>
+      <li class="series-chapter-item">
+        <a href="14-another-way-to-learn.html" data-chapter="14">另一种学习——从「有标准答案」到「只有后果」</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="15-value-functions.html" data-chapter="15">给未来定价——回报、价值函数与贝尔曼方程</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="16-policy-gradient.html" data-chapter="16">顺着后果爬坡——策略梯度与 REINFORCE</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="17-actor-critic-trust-region.html" data-chapter="17" class="active" aria-current="page">教练与护栏——Actor-Critic、重要性采样与信任域</a>
+        <ul class="series-section-links">
+          <li><a href="#41-合体演员与教练">4.1 合体：演员与教练</a></li>
+          <li><a href="#42-让旧数据发余热重要性采样">4.2 让旧数据发余热：重要性采样</a></li>
+          <li><a href="#43-悬崖边的雾策略崩塌">4.3 悬崖边的雾：策略崩塌</a></li>
+          <li><a href="#44-信任域把纪律写进优化问题">4.4 信任域：把纪律写进优化问题</a></li>
+        </ul>
+      </li>
+      <li class="series-chapter-item">
+        <a href="18-ppo-and-llm.html" data-chapter="18">PPO 与会师——通往大模型的最后一站</a>
+      </li>
+    </ul>
+  </section>
+  <section class="series-sidebar-part">
+    <h4><span>PART IV</span>后训练</h4>
+    <ul>
+      <li class="series-chapter-item">
+        <a href="19-sft-instruction-tuning.html" data-chapter="19">从续写到听话——SFT 与指令微调</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="20-reward-models-rlhf.html" data-chapter="20">学会分辨好坏——奖励模型与 RLHF 全流程</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="21-dpo-direct-preference.html" data-chapter="21">把 RL 短路——DPO 与直接偏好优化</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="22-rlaif-constitutional.html" data-chapter="22">让 AI 教 AI——RLAIF、宪法与评判者</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="23-reasoning-models.html" data-chapter="23">第二次质变——从 o1 到 R1 的推理革命</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="24-reasoning-craft-and-reefs.html" data-chapter="24">想多久、想什么——推理时代的工艺与暗礁</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="25-distillation-lora-versions.html" data-chapter="25">兑现与迭代——蒸馏、LoRA 与小版本的秘密</a>
+      </li>
+    </ul>
+  </section>
+  <section class="series-sidebar-part">
+    <h4><span>PART V</span>算力与推理</h4>
+    <ul>
+      <li class="series-chapter-item">
+        <a href="26-gpu-anatomy.html" data-chapter="26">认识铁疙瘩——GPU、带宽与算力的三重账</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="27-memory-math-quantization.html" data-chapter="27">跑得动吗——显存数学与量化速算手册</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="28-inference-factory-pricing.html" data-chapter="28">推理工厂与价格标签——从 GPU 到账单</a>
+      </li>
+    </ul>
+  </section>
+  <section class="series-sidebar-part">
+    <h4><span>PART VI</span>2026 产业地图</h4>
+    <ul>
+      <li class="series-chapter-item">
+        <a href="29-us-frontier-labs.html" data-chapter="29">三巨头的分野——OpenAI、Anthropic 与 Google</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="30-china-open-weight.html" data-chapter="30">开源的中国时刻——一场反向的阳谋</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="31-model-genealogy.html" data-chapter="31">谁是谁的孩子——模型谱系与换代节奏</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="32-geopolitics-power.html" data-chapter="32">芯片、稀土与电表——算力的地缘战争</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="33-business-and-money.html" data-chapter="33">钱从哪来，又烧向何处——商业模式与泡沫之辩</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="34-finale-and-frontier.html" data-chapter="34">六年，与之后——回望、前沿与写给你的话</a>
+      </li>
+    </ul>
+  </section>
+</aside>
+  <article class="chapter-body">
+    <header class="chapter-head series-chapter-head">
+  <div class="series-breadcrumb">PART III · 强化学习速成</div>
+  <div class="chapter-head-meta">
+    <span class="num">CHAPTER 17</span>
+    <span>≈ 45 MIN READ</span>
+  </div>
+  <h1>教练与护栏——Actor-Critic、重要性采样与信任域</h1>
+</header>
+    <p>上一章结尾留了两桩病：采样来的数据只能用一次就扔；步子迈大了会跌进无法自愈的深渊。这一章把治这两桩病的三块拼图逐一备齐——<strong>Actor-Critic</strong>（让价值函数正式上岗）、<strong>重要性采样</strong>（让旧数据焕发余热）、<strong>信任域</strong>（给步子装护栏）。备齐之后，下一章的 PPO 就只是水到渠成的组装。</p>
+<h2 id="41-合体演员与教练">4.1 合体：演员与教练</h2>
+<p>第二章结尾说过，策略路线&quot;不走价值路线，但雇用价值函数当评估员&quot;。现在正式办入职手续。</p>
+<p>回顾链条：策略梯度需要 advantage 当权重；advantage 的单步估计是 TD 误差 $\delta = r + \gamma V(s') - V(s)$；而算 $\delta$ 需要一个 $V$。既然没有真值，那就<strong>再训一个网络去学它</strong>。于是架构里出现了两个角色，这套设计叫 <strong>Actor-Critic</strong>（演员-评论家）：</p>
+<ul>
+<li><strong>Actor（演员）</strong>：策略网络 $\pi_\theta$，负责行动——它就是我们要优化的主角（对语言模型：就是模型本身）；</li>
+<li><strong>Critic（评论家）</strong>：价值网络 $V_\phi$，负责评估——它看着每个状态输出&quot;此局面的平常水平&quot;，供计算 advantage 用。</li>
+</ul>
+<p>两者共生互训：actor 走出轨迹，critic 用 TD 学习（第二章的方法）不断修正自己的估值；critic 的估值反过来给 actor 提供低噪声的学习信号。常用的类比是驾校：学员（actor）握方向盘，教练（critic）坐副驾不碰方向盘、只在每个动作后给出&quot;比预期好/差&quot;的即时点评——点评本身不开车，却让学员不必等到&quot;考试挂科&quot;（终局奖励）才知道哪一步错了。这个思想的资历比深度学习还老：1983 年 Barto、Sutton 与 Anderson 的论文就用一对&quot;自适应单元&quot;在倒立摆上实现了它——那篇论文里评估单元的名字就叫 adaptive critic element，&quot;评论家&quot;之名沿用至今。</p>
+<p>工程上还剩一个可调的旋钮。critic 的 $\delta$ 是 advantage 的低方差估计，但有偏（$V_\phi$ 是近似值，教练自己也会看走眼）；蒙特卡洛回报无偏但高方差——又是那架跷跷板。实践中的标准答案叫 <strong>GAE</strong>（广义优势估计）：把多步的 $\delta$ 按权重 $\lambda$ 叠加，$\lambda = 0$ 退化为单步 TD（信教练），$\lambda = 1$ 退化为蒙特卡洛（信实测），中间连续可调，典型取 0.95——一个&quot;九分信实测、留一分平滑&quot;的折中。你在后训练代码库里会反复见到 <code>gae_lambda</code> 这个参数，它就是这架跷跷板的游标。</p>
+<h2 id="42-让旧数据发余热重要性采样">4.2 让旧数据发余热：重要性采样</h2>
+<p>第一桩病：on-policy 的一次性数据。病根在数学上很清楚——策略梯度公式里的期望必须&quot;在当前策略的分布下&quot;取；参数一更新，手里那批轨迹就成了<strong>旧策略</strong>的作品，用它们直接估计新策略的梯度，分布对不上，估计就是错的。</p>
+<p>但&quot;分布对不上&quot;不等于&quot;没救&quot;，统计学早有标准药方：<strong>重要性采样</strong>（importance sampling）——用一个分布的样本去估计另一个分布下的期望，办法是给每个样本乘上一个<strong>校正比率</strong>：两个分布下该样本概率之比。落到我们的场景，对每一步动作定义：</p>
+<p>$$
+r_t(\theta) = \frac{\pi_\theta(a_t \mid s_t)}{\pi_{\theta_{\text{old}}}(a_t \mid s_t)}
+$$</p>
+<p>分母是采数据时的旧策略给这个动作的概率，分子是现在的新策略给它的概率。比率大于 1，说明新策略比旧策略<strong>更爱</strong>这个动作——它在旧数据里被&quot;低估了出场率&quot;，权重上调补偿；小于 1 则反之。乘上这个比率，旧数据就能合法地为新策略的梯度估计服务。</p>
+<p>实际收益立竿见影：采一批数据，<strong>做多轮梯度更新</strong>（每轮用最新参数重算比率），榨干每条昂贵的轨迹再扔。对语言模型这尤其要命地重要——&quot;采样一批轨迹&quot; = 用当前模型完整生成几万条回答，是实打实的推理算力；能复用三到十轮，成本直接除以三到十。</p>
+<p>但药方自带毒性警告：<strong>校正比率只在两个分布还比较接近时可靠</strong>。新旧策略差得越远，比率的取值越极端（一个旧策略几乎不选、新策略很爱的动作，比率可以大到几十几百），估计的方差爆炸，&quot;校正&quot;变成&quot;放大噪声&quot;。所以重要性采样给了我们复用数据的权利，同时施加了一条纪律：<strong>新策略不能离旧策略太远</strong>。记住这条纪律，它马上会和第二桩病汇合。</p>
+<h2 id="43-悬崖边的雾策略崩塌">4.3 悬崖边的雾：策略崩塌</h2>
+<p>第二桩病要认真讲透，因为它是 PPO 存在的全部理由。</p>
+<p>监督学习里，学习率大了会震荡、会发散，但有一个隐性的安全网：<strong>数据集不会因为你更新坏了而变质</strong>——下一步梯度仍来自同一批好数据，走错了还能被拉回来。RL 把这张网抽掉了：数据是当前策略自己采的。设想一次过大的更新把策略推进了坏区域——它开始满嘴胡话/往悬崖走——接下来发生什么？<strong>它采到的所有新数据都是坏策略的产物</strong>：低回报、无信息量，从这些垃圾轨迹里算出的梯度指不出回家的路。策略坏 → 数据坏 → 梯度坏 → 策略更坏。这个自我强化的死亡螺旋有个名字：<strong>策略崩塌</strong>（performance collapse），而且常常没有回头路——不是&quot;这一步亏了&quot;，是&quot;从此再也采不到能教你变好的数据&quot;。</p>
+<p>社区流传一个贴切的比喻（Spinning Up 等教程常用）：策略优化像<strong>在浓雾中沿着悬崖边的山脊登山</strong>。看不清全貌（只有本地的梯度估计），山脊右侧是深渊（坏策略区域），而且摔下去没有安全绳。在这样的地形上，正确的行走方式不是&quot;朝最陡的方向迈最大步&quot;，而是：<strong>每一步都小，且确认落脚点离上一步不远</strong>。</p>
+<p>把这句话说得数学一点，还有一层微妙：<strong>&quot;参数变化小&quot;不等于&quot;策略变化小&quot;</strong>。神经网络里，有的参数动一点点、输出分布纹丝不动；有的参数动同样一点点、分布天翻地覆。在参数空间限制步长（比如调小学习率）是隔靴搔痒——真正该限制的是<strong>策略分布本身</strong>的变化量。分布之间的&quot;距离&quot;用什么量？你在深度学习里见过的老朋友：KL 散度。</p>
+<h2 id="44-信任域把纪律写进优化问题">4.4 信任域：把纪律写进优化问题</h2>
+<p>于是 2015 年的 <strong>TRPO</strong>（Trust Region Policy Optimization，信任域策略优化）把上面所有线索拧成了一个干净的优化问题：</p>
+<p>$$
+\max_\theta\ \ \mathbb{E}\Big[\, r_t(\theta)\, \hat A_t \,\Big] \qquad \text{s.t.}\quad \mathbb{E}\big[\, D_{\mathrm{KL}}\big(\pi_{\theta_{\text{old}}} \,\|\, \pi_\theta\big)\,\big] \le \delta
+$$</p>
+<p>读起来每个零件都认识：目标是&quot;用重要性采样校正过的 advantage 加权收益&quot;（4.2 的成果——可复用旧数据）；约束是&quot;新旧策略的 KL 散度不得超过一个小阈值 $\delta$&quot;（4.3 的纪律——在<strong>分布空间</strong>画一个信任域，本次更新只许在圈内寻优）。圈内，重要性采样可靠、崩塌风险可控；出圈，一切保证作废。&quot;信任域&quot;这个名字非常准确：<strong>我只信任旧策略邻域内的估计，就只在我信任的范围里走</strong>。</p>
+<p>TRPO 在理论上近乎完美（甚至能证明单调改进的保证），实践中却笨重：带 KL 约束的优化需要二阶信息——算 Fisher 矩阵、跑共轭梯度——实现复杂、算力昂贵，还和 dropout、参数共享这些深度学习的日常家当合不来。它像一辆装了顶级安全系统的概念车：方向完全正确，但没法量产。</p>
+<p>整个领域于是憋着同一个问题：**能不能用一阶方法（就普通的梯度下降），廉价地逼近信任域的效果？**2017 年，Schulman（TRPO 的同一作者）给出了那个后来改变一切的答案——用一个 min 和一个 clip，两行代码。下一章，PPO：先拆解这个精巧的目标函数，然后带着全卷的装备，正式跨进大语言模型的世界。</p>
+<hr>
+<h3 id="本章要点">本章要点</h3>
+<ul>
+<li>Actor-Critic：演员（策略网络）行动、评论家（价值网络）估值供 advantage；共生互训；思想可溯至 1983 年倒立摆实验，critic 之名即出自彼处。</li>
+<li>GAE 的 $\lambda$：在单步 TD（低方差有偏，信教练）与蒙特卡洛（无偏高方差，信实测）之间连续调节，典型 0.95。</li>
+<li>重要性采样 $r_t = \pi_\theta / \pi_{\theta_{\text{old}}}$：分布校正让旧数据可复用（一批数据多轮更新，对生成昂贵的 LLM 尤其关键）；纪律：比率仅在新旧策略接近时可靠。</li>
+<li>策略崩塌：数据由策略自己采 ⇒ 坏策略采坏数据、无法自愈的死亡螺旋——RL 独有，监督学习有&quot;数据不变&quot;的安全网；比喻：浓雾中沿悬崖山脊行走。</li>
+<li>该限制的是分布变化而非参数变化（同样的参数步长，分布变化可以天差地别）⇒ 用 KL 散度度量。</li>
+<li>TRPO = 重要性采样目标 + KL 信任域约束：方向完全正确、二阶实现太笨重——为 PPO 的&quot;两行代码平替&quot;铺好了台。</li>
+</ul>
+
+    <nav class="pager series-pager">
+  <a href="16-policy-gradient.html">
+    <span class="label">← 上一章</span>
+    <span class="title">顺着后果爬坡——策略梯度与 REINFORCE</span>
+  </a>
+  <a href="18-ppo-and-llm.html" class="next">
+    <span class="label">下一章 →</span>
+    <span class="title">PPO 与会师——通往大模型的最后一站</span>
+  </a>
+</nav>
+  </article>
+</div>
+
+<footer>
+  <div class="set">
+    <span>Large Language Models</span>
+    <span>2026 · ZH-CN</span>
+  </div>
+  <div class="set">
+    <span>Mav</span>
+  </div>
+</footer>
+<div class="search-backdrop" id="search-overlay" role="dialog" aria-modal="true" aria-label="搜索" hidden>
+  <div class="search-modal">
+    <div class="search-input-wrap">
+      <input type="search" class="search-input" placeholder="搜索内容..." aria-label="搜索内容" autocomplete="off">
+      <kbd>ESC</kbd>
+    </div>
+    <div class="search-results" role="listbox" aria-label="搜索结果"></div>
+  </div>
+</div>
+
+<div class="side-panel" id="side-panel">
+  <div class="side-panel-resize" id="side-panel-resize"></div>
+  <div class="side-panel-header">
+    <div class="side-panel-tabs">
+      <button class="side-panel-tab active" data-mode="sidenote">补充</button>
+      <button class="side-panel-tab" data-mode="notepad">笔记</button>
+    </div>
+    <button class="side-panel-close" aria-label="关闭">×</button>
+  </div>
+  <div class="side-panel-body"></div>
+</div>
+<button class="notepad-fab" id="notepad-fab" aria-label="便利贴">✎</button>
+
+<button class="mtoc-fab" id="mtoc-fab" aria-label="系列目录">TOC</button>
+<div class="mtoc-drawer" id="mtoc-drawer">
+  <div class="mtoc-content series-sidebar"></div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/bash.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/typescript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/yaml.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/javascript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/json.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/python.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/css.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+<script>mermaid.initialize({startOnLoad:true, theme:'neutral', fontFamily:'Inter, sans-serif'});</script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}]});"></script>
+<script src="../assets/script.js"></script>
+
+</body>
+</html>

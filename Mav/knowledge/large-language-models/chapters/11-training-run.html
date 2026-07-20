@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>厨房里的三个月——损失、优化器与一场不能崩的马拉松 — Large Language Models</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" href="../assets/series.css">
+<link rel="stylesheet" id="hljs-light" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+<link rel="stylesheet" id="hljs-dark" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" media="not all">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+
+</head>
+<body class="series-page series-reader-page">
+
+<div class="progress-bar" id="progress-bar"></div>
+
+<nav class="topnav series-topnav" id="topnav">
+  <div class="topnav-inner">
+    <a class="brand" href="../index.html">Large Language Models</a>
+    <div class="nav-links">
+      <a href="../index.html#part-architecture">PART I</a>
+      <a href="../index.html#part-pretraining" class="active">PART II</a>
+      <a href="../index.html#part-rl-crash-course">PART III</a>
+      <a href="../index.html#part-post-training">PART IV</a>
+      <a href="../index.html#part-compute-inference">PART V</a>
+      <a href="../index.html#part-industry-map">PART VI</a>
+    </div>
+    <div class="nav-controls">
+      <button class="nav-btn" id="search-btn" aria-label="搜索 (Ctrl+K)">⌘K</button>
+      <button class="nav-btn" id="settings-btn" aria-label="阅读设置">Aa</button>
+      <a class="nav-btn" href="../../index.html" aria-label="返回知识库">← 知识库</a>
+    </div>
+  </div>
+</nav>
+<div class="settings-pop" id="settings-pop">
+  <h5>主题</h5>
+  <div class="row">
+    <button class="seg" data-theme-set="light">明亮</button>
+    <button class="seg" data-theme-set="dark">暗色</button>
+  </div>
+  <h5>字号</h5>
+  <div class="row">
+    <button class="seg" data-size-set="s">小</button>
+    <button class="seg" data-size-set="m">中</button>
+    <button class="seg" data-size-set="l">大</button>
+  </div>
+</div>
+
+<div class="with-sidebar series-reader">
+  <aside class="sidebar series-sidebar">
+  <a class="series-sidebar-home" href="../index.html">系列目录</a>
+  <section class="series-sidebar-part">
+    <h4><span>PART I</span>架构演化</h4>
+    <ul>
+      <li class="series-chapter-item">
+        <a href="01-from-transformer-to-gpt.html" data-chapter="01">课本尽头的 Transformer——把它真正数一遍</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="02-residual-stream.html" data-chapter="02">残差流——理解一切改动的地基</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="03-norms-and-activations.html" data-chapter="03">稳定性之战——归一化与激活函数</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="04-positional-encoding.html" data-chapter="04">位置的难题——从正弦波到 RoPE 与长上下文</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="05-attention-evolution.html" data-chapter="05">注意力的账单——KV cache 与一部省钱史</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="06-moe-basics.html" data-chapter="06">分而治之——MoE 的基本机制</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="07-moe-modern.html" data-chapter="07">MoE 的分水岭——DeepSeek 配方与 2026 年的主流形态</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="08-reading-a-release.html" data-chapter="08">读懂一次发布——参数量、基模与版本语义</a>
+      </li>
+    </ul>
+  </section>
+  <section class="series-sidebar-part">
+    <h4><span>PART II</span>预训练</h4>
+    <ul>
+      <li class="series-chapter-item">
+        <a href="09-scaling-laws.html" data-chapter="09">规模的法则——从赌注到公式</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="10-data-pipeline.html" data-chapter="10">备菜间——几十万亿 token 从哪来</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="11-training-run.html" data-chapter="11" class="active" aria-current="page">厨房里的三个月——损失、优化器与一场不能崩的马拉松</a>
+        <ul class="series-section-links">
+          <li><a href="#31-目标函数朴素得令人失望深刻得出人意料">3.1 目标函数：朴素得令人失望，深刻得出人意料</a></li>
+          <li><a href="#32-优化器adamw-的王座与-muon-的叛乱">3.2 优化器：AdamW 的王座与 Muon 的叛乱</a></li>
+          <li><a href="#33-学习率的编舞与超参的缩放律">3.3 学习率的编舞与超参的缩放律</a></li>
+          <li><a href="#34-马拉松每三小时坏一次的机器">3.4 马拉松：每三小时坏一次的机器</a></li>
+          <li><a href="#35-仪表盘几亿美元烧完之前怎么知道没做砸">3.5 仪表盘：几亿美元烧完之前，怎么知道没做砸</a></li>
+          <li><a href="#36-涌现之争你的尺子决定你看到什么">3.6 涌现之争：你的尺子决定你看到什么</a></li>
+        </ul>
+      </li>
+      <li class="series-chapter-item">
+        <a href="12-midtraining.html" data-chapter="12">后半场——mid-training、退火与长上下文课程</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="13-parallelism.html" data-chapter="13">把模型摊开——并行训练、万卡集群与预训练的黄昏</a>
+      </li>
+    </ul>
+  </section>
+  <section class="series-sidebar-part">
+    <h4><span>PART III</span>强化学习速成</h4>
+    <ul>
+      <li class="series-chapter-item">
+        <a href="14-another-way-to-learn.html" data-chapter="14">另一种学习——从「有标准答案」到「只有后果」</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="15-value-functions.html" data-chapter="15">给未来定价——回报、价值函数与贝尔曼方程</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="16-policy-gradient.html" data-chapter="16">顺着后果爬坡——策略梯度与 REINFORCE</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="17-actor-critic-trust-region.html" data-chapter="17">教练与护栏——Actor-Critic、重要性采样与信任域</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="18-ppo-and-llm.html" data-chapter="18">PPO 与会师——通往大模型的最后一站</a>
+      </li>
+    </ul>
+  </section>
+  <section class="series-sidebar-part">
+    <h4><span>PART IV</span>后训练</h4>
+    <ul>
+      <li class="series-chapter-item">
+        <a href="19-sft-instruction-tuning.html" data-chapter="19">从续写到听话——SFT 与指令微调</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="20-reward-models-rlhf.html" data-chapter="20">学会分辨好坏——奖励模型与 RLHF 全流程</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="21-dpo-direct-preference.html" data-chapter="21">把 RL 短路——DPO 与直接偏好优化</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="22-rlaif-constitutional.html" data-chapter="22">让 AI 教 AI——RLAIF、宪法与评判者</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="23-reasoning-models.html" data-chapter="23">第二次质变——从 o1 到 R1 的推理革命</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="24-reasoning-craft-and-reefs.html" data-chapter="24">想多久、想什么——推理时代的工艺与暗礁</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="25-distillation-lora-versions.html" data-chapter="25">兑现与迭代——蒸馏、LoRA 与小版本的秘密</a>
+      </li>
+    </ul>
+  </section>
+  <section class="series-sidebar-part">
+    <h4><span>PART V</span>算力与推理</h4>
+    <ul>
+      <li class="series-chapter-item">
+        <a href="26-gpu-anatomy.html" data-chapter="26">认识铁疙瘩——GPU、带宽与算力的三重账</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="27-memory-math-quantization.html" data-chapter="27">跑得动吗——显存数学与量化速算手册</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="28-inference-factory-pricing.html" data-chapter="28">推理工厂与价格标签——从 GPU 到账单</a>
+      </li>
+    </ul>
+  </section>
+  <section class="series-sidebar-part">
+    <h4><span>PART VI</span>2026 产业地图</h4>
+    <ul>
+      <li class="series-chapter-item">
+        <a href="29-us-frontier-labs.html" data-chapter="29">三巨头的分野——OpenAI、Anthropic 与 Google</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="30-china-open-weight.html" data-chapter="30">开源的中国时刻——一场反向的阳谋</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="31-model-genealogy.html" data-chapter="31">谁是谁的孩子——模型谱系与换代节奏</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="32-geopolitics-power.html" data-chapter="32">芯片、稀土与电表——算力的地缘战争</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="33-business-and-money.html" data-chapter="33">钱从哪来，又烧向何处——商业模式与泡沫之辩</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="34-finale-and-frontier.html" data-chapter="34">六年，与之后——回望、前沿与写给你的话</a>
+      </li>
+    </ul>
+  </section>
+</aside>
+  <article class="chapter-body">
+    <header class="chapter-head series-chapter-head">
+  <div class="series-breadcrumb">PART II · 预训练</div>
+  <div class="chapter-head-meta">
+    <span class="num">CHAPTER 11</span>
+    <span>≈ 50 MIN READ</span>
+  </div>
+  <h1>厨房里的三个月——损失、优化器与一场不能崩的马拉松</h1>
+</header>
+    <p>菜备好了，进厨房。这一章讲预训练这场&quot;烹饪&quot;本身：目标函数为什么朴素得令人失望却又深刻得出人意料；优化器和学习率这两个你在课程里学过的老朋友，在几万卡的尺度上变成了什么样；一场几个月不许失败的马拉松在工程上意味着什么；以及全程唯一的仪表盘——损失曲线和评测——该怎么读。读完这一章，&quot;训练一个大模型&quot;对你就不再是一个黑箱动词，而是一套你能逐环节讨论的流程。</p>
+<h2 id="31-目标函数朴素得令人失望深刻得出人意料">3.1 目标函数：朴素得令人失望，深刻得出人意料</h2>
+<p>先直面一个让所有初学者错愕的事实：这个行业烧几亿美元优化的目标函数，就是你在深度学习课上见过的交叉熵——在每个位置上预测下一个 token，猜错了罚分：</p>
+<p>$$
+\mathcal{L} = -\frac{1}{T}\sum_{t=1}^{T} \log p_\theta(x_t \mid x_{<t})
+$$</p>
+<p>没有精巧的多任务设计，没有奖励，没有对&quot;智能&quot;的任何直接刻画。就这一个数，从 GPT-1 到 2026 年的每一个基模，一以贯之。</p>
+<p>它凭什么够用？最有解释力的视角是<strong>压缩</strong>。&quot;预测下一个词&quot;和&quot;压缩文本&quot;在数学上是一回事（预测得越准，编码文本所需的比特越少），而<strong>压缩的极限是理解</strong>。想把&quot;巴黎是法国的……&quot;压到极致，你得知道首都这个事实；想压缩一篇侦探小说的结局，你得理解前文的诡计；想压缩一段程序的输出，你得会执行这段程序。互联网文本是人类知识与思维过程的投影——把它压缩到极限的系统，被迫在内部建构出产生这些文本的世界的模型。损失每下降一点，都对应着某种规律从&quot;没学会&quot;到&quot;学会&quot;。这就是那句行话的含义：<strong>loss 里压着一切</strong>。顺带一提，Chinchilla 论文拟合出的损失函数里有一个常数项 1.69——那是语言本身的不可约随机性（下一个词真的可能是很多种），神也压不掉的部分；预训练争夺的是它之上的每一个小数位。</p>
+<h2 id="32-优化器adamw-的王座与-muon-的叛乱">3.2 优化器：AdamW 的王座与 Muon 的叛乱</h2>
+<p>目标定了，谁来下山？过去七年答案唯一：<strong>AdamW</strong>——你学过的 Adam 加上解耦的权重衰减。它为每个参数维护两笔&quot;账&quot;（梯度的一阶、二阶动量），据此给每个参数自适应的步长。稳定、宽容、久经考验；代价在上一章的显存账里见过：那两笔账占了训练状态 16 字节中的 8 字节——<strong>优化器是显存里最大的单一租户</strong>。</p>
+<p>2025 年起，王座出现了七年来第一次真实的动摇。挑战者叫 <strong>Muon</strong>，思路是换一种&quot;步子的度量衡&quot;：AdamW 逐元素地缩放梯度，Muon 把整个权重<strong>矩阵</strong>的更新做近似正交化——直觉上，它约束的不是每个数字动多少，而是这次更新对该层整体变换的&quot;形状&quot;改变多少，让矩阵的各个方向被均衡地更新，而不是被少数主导方向拖着走。实测收益直接写在账单上：同样数据到达更低损失（token 效率更高），且只需一笔动量账、<strong>优化器显存减半</strong>。</p>
+<p>让 Muon 从论文走向生产的还是那家熟悉的公司组合：月之暗面把它扩展到大规模并给它加了一个保险丝——<strong>MuonClip</strong>：监控注意力 logits（第一卷第三章讲过的那个 loss spike 火源），超过阈值就直接对 Q、K 投影权重做重缩放，从源头掐灭爆炸。结果成了 2025 年技术报告里最漂亮的一句话：Kimi K2 的 15.5T token 预训练<strong>全程零 loss spike</strong>——损失曲线光滑得像教科书插图。此后 GLM-5、DeepSeek-V4、Kimi K3 相继采用 Muon 系优化器。而 AdamW 仍是西方旗舰的默认。优化器这个课本里&quot;选型题&quot;级别的组件，在 2026 年重新成了竞争前沿——这个行业没有任何一层是彻底定型的。</p>
+<h2 id="33-学习率的编舞与超参的缩放律">3.3 学习率的编舞与超参的缩放律</h2>
+<p>学习率调度，课程作业里常被一笔带过的配置项，在这里是被精心编排的舞蹈，而且 2024 年前后换了一支舞。</p>
+<p>经典编舞是 <strong>warmup + cosine</strong>：开头几千步从零线性爬升（避开初始化时刻的大梯度雷区——第一卷讲 Post-LN 时见过这个雷区的来历），随后沿余弦曲线缓缓降到峰值的百分之一。它效果好，但有个隐藏的僵硬之处：<strong>余弦曲线必须预先知道终点</strong>——整条调度是为&quot;总共训 X 万亿 token&quot;量身定制的，中途想多训一段？对不起，整支舞重编。</p>
+<p>2024 年后主流转向 <strong>WSD</strong>（warmup–stable–decay）：爬升之后<strong>长期恒定</strong>，只在最后一段快速衰减。恒定段的妙处是&quot;永远没定终点&quot;——随时可以决定再多训 5T token，也随时可以从恒定段的任何一个 checkpoint 分出一支、跑一段衰减来&quot;结账&quot;。这个灵活性下一章会显出真正的威力：它让预训练的尾声从一次性动作变成了可反复实验的阶段。Kimi K2 的配方就是典型：前 10T token 恒定，后 5.5T 衰减。</p>
+<p>其余超参数在旗舰之间惊人地一致：权重衰减 0.1、梯度全局范数裁剪 1.0（第一卷深度学习课的老朋友）、batch size 从小往大爬坡（训练初期模型什么都能学，小 batch 省算力；后期需要更稳的梯度估计，batch 加大到千万 token 级）。至于&quot;模型放大十倍，学习率该怎么变&quot;——各家用小模型拟合自己的<strong>超参缩放律</strong>再外推，是&quot;小模型侦察兵&quot;方法论的又一次出场。</p>
+<h2 id="34-马拉松每三小时坏一次的机器">3.4 马拉松：每三小时坏一次的机器</h2>
+<p>现在把视角从算法拉到机房。一次旗舰预训练是数万张 GPU 连续运转两三个月，这个尺度上，一类平时可以忽略的问题成了日常：<strong>硬件会坏，而且一直在坏</strong>。</p>
+<p>Meta 公布过 Llama 3 405B 训练的完整&quot;病历&quot;，数字足以刷新直觉：54 天的训练窗口、1.6 万张 H100，共发生 466 次中断，其中 <strong>419 次是非计划的——平均每三小时坏一次</strong>。病因排行：GPU 本体故障 30%，HBM 显存故障 17%（算上其他 GPU 部件，卡本身的问题占近六成），再往下是网线、交换机、偶尔的宿主机。做个朴素的算术就明白这不是 Meta 倒霉：单张卡哪怕年故障率只有百分之几，一万六千张卡同时跑，<strong>&quot;每天坏几张&quot;就是数学必然</strong>。故障不是异常，是常态；容错不是补丁，是系统的默认形态。</p>
+<p>工程应对是一套成熟的组合拳：<strong>高频异步 checkpoint</strong>（把模型状态持续快照到内存和存储，坏了就回滚，损失以分钟计）、自动故障检测与节点热替换（Llama 3 的 466 次中断只有 3 次需要人工介入，有效训练时间保持在 90% 以上）。对付 loss spike 也有标准剧本，出自 PaLM 时代的经典观察：spike 发生后，回滚到几百步之前、<strong>跳过那几百个 batch</strong> 再继续，spike 就不再复现——说明爆炸不是&quot;某条坏数据&quot;的错，而是&quot;优化器状态与特定数据顺序&quot;的坏组合，错开就好。而 2026 年的风向是从抢救转向预防：与其练熟救火（回滚、跳批、临时降学习率），不如从机制上让火点不着——MuonClip、QK-Norm 这些第一卷和本章讲过的&quot;保险丝&quot;，让新一代技术报告的炫耀点从&quot;我们扛住了 spike&quot;变成了&quot;我们全程零 spike&quot;。</p>
+<div class="callout callout-tip">
+<p class="callout-title">产业一瞥</p>
+
+<p>&quot;每三小时坏一次&quot;这个数字还解释了一条产业链：大集群运维（故障预测、静默数据损坏检测、checkpoint 基础设施）本身成了核心竞争力和招聘热点。读技术报告时，&quot;故障与恢复&quot;章节的详实程度是判断一家实验室工程成熟度的可靠信号——这部分吹不了牛。</p>
+</div>
+
+<h2 id="35-仪表盘几亿美元烧完之前怎么知道没做砸">3.5 仪表盘：几亿美元烧完之前，怎么知道没做砸</h2>
+<p>马拉松跑着，怎么知道方向对不对？预训练的仪表盘有三层。</p>
+<p><strong>第一层：损失曲线本身。<strong>在留出的验证集上持续测交叉熵（或困惑度——loss 的指数，直观含义是&quot;模型在多少个候选词之间犹豫&quot;）。团队还会盯</strong>分领域的损失切片</strong>：代码 loss、数学 loss、多语言 loss 分别怎么走——总 loss 平滑下降而代码 loss 停滞，就说明配比或数据出了问题。</p>
+<p>**第二层：对照预言。**第一章讲过&quot;小模型侦察、外推预测&quot;——正式 run 的损失曲线要与开跑前 scaling law 的预测值持续对表。GPT-4 团队用万分之一算力的小模型预测了最终损失并精确命中；实际曲线偏离预言，是配置出错的最早警报。</p>
+<p>**第三层：能力抽检。**loss 相同的两个模型能力未必相同，所以定期拉 checkpoint 做 few-shot 基准评测：知识（MMLU 及其更难的后继 MMLU-Pro）、研究生级科学（GPQA）、数学、代码。这层仪表有一个著名陷阱——<strong>数据污染</strong>：几十 T 的语料里很可能混进了基准测试的原题，模型&quot;背过答案&quot;，分数虚高。所以严肃的团队做去污染处理，而基准本身也在不断轮换——旧基准饱和加污染，新基准顶上，这是评测领域永恒的猫鼠游戏。</p>
+<h2 id="36-涌现之争你的尺子决定你看到什么">3.6 涌现之争：你的尺子决定你看到什么</h2>
+<p>仪表盘的话题通向本卷立过 flag 的一场辩论，它关乎&quot;loss 下降&quot;和&quot;变聪明&quot;之间那道缝隙。</p>
+<p>2022 年，&quot;<strong>涌现能力</strong>&quot;论文给出了一组令人着迷的曲线：很多能力（多步算术、思维链推理）在小模型上完全为零，模型放大到某个规模时<strong>突然出现</strong>——像相变，不可预测。这个叙事传播极广（也顺手成了&quot;大模型可能突然涌现危险能力&quot;的论据）。2023 年，斯坦福团队发表了针锋相对的《涌现是海市蜃楼吗？》：所谓突变，很大程度是<strong>度量方式的伪影</strong>——&quot;完全做对才得分&quot;这类非连续指标天然把平滑的进步显示成跳变（一道五步算术，每步对的概率从 70% 爬到 99% 是平滑的，&quot;五步全对&quot;的概率却像开关）。换成连续的尺子，多数&quot;涌现&quot;曲线变回了平滑的坡。</p>
+<p>2026 年回望，这场争论以&quot;各让一步&quot;收场：大部分涌现确实是尺子问题加阈值效应；但少数能力换了尺子依然表现出顽固的非线性跃升，无法完全解释掉。留给你的教学要点有两条。<strong>其一，&quot;你测到什么取决于你用什么尺子&quot;</strong>——这在评测泛滥的今天是价值连城的防身术。<strong>其二</strong>，它精确划定了 scaling laws 的边界：<strong>幂律保证的是 loss 的平滑可预测，从不保证任意下游能力的平滑可预测</strong>——loss 与能力之间的换算，至今仍是半经验的艺术。这道缝隙，正是&quot;预训练之外还需要什么&quot;这个问题的萌芽——本卷结尾会回到它。</p>
+<p>厨房的日常讲完了。但还有一个尾声被我反复按下不表：训练的<strong>最后一段</strong>——学习率衰减的那几个星期——藏着近两年才被行业郑重命名的一整套工艺。下一章，mid-training：预训练的后半场，以及它如何模糊了&quot;预训练&quot;和&quot;后训练&quot;的边界。</p>
+<hr>
+<h3 id="本章要点">本章要点</h3>
+<ul>
+<li>目标函数就是逐位置交叉熵；压缩视角解释其深刻性：压缩的极限是理解，loss 里压着一切；1.69 的不可约熵是神也压不掉的底。</li>
+<li>AdamW 七年王座（代价：16 字节里占 8）；Muon 以矩阵级正交化更新挑战之——token 效率更高、优化器显存减半；MuonClip 加保险丝后 K2 达成 15.5T 零 spike；Muon 系已入 GLM-5/V4/K3。</li>
+<li>学习率编舞：cosine（须预知终点）→ WSD（恒定段随时可续、衰减段可反复&quot;结账&quot;）；wd 0.1、裁剪 1.0、batch 爬坡、超参靠小模型缩放律外推。</li>
+<li>马拉松工程：Llama 3 405B 54 天 419 次非计划中断（约 3 小时一次，GPU 系占六成）——故障是数学必然；高频 checkpoint + 自动恢复保 90%+ 有效时间；spike 剧本从&quot;回滚跳批&quot;进化为&quot;机制性预防、全程零 spike&quot;。</li>
+<li>三层仪表盘：分领域 loss 切片、对照 scaling law 预言（偏离即警报）、checkpoint 基准抽检（防数据污染）。</li>
+<li>涌现之争的收场：多数是度量伪影、少数顽固存在；scaling law 只保证 loss 平滑，不保证能力平滑——这道缝隙通向后训练的故事。</li>
+</ul>
+
+    <nav class="pager series-pager">
+  <a href="10-data-pipeline.html">
+    <span class="label">← 上一章</span>
+    <span class="title">备菜间——几十万亿 token 从哪来</span>
+  </a>
+  <a href="12-midtraining.html" class="next">
+    <span class="label">下一章 →</span>
+    <span class="title">后半场——mid-training、退火与长上下文课程</span>
+  </a>
+</nav>
+  </article>
+</div>
+
+<footer>
+  <div class="set">
+    <span>Large Language Models</span>
+    <span>2026 · ZH-CN</span>
+  </div>
+  <div class="set">
+    <span>Mav</span>
+  </div>
+</footer>
+<div class="search-backdrop" id="search-overlay" role="dialog" aria-modal="true" aria-label="搜索" hidden>
+  <div class="search-modal">
+    <div class="search-input-wrap">
+      <input type="search" class="search-input" placeholder="搜索内容..." aria-label="搜索内容" autocomplete="off">
+      <kbd>ESC</kbd>
+    </div>
+    <div class="search-results" role="listbox" aria-label="搜索结果"></div>
+  </div>
+</div>
+
+<div class="side-panel" id="side-panel">
+  <div class="side-panel-resize" id="side-panel-resize"></div>
+  <div class="side-panel-header">
+    <div class="side-panel-tabs">
+      <button class="side-panel-tab active" data-mode="sidenote">补充</button>
+      <button class="side-panel-tab" data-mode="notepad">笔记</button>
+    </div>
+    <button class="side-panel-close" aria-label="关闭">×</button>
+  </div>
+  <div class="side-panel-body"></div>
+</div>
+<button class="notepad-fab" id="notepad-fab" aria-label="便利贴">✎</button>
+
+<button class="mtoc-fab" id="mtoc-fab" aria-label="系列目录">TOC</button>
+<div class="mtoc-drawer" id="mtoc-drawer">
+  <div class="mtoc-content series-sidebar"></div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/bash.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/typescript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/yaml.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/javascript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/json.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/python.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/css.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+<script>mermaid.initialize({startOnLoad:true, theme:'neutral', fontFamily:'Inter, sans-serif'});</script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}]});"></script>
+<script src="../assets/script.js"></script>
+
+</body>
+</html>

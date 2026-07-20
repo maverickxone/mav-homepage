@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>六年，与之后——回望、前沿与写给你的话 — Large Language Models</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" href="../assets/series.css">
+<link rel="stylesheet" id="hljs-light" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+<link rel="stylesheet" id="hljs-dark" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" media="not all">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+
+</head>
+<body class="series-page series-reader-page">
+
+<div class="progress-bar" id="progress-bar"></div>
+
+<nav class="topnav series-topnav" id="topnav">
+  <div class="topnav-inner">
+    <a class="brand" href="../index.html">Large Language Models</a>
+    <div class="nav-links">
+      <a href="../index.html#part-architecture">PART I</a>
+      <a href="../index.html#part-pretraining">PART II</a>
+      <a href="../index.html#part-rl-crash-course">PART III</a>
+      <a href="../index.html#part-post-training">PART IV</a>
+      <a href="../index.html#part-compute-inference">PART V</a>
+      <a href="../index.html#part-industry-map" class="active">PART VI</a>
+    </div>
+    <div class="nav-controls">
+      <button class="nav-btn" id="search-btn" aria-label="搜索 (Ctrl+K)">⌘K</button>
+      <button class="nav-btn" id="settings-btn" aria-label="阅读设置">Aa</button>
+      <a class="nav-btn" href="../../index.html" aria-label="返回知识库">← 知识库</a>
+    </div>
+  </div>
+</nav>
+<div class="settings-pop" id="settings-pop">
+  <h5>主题</h5>
+  <div class="row">
+    <button class="seg" data-theme-set="light">明亮</button>
+    <button class="seg" data-theme-set="dark">暗色</button>
+  </div>
+  <h5>字号</h5>
+  <div class="row">
+    <button class="seg" data-size-set="s">小</button>
+    <button class="seg" data-size-set="m">中</button>
+    <button class="seg" data-size-set="l">大</button>
+  </div>
+</div>
+
+<div class="with-sidebar series-reader">
+  <aside class="sidebar series-sidebar">
+  <a class="series-sidebar-home" href="../index.html">系列目录</a>
+  <section class="series-sidebar-part">
+    <h4><span>PART I</span>架构演化</h4>
+    <ul>
+      <li class="series-chapter-item">
+        <a href="01-from-transformer-to-gpt.html" data-chapter="01">课本尽头的 Transformer——把它真正数一遍</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="02-residual-stream.html" data-chapter="02">残差流——理解一切改动的地基</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="03-norms-and-activations.html" data-chapter="03">稳定性之战——归一化与激活函数</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="04-positional-encoding.html" data-chapter="04">位置的难题——从正弦波到 RoPE 与长上下文</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="05-attention-evolution.html" data-chapter="05">注意力的账单——KV cache 与一部省钱史</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="06-moe-basics.html" data-chapter="06">分而治之——MoE 的基本机制</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="07-moe-modern.html" data-chapter="07">MoE 的分水岭——DeepSeek 配方与 2026 年的主流形态</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="08-reading-a-release.html" data-chapter="08">读懂一次发布——参数量、基模与版本语义</a>
+      </li>
+    </ul>
+  </section>
+  <section class="series-sidebar-part">
+    <h4><span>PART II</span>预训练</h4>
+    <ul>
+      <li class="series-chapter-item">
+        <a href="09-scaling-laws.html" data-chapter="09">规模的法则——从赌注到公式</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="10-data-pipeline.html" data-chapter="10">备菜间——几十万亿 token 从哪来</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="11-training-run.html" data-chapter="11">厨房里的三个月——损失、优化器与一场不能崩的马拉松</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="12-midtraining.html" data-chapter="12">后半场——mid-training、退火与长上下文课程</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="13-parallelism.html" data-chapter="13">把模型摊开——并行训练、万卡集群与预训练的黄昏</a>
+      </li>
+    </ul>
+  </section>
+  <section class="series-sidebar-part">
+    <h4><span>PART III</span>强化学习速成</h4>
+    <ul>
+      <li class="series-chapter-item">
+        <a href="14-another-way-to-learn.html" data-chapter="14">另一种学习——从「有标准答案」到「只有后果」</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="15-value-functions.html" data-chapter="15">给未来定价——回报、价值函数与贝尔曼方程</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="16-policy-gradient.html" data-chapter="16">顺着后果爬坡——策略梯度与 REINFORCE</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="17-actor-critic-trust-region.html" data-chapter="17">教练与护栏——Actor-Critic、重要性采样与信任域</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="18-ppo-and-llm.html" data-chapter="18">PPO 与会师——通往大模型的最后一站</a>
+      </li>
+    </ul>
+  </section>
+  <section class="series-sidebar-part">
+    <h4><span>PART IV</span>后训练</h4>
+    <ul>
+      <li class="series-chapter-item">
+        <a href="19-sft-instruction-tuning.html" data-chapter="19">从续写到听话——SFT 与指令微调</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="20-reward-models-rlhf.html" data-chapter="20">学会分辨好坏——奖励模型与 RLHF 全流程</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="21-dpo-direct-preference.html" data-chapter="21">把 RL 短路——DPO 与直接偏好优化</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="22-rlaif-constitutional.html" data-chapter="22">让 AI 教 AI——RLAIF、宪法与评判者</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="23-reasoning-models.html" data-chapter="23">第二次质变——从 o1 到 R1 的推理革命</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="24-reasoning-craft-and-reefs.html" data-chapter="24">想多久、想什么——推理时代的工艺与暗礁</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="25-distillation-lora-versions.html" data-chapter="25">兑现与迭代——蒸馏、LoRA 与小版本的秘密</a>
+      </li>
+    </ul>
+  </section>
+  <section class="series-sidebar-part">
+    <h4><span>PART V</span>算力与推理</h4>
+    <ul>
+      <li class="series-chapter-item">
+        <a href="26-gpu-anatomy.html" data-chapter="26">认识铁疙瘩——GPU、带宽与算力的三重账</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="27-memory-math-quantization.html" data-chapter="27">跑得动吗——显存数学与量化速算手册</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="28-inference-factory-pricing.html" data-chapter="28">推理工厂与价格标签——从 GPU 到账单</a>
+      </li>
+    </ul>
+  </section>
+  <section class="series-sidebar-part">
+    <h4><span>PART VI</span>2026 产业地图</h4>
+    <ul>
+      <li class="series-chapter-item">
+        <a href="29-us-frontier-labs.html" data-chapter="29">三巨头的分野——OpenAI、Anthropic 与 Google</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="30-china-open-weight.html" data-chapter="30">开源的中国时刻——一场反向的阳谋</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="31-model-genealogy.html" data-chapter="31">谁是谁的孩子——模型谱系与换代节奏</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="32-geopolitics-power.html" data-chapter="32">芯片、稀土与电表——算力的地缘战争</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="33-business-and-money.html" data-chapter="33">钱从哪来，又烧向何处——商业模式与泡沫之辩</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="34-finale-and-frontier.html" data-chapter="34" class="active" aria-current="page">六年，与之后——回望、前沿与写给你的话</a>
+        <ul class="series-section-links">
+          <li><a href="#61-三条曲线一个转折">6.1 三条曲线，一个转折</a></li>
+          <li><a href="#62-下一次跃迁的候选">6.2 下一次跃迁的候选</a></li>
+          <li><a href="#63-agi一场关于定义的争吵">6.3 AGI：一场关于定义的争吵</a></li>
+          <li><a href="#64-回望六年从续写机到数字同事">6.4 回望六年：从续写机到数字同事</a></li>
+          <li><a href="#65-写给你的话如何跟一个跑得比书快的领域">6.5 写给你的话：如何跟一个跑得比书快的领域</a></li>
+        </ul>
+      </li>
+    </ul>
+  </section>
+</aside>
+  <article class="chapter-body">
+    <header class="chapter-head series-chapter-head">
+  <div class="series-breadcrumb">PART VI · 2026 产业地图</div>
+  <div class="chapter-head-meta">
+    <span class="num">CHAPTER 34</span>
+    <span>≈ 45 MIN READ</span>
+  </div>
+  <h1>六年，与之后——回望、前沿与写给你的话</h1>
+</header>
+    <p>这是全书的最后一章。前面五卷加这一卷的前五章，我们从课本里那个原版 Transformer 出发，一路走到了 2026 年的产业地图。现在该收尾了——但收尾不是重复，而是站到最高处回望来路、眺望前方，然后把这本书交还到你手里。</p>
+<p>这一章分三步走：先看清 AI 增长的三条曲线眼下各自走到了哪、这决定了第 5 章那个&quot;能力还能不能继续涨&quot;的悬念的答案倾向；再巡视一遍下一次范式跃迁的候选者；最后，回望这六年，说几句写给你——一个正在入门的大二学生——的话。</p>
+<h2 id="61-三条曲线一个转折">6.1 三条曲线，一个转折</h2>
+<p>第二卷末尾我们留下过&quot;预训练撞墙了吗&quot;的悬念，第四卷又见证了 RL 和 test-time 两条新曲线的崛起。现在把三条曲线放在一起做个体检，会看到一个清晰的转折。</p>
+<p>**第一条，预训练 scaling（把模型做大、喂更多数据）。**2026 年的共识不是&quot;能力见顶&quot;，而是&quot;<strong>这条特定路径见顶</strong>&quot;。多份综述的措辞高度一致：撞上的不是能力的硬天花板，而是&quot;更大模型 + 更多互联网文本&quot;这个具体方法的极限——数据墙（第二卷）是真实的上限，架构与训练方法的创新从&quot;可选&quot;变成了&quot;必需&quot;。</p>
+<p>**第二条，RL scaling（后训练强化学习的算力）。**这是第四卷推理革命的引擎，2026 年它还在涨——但一份大规模系统研究揭示了一个关键性质：<strong>RL 的算力-性能曲线是 S 形的（有渐近上限）</strong>，不像预训练的幂律那样在可观测范围内看不到头。用一个直观的比方：<strong>预训练像越吹越大的气球（幂律，一直在长），RL 更像逼近饱和的 S 曲线（会趋平）</strong>。而且天花板的高度由训练配方决定——这解释了第四卷那场 GRPO 军备赛为什么如此激烈：大家争的不只是效率，是谁的配方能把渐近线抬得更高。</p>
+<p><strong>第三条，test-time scaling（答题时想得更久）。<strong>o1 以来最实打实的新维度，2026 年的问题已经从&quot;能不能 scale&quot;转向&quot;边际何时递减&quot;。一个耐人寻味的信号来自评测端：衡量能力的基准正在被前沿模型</strong>快速饱和</strong>——第四卷讲过的 METR 时间跨度曲线（模型能独立完成的任务时长），2024 年后每约三个月翻一倍，到 2026 年初前沿已达十几个小时，但基准本身开始&quot;测不准&quot;了（能撑起十六小时以上任务的测试题太少）。<strong>标尺快不够用了</strong>——这既是能力仍在猛涨的证据，也是一个微妙的警示：我们正在失去衡量下一段增长的工具。</p>
+<p>三条曲线合起来的图景是：<strong>老引擎（预训练）在减速，新引擎（RL、test-time）在加速但也能看到各自的天花板</strong>。所以第 5 章那个悬念——&quot;能力还能不能继续涨&quot;——2026 年最诚实的答案是：<strong>能，但不再是靠同一台引擎；增长的接力棒正在从&quot;规模&quot;传向&quot;方法&quot;</strong>。而下一棒会交到谁手里，就是下一节的问题。</p>
+<h2 id="62-下一次跃迁的候选">6.2 下一次跃迁的候选</h2>
+<p>如果说过去六年的主线是&quot;scaling 现有架构&quot;，那么 2026 年前沿的共识是：<strong>下一波增长更可能来自定向的算法突破，而非继续放大现有系统</strong>。几个候选方向值得你认识，因为它们很可能就是你未来几年会亲历的故事：</p>
+<p><strong>持续学习（continual learning）</strong>——解决当前系统最反直觉的一个缺陷：模型部署后<strong>学不进新东西</strong>。它的权重是&quot;冻&quot;住的，你这次对话教它的，下次它就忘了；想让它学新知识就得重训，而重训又会冲掉旧知识（这个叫&quot;灾难性遗忘&quot;的顽疾困扰了领域几十年）。第四卷讲的&quot;小版本迭代&quot;本质是人类工程师在替模型学习。而持续学习要让模型<strong>自己在部署中积累经验</strong>。多位前沿研究者乐观地认为它可能在近几年内被&quot;以令人满意的方式解决&quot;——如果成真，这是通往&quot;能力随使用而增长&quot;的关键一步。</p>
+<p><strong>世界模型（world models）</strong>——大语言模型预测&quot;下一个词&quot;，世界模型预测&quot;下一帧&quot;，在内部建立对物理与数字世界如何运作的表征。2025–26 年这个方向从论文走进了产品：有系统能从一张图或一段文字实时生成可交互、可导航的三维世界。深度学习先驱中有人（Yann LeCun 是最坚定的代表）押注这才是通往真正智能的路，甚至为此离开大厂另起炉灶——他们认为纯语言模型永远碰不到&quot;理解物理世界&quot;这层，而这层才是最难的。</p>
+<p><strong>具身智能（机器人）</strong>——把大模型装进机器人身体，让它不只在文本里推理，还能在真实世界里行动。2026 年&quot;视觉-语言-动作&quot;模型密集涌现，但真实短板也很清楚：物理世界的多样性和不确定性远超文本，当前的机器人更像在&quot;模仿训练数据里的模式&quot;，还缺乏对动作后果的真正预见。</p>
+<p><strong>agent 作为新范式</strong>——这不是遥远的未来，而是正在发生的现在。第四卷末尾那条&quot;从解题者到干活者&quot;的曲线，正在把 AI 从&quot;聊天机器人&quot;重新定义为&quot;数字同事&quot;。但这里有个冷静的数据：分析机构一边预测大量企业应用会嵌入 agent，一边预测相当比例的 agent 项目会因成本和回报不清而被砍掉——<strong>从原型到可靠生产的鸿沟，仍然很大</strong>。</p>
+<p>这些方向哪个会成、哪个是炒作？诚实的判断是：世界模型已有商用、持续学习进展强势但未落地、agent 生产化真实但有回报缺口、具身智能必要但仍早期。没有人能确定下一次&quot;GPT-3 时刻&quot;或&quot;R1 时刻&quot;会从哪个方向来——但几乎可以确定，<strong>它不会再是&quot;把 Transformer 做得更大&quot;这么简单</strong>。</p>
+<h2 id="63-agi一场关于定义的争吵">6.3 AGI：一场关于定义的争吵</h2>
+<p>绕不开的话题：这一切在通向 AGI（通用人工智能）吗？多久？</p>
+<p>2026 年，最有分量的几个声音给出的答案差异巨大。一端是最乐观的——有 CEO 认为强大到能取代大部分软件开发者、做诺奖级科研的 AI 会在一两年内出现。另一端是最怀疑的——有图灵奖级的学者坚持现有架构原则上到不了人类级智能，必须换范式，乐观估计也要五到十年。中间是谨慎乐观派——认为人类级 AGI&quot;还差得远&quot;，十年内达成的概率大概一半，且明确需要&quot;一两个突破&quot;（持续学习、记忆、few-shot 学习、更强推理这些当前的缺口）。</p>
+<p>面对这种分歧，最有用的不是选边站，而是看穿争论的实质。有一个精辟的观察值得你记住：<strong>当一个人说&quot;AGI 快到了&quot;、另一个人说&quot;AGI 不可能&quot;，他们往往不是在争同一件事——他们在争「该把哪件事叫做 AGI」。</strong> &quot;通用智能&quot;是个没有公认定义的词，把标准定在&quot;能替代程序员&quot;还是&quot;能像人一样理解物理世界&quot;，会得出完全相反的时间表。所以当你听到 AGI 的时间预测时，第一个该问的不是&quot;几年&quot;，而是&quot;<strong>你说的 AGI 是什么</strong>&quot;。这是这个领域最重要的一条&quot;防忽悠&quot;心法。</p>
+<p>至于能力增长本身——那条每约三个月翻一倍的任务时长曲线，是目前最硬的客观标尺。它没有告诉我们&quot;AGI 何时到来&quot;，但它确实告诉我们：<strong>AI 能独立完成的工作，正在以肉眼可见、可测量的速度变长</strong>。这个趋势会平滑地延续、还是会撞上某道墙，是未来几年最值得盯住的一个数字。</p>
+<h2 id="64-回望六年从续写机到数字同事">6.4 回望六年：从续写机到数字同事</h2>
+<p>现在把镜头拉到最远，回望整本书的起点。2020 年，GPT-3 是一台只会&quot;接下一个词&quot;的续写机器（第一卷开篇那个反问你问题的场景）。2026 年，同一条技术路线上的模型能独立完成一个工作日长度的编程任务。这六年的主线，可以浓缩成五级台阶——这也是全书六卷的骨架：</p>
+<ul>
+<li><strong>续写机</strong>（GPT-3，第一、二卷）：架构立骨、预训练注入知识，得到一台满腹经纶却只会续写的机器。</li>
+<li><strong>会听话</strong>（RLHF/ChatGPT，第四卷前半）：对齐把&quot;续写&quot;驯化成&quot;对话&quot;，AI 走进大众。</li>
+<li><strong>会思考</strong>（o1/R1，第三、四卷后半）：强化学习把算力从训练期挪到答题期，推理能力被激励出来。</li>
+<li><strong>会干活</strong>（2025 agent，第四卷末）：工具使用加长任务，AI 从&quot;生成文本&quot;迈向&quot;完成任务&quot;。</li>
+<li><strong>会看世界、会记忆</strong>（2026 前沿）：世界模型与持续学习指向一个持久的、能积累经验的&quot;数字同事&quot;——这是本书结束之处、也是未来开始之处。</li>
+</ul>
+<p>每一级台阶，你现在都知道它背后的技术是什么、为什么会发生、代价和边界在哪。这正是这本书想给你的东西：不是记住一堆模型名字和榜单排名（那些下个月就变了），而是<strong>拥有一套能看懂任何一次新发布、任何一场新争论的框架</strong>——账本与账单、基模与版本、三条 scaling 曲线、约束如何塑造创新。这些框架会比书里任何一个具体数字都活得更久。</p>
+<h2 id="65-写给你的话如何跟一个跑得比书快的领域">6.5 写给你的话：如何跟一个跑得比书快的领域</h2>
+<p>最后，作为一个大二学生，你合上这本书之后，怎么继续跟这个跑得飞快的领域？几条诚实的建议：</p>
+<p><strong>别追榜单，追曲线。<strong>谁家模型今天排第一，下个月就换人，记这些没意义。真正耐久的是</strong>能力曲线</strong>（METR 的任务时长、SWE-bench 的通过率）和<strong>范式转折</strong>（哪条 scaling 曲线在涨、哪条在饱和）。看懂趋势，比记住名次有用一百倍。</p>
+<p>**读一手，别只读转述。**技术报告和 model card 比发布博客诚实（第一卷教过怎么读发布）；arXiv、各实验室的技术报告、Epoch AI 的算力数据、METR 的能力数据，都是一手源。二手聚合站常常互相抄、错了一起错——这本书的每一卷都是先派人核实一手源再动笔的，你也该养成这个习惯。</p>
+<p><strong>关于就业，说句实在的。<strong>你是 CS 学生，绕不开&quot;AI 会不会取代程序员&quot;。2026 年的现实是：<strong>它取代的是任务，不是职业；最受冲击的是入门级的重复性编码</strong>——研究显示编程是 AI 覆盖率最高的职业之一，年轻程序员的入门岗招聘确实在收缩。但价值没有消失，它在</strong>迁移</strong>：向&quot;能定义问题、做架构设计、审查和整合 AI 产出&quot;的能力迁移。换句话说，会用 AI 写代码的人不会被取代，被取代的是&quot;只会写 AI 也能写的那种代码&quot;的人。你现在读这本书、去理解 AI 到底怎么运作——这本身就是在往价值迁移的那一端站。</p>
+<p>**保持怀疑，也保持惊奇。**这个领域同时充满了真实的突破和过度的炒作，泡沫的质疑和真金白银的进展并存。最好的姿态是两者都不放弃——像工程师一样怀疑每一个惊人的数字（去查它的口径和来源），也像 2020 年第一次见到 GPT-3 的人一样，对&quot;机器开始会思考&quot;这件事保有惊奇。</p>
+<p>六卷到此结束。你从一个&quot;听师兄聊天似懂非懂&quot;的起点出发，现在应该能坐到那张饭桌上，不只是听懂，而是有自己的判断——知道哪些是扎实的、哪些是吹的、下一个值得关注的转折可能在哪。这套判断力，就是这本书能给你的全部，也是它想给你的全部。</p>
+<p>这六年发生了什么，我们讲完了。接下来的六年会发生什么——那是你的故事了。</p>
+<hr>
+<h3 id="本章要点">本章要点</h3>
+<ul>
+<li>三条曲线体检：预训练 scaling 见顶的是&quot;特定路径&quot;而非能力（数据墙真实、架构创新变必需）；RL scaling 是 S 形有渐近上限（气球 vs S 曲线）、天花板由配方决定；test-time 仍涨但评测在饱和、&quot;标尺快不够用&quot;。增长接力棒从&quot;规模&quot;传向&quot;方法&quot;。</li>
+<li>下一跃迁候选：持续学习（解决静态权重与灾难性遗忘，进展强势未落地）、世界模型（预测下一帧、已有商用、LeCun 押注）、具身智能（VLA 涌现但仍早期）、agent 范式（正在发生但有生产化鸿沟）；下一次突破几乎确定不再是&quot;把 Transformer 做更大&quot;。</li>
+<li>AGI 时间表之争的实质是&quot;该把哪件事叫 AGI&quot;的定义之争——听到时间预测先问&quot;你说的 AGI 是什么&quot;；任务时长每约三个月翻倍是最硬的客观标尺。</li>
+<li>六年五级台阶（全书骨架）：续写机→会听话→会思考→会干活→会看世界/会记忆；本书给的是看懂任何新发布的框架，而非易过时的名字与名次。</li>
+<li>给学生的建议：追曲线别追榜单；读一手别读转述；就业是&quot;取代任务不取代职业、价值向定义问题/架构/审查整合迁移&quot;；保持怀疑也保持惊奇。</li>
+</ul>
+
+    <nav class="pager series-pager">
+  <a href="33-business-and-money.html">
+    <span class="label">← 上一章</span>
+    <span class="title">钱从哪来，又烧向何处——商业模式与泡沫之辩</span>
+  </a>
+  <a class="disabled next"><span class="label">下一章 →</span><span class="title"></span></a>
+</nav>
+  </article>
+</div>
+
+<footer>
+  <div class="set">
+    <span>Large Language Models</span>
+    <span>2026 · ZH-CN</span>
+  </div>
+  <div class="set">
+    <span>Mav</span>
+  </div>
+</footer>
+<div class="search-backdrop" id="search-overlay" role="dialog" aria-modal="true" aria-label="搜索" hidden>
+  <div class="search-modal">
+    <div class="search-input-wrap">
+      <input type="search" class="search-input" placeholder="搜索内容..." aria-label="搜索内容" autocomplete="off">
+      <kbd>ESC</kbd>
+    </div>
+    <div class="search-results" role="listbox" aria-label="搜索结果"></div>
+  </div>
+</div>
+
+<div class="side-panel" id="side-panel">
+  <div class="side-panel-resize" id="side-panel-resize"></div>
+  <div class="side-panel-header">
+    <div class="side-panel-tabs">
+      <button class="side-panel-tab active" data-mode="sidenote">补充</button>
+      <button class="side-panel-tab" data-mode="notepad">笔记</button>
+    </div>
+    <button class="side-panel-close" aria-label="关闭">×</button>
+  </div>
+  <div class="side-panel-body"></div>
+</div>
+<button class="notepad-fab" id="notepad-fab" aria-label="便利贴">✎</button>
+
+<button class="mtoc-fab" id="mtoc-fab" aria-label="系列目录">TOC</button>
+<div class="mtoc-drawer" id="mtoc-drawer">
+  <div class="mtoc-content series-sidebar"></div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/bash.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/typescript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/yaml.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/javascript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/json.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/python.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/css.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+<script>mermaid.initialize({startOnLoad:true, theme:'neutral', fontFamily:'Inter, sans-serif'});</script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}]});"></script>
+<script src="../assets/script.js"></script>
+
+</body>
+</html>

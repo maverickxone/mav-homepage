@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>开源的中国时刻——一场反向的阳谋 — Large Language Models</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" href="../assets/series.css">
+<link rel="stylesheet" id="hljs-light" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+<link rel="stylesheet" id="hljs-dark" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" media="not all">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+
+</head>
+<body class="series-page series-reader-page">
+
+<div class="progress-bar" id="progress-bar"></div>
+
+<nav class="topnav series-topnav" id="topnav">
+  <div class="topnav-inner">
+    <a class="brand" href="../index.html">Large Language Models</a>
+    <div class="nav-links">
+      <a href="../index.html#part-architecture">PART I</a>
+      <a href="../index.html#part-pretraining">PART II</a>
+      <a href="../index.html#part-rl-crash-course">PART III</a>
+      <a href="../index.html#part-post-training">PART IV</a>
+      <a href="../index.html#part-compute-inference">PART V</a>
+      <a href="../index.html#part-industry-map" class="active">PART VI</a>
+    </div>
+    <div class="nav-controls">
+      <button class="nav-btn" id="search-btn" aria-label="搜索 (Ctrl+K)">⌘K</button>
+      <button class="nav-btn" id="settings-btn" aria-label="阅读设置">Aa</button>
+      <a class="nav-btn" href="../../index.html" aria-label="返回知识库">← 知识库</a>
+    </div>
+  </div>
+</nav>
+<div class="settings-pop" id="settings-pop">
+  <h5>主题</h5>
+  <div class="row">
+    <button class="seg" data-theme-set="light">明亮</button>
+    <button class="seg" data-theme-set="dark">暗色</button>
+  </div>
+  <h5>字号</h5>
+  <div class="row">
+    <button class="seg" data-size-set="s">小</button>
+    <button class="seg" data-size-set="m">中</button>
+    <button class="seg" data-size-set="l">大</button>
+  </div>
+</div>
+
+<div class="with-sidebar series-reader">
+  <aside class="sidebar series-sidebar">
+  <a class="series-sidebar-home" href="../index.html">系列目录</a>
+  <section class="series-sidebar-part">
+    <h4><span>PART I</span>架构演化</h4>
+    <ul>
+      <li class="series-chapter-item">
+        <a href="01-from-transformer-to-gpt.html" data-chapter="01">课本尽头的 Transformer——把它真正数一遍</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="02-residual-stream.html" data-chapter="02">残差流——理解一切改动的地基</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="03-norms-and-activations.html" data-chapter="03">稳定性之战——归一化与激活函数</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="04-positional-encoding.html" data-chapter="04">位置的难题——从正弦波到 RoPE 与长上下文</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="05-attention-evolution.html" data-chapter="05">注意力的账单——KV cache 与一部省钱史</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="06-moe-basics.html" data-chapter="06">分而治之——MoE 的基本机制</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="07-moe-modern.html" data-chapter="07">MoE 的分水岭——DeepSeek 配方与 2026 年的主流形态</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="08-reading-a-release.html" data-chapter="08">读懂一次发布——参数量、基模与版本语义</a>
+      </li>
+    </ul>
+  </section>
+  <section class="series-sidebar-part">
+    <h4><span>PART II</span>预训练</h4>
+    <ul>
+      <li class="series-chapter-item">
+        <a href="09-scaling-laws.html" data-chapter="09">规模的法则——从赌注到公式</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="10-data-pipeline.html" data-chapter="10">备菜间——几十万亿 token 从哪来</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="11-training-run.html" data-chapter="11">厨房里的三个月——损失、优化器与一场不能崩的马拉松</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="12-midtraining.html" data-chapter="12">后半场——mid-training、退火与长上下文课程</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="13-parallelism.html" data-chapter="13">把模型摊开——并行训练、万卡集群与预训练的黄昏</a>
+      </li>
+    </ul>
+  </section>
+  <section class="series-sidebar-part">
+    <h4><span>PART III</span>强化学习速成</h4>
+    <ul>
+      <li class="series-chapter-item">
+        <a href="14-another-way-to-learn.html" data-chapter="14">另一种学习——从「有标准答案」到「只有后果」</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="15-value-functions.html" data-chapter="15">给未来定价——回报、价值函数与贝尔曼方程</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="16-policy-gradient.html" data-chapter="16">顺着后果爬坡——策略梯度与 REINFORCE</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="17-actor-critic-trust-region.html" data-chapter="17">教练与护栏——Actor-Critic、重要性采样与信任域</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="18-ppo-and-llm.html" data-chapter="18">PPO 与会师——通往大模型的最后一站</a>
+      </li>
+    </ul>
+  </section>
+  <section class="series-sidebar-part">
+    <h4><span>PART IV</span>后训练</h4>
+    <ul>
+      <li class="series-chapter-item">
+        <a href="19-sft-instruction-tuning.html" data-chapter="19">从续写到听话——SFT 与指令微调</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="20-reward-models-rlhf.html" data-chapter="20">学会分辨好坏——奖励模型与 RLHF 全流程</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="21-dpo-direct-preference.html" data-chapter="21">把 RL 短路——DPO 与直接偏好优化</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="22-rlaif-constitutional.html" data-chapter="22">让 AI 教 AI——RLAIF、宪法与评判者</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="23-reasoning-models.html" data-chapter="23">第二次质变——从 o1 到 R1 的推理革命</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="24-reasoning-craft-and-reefs.html" data-chapter="24">想多久、想什么——推理时代的工艺与暗礁</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="25-distillation-lora-versions.html" data-chapter="25">兑现与迭代——蒸馏、LoRA 与小版本的秘密</a>
+      </li>
+    </ul>
+  </section>
+  <section class="series-sidebar-part">
+    <h4><span>PART V</span>算力与推理</h4>
+    <ul>
+      <li class="series-chapter-item">
+        <a href="26-gpu-anatomy.html" data-chapter="26">认识铁疙瘩——GPU、带宽与算力的三重账</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="27-memory-math-quantization.html" data-chapter="27">跑得动吗——显存数学与量化速算手册</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="28-inference-factory-pricing.html" data-chapter="28">推理工厂与价格标签——从 GPU 到账单</a>
+      </li>
+    </ul>
+  </section>
+  <section class="series-sidebar-part">
+    <h4><span>PART VI</span>2026 产业地图</h4>
+    <ul>
+      <li class="series-chapter-item">
+        <a href="29-us-frontier-labs.html" data-chapter="29">三巨头的分野——OpenAI、Anthropic 与 Google</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="30-china-open-weight.html" data-chapter="30" class="active" aria-current="page">开源的中国时刻——一场反向的阳谋</a>
+        <ul class="series-section-links">
+          <li><a href="#21-先看战果一个惊人的事实">2.1 先看战果：一个惊人的事实</a></li>
+          <li><a href="#22-逻辑一权重是获客漏斗不是护城河">2.2 逻辑一：权重是获客漏斗，不是护城河</a></li>
+          <li><a href="#23-逻辑二低价-api-是价格武器开源是绕过封锁的盾">2.3 逻辑二：低价 API 是价格武器，开源是绕过封锁的盾</a></li>
+          <li><a href="#24-逻辑三一个美国无法复制的飞轮">2.4 逻辑三：一个美国无法复制的飞轮</a></li>
+          <li><a href="#25-阵营内部四家不撞车的分工">2.5 阵营内部：四家不撞车的分工</a></li>
+          <li><a href="#26-一个被逼出来的转向连大厂也开源了">2.6 一个被逼出来的转向：连大厂也开源了</a></li>
+        </ul>
+      </li>
+      <li class="series-chapter-item">
+        <a href="31-model-genealogy.html" data-chapter="31">谁是谁的孩子——模型谱系与换代节奏</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="32-geopolitics-power.html" data-chapter="32">芯片、稀土与电表——算力的地缘战争</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="33-business-and-money.html" data-chapter="33">钱从哪来，又烧向何处——商业模式与泡沫之辩</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="34-finale-and-frontier.html" data-chapter="34">六年，与之后——回望、前沿与写给你的话</a>
+      </li>
+    </ul>
+  </section>
+</aside>
+  <article class="chapter-body">
+    <header class="chapter-head series-chapter-head">
+  <div class="series-breadcrumb">PART VI · 2026 产业地图</div>
+  <div class="chapter-head-meta">
+    <span class="num">CHAPTER 30</span>
+    <span>≈ 45 MIN READ</span>
+  </div>
+  <h1>开源的中国时刻——一场反向的阳谋</h1>
+</header>
+    <p>上一章的美国三巨头，无论活法多不同，有一条铁律共享：<strong>最强的模型绝不公开</strong>。参数、权重、架构都是最高机密。而这一章的主角——中国的大模型公司——几乎集体做了一件在硅谷看来匪夷所思的事：<strong>把最强的模型免费开源出去</strong>，权重、代码、技术报告全部公开，任何人可下载、可商用、可微调。</p>
+<p>这看起来像慈善，甚至像自杀——辛辛苦苦烧几千万美元训出来的模型，白送？但如果你把它当慈善，就完全误读了 2026 年 AI 世界最精妙的一盘棋。这一章要讲清楚：<strong>开放权重不是道德选择，是一套自洽的、甚至颇具攻击性的商业与地缘策略</strong>。</p>
+<h2 id="21-先看战果一个惊人的事实">2.1 先看战果：一个惊人的事实</h2>
+<p>在讲逻辑之前，先把结果摆出来，因为它比任何论证都有说服力。到 2026 年年中，在全球最大的第三方模型调用平台上，<strong>中国开源模型占据了约六成的 token 消耗量</strong>——最常被调用的前五个模型里，四个是中国模型。更扎心的数字是：<strong>连美国公司自己，都把最多接近一半的调用量路由给了中国的开源模型</strong>。曾经的开源旗帜 Meta Llama，路由份额已跌到不足百分之一。</p>
+<p>这个格局的转折点，你在第四卷已经见证过——2025 年 1 月的 R1。此后一年多，Qwen、Kimi、GLM、MiniMax、小米等一个接一个，把&quot;美国前沿线以下&quot;的每一个性价比生态位填满。成本差是这场攻势的弹药：同样一个常见编程任务，在中国开源模型上花不到半美元，在美国前沿模型上要十美元左右——<strong>便宜六到九成</strong>。当&quot;够用、便宜、开放&quot;的那一层能吃掉绝大多数走量需求，&quot;最强但最贵&quot;就被挤成了一个细分市场。</p>
+<p>那么问题来了：白送模型，钱从哪来？</p>
+<h2 id="22-逻辑一权重是获客漏斗不是护城河">2.2 逻辑一：权重是获客漏斗，不是护城河</h2>
+<p>第一个、也是最根本的洞察是：<strong>这些公司从不指望靠&quot;卖模型&quot;赚钱</strong>。有一句话点破了本质——&quot;Qwen 的十亿次下载，是阿里云的获客成本，不是产品本身。&quot;</p>
+<p>拆开看这套模式。开源模型是<strong>播种</strong>：免费权重让全世界的开发者、企业、研究者零门槛用上你的模型，形成使用习惯和技术依赖。而<strong>收割</strong>发生在别处——当这些用户需要稳定、大规模、免运维地跑模型时，最省事的选择就是用原厂的云服务（第五卷讲过自托管的门槛和盈亏平衡线）。阿里靠阿里云的推理服务变现 Qwen，字节靠抖音的广告和电商补贴模型，都是同一个&quot;平台补贴模型、模型反哺平台&quot;的结构。<strong>模型本身是免费的钩子，钱在钩子钓上来的鱼身上</strong>。</p>
+<p>这套打法在中国尤其成立，还因为一个现实约束（这里接上第五卷的账）：在先进芯片和 HBM 受限的条件下，中国公司拿不到无限算力，与其把有限的算力锁在闭源 API 的围墙里慢慢变现，不如用开源把影响力最大化、把生态卡位做实。开源，在算力稀缺时反而是<strong>资源利用率最高</strong>的打法。</p>
+<h2 id="23-逻辑二低价-api-是价格武器开源是绕过封锁的盾">2.3 逻辑二：低价 API 是价格武器，开源是绕过封锁的盾</h2>
+<p>第二层逻辑更有攻击性。中国公司普遍配一套&quot;<strong>开源引流 + 低价 API 变现</strong>&quot;的组合拳：权重全开、同时提供价格约为美国闭源十分之一的 API。这不是薄利多销，是<strong>价格武器化</strong>——用极低价格换市场份额，逼着&quot;前沿能力&quot;这件事本身贬值成一个廉价功能。（有个数字很能说明打法：某家拿下了约一成七的开发者调用量，却只贡献约百分之一的收入——它要的根本不是这部分收入，是份额和存在感。）</p>
+<p>而开源还有一层美国公司<strong>结构上无法复制</strong>的优势，它直接接上了上一章的 Fable 5 事件。你还记得那一幕：一纸美国行政令，让 Anthropic 的前沿模型全球下线十九天。为什么能下线？因为它是<strong>受美国管辖的闭源 API</strong>——服务器、公司、法律主体都在美国政府够得着的地方。而一个开源模型呢？权重一旦放到全世界的硬盘上，<strong>没有任何政府能把它&quot;下线&quot;</strong>，也不需要任何出口许可。这就是中国开源策略最深的地缘含义：<strong>开放权重让能力免疫于封锁</strong>。有分析一针见血——美国的 AI 出口管制，反而把&quot;开放&quot;这个优势拱手让给了中国。你越是想用管制卡住闭源的喉咙，就越是反衬出开源的不可阻挡。</p>
+<h2 id="24-逻辑三一个美国无法复制的飞轮">2.4 逻辑三：一个美国无法复制的飞轮</h2>
+<p>如果说前两层是商业算计，第三层就是产业结构层面的深谋，它被智库总结成一个&quot;双回路飞轮&quot;，值得你记住这个框架：</p>
+<p><strong>第一个回路在训练侧（数字回路）</strong>：开源降低门槛 → 加速全球采用 → 海量使用暴露问题、驱动快速迭代 → 更强的模型再开源。Qwen 在开源社区衍生出十几万个变体，这个庞大的生态本身就是一个持续反馈的研发力量——全世界的开发者在免费帮你测试、改进、发现用例。</p>
+<p><strong>第二个回路在部署侧（物理回路）</strong>：这是美国真正难复制的一环。免费、可自托管的开源模型让中国的制造业、机器人、物流能<strong>低成本地大规模部署</strong> AI，而这些真实的工业场景又产生海量的运营数据回流、精炼模型。中国把&quot;数据&quot;定为生产要素、允许企业把数据资产入表——从制度上给这个飞轮加了油。</p>
+<p>两个回路互锁，构成一个&quot;越用越强、越强越多人用&quot;的产业飞轮。而闭源模式天然转不动这个飞轮——你把模型锁在 API 后面，就切断了生态贡献和大规模工业部署这两个反馈源。这是&quot;开放&quot;对&quot;封闭&quot;在<strong>产业演化速度</strong>上的结构性差异。</p>
+<h2 id="25-阵营内部四家不撞车的分工">2.5 阵营内部：四家不撞车的分工</h2>
+<p>这套开源逻辑之下，中国阵营内部并非混战，而是形成了一种有趣的<strong>分层错位</strong>，可以用一句业内归纳记住：<strong>&quot;Qwen 拥有生态，DeepSeek 拥有性价比，Kimi 拥有 agentic 节奏，字节拥有多模态。&quot;</strong> 各占一格，不正面血拼。</p>
+<ul>
+<li><strong>DeepSeek</strong> 是引爆者，也是象征。量化私募幻方是它的母体和钱袋——&quot;以量化养 AI&quot;让它能打价格战而不依赖外部输血。有意思的是，这家最不缺钱的公司，直到 2026 年 6 月才完成成立以来<strong>第一次外部融资</strong>（约七十多亿美元、投后估值约五百亿，一举成为中国估值最高的 AI 创业公司），且创始人梁文锋自己就是最大出资方、牢牢握着控制权。它的推理续作迟迟未独立发布（据报是创始人对性能不满而压着），推理能力被并进了主线模型——第三卷谱系里那个&quot;R 线并入 V 线&quot;的现象，背后是这个决策。</li>
+<li><strong>阿里 Qwen</strong> 是生态之王：累计下载超十亿次（超过 Meta Llama、占全球开源下载的一半以上），衍生出十几万个变体，从 0.6B 到旗舰全尺寸覆盖——&quot;每个部署层级都有一款 Qwen&quot;。它开源走量、闭源旗舰（Qwen-Max 线）攻高端，两条腿走路。</li>
+<li><strong>月之暗面（Kimi）、智谱（GLM）、MiniMax、阶跃</strong> 各有侧重：Kimi 主打 to C 应用和 agentic 编程节奏；智谱国资色彩最重、主攻政企市场，2026 年初率先登陆港股；MiniMax 走 to C 和出海路线，上市首日大涨过一倍。一个信号是：<strong>这批公司正密集冲刺 IPO</strong>——大模型创业进入了资本化收割期。</li>
+</ul>
+<h2 id="26-一个被逼出来的转向连大厂也开源了">2.6 一个被逼出来的转向：连大厂也开源了</h2>
+<p>开源逻辑的说服力，最好的证据是它的<strong>对手也被迫改宗</strong>。两个例子。</p>
+<p><strong>百度</strong>曾是中国闭源路线最坚定的旗手——创始人公开说过&quot;永远该选闭源&quot;。但 R1 证明开源能打之后，百度掉头把文心大模型开源了。<strong>Meta</strong> 在美国走了相反方向：作为西方开源的旗帜，它在 2025 年底因为旗舰失利、又担心自家架构被中国公司蒸馏复制，转向了闭源。一开一关之间，恰好构成一组镜像——<strong>在中国，开源是进攻的阳谋；在美国，开源正在因为&quot;防不住蒸馏&quot;而退潮</strong>（美国前沿实验室甚至联手成立论坛、共享情报来对抗&quot;对抗性蒸馏&quot;——用自动化查询套取前沿模型输出来训练廉价复制品）。这组对照本身就是本卷的一个核心论点：<strong>当模型能力可以被低成本复制，&quot;靠保密建护城河&quot;的逻辑正在失效，而中国的开源阵营正是这一失效的最大受益者</strong>。</p>
+<p>那么，中美到底差多少？公开评估给出的答案在收窄：主流机构的说法从&quot;落后六到八个月&quot;缩到&quot;几个月&quot;、甚至&quot;几周&quot;，最强模型的性能差距按某个权威指数已缩到个位数百分点。但天平的另一端是资本——美国的 AI 私人投资是中国的二十多倍。<strong>性能和资本，美国仍领先；成本效率、开源采用、部署规模、工程人才，中国领先</strong>。这是一场还没有裁判的比赛，而它的胜负手，一半握在下一章要讲的东西手里——芯片、电力与国界。</p>
+<hr>
+<h3 id="本章要点">本章要点</h3>
+<ul>
+<li>战果先行：2026 年中，中国开源模型占全球第三方平台约六成 token 调用，连美国公司都把近半调用路由给它们；成本便宜六到九成。转折点是 R1。</li>
+<li>逻辑一：权重是获客漏斗不是护城河——开源播种、云服务收割（Qwen 的下载是阿里云的获客成本）；算力稀缺时开源是资源利用率最高的打法。</li>
+<li>逻辑二：低价 API 价格武器化（约为美国闭源的 1/10）；开源让能力免疫于封锁——开源模型无法被出口管制&quot;下线&quot;（对照上一章 Fable 5 事件），管制反而凸显开源优势。</li>
+<li>逻辑三：双回路飞轮——训练侧（开源→采用→迭代）+ 部署侧（工业场景→数据回流），美国闭源模式转不动这个飞轮。</li>
+<li>阵营分工不撞车：DeepSeek 性价比（幻方养、首轮外融迟至 2026-06）、Qwen 生态（下载破十亿）、Kimi agentic、字节多模态；智谱/MiniMax 已抢先港股上市。</li>
+<li>攻守易势：百度被逼从闭源改开源，Meta 因防不住蒸馏退回闭源——&quot;靠保密建护城河&quot;的逻辑正在失效，中国开源阵营是最大受益者。中美差距在收窄（性能差个位数百分点），但美国资本领先二十余倍。</li>
+</ul>
+
+    <nav class="pager series-pager">
+  <a href="29-us-frontier-labs.html">
+    <span class="label">← 上一章</span>
+    <span class="title">三巨头的分野——OpenAI、Anthropic 与 Google</span>
+  </a>
+  <a href="31-model-genealogy.html" class="next">
+    <span class="label">下一章 →</span>
+    <span class="title">谁是谁的孩子——模型谱系与换代节奏</span>
+  </a>
+</nav>
+  </article>
+</div>
+
+<footer>
+  <div class="set">
+    <span>Large Language Models</span>
+    <span>2026 · ZH-CN</span>
+  </div>
+  <div class="set">
+    <span>Mav</span>
+  </div>
+</footer>
+<div class="search-backdrop" id="search-overlay" role="dialog" aria-modal="true" aria-label="搜索" hidden>
+  <div class="search-modal">
+    <div class="search-input-wrap">
+      <input type="search" class="search-input" placeholder="搜索内容..." aria-label="搜索内容" autocomplete="off">
+      <kbd>ESC</kbd>
+    </div>
+    <div class="search-results" role="listbox" aria-label="搜索结果"></div>
+  </div>
+</div>
+
+<div class="side-panel" id="side-panel">
+  <div class="side-panel-resize" id="side-panel-resize"></div>
+  <div class="side-panel-header">
+    <div class="side-panel-tabs">
+      <button class="side-panel-tab active" data-mode="sidenote">补充</button>
+      <button class="side-panel-tab" data-mode="notepad">笔记</button>
+    </div>
+    <button class="side-panel-close" aria-label="关闭">×</button>
+  </div>
+  <div class="side-panel-body"></div>
+</div>
+<button class="notepad-fab" id="notepad-fab" aria-label="便利贴">✎</button>
+
+<button class="mtoc-fab" id="mtoc-fab" aria-label="系列目录">TOC</button>
+<div class="mtoc-drawer" id="mtoc-drawer">
+  <div class="mtoc-content series-sidebar"></div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/bash.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/typescript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/yaml.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/javascript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/json.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/python.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/css.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+<script>mermaid.initialize({startOnLoad:true, theme:'neutral', fontFamily:'Inter, sans-serif'});</script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}]});"></script>
+<script src="../assets/script.js"></script>
+
+</body>
+</html>

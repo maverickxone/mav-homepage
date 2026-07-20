@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>备菜间——几十万亿 token 从哪来 — Large Language Models</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" href="../assets/series.css">
+<link rel="stylesheet" id="hljs-light" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+<link rel="stylesheet" id="hljs-dark" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" media="not all">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+
+</head>
+<body class="series-page series-reader-page">
+
+<div class="progress-bar" id="progress-bar"></div>
+
+<nav class="topnav series-topnav" id="topnav">
+  <div class="topnav-inner">
+    <a class="brand" href="../index.html">Large Language Models</a>
+    <div class="nav-links">
+      <a href="../index.html#part-architecture">PART I</a>
+      <a href="../index.html#part-pretraining" class="active">PART II</a>
+      <a href="../index.html#part-rl-crash-course">PART III</a>
+      <a href="../index.html#part-post-training">PART IV</a>
+      <a href="../index.html#part-compute-inference">PART V</a>
+      <a href="../index.html#part-industry-map">PART VI</a>
+    </div>
+    <div class="nav-controls">
+      <button class="nav-btn" id="search-btn" aria-label="搜索 (Ctrl+K)">⌘K</button>
+      <button class="nav-btn" id="settings-btn" aria-label="阅读设置">Aa</button>
+      <a class="nav-btn" href="../../index.html" aria-label="返回知识库">← 知识库</a>
+    </div>
+  </div>
+</nav>
+<div class="settings-pop" id="settings-pop">
+  <h5>主题</h5>
+  <div class="row">
+    <button class="seg" data-theme-set="light">明亮</button>
+    <button class="seg" data-theme-set="dark">暗色</button>
+  </div>
+  <h5>字号</h5>
+  <div class="row">
+    <button class="seg" data-size-set="s">小</button>
+    <button class="seg" data-size-set="m">中</button>
+    <button class="seg" data-size-set="l">大</button>
+  </div>
+</div>
+
+<div class="with-sidebar series-reader">
+  <aside class="sidebar series-sidebar">
+  <a class="series-sidebar-home" href="../index.html">系列目录</a>
+  <section class="series-sidebar-part">
+    <h4><span>PART I</span>架构演化</h4>
+    <ul>
+      <li class="series-chapter-item">
+        <a href="01-from-transformer-to-gpt.html" data-chapter="01">课本尽头的 Transformer——把它真正数一遍</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="02-residual-stream.html" data-chapter="02">残差流——理解一切改动的地基</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="03-norms-and-activations.html" data-chapter="03">稳定性之战——归一化与激活函数</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="04-positional-encoding.html" data-chapter="04">位置的难题——从正弦波到 RoPE 与长上下文</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="05-attention-evolution.html" data-chapter="05">注意力的账单——KV cache 与一部省钱史</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="06-moe-basics.html" data-chapter="06">分而治之——MoE 的基本机制</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="07-moe-modern.html" data-chapter="07">MoE 的分水岭——DeepSeek 配方与 2026 年的主流形态</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="08-reading-a-release.html" data-chapter="08">读懂一次发布——参数量、基模与版本语义</a>
+      </li>
+    </ul>
+  </section>
+  <section class="series-sidebar-part">
+    <h4><span>PART II</span>预训练</h4>
+    <ul>
+      <li class="series-chapter-item">
+        <a href="09-scaling-laws.html" data-chapter="09">规模的法则——从赌注到公式</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="10-data-pipeline.html" data-chapter="10" class="active" aria-current="page">备菜间——几十万亿 token 从哪来</a>
+        <ul class="series-section-links">
+          <li><a href="#21-原矿互联网不是数据集">2.1 原矿：互联网不是数据集</a></li>
+          <li><a href="#22-提炼链从网页到精粮">2.2 提炼链：从网页到精粮</a></li>
+          <li><a href="#23-质量的第二级火箭让模型给数据打分">2.3 质量的第二级火箭：让模型给数据打分</a></li>
+          <li><a href="#24-调配比预训练的营养师">2.4 调配比：预训练的营养师</a></li>
+          <li><a href="#25-合成与增密当矿快挖完的时候">2.5 合成与增密：当矿快挖完的时候</a></li>
+          <li><a href="#26-收紧的绞索版权与quot关闭中的网quot">2.6 收紧的绞索：版权与&amp;quot;关闭中的网&amp;quot;</a></li>
+        </ul>
+      </li>
+      <li class="series-chapter-item">
+        <a href="11-training-run.html" data-chapter="11">厨房里的三个月——损失、优化器与一场不能崩的马拉松</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="12-midtraining.html" data-chapter="12">后半场——mid-training、退火与长上下文课程</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="13-parallelism.html" data-chapter="13">把模型摊开——并行训练、万卡集群与预训练的黄昏</a>
+      </li>
+    </ul>
+  </section>
+  <section class="series-sidebar-part">
+    <h4><span>PART III</span>强化学习速成</h4>
+    <ul>
+      <li class="series-chapter-item">
+        <a href="14-another-way-to-learn.html" data-chapter="14">另一种学习——从「有标准答案」到「只有后果」</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="15-value-functions.html" data-chapter="15">给未来定价——回报、价值函数与贝尔曼方程</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="16-policy-gradient.html" data-chapter="16">顺着后果爬坡——策略梯度与 REINFORCE</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="17-actor-critic-trust-region.html" data-chapter="17">教练与护栏——Actor-Critic、重要性采样与信任域</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="18-ppo-and-llm.html" data-chapter="18">PPO 与会师——通往大模型的最后一站</a>
+      </li>
+    </ul>
+  </section>
+  <section class="series-sidebar-part">
+    <h4><span>PART IV</span>后训练</h4>
+    <ul>
+      <li class="series-chapter-item">
+        <a href="19-sft-instruction-tuning.html" data-chapter="19">从续写到听话——SFT 与指令微调</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="20-reward-models-rlhf.html" data-chapter="20">学会分辨好坏——奖励模型与 RLHF 全流程</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="21-dpo-direct-preference.html" data-chapter="21">把 RL 短路——DPO 与直接偏好优化</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="22-rlaif-constitutional.html" data-chapter="22">让 AI 教 AI——RLAIF、宪法与评判者</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="23-reasoning-models.html" data-chapter="23">第二次质变——从 o1 到 R1 的推理革命</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="24-reasoning-craft-and-reefs.html" data-chapter="24">想多久、想什么——推理时代的工艺与暗礁</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="25-distillation-lora-versions.html" data-chapter="25">兑现与迭代——蒸馏、LoRA 与小版本的秘密</a>
+      </li>
+    </ul>
+  </section>
+  <section class="series-sidebar-part">
+    <h4><span>PART V</span>算力与推理</h4>
+    <ul>
+      <li class="series-chapter-item">
+        <a href="26-gpu-anatomy.html" data-chapter="26">认识铁疙瘩——GPU、带宽与算力的三重账</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="27-memory-math-quantization.html" data-chapter="27">跑得动吗——显存数学与量化速算手册</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="28-inference-factory-pricing.html" data-chapter="28">推理工厂与价格标签——从 GPU 到账单</a>
+      </li>
+    </ul>
+  </section>
+  <section class="series-sidebar-part">
+    <h4><span>PART VI</span>2026 产业地图</h4>
+    <ul>
+      <li class="series-chapter-item">
+        <a href="29-us-frontier-labs.html" data-chapter="29">三巨头的分野——OpenAI、Anthropic 与 Google</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="30-china-open-weight.html" data-chapter="30">开源的中国时刻——一场反向的阳谋</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="31-model-genealogy.html" data-chapter="31">谁是谁的孩子——模型谱系与换代节奏</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="32-geopolitics-power.html" data-chapter="32">芯片、稀土与电表——算力的地缘战争</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="33-business-and-money.html" data-chapter="33">钱从哪来，又烧向何处——商业模式与泡沫之辩</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="34-finale-and-frontier.html" data-chapter="34">六年，与之后——回望、前沿与写给你的话</a>
+      </li>
+    </ul>
+  </section>
+</aside>
+  <article class="chapter-body">
+    <header class="chapter-head series-chapter-head">
+  <div class="series-breadcrumb">PART II · 预训练</div>
+  <div class="chapter-head-meta">
+    <span class="num">CHAPTER 10</span>
+    <span>≈ 50 MIN READ</span>
+  </div>
+  <h1>备菜间——几十万亿 token 从哪来</h1>
+</header>
+    <p>上一章的结论是数据从配角变成主角：Chinchilla 之后，&quot;喂多少、喂什么&quot;决定了同等算力下模型的成色。这一章走进备菜间，看几十万亿 token 是怎么备出来的。这个领域有个耐人寻味的特点：<strong>它是整个预训练里技术含量最被低估、同时保密程度最高的环节</strong>。架构大家争相发论文（第一卷你已看过），数据管线的完整细节却几乎没有一家旗舰完整公开——因为在架构日益同质化的今天，数据配方是少数真正拉开差距的地方。好在 2024 年之后出现了几个高质量的开放复现项目，让我们得以看清这条流水线的全貌。</p>
+<h2 id="21-原矿互联网不是数据集">2.1 原矿：互联网不是数据集</h2>
+<p>先纠正一个普遍的想象：&quot;模型读了整个互联网&quot;。实情是：互联网是<strong>矿山</strong>，不是粮仓——绝大部分内容是矿渣，可入口的部分需要重重提炼。</p>
+<p>矿山的主体叫 <strong>Common Crawl</strong>（CC）：一个非营利组织，十几年来每一两个月对公开网页做一次大规模抓取，每次快照收录二三十亿个网页，累计一百多个快照、数 PB 的原始数据，免费公开。从 GPT-3 到今天的开源旗舰，几乎所有模型的英文网页语料都以它为起点。但&quot;以它为起点&quot;的含义是：<strong>从原矿到可用语料，产出比只有百分之几到百分之十</strong>。剩下的九成多是什么？导航栏和广告文字、机器生成的垃圾站、无穷无尽的重复模板页、乱码、色情与欺诈页面……直接把原矿喂给模型，模型学到的就是互联网的平均水平——而互联网的平均水平很低。</p>
+<p>数据工作的全部秘密就在这条提炼链上。我们借 2024 年 HuggingFace 的 <strong>FineWeb</strong> 项目走一遍——它把 96 个 CC 快照提炼成 15T token 的高质量语料，并且<strong>公开了每一步的方法和消融实验</strong>，是这个隐秘领域里最好的一份公开教材。</p>
+<h2 id="22-提炼链从网页到精粮">2.2 提炼链：从网页到精粮</h2>
+<p>FineWeb 流水线的六道工序，每一道都朴素，叠起来威力惊人：</p>
+<p><strong>URL 过滤</strong>：先按域名黑名单干掉成人、欺诈、垃圾站——最便宜的一刀，在下载正文之前就砍。</p>
+<p><strong>正文抽取</strong>：网页是 HTML，正文外包裹着菜单、页脚、广告、评论框。抽取器要从标签汤里把&quot;人写给人看的那部分&quot;挖出来。这一步的质量出乎意料地重要——抽坏了，后面全白干。</p>
+<p><strong>语言识别</strong>：用轻量分类器判定语言、按置信度过滤，分流到各语言子管线。</p>
+<p><strong>质量启发式</strong>：一批手工规则刻画&quot;垃圾文本长什么样&quot;。FineWeb 的消融给出了几个直观例子：删掉&quot;行尾几乎没有标点&quot;的文档（干掉了 10% 的 token——那多半是菜单和列表碎片）；删掉&quot;重复行占比过高&quot;的文档（再干掉 12%——模板页和刷屏垃圾）。规则土，但每一条都对应互联网垃圾的一种典型长相。</p>
+<p><strong>去重</strong>：互联网充满转载、镜像、模板复制。用 MinHash 一类的近似算法在几十亿文档里找出&quot;长得差不多&quot;的簇，每簇留一份。去重的意义不只是省算力：重复文档会让模型把&quot;见过很多遍&quot;误当&quot;很重要&quot;，加重记忆倾向、挤占学习容量。有趣的是 FineWeb 发现去重也有讲究——<strong>逐快照分别去重比全库统一去重效果更好</strong>，因为激进的全局去重反而会把&quot;被广泛转载的优质内容&quot;错杀。</p>
+<p><strong>PII 与安全处理</strong>：匿名化个人信息（邮箱、电话），过滤有害内容。</p>
+<p>工序讲完，但 FineWeb 论文真正的方法论贡献是一句话：<strong>每一道工序都用&quot;训一个小模型试试&quot;来裁决</strong>。规则 A 还是规则 B 好？各做一版数据、各训一个 1.8B 的小模型、比下游成绩。数据工程从手艺变成了实验科学——这也呼应了上一章的&quot;小模型侦察&quot;方法论：不止损失可以外推，数据决策同样靠小模型代理。</p>
+<h2 id="23-质量的第二级火箭让模型给数据打分">2.3 质量的第二级火箭：让模型给数据打分</h2>
+<p>启发式规则能滤掉垃圾，但&quot;不是垃圾&quot;和&quot;值得学&quot;之间还差一个量级。2024 年的下一步是<strong>用大模型当质检员</strong>：FineWeb-Edu 用 Llama3-70B 给几十万份样例网页按&quot;教育价值&quot;打分（0–5 分），再用这些标注训练一个便宜的小分类器，让它扫描全部 15T token，只保留 3 分以上的文档。<strong>结果 92% 被扔掉</strong>，剩下 1.3T——而用这 1.3T 训出的模型，在知识类基准上明显超过用全量 15T 训的。</p>
+<p>让这个数字在你脑中停留一会儿：<strong>扔掉九成二，效果更好</strong>。它宣告了数据竞赛的规则彻底改变——从&quot;谁的数据多&quot;变成&quot;谁的筛子好&quot;。FineWeb 团队自己总结：15T 这个总量数字本身不重要。而&quot;筛子&quot;——那个质量分类器——的构建方式（拿什么样例、按什么标准打分）没有标准答案，每家都在暗中调制自己的版本：这就是&quot;数据配方是核心机密&quot;的第一层含义。</p>
+<h2 id="24-调配比预训练的营养师">2.4 调配比：预训练的营养师</h2>
+<p>机密的第二层是<strong>配比</strong>（data mix）：网页、代码、数学、论文、书籍、多语言各占多少。这不是行政决定，是直接影响模型性格的调制。少数公开数字里最完整的是 Llama 3：约 50% 通用知识、25% 数学与推理、17% 代码、8% 多语言。</p>
+<p>两个比例值得端详。<strong>代码占 17%</strong>——Llama 3 并不是编程专用模型，为什么喂这么多代码？因为行业反复验证过一个初看神秘的现象：<strong>代码训练提升的不只是编程，还有通用推理能力</strong>。代码是人类写过的逻辑最严密、结构最清晰的文本——变量指代精确、因果链条完整、错一个字符就失败——喂代码等于给模型上逻辑课。&quot;即使做通用模型也要喂 10–20% 代码&quot;如今已是共识。<strong>数学与推理占 25%</strong>——同理，而且数学语料在原始互联网里极稀缺，各家都在极限上采样。配比怎么定？还是小模型：几十种配比各训一个小模型，看哪种曲线好，再外推到大模型——你会发现&quot;小模型当侦察兵&quot;是贯穿本卷的方法论主旋律。</p>
+<div class="callout">
+<p class="callout-title">中文语料的特殊困境</p>
+
+<p>一个对国内读者切身的问题：CC 里中文占比远低于中文互联网的真实体量——因为中文内容大量锁在 App 和封闭平台里，公网爬不到。所以中文模型的中文语料高度依赖自有渠道（大厂的站内数据）和自建爬虫，这部分从不公开；开放的中文数据集（WuDao、万卷、CCI 系列等）比英文开放集小一个数量级以上。加上中文网页抽取更易出错、质量分类器需要重训，中文数据管线的每一步都要重新发明一遍。&quot;中文模型为什么难做&quot;，一半的答案在备菜间里。</p>
+</div>
+
+<h2 id="25-合成与增密当矿快挖完的时候">2.5 合成与增密：当矿快挖完的时候</h2>
+<p>上一章末尾预告过&quot;数据墙&quot;：Epoch AI 估计人类公开文本的有效存量约 300T token 量级，而 2026 年旗舰一次预训练就吃 30T 上下、高质量子集还要反复吃好几遍——按这个吃法，撞墙不是会不会、是何时的问题。行业的回应是本节的主题：<strong>数据不够，就制造数据</strong>。但&quot;合成数据&quot;这个词底下其实是两条很不同的路。</p>
+<p><strong>改写增密</strong>（rephrasing）：不无中生有，而是把已有的高质量文档<strong>重写成多种风格</strong>——把一篇维基条目改写成问答体、教学笔记体、对话体。同样的知识，多种表达，模型的&quot;每 token 学习效率&quot;更高，还把低质量文档改写成规整文体来废物利用。这条路已实打实进入生产：NVIDIA 的 Nemotron-CC 语料里有 1.9T token 是改写产物；Kimi K2 的技术报告明确说预训练中对知识和数学语料做了受控改写（并小心限制改写遍数防过拟合）。</p>
+<p><strong>从头合成</strong>：让强模型直接写&quot;教科书级&quot;的训练材料。旗手是微软的 phi 系列（&quot;Textbooks Are All You Need&quot;），用极小的模型配纯度极高的合成课本取得过惊艳战绩。这条激进路线后来作为独立门派声量渐弱，但它的方法——系统性地覆盖推理模式、课程化组织内容——被各家吸收进了主流管线。</p>
+<p>合成数据能不能真正拆掉数据墙？2026 年的诚实回答是<strong>争议中</strong>：支持的证据（混入约三成合成数据能显著加速收敛；改写路线报告数倍的效率提升）与怀疑（朴素的&quot;让模型续写网页&quot;收益有限，&quot;用模型的输出训模型&quot;的天花板与退化风险在学术上未有定论）并存。目前的实际图景是：<strong>墙被推后了，还没被拆掉</strong>——靠改写增密、多模态数据扩容（图像视频音频的 token 化进入预训练）、多遍训练和付费语料，前沿实验室又给自己争取了几年。</p>
+<h2 id="26-收紧的绞索版权与quot关闭中的网quot">2.6 收紧的绞索：版权与&quot;关闭中的网&quot;</h2>
+<p>备菜间的故事还有一条法律战线，2025–26 年它从背景噪音变成了实质约束。</p>
+<p>三个标志性判例勾勒出现状：Anthropic 案中法院认定<strong>训练行为本身可构成合理使用</strong>，但通过盗版渠道获取书籍另当别论——Anthropic 最终为此支付了 15 亿美元和解金，是 AI 版权史上最大数字；Meta 案中 Meta 胜诉，但判词明确这是原告举证不力的技术性胜利，法官特意写明&quot;无授权训练在多数情形下可能不构成合理使用&quot;；而《纽约时报》诉 OpenAI 案缠斗至今未决。合起来的信号是：<strong>法律没有给&quot;随便爬&quot;发通行证，也没有一票否决训练本身</strong>——行业在夹缝中转向付费授权（OpenAI 已签下十几家出版商，单笔可达亿级美元），但授权费只流向头部媒体，长尾内容拿不到有意义的分成。</p>
+<p>比诉讼影响更直接的是技术性封锁：2025 年起 Cloudflare（托管着很大一部分互联网）对新网站<strong>默认拦截 AI 爬虫</strong>；2026 年中，多家美国主流媒体联名向 Common Crawl 发出停止侵权函，要求停爬并从既有数据集删除其内容——<strong>矛头直指 FineWeb 们的上游水源</strong>。从业者称之为&quot;关闭中的网&quot;（closing web）：公开可爬的高质量文本，存量在逼近上限，增量在主动缩减。这条绞索反过来加速了上一节的一切——授权语料、私有数据、合成数据，都是对它的回应。</p>
+<p>备好了菜——几十 T 经过提炼、打分、调配的 token——接下来进厨房。下一章看真正的烹饪过程：损失曲线怎么读、优化器和学习率怎么编舞、三个月的马拉松里每三小时一次的故障怎么扛、以及怎么在几亿美元烧完之前知道这锅菜没做砸。</p>
+<hr>
+<h3 id="本章要点">本章要点</h3>
+<ul>
+<li>互联网是矿山不是粮仓：Common Crawl（百余快照、数 PB）到可用语料的产出比仅百分之几；数据管线是保密程度最高的环节。</li>
+<li>FineWeb 六道工序：URL 过滤→正文抽取→语言识别→质量启发式→MinHash 去重（逐快照优于全局）→PII 处理；一切决策用小模型实验裁决。</li>
+<li>质量分类器时代：FineWeb-Edu 扔掉 92% 反而更强——竞赛从&quot;数据多&quot;变成&quot;筛子好&quot;，筛子即机密。</li>
+<li>配比是调制：Llama 3 = 50% 通用 + 25% 数学推理 + 17% 代码 + 8% 多语言；代码换推理是共识；配比靠小模型侦察。中文语料受&quot;封闭平台+工具链重造&quot;双重困境。</li>
+<li>数据墙应对：改写增密已入生产（Nemotron-CC、Kimi K2），从头合成的 phi 路线被主流吸收；墙被推后、未被拆掉。</li>
+<li>法律绞索：训练可算合理使用但盗版获取要赔（Anthropic 15 亿和解）；Cloudflare 默认拦截 + CC 收停止侵权函 = &quot;关闭中的网&quot;，反向加速授权/私有/合成三条路。</li>
+</ul>
+
+    <nav class="pager series-pager">
+  <a href="09-scaling-laws.html">
+    <span class="label">← 上一章</span>
+    <span class="title">规模的法则——从赌注到公式</span>
+  </a>
+  <a href="11-training-run.html" class="next">
+    <span class="label">下一章 →</span>
+    <span class="title">厨房里的三个月——损失、优化器与一场不能崩的马拉松</span>
+  </a>
+</nav>
+  </article>
+</div>
+
+<footer>
+  <div class="set">
+    <span>Large Language Models</span>
+    <span>2026 · ZH-CN</span>
+  </div>
+  <div class="set">
+    <span>Mav</span>
+  </div>
+</footer>
+<div class="search-backdrop" id="search-overlay" role="dialog" aria-modal="true" aria-label="搜索" hidden>
+  <div class="search-modal">
+    <div class="search-input-wrap">
+      <input type="search" class="search-input" placeholder="搜索内容..." aria-label="搜索内容" autocomplete="off">
+      <kbd>ESC</kbd>
+    </div>
+    <div class="search-results" role="listbox" aria-label="搜索结果"></div>
+  </div>
+</div>
+
+<div class="side-panel" id="side-panel">
+  <div class="side-panel-resize" id="side-panel-resize"></div>
+  <div class="side-panel-header">
+    <div class="side-panel-tabs">
+      <button class="side-panel-tab active" data-mode="sidenote">补充</button>
+      <button class="side-panel-tab" data-mode="notepad">笔记</button>
+    </div>
+    <button class="side-panel-close" aria-label="关闭">×</button>
+  </div>
+  <div class="side-panel-body"></div>
+</div>
+<button class="notepad-fab" id="notepad-fab" aria-label="便利贴">✎</button>
+
+<button class="mtoc-fab" id="mtoc-fab" aria-label="系列目录">TOC</button>
+<div class="mtoc-drawer" id="mtoc-drawer">
+  <div class="mtoc-content series-sidebar"></div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/bash.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/typescript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/yaml.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/javascript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/json.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/python.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/css.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+<script>mermaid.initialize({startOnLoad:true, theme:'neutral', fontFamily:'Inter, sans-serif'});</script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}]});"></script>
+<script src="../assets/script.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>让 AI 教 AI——RLAIF、宪法与评判者 — Large Language Models</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" href="../assets/series.css">
+<link rel="stylesheet" id="hljs-light" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+<link rel="stylesheet" id="hljs-dark" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" media="not all">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+
+</head>
+<body class="series-page series-reader-page">
+
+<div class="progress-bar" id="progress-bar"></div>
+
+<nav class="topnav series-topnav" id="topnav">
+  <div class="topnav-inner">
+    <a class="brand" href="../index.html">Large Language Models</a>
+    <div class="nav-links">
+      <a href="../index.html#part-architecture">PART I</a>
+      <a href="../index.html#part-pretraining">PART II</a>
+      <a href="../index.html#part-rl-crash-course">PART III</a>
+      <a href="../index.html#part-post-training" class="active">PART IV</a>
+      <a href="../index.html#part-compute-inference">PART V</a>
+      <a href="../index.html#part-industry-map">PART VI</a>
+    </div>
+    <div class="nav-controls">
+      <button class="nav-btn" id="search-btn" aria-label="搜索 (Ctrl+K)">⌘K</button>
+      <button class="nav-btn" id="settings-btn" aria-label="阅读设置">Aa</button>
+      <a class="nav-btn" href="../../index.html" aria-label="返回知识库">← 知识库</a>
+    </div>
+  </div>
+</nav>
+<div class="settings-pop" id="settings-pop">
+  <h5>主题</h5>
+  <div class="row">
+    <button class="seg" data-theme-set="light">明亮</button>
+    <button class="seg" data-theme-set="dark">暗色</button>
+  </div>
+  <h5>字号</h5>
+  <div class="row">
+    <button class="seg" data-size-set="s">小</button>
+    <button class="seg" data-size-set="m">中</button>
+    <button class="seg" data-size-set="l">大</button>
+  </div>
+</div>
+
+<div class="with-sidebar series-reader">
+  <aside class="sidebar series-sidebar">
+  <a class="series-sidebar-home" href="../index.html">系列目录</a>
+  <section class="series-sidebar-part">
+    <h4><span>PART I</span>架构演化</h4>
+    <ul>
+      <li class="series-chapter-item">
+        <a href="01-from-transformer-to-gpt.html" data-chapter="01">课本尽头的 Transformer——把它真正数一遍</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="02-residual-stream.html" data-chapter="02">残差流——理解一切改动的地基</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="03-norms-and-activations.html" data-chapter="03">稳定性之战——归一化与激活函数</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="04-positional-encoding.html" data-chapter="04">位置的难题——从正弦波到 RoPE 与长上下文</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="05-attention-evolution.html" data-chapter="05">注意力的账单——KV cache 与一部省钱史</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="06-moe-basics.html" data-chapter="06">分而治之——MoE 的基本机制</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="07-moe-modern.html" data-chapter="07">MoE 的分水岭——DeepSeek 配方与 2026 年的主流形态</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="08-reading-a-release.html" data-chapter="08">读懂一次发布——参数量、基模与版本语义</a>
+      </li>
+    </ul>
+  </section>
+  <section class="series-sidebar-part">
+    <h4><span>PART II</span>预训练</h4>
+    <ul>
+      <li class="series-chapter-item">
+        <a href="09-scaling-laws.html" data-chapter="09">规模的法则——从赌注到公式</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="10-data-pipeline.html" data-chapter="10">备菜间——几十万亿 token 从哪来</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="11-training-run.html" data-chapter="11">厨房里的三个月——损失、优化器与一场不能崩的马拉松</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="12-midtraining.html" data-chapter="12">后半场——mid-training、退火与长上下文课程</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="13-parallelism.html" data-chapter="13">把模型摊开——并行训练、万卡集群与预训练的黄昏</a>
+      </li>
+    </ul>
+  </section>
+  <section class="series-sidebar-part">
+    <h4><span>PART III</span>强化学习速成</h4>
+    <ul>
+      <li class="series-chapter-item">
+        <a href="14-another-way-to-learn.html" data-chapter="14">另一种学习——从「有标准答案」到「只有后果」</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="15-value-functions.html" data-chapter="15">给未来定价——回报、价值函数与贝尔曼方程</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="16-policy-gradient.html" data-chapter="16">顺着后果爬坡——策略梯度与 REINFORCE</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="17-actor-critic-trust-region.html" data-chapter="17">教练与护栏——Actor-Critic、重要性采样与信任域</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="18-ppo-and-llm.html" data-chapter="18">PPO 与会师——通往大模型的最后一站</a>
+      </li>
+    </ul>
+  </section>
+  <section class="series-sidebar-part">
+    <h4><span>PART IV</span>后训练</h4>
+    <ul>
+      <li class="series-chapter-item">
+        <a href="19-sft-instruction-tuning.html" data-chapter="19">从续写到听话——SFT 与指令微调</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="20-reward-models-rlhf.html" data-chapter="20">学会分辨好坏——奖励模型与 RLHF 全流程</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="21-dpo-direct-preference.html" data-chapter="21">把 RL 短路——DPO 与直接偏好优化</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="22-rlaif-constitutional.html" data-chapter="22" class="active" aria-current="page">让 AI 教 AI——RLAIF、宪法与评判者</a>
+        <ul class="series-section-links">
+          <li><a href="#41-标注瓶颈与一个更深的忧虑">4.1 标注瓶颈与一个更深的忧虑</a></li>
+          <li><a href="#42-宪法-ai把对齐目标写成明文">4.2 宪法 AI：把对齐目标写成明文</a></li>
+          <li><a href="#43-裁判的偏见llm-as-judge-的暗面">4.3 裁判的偏见：LLM-as-judge 的暗面</a></li>
+          <li><a href="#44-从宪法到评分细则rubric-的兴起">4.4 从宪法到评分细则：rubric 的兴起</a></li>
+        </ul>
+      </li>
+      <li class="series-chapter-item">
+        <a href="23-reasoning-models.html" data-chapter="23">第二次质变——从 o1 到 R1 的推理革命</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="24-reasoning-craft-and-reefs.html" data-chapter="24">想多久、想什么——推理时代的工艺与暗礁</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="25-distillation-lora-versions.html" data-chapter="25">兑现与迭代——蒸馏、LoRA 与小版本的秘密</a>
+      </li>
+    </ul>
+  </section>
+  <section class="series-sidebar-part">
+    <h4><span>PART V</span>算力与推理</h4>
+    <ul>
+      <li class="series-chapter-item">
+        <a href="26-gpu-anatomy.html" data-chapter="26">认识铁疙瘩——GPU、带宽与算力的三重账</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="27-memory-math-quantization.html" data-chapter="27">跑得动吗——显存数学与量化速算手册</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="28-inference-factory-pricing.html" data-chapter="28">推理工厂与价格标签——从 GPU 到账单</a>
+      </li>
+    </ul>
+  </section>
+  <section class="series-sidebar-part">
+    <h4><span>PART VI</span>2026 产业地图</h4>
+    <ul>
+      <li class="series-chapter-item">
+        <a href="29-us-frontier-labs.html" data-chapter="29">三巨头的分野——OpenAI、Anthropic 与 Google</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="30-china-open-weight.html" data-chapter="30">开源的中国时刻——一场反向的阳谋</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="31-model-genealogy.html" data-chapter="31">谁是谁的孩子——模型谱系与换代节奏</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="32-geopolitics-power.html" data-chapter="32">芯片、稀土与电表——算力的地缘战争</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="33-business-and-money.html" data-chapter="33">钱从哪来，又烧向何处——商业模式与泡沫之辩</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="34-finale-and-frontier.html" data-chapter="34">六年，与之后——回望、前沿与写给你的话</a>
+      </li>
+    </ul>
+  </section>
+</aside>
+  <article class="chapter-body">
+    <header class="chapter-head series-chapter-head">
+  <div class="series-breadcrumb">PART IV · 后训练</div>
+  <div class="chapter-head-meta">
+    <span class="num">CHAPTER 22</span>
+    <span>≈ 45 MIN READ</span>
+  </div>
+  <h1>让 AI 教 AI——RLAIF、宪法与评判者</h1>
+</header>
+    <p>上一章解决了&quot;用偏好太贵&quot;，这一章解决&quot;产偏好太贵&quot;——RLHF 流水线上最后一个重度依赖人力的环节。但这一章的意义超出省钱：它回答的是一个随着模型变强会越来越尖锐的问题——<strong>当模型的能力逼近甚至超过标注员，人类还怎么当老师？</strong></p>
+<h2 id="41-标注瓶颈与一个更深的忧虑">4.1 标注瓶颈与一个更深的忧虑</h2>
+<p>先数一数人类标注的三宗罪：<strong>贵</strong>（生产级 RLHF 每轮迭代要几十万上百万次比较，标注团队是千万美元级的常设开销）、<strong>慢</strong>（模型迭代以周计，人力标注的周转以月计，流水线的节拍器卡在最慢的环节）、<strong>躁</strong>（上一章说过，人与人的一致率只有七成上下——所谓&quot;人类偏好&quot;是一锅有噪声的平均）。</p>
+<p>但真正让研究者夜不能寐的是第四宗，它关乎未来：<strong>能力倒挂</strong>。标注员挑得出&quot;两首打油诗哪首好&quot;，挑得出&quot;两段五百行的并发代码哪段藏着竞态条件&quot;吗？挑得出&quot;两份数学证明哪份在第七步有微妙漏洞&quot;吗？模型能力一旦越过标注员的鉴别力，偏好信号就开始失真——你在用一把越来越钝的尺子，量一个越来越锋利的东西。这个问题有个正式名字：<strong>可扩展监督</strong>（scalable oversight）——怎么让监督信号随被监督者的能力一起变强？</p>
+<p>答案的方向，藏在上一章埋的那个不对称里：<strong>评价易于生成</strong>。当年它的用法是&quot;人类写不出大师示范，但挑得出好坏&quot;；现在把它再推一层——<strong>模型自己也是如此</strong>：让模型评价两个回答的优劣，比让它生成完美回答容易，而且它的评价能力会随着它的生成能力一起变强——尺子和刀出自同一块钢，永远同步开刃。让 AI 当标注员：这就是 <strong>RLAIF</strong>（RL from AI Feedback）。</p>
+<p>当然，你应该立刻皱眉：模型给自己当裁判，标准从哪来？谁来保证裁判不偏心？这正是宪法 AI 要回答的。</p>
+<h2 id="42-宪法-ai把对齐目标写成明文">4.2 宪法 AI：把对齐目标写成明文</h2>
+<p>2022 年底，Anthropic 提出 <strong>Constitutional AI</strong>（CAI，宪法 AI），核心动作只有一个：<strong>把&quot;什么是好回答&quot;写成一部明文的原则清单</strong>——一组自然语言写就的条款（&quot;选择更有帮助且诚实的回答&quot;、&quot;避免协助危险行为&quot;、&quot;不要居高临下地说教&quot;……），称为<strong>宪法</strong>。然后让这部宪法通过两条流水线渗进模型：</p>
+<p><strong>第一阶段：自我批评与修订（造 SFT 数据）。<strong>让模型对一批提示先生成初稿；然后</strong>援引宪法条款批评自己的初稿</strong>（&quot;这个回答违反了第 X 条，因为……&quot;）；再按批评意见<strong>修订</strong>出更好的版本。把（提示 → 修订稿）收集起来做 SFT。模型给自己当编辑，宪法是编辑手册。</p>
+<p><strong>第二阶段：AI 偏好与 RL（替代人类标注）。<strong>生成成对回答，让模型</strong>按宪法</strong>判断哪个更好——产出的&quot;AI 偏好数据&quot;走上一章的老流程：训 RM、跑 RL。整条 RLHF 流水线原封不动，只是&quot;挑&quot;的那双手从人换成了模型。</p>
+<p>停下来看清这个设计换来了什么。<strong>其一，透明与可修订。<strong>RLHF 里，对齐目标是几万名标注员脑中隐性标准的统计平均——没人能说清模型到底被教了什么，出了问题也无从修起。CAI 把目标写成</strong>明文</strong>：想改变模型的行为边界，修订宪法条款、重跑流水线——对齐从&quot;雕塑一群人的直觉&quot;变成&quot;执行一部可审计的规范&quot;。**其二，监督随能力增长。**裁判和选手是同一个模型，鉴别力自动跟上生成力——scalable oversight 的一个（部分的）答案。**其三，规模。**AI 标注的吞吐没有上限、成本近乎为零、标准前后一致（没有标注员之间的噪声）。谷歌随后的对照研究补上了实证一环：AI 反馈训出的模型，人类盲评下与人类反馈训出的不相上下。</p>
+<div class="callout callout-tip">
+<p class="callout-title">产业一瞥</p>
+
+<p>到 2025–26 年，&quot;AI 反馈为主、人类反馈为纲&quot;已是行业默认形态：偏好数据的大头由模型生成，人类的角色撤到两端——<strong>上游立法</strong>（撰写和修订宪法、评分标准、政策文档）与<strong>下游抽查</strong>（审核 AI 标注的质量、盲评最终模型、处理疑难与申诉）。人没有离开流水线，而是从&quot;计件工人&quot;变成了&quot;立法者与质检员&quot;。顺带一提：你此刻正在读的这本书的作者模型，其训练谱系里就有宪法 AI 这一环——这项技术不是论文摆设，它在生产线上跑了四年。</p>
+</div>
+
+<h2 id="43-裁判的偏见llm-as-judge-的暗面">4.3 裁判的偏见：LLM-as-judge 的暗面</h2>
+<p>AI 裁判不是免费的圣人。让模型当评委（行话叫 <strong>LLM-as-judge</strong>）在 2024–26 年被研究得底朝天，暗面清单相当具体：</p>
+<p><strong>系统性偏置</strong>：偏爱更长的回答（与人类标注员同病，还更严重）；偏爱先出现的选项（位置偏置，严肃的评测都要交换顺序跑两遍取平均）；<strong>自我偏好</strong>——模型倾向给&quot;和自己文风相近&quot;的回答打高分，裁判给自家人吹哨。<strong>裁判也是可 hack 的奖励</strong>：第二章的 Goodhart 定律对 AI 裁判一视同仁——被优化的策略会学会讨好裁判的癖好：摆出自信的语气、套上&quot;首先/其次/综上&quot;的漂亮结构、堆砌裁判爱看的格式，而不是把内容做对。用 RL 全力优化一个 LLM 裁判的分数，和全力优化一个 RM 一样，终点是钻空子。</p>
+<p>所以生产实践的共识是<strong>不让任何单一裁判掌握生杀大权</strong>：规则校验兜底（能程序判定的绝不交给裁判）、多裁判聚合、裁判与被训模型解耦、人类抽查校准。裁判是好用的量尺，前提是你永远记得它是把会被磨弯的量尺。</p>
+<h2 id="44-从宪法到评分细则rubric-的兴起">4.4 从宪法到评分细则：rubric 的兴起</h2>
+<p>宪法思想在 2025–26 年演化出一个更细粒度的后代：<strong>rubric 奖励</strong>（评分细则奖励）。宪法是全局的（一部法典管所有回答），rubric 是<strong>逐题的</strong>——为每道训练题目附上一份结构化的评分清单：&quot;这道题的好回答应当：正确指出 X；考虑到边界情况 Y；不引入 Z 误导……&quot;，然后让 AI 裁判<strong>按清单</strong>逐条核对打分。</p>
+<p>它解决的问题精确而重要：有大量任务既没有机器可验证的标准答案（写作、分析、建议、安全判断），又不能容忍裁判凭整体印象打分（印象分正是偏置和 hack 的重灾区）。rubric 把&quot;整体印象&quot;拆解成&quot;逐条核对&quot;，可解释、可审计、hack 面小得多。月之暗面的 Kimi K2 是公开报告里的典型实践：可机器验证的领域（数学、代码、逻辑）用铁面无私的规则奖励，开放领域用模型自评加 rubric——两条腿把 RL 的覆盖面从&quot;有标准答案的任务&quot;扩展到了几乎所有任务。</p>
+<p>注意这一章走到这里，一个大问题已经在门口候场了：刚才反复出现的&quot;可机器验证的领域&quot;——数学答案判对错、代码跑测试——那里的奖励<strong>不需要</strong>任何裁判、任何 RM、任何宪法，它就是<strong>事实本身</strong>，无偏见、不可讨好、hack 面极小。如果把 RL 的全部火力对准这些领域，会发生什么？</p>
+<p>2024 年 9 月，OpenAI 发布了 o1。2025 年 1 月，DeepSeek 发布了 R1。答案是：<strong>第二次质变</strong>。下一章，推理模型——本卷、也是全书的高潮。</p>
+<hr>
+<h3 id="本章要点">本章要点</h3>
+<ul>
+<li>人类标注四宗罪：贵、慢、躁（一致率约七成）、以及最深的能力倒挂——尺子钝于刀；scalable oversight 问题由此立起。</li>
+<li>出路复用&quot;评价易于生成&quot;：模型的鉴别力随生成力同步增长——让 AI 当标注员（RLAIF）。</li>
+<li>宪法 AI 两阶段：按宪法自我批评修订（造 SFT 数据）+ 按宪法产出 AI 偏好（替换人类标注跑 RLHF）；换来透明可修订的明文目标、随能力增长的监督、无上限的标注吞吐；实证与人类反馈打平。</li>
+<li>2026 形态：AI 反馈为主、人类退居&quot;上游立法 + 下游抽查&quot;。</li>
+<li>LLM-as-judge 的暗面：长度/位置/自我偏好偏置，且裁判本身可被 Goodhart——对策是规则兜底、多裁判、解耦、人工校准。</li>
+<li>rubric = 逐题的宪法：把印象分拆成逐条核对，覆盖不可验证任务（K2 双轨实践）；而&quot;可验证领域的奖励是事实本身&quot;这个观察，直通下一章的推理革命。</li>
+</ul>
+
+    <nav class="pager series-pager">
+  <a href="21-dpo-direct-preference.html">
+    <span class="label">← 上一章</span>
+    <span class="title">把 RL 短路——DPO 与直接偏好优化</span>
+  </a>
+  <a href="23-reasoning-models.html" class="next">
+    <span class="label">下一章 →</span>
+    <span class="title">第二次质变——从 o1 到 R1 的推理革命</span>
+  </a>
+</nav>
+  </article>
+</div>
+
+<footer>
+  <div class="set">
+    <span>Large Language Models</span>
+    <span>2026 · ZH-CN</span>
+  </div>
+  <div class="set">
+    <span>Mav</span>
+  </div>
+</footer>
+<div class="search-backdrop" id="search-overlay" role="dialog" aria-modal="true" aria-label="搜索" hidden>
+  <div class="search-modal">
+    <div class="search-input-wrap">
+      <input type="search" class="search-input" placeholder="搜索内容..." aria-label="搜索内容" autocomplete="off">
+      <kbd>ESC</kbd>
+    </div>
+    <div class="search-results" role="listbox" aria-label="搜索结果"></div>
+  </div>
+</div>
+
+<div class="side-panel" id="side-panel">
+  <div class="side-panel-resize" id="side-panel-resize"></div>
+  <div class="side-panel-header">
+    <div class="side-panel-tabs">
+      <button class="side-panel-tab active" data-mode="sidenote">补充</button>
+      <button class="side-panel-tab" data-mode="notepad">笔记</button>
+    </div>
+    <button class="side-panel-close" aria-label="关闭">×</button>
+  </div>
+  <div class="side-panel-body"></div>
+</div>
+<button class="notepad-fab" id="notepad-fab" aria-label="便利贴">✎</button>
+
+<button class="mtoc-fab" id="mtoc-fab" aria-label="系列目录">TOC</button>
+<div class="mtoc-drawer" id="mtoc-drawer">
+  <div class="mtoc-content series-sidebar"></div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/bash.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/typescript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/yaml.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/javascript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/json.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/python.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/css.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+<script>mermaid.initialize({startOnLoad:true, theme:'neutral', fontFamily:'Inter, sans-serif'});</script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}]});"></script>
+<script src="../assets/script.js"></script>
+
+</body>
+</html>

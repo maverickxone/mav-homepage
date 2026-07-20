@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>规模的法则——从赌注到公式 — Large Language Models</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" href="../assets/series.css">
+<link rel="stylesheet" id="hljs-light" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+<link rel="stylesheet" id="hljs-dark" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" media="not all">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+
+</head>
+<body class="series-page series-reader-page">
+
+<div class="progress-bar" id="progress-bar"></div>
+
+<nav class="topnav series-topnav" id="topnav">
+  <div class="topnav-inner">
+    <a class="brand" href="../index.html">Large Language Models</a>
+    <div class="nav-links">
+      <a href="../index.html#part-architecture">PART I</a>
+      <a href="../index.html#part-pretraining" class="active">PART II</a>
+      <a href="../index.html#part-rl-crash-course">PART III</a>
+      <a href="../index.html#part-post-training">PART IV</a>
+      <a href="../index.html#part-compute-inference">PART V</a>
+      <a href="../index.html#part-industry-map">PART VI</a>
+    </div>
+    <div class="nav-controls">
+      <button class="nav-btn" id="search-btn" aria-label="搜索 (Ctrl+K)">⌘K</button>
+      <button class="nav-btn" id="settings-btn" aria-label="阅读设置">Aa</button>
+      <a class="nav-btn" href="../../index.html" aria-label="返回知识库">← 知识库</a>
+    </div>
+  </div>
+</nav>
+<div class="settings-pop" id="settings-pop">
+  <h5>主题</h5>
+  <div class="row">
+    <button class="seg" data-theme-set="light">明亮</button>
+    <button class="seg" data-theme-set="dark">暗色</button>
+  </div>
+  <h5>字号</h5>
+  <div class="row">
+    <button class="seg" data-size-set="s">小</button>
+    <button class="seg" data-size-set="m">中</button>
+    <button class="seg" data-size-set="l">大</button>
+  </div>
+</div>
+
+<div class="with-sidebar series-reader">
+  <aside class="sidebar series-sidebar">
+  <a class="series-sidebar-home" href="../index.html">系列目录</a>
+  <section class="series-sidebar-part">
+    <h4><span>PART I</span>架构演化</h4>
+    <ul>
+      <li class="series-chapter-item">
+        <a href="01-from-transformer-to-gpt.html" data-chapter="01">课本尽头的 Transformer——把它真正数一遍</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="02-residual-stream.html" data-chapter="02">残差流——理解一切改动的地基</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="03-norms-and-activations.html" data-chapter="03">稳定性之战——归一化与激活函数</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="04-positional-encoding.html" data-chapter="04">位置的难题——从正弦波到 RoPE 与长上下文</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="05-attention-evolution.html" data-chapter="05">注意力的账单——KV cache 与一部省钱史</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="06-moe-basics.html" data-chapter="06">分而治之——MoE 的基本机制</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="07-moe-modern.html" data-chapter="07">MoE 的分水岭——DeepSeek 配方与 2026 年的主流形态</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="08-reading-a-release.html" data-chapter="08">读懂一次发布——参数量、基模与版本语义</a>
+      </li>
+    </ul>
+  </section>
+  <section class="series-sidebar-part">
+    <h4><span>PART II</span>预训练</h4>
+    <ul>
+      <li class="series-chapter-item">
+        <a href="09-scaling-laws.html" data-chapter="09" class="active" aria-current="page">规模的法则——从赌注到公式</a>
+        <ul class="series-section-links">
+          <li><a href="#11-三种货币ndc">1.1 三种货币：N、D、C</a></li>
+          <li><a href="#12-kaplan-定律损失是一条直线">1.2 Kaplan 定律：损失是一条直线</a></li>
+          <li><a href="#13-chinchilla-修正大家都把模型养胖了">1.3 Chinchilla 修正：大家都把模型养胖了</a></li>
+          <li><a href="#14-第二次修正故意把模型quot训过头quot">1.4 第二次修正：故意把模型&amp;quot;训过头&amp;quot;</a></li>
+          <li><a href="#15-一条定律的三重身份">1.5 一条定律的三重身份</a></li>
+        </ul>
+      </li>
+      <li class="series-chapter-item">
+        <a href="10-data-pipeline.html" data-chapter="10">备菜间——几十万亿 token 从哪来</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="11-training-run.html" data-chapter="11">厨房里的三个月——损失、优化器与一场不能崩的马拉松</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="12-midtraining.html" data-chapter="12">后半场——mid-training、退火与长上下文课程</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="13-parallelism.html" data-chapter="13">把模型摊开——并行训练、万卡集群与预训练的黄昏</a>
+      </li>
+    </ul>
+  </section>
+  <section class="series-sidebar-part">
+    <h4><span>PART III</span>强化学习速成</h4>
+    <ul>
+      <li class="series-chapter-item">
+        <a href="14-another-way-to-learn.html" data-chapter="14">另一种学习——从「有标准答案」到「只有后果」</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="15-value-functions.html" data-chapter="15">给未来定价——回报、价值函数与贝尔曼方程</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="16-policy-gradient.html" data-chapter="16">顺着后果爬坡——策略梯度与 REINFORCE</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="17-actor-critic-trust-region.html" data-chapter="17">教练与护栏——Actor-Critic、重要性采样与信任域</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="18-ppo-and-llm.html" data-chapter="18">PPO 与会师——通往大模型的最后一站</a>
+      </li>
+    </ul>
+  </section>
+  <section class="series-sidebar-part">
+    <h4><span>PART IV</span>后训练</h4>
+    <ul>
+      <li class="series-chapter-item">
+        <a href="19-sft-instruction-tuning.html" data-chapter="19">从续写到听话——SFT 与指令微调</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="20-reward-models-rlhf.html" data-chapter="20">学会分辨好坏——奖励模型与 RLHF 全流程</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="21-dpo-direct-preference.html" data-chapter="21">把 RL 短路——DPO 与直接偏好优化</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="22-rlaif-constitutional.html" data-chapter="22">让 AI 教 AI——RLAIF、宪法与评判者</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="23-reasoning-models.html" data-chapter="23">第二次质变——从 o1 到 R1 的推理革命</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="24-reasoning-craft-and-reefs.html" data-chapter="24">想多久、想什么——推理时代的工艺与暗礁</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="25-distillation-lora-versions.html" data-chapter="25">兑现与迭代——蒸馏、LoRA 与小版本的秘密</a>
+      </li>
+    </ul>
+  </section>
+  <section class="series-sidebar-part">
+    <h4><span>PART V</span>算力与推理</h4>
+    <ul>
+      <li class="series-chapter-item">
+        <a href="26-gpu-anatomy.html" data-chapter="26">认识铁疙瘩——GPU、带宽与算力的三重账</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="27-memory-math-quantization.html" data-chapter="27">跑得动吗——显存数学与量化速算手册</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="28-inference-factory-pricing.html" data-chapter="28">推理工厂与价格标签——从 GPU 到账单</a>
+      </li>
+    </ul>
+  </section>
+  <section class="series-sidebar-part">
+    <h4><span>PART VI</span>2026 产业地图</h4>
+    <ul>
+      <li class="series-chapter-item">
+        <a href="29-us-frontier-labs.html" data-chapter="29">三巨头的分野——OpenAI、Anthropic 与 Google</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="30-china-open-weight.html" data-chapter="30">开源的中国时刻——一场反向的阳谋</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="31-model-genealogy.html" data-chapter="31">谁是谁的孩子——模型谱系与换代节奏</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="32-geopolitics-power.html" data-chapter="32">芯片、稀土与电表——算力的地缘战争</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="33-business-and-money.html" data-chapter="33">钱从哪来，又烧向何处——商业模式与泡沫之辩</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="34-finale-and-frontier.html" data-chapter="34">六年，与之后——回望、前沿与写给你的话</a>
+      </li>
+    </ul>
+  </section>
+</aside>
+  <article class="chapter-body">
+    <header class="chapter-head series-chapter-head">
+  <div class="series-breadcrumb">PART II · 预训练</div>
+  <div class="chapter-head-meta">
+    <span class="num">CHAPTER 09</span>
+    <span>≈ 45 MIN READ</span>
+  </div>
+  <h1>规模的法则——从赌注到公式</h1>
+</header>
+    <p>第一卷的结尾说，骨架决定潜力的上限，但不产生任何能力——能力来自训练。这一卷讲训练的第一阶段，也是最重的阶段：<strong>预训练</strong>。几万张 GPU、几十万亿 token、几个月不间断的计算，把互联网压进权重里。</p>
+<p>而预训练的一切故事，都要从一条曲线讲起。这条曲线回答了一个在 2020 年之前根本没人敢认真问的问题：**如果我把模型做大十倍、一百倍，会发生什么？**在别的工程领域，这种问题的答案通常是&quot;收益递减，然后撞墙&quot;。深度学习给出的答案却是一条笔直得可怕的直线——而且这条直线一直延伸到了今天。理解这条线，你就理解了这个行业为什么敢把千亿美元押在算力上；理解它后来被修正、被绕行的过程，你就理解了 2022 年之后每家实验室训练策略的分岔。</p>
+<h2 id="11-三种货币ndc">1.1 三种货币：N、D、C</h2>
+<p>先建立预训练的记账体系。一次预训练的投入可以用三个量描述，本卷会反复使用这套记号：</p>
+<ul>
+<li><strong>N</strong>：模型参数量（第一卷数过的账本）；</li>
+<li><strong>D</strong>：训练数据量，以 token 计（喂了多少料）；</li>
+<li><strong>C</strong>：总计算量，以 FLOPs（浮点运算次数）计（烧了多少算力）。</li>
+</ul>
+<p>三者不独立。回忆第一卷的结论：模型每处理一个 token，前向传播约需 $2N$ 次浮点运算；训练还要反向传播，代价约是前向的两倍。于是有了整个领域最常用的一个估算公式：</p>
+<p>$$
+C \approx 6ND
+$$</p>
+<p>**训练总算力 ≈ 6 × 参数量 × token 数。**这个公式值得你当场试用一次。GPT-3：$N = 175\text{B}$，$D = 300\text{B}$ tokens，代入得 $C \approx 3.1 \times 10^{23}$ FLOPs。一张 A100 每秒约 $3 \times 10^{14}$ 次浮点运算（实际利用率打对折），跑完这个数需要约 6.6 万卡日——一千张 A100 跑两个月，量级正确（GPT-3 实际用的是 V100 集群，数字同量级）。这类&quot;信封背面&quot;估算是从业者的日常语言：&quot;训一个 X 规模的模型要多少卡多少天&quot;，用 6ND 除以集群算力就是答案。</p>
+<p>预算 $C$ 是有限的——它直接等于钱和时间。于是预训练的中心问题浮出水面：**给定预算 C，参数 N 和数据 D 怎么分？**是训一个大模型少喂点，还是训一个小模型多喂点？2020 年之前，这个问题靠玄学和试错；2020 年之后，它有了定量答案。</p>
+<h2 id="12-kaplan-定律损失是一条直线">1.2 Kaplan 定律：损失是一条直线</h2>
+<p>2020 年初，OpenAI 的 Kaplan 等人发表《Scaling Laws for Neural Language Models》，做了一件朴素但没人系统做过的事：训练几百个大小不一的模型，把损失（loss）画在对数坐标上。结果是三条惊人干净的<strong>幂律</strong>（power law）：损失随 N、随 D、随 C 的增长，各自沿对数-对数坐标上的直线下降，跨越了七个数量级而不弯折。没有饱和的迹象，没有撞墙的迹象——<strong>只要继续放大，损失就继续可预测地下降</strong>。</p>
+<p>这个发现的震撼之处需要放回当时的语境。深度学习向来以&quot;炼丹&quot;著称——调参靠手感、结果难复现，而 Kaplan 曲线宣告：在最宏观的尺度上，这个领域有物理定律般的规律性。它把&quot;做大模型&quot;从一个冒险变成了一笔<strong>可以计算回报率的投资</strong>：想要多低的损失，查曲线就知道要花多少算力。GPT-3 正是这条曲线给的胆量——论文发表几个月后，OpenAI 直接把模型从 1.5B 放大一百倍，因为曲线说值得。</p>
+<p>Kaplan 论文还给了资源分配问题一个具体答案：预算增大时，<strong>大部分增量应该花在 N 上</strong>——把模型做大，数据只需温和增长。行业照办了：2020–2022 年的模型军备竞赛全是参数竞赛，GPT-3 175B、Gopher 280B、MT-NLG 530B，参数一路狂飙，而各家喂的数据都在 3000 亿 token 上下踏步。</p>
+<h2 id="13-chinchilla-修正大家都把模型养胖了">1.3 Chinchilla 修正：大家都把模型养胖了</h2>
+<p>2022 年，DeepMind 的 Hoffmann 等人重做了这个实验，结论让全行业坐直了：<strong>Kaplan 的分配公式错了，错得还不小。</strong></p>
+<p>技术根源后来被梳理清楚：Kaplan 的实验里，不同训练长度的 run 共用了不合适的学习率调度（调度没有对齐到各自的训练终点），系统性低估了&quot;多喂数据&quot;的收益。修正之后的结论叫 <strong>Chinchilla 定律</strong>：计算最优的分配是 <strong>N 和 D 等比例增长</strong>，数值上大约<strong>每个参数配 20 个 token</strong>。对照这个标准，当时的一线模型全都&quot;养胖了&quot;：Gopher 280B 参数只喂了 300B token（比例 1:1，应该 1:20），是一个严重&quot;营养不良的胖子&quot;——参数堆了一堆，没喂够数据，潜力远未兑现。</p>
+<p>DeepMind 用一次漂亮的对照实验钉死了结论：用与 Gopher <strong>完全相同的算力</strong>，训一个 70B 参数、1.4T token 的模型（参数缩小 4 倍、数据放大 4.7 倍），命名 Chinchilla。结果全面碾压 Gopher。同样的钱，换个分法，白捡一代模型的提升——这在&quot;算力即黄金&quot;的行业里等于宣布：过去两年大家集体把钱花错了地方。</p>
+<p>Chinchilla 之后，&quot;参数军备竞赛&quot;熄火了，行业的口头禅从&quot;多大的模型&quot;变成了&quot;多少 token&quot;。数据从配角升为主角——下一章你会看到，数据管线自此成为各家最核心的机密之一。</p>
+<div class="callout callout-warn">
+<p class="callout-title">易错点</p>
+
+<p>Chinchilla 说的是&quot;给定算力下损失最低&quot;的<strong>计算最优</strong>（compute-optimal），不是&quot;模型越小越好&quot;。它是一条等预算下的最优分配线：预算翻倍，N 和 D 各乘 $\sqrt{2}$。另外它的 20:1 是在特定数据分布和训练配方下拟合的经验值，后续研究（包括对原论文数据的复核）指出这个系数对配方敏感——把它当量级参考，别当物理常数。</p>
+</div>
+
+<h2 id="14-第二次修正故意把模型quot训过头quot">1.4 第二次修正：故意把模型&quot;训过头&quot;</h2>
+<p>故事到 2023 年又拐了一个弯，而这一弯的驱动力不是科学，是商业。</p>
+<p>Chinchilla 优化的目标是&quot;训练预算固定，损失最低&quot;。但模型训完是要<strong>部署</strong>的——第一卷算过推理账单：每生成一个 token 花约 $2N$ 的计算，用户量大时，推理的累计算力远超训练。把推理成本纳入总账，最优解就变了：<strong>宁可训练时多花算力，也要把 N 压小</strong>——小模型每次服务都便宜，训练多花的钱在海量推理中赚回来。</p>
+<p>于是出现了故意偏离 Chinchilla 的&quot;<strong>过度训练</strong>&quot;（overtraining）：Meta 的 Llama 3 8B 训了 15T token——<strong>每参数近 1900 个 token，是 Chinchilla 建议的百倍量级</strong>。按 Chinchilla 的账这严重&quot;浪费&quot;：同样算力训个更大的模型损失会更低。但 Meta 要的不是纸面损失最低，而是&quot;一个能塞进单卡、推理便宜、拿去开源人人可用&quot;的 8B 模型的能力尽可能强。训练是一次性成本，推理是永久成本——<strong>计算最优让位给了推理最优</strong>。</p>
+<p>2025–26 年的 MoE 旗舰把这两条逻辑合流了：细粒度稀疏（第一卷第七章）把激活参数压到几十 B（推理便宜），总参数照样巨大（容量够），再配上几十 T token 的重喂养。今天旗舰的预训练量普遍在 15T 到 30T+ token——数据量五年膨胀了一百倍，而&quot;该喂多少&quot;的决策依据，正是本章这三步演化叠加的结果：Kaplan 给了&quot;规模有回报&quot;的信仰，Chinchilla 给了&quot;参数数据平衡&quot;的账本，推理经济学给了&quot;往数据侧再压&quot;的理由。</p>
+<h2 id="15-一条定律的三重身份">1.5 一条定律的三重身份</h2>
+<p>收束本章之前，把 scaling laws 的意义整理成三层，后面各章会分别用到。</p>
+<p><strong>它是预测工具。<strong>大模型训练是不可试错的豪赌——几亿美元一次、没有重来机会。scaling laws 让实验室可以先用千分之一的算力训一串小模型，拟合出曲线，再</strong>外推</strong>预测大模型的最终损失。GPT-4 的技术报告罕见地披露过这一点：正式训练开始前，他们用小模型准确预测了最终 loss。这套&quot;小模型侦察、大模型决战&quot;的方法论，是所有前沿实验室的标准操作，也是第一卷讲过的&quot;架构改动要在真实规模才见分晓&quot;这一困境的部分解药——好的架构改动，应该改善的是整条 scaling 曲线的斜率或截距，而不只是某个点。</p>
+<p><strong>它是投资论证。</strong>&quot;损失可预测地下降&quot;意味着&quot;能力提升可以计划&quot;，这是数千亿美元数据中心投资唯一的理性基础。第六卷讲产业时你会看到，每一轮融资叙事的底层都是这条曲线。</p>
+<p>**它也是被追问的对象。**损失下降就等于&quot;更聪明&quot;吗？下降到什么时候是个头？数据够用吗？——这些追问构成了 2024 年之后行业最重要的几场辩论（&quot;涌现能力&quot;之争、&quot;数据墙&quot;之争、&quot;预训练终结&quot;之争），我们在后面几章逐一处理。</p>
+<p>但在此之前，得先回答一个更根本的问题：几十万亿 token 到底是什么东西？从哪来？为什么说&quot;数据配比是各家最核心的机密&quot;？下一章，数据管线——预训练这道大菜的备菜间。</p>
+<hr>
+<h3 id="本章要点">本章要点</h3>
+<ul>
+<li>记账体系：$C \approx 6ND$（训练），推理每 token 约 $2N$；用它可做&quot;多少卡多少天&quot;的信封背面估算。</li>
+<li>Kaplan 2020：损失随 N/D/C 幂律下降，跨七个数量级不弯折——&quot;做大&quot;从冒险变成可计算回报的投资，直接催生 GPT-3。</li>
+<li>Chinchilla 2022：修正分配——N 与 D 应等比增长，约 20 token/参数；同算力下 70B×1.4T 碾压 280B×300B；数据从配角变主角。</li>
+<li>2023 后的推理最优：训练是一次性成本、推理是永久成本，故意&quot;过度训练&quot;小模型（Llama 3 8B：1900 token/参数）；MoE 旗舰 = 稀疏激活 + 重喂养的合流。</li>
+<li>三重身份：预测工具（小模型侦察、外推大模型 loss）、投资论证（能力可计划）、被追问的对象（涌现/数据墙/预训练终结之争，后章展开）。</li>
+</ul>
+
+    <nav class="pager series-pager">
+  <a href="08-reading-a-release.html" class="cross-part">
+    <span class="label">← 上一篇 · PART I</span>
+    <span class="title">读懂一次发布——参数量、基模与版本语义</span>
+  </a>
+  <a href="10-data-pipeline.html" class="next">
+    <span class="label">下一章 →</span>
+    <span class="title">备菜间——几十万亿 token 从哪来</span>
+  </a>
+</nav>
+  </article>
+</div>
+
+<footer>
+  <div class="set">
+    <span>Large Language Models</span>
+    <span>2026 · ZH-CN</span>
+  </div>
+  <div class="set">
+    <span>Mav</span>
+  </div>
+</footer>
+<div class="search-backdrop" id="search-overlay" role="dialog" aria-modal="true" aria-label="搜索" hidden>
+  <div class="search-modal">
+    <div class="search-input-wrap">
+      <input type="search" class="search-input" placeholder="搜索内容..." aria-label="搜索内容" autocomplete="off">
+      <kbd>ESC</kbd>
+    </div>
+    <div class="search-results" role="listbox" aria-label="搜索结果"></div>
+  </div>
+</div>
+
+<div class="side-panel" id="side-panel">
+  <div class="side-panel-resize" id="side-panel-resize"></div>
+  <div class="side-panel-header">
+    <div class="side-panel-tabs">
+      <button class="side-panel-tab active" data-mode="sidenote">补充</button>
+      <button class="side-panel-tab" data-mode="notepad">笔记</button>
+    </div>
+    <button class="side-panel-close" aria-label="关闭">×</button>
+  </div>
+  <div class="side-panel-body"></div>
+</div>
+<button class="notepad-fab" id="notepad-fab" aria-label="便利贴">✎</button>
+
+<button class="mtoc-fab" id="mtoc-fab" aria-label="系列目录">TOC</button>
+<div class="mtoc-drawer" id="mtoc-drawer">
+  <div class="mtoc-content series-sidebar"></div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/bash.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/typescript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/yaml.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/javascript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/json.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/python.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/css.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+<script>mermaid.initialize({startOnLoad:true, theme:'neutral', fontFamily:'Inter, sans-serif'});</script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}]});"></script>
+<script src="../assets/script.js"></script>
+
+</body>
+</html>

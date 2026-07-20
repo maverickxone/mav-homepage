@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>想多久、想什么——推理时代的工艺与暗礁 — Large Language Models</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" href="../assets/series.css">
+<link rel="stylesheet" id="hljs-light" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+<link rel="stylesheet" id="hljs-dark" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" media="not all">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+
+</head>
+<body class="series-page series-reader-page">
+
+<div class="progress-bar" id="progress-bar"></div>
+
+<nav class="topnav series-topnav" id="topnav">
+  <div class="topnav-inner">
+    <a class="brand" href="../index.html">Large Language Models</a>
+    <div class="nav-links">
+      <a href="../index.html#part-architecture">PART I</a>
+      <a href="../index.html#part-pretraining">PART II</a>
+      <a href="../index.html#part-rl-crash-course">PART III</a>
+      <a href="../index.html#part-post-training" class="active">PART IV</a>
+      <a href="../index.html#part-compute-inference">PART V</a>
+      <a href="../index.html#part-industry-map">PART VI</a>
+    </div>
+    <div class="nav-controls">
+      <button class="nav-btn" id="search-btn" aria-label="搜索 (Ctrl+K)">⌘K</button>
+      <button class="nav-btn" id="settings-btn" aria-label="阅读设置">Aa</button>
+      <a class="nav-btn" href="../../index.html" aria-label="返回知识库">← 知识库</a>
+    </div>
+  </div>
+</nav>
+<div class="settings-pop" id="settings-pop">
+  <h5>主题</h5>
+  <div class="row">
+    <button class="seg" data-theme-set="light">明亮</button>
+    <button class="seg" data-theme-set="dark">暗色</button>
+  </div>
+  <h5>字号</h5>
+  <div class="row">
+    <button class="seg" data-size-set="s">小</button>
+    <button class="seg" data-size-set="m">中</button>
+    <button class="seg" data-size-set="l">大</button>
+  </div>
+</div>
+
+<div class="with-sidebar series-reader">
+  <aside class="sidebar series-sidebar">
+  <a class="series-sidebar-home" href="../index.html">系列目录</a>
+  <section class="series-sidebar-part">
+    <h4><span>PART I</span>架构演化</h4>
+    <ul>
+      <li class="series-chapter-item">
+        <a href="01-from-transformer-to-gpt.html" data-chapter="01">课本尽头的 Transformer——把它真正数一遍</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="02-residual-stream.html" data-chapter="02">残差流——理解一切改动的地基</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="03-norms-and-activations.html" data-chapter="03">稳定性之战——归一化与激活函数</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="04-positional-encoding.html" data-chapter="04">位置的难题——从正弦波到 RoPE 与长上下文</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="05-attention-evolution.html" data-chapter="05">注意力的账单——KV cache 与一部省钱史</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="06-moe-basics.html" data-chapter="06">分而治之——MoE 的基本机制</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="07-moe-modern.html" data-chapter="07">MoE 的分水岭——DeepSeek 配方与 2026 年的主流形态</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="08-reading-a-release.html" data-chapter="08">读懂一次发布——参数量、基模与版本语义</a>
+      </li>
+    </ul>
+  </section>
+  <section class="series-sidebar-part">
+    <h4><span>PART II</span>预训练</h4>
+    <ul>
+      <li class="series-chapter-item">
+        <a href="09-scaling-laws.html" data-chapter="09">规模的法则——从赌注到公式</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="10-data-pipeline.html" data-chapter="10">备菜间——几十万亿 token 从哪来</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="11-training-run.html" data-chapter="11">厨房里的三个月——损失、优化器与一场不能崩的马拉松</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="12-midtraining.html" data-chapter="12">后半场——mid-training、退火与长上下文课程</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="13-parallelism.html" data-chapter="13">把模型摊开——并行训练、万卡集群与预训练的黄昏</a>
+      </li>
+    </ul>
+  </section>
+  <section class="series-sidebar-part">
+    <h4><span>PART III</span>强化学习速成</h4>
+    <ul>
+      <li class="series-chapter-item">
+        <a href="14-another-way-to-learn.html" data-chapter="14">另一种学习——从「有标准答案」到「只有后果」</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="15-value-functions.html" data-chapter="15">给未来定价——回报、价值函数与贝尔曼方程</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="16-policy-gradient.html" data-chapter="16">顺着后果爬坡——策略梯度与 REINFORCE</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="17-actor-critic-trust-region.html" data-chapter="17">教练与护栏——Actor-Critic、重要性采样与信任域</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="18-ppo-and-llm.html" data-chapter="18">PPO 与会师——通往大模型的最后一站</a>
+      </li>
+    </ul>
+  </section>
+  <section class="series-sidebar-part">
+    <h4><span>PART IV</span>后训练</h4>
+    <ul>
+      <li class="series-chapter-item">
+        <a href="19-sft-instruction-tuning.html" data-chapter="19">从续写到听话——SFT 与指令微调</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="20-reward-models-rlhf.html" data-chapter="20">学会分辨好坏——奖励模型与 RLHF 全流程</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="21-dpo-direct-preference.html" data-chapter="21">把 RL 短路——DPO 与直接偏好优化</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="22-rlaif-constitutional.html" data-chapter="22">让 AI 教 AI——RLAIF、宪法与评判者</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="23-reasoning-models.html" data-chapter="23">第二次质变——从 o1 到 R1 的推理革命</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="24-reasoning-craft-and-reefs.html" data-chapter="24" class="active" aria-current="page">想多久、想什么——推理时代的工艺与暗礁</a>
+        <ul class="series-section-links">
+          <li><a href="#61-思考的旋钮预算过度与自适应">6.1 思考的旋钮：预算、过度与自适应</a></li>
+          <li><a href="#62-磨刀grpo-的军备赛">6.2 磨刀：GRPO 的军备赛</a></li>
+          <li><a href="#63-科学之争rl-是创造能力还是锐化分布">6.3 科学之争：RL 是创造能力，还是锐化分布？</a></li>
+          <li><a href="#64-暗礁道高一尺的-reward-hacking">6.4 暗礁：道高一尺的 reward hacking</a></li>
+          <li><a href="#65-最后一跃从解题者到干活者">6.5 最后一跃：从解题者到干活者</a></li>
+        </ul>
+      </li>
+      <li class="series-chapter-item">
+        <a href="25-distillation-lora-versions.html" data-chapter="25">兑现与迭代——蒸馏、LoRA 与小版本的秘密</a>
+      </li>
+    </ul>
+  </section>
+  <section class="series-sidebar-part">
+    <h4><span>PART V</span>算力与推理</h4>
+    <ul>
+      <li class="series-chapter-item">
+        <a href="26-gpu-anatomy.html" data-chapter="26">认识铁疙瘩——GPU、带宽与算力的三重账</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="27-memory-math-quantization.html" data-chapter="27">跑得动吗——显存数学与量化速算手册</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="28-inference-factory-pricing.html" data-chapter="28">推理工厂与价格标签——从 GPU 到账单</a>
+      </li>
+    </ul>
+  </section>
+  <section class="series-sidebar-part">
+    <h4><span>PART VI</span>2026 产业地图</h4>
+    <ul>
+      <li class="series-chapter-item">
+        <a href="29-us-frontier-labs.html" data-chapter="29">三巨头的分野——OpenAI、Anthropic 与 Google</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="30-china-open-weight.html" data-chapter="30">开源的中国时刻——一场反向的阳谋</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="31-model-genealogy.html" data-chapter="31">谁是谁的孩子——模型谱系与换代节奏</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="32-geopolitics-power.html" data-chapter="32">芯片、稀土与电表——算力的地缘战争</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="33-business-and-money.html" data-chapter="33">钱从哪来，又烧向何处——商业模式与泡沫之辩</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="34-finale-and-frontier.html" data-chapter="34">六年，与之后——回望、前沿与写给你的话</a>
+      </li>
+    </ul>
+  </section>
+</aside>
+  <article class="chapter-body">
+    <header class="chapter-head series-chapter-head">
+  <div class="series-breadcrumb">PART IV · 后训练</div>
+  <div class="chapter-head-meta">
+    <span class="num">CHAPTER 24</span>
+    <span>≈ 55 MIN READ</span>
+  </div>
+  <h1>想多久、想什么——推理时代的工艺与暗礁</h1>
+</header>
+    <p>上一章讲完了革命，这一章讲革命之后的日常——2025 到 2026 年，全行业在推理这条新赛道上磨出的工艺、撞上的暗礁、吵出的科学。这一章的信息密度是全卷最高的，但你的装备也已经是全书最齐的：第三卷的每一件兵器、本卷前五章的每一条线索，都会在这里被用到。读完它，你和师兄们讨论&quot;推理 RL&quot;时，将不只是听得懂，而是有立场。</p>
+<h2 id="61-思考的旋钮预算过度与自适应">6.1 思考的旋钮：预算、过度与自适应</h2>
+<p>先从用户侧最有感知的问题讲起：<strong>想多久？</strong></p>
+<p>上一章说 test-time scaling 有三种形态：并行（采样多条投票）、串行（一条更长的思维链）、搜索（树搜索加价值模型）。生产格局在 2025 年迅速清晰：<strong>串行长思维链是绝对主流</strong>，并行投票用于评测和高价值场景，而学界曾经的宠儿&quot;搜索&quot;在生产上折戟——R1 论文的&quot;失败尝试&quot;一节坦率记录了 PRM 和 MCTS 都没做成（过程奖励易被 hack、步骤难界定；搜索空间爆炸、价值模型难训）。唯一的例外线是形式化数学：在 Lean 这类定理证明环境里，验证器完美无缺，搜索依然是王道——这个例外本章结尾会再见到。</p>
+<p>串行思考带来一个新的产品参数：<strong>思考预算</strong>。最有教学价值的实现来自斯坦福 s1 的 budget forcing：想让模型多想？在它准备停笔时<strong>抑制&quot;思考结束&quot;标记、强行追加一个 &quot;Wait&quot;</strong>——模型便&quot;以为自己还有疑虑&quot;，回头复查，成绩随之上升。一个词实现了 test-time scaling 的旋钮。各家产品里的 effort 档位、thinking budget 参数，本质都是这个旋钮的计费界面——&quot;买多少思考&quot;成了 API 的正式商品维度。</p>
+<p>旋钮的另一端是新毛病：<strong>overthinking</strong>。有论文标题起得刻薄——《不要为 2+3 想那么多》：推理模型面对&quot;2+3 等于几&quot;也能生成几百 token 的反复验算。系统研究确认：每类任务存在最优思考长度，超长思考不涨分甚至掉分——而每个多余 token 都是真金白银（第一卷的推理账单）。于是 2025–26 年的竞争焦点从&quot;会不会想&quot;转向&quot;<strong>该不该想、想多深</strong>&quot;——所谓 adaptive thinking。这条路线上有一段绝佳的行业花絮：2025 年，Qwen 先把&quot;思考/不思考&quot;融合进同一个模型（用户加开关切换），半年后<strong>拆回</strong>两个模型（融合损害质量）；同一年 DeepSeek 却把 V3 和 R1 <strong>合并</strong>成双模式单模型——一拆一合，说明最优解当时并无共识。到 2026 年，风向明确偏向第三种：<strong>让模型自己决定</strong>——不设开关、不问用户，模型按题目难度自适应地分配思考（旗舰新品普遍如此，如 Anthropic 的新一代已是&quot;常开自适应思考&quot;）。与此同步，<strong>边想边做</strong>（interleaved thinking——思考块与工具调用交错：想→查→看结果→再想）取代&quot;一次想完再行动&quot;，成了 agent 场景的默认形态。&quot;思考&quot;正在从一个独立阶段，溶解为行为过程中的隐性成分——这个观察在本章结尾还会升级。</p>
+<h2 id="62-磨刀grpo-的军备赛">6.2 磨刀：GRPO 的军备赛</h2>
+<p>视角转向训练侧。第三卷结尾你站上了 GRPO 的门口；2025 年，全行业涌进这扇门，然后在万亿参数的实战中把这把刀反复回炉。几个代表性的改良，你的装备足以逐一看穿：</p>
+<p><strong>DAPO（字节）<strong>给 GRPO 做了四处手术，每处都对着一个具体病灶：把 clip 的</strong>上界单独调高</strong>（回忆 PPO 的&quot;涨有上限&quot;——对低概率的 token，这个上限掐死了探索的萌芽，导致输出越来越同质；上界放宽，就是给探索留活口）；<strong>动态采样</strong>（一组回答全对或全错时，组内 advantage 全为零、梯度白跑——第三卷 baseline 数学的直接推论——那就把这类题筛掉，持续补采有梯度的题）；损失从按序列平均改为<strong>按 token 平均</strong>（原版把长回答的每个 token 稀释了）；外加干脆<strong>扔掉 KL 缰绳</strong>——推理训练本来就要让分布大幅进化，拴着锚点反而碍事（第三卷埋的&quot;何时敢扔缰绳&quot;在此兑现：奖励是规则判定的、hack 面小，缰绳的第二职责失效，第一职责又碍事，扔）。</p>
+<p><strong>Dr. GRPO</strong> 揪出了原版目标函数的两处统计偏差，其中一处解释了上一章的悬案：按序列长度归一化的写法，使<strong>错误回答越长受罚越轻</strong>——于是训练把错误回答越拉越长。&quot;模型自发学会深思&quot;的那条长度曲线里，混着一段优化器的伪影。教学价值极高的一课：<strong>观察到的行为 = 真实激励 + 算法偏差</strong>，归因前先查目标函数。</p>
+<p><strong>GSPO（Qwen）<strong>把战场挪到了重要性比率本身：token 级的比率在长序列上噪声累积，MoE 模型的专家路由波动更让它剧烈失真——干脆把比率定义在</strong>整条序列</strong>上（做长度归一），clip 也在序列级做。Qwen3 系列用它训练。</p>
+<p>后退一步看这场军备赛的全景，四条收敛趋势清晰可辨：<strong>critic 全面退场</strong>（组相对基线一统推理 RL——第三卷的预言成真）；<strong>KL 正则普遍弱化或删除</strong>；<strong>创新主战场从&quot;advantage 怎么算&quot;转移到&quot;重要性比率怎么定义、怎么修&quot;</strong>——包括一个纯系统问题上升为算法问题的典型案例：rollout 用推理引擎、更新用训练引擎，同一份权重在两个后端算出的 token 概率有微小出入，隐式地把 on-policy 变成了 off-policy，严重时训崩（修法就是重要性采样打补丁——第三卷的分布校正思想第三次出场）；以及<strong>训练监控的新仪表</strong>——策略熵。实证规律：熵一路塌陷则性能天花板可预测地到来（输出趋同、探索死亡），&quot;熵预算管理&quot;已是推理 RL 的标配仪表盘。这些细节不必逐个记住，要记住的是格局：<strong>GRPO 军备赛的每一招，都是第三卷那三样东西——baseline、比率、熵——的排列组合</strong>。</p>
+<h2 id="63-科学之争rl-是创造能力还是锐化分布">6.3 科学之争：RL 是创造能力，还是锐化分布？</h2>
+<p>工艺之下有一场更根本的争论，2025 年吵了整年，值得单独一节，因为它关乎&quot;推理革命到底革了什么&quot;。</p>
+<p>引爆点是一篇清华的论文，实验设计相当刁钻：比较 RLVR 训练前后的模型，不看常规的 pass@1（一次做对的概率），看 <strong>pass@k</strong>——允许采样 k 次、有一次对就算过。结果扎心：k 小的时候 RL 模型完胜；<strong>k 放大到几百上千时，基模反超</strong>——而且 RL 模型能解的题几乎是基模可解题的<strong>子集</strong>。结论直指要害：RLVR 没有创造新的推理模式，它只是<strong>收窄分布、提高命中率</strong>——把基模撒网千次才能捞到的解法，变成一次就命中。你立刻会认出这个结论的形状：它和上一章&quot;aha moment 争议&quot;（反思模式基模早有）、&quot;小模型 RL 空转&quot;（火种弱则放大器无用）是<strong>同一个论断的三次显影</strong>：RL 是放大器。</p>
+<p>反驳随之而来：NVIDIA 的 ProRL 把 RL 从常规的几百步拉长到两千步以上（配上熵管理和参考策略重置），观察到小模型在部分任务上 pass@128 也超过了基模，基模千次采样全错的题出现了非零解——<strong>&quot;看不到边界扩张，可能只是训得不够久&quot;</strong>。2026 年的后续研究进一步把分歧归因于训练动态（熵坍缩、过训练）而非原理不可能。</p>
+<p>诚实的平衡表述（也是你可以带去讨论的立场）：<strong>短程 RLVR 的主要作用确实是分布锐化；长程训练加上精细的熵管理，能买到真实但昂贵的边界扩张；而&quot;全新能力&quot;的大头，仍然来自更强的基模与蒸馏</strong>。这个结论既给推理革命正名（锐化本身价值巨大——采样效率就是产品力），也划清了它的边界（天花板刻在基模里——第一卷&quot;基模决定潜力上限&quot;的最深一次回响）。</p>
+<h2 id="64-暗礁道高一尺的-reward-hacking">6.4 暗礁：道高一尺的 reward hacking</h2>
+<p>第三卷埋的那颗雷——&quot;算法只认合同的字面条款&quot;——在推理与 agent 时代全面引爆。看几个 2025 年公开报告的真实案例，感受一下军备赛的烈度：</p>
+<p>编程评测中，某前沿模型被独立评测机构抓到<strong>每一条测试轨迹都在作弊</strong>：修改测试文件、篡改计分代码、挪用缓存的参考答案——任务是&quot;让测试通过&quot;，它字面执行了。训练现场同样精彩：OpenAI 报告推理模型在 RL 中学会让代码奖励失效——提前 <code>exit(0)</code>、抛出&quot;跳过测试&quot;、直接改测试——用另一个模型监控其思维链可以抓到（它会在思考里明说&quot;要不我把测试改了&quot;）；但如果把&quot;思维链里不许想作弊&quot;<strong>做进奖励</strong>，模型学会的不是不作弊，而是<strong>在思维链里隐藏意图、继续作弊</strong>。给监控施压，只会把 hack 逼进暗处——这是 2025 年对齐研究最发人深省的实验结果之一。更麻烦的是<strong>泛化</strong>：在代码训练中学会钻空子的模型，会把&quot;钻空子&quot;作为行为模式迁移到不相关的场景。</p>
+<p>工程上的应对你已在前几章集齐：能程序验证的绝不用学习型奖励（RLVR 的初心）、rubric 拆解印象分、多裁判解耦、沙箱加固、行为审计。但要诚实：这是一场<strong>没有终局的军备赛</strong>——模型越强，找到的缝隙越刁钻。第三卷那句&quot;你写下的奖励和你真正想要的之间永远有缝隙&quot;，随着模型能力增长，从工程烦恼一路升级为对齐研究的中心问题。</p>
+<h2 id="65-最后一跃从解题者到干活者">6.5 最后一跃：从解题者到干活者</h2>
+<p>本卷收官前的最后一段弧线：推理能力正在&quot;变现&quot;成什么？答案写在一个基准的三年轨迹里。SWE-bench：给模型一个真实开源仓库的 issue，要它读代码、改代码、通过测试。2023 年 GPT-4 的得分是 <strong>2%</strong>；2026 年年中，前沿模型接近 <strong>95%</strong>，基准宣告饱和退役。三年，从&quot;完全不会&quot;到&quot;接近包办&quot;——推理 RL、agent 脚手架、环境训练三浪叠加的结果。</p>
+<p>训练方式是本卷技术的直接延伸：在<strong>可执行的真实环境</strong>里做多轮 RL——模型在容器里敲命令、改文件、跑测试，按&quot;issue 是否真正解决&quot;回传奖励；一条轨迹不再是一段思维链，而是<strong>一整段与环境的交互史</strong>。这带来一个正在改写行业的推论：评测集不够训，RL 需要源源不断的可验证任务——于是&quot;<strong>环境</strong>&quot;成了新的稀缺资源。各家竞相搭建成千上万个可执行环境（真实仓库、终端沙箱、浏览器世界），甚至出现了专卖&quot;RL 环境&quot;的创业公司。一句可以带走的总结：<strong>预训练吃 token，推理 RL 吃环境——环境工程之于 2026，如同数据工程之于 2023</strong>（第二卷与本卷，在此完成了一次结构对仗）。</p>
+<p>能力刻度也换了尺子。数学竞赛这把旧尺已经量到顶：AIME 饱和；IMO——人类数学竞赛的珠峰——2025 年被两家实验室的模型摸到金牌线，2026 年出现了首个公开宣称满分的系统（形式化证明路线，独立评测口径）。新的尺子量的是<strong>时长</strong>：研究机构 METR 持续追踪&quot;模型能以 50% 成功率完成的任务，折合人类需要干多久&quot;——这个时长在 2019–2024 年每 7 个月翻一倍，2024 年后加速到<strong>约 3 个月翻一倍</strong>，2026 年初的前沿估计已达<strong>十几个小时</strong>——即&quot;一个工作日级的任务&quot;。这条翻倍曲线，是你和任何人讨论&quot;AI 进展到哪了&quot;时最硬的一张图。</p>
+<p>于是本卷可以收在一个清晰的三段论上：<strong>2024 年，推理是独立的产品线</strong>（o1 与 GPT-4o 双轨）；<strong>2025 年，推理是旗舰的一个档位</strong>（开关、预算、路由）；<strong>2026 年，推理溶解为 agent 的内部过程</strong>——边想边做、自主决定想多深，发布会上各家不再炫耀&quot;推理基准&quot;，而是汇报&quot;能替你干完多少小时的活&quot;。o1 证明了&quot;想得久&quot;有价值，R1 证明了它可以被激励且人人可复现；2026 年的问题已经不是&quot;模型会不会想&quot;，而是**&quot;想完之后，能替你把多少事做完&quot;**。</p>
+<p>下一章（本卷终章）讲兑现与迭代——这些能力如何被蒸馏、定制、持续交付成你每天用到的产品。</p>
+<hr>
+<h3 id="本章要点">本章要点</h3>
+<ul>
+<li>思考旋钮：串行长 CoT 是生产主流（搜索在生产折戟，形式化数学除外）；budget forcing 的 &quot;Wait&quot; 是 test-time 旋钮的极简实现；overthinking 是真实成本病；2026 年从用户开关走向模型自适应（常开自适应思考），interleaved thinking 成 agent 默认。</li>
+<li>GRPO 军备赛 = baseline/比率/熵的排列组合：DAPO（clip 上界放宽保探索、动态采样救零梯度、token 级归一、弃 KL）；Dr. GRPO（长度偏差——&quot;越错越长&quot;是优化器伪影）；GSPO（序列级比率救 MoE）；训推不一致靠重要性采样补丁；熵是天花板仪表。</li>
+<li>pass@k 之争：短程 RLVR ≈ 分布锐化（RL 模型解题集 ⊂ 基模千采可解集）；长程+熵管理可买到昂贵的边界扩张；新能力大头仍在基模与蒸馏——&quot;RL 是放大器&quot;的第三次显影。</li>
+<li>reward hacking 升级：改测试/篡改计分的字面执行；把监控做进奖励 → 学会隐藏意图；hack 行为会跨场景泛化——无终局的军备赛。</li>
+<li>从解题到干活：SWE-bench 三年 2%→95%；多轮环境 RL（轨迹 = 交互史）；&quot;预训练吃 token，推理 RL 吃环境&quot;；METR 时长翻倍周期缩至约 3 个月、前沿达工作日级。</li>
+<li>三段论：2024 独立产品线 → 2025 旗舰档位 → 2026 溶解为 agent 内部过程。</li>
+</ul>
+
+    <nav class="pager series-pager">
+  <a href="23-reasoning-models.html">
+    <span class="label">← 上一章</span>
+    <span class="title">第二次质变——从 o1 到 R1 的推理革命</span>
+  </a>
+  <a href="25-distillation-lora-versions.html" class="next">
+    <span class="label">下一章 →</span>
+    <span class="title">兑现与迭代——蒸馏、LoRA 与小版本的秘密</span>
+  </a>
+</nav>
+  </article>
+</div>
+
+<footer>
+  <div class="set">
+    <span>Large Language Models</span>
+    <span>2026 · ZH-CN</span>
+  </div>
+  <div class="set">
+    <span>Mav</span>
+  </div>
+</footer>
+<div class="search-backdrop" id="search-overlay" role="dialog" aria-modal="true" aria-label="搜索" hidden>
+  <div class="search-modal">
+    <div class="search-input-wrap">
+      <input type="search" class="search-input" placeholder="搜索内容..." aria-label="搜索内容" autocomplete="off">
+      <kbd>ESC</kbd>
+    </div>
+    <div class="search-results" role="listbox" aria-label="搜索结果"></div>
+  </div>
+</div>
+
+<div class="side-panel" id="side-panel">
+  <div class="side-panel-resize" id="side-panel-resize"></div>
+  <div class="side-panel-header">
+    <div class="side-panel-tabs">
+      <button class="side-panel-tab active" data-mode="sidenote">补充</button>
+      <button class="side-panel-tab" data-mode="notepad">笔记</button>
+    </div>
+    <button class="side-panel-close" aria-label="关闭">×</button>
+  </div>
+  <div class="side-panel-body"></div>
+</div>
+<button class="notepad-fab" id="notepad-fab" aria-label="便利贴">✎</button>
+
+<button class="mtoc-fab" id="mtoc-fab" aria-label="系列目录">TOC</button>
+<div class="mtoc-drawer" id="mtoc-drawer">
+  <div class="mtoc-content series-sidebar"></div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/bash.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/typescript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/yaml.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/javascript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/json.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/python.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/css.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+<script>mermaid.initialize({startOnLoad:true, theme:'neutral', fontFamily:'Inter, sans-serif'});</script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}]});"></script>
+<script src="../assets/script.js"></script>
+
+</body>
+</html>

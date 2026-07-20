@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>把 RL 短路——DPO 与直接偏好优化 — Large Language Models</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" href="../assets/series.css">
+<link rel="stylesheet" id="hljs-light" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+<link rel="stylesheet" id="hljs-dark" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" media="not all">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+
+</head>
+<body class="series-page series-reader-page">
+
+<div class="progress-bar" id="progress-bar"></div>
+
+<nav class="topnav series-topnav" id="topnav">
+  <div class="topnav-inner">
+    <a class="brand" href="../index.html">Large Language Models</a>
+    <div class="nav-links">
+      <a href="../index.html#part-architecture">PART I</a>
+      <a href="../index.html#part-pretraining">PART II</a>
+      <a href="../index.html#part-rl-crash-course">PART III</a>
+      <a href="../index.html#part-post-training" class="active">PART IV</a>
+      <a href="../index.html#part-compute-inference">PART V</a>
+      <a href="../index.html#part-industry-map">PART VI</a>
+    </div>
+    <div class="nav-controls">
+      <button class="nav-btn" id="search-btn" aria-label="搜索 (Ctrl+K)">⌘K</button>
+      <button class="nav-btn" id="settings-btn" aria-label="阅读设置">Aa</button>
+      <a class="nav-btn" href="../../index.html" aria-label="返回知识库">← 知识库</a>
+    </div>
+  </div>
+</nav>
+<div class="settings-pop" id="settings-pop">
+  <h5>主题</h5>
+  <div class="row">
+    <button class="seg" data-theme-set="light">明亮</button>
+    <button class="seg" data-theme-set="dark">暗色</button>
+  </div>
+  <h5>字号</h5>
+  <div class="row">
+    <button class="seg" data-size-set="s">小</button>
+    <button class="seg" data-size-set="m">中</button>
+    <button class="seg" data-size-set="l">大</button>
+  </div>
+</div>
+
+<div class="with-sidebar series-reader">
+  <aside class="sidebar series-sidebar">
+  <a class="series-sidebar-home" href="../index.html">系列目录</a>
+  <section class="series-sidebar-part">
+    <h4><span>PART I</span>架构演化</h4>
+    <ul>
+      <li class="series-chapter-item">
+        <a href="01-from-transformer-to-gpt.html" data-chapter="01">课本尽头的 Transformer——把它真正数一遍</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="02-residual-stream.html" data-chapter="02">残差流——理解一切改动的地基</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="03-norms-and-activations.html" data-chapter="03">稳定性之战——归一化与激活函数</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="04-positional-encoding.html" data-chapter="04">位置的难题——从正弦波到 RoPE 与长上下文</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="05-attention-evolution.html" data-chapter="05">注意力的账单——KV cache 与一部省钱史</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="06-moe-basics.html" data-chapter="06">分而治之——MoE 的基本机制</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="07-moe-modern.html" data-chapter="07">MoE 的分水岭——DeepSeek 配方与 2026 年的主流形态</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="08-reading-a-release.html" data-chapter="08">读懂一次发布——参数量、基模与版本语义</a>
+      </li>
+    </ul>
+  </section>
+  <section class="series-sidebar-part">
+    <h4><span>PART II</span>预训练</h4>
+    <ul>
+      <li class="series-chapter-item">
+        <a href="09-scaling-laws.html" data-chapter="09">规模的法则——从赌注到公式</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="10-data-pipeline.html" data-chapter="10">备菜间——几十万亿 token 从哪来</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="11-training-run.html" data-chapter="11">厨房里的三个月——损失、优化器与一场不能崩的马拉松</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="12-midtraining.html" data-chapter="12">后半场——mid-training、退火与长上下文课程</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="13-parallelism.html" data-chapter="13">把模型摊开——并行训练、万卡集群与预训练的黄昏</a>
+      </li>
+    </ul>
+  </section>
+  <section class="series-sidebar-part">
+    <h4><span>PART III</span>强化学习速成</h4>
+    <ul>
+      <li class="series-chapter-item">
+        <a href="14-another-way-to-learn.html" data-chapter="14">另一种学习——从「有标准答案」到「只有后果」</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="15-value-functions.html" data-chapter="15">给未来定价——回报、价值函数与贝尔曼方程</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="16-policy-gradient.html" data-chapter="16">顺着后果爬坡——策略梯度与 REINFORCE</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="17-actor-critic-trust-region.html" data-chapter="17">教练与护栏——Actor-Critic、重要性采样与信任域</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="18-ppo-and-llm.html" data-chapter="18">PPO 与会师——通往大模型的最后一站</a>
+      </li>
+    </ul>
+  </section>
+  <section class="series-sidebar-part">
+    <h4><span>PART IV</span>后训练</h4>
+    <ul>
+      <li class="series-chapter-item">
+        <a href="19-sft-instruction-tuning.html" data-chapter="19">从续写到听话——SFT 与指令微调</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="20-reward-models-rlhf.html" data-chapter="20">学会分辨好坏——奖励模型与 RLHF 全流程</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="21-dpo-direct-preference.html" data-chapter="21" class="active" aria-current="page">把 RL 短路——DPO 与直接偏好优化</a>
+        <ul class="series-section-links">
+          <li><a href="#31-出发点把-rlhf-的目标写在纸上">3.1 出发点：把 RLHF 的目标写在纸上</a></li>
+          <li><a href="#32-关键一翻策略里藏着奖励">3.2 关键一翻：策略里藏着奖励</a></li>
+          <li><a href="#33-午餐的价格离线的代价">3.3 午餐的价格：离线的代价</a></li>
+          <li><a href="#34-2026-年的分工格局">3.4 2026 年的分工格局</a></li>
+        </ul>
+      </li>
+      <li class="series-chapter-item">
+        <a href="22-rlaif-constitutional.html" data-chapter="22">让 AI 教 AI——RLAIF、宪法与评判者</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="23-reasoning-models.html" data-chapter="23">第二次质变——从 o1 到 R1 的推理革命</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="24-reasoning-craft-and-reefs.html" data-chapter="24">想多久、想什么——推理时代的工艺与暗礁</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="25-distillation-lora-versions.html" data-chapter="25">兑现与迭代——蒸馏、LoRA 与小版本的秘密</a>
+      </li>
+    </ul>
+  </section>
+  <section class="series-sidebar-part">
+    <h4><span>PART V</span>算力与推理</h4>
+    <ul>
+      <li class="series-chapter-item">
+        <a href="26-gpu-anatomy.html" data-chapter="26">认识铁疙瘩——GPU、带宽与算力的三重账</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="27-memory-math-quantization.html" data-chapter="27">跑得动吗——显存数学与量化速算手册</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="28-inference-factory-pricing.html" data-chapter="28">推理工厂与价格标签——从 GPU 到账单</a>
+      </li>
+    </ul>
+  </section>
+  <section class="series-sidebar-part">
+    <h4><span>PART VI</span>2026 产业地图</h4>
+    <ul>
+      <li class="series-chapter-item">
+        <a href="29-us-frontier-labs.html" data-chapter="29">三巨头的分野——OpenAI、Anthropic 与 Google</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="30-china-open-weight.html" data-chapter="30">开源的中国时刻——一场反向的阳谋</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="31-model-genealogy.html" data-chapter="31">谁是谁的孩子——模型谱系与换代节奏</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="32-geopolitics-power.html" data-chapter="32">芯片、稀土与电表——算力的地缘战争</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="33-business-and-money.html" data-chapter="33">钱从哪来，又烧向何处——商业模式与泡沫之辩</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="34-finale-and-frontier.html" data-chapter="34">六年，与之后——回望、前沿与写给你的话</a>
+      </li>
+    </ul>
+  </section>
+</aside>
+  <article class="chapter-body">
+    <header class="chapter-head series-chapter-head">
+  <div class="series-breadcrumb">PART IV · 后训练</div>
+  <div class="chapter-head-meta">
+    <span class="num">CHAPTER 21</span>
+    <span>≈ 45 MIN READ</span>
+  </div>
+  <h1>把 RL 短路——DPO 与直接偏好优化</h1>
+</header>
+    <p>上一章留下的第一条岔路：RLHF 那台四模型机器太重了——就为了&quot;让模型更符合人类偏好&quot;这个目标，先训一个 RM，再开动 PPO 全家桶，采样、打分、advantage、缰绳……有没有可能<strong>从偏好数据直接优化策略</strong>，把中间商全部裁掉？</p>
+<p>2023 年 5 月，斯坦福的一篇论文给出了肯定回答，标题起得锋芒毕露：《Direct Preference Optimization: Your Language Model Is Secretly a Reward Model》——直接偏好优化：<strong>你的语言模型暗中就是个奖励模型</strong>。这一章讲清这句话的确切含义。它是全卷数学最漂亮的一次短路，也是一堂关于&quot;免费午餐的真实价格&quot;的课。</p>
+<h2 id="31-出发点把-rlhf-的目标写在纸上">3.1 出发点：把 RLHF 的目标写在纸上</h2>
+<p>DPO 的推导起点不是新想法，恰恰是<strong>原样接过 RLHF 的优化目标</strong>。上一章的第三步在做什么？用符号写出来（第三卷的装备直接上阵）：</p>
+<p>$$
+\max_\pi\ \ \mathbb{E}_{y \sim \pi}\big[\, r(x, y)\,\big] \;-\; \beta\, D_{\mathrm{KL}}\big(\pi \,\|\, \pi_{\text{ref}}\big)
+$$</p>
+<p>最大化奖励，同时用系数 $\beta$ 的 KL 缰绳拴住别跑远。RLHF 用 PPO 迭代地逼近这个目标的解。DPO 的第一步观察是：<strong>这个优化问题其实有解析解</strong>——不用迭代，最优策略可以直接写出来：</p>
+<p>$$
+\pi^*(y \mid x) \;\propto\; \pi_{\text{ref}}(y \mid x)\, \exp\!\Big(\frac{r(x, y)}{\beta}\Big)
+$$</p>
+<p>这个解长得很讲道理：最优策略 = 参考策略 × 按奖励指数加权。奖励高的回答，概率在参考分布基础上被指数放大；$\beta$ 越大（缰绳越紧），放大越温和。这个形式在统计物理和贝叶斯推断里都是老面孔，本身不新奇。<strong>新奇的是下一步的方向</strong>——所有人都拿这个式子&quot;从奖励推策略&quot;，DPO 反过来：<strong>从策略反解奖励</strong>。</p>
+<h2 id="32-关键一翻策略里藏着奖励">3.2 关键一翻：策略里藏着奖励</h2>
+<p>把上面的式子做个初等变形（两边取对数、移项），奖励可以用策略表示出来：</p>
+<p>$$
+r(x, y) \;=\; \beta \log \frac{\pi(y \mid x)}{\pi_{\text{ref}}(y \mid x)} \;+\; \text{（与 } y \text{ 无关的常数）}
+$$</p>
+<p>用人话读：<strong>一个回答的奖励，等于&quot;策略相对参考模型对它概率的抬升幅度&quot;（乘 $\beta$）</strong>。策略越是超出参考模型地偏爱某个回答，等价于它给这个回答记了越高的奖励——任何一个策略，都隐式地定义着一个奖励函数。&quot;你的语言模型暗中是个奖励模型&quot;，指的就是这层等价。</p>
+<p>最后一步收网。上一章的 Bradley-Terry 说，偏好概率只由<strong>奖励之差</strong>决定——而差一作，那个讨厌的常数项恰好消掉！把&quot;隐式奖励&quot;代入 Bradley-Terry，再做最大似然（跟训 RM 时一模一样的套路），得到 DPO 的最终损失——对每条偏好数据（指令 $x$，胜者 $y_w$，败者 $y_l$）：</p>
+<p>$$
+\mathcal{L}_{\text{DPO}} = -\log \sigma\Big(\underbrace{\beta \log \tfrac{\pi_\theta(y_w|x)}{\pi_{\text{ref}}(y_w|x)}}_{\text{胜者的隐式奖励}} \;-\; \underbrace{\beta \log \tfrac{\pi_\theta(y_l|x)}{\pi_{\text{ref}}(y_l|x)}}_{\text{败者的隐式奖励}}\Big)
+$$</p>
+<p>盯着看一会儿，它惊人地朴素：<strong>让胜者的隐式奖励超过败者</strong>——即&quot;相对参考模型，把胜者的概率抬得比败者更高&quot;。没有 RM（它被策略自己兼任了），没有采样（数据是现成的偏好对），没有 critic、没有 clip、没有 rollout——<strong>整台 RL 机器被一步数学短路</strong>，剩下的是一个长得像二分类的损失函数，拿偏好数据集像跑 SFT 一样离线跑梯度下降就行。四模型机器变成了两模型（策略 + 冻结参考），训练成本和工程复杂度断崖式下降。</p>
+<p>这就是 DPO 在 2023–24 年横扫开源社区的原因：RLHF 的效果，SFT 的实现难度。一时间&quot;RL is dead&quot;的说法都出来了。</p>
+<h2 id="33-午餐的价格离线的代价">3.3 午餐的价格：离线的代价</h2>
+<p>但第三卷训练过的你，应该本能地要找那顿免费午餐的账单。它藏在一个词里：<strong>离线</strong>（offline）。</p>
+<p>DPO 的数学推导严格成立的前提，是那个解析解——而解析解描述的是&quot;在偏好数据所覆盖的分布上&quot;的最优。实际训练中，偏好数据是<strong>事先</strong>收集的（通常来自旧版模型或别的模型的输出），而策略在训练中不断变化、生成分布不断漂移——<strong>它漂到哪里，数据就照不到哪里</strong>。第三卷的语言现成可用：DPO 没有 on-policy 采样，它对&quot;策略自己当前会生成什么&quot;一无所知；它优化的是&quot;在别人的作品上排出正确的偏好序&quot;，而不是&quot;把自己的产出变好&quot;。极端情形下会出现著名的怪现象：训练推进时，<strong>胜者和败者的绝对概率双双下降</strong>（只要相对差距在扩大，损失照样降）——概率质量悄悄流向了数据没覆盖的地方，那里没有任何监督在看守。</p>
+<p>实证对比给出的图景与理论相符：头对头研究普遍发现，<strong>认真调好的 PPO 在能力上限上压过 DPO</strong>，尤其在推理、代码这类有客观对错的任务上；DPO 的胜场在&quot;偏好型&quot;目标——风格、语气、安全边界、格式习惯——这些目标本来就住在数据分布附近，离线的短板伤不到要害，而便宜、稳定、可复现的优点全额兑现。围绕 DPO 还长出了一整族改良变体（换损失形状的 IPO、不需要成对数据的 KTO、去掉参考模型的 SimPO……），各修一处短板，你在论文里撞见时知道它们是同一家族即可。</p>
+<h2 id="34-2026-年的分工格局">3.4 2026 年的分工格局</h2>
+<p>争论在 2025 年前后尘埃落定，落点不是谁取代谁，而是<strong>分工</strong>——这个格局你可以直接放进工具箱：</p>
+<ul>
+<li><strong>偏好类目标</strong>（风格、语气、安全、拒答边界、格式）：DPO 及其变体是主力——离线、便宜、稳定，拿偏好数据反复迭代，像打磨产品一样打磨行为。</li>
+<li><strong>能力类目标</strong>（数学、代码、推理、agent）：on-policy 的 RL（GRPO 一族）不可替代——能力增长恰恰依赖&quot;模型自己生成、按后果学习&quot;的闭环，离线方法给不了。</li>
+</ul>
+<p>生产流水线因此普遍是<strong>串联</strong>的：Llama 3 的后训练是 SFT 与 DPO 的多轮滚动；学界的开放复现 Tülu 3 是 SFT → DPO → RLVR 三段式——DPO 管偏好，RLVR 管能力，各司其职。回头看，DPO 的历史功绩与其说是&quot;取代了 RL&quot;，不如说是<strong>把偏好对齐的成本打到了地板价</strong>，让 RL 的火力得以集中到它真正不可替代的战场——能力。而那个战场上正在发生的事，是本卷后半部的主题。</p>
+<p>在此之前还剩一条岔路要走完：上一章说 RLHF&quot;数据吃人&quot;——偏好标注贵、慢、还互相打架。DPO 降低了<strong>用</strong>偏好的成本，没降低<strong>产</strong>偏好的成本。下一章：让 AI 自己当标注员——RLAIF 与宪法 AI，以及&quot;评价易于生成&quot;这个不对称的第二次登场。</p>
+<hr>
+<h3 id="本章要点">本章要点</h3>
+<ul>
+<li>DPO 推导三步：RLHF 目标（奖励 − β·KL）有解析解 $\pi^* \propto \pi_{\text{ref}} e^{r/\beta}$ → 反解出&quot;隐式奖励 = β·log(π/π_ref)&quot; → 代入 Bradley-Terry，常数消去，得到纯分类损失。</li>
+<li>一句话本质：相对参考模型，把胜者概率抬得比败者更高；策略自己兼任奖励模型，RM/critic/采样全部裁撤，四模型变两模型。</li>
+<li>代价在&quot;离线&quot;：无 on-policy 采样 ⇒ 分布漂移无人看守（胜败者概率可同时下降的怪癖）；实证：PPO 能力上限更高（尤其推理/代码），DPO 在偏好型目标上性价比无敌。</li>
+<li>2026 分工共识：DPO 族管风格/安全/格式（离线便宜稳），GRPO 族管数学/代码/agent（能力靠 on-policy 闭环）；生产流水线串联两者（Llama 3 的 SFT+DPO 滚动、Tülu 3 的 SFT→DPO→RLVR）。</li>
+<li>DPO 的历史功绩：把偏好对齐打到地板价，让 RL 火力集中到能力战场。</li>
+</ul>
+
+    <nav class="pager series-pager">
+  <a href="20-reward-models-rlhf.html">
+    <span class="label">← 上一章</span>
+    <span class="title">学会分辨好坏——奖励模型与 RLHF 全流程</span>
+  </a>
+  <a href="22-rlaif-constitutional.html" class="next">
+    <span class="label">下一章 →</span>
+    <span class="title">让 AI 教 AI——RLAIF、宪法与评判者</span>
+  </a>
+</nav>
+  </article>
+</div>
+
+<footer>
+  <div class="set">
+    <span>Large Language Models</span>
+    <span>2026 · ZH-CN</span>
+  </div>
+  <div class="set">
+    <span>Mav</span>
+  </div>
+</footer>
+<div class="search-backdrop" id="search-overlay" role="dialog" aria-modal="true" aria-label="搜索" hidden>
+  <div class="search-modal">
+    <div class="search-input-wrap">
+      <input type="search" class="search-input" placeholder="搜索内容..." aria-label="搜索内容" autocomplete="off">
+      <kbd>ESC</kbd>
+    </div>
+    <div class="search-results" role="listbox" aria-label="搜索结果"></div>
+  </div>
+</div>
+
+<div class="side-panel" id="side-panel">
+  <div class="side-panel-resize" id="side-panel-resize"></div>
+  <div class="side-panel-header">
+    <div class="side-panel-tabs">
+      <button class="side-panel-tab active" data-mode="sidenote">补充</button>
+      <button class="side-panel-tab" data-mode="notepad">笔记</button>
+    </div>
+    <button class="side-panel-close" aria-label="关闭">×</button>
+  </div>
+  <div class="side-panel-body"></div>
+</div>
+<button class="notepad-fab" id="notepad-fab" aria-label="便利贴">✎</button>
+
+<button class="mtoc-fab" id="mtoc-fab" aria-label="系列目录">TOC</button>
+<div class="mtoc-drawer" id="mtoc-drawer">
+  <div class="mtoc-content series-sidebar"></div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/bash.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/typescript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/yaml.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/javascript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/json.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/python.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/css.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+<script>mermaid.initialize({startOnLoad:true, theme:'neutral', fontFamily:'Inter, sans-serif'});</script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}]});"></script>
+<script src="../assets/script.js"></script>
+
+</body>
+</html>

@@ -19,6 +19,11 @@
     <a class="brand" href="index.html">Large Language Models</a>
     <div class="nav-links">
       <a href="index.html#part-architecture">PART I</a>
+      <a href="index.html#part-pretraining">PART II</a>
+      <a href="index.html#part-rl-crash-course">PART III</a>
+      <a href="index.html#part-post-training">PART IV</a>
+      <a href="index.html#part-compute-inference">PART V</a>
+      <a href="index.html#part-industry-map">PART VI</a>
     </div>
     <div class="nav-controls">
       <button class="nav-btn" id="search-btn" aria-label="搜索 (Ctrl+K)">⌘K</button>
@@ -45,13 +50,13 @@
   <header class="series-hero">
     <div class="series-eyebrow">Series · LLM</div>
     <h1>Large Language Models</h1>
-    <p>从 2020 年只会续写的 GPT-3，到 2026 年能做高强度推理与编程的大模型，这六年发生了什么。系列沿一条主线展开：模型长什么样（架构演化）、怎么炼出来的（预训练与后训练）、跑在什么上面（算力与推理）、谁在做（产业地图）。连载中，当前已发布第一卷：架构演化。</p>
+    <p>从 2020 年只会续写的 GPT-3，到 2026 年能做高强度推理与编程的大模型，这六年发生了什么。系列沿一条主线展开：模型长什么样（架构演化）、怎么炼出来的（预训练与后训练）、跑在什么上面（算力与推理）、谁在做（产业地图）。全六卷已完结。</p>
     <div class="series-stats" aria-label="系列规模">
-      <span>1 篇</span>
+      <span>6 篇</span>
       <span aria-hidden="true">·</span>
-      <span>8 章</span>
+      <span>34 章</span>
       <span aria-hidden="true">·</span>
-      <span>约 6 小时（第一卷）</span>
+      <span>约 26 小时（全六卷）</span>
     </div>
   </header>
 
@@ -150,6 +155,352 @@
               <span class="series-chapter-meta">45 MIN</span>
               <h3>读懂一次发布——参数量、基模与版本语义</h3>
               <p>全卷的零件拼装成实战能力：像从业者一样逐行读懂一份模型发布——每个数字什么意思、哪些是新基模哪些是后训练更新、以及 2026 年 7 月 Kimi K3 发布的完整解读。</p>
+            </span>
+            <span class="series-chapter-arrow" aria-hidden="true">→</span>
+          </a>
+        </li>
+      </ol>
+    </section>
+    <section class="series-part" id="part-pretraining">
+      <header class="series-part-head">
+        <span class="series-part-label">PART II</span>
+        <div>
+          <h2>预训练</h2>
+          <p>把互联网压进权重里：scaling laws 与 Chinchilla、数据管线与配比机密、优化器与万卡马拉松、mid-training 与退火课程、并行策略，以及卷末的大哉问——预训练到头了吗。</p>
+        </div>
+        <span class="series-part-count">5 章</span>
+      </header>
+      <ol class="series-chapter-grid">
+        <li>
+          <a class="series-chapter-card toc-card" href="chapters/09-scaling-laws.html">
+            <span class="series-chapter-number">09</span>
+            <span class="series-chapter-copy">
+              <span class="series-chapter-meta">45 MIN</span>
+              <h3>规模的法则——从赌注到公式</h3>
+              <p>「更大就是更好」是怎么从一句口号变成可以写进商业计划书的公式的：Kaplan 定律、Chinchilla 修正、6ND 估算，以及为什么 2024 年之后大家又开始「过度训练」。</p>
+            </span>
+            <span class="series-chapter-arrow" aria-hidden="true">→</span>
+          </a>
+        </li>
+        <li>
+          <a class="series-chapter-card toc-card" href="chapters/10-data-pipeline.html">
+            <span class="series-chapter-number">10</span>
+            <span class="series-chapter-copy">
+              <span class="series-chapter-meta">50 MIN</span>
+              <h3>备菜间——几十万亿 token 从哪来</h3>
+              <p>互联网不是数据集，是矿山。从 Common Crawl 的原矿到 15T 的精粮：清洗、去重、质量分类、配比调制、合成扩容——以及正在收紧的版权绞索。</p>
+            </span>
+            <span class="series-chapter-arrow" aria-hidden="true">→</span>
+          </a>
+        </li>
+        <li>
+          <a class="series-chapter-card toc-card" href="chapters/11-training-run.html">
+            <span class="series-chapter-number">11</span>
+            <span class="series-chapter-copy">
+              <span class="series-chapter-meta">50 MIN</span>
+              <h3>厨房里的三个月——损失、优化器与一场不能崩的马拉松</h3>
+              <p>预训练本身是一场三个月的马拉松：目标函数朴素得令人失望，优化器在换代，学习率在编舞，故障每三小时一次——以及怎么在几亿美元烧完之前知道这锅菜没做砸。</p>
+            </span>
+            <span class="series-chapter-arrow" aria-hidden="true">→</span>
+          </a>
+        </li>
+        <li>
+          <a class="series-chapter-card toc-card" href="chapters/12-midtraining.html">
+            <span class="series-chapter-number">12</span>
+            <span class="series-chapter-copy">
+              <span class="series-chapter-meta">45 MIN</span>
+              <h3>后半场——mid-training、退火与长上下文课程</h3>
+              <p>预训练不是一锅炖到底：最后几周的退火、精心编排的数据课程、长上下文扩展——近两年才被郑重命名的 mid-training，正在模糊预训练与后训练的边界。</p>
+            </span>
+            <span class="series-chapter-arrow" aria-hidden="true">→</span>
+          </a>
+        </li>
+        <li>
+          <a class="series-chapter-card toc-card" href="chapters/13-parallelism.html">
+            <span class="series-chapter-number">13</span>
+            <span class="series-chapter-copy">
+              <span class="series-chapter-meta">50 MIN</span>
+              <h3>把模型摊开——并行训练、万卡集群与预训练的黄昏</h3>
+              <p>一个 405B 模型的训练状态有 6.5 TB，没有任何一张卡装得下——四种并行策略如何把它摊到一万六千张卡上；以及卷末的大哉问：预训练 scaling 到头了吗？</p>
+            </span>
+            <span class="series-chapter-arrow" aria-hidden="true">→</span>
+          </a>
+        </li>
+      </ol>
+    </section>
+    <section class="series-part" id="part-rl-crash-course">
+      <header class="series-part-head">
+        <span class="series-part-label">PART III</span>
+        <div>
+          <h2>强化学习速成</h2>
+          <p>为零基础读者补的一卷：从「只有后果、没有答案」的学习范式出发，沿 MDP、价值函数、策略梯度、Actor-Critic 一条主线走到 PPO，终点是把语言模型放进 RL 的坐标系、站上 GRPO 的门口。</p>
+        </div>
+        <span class="series-part-count">5 章</span>
+      </header>
+      <ol class="series-chapter-grid">
+        <li>
+          <a class="series-chapter-card toc-card" href="chapters/14-another-way-to-learn.html">
+            <span class="series-chapter-number">14</span>
+            <span class="series-chapter-copy">
+              <span class="series-chapter-meta">45 MIN</span>
+              <h3>另一种学习——从「有标准答案」到「只有后果」</h3>
+              <p>你学过的一切训练方法都需要标准答案，但世界上大多数值得学的事没有标准答案，只有后果。这一章从零建立强化学习的问题框架：MDP、策略、奖励——以及它为什么是通往推理模型的必经之路。</p>
+            </span>
+            <span class="series-chapter-arrow" aria-hidden="true">→</span>
+          </a>
+        </li>
+        <li>
+          <a class="series-chapter-card toc-card" href="chapters/15-value-functions.html">
+            <span class="series-chapter-number">15</span>
+            <span class="series-chapter-copy">
+              <span class="series-chapter-meta">50 MIN</span>
+              <h3>给未来定价——回报、价值函数与贝尔曼方程</h3>
+              <p>奖励在遥远的将来，决策要在此时此刻做——「价值」就是把未来折算成现值的记账体系。回报与折扣、V 与 Q、贝尔曼方程的递归魔法，以及从经验中估计价值的两种方式。</p>
+            </span>
+            <span class="series-chapter-arrow" aria-hidden="true">→</span>
+          </a>
+        </li>
+        <li>
+          <a class="series-chapter-card toc-card" href="chapters/16-policy-gradient.html">
+            <span class="series-chapter-number">16</span>
+            <span class="series-chapter-copy">
+              <span class="series-chapter-meta">50 MIN</span>
+              <h3>顺着后果爬坡——策略梯度与 REINFORCE</h3>
+              <p>怎么对「运气」求导？策略梯度定理把不可微的采样变成可优化的目标，REINFORCE 给出第一个能跑的算法——以及为什么它信号太吵，逼出了 baseline 与 advantage。</p>
+            </span>
+            <span class="series-chapter-arrow" aria-hidden="true">→</span>
+          </a>
+        </li>
+        <li>
+          <a class="series-chapter-card toc-card" href="chapters/17-actor-critic-trust-region.html">
+            <span class="series-chapter-number">17</span>
+            <span class="series-chapter-copy">
+              <span class="series-chapter-meta">45 MIN</span>
+              <h3>教练与护栏——Actor-Critic、重要性采样与信任域</h3>
+              <p>策略与价值合体成 Actor-Critic，重要性采样让昂贵的数据可以复用，而「策略崩塌」的悬崖逼出了信任域思想——通往 PPO 的最后三块拼图。</p>
+            </span>
+            <span class="series-chapter-arrow" aria-hidden="true">→</span>
+          </a>
+        </li>
+        <li>
+          <a class="series-chapter-card toc-card" href="chapters/18-ppo-and-llm.html">
+            <span class="series-chapter-number">18</span>
+            <span class="series-chapter-copy">
+              <span class="series-chapter-meta">50 MIN</span>
+              <h3>PPO 与会师——通往大模型的最后一站</h3>
+              <p>两行代码实现信任域的 PPO，从 Dota 一路打进 ChatGPT；把语言模型放进 MDP 的坐标系，看懂 RLHF 的四模型机器，并站上 GRPO 的门口——本卷在此与主线会师。</p>
+            </span>
+            <span class="series-chapter-arrow" aria-hidden="true">→</span>
+          </a>
+        </li>
+      </ol>
+    </section>
+    <section class="series-part" id="part-post-training">
+      <header class="series-part-head">
+        <span class="series-part-label">PART IV</span>
+        <div>
+          <h2>后训练</h2>
+          <p>全书的心脏：SFT 教会听话，奖励模型与 RLHF 学会分辨好坏，DPO 把 RL 短路，宪法让 AI 教 AI；然后是第二次质变——o1 与 R1 的推理革命、GRPO 军备赛与 reward hacking 暗礁，最后是蒸馏、LoRA 与小版本迭代的兑现工艺。</p>
+        </div>
+        <span class="series-part-count">7 章</span>
+      </header>
+      <ol class="series-chapter-grid">
+        <li>
+          <a class="series-chapter-card toc-card" href="chapters/19-sft-instruction-tuning.html">
+            <span class="series-chapter-number">19</span>
+            <span class="series-chapter-copy">
+              <span class="series-chapter-meta">45 MIN</span>
+              <h3>从续写到听话——SFT 与指令微调</h3>
+              <p>后训练的第一幕：用几万条「理想行为的示范」教会续写机器听懂人话。SFT 是整个对齐流水线最朴素的一步，也是暴露「模仿的天花板」的一步。</p>
+            </span>
+            <span class="series-chapter-arrow" aria-hidden="true">→</span>
+          </a>
+        </li>
+        <li>
+          <a class="series-chapter-card toc-card" href="chapters/20-reward-models-rlhf.html">
+            <span class="series-chapter-number">20</span>
+            <span class="series-chapter-copy">
+              <span class="series-chapter-meta">50 MIN</span>
+              <h3>学会分辨好坏——奖励模型与 RLHF 全流程</h3>
+              <p>把千万次「我更喜欢这个」压缩成一个打分函数，再用第三卷的机器去优化它——RLHF 的完整流水线、1.3B 打败 175B 的杠杆时刻，以及 Goodhart 定律的第一次登场。</p>
+            </span>
+            <span class="series-chapter-arrow" aria-hidden="true">→</span>
+          </a>
+        </li>
+        <li>
+          <a class="series-chapter-card toc-card" href="chapters/21-dpo-direct-preference.html">
+            <span class="series-chapter-number">21</span>
+            <span class="series-chapter-copy">
+              <span class="series-chapter-meta">45 MIN</span>
+              <h3>把 RL 短路——DPO 与直接偏好优化</h3>
+              <p>一步数学变换证明：你的语言模型暗中就是个奖励模型。DPO 把「偏好数据 → RM → PPO」的整条流水线压缩成一个分类损失——以及这份免费午餐的真实价格。</p>
+            </span>
+            <span class="series-chapter-arrow" aria-hidden="true">→</span>
+          </a>
+        </li>
+        <li>
+          <a class="series-chapter-card toc-card" href="chapters/22-rlaif-constitutional.html">
+            <span class="series-chapter-number">22</span>
+            <span class="series-chapter-copy">
+              <span class="series-chapter-meta">45 MIN</span>
+              <h3>让 AI 教 AI——RLAIF、宪法与评判者</h3>
+              <p>当模型的能力逼近标注员，人类还挑得动吗？宪法 AI 把对齐目标写成明文规范、让模型给自己当裁判——「评价易于生成」的不对称第二次登场，人类撤向「立法与抽查」的位置。</p>
+            </span>
+            <span class="series-chapter-arrow" aria-hidden="true">→</span>
+          </a>
+        </li>
+        <li>
+          <a class="series-chapter-card toc-card" href="chapters/23-reasoning-models.html">
+            <span class="series-chapter-number">23</span>
+            <span class="series-chapter-copy">
+              <span class="series-chapter-meta">55 MIN</span>
+              <h3>第二次质变——从 o1 到 R1 的推理革命</h3>
+              <p>三块拼图 2022 年就齐了，缺的只是放大一万倍的决心：思维链的发现史、o1 的第三条 scaling 曲线、R1 公开谜底的完整现场，以及推理能力如何被蒸馏进人人可跑的小模型。</p>
+            </span>
+            <span class="series-chapter-arrow" aria-hidden="true">→</span>
+          </a>
+        </li>
+        <li>
+          <a class="series-chapter-card toc-card" href="chapters/24-reasoning-craft-and-reefs.html">
+            <span class="series-chapter-number">24</span>
+            <span class="series-chapter-copy">
+              <span class="series-chapter-meta">55 MIN</span>
+              <h3>想多久、想什么——推理时代的工艺与暗礁</h3>
+              <p>质变之后是磨刀：思考预算与 overthinking、GRPO 的军备赛、「RL 只是锐化分布吗」的科学之争、道高一尺的 reward hacking，以及从推理到 agent 的最后一跃。</p>
+            </span>
+            <span class="series-chapter-arrow" aria-hidden="true">→</span>
+          </a>
+        </li>
+        <li>
+          <a class="series-chapter-card toc-card" href="chapters/25-distillation-lora-versions.html">
+            <span class="series-chapter-number">25</span>
+            <span class="series-chapter-copy">
+              <span class="series-chapter-meta">50 MIN</span>
+              <h3>兑现与迭代——蒸馏、LoRA 与小版本的秘密</h3>
+              <p>旗舰模型如何变成人人用得起的产品：蒸馏的三种形态、LoRA 的性价比边界、四条真实后训练流水线的全景图，以及「小版本更新到底更新了什么」的最终答案。</p>
+            </span>
+            <span class="series-chapter-arrow" aria-hidden="true">→</span>
+          </a>
+        </li>
+      </ol>
+    </section>
+    <section class="series-part" id="part-compute-inference">
+      <header class="series-part-head">
+        <span class="series-part-label">PART V</span>
+        <div>
+          <h2>算力与推理</h2>
+          <p>够用就好的 infra 常识账：解剖一张 GPU 与 roofline 标尺、显存数学与量化速算手册、推理工厂的五件套工艺——以及 API 价格表如何成为成本结构的公开化石。</p>
+        </div>
+        <span class="series-part-count">3 章</span>
+      </header>
+      <ol class="series-chapter-grid">
+        <li>
+          <a class="series-chapter-card toc-card" href="chapters/26-gpu-anatomy.html">
+            <span class="series-chapter-number">26</span>
+            <span class="series-chapter-copy">
+              <span class="series-chapter-meta">50 MIN</span>
+              <h3>认识铁疙瘩——GPU、带宽与算力的三重账</h3>
+              <p>买卡买的其实是三样东西：每秒浮点数、每秒字节数、字节数。解剖一张 H100，学会 roofline 这把万能标尺，看懂从 A100 到 Rubin 的代际演化、中国算力的真实处境，以及电表为什么成了新的瓶颈。</p>
+            </span>
+            <span class="series-chapter-arrow" aria-hidden="true">→</span>
+          </a>
+        </li>
+        <li>
+          <a class="series-chapter-card toc-card" href="chapters/27-memory-math-quantization.html">
+            <span class="series-chapter-number">27</span>
+            <span class="series-chapter-copy">
+              <span class="series-chapter-meta">40 MIN</span>
+              <h3>跑得动吗——显存数学与量化速算手册</h3>
+              <p>「70B 模型要几张卡」「4bit 量化能塞进一张 4090 吗」——这一章把散落在前四卷的显存知识收拢成一本速算手册，再补上量化这块最后的拼图。</p>
+            </span>
+            <span class="series-chapter-arrow" aria-hidden="true">→</span>
+          </a>
+        </li>
+        <li>
+          <a class="series-chapter-card toc-card" href="chapters/28-inference-factory-pricing.html">
+            <span class="series-chapter-number">28</span>
+            <span class="series-chapter-copy">
+              <span class="series-chapter-meta">45 MIN</span>
+              <h3>推理工厂与价格标签——从 GPU 到账单</h3>
+              <p>当几万个用户同时涌向一个模型集群：连续批处理、PD 分离、前缀缓存这些工厂工艺，如何一路投影成你 API 账单上的每一个数字——输出为什么贵五倍、缓存为什么打一折、以及那张著名的 545% 账本。</p>
+            </span>
+            <span class="series-chapter-arrow" aria-hidden="true">→</span>
+          </a>
+        </li>
+      </ol>
+    </section>
+    <section class="series-part" id="part-industry-map">
+      <header class="series-part-head">
+        <span class="series-part-label">PART VI</span>
+        <div>
+          <h2>2026 产业地图</h2>
+          <p>收官卷（截至 2026 年 7 月的快照）：美国三巨头的商业分野、中国开源阵营的反向阳谋、模型谱系图、芯片与电力的地缘战争、商业模式与泡沫之辩，最后回望六年、眺望前沿，并写给入门读者几句话。</p>
+        </div>
+        <span class="series-part-count">6 章</span>
+      </header>
+      <ol class="series-chapter-grid">
+        <li>
+          <a class="series-chapter-card toc-card" href="chapters/29-us-frontier-labs.html">
+            <span class="series-chapter-number">29</span>
+            <span class="series-chapter-copy">
+              <span class="series-chapter-meta">45 MIN</span>
+              <h3>三巨头的分野——OpenAI、Anthropic 与 Google</h3>
+              <p>同样是造前沿模型，三家美国巨头的活法截然不同：消费订阅、企业 API、云生态捆绑——技术押注背后是三种商业模式，以及一纸行政令让前沿模型全球下线十九天的地缘现实。</p>
+            </span>
+            <span class="series-chapter-arrow" aria-hidden="true">→</span>
+          </a>
+        </li>
+        <li>
+          <a class="series-chapter-card toc-card" href="chapters/30-china-open-weight.html">
+            <span class="series-chapter-number">30</span>
+            <span class="series-chapter-copy">
+              <span class="series-chapter-meta">45 MIN</span>
+              <h3>开源的中国时刻——一场反向的阳谋</h3>
+              <p>把最强的模型免费送出去，在硅谷看来近乎自杀，在中国却成了主流打法。这一章拆解「开放权重」背后的产业逻辑：它不是慈善，是一场用免费权重换生态、用低价 API 绕封锁的反向阳谋。</p>
+            </span>
+            <span class="series-chapter-arrow" aria-hidden="true">→</span>
+          </a>
+        </li>
+        <li>
+          <a class="series-chapter-card toc-card" href="chapters/31-model-genealogy.html">
+            <span class="series-chapter-number">31</span>
+            <span class="series-chapter-copy">
+              <span class="series-chapter-meta">40 MIN</span>
+              <h3>谁是谁的孩子——模型谱系与换代节奏</h3>
+              <p>把 2026 年叫得出名字的模型排成家族树：哪些是同一基模的兄弟、哪些是真正的换代、各家的迭代节奏差在哪——第一卷「基模与版本语义」的一次产业级兑现。</p>
+            </span>
+            <span class="series-chapter-arrow" aria-hidden="true">→</span>
+          </a>
+        </li>
+        <li>
+          <a class="series-chapter-card toc-card" href="chapters/32-geopolitics-power.html">
+            <span class="series-chapter-number">32</span>
+            <span class="series-chapter-copy">
+              <span class="series-chapter-meta">50 MIN</span>
+              <h3>芯片、稀土与电表——算力的地缘战争</h3>
+              <p>模型背后是芯片，芯片背后是国界。出口管制四年博弈史、中国的稀土反制、国产替代的真实瓶颈，以及一个反转的结局——美国有最好的「脑」却缺「电」，中国有「电」却被卡住「脑」。</p>
+            </span>
+            <span class="series-chapter-arrow" aria-hidden="true">→</span>
+          </a>
+        </li>
+        <li>
+          <a class="series-chapter-card toc-card" href="chapters/33-business-and-money.html">
+            <span class="series-chapter-number">33</span>
+            <span class="series-chapter-copy">
+              <span class="series-chapter-meta">45 MIN</span>
+              <h3>钱从哪来，又烧向何处——商业模式与泡沫之辩</h3>
+              <p>三种商业模式、两强对赌、一个越来越响的问题：当八年资本承诺是万亿美元、年营收只有百亿，这门生意的数学成立吗？循环融资、折旧争议与铁路泡沫的启示。</p>
+            </span>
+            <span class="series-chapter-arrow" aria-hidden="true">→</span>
+          </a>
+        </li>
+        <li>
+          <a class="series-chapter-card toc-card" href="chapters/34-finale-and-frontier.html">
+            <span class="series-chapter-number">34</span>
+            <span class="series-chapter-copy">
+              <span class="series-chapter-meta">45 MIN</span>
+              <h3>六年，与之后——回望、前沿与写给你的话</h3>
+              <p>全书的落幕：scaling 三条曲线的现状、下一个范式的候选、AGI 时间表之争，回望「续写机到数字同事」这六年，最后是写给一个大二学生的、关于如何持续跟进这个领域的诚实建议。</p>
             </span>
             <span class="series-chapter-arrow" aria-hidden="true">→</span>
           </a>

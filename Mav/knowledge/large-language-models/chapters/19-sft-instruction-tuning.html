@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>从续写到听话——SFT 与指令微调 — Large Language Models</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" href="../assets/series.css">
+<link rel="stylesheet" id="hljs-light" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+<link rel="stylesheet" id="hljs-dark" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" media="not all">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+
+</head>
+<body class="series-page series-reader-page">
+
+<div class="progress-bar" id="progress-bar"></div>
+
+<nav class="topnav series-topnav" id="topnav">
+  <div class="topnav-inner">
+    <a class="brand" href="../index.html">Large Language Models</a>
+    <div class="nav-links">
+      <a href="../index.html#part-architecture">PART I</a>
+      <a href="../index.html#part-pretraining">PART II</a>
+      <a href="../index.html#part-rl-crash-course">PART III</a>
+      <a href="../index.html#part-post-training" class="active">PART IV</a>
+      <a href="../index.html#part-compute-inference">PART V</a>
+      <a href="../index.html#part-industry-map">PART VI</a>
+    </div>
+    <div class="nav-controls">
+      <button class="nav-btn" id="search-btn" aria-label="搜索 (Ctrl+K)">⌘K</button>
+      <button class="nav-btn" id="settings-btn" aria-label="阅读设置">Aa</button>
+      <a class="nav-btn" href="../../index.html" aria-label="返回知识库">← 知识库</a>
+    </div>
+  </div>
+</nav>
+<div class="settings-pop" id="settings-pop">
+  <h5>主题</h5>
+  <div class="row">
+    <button class="seg" data-theme-set="light">明亮</button>
+    <button class="seg" data-theme-set="dark">暗色</button>
+  </div>
+  <h5>字号</h5>
+  <div class="row">
+    <button class="seg" data-size-set="s">小</button>
+    <button class="seg" data-size-set="m">中</button>
+    <button class="seg" data-size-set="l">大</button>
+  </div>
+</div>
+
+<div class="with-sidebar series-reader">
+  <aside class="sidebar series-sidebar">
+  <a class="series-sidebar-home" href="../index.html">系列目录</a>
+  <section class="series-sidebar-part">
+    <h4><span>PART I</span>架构演化</h4>
+    <ul>
+      <li class="series-chapter-item">
+        <a href="01-from-transformer-to-gpt.html" data-chapter="01">课本尽头的 Transformer——把它真正数一遍</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="02-residual-stream.html" data-chapter="02">残差流——理解一切改动的地基</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="03-norms-and-activations.html" data-chapter="03">稳定性之战——归一化与激活函数</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="04-positional-encoding.html" data-chapter="04">位置的难题——从正弦波到 RoPE 与长上下文</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="05-attention-evolution.html" data-chapter="05">注意力的账单——KV cache 与一部省钱史</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="06-moe-basics.html" data-chapter="06">分而治之——MoE 的基本机制</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="07-moe-modern.html" data-chapter="07">MoE 的分水岭——DeepSeek 配方与 2026 年的主流形态</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="08-reading-a-release.html" data-chapter="08">读懂一次发布——参数量、基模与版本语义</a>
+      </li>
+    </ul>
+  </section>
+  <section class="series-sidebar-part">
+    <h4><span>PART II</span>预训练</h4>
+    <ul>
+      <li class="series-chapter-item">
+        <a href="09-scaling-laws.html" data-chapter="09">规模的法则——从赌注到公式</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="10-data-pipeline.html" data-chapter="10">备菜间——几十万亿 token 从哪来</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="11-training-run.html" data-chapter="11">厨房里的三个月——损失、优化器与一场不能崩的马拉松</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="12-midtraining.html" data-chapter="12">后半场——mid-training、退火与长上下文课程</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="13-parallelism.html" data-chapter="13">把模型摊开——并行训练、万卡集群与预训练的黄昏</a>
+      </li>
+    </ul>
+  </section>
+  <section class="series-sidebar-part">
+    <h4><span>PART III</span>强化学习速成</h4>
+    <ul>
+      <li class="series-chapter-item">
+        <a href="14-another-way-to-learn.html" data-chapter="14">另一种学习——从「有标准答案」到「只有后果」</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="15-value-functions.html" data-chapter="15">给未来定价——回报、价值函数与贝尔曼方程</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="16-policy-gradient.html" data-chapter="16">顺着后果爬坡——策略梯度与 REINFORCE</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="17-actor-critic-trust-region.html" data-chapter="17">教练与护栏——Actor-Critic、重要性采样与信任域</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="18-ppo-and-llm.html" data-chapter="18">PPO 与会师——通往大模型的最后一站</a>
+      </li>
+    </ul>
+  </section>
+  <section class="series-sidebar-part">
+    <h4><span>PART IV</span>后训练</h4>
+    <ul>
+      <li class="series-chapter-item">
+        <a href="19-sft-instruction-tuning.html" data-chapter="19" class="active" aria-current="page">从续写到听话——SFT 与指令微调</a>
+        <ul class="series-section-links">
+          <li><a href="#11-鸿沟目标错位的天才">1.1 鸿沟：目标错位的天才</a></li>
+          <li><a href="#12-sft把理想行为写成数据">1.2 SFT：把理想行为写成数据</a></li>
+          <li><a href="#13-对话的骨骼chat-template">1.3 对话的骨骼：chat template</a></li>
+          <li><a href="#14-模仿的三重天花板">1.4 模仿的三重天花板</a></li>
+        </ul>
+      </li>
+      <li class="series-chapter-item">
+        <a href="20-reward-models-rlhf.html" data-chapter="20">学会分辨好坏——奖励模型与 RLHF 全流程</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="21-dpo-direct-preference.html" data-chapter="21">把 RL 短路——DPO 与直接偏好优化</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="22-rlaif-constitutional.html" data-chapter="22">让 AI 教 AI——RLAIF、宪法与评判者</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="23-reasoning-models.html" data-chapter="23">第二次质变——从 o1 到 R1 的推理革命</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="24-reasoning-craft-and-reefs.html" data-chapter="24">想多久、想什么——推理时代的工艺与暗礁</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="25-distillation-lora-versions.html" data-chapter="25">兑现与迭代——蒸馏、LoRA 与小版本的秘密</a>
+      </li>
+    </ul>
+  </section>
+  <section class="series-sidebar-part">
+    <h4><span>PART V</span>算力与推理</h4>
+    <ul>
+      <li class="series-chapter-item">
+        <a href="26-gpu-anatomy.html" data-chapter="26">认识铁疙瘩——GPU、带宽与算力的三重账</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="27-memory-math-quantization.html" data-chapter="27">跑得动吗——显存数学与量化速算手册</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="28-inference-factory-pricing.html" data-chapter="28">推理工厂与价格标签——从 GPU 到账单</a>
+      </li>
+    </ul>
+  </section>
+  <section class="series-sidebar-part">
+    <h4><span>PART VI</span>2026 产业地图</h4>
+    <ul>
+      <li class="series-chapter-item">
+        <a href="29-us-frontier-labs.html" data-chapter="29">三巨头的分野——OpenAI、Anthropic 与 Google</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="30-china-open-weight.html" data-chapter="30">开源的中国时刻——一场反向的阳谋</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="31-model-genealogy.html" data-chapter="31">谁是谁的孩子——模型谱系与换代节奏</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="32-geopolitics-power.html" data-chapter="32">芯片、稀土与电表——算力的地缘战争</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="33-business-and-money.html" data-chapter="33">钱从哪来，又烧向何处——商业模式与泡沫之辩</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="34-finale-and-frontier.html" data-chapter="34">六年，与之后——回望、前沿与写给你的话</a>
+      </li>
+    </ul>
+  </section>
+</aside>
+  <article class="chapter-body">
+    <header class="chapter-head series-chapter-head">
+  <div class="series-breadcrumb">PART IV · 后训练</div>
+  <div class="chapter-head-meta">
+    <span class="num">CHAPTER 19</span>
+    <span>≈ 45 MIN READ</span>
+  </div>
+  <h1>从续写到听话——SFT 与指令微调</h1>
+</header>
+    <p>这一卷是全系列的心脏。第一卷立骨架，第二卷注入知识，第三卷备好数学——现在回答那个贯穿全书的问题的下半段：<strong>从 GPT-3 到今天，模型是怎么从&quot;满腹经纶的续写机&quot;变成&quot;能干活的助手&quot;、又变成&quot;能深度推理的专家&quot;的？<strong>答案是一条流水线，行业统称</strong>后训练</strong>（post-training）。本卷按它的历史层次推进：先教会听话（SFT，本章），再学会分辨好坏（奖励模型与 RLHF，第二三章），再让 AI 教 AI（第四章），然后是第二次质变——推理模型（第五六章），最后是把这一切兑现成产品的工艺（第七章）。</p>
+<h2 id="11-鸿沟目标错位的天才">1.1 鸿沟：目标错位的天才</h2>
+<p>先把 2020–2022 年那道著名的鸿沟看真切。GPT-3 压缩了半个互联网，但你对它说&quot;用三句话解释光合作用&quot;，它很可能回你一串风格雷同的题目——&quot;用三句话解释呼吸作用。用三句话解释蒸腾作用。&quot;这不是它蠢，恰恰是它太称职：预训练教它的唯一本领是<strong>续写</strong>，而互联网上&quot;一条指令后面跟着更多指令&quot;（习题集、考卷）的概率，不比&quot;一条指令后面跟着答案&quot;低。它在完美地执行自己的目标函数——只是<strong>它的目标和你的目标不是同一个</strong>。</p>
+<p>当时的补救办法你在第一卷见过：few-shot 提示。在指令前手工垫几个&quot;指令→回答&quot;的例子，把模型&quot;骗&quot;进正确的续写模式。这套&quot;提示词咒语&quot;确实能用，但作为产品形态是灾难——用户凭什么要先学会念咒？OpenAI 把这个问题正式命名为<strong>对齐</strong>（alignment）：让模型实际做的事，对齐到用户想要它做的事。这个词后来含义越滚越大（安全、价值观、诚实），但它的原点朴素得很：<strong>让模型听懂人话、照着办</strong>。</p>
+<p>对齐的第一步方案简单得近乎让人失望，但它开启了一切。</p>
+<h2 id="12-sft把理想行为写成数据">1.2 SFT：把理想行为写成数据</h2>
+<p>方案是：<strong>收集一批&quot;理想交互的示范&quot;，拿它继续做下一词预测训练。<strong>雇一批标注员，给他们真实的用户指令（&quot;给我妹妹写首生日诗&quot;、&quot;解释什么是量子纠缠&quot;），让他们</strong>亲手写出理想的回答</strong>；然后把这几万条（指令 → 理想回答）对当作训练数据，微调预训练模型——损失函数还是那个交叉熵，只是通常只在&quot;回答&quot;部分计算（指令部分只作条件、不学习）。这一步叫<strong>监督微调</strong>（Supervised Fine-Tuning，SFT），InstructGPT 用了约一万三千条人工示范起家。</p>
+<p>为什么这么小的数据量（对比预训练的几十万亿 token，九个数量级的差距）能改变模型的行为模式？第三章的彩蛋在这里第一次派上用场：<strong>SFT 就是&quot;无条件模仿数据&quot;</strong>——而它要教的东西其实非常少。模型不需要从 SFT 里学知识（知识在预训练里早就有了），它只需要学一个<strong>行为模式的切换</strong>：&quot;看到指令时，进入&#39;助手&#39;这个角色，而不是&#39;续写者&#39;这个角色&quot;。用第一卷残差流的语言说：SFT 不是往传送带里灌新知识，而是调整&quot;哪些已有知识在什么场合被取用&quot;的调度习惯。改变习惯不需要海量数据——需要的是<strong>一致而高质量的示范</strong>。</p>
+<p>2023 年 Meta 的 LIMA 论文把这个洞察推到极致并给出了名字：<strong>表面对齐假设</strong>（superficial alignment hypothesis）——模型的能力几乎全部来自预训练，对齐只是教会它&quot;该用什么格式和口吻调用这些能力&quot;。他们只用一千条千挑万选的示范做 SFT，就得到一个相当能打的助手。这个&quot;一千条&quot;当然有夸张成分（后来的实践表明覆盖面和难度分布仍然要紧，生产级 SFT 数据远不止千条），但方向性结论站住了脚，并成了此后所有 SFT 实践的指导思想：<strong>质量与多样性碾压数量</strong>。</p>
+<p>同一时期还有一条现在看来影响深远的支线：斯坦福的 Alpaca 用&quot;让强模型自动生成指令数据&quot;的办法（self-instruct），花几百美元造出五万二千条数据，微调出一个像模像样的助手。它的直接效果是掀起了 2023 年的开源微调热潮；更深远的影响是开了一个先例——<strong>用模型造数据训模型</strong>。这颗种子会在第四章（AI 反馈）和第七章（蒸馏）长成参天大树。</p>
+<h2 id="13-对话的骨骼chat-template">1.3 对话的骨骼：chat template</h2>
+<p>SFT 还悄悄奠定了一件极少被讨论、却支撑着你每天使用体验的基础设施：<strong>对话格式</strong>。</p>
+<p>模型的输入终究是一串 token——&quot;多轮对话&quot;、&quot;系统提示&quot;这些概念必须被编码成文本才存在。行业的做法是引入一套特殊 token 把对话结构标记出来，大致形如：<code>&lt;|system|&gt;</code>你是一个有帮助的助手<code>&lt;|user|&gt;</code>你好<code>&lt;|assistant|&gt;</code>你好！有什么可以帮你？<code>&lt;|end|&gt;</code>……这套约定叫 <strong>chat template</strong>。SFT 数据全部按这个格式组织，于是模型学到的不只是&quot;怎么回答&quot;，还有整套<strong>会话协议</strong>：看到 <code>&lt;|assistant|&gt;</code> 就轮到我说话，说完要输出结束符（这是&quot;模型怎么知道该停&quot;的全部秘密），system 段的指示优先级高于 user 段，等等。</p>
+<p>别小看这层&quot;格式工程&quot;。你在使用产品时感知到的许多性质——模型守不守系统提示、会不会把多轮对话搅混、能不能被注入攻击（把指令藏进用户内容里骗模型执行）——很大程度取决于这套协议被训练得多牢靠。第一卷说 tokenizer 是文明与模型的接口，chat template 就是<strong>对话与模型的接口</strong>，而它完全是 SFT 阶段的产物。</p>
+<h2 id="14-模仿的三重天花板">1.4 模仿的三重天花板</h2>
+<p>SFT 一步就把 GPT-3 从&quot;念咒才能用&quot;变成了&quot;直接对话&quot;，效果立竿见影。但行业很快撞上了它的天花板，而且是三重。看清这三重天花板，你就精确地知道了为什么必须有 RLHF、为什么必须有 RL——<strong>本卷余下的一切技术，都是从这三条裂缝里生长出来的</strong>。</p>
+<p>**第一重：示范者即上限。**SFT 是纯模仿——模型至多学到&quot;标注员平均水平&quot;的行为。你雇不起一万个陶哲轩来写数学示范；即使雇得起，模型也只能逼近他们、不能超越他们。第三卷第一章讲过 RL 的天花板是任务本身而非人类示范——现在这个对比有了确切的落点。</p>
+<p><strong>第二重：模仿分不清&quot;形&quot;与&quot;实&quot;，会学出自信的胡说。<strong>SFT 的示范答案都写得流畅、自信、结构完整——模型忠实地学会了这个</strong>形式</strong>。但当它遇到自己其实不知道答案的问题时会怎样？它没有学过&quot;我不知道&quot;（示范数据里几乎没有这种样本），它学过的是&quot;以自信的口吻给出结构完整的回答&quot;——于是它<strong>以完美的格式编造事实</strong>。幻觉（hallucination）问题当然有多重根源，但 SFT 的&quot;只见好样本、从无负反馈&quot;结构性地加重了它：<strong>模仿学习里没有任何机制告诉模型&quot;这样答是错的&quot;</strong>——它只被告知过&quot;人类会这样答&quot;。</p>
+<p><strong>第三重：死记硬背，泛化有限。<strong>2025 年一篇被广泛引用的对照研究把这个老直觉钉实了，标题就是结论：</strong>&quot;SFT 记忆，RL 泛化&quot;</strong>——在同样的任务上，SFT 训出的模型倾向复述训练分布内的模式，规则稍作变体就崩；RL 训出的模型学到的东西更能迁移到新变体。原理用第三卷的语言一说就透：SFT 对示范里的每个 token 无差别地正向模仿（权重全是 +1），信号里不含&quot;哪些是本质、哪些是巧合&quot;；RL 按后果加权，成败的对照逼着模型把&quot;什么真正管用&quot;从&quot;什么只是碰巧出现&quot;里分离出来。</p>
+<p>三重天花板指向同一个出口。既然<strong>写出完美示范</strong>这么难（贵、有上限、还教坏了自信），那能不能退一步——不让人类<strong>写</strong>，只让人类<strong>挑</strong>？给两个候选回答，问哪个更好——这判断谁都会做，又快又便宜，而且它天然携带 SFT 最缺的那种信息：<strong>负信号</strong>（&quot;这个不如那个&quot;）。把千万次&quot;挑选&quot;压缩成一个可以给任何回答打分的函数，再用第三卷的机器去优化这个分数——这就是下一章的主角：奖励模型，与 RLHF 的完整流水线。</p>
+<hr>
+<h3 id="本章要点">本章要点</h3>
+<ul>
+<li>鸿沟的本质是目标错位：预训练模型在完美地续写，而用户要的是执行指令；对齐一词的原点即&quot;让模型做用户想要的事&quot;。</li>
+<li>SFT = 用（指令→理想示范）对继续做下一词预测（loss 只算回答段）；InstructGPT 约 1.3 万条起家。</li>
+<li>为什么小数据能变行为：能力在预训练里，SFT 只是切换调度习惯——表面对齐假设（LIMA 的一千条实验）；质量与多样性碾压数量；Alpaca 开了&quot;模型造数据&quot;的先例。</li>
+<li>chat template 是 SFT 的隐形遗产：对话结构、停止时机、system 优先级全是这层会话协议训出来的。</li>
+<li>三重天花板：示范者即上限（模仿无法超越）；只有正样本没有负反馈（结构性加重自信的幻觉）；SFT 记忆、RL 泛化（无差别模仿分不清本质与巧合）。</li>
+<li>出口：从&quot;让人写完美示范&quot;退到&quot;让人挑更好的&quot;——负信号 + 可规模化，通往奖励模型与 RLHF。</li>
+</ul>
+
+    <nav class="pager series-pager">
+  <a href="18-ppo-and-llm.html" class="cross-part">
+    <span class="label">← 上一篇 · PART III</span>
+    <span class="title">PPO 与会师——通往大模型的最后一站</span>
+  </a>
+  <a href="20-reward-models-rlhf.html" class="next">
+    <span class="label">下一章 →</span>
+    <span class="title">学会分辨好坏——奖励模型与 RLHF 全流程</span>
+  </a>
+</nav>
+  </article>
+</div>
+
+<footer>
+  <div class="set">
+    <span>Large Language Models</span>
+    <span>2026 · ZH-CN</span>
+  </div>
+  <div class="set">
+    <span>Mav</span>
+  </div>
+</footer>
+<div class="search-backdrop" id="search-overlay" role="dialog" aria-modal="true" aria-label="搜索" hidden>
+  <div class="search-modal">
+    <div class="search-input-wrap">
+      <input type="search" class="search-input" placeholder="搜索内容..." aria-label="搜索内容" autocomplete="off">
+      <kbd>ESC</kbd>
+    </div>
+    <div class="search-results" role="listbox" aria-label="搜索结果"></div>
+  </div>
+</div>
+
+<div class="side-panel" id="side-panel">
+  <div class="side-panel-resize" id="side-panel-resize"></div>
+  <div class="side-panel-header">
+    <div class="side-panel-tabs">
+      <button class="side-panel-tab active" data-mode="sidenote">补充</button>
+      <button class="side-panel-tab" data-mode="notepad">笔记</button>
+    </div>
+    <button class="side-panel-close" aria-label="关闭">×</button>
+  </div>
+  <div class="side-panel-body"></div>
+</div>
+<button class="notepad-fab" id="notepad-fab" aria-label="便利贴">✎</button>
+
+<button class="mtoc-fab" id="mtoc-fab" aria-label="系列目录">TOC</button>
+<div class="mtoc-drawer" id="mtoc-drawer">
+  <div class="mtoc-content series-sidebar"></div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/bash.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/typescript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/yaml.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/javascript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/json.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/python.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/css.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+<script>mermaid.initialize({startOnLoad:true, theme:'neutral', fontFamily:'Inter, sans-serif'});</script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}]});"></script>
+<script src="../assets/script.js"></script>
+
+</body>
+</html>

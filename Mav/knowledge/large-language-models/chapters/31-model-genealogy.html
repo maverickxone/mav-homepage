@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>谁是谁的孩子——模型谱系与换代节奏 — Large Language Models</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" href="../assets/series.css">
+<link rel="stylesheet" id="hljs-light" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+<link rel="stylesheet" id="hljs-dark" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" media="not all">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+
+</head>
+<body class="series-page series-reader-page">
+
+<div class="progress-bar" id="progress-bar"></div>
+
+<nav class="topnav series-topnav" id="topnav">
+  <div class="topnav-inner">
+    <a class="brand" href="../index.html">Large Language Models</a>
+    <div class="nav-links">
+      <a href="../index.html#part-architecture">PART I</a>
+      <a href="../index.html#part-pretraining">PART II</a>
+      <a href="../index.html#part-rl-crash-course">PART III</a>
+      <a href="../index.html#part-post-training">PART IV</a>
+      <a href="../index.html#part-compute-inference">PART V</a>
+      <a href="../index.html#part-industry-map" class="active">PART VI</a>
+    </div>
+    <div class="nav-controls">
+      <button class="nav-btn" id="search-btn" aria-label="搜索 (Ctrl+K)">⌘K</button>
+      <button class="nav-btn" id="settings-btn" aria-label="阅读设置">Aa</button>
+      <a class="nav-btn" href="../../index.html" aria-label="返回知识库">← 知识库</a>
+    </div>
+  </div>
+</nav>
+<div class="settings-pop" id="settings-pop">
+  <h5>主题</h5>
+  <div class="row">
+    <button class="seg" data-theme-set="light">明亮</button>
+    <button class="seg" data-theme-set="dark">暗色</button>
+  </div>
+  <h5>字号</h5>
+  <div class="row">
+    <button class="seg" data-size-set="s">小</button>
+    <button class="seg" data-size-set="m">中</button>
+    <button class="seg" data-size-set="l">大</button>
+  </div>
+</div>
+
+<div class="with-sidebar series-reader">
+  <aside class="sidebar series-sidebar">
+  <a class="series-sidebar-home" href="../index.html">系列目录</a>
+  <section class="series-sidebar-part">
+    <h4><span>PART I</span>架构演化</h4>
+    <ul>
+      <li class="series-chapter-item">
+        <a href="01-from-transformer-to-gpt.html" data-chapter="01">课本尽头的 Transformer——把它真正数一遍</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="02-residual-stream.html" data-chapter="02">残差流——理解一切改动的地基</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="03-norms-and-activations.html" data-chapter="03">稳定性之战——归一化与激活函数</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="04-positional-encoding.html" data-chapter="04">位置的难题——从正弦波到 RoPE 与长上下文</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="05-attention-evolution.html" data-chapter="05">注意力的账单——KV cache 与一部省钱史</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="06-moe-basics.html" data-chapter="06">分而治之——MoE 的基本机制</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="07-moe-modern.html" data-chapter="07">MoE 的分水岭——DeepSeek 配方与 2026 年的主流形态</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="08-reading-a-release.html" data-chapter="08">读懂一次发布——参数量、基模与版本语义</a>
+      </li>
+    </ul>
+  </section>
+  <section class="series-sidebar-part">
+    <h4><span>PART II</span>预训练</h4>
+    <ul>
+      <li class="series-chapter-item">
+        <a href="09-scaling-laws.html" data-chapter="09">规模的法则——从赌注到公式</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="10-data-pipeline.html" data-chapter="10">备菜间——几十万亿 token 从哪来</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="11-training-run.html" data-chapter="11">厨房里的三个月——损失、优化器与一场不能崩的马拉松</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="12-midtraining.html" data-chapter="12">后半场——mid-training、退火与长上下文课程</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="13-parallelism.html" data-chapter="13">把模型摊开——并行训练、万卡集群与预训练的黄昏</a>
+      </li>
+    </ul>
+  </section>
+  <section class="series-sidebar-part">
+    <h4><span>PART III</span>强化学习速成</h4>
+    <ul>
+      <li class="series-chapter-item">
+        <a href="14-another-way-to-learn.html" data-chapter="14">另一种学习——从「有标准答案」到「只有后果」</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="15-value-functions.html" data-chapter="15">给未来定价——回报、价值函数与贝尔曼方程</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="16-policy-gradient.html" data-chapter="16">顺着后果爬坡——策略梯度与 REINFORCE</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="17-actor-critic-trust-region.html" data-chapter="17">教练与护栏——Actor-Critic、重要性采样与信任域</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="18-ppo-and-llm.html" data-chapter="18">PPO 与会师——通往大模型的最后一站</a>
+      </li>
+    </ul>
+  </section>
+  <section class="series-sidebar-part">
+    <h4><span>PART IV</span>后训练</h4>
+    <ul>
+      <li class="series-chapter-item">
+        <a href="19-sft-instruction-tuning.html" data-chapter="19">从续写到听话——SFT 与指令微调</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="20-reward-models-rlhf.html" data-chapter="20">学会分辨好坏——奖励模型与 RLHF 全流程</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="21-dpo-direct-preference.html" data-chapter="21">把 RL 短路——DPO 与直接偏好优化</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="22-rlaif-constitutional.html" data-chapter="22">让 AI 教 AI——RLAIF、宪法与评判者</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="23-reasoning-models.html" data-chapter="23">第二次质变——从 o1 到 R1 的推理革命</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="24-reasoning-craft-and-reefs.html" data-chapter="24">想多久、想什么——推理时代的工艺与暗礁</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="25-distillation-lora-versions.html" data-chapter="25">兑现与迭代——蒸馏、LoRA 与小版本的秘密</a>
+      </li>
+    </ul>
+  </section>
+  <section class="series-sidebar-part">
+    <h4><span>PART V</span>算力与推理</h4>
+    <ul>
+      <li class="series-chapter-item">
+        <a href="26-gpu-anatomy.html" data-chapter="26">认识铁疙瘩——GPU、带宽与算力的三重账</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="27-memory-math-quantization.html" data-chapter="27">跑得动吗——显存数学与量化速算手册</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="28-inference-factory-pricing.html" data-chapter="28">推理工厂与价格标签——从 GPU 到账单</a>
+      </li>
+    </ul>
+  </section>
+  <section class="series-sidebar-part">
+    <h4><span>PART VI</span>2026 产业地图</h4>
+    <ul>
+      <li class="series-chapter-item">
+        <a href="29-us-frontier-labs.html" data-chapter="29">三巨头的分野——OpenAI、Anthropic 与 Google</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="30-china-open-weight.html" data-chapter="30">开源的中国时刻——一场反向的阳谋</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="31-model-genealogy.html" data-chapter="31" class="active" aria-current="page">谁是谁的孩子——模型谱系与换代节奏</a>
+        <ul class="series-section-links">
+          <li><a href="#31-一条产品线里的三种quot新版本quot">3.1 一条产品线里的三种&amp;quot;新版本&amp;quot;</a></li>
+          <li><a href="#32-中国开源阵营枝繁叶茂的家族树">3.2 中国开源阵营：枝繁叶茂的家族树</a></li>
+          <li><a href="#33-美国闭源阵营看不见血缘的家谱">3.3 美国闭源阵营：看不见血缘的家谱</a></li>
+          <li><a href="#34-一张读得懂的家谱三个规律">3.4 一张读得懂的家谱：三个规律</a></li>
+        </ul>
+      </li>
+      <li class="series-chapter-item">
+        <a href="32-geopolitics-power.html" data-chapter="32">芯片、稀土与电表——算力的地缘战争</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="33-business-and-money.html" data-chapter="33">钱从哪来，又烧向何处——商业模式与泡沫之辩</a>
+      </li>
+      <li class="series-chapter-item">
+        <a href="34-finale-and-frontier.html" data-chapter="34">六年，与之后——回望、前沿与写给你的话</a>
+      </li>
+    </ul>
+  </section>
+</aside>
+  <article class="chapter-body">
+    <header class="chapter-head series-chapter-head">
+  <div class="series-breadcrumb">PART VI · 2026 产业地图</div>
+  <div class="chapter-head-meta">
+    <span class="num">CHAPTER 31</span>
+    <span>≈ 40 MIN READ</span>
+  </div>
+  <h1>谁是谁的孩子——模型谱系与换代节奏</h1>
+</header>
+    <p>前两章讲了两个阵营的公司与战略；这一章换一个视角——<strong>把模型本身排成家谱</strong>。第一卷第八章教过你读懂一次发布、区分&quot;基模&quot;与&quot;版本语义&quot;；这一章是那套读法的产业级兑现：我们要把 2026 年你叫得出名字的几十个模型，按血缘关系摊成一张家族树，让你一眼看清谁是谁的孩子、谁和谁是兄弟、以及各家换代的节奏为什么如此不同。这是一张会过时的地图（卷首说过，本卷是&quot;截至 2026 年 7 月的快照&quot;），但读图的方法不会过时。</p>
+<h2 id="31-一条产品线里的三种quot新版本quot">3.1 一条产品线里的三种&quot;新版本&quot;</h2>
+<p>先把第一卷的工具磨快。当一家公司发布&quot;新版本&quot;时，它可能是三件性质完全不同的事，而外界最大的误读就是把它们混为一谈：</p>
+<p><strong>换基模（整数级换代）</strong>——重新预训练一个新的基础模型，几个月、几千万美元的重注。能力天花板被抬高，架构革新（新注意力、新 MoE 配方）只能搭这班车上线。DeepSeek V3→V4 就是典型：全新预训练、32T token、新注意力、原生 1M 上下文——<strong>这是&quot;两个系列&quot;级别的事件</strong>。</p>
+<p><strong>续训（小数点级）</strong>——在同一基模上继续训练，扩展某种能力。DeepSeek V3→V3.1 是长上下文续训，V3.1→V3.2 是把稀疏注意力&quot;改装&quot;上去——底盘没换，只是加装。</p>
+<p><strong>翻新后训练（同基模、换配方）</strong>——基模一个参数不动，只重跑第四卷讲的那条后训练流水线。DeepSeek V3-0324 是最干净的例证：同一个 V3 基座，吸收了 R1 的推理 RL 成果，数学代码能力跳一大级——<strong>&quot;小版本更新到底更新了什么&quot;的答案就是这个</strong>。</p>
+<p>三种事件的成本差着一到两个数量级，而营销命名常常故意抹平这个差别（第一卷讲过：版本号是市场部和工程部拔河的结果）。带着这把尺，我们开始读图。</p>
+<h2 id="32-中国开源阵营枝繁叶茂的家族树">3.2 中国开源阵营：枝繁叶茂的家族树</h2>
+<p>开源阵营的谱系最清晰，因为技术报告把血缘写得明明白白。</p>
+<p><strong>DeepSeek 系</strong>是教科书般工整的一棵树。主干：V2（首创 MLA）→ V3（671B，细粒度 MoE + aux-loss-free）→ V3.1（长上下文续训）→ V3.2（DSA 稀疏注意力续训）→ V4（全新基模，1.6T）。主干上挂着两类果实：<strong>推理分支</strong> R1（基于 V3-Base 纯 RL）及其后继；<strong>蒸馏分支</strong> R1-Distill 系列（把 R1 的推理能力灌进 Qwen 和 Llama 的躯壳——注意这一支的&quot;身体&quot;是别人家的基模，&quot;灵魂&quot;才是 DeepSeek 的，这是谱系图上最有趣的杂交现象）。到 2026 年，推理线（R 系列）被并进了主线的双模式模型，R2 迟迟未出——因为 V3.2-Speciale 和 V4 已经把推理能力承接了。</p>
+<p><strong>Qwen 系（阿里）<strong>是另一种形态——不是一棵深树，而是一片</strong>同代覆盖全尺寸的灌木丛</strong>。同一代（如 Qwen3）从 0.6B 到旗舰 235B 全谱系铺开，小模型多由大模型蒸馏而来（第四卷的&quot;大模型当教师&quot;分工写在家谱里）。代际上 Qwen3→Qwen3.5 是新架构新基模，而 3.5→3.6→3.7 是快速迭代。一个值得记的花絮：Qwen3 曾把&quot;思考/不思考&quot;融进一个模型，半年后又拆回两个——家谱上出现了&quot;先合并、再分家&quot;的罕见枝节。</p>
+<p>**Kimi 系（月之暗面）**的家谱短而陡：K2（1T，384 专家）→ K2.6（同架构加多模态）→ K3（2.8T 全新基模+KDA 线性注意力+896 专家）。K2→K3 是明确的换基模+换架构，一次豪赌式的跨代——从家谱看，月之暗面走的是&quot;少而重&quot;的路线，与 Qwen 的&quot;多而全&quot;形成鲜明对比。</p>
+<p><strong>其余枝干</strong>：GLM（智谱）的 GLM-4.5→5→5.2 稳步走稀疏注意力路线；MiniMax 的 M1→M2→M3 是全书最曲折的一支（线性→回退全注意力→转稀疏，三代三条路，第一卷第五章的&quot;没有共识&quot;活案例）；字节豆包、腾讯混元、百度文心、阶跃各有自己的小树，多数不完全公开血缘。</p>
+<h2 id="33-美国闭源阵营看不见血缘的家谱">3.3 美国闭源阵营：看不见血缘的家谱</h2>
+<p>美国前沿阵营的家谱要靠&quot;考古&quot;——参数、架构、基模关系一律不披露，只能从发布节奏和能力跃迁反推（第一卷第八章教的三条线索：发布间隔、能力跃迁形态、定价结构）。</p>
+<p><strong>OpenAI 的 GPT 线</strong>：GPT-4 → 4o/4.5（4.5 是那个&quot;平淡的最大基模&quot;，第二卷的关键证据）→ <strong>GPT-5</strong>（2025-08，统一 router 架构，把独立的 o 系列推理模型并入主线）→ 5.1/5.2/5.4 快速迭代 → <strong>GPT-5.5</strong>（罕见地有公开证据是新基模，预训练代号 &quot;Spud&quot;）→ <strong>GPT-5.6</strong>（2026-07，Luna/Terra/Sol 三档）。这条线最大的谱系事件是 <strong>o 系列的&quot;合流&quot;</strong>：曾经 o1/o3 是独立的推理产品线，2026 年初被整体退役、能力融进 GPT-5 家族——&quot;推理模型&quot;从一个物种降格为旗舰内的一个档位（第四卷末章的三段论）。</p>
+<p><strong>Anthropic 的 Claude 线</strong>：最耐人寻味的谱系。它是一个<strong>能力分层的命名体系</strong>——Haiku &lt; Sonnet &lt; Opus &lt; Fable/Mythos，同一代里按&quot;个头&quot;分三四档（快而便宜的 Haiku 到最强的 Mythos 级）。2026 年的大事是启用了高于 Opus 的全新 <strong>Mythos 层级</strong>（Fable 5 是首个公开可用的 Mythos 级模型）——命名体系本身在暗示底盘换代，但官方一个参数都不给。点版本（Opus 4.5→4.6→4.7→4.8 半年四发）大概率是后训练迭代。</p>
+<p><strong>Google 的 Gemini 线</strong>：2.5 → 3 → 3.5，而 3.5 Pro 的谱系里藏着一个公开的&quot;事故&quot;——原基模因结构性缺陷被推倒重建、屡次跳票，是&quot;换基模是一场豪赌、可能失败&quot;的罕见公开案例（第二卷讲过预训练不可试错）。<strong>xAI 的 Grok</strong> 线（4→4.1→4.5）和 <strong>Meta 的 Llama</strong> 线（4→5）各成一支，前者绑定自建算力、后者是美国开源的旗帜。</p>
+<h2 id="34-一张读得懂的家谱三个规律">3.4 一张读得懂的家谱：三个规律</h2>
+<p>把两个阵营的家谱合起来看，浮现出三条跨公司的规律，它们比任何单个模型都更耐久：</p>
+<p>**规律一：基座复用，后训练狂奔。**几乎所有公司都是&quot;基模用数月到一年，后训练以周/月迭代&quot;（第四卷的&quot;持续交付&quot;）。所以一年里一家公司发五六个&quot;新模型&quot;，背后往往只有一两个真正的新基模。<strong>数发布数量会高估进展，数基模数量才是真实的换代频率。</strong></p>
+<p>**规律二：能力靠蒸馏向下扩散。**每家的小模型基本都是大模型的蒸馏产物（第四卷&quot;大模型当教师&quot;）。所以家谱不只有&quot;父子代际&quot;的纵向血缘，还有&quot;大教小&quot;的横向血缘——DeepSeek 的推理能力甚至横向蒸进了 Qwen 和 Llama 的身体。<strong>能力的传播比基模的繁衍快得多。</strong></p>
+<p>**规律三：透明度是一条政治分界线。**开源阵营的家谱清晰可考，闭源阵营的家谱靠猜——这不是技术差异，是战略选择（下一章会看到，&quot;开源还是闭源&quot;本身就是最大的战略分野）。一个读图的实用建议：<strong>看到中国模型的发布，去读技术报告；看到美国旗舰的发布，去数发布间隔、查知识截止日期、比定价结构</strong>——两种阅读法，对应两种披露文化。</p>
+<p>家谱读完了。但家谱只告诉你&quot;谁生了谁&quot;，没告诉你&quot;这些家族在争夺什么、靠什么活下去&quot;。下一章转向算力与地缘——这些模型背后的钢铁、电力与国界之争；再下一章是钱——谁在盈利、谁在烧钱、这场竞赛能烧多久。</p>
+<hr>
+<h3 id="本章要点">本章要点</h3>
+<ul>
+<li>三种&quot;新版本&quot;性质迥异、成本差一到两个数量级：换基模（整数级，重新预训练，抬高天花板）、续训（小数点级，同基模加装能力）、翻新后训练（同基模换配方，如 V3-0324）；营销命名常抹平差别，用第一卷三条线索甄别。</li>
+<li>中国开源家谱清晰：DeepSeek 工整主干 + 推理/蒸馏两分支；Qwen &quot;全尺寸灌木丛&quot;（大教小写进家谱）；Kimi &quot;少而重&quot;（K2→K3 跨代豪赌）；MiniMax 三代三路线的曲折支。</li>
+<li>美国闭源家谱靠考古：GPT 线的 o 系列&quot;合流&quot;（推理从物种降为档位）；Claude 的能力分层命名 + 新 Mythos 层级；Gemini 3.5 Pro 推倒重建（换基模可能失败的公开案例）。</li>
+<li>三条跨公司规律：基座复用后训练狂奔（数基模而非数发布）；能力靠蒸馏横向扩散（比基模繁衍快）；透明度是政治分界线（读报告 vs 数间隔的两种阅读法）。</li>
+</ul>
+
+    <nav class="pager series-pager">
+  <a href="30-china-open-weight.html">
+    <span class="label">← 上一章</span>
+    <span class="title">开源的中国时刻——一场反向的阳谋</span>
+  </a>
+  <a href="32-geopolitics-power.html" class="next">
+    <span class="label">下一章 →</span>
+    <span class="title">芯片、稀土与电表——算力的地缘战争</span>
+  </a>
+</nav>
+  </article>
+</div>
+
+<footer>
+  <div class="set">
+    <span>Large Language Models</span>
+    <span>2026 · ZH-CN</span>
+  </div>
+  <div class="set">
+    <span>Mav</span>
+  </div>
+</footer>
+<div class="search-backdrop" id="search-overlay" role="dialog" aria-modal="true" aria-label="搜索" hidden>
+  <div class="search-modal">
+    <div class="search-input-wrap">
+      <input type="search" class="search-input" placeholder="搜索内容..." aria-label="搜索内容" autocomplete="off">
+      <kbd>ESC</kbd>
+    </div>
+    <div class="search-results" role="listbox" aria-label="搜索结果"></div>
+  </div>
+</div>
+
+<div class="side-panel" id="side-panel">
+  <div class="side-panel-resize" id="side-panel-resize"></div>
+  <div class="side-panel-header">
+    <div class="side-panel-tabs">
+      <button class="side-panel-tab active" data-mode="sidenote">补充</button>
+      <button class="side-panel-tab" data-mode="notepad">笔记</button>
+    </div>
+    <button class="side-panel-close" aria-label="关闭">×</button>
+  </div>
+  <div class="side-panel-body"></div>
+</div>
+<button class="notepad-fab" id="notepad-fab" aria-label="便利贴">✎</button>
+
+<button class="mtoc-fab" id="mtoc-fab" aria-label="系列目录">TOC</button>
+<div class="mtoc-drawer" id="mtoc-drawer">
+  <div class="mtoc-content series-sidebar"></div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/bash.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/typescript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/yaml.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/javascript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/json.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/python.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/css.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+<script>mermaid.initialize({startOnLoad:true, theme:'neutral', fontFamily:'Inter, sans-serif'});</script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}]});"></script>
+<script src="../assets/script.js"></script>
+
+</body>
+</html>

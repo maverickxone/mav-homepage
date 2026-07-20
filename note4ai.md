@@ -1,6 +1,6 @@
 # note4ai.md
 
-> 最后更新：2026.07.16
+> 最后更新：2026.07.20
 
 本文件面向接手本项目的 AI agent，不是给人类线性阅读的文档。目标是让你读完之后对项目结构、构建系统、约束规则了如指掌。
 
@@ -34,9 +34,11 @@ mav-homepage/
 │   │   │   ├── how-computer-works/index.html
 │   │   │   └── digital-formats/index.html
 │   │   ├── deep-learning/       ← 深度学习 Series 输出（3 篇、21 章）
+│   │   ├── large-language-models/ ← LLM Series 输出（6 篇、34 章；v1.0.0）
 │   │   ├── browser-war/         ← 示例书（有前端定制）
 │   │   ├── euv-lithography/     ← 示例书（有前端定制）
 │   │   ├── robogame2026/        ← RoboGame 2026 讲义
+│   │   ├── rag/                 ← RAG 书（7 章）
 │   │   ├── claude-code/         ← ⚠️ 纯手写 HTML，无 Markdown 源码
 │   │   └── ...
 │   └── assets/                  ← 全站共享 CSS/JS
@@ -55,6 +57,11 @@ mav-homepage/
 │   │   ├── 01-toolbox/*.md      ← PART I 章节
 │   │   ├── 02-cnn/*.md          ← PART II 章节
 │   │   └── 03-rnn/*.md          ← PART III 章节
+│   ├── Large-Language-Models/   ← LLM Series 源目录（6 卷完结）
+│   │   ├── series.yaml
+│   │   ├── 01-architecture/ … 06-industry-map/
+│   │   └── _research/           ← 写作调研素材（未进 series parts；计划作附录）
+│   ├── RAG/                     ← RAG 书源
 │   ├── projects/                ← Project 数据源（YAML）
 │   │   ├── how-computer-works.yaml
 │   │   └── digital-formats.yaml
@@ -340,6 +347,7 @@ node blog-build.js   # 只生成 html/*.html 详情页（导航指向时间线�
 | ~~ai-nlp-foundations~~ | ~~AI 自然语言处理基础~~ | ~~7 章~~ —— 2026-07 移除 |
 | ~~ai-transformers~~ | ~~AI Transformer 深度剖析~~ | ~~7 章~~ —— 2026-07 移除 |
 | deep-learning | 深度学习系列讲义 | **Series**；3 篇、21 章；源为 `markdown-backups/Deep-Learning/series.yaml`；`status: published` |
+| large-language-models | Large Language Models | **Series**；6 篇、34 章；v1.0.0；`status: published`；源为 `markdown-backups/Large-Language-Models/series.yaml`。卷序：架构演化 → 预训练 → 强化学习速成 → 后训练 → 算力与推理 → 2026 产业地图。写作调研素材在同目录 `_research/`（14 份 research-*.md + 过程笔记；**当前未挂入 series parts**，计划整理为附录卷） |
 | rag | 检索增强生成（RAG） | 7 章；`status: published`；v1.0.0；AI 工程实践；从幻觉/检索/切块/重排/评估到 2026 年 agentic 检索之争，末章两百行 Python 手搓知识库问答 |
 | ~~d2l-toolbox / d2l-cnn / d2l-rnn~~ | ~~三套独立 D2L 书稿~~ | 2026-07 合并进 `deep-learning` Series，旧源与旧产物移入废纸篓 |
 | ~~claude-d2l-to-rnn~~ | ~~深度学习讲义~~ | ~~4 章；旧版合订；`catalog: false`、`status: draft`~~ —— 2026-07 移除（内容已由深度学习 Series 承接） |
@@ -449,8 +457,8 @@ Mav/knowledge/projects/
 
 路径 `Mav/knowledge/index.html`。两个 tab：
 
-1. **Projects** — 展示 published project 卡片（带路径圆点动画）+ Series + 独立阅读区
-2. **全部书籍** — 顶部展示 `deep-learning` Series，之后平铺 **14** 本主书卡片（不含课程讲义）：
+1. **Projects** — 展示 published project 卡片（带路径圆点动画）+ Series（`deep-learning`、`large-language-models`）+ 独立阅读区
+2. **全部书籍** — 顶部展示 Series 卡片（深度学习 + LLM），之后平铺主书卡片（不含课程讲义）：
    rag、data-structures、robogame2026、claude-code、money-bank、bite-to-byte-硬件篇、blockchain-crypto、rust-book、git-guide、server-frontend-backend、video-screen、browser-war、euv-lithography、pdf-explained
 
 两个视图下方共用一个原生 `<details>` 折叠区：**大一下学期课程讲义**，包含 `thermodynamics`、`math-analysis`、`ai-math-principles`。旧的“深度学习相关书稿”折叠区已移除。

@@ -3,14 +3,39 @@ slug: large-language-models
 type: series
 eyebrow: "Series · LLM"
 author: "Mav"
-description: "从 2020 年只会续写的 GPT-3，到 2026 年能做高强度推理与编程的大模型，这六年发生了什么。系列沿一条主线展开：模型长什么样（架构演化）、怎么炼出来的（预训练与后训练）、跑在什么上面（算力与推理）、谁在做（产业地图）。连载中，当前已发布第一卷：架构演化。"
+description: "从 2020 年只会续写的 GPT-3，到 2026 年能做高强度推理与编程的大模型，这六年发生了什么。系列沿一条主线展开：模型长什么样（架构演化）、怎么炼出来的（预训练与后训练）、跑在什么上面（算力与推理）、谁在做（产业地图）。全六卷已完结。"
 language: "ZH-CN"
-version: "0.1.0"
+version: "1.0.0"
 status: published
-estimatedTime: "约 6 小时（第一卷）"
+estimatedTime: "约 26 小时（全六卷）"
 parts:
   - id: architecture
     label: "PART I"
     title: "架构演化"
     description: "从你在课本里学到的原版 Transformer 出发，逐个部件看清 2026 年的大模型骨架：残差流、归一化、RoPE、注意力的省钱史、MoE，以及怎么读懂一次模型发布。"
     source: "01-architecture"
+  - id: pretraining
+    label: "PART II"
+    title: "预训练"
+    description: "把互联网压进权重里：scaling laws 与 Chinchilla、数据管线与配比机密、优化器与万卡马拉松、mid-training 与退火课程、并行策略，以及卷末的大哉问——预训练到头了吗。"
+    source: "02-pretraining"
+  - id: rl-crash-course
+    label: "PART III"
+    title: "强化学习速成"
+    description: "为零基础读者补的一卷：从「只有后果、没有答案」的学习范式出发，沿 MDP、价值函数、策略梯度、Actor-Critic 一条主线走到 PPO，终点是把语言模型放进 RL 的坐标系、站上 GRPO 的门口。"
+    source: "03-rl-crash-course"
+  - id: post-training
+    label: "PART IV"
+    title: "后训练"
+    description: "全书的心脏：SFT 教会听话，奖励模型与 RLHF 学会分辨好坏，DPO 把 RL 短路，宪法让 AI 教 AI；然后是第二次质变——o1 与 R1 的推理革命、GRPO 军备赛与 reward hacking 暗礁，最后是蒸馏、LoRA 与小版本迭代的兑现工艺。"
+    source: "04-post-training"
+  - id: compute-inference
+    label: "PART V"
+    title: "算力与推理"
+    description: "够用就好的 infra 常识账：解剖一张 GPU 与 roofline 标尺、显存数学与量化速算手册、推理工厂的五件套工艺——以及 API 价格表如何成为成本结构的公开化石。"
+    source: "05-compute-inference"
+  - id: industry-map
+    label: "PART VI"
+    title: "2026 产业地图"
+    description: "收官卷（截至 2026 年 7 月的快照）：美国三巨头的商业分野、中国开源阵营的反向阳谋、模型谱系图、芯片与电力的地缘战争、商业模式与泡沫之辩，最后回望六年、眺望前沿，并写给入门读者几句话。"
+    source: "06-industry-map"
