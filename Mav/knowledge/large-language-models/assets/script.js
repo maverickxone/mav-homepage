@@ -406,6 +406,29 @@
     });
   })();
 
+  // ---------- 5b. Series PART tabs → switch docked sidebar's active part ----------
+  (function () {
+    const tabs = document.querySelectorAll('.series-topnav .nav-links a[data-part]');
+    const dockedSidebar = document.querySelector('.series-reader .series-sidebar');
+    if (!tabs.length || !dockedSidebar) return;
+
+    const parts = dockedSidebar.querySelectorAll('.series-sidebar-part');
+
+    tabs.forEach(tab => {
+      tab.addEventListener('click', (e) => {
+        // Docked sidebar is desktop-only (hidden on mobile via CSS). When it's
+        // offscreen, fall through to the default link → cover page anchor.
+        if (dockedSidebar.offsetParent === null) return;
+        e.preventDefault();
+
+        const partId = tab.getAttribute('data-part');
+        tabs.forEach(t => t.classList.toggle('active', t === tab));
+        parts.forEach(p => p.classList.toggle('active', p.getAttribute('data-part') === partId));
+        dockedSidebar.scrollTop = 0;
+      });
+    });
+  })();
+
   // ---------- 6. Collapsible sections ----------
   (function () {
     document.querySelectorAll('.collapsible-trigger').forEach(trigger => {

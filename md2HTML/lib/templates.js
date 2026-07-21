@@ -79,7 +79,7 @@ function generateSeriesNav(series, isChapter, activePartId) {
   const knowledgeHref = isChapter ? '../../index.html' : '../index.html';
   const links = series.parts.map(part => {
     const active = part.id === activePartId ? ' class="active"' : '';
-    return `      <a href="${indexPrefix}index.html#part-${escapeHtml(part.id)}"${active}>${escapeHtml(part.label)}</a>`;
+    return `      <a href="${indexPrefix}index.html#part-${escapeHtml(part.id)}" data-part="${escapeHtml(part.id)}"${active}>${escapeHtml(part.label)}</a>`;
   }).join('\n');
 
   return `<nav class="topnav series-topnav" id="topnav">
@@ -193,7 +193,8 @@ function generateSeriesSidebar(series, chapter, chaptersMeta, headings) {
       </li>`;
       }).join('\n');
 
-    return `  <section class="series-sidebar-part">
+    const isActivePart = part.id === chapter.partId;
+    return `  <section class="series-sidebar-part${isActivePart ? ' active' : ''}" data-part="${escapeHtml(part.id)}">
     <h4><span>${escapeHtml(part.label)}</span>${escapeHtml(part.title)}</h4>
     <ul>
 ${links}

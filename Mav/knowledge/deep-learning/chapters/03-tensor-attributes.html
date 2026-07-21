@@ -22,9 +22,9 @@
   <div class="topnav-inner">
     <a class="brand" href="../index.html">深度学习系列讲义</a>
     <div class="nav-links">
-      <a href="../index.html#part-toolbox" class="active">PART I</a>
-      <a href="../index.html#part-cnn">PART II</a>
-      <a href="../index.html#part-rnn">PART III</a>
+      <a href="../index.html#part-toolbox" data-part="toolbox" class="active">PART I</a>
+      <a href="../index.html#part-cnn" data-part="cnn">PART II</a>
+      <a href="../index.html#part-rnn" data-part="rnn">PART III</a>
     </div>
     <div class="nav-controls">
       <button class="nav-btn" id="search-btn" aria-label="搜索 (Ctrl+K)">⌘K</button>
@@ -50,7 +50,7 @@
 <div class="with-sidebar series-reader">
   <aside class="sidebar series-sidebar">
   <a class="series-sidebar-home" href="../index.html">系列目录</a>
-  <section class="series-sidebar-part">
+  <section class="series-sidebar-part active" data-part="toolbox">
     <h4><span>PART I</span>数学与 PyTorch 工具</h4>
     <ul>
       <li class="series-chapter-item">
@@ -81,7 +81,7 @@
       </li>
     </ul>
   </section>
-  <section class="series-sidebar-part">
+  <section class="series-sidebar-part" data-part="cnn">
     <h4><span>PART II</span>卷积与视觉</h4>
     <ul>
       <li class="series-chapter-item">
@@ -104,7 +104,7 @@
       </li>
     </ul>
   </section>
-  <section class="series-sidebar-part">
+  <section class="series-sidebar-part" data-part="rnn">
     <h4><span>PART III</span>序列与自然语言处理</h4>
     <ul>
       <li class="series-chapter-item">

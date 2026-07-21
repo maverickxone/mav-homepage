@@ -22,12 +22,12 @@
   <div class="topnav-inner">
     <a class="brand" href="../index.html">Large Language Models</a>
     <div class="nav-links">
-      <a href="../index.html#part-architecture" class="active">PART I</a>
-      <a href="../index.html#part-pretraining">PART II</a>
-      <a href="../index.html#part-rl-crash-course">PART III</a>
-      <a href="../index.html#part-post-training">PART IV</a>
-      <a href="../index.html#part-compute-inference">PART V</a>
-      <a href="../index.html#part-industry-map">PART VI</a>
+      <a href="../index.html#part-architecture" data-part="architecture" class="active">PART I</a>
+      <a href="../index.html#part-pretraining" data-part="pretraining">PART II</a>
+      <a href="../index.html#part-rl-crash-course" data-part="rl-crash-course">PART III</a>
+      <a href="../index.html#part-post-training" data-part="post-training">PART IV</a>
+      <a href="../index.html#part-compute-inference" data-part="compute-inference">PART V</a>
+      <a href="../index.html#part-industry-map" data-part="industry-map">PART VI</a>
     </div>
     <div class="nav-controls">
       <button class="nav-btn" id="search-btn" aria-label="搜索 (Ctrl+K)">⌘K</button>
@@ -53,7 +53,7 @@
 <div class="with-sidebar series-reader">
   <aside class="sidebar series-sidebar">
   <a class="series-sidebar-home" href="../index.html">系列目录</a>
-  <section class="series-sidebar-part">
+  <section class="series-sidebar-part active" data-part="architecture">
     <h4><span>PART I</span>架构演化</h4>
     <ul>
       <li class="series-chapter-item">
@@ -89,7 +89,7 @@
       </li>
     </ul>
   </section>
-  <section class="series-sidebar-part">
+  <section class="series-sidebar-part" data-part="pretraining">
     <h4><span>PART II</span>预训练</h4>
     <ul>
       <li class="series-chapter-item">
@@ -109,7 +109,7 @@
       </li>
     </ul>
   </section>
-  <section class="series-sidebar-part">
+  <section class="series-sidebar-part" data-part="rl-crash-course">
     <h4><span>PART III</span>强化学习速成</h4>
     <ul>
       <li class="series-chapter-item">
@@ -129,7 +129,7 @@
       </li>
     </ul>
   </section>
-  <section class="series-sidebar-part">
+  <section class="series-sidebar-part" data-part="post-training">
     <h4><span>PART IV</span>后训练</h4>
     <ul>
       <li class="series-chapter-item">
@@ -155,7 +155,7 @@
       </li>
     </ul>
   </section>
-  <section class="series-sidebar-part">
+  <section class="series-sidebar-part" data-part="compute-inference">
     <h4><span>PART V</span>算力与推理</h4>
     <ul>
       <li class="series-chapter-item">
@@ -169,7 +169,7 @@
       </li>
     </ul>
   </section>
-  <section class="series-sidebar-part">
+  <section class="series-sidebar-part" data-part="industry-map">
     <h4><span>PART VI</span>2026 产业地图</h4>
     <ul>
       <li class="series-chapter-item">

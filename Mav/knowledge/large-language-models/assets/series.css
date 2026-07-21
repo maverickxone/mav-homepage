@@ -234,6 +234,18 @@
   margin-bottom: var(--space-5);
 }
 
+/* Master-detail: the docked sidebar shows only the active part; the
+   top PART tabs switch between them. The mobile drawer (.mtoc-content)
+   is left untouched so it still holds the full series map. */
+.series-reader .series-sidebar .series-sidebar-part {
+  display: none;
+}
+
+.series-reader .series-sidebar .series-sidebar-part.active {
+  display: block;
+  margin-bottom: 0;
+}
+
 .series-sidebar h4 {
   display: grid;
   grid-template-columns: 52px minmax(0, 1fr);
@@ -268,6 +280,21 @@
   border-left: 2px solid transparent;
   font-size: 12px;
   line-height: 1.35;
+}
+
+/* With only one part on screen, the docked list can breathe. */
+.series-reader .series-sidebar .series-sidebar-part h4 {
+  font-size: var(--text-sm);
+}
+
+.series-reader .series-sidebar .series-chapter-item > a {
+  padding: 7px 8px;
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+.series-reader .series-sidebar .series-section-links a {
+  font-size: 13px;
 }
 
 .series-sidebar .series-chapter-item > a::before {
