@@ -358,6 +358,7 @@ node blog-build.js   # 只生成 html/*.html 详情页（导航指向时间线�
 | data-structures | 数据结构：从指针到算法 | 9 章；原始 md/c 在 `markdown-backups/Data-Structures/_source/`，装配脚本 `_source/assemble.py` |
 | thermodynamics | 热学速通 | 6 章；课程讲义折叠区；`_figures/*.py` 生成 PNG；`script.js` 锁定 |
 | money-bank | 银行体系与货币系统 | 8 章 |
+| investing-101 | 投资入门：从一股股票到一套认知 | 9 章；2026-07 新增；面向刚满 18 岁大学生的投资科普（股票/上市/交易所/涨跌/债券/黄金/基金/风险骗局/实操路线），主线"收益从哪里来"；以 SpaceX 2026-06 IPO、OpenAI/Anthropic/DeepSeek 融资、苹果 1980 IPO 等真实案例贯穿；行情与价格数据核实时点 2026-07（三个调研 agent 交叉核实）；与 money-bank、blockchain-crypto 构成金融三部曲 |
 | bite-to-byte-硬件篇 | 电脑怎么工作的 | 8 章 |
 | blockchain-crypto | 区块链与加密货币 | 8 章；`status: published`；v3.0（信任/比特币设计与网络/以太坊/共识/生态/Web3/安全实战） |
 | rust-book | Rust | 7 章 |

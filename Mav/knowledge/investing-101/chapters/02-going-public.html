@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>上市：一家公司的成人礼 — 投资入门：从一股股票到一套认知</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" id="hljs-light" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+<link rel="stylesheet" id="hljs-dark" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" media="not all">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+
+</head>
+<body>
+
+<div class="progress-bar" id="progress-bar"></div>
+
+<nav class="topnav" id="topnav">
+  <div class="topnav-inner">
+    <a class="brand" href="../index.html">投资入门：从一股股票到一套认知</a>
+    <div class="nav-links">
+      <a href="01-what-is-a-stock.html">01</a>
+      <a href="02-going-public.html" class="active">02</a>
+      <a href="03-exchanges-and-prices.html">03</a>
+      <a href="04-why-prices-move.html">04</a>
+      <a href="05-bonds-and-interest.html">05</a>
+      <a href="06-gold-and-silver.html">06</a>
+      <a href="07-funds.html">07</a>
+      <a href="08-risk-leverage-scams.html">08</a>
+      <a href="09-practical-path.html">09</a>
+    </div>
+    <div class="nav-controls">
+      <button class="nav-btn" id="search-btn" aria-label="搜索 (Ctrl+K)">⌘K</button>
+      <button class="nav-btn" id="settings-btn" aria-label="阅读设置">Aa</button>
+      <a class="nav-btn" href="../../index.html" aria-label="返回知识库">← 知识库</a>
+      <a class="nav-btn" href="https://github.com/maverickxone/mav-homepage" target="_blank" rel="noopener" aria-label="GitHub" style="padding: 6px 8px;"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg></a>
+    </div>
+  </div>
+</nav>
+<div class="settings-pop" id="settings-pop">
+  <h5>主题</h5>
+  <div class="row">
+    <button class="seg" data-theme-set="light">明亮</button>
+    <button class="seg" data-theme-set="dark">暗色</button>
+  </div>
+  <h5>字号</h5>
+  <div class="row">
+    <button class="seg" data-size-set="s">小</button>
+    <button class="seg" data-size-set="m">中</button>
+    <button class="seg" data-size-set="l">大</button>
+  </div>
+</div>
+
+<div class="with-sidebar">
+  <aside class="sidebar">
+  <div class="chapter-num">CHAPTER 02</div>
+  <div class="chapter-name">上市：一家公司的成人礼</div>
+  <h4>目录</h4>
+  <ul>
+    <li><a href="#20-导言有钱也买不到的股票">2.0 导言：有钱也买不到的股票</a></li>
+    <li><a href="#21-一级市场与二级市场你的钱到底给了谁">2.1 一级市场与二级市场：你的钱到底给了谁</a></li>
+    <li><a href="#22-上市之前一轮一轮的融资">2.2 上市之前：一轮一轮的融资</a></li>
+    <li><a href="#23-spacex十三年quot绝不上市quot与史上最大的-ipo">2.3 SpaceX：十三年&quot;绝不上市&quot;，与史上最大的 IPO</a></li>
+    <li><a href="#24-ipo-的机器房定价承销与敲钟">2.4 IPO 的机器房：定价、承销与敲钟</a></li>
+    <li><a href="#25-两个载入史册的-ipo苹果-1980-与谷歌-2004">2.5 两个载入史册的 IPO：苹果 1980 与谷歌 2004</a></li>
+    <li><a href="#26-死活不上的公司华为老干妈与字节跳动">2.6 死活不上的公司：华为、老干妈与字节跳动</a></li>
+    <li><a href="#27-quot每股-135-美元quot到底该怎么读">2.7 &quot;每股 135 美元&quot;到底该怎么读</a></li>
+    <li><a href="#28-收束门里门外">2.8 收束：门里门外</a></li>
+  </ul>
+</aside>
+  <article class="chapter-body">
+    <header class="chapter-head">
+  <div class="chapter-head-meta">
+    <span class="num">CHAPTER 02</span>
+    <span>≈ 45 MIN READ</span>
+  </div>
+  <h1>上市：一家公司的成人礼</h1>
+
+</header>
+    <h2 id="20-导言有钱也买不到的股票">2.0 导言：有钱也买不到的股票</h2>
+<p>第一章结尾留了一个问题：为什么苹果的股票你打开 App 就能买，而 SpaceX 的股份，你在 2026 年 6 月之前有钱也买不到？</p>
+<p>这个问题在 2026 年问出来格外有意思，因为答案刚刚当着全世界的面翻篇了。2026 年 6 月 12 日，SpaceX 在纳斯达克挂牌，代码 SPCX，募资 750 亿美元——人类证券史上最大的一次首次公开发行。而在此之前的十三年里，马斯克反复公开表示这家公司不会上市，理由写得掷地有声：股市的短期情绪会干扰殖民火星这个需要几十年的使命。</p>
+<p>一家公司从&quot;股份只在小圈子里流转&quot;走到&quot;任何人都能在手机上买一股&quot;，中间隔着一整套制度、一群专业玩家和一场盛大的仪式。这一章就沿着这条路走一遍。你会看到 OpenAI、Anthropic、DeepSeek 如何在不上市的状态下融到天文数字的钱；看到 SpaceX 的十三年拉锯如何收场；看到 IPO 定价这门手艺如何在 Circle 身上失手；也会看到华为和老干妈为什么一辈子不进这扇门。走完之后，&quot;IPO&quot;&quot;估值&quot;&quot;每股 135 美元&quot;这些新闻里的词，对你就不再是黑话。</p>
+<p>但在出发之前，必须先立起一个比 IPO 本身更重要的框架。它能解释你以后会遇到的大半困惑。</p>
+<div class="keypoints"><div class="keypoints-label">要点</div><ul>
+<li>本章主线：一家公司的股份如何从&quot;小圈子流转&quot;走到&quot;公开交易&quot;，以及为什么有的公司终生不走这条路。</li>
+<li>先立框架（下一节）：一级市场与二级市场——这是理解一切融资新闻的地基。</li>
+</ul>
+</div>
+<hr>
+<h2 id="21-一级市场与二级市场你的钱到底给了谁">2.1 一级市场与二级市场：你的钱到底给了谁</h2>
+<p>金融里有一对术语，名字起得毫无想象力，但含义必须刻在脑子里：</p>
+<p><strong>一级市场（primary market）</strong>：公司<strong>发行新股份换钱</strong>的地方。钱从投资者手里出发，<strong>进入公司账户</strong>，变成实验室、工厂、工资。公司的股份总数变多了，每个老股东的比例被稀释了一点，换来的是公司多了一笔发展资金。融资、IPO、增发，都发生在一级市场。</p>
+<p><strong>二级市场（secondary market）</strong>：<strong>已经存在的股份换手</strong>的地方。钱从买家手里出发，<strong>进入卖家（上一个股东）口袋</strong>，公司一分钱拿不到，只是股东名册改了个名字。你以后在券商 App 里做的每一笔交易，几乎都在二级市场。</p>
+<p>第一章那个警示框说过&quot;你买股票的钱不进公司&quot;，指的就是二级市场。现在可以把整幅图补全了：<strong>公司只在一级市场拿到钱；二级市场的意义，是让一级市场的出资人有路可退</strong>。还记得 1602 年阿姆斯特丹的那个转换器吗——公司拿长期资本，股东留退出通道？一级市场就是&quot;拿资本&quot;的那一端，二级市场就是&quot;退出通道&quot;那一端。两者缺一不可：没有一级市场，公司融不到钱；没有二级市场，一级市场就没人敢出钱——谁愿意把钱投进一个永远出不来的东西？</p>
+<p>这个框架立起来之后，很多新闻立刻可以读懂了。&quot;OpenAI 完成新一轮融资&quot;——一级市场，钱进了 OpenAI。&quot;某大股东减持套现 50 亿&quot;——二级市场，钱进了那位股东的口袋，公司没拿到也没损失什么。&quot;公司回购股份&quot;——方向反过来的一级市场行为，公司掏钱把切片买回来注销，剩下每股占的比例变大。你会发现，判断任何一条资本新闻的第一步，都是先问：<strong>这笔钱，进的是公司的账户，还是某个股东的口袋？</strong></p>
+<div class="keypoints"><div class="keypoints-label">要点</div><ul>
+<li><strong>一级市场</strong>：发新股换钱，钱进公司，融资发生在这里。<strong>二级市场</strong>：旧股换手，钱进上一个股东口袋，你日常交易的地方。</li>
+<li>二级市场不给公司输血，但它是一级市场敢于存在的前提——退出通道。</li>
+<li>读任何资本新闻的第一问：钱进了公司账户，还是股东口袋？</li>
+</ul>
+</div>
+<hr>
+<h2 id="22-上市之前一轮一轮的融资">2.2 上市之前：一轮一轮的融资</h2>
+<p>一家公司从车库走到交易所，中间通常要在一级市场里融资很多轮。这条链路有一套标准叫法：最早期朋友和**天使投资人（angel investor）<strong>给的钱叫天使轮；随后</strong>风险投资（venture capital, VC）**机构入场，按先后叫 A 轮、B 轮、C 轮……每一轮都是同一个动作的重复：<strong>公司发行一批新股份，投资人出钱认购，双方谈定的&quot;这家公司整体值多少钱&quot;就是估值（valuation）</strong>。</p>
+<p>估值这个词要祛魅一下：它不是什么科学测量的结果，就是这一轮买卖双方讨价还价谈出来的价格，乘以总股份数。下一轮谈崩了，估值可以掉头向下。而 2025 到 2026 年，人类历史上最猛的一串融资轮次恰好发生在你最熟悉的行业——不妨把三家 AI 公司并排放着看，它们展示了一级市场的三种活法。</p>
+<p><strong>OpenAI：把融资做成了阶梯。</strong> 这家公司的结构本身就是一部演变史：2015 年以非营利组织成立，2019 年为了融资设立了利润上限子公司，2025 年 10 月完成重组，营利实体变为公共利益公司（Public Benefit Corporation, PBC），仍由非营利基金会控制，微软持有约 27%。它的融资阶梯陡得晕眩：2025 年 3 月，软银领投 400 亿美元，投后估值 3,000 亿美元，当时已是史上最大私募融资；仅一年后的 2026 年 3 月，新一轮融资 1,220 亿美元收官，投后估值 8,520 亿美元——亚马逊一家就投了 500 亿，英伟达、软银各 300 亿。注意这些钱全部发生在一级市场：没有任何散户参与，你我只能在新闻里围观。</p>
+<p><strong>Anthropic：五轮融资，估值反超。</strong> Claude 的开发商走的是更密的节奏：2025 年 3 月 E 轮估值 615 亿美元，9 月 F 轮 1,830 亿，2026 年 2 月 G 轮 3,800 亿，2026 年 5 月 28 日 H 轮融资 650 亿美元、投后估值 9,650 亿美元——就在这一轮，它超过 OpenAI 成为全球估值最高的 AI 初创公司。它的两大金主写进了教科书级的条款：Google 累计承诺投资至多数百亿美元，但合同明确约定持股上限 15%；亚马逊也承诺了至多 250 亿美元的追加投资。为什么金主愿意接受持股上限？因为 Anthropic 和 OpenAI 一样是 PBC，还设有长期利益信托（Long-Term Benefit Trust）——出钱可以，控制权免谈。2026 年 6 月 1 日，Anthropic 已向美国证监会秘密递交上市申请草案，这家公司正站在本章两个世界的门槛上。</p>
+<p><strong>DeepSeek：拿你的钱，不给你话语权。</strong> 深度求索是最特别的样本。它由梁文锋通过自己的对冲基金幻方量化全资供养，成立以来一直拒绝外部融资——直到 2026 年 6 月，它完成了首轮外部融资：510 亿元人民币，投后估值近 4,000 亿元，创下国内 AI 公司单轮融资纪录。但看条款你会倒吸一口气：据公开报道，除国家人工智能产业投资基金获得直接股权和投票权外，其余外部投资人通过梁文锋控制的有限合伙间接持股——<strong>没有投票权，没有董事席位，股份锁定五年</strong>。梁文锋个人穿透后受益股份超过 84%，表决权接近 100%。这是一级市场的一条铁律的极端展示：<strong>融资条款是谈出来的，谁稀缺谁定规则</strong>。资本挤破头想上车的时候，公司可以只卖&quot;分红权&quot;、不卖&quot;话语权&quot;——还记得第一章股东的三项权利吗？它们是可以被条款拆开卖的。</p>
+<p>三家公司，三种结构，共同点只有一个：普通人一股都买不到。这些股份在一个封闭的市场里流转，参与者是 VC、主权基金、科技巨头。那么问题来了——早期投资人和持有期权的员工，等了十年八年，怎么把纸面财富变成现金？这就轮到 SpaceX 出场了，因为它把&quot;不上市状态下的退出&quot;玩到了极致，然后亲手终结了这个游戏。</p>
+<div class="keypoints"><div class="keypoints-label">要点</div><ul>
+<li>融资轮次（天使→A→B→C…）= 同一动作的重复：发新股、换钱、谈估值。<strong>估值是谈出来的价格，不是测出来的真理</strong>。</li>
+<li>OpenAI（8,520 亿美元）、Anthropic（9,650 亿美元）、DeepSeek（约 4,000 亿元人民币）的天量融资全部发生在一级市场，与散户无关。（估值时点均为 2026 年上半年）</li>
+<li>股东的三项权利可以被融资条款拆开：DeepSeek 的外部投资人出了 510 亿元，几乎只买到分红权。</li>
+</ul>
+</div>
+<hr>
+<h2 id="23-spacex十三年quot绝不上市quot与史上最大的-ipo">2.3 SpaceX：十三年&quot;绝不上市&quot;，与史上最大的 IPO</h2>
+<p><strong>先听 2013 年的马斯克怎么说。</strong> 那年 6 月，有传闻说 SpaceX 要上市，他先发推文：&quot;SpaceX 近期没有 IPO 计划。只有当火星殖民运输船定期飞行之后，才有可能。&quot;随后又给全体员工写了一封流传甚广的邮件，核心意思有两层：第一，&quot;在火星上建立生命所需的技术，是且始终是 SpaceX 的根本目标&quot;；第二，公开市场的&quot;非理性狂热或抑郁&quot;（irrational exuberance or depression）会绑架公司——股价暴涨时员工无心工作，股价暴跌时人心涣散，而火星这件事需要几十年不受干扰的专注。邮件里他还顺带嘲讽了那些自认为能&quot;高点卖出&quot;的员工：如果你觉得自己比职业基金经理更会择时，你就不该在 SpaceX 造火箭，你该去当对冲基金经理。</p>
+<p>这封邮件值得你认真读，因为它是&quot;公司为什么不想上市&quot;的最佳陈述：<strong>上市等于给公司装上一块每秒刷新的记分牌，而有些事业不能按秒记分。</strong></p>
+<p><strong>但不上市有一个必须解决的工程问题：员工要吃饭。</strong> SpaceX 用期权和股份吸引了大量顶尖工程师，这些纸面财富如果永远变不了现，招聘承诺就是空头支票。SpaceX 的解法是定期组织<strong>要约收购（tender offer）</strong>——公司牵头，让新老投资机构出钱，按约定价格收购员工手里的股份。这相当于在公司内部搭了一个小型的、一年开张一两次的&quot;准二级市场&quot;。这个内部市场的价格轨迹，就是 SpaceX 估值的心电图：2024 年 12 月，估值 3,500 亿美元；2025 年 7 月，4,000 亿（每股 212 美元）；2025 年 12 月，约 8,000 亿（每股 421 美元）。</p>
+<p>心电图在 2025 年 12 月出现异动：就在那次估值 8,000 亿美元的内部转让完成的同时，SpaceX 官宣筹备 IPO。理由和 2013 年判若两司：星舰要达到&quot;疯狂的发射频率&quot;、要建太空 AI 数据中心、要建月球基地——每一项都是千亿美元级的胃口，内部市场和私募融资喂不饱了。2026 年 2 月 2 日，上市前最后一块拼图落定：SpaceX 以全股票交易吞并了马斯克旗下的 AI 公司 xAI（含 X 平台），xAI 作价 2,500 亿美元，合并后的公司整体估值 1.25 万亿美元。</p>
+<p><strong>然后是 2026 年 6 月 12 日。</strong> SpaceX 在纳斯达克挂牌：发行 5.556 亿股，每股定价 135 美元，募资 750 亿美元——史上最大 IPO，约为上一个纪录保持者沙特阿美（2019 年，256 亿美元）的三倍。认购需求约为发行量的四倍。上市首日收于 160.95 美元，涨约 19%，当日收盘市值约 2.2 万亿美元；六天后的 6 月 16 日冲到历史最高的 225.64 美元。</p>
+<p>如果故事停在这里，它就只是一场加冕礼。但市场立刻安排了第二幕：<strong>一个多月后的 7 月 24 日，SPCX 收于 114.25 美元——比 225 美元的高点跌去约一半，比 135 美元的发行价低了约 15%，这叫&quot;破发&quot;</strong>。市值缩水到约 1.56 万亿美元，还压着一块石头：7 月下旬起，IPO 时被锁定的约 1,160 亿美元的早期股份陆续解禁，可以入场卖出。公司没有任何变化——火箭照发、星链照转——变的只是买卖双方的情绪与资金。马斯克 2013 年警告的&quot;非理性狂热或抑郁&quot;，在他自己公司上市的第一个月里全部上演了一遍。连带效应都是真的：据报道，OpenAI 原本瞄准 2026 年 9 月上市、目标估值 1 万亿美元，因为 SpaceX 的坎坷首秀，顾问们建议推迟到 2027 年。</p>
+<blockquote><p><strong>Mav&#39;s Thoughts：</strong> 我不觉得 2026 年的马斯克&quot;背叛&quot;了 2013 年的马斯克——更准确的读法是：他 2013 年说的每一句都是对的，2026 年做的事也是理性的，两者之间隔着的不是人变了，而是<strong>资本需求的量级变了</strong>。私募市场的极限大约就是一年几百亿美元，而星舰高频发射加轨道数据中心是万亿级的叙事，地球上只有公开市场这一个池子装得下。这件事给你的启示是通用的：读商业新闻时，少问&quot;他怎么变卦了&quot;，多问&quot;他的约束条件变了什么&quot;。立场追着约束走，这不是虚伪，这是几乎所有组织行为的第一性原理。</p>
+</blockquote>
+<div class="keypoints"><div class="keypoints-label">要点</div><ul>
+<li>不上市的公司靠**要约收购（tender offer）**给员工和早期投资人开退出通道；其价格轨迹就是公司估值的心电图（SpaceX：3,500 亿 → 4,000 亿 → 8,000 亿美元，2024-12 至 2025-12）。</li>
+<li>SpaceX 2026-06-12 上市：发行价 135 美元、募资 750 亿美元（史上最大）；首日 +19%，六天后见顶 225.64 美元，一个多月后破发至 114 美元（2026-07-24）。</li>
+<li>公司没变，价格腰斩——<strong>上市那一刻起，公司的记分牌就交给了市场情绪</strong>。这正是 2013 年那封邮件预言的场景。</li>
+</ul>
+</div>
+<hr>
+<h2 id="24-ipo-的机器房定价承销与敲钟">2.4 IPO 的机器房：定价、承销与敲钟</h2>
+<p>现在把镜头从戏剧拉回机器房，看看 IPO（Initial Public Offering，首次公开发行）在技术上是怎么完成的。</p>
+<p><strong>IPO 的本质</strong>用一级/二级市场的语言说就是一句话：公司<strong>第一次在一级市场向公众发行新股</strong>，并同时把全部股份挂到交易所，让它们从此可以在二级市场自由交易。所以 IPO 是一扇单向门：门里是估值靠谈判、股份靠私下转让的世界，门外是价格每秒刷新、任何人可以参与的世界。</p>
+<p>这扇门不能自己走过去，要雇<strong>承销商（underwriter）</strong>——通常是高盛、摩根士丹利这类投资银行。它们做三件事：把公司的家底写成几百页的招股书交给监管机构审核；带着管理层到全球路演，向基金经理们推销；最后，也是最微妙的一步——<strong>定发行价</strong>。</p>
+<p>定价为什么微妙？因为它是一个两头受气的取舍。定高了，没人认购，或者上市首日跌破发行价，公司名声扫地；定低了，股票首日暴涨，看起来喜庆，实际上是公司贱卖了自己的股份——本可以进公司账户的钱，白送给了拿到新股的机构。华尔街管这叫&quot;留在桌上的钱&quot;（money left on the table）。</p>
+<p>2025 年提供了一个教科书案例。稳定币公司 Circle 在 6 月上市，发行价定为 31 美元；首日收于 83.23 美元，<strong>暴涨 168%</strong>，盘中一度冲到 103.75 美元，多次触发临时停牌。财经媒体第一时间算了账：如果发行价定得贴近市场真实需求，Circle 本可以多募约 17 亿美元——这笔钱现在成了首日买到新股的机构的利润。而故事的下半场更有教育意义：Circle 股价在三周后一度冲到约 299 美元，随后漫长回落，2026 年 7 月 25 日只剩 62.10 美元。首日的狂欢与一年后的价格，中间隔着整整一个泡沫的生灭。同期还有一个对照样本：AI 算力公司 CoreWeave，2025 年 3 月以 40 美元发行（发行规模被迫缩减，当时市况冷淡），三个月内冲到 183.58 美元，2026 年 7 月回落到 82.64 美元——仍是发行价的两倍，但较峰值腰斩。</p>
+<p>把 SpaceX、Circle、CoreWeave 三个案例放在一起，你应该能提炼出一个规律：<strong>发行价是谈判的产物，上市初期的价格是情绪的产物，一年后的价格才开始向经营成绩靠拢</strong>。所以&quot;打新股必赚&quot;和&quot;破发的公司完蛋了&quot;都是错误的推理——首日涨跌只反映定价和情绪的偏差，不反映公司质地。</p>
+<p>至于&quot;敲钟&quot;：交易所开市钟原本只是每天宣布交易开始的信号，后来演变成 IPO 的加冕仪式——上市首日请公司创始人去敲。它没有任何实际功能，但作为符号很诚实：钟声一响，这家公司的一部分定价权，从此永久让渡给了市场。</p>
+<div class="keypoints"><div class="keypoints-label">要点</div><ul>
+<li>IPO = 第一次向公众发行新股（一级市场）+ 全部股份挂牌可交易（二级市场开闸），由承销商定价、销售、护航。</li>
+<li>定价两难：定高了破发难看，定低了&quot;把钱留在桌上&quot;（Circle：首日 +168% = 少募约 17 亿美元）。</li>
+<li>首日涨跌反映<strong>定价偏差与情绪</strong>，不反映公司质地；一年后的价格才开始讲实力（Circle 从 299 美元回到 62 美元，2026-07）。</li>
+</ul>
+</div>
+<hr>
+<h2 id="25-两个载入史册的-ipo苹果-1980-与谷歌-2004">2.5 两个载入史册的 IPO：苹果 1980 与谷歌 2004</h2>
+<p><strong>苹果，1980 年 12 月 12 日</strong>，是理解&quot;上市造富&quot;与&quot;长期持有&quot;的完美标本。当天苹果以每股 22 美元发行 460 万股，是 1956 年福特以来美国最大的 IPO；首日收于 29 美元，公司收盘市值 17.78 亿美元，一天之内造出四十多个百万富翁。25 岁的乔布斯持股 15%（750 万股），当天收盘身价约 2.17 亿美元。</p>
+<p>更值得算的是后面这笔账。上市之后，苹果做过五次<strong>拆股（stock split）</strong>：1987 年一拆二，2000 年一拆二，2005 年一拆二，2014 年一拆七，2020 年一拆四。拆股的意思是把每一股切成更多股，2×2×2×7×4 = 224——<strong>1980 年你买的 1 股，今天变成了 224 股</strong>。按 2026 年 7 月约 322 美元的股价算，这 224 股约值 72,000 美元；对照 22 美元的买入成本，约 3,270 倍，还没算历年分红。这就是第一章说的&quot;价差的长期底层是利润增长&quot;的极限样本：支撑这三千多倍的，是苹果从车库公司长成年入几千亿美元的巨头这件事本身。</p>
+<p>（先在这里楔进一根钉子，下一节要用：拆股只是把披萨切成更多块，<strong>你手里的比例一丝一毫没变</strong>。1 股变 224 股的同时，每股价格也被同比例摊薄了 224 倍——3,270 倍的收益全部来自公司变大，零头都不来自拆股。）</p>
+<p><strong>谷歌，2004 年 8 月 19 日</strong>，贡献了两项制度实验。第一项是定价方式：它跳过了投行主导的传统询价，采用<strong>荷兰式拍卖</strong>——让所有想买的人公开出价，从高到低排下来，找到恰好卖完全部股份的那个价格，所有人按这个统一价格成交。最终定价 85 美元，募资约 16.7 亿美元，上市市值约 230 亿美元。两位创始人的意图很直白：定价权不交给华尔街，交给出价本身。</p>
+<p>第二项影响更深远：<strong>双层股权结构（dual-class shares）</strong>。谷歌把股票分成两类：A 类股（代码 GOOGL）一股一票，卖给公众；B 类股一股<strong>十票</strong>，不上市，攥在创始人和早期核心手里。2014 年又拆出了 C 类股（代码 GOOG），一股<strong>零票</strong>。三类股份分红完全相同，唯一的区别是话语权。效果是：创始人只持有公司一小部分经济利益，却牢牢握着投票的多数——公众的钱进来了，公众的手伸不进来。你现在应该能认出这个配方了：DeepSeek 2026 年融资时&quot;拿钱不给话语权&quot;的条款，谷歌二十二年前就写好了模板。顺带一提，这也解释了一个常见困惑：为什么股票软件里有两个&quot;谷歌&quot;（GOOG 和 GOOGL）且价格略有不同——它们是同一家公司的不同投票权版本。</p>
+<div class="keypoints"><div class="keypoints-label">要点</div><ul>
+<li>苹果 1980 IPO：发行价 22 美元；五次拆股累计 224 倍；1 股 = 今天 224 股 ≈ 72,000 美元（2026-07），约 3,270 倍，全部由公司成长支撑。</li>
+<li>谷歌 2004：荷兰式拍卖定价 85 美元（定价权交给出价而非投行）；双层股权 A 类 1 票 / B 类 10 票 / C 类 0 票——<strong>同股可以不同权，分红权与话语权是两种可以分开出售的商品</strong>。</li>
+</ul>
+</div>
+<hr>
+<h2 id="26-死活不上的公司华为老干妈与字节跳动">2.6 死活不上的公司：华为、老干妈与字节跳动</h2>
+<p>上一节是挤进门的公司，这一节看三家站在门外、且把理由说得很清楚的公司。它们合起来是一份&quot;上市的代价&quot;清单。</p>
+<p><strong>华为：怕的是钱太多。</strong> 任正非把话说得很透。2016 年他对新华社记者说：&quot;因为我们把利益看得不重，就是为理想和目标而奋斗。……如果上市，股东们看着股市那儿可赚几十亿元、几百亿元，逼我们横向发展，我们就攻不进&#39;无人区&#39;了。&quot;更早的 2014 年，他有一句更生动的：&quot;猪养得太肥了，连哼哼声都没了。科技企业是靠人才推动的，公司过早上市，就会有一批人变成百万富翁、千万富翁，他们的工作激情会衰退。&quot;注意他怕的两件事，正好对应上市的两大副作用：<strong>股东压力扭曲战略方向</strong>（逼你做短期能兑现的横向扩张，而不是十年才见效的研发深潜），以及<strong>一夜暴富瓦解组织动力</strong>（这和马斯克 2013 年邮件里的担忧是同一件事）。华为的替代方案是内部虚拟受限股：员工出钱认购、按年分红、离职回购——用一套封闭的准股份制留住&quot;分蛋糕&quot;的功能，挡掉资本市场的一切。</p>
+<p><strong>老干妈：不懂，也不屑。</strong> 陶华碧的原话是市井智慧的标本：&quot;上市、融资这些东西我一概不懂，我只知道一上市，就可能倾家荡产。上市那是欺骗人家的钱……有钱你就拿，把钱圈了，喊他来入股，到时候把钱吸走了，我来还债，我才不干呢。&quot;配套的是她著名的&quot;四不&quot;：不偷税、不贷款、不欠钱、不上市。这段话在金融学上当然说不通——上市不是骗钱——但它包含一个朴素而正确的内核：<strong>上市的本质功能是融资，而一家现金流充沛、不需要外部资本的公司，确实没有义务上市</strong>。辣酱生意天天收现金，扩产靠利润滚动就够了。上市对它是纯成本：招股书要把家底晒给全世界，季报要向陌生人解释每一个决定，还要迎接做空机构的显微镜。没有收益，全是账单，那就不办。</p>
+<p><strong>字节跳动：不上市的公司能长多大？</strong> 截至 2026 年 7 月，字节跳动仍未上市，据多方报道管理层已暂停所有 IPO 讨论。但它把 SpaceX 那套内部流动性玩出了自己的版本：<strong>每半年一次、用公司自有资金回购员工股份</strong>——注意这比 SpaceX 更硬核，SpaceX 的要约收购是拉外部投资人出钱接盘，字节是自己掏真金白银。2025 年 8 月那次，在职员工回购价每股 200.41 美元，对应估值超过 3,300 亿美元。更有意思的是价差：同期二级转让市场上，机构之间的字节股份交易对应的估值一路走到 2026 年 4 月的约 6,000 亿美元——<strong>同一家公司，内部回购价和外部转让价差了将近一倍</strong>。为什么？因为没有公开市场，就没有&quot;唯一的价格&quot;，只有一笔一笔孤立的交易，价格取决于谁在买、多急着卖、锁定条款多苛刻。这个价差本身就是最好的教具：<strong>上市最大的技术贡献，是给一家公司装上一个全世界公认的、每秒更新的单一报价</strong>。好也罢坏也罢，至少大家吵架时用的是同一个数字。</p>
+<div class="keypoints"><div class="keypoints-label">要点</div><ul>
+<li>上市的代价清单：信息全裸披露、季报驱动的短期主义、做空与舆论压力、控制权稀释、财富效应冲击组织。</li>
+<li>不上市的前提是<strong>不缺钱</strong>（老干妈的现金流、华为的利润、字节的自有资金回购）；缺钱的理想主义者最终也要进场（SpaceX）。</li>
+<li>非上市公司没有单一公价：字节内部回购估值 3,300 亿 vs 外部转让约 6,000 亿美元（2025-08 至 2026-04）——公开市场的核心产品是<strong>一个所有人公认的价格</strong>。</li>
+</ul>
+</div>
+<hr>
+<h2 id="27-quot每股-135-美元quot到底该怎么读">2.7 &quot;每股 135 美元&quot;到底该怎么读</h2>
+<p>本章最后，拆掉一个新闻里最常见、也最容易误导新手的数字：股价。</p>
+<p>SpaceX 发行价 135 美元，茅台一股一千多元人民币，苹果 322 美元，还有大量三五块钱的股票。新手几乎都会冒出同一个直觉：<strong>135 美元是不是太贵了？五块钱的股票是不是便宜货？</strong></p>
+<p>这个直觉是错的，而且错得很干净：<strong>单独一个股价，什么信息都不包含。</strong> 原因你在第一章就学过了——股票是切片，而<strong>一家公司可以随意决定把自己切成多少片</strong>。同一家奶茶店，切 20 万股每股 1 元，和切 2 万股每股 10 元，是完全等价的两种切法。真正有意义的数字是把所有切片加起来：</p>
+<p><strong>市值（market capitalization）= 每股价格 × 总股数 = 买下整家公司的价格。</strong></p>
+<p>比较两家公司的贵贱，永远比市值（以及市值背后对应的利润，第四章讲），永远不要比股价。一股 5 元的公司完全可能比一股 500 元的公司贵得离谱——前者可能切了几百亿股，后者可能只切了几千万股。</p>
+<p>拆股现在可以彻底讲穿了。英伟达在 2021 年做过一拆四、2024 年做过一拆十；特斯拉 2020 年一拆五、2022 年一拆三。每次拆股新闻都伴随着&quot;利好&quot;的欢呼，但你已经知道：拆股前后市值一分钱不变，你的持股比例一丝不变，它唯一的实际效果是把每股价格降下来，让小资金买得起一股（在美股，买入单位是 1 股，一股 1,000 美元确实会挡住一部分散户——这是第三章的话题）。把拆股当利好炒作，本质上是在庆祝&quot;披萨被切成了更多块&quot;。</p>
+<p>顺手可以把特斯拉的账也算一遍作为练习：2010 年 6 月 IPO 发行价 17 美元，经过 5×3 = 15 倍拆股，当年 1 股相当于今天 15 股；按 2026 年 7 月约 311 美元计，15 × 311 ≈ 4,670 美元，对 17 美元的成本约 275 倍。和苹果那笔账的算法一模一样——先算拆股倍数，再乘现价，才能跨越几十年比较。<strong>凡是跨年代谈论股价的场合，不做拆股还原的比较全是错的。</strong></p>
+<p>最后，用正确的度量衡看一眼 2026 年 7 月下旬的世界（约数，随时变动）：</p>
+<div class="table-wrap"><table><thead><tr>
+<th>排名</th>
+<th>公司</th>
+<th>市值（美元）</th>
+</tr>
+</thead><tbody><tr>
+<td>1</td>
+<td>英伟达</td>
+<td>约 5.1 万亿</td>
+</tr>
+<tr>
+<td>2</td>
+<td>苹果</td>
+<td>约 4.7–4.9 万亿</td>
+</tr>
+<tr>
+<td>3</td>
+<td>Alphabet（谷歌）</td>
+<td>约 3.9 万亿</td>
+</tr>
+<tr>
+<td>4</td>
+<td>微软</td>
+<td>约 2.8 万亿</td>
+</tr>
+<tr>
+<td>5</td>
+<td>亚马逊</td>
+<td>约 2.5 万亿</td>
+</tr>
+<tr>
+<td>6</td>
+<td>台积电</td>
+<td>约 2.2 万亿</td>
+</tr>
+<tr>
+<td>7</td>
+<td>博通</td>
+<td>约 1.9 万亿</td>
+</tr>
+<tr>
+<td>8</td>
+<td>沙特阿美</td>
+<td>约 1.7 万亿</td>
+</tr>
+<tr>
+<td>9</td>
+<td>SpaceX</td>
+<td>约 1.6 万亿</td>
+</tr>
+<tr>
+<td>10</td>
+<td>Meta</td>
+<td>约 1.5 万亿</td>
+</tr>
+</tbody></table></div>
+<p>读这张表的正确姿势不是记数字——下个月就变了——而是读结构：前十里八家是科技公司；卖 AI 芯片的英伟达一家，约等于德国全部上市公司之和的量级；上市才一个月的 SpaceX 直接空降第九。这张表是 2026 年这个时代的 X 光片。</p>
+<div class="keypoints"><div class="keypoints-label">要点</div><ul>
+<li><strong>股价单独无意义，市值 = 股价 × 总股数才是公司的价格标签</strong>。比贵贱永远比市值，不比股价。</li>
+<li>拆股（英伟达 4:1、10:1；特斯拉 5:1、3:1）不创造一分钱价值，只是把披萨切得更碎；跨年代比较股价必须先做拆股还原。</li>
+<li>2026-07 全球市值前十：英伟达约 5.1 万亿美元居首，SpaceX 上市一个月即列第九。</li>
+</ul>
+</div>
+<hr>
+<h2 id="28-收束门里门外">2.8 收束：门里门外</h2>
+<p>这一章你看到了完整的两个世界。门外，OpenAI、Anthropic、DeepSeek 们在一级市场里与巨头讨价还价，估值是谈判桌上的数字，退出靠要约收购和内部转让，价格因人而异；门里，苹果、英伟达、以及新来的 SpaceX，每一股都有一个全世界公认、每秒更新的价格，任何一个刚满十八岁的大学生都能买上一股。</p>
+<p>上市，就是从&quot;价格靠谈&quot;走进&quot;价格靠市场&quot;的那扇单向门。公司用信息披露、季报压力和控制权风险作为门票，换来公开市场近乎无限的融资能力和一个公允的报价。</p>
+<p>而你现在自然要问下一个问题了：门里这个&quot;每秒更新的公认价格&quot;，到底是谁报出来的？你在 App 上点下&quot;买入&quot;之后的那几毫秒里发生了什么？为什么 A 股买入最少 100 股，美股却可以只买 1 股？下一章，我们走进交易所这台机器的内部。</p>
+<div class="keypoints"><div class="keypoints-label">要点</div><ul>
+<li>一级市场谈价格，二级市场生成价格；IPO 是两个世界之间的单向门。</li>
+<li>门票：披露、短期压力、控制权风险。回报：近乎无限的融资池 + 一个公认的价格。</li>
+<li>下一章：这个价格具体是怎么被&quot;算&quot;出来的——交易所与订单簿。</li>
+</ul>
+</div>
+
+    <nav class="pager">  <a href="01-what-is-a-stock.html">
+    <span class="label">← 上一章</span>
+    <span class="title">股票到底是一张什么东西</span>
+  </a>  <a href="03-exchanges-and-prices.html" class="next">
+    <span class="label">下一章 →</span>
+    <span class="title">交易所与价格的形成</span>
+  </a></nav>
+  </article>
+</div>
+
+<footer>
+  <div class="set">
+    <span>投资入门：从一股股票到一套认知</span>
+    <span>2026 · ZH-CN</span>
+  </div>
+  <div class="set">
+    <span>Mav</span>
+  </div>
+</footer>
+<div class="search-backdrop" id="search-overlay" role="dialog" aria-modal="true" aria-label="搜索" hidden>
+  <div class="search-modal">
+    <div class="search-input-wrap">
+      <input type="search" class="search-input" placeholder="搜索内容..." aria-label="搜索内容" autocomplete="off">
+      <kbd>ESC</kbd>
+    </div>
+    <div class="search-results" role="listbox" aria-label="搜索结果"></div>
+  </div>
+</div>
+
+<!-- Side Panel -->
+<div class="side-panel" id="side-panel">
+  <div class="side-panel-resize" id="side-panel-resize"></div>
+  <div class="side-panel-header">
+    <div class="side-panel-tabs">
+      <button class="side-panel-tab active" data-mode="sidenote">补充</button>
+      <button class="side-panel-tab" data-mode="notepad">笔记</button>
+    </div>
+    <button class="side-panel-close" aria-label="关闭">×</button>
+  </div>
+  <div class="side-panel-body"></div>
+</div>
+<button class="notepad-fab" id="notepad-fab" aria-label="便利贴">✎</button>
+
+<!-- Mobile TOC -->
+<button class="mtoc-fab" id="mtoc-fab" aria-label="目录">TOC</button>
+<div class="mtoc-drawer" id="mtoc-drawer">
+  <div class="mtoc-content"></div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/bash.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/typescript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/yaml.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/javascript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/json.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/python.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/css.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+<script>mermaid.initialize({startOnLoad:true, theme:'neutral', fontFamily:'Inter, sans-serif'});</script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}]});"></script>
+<script src="../assets/script.js"></script>
+
+</body>
+</html>
