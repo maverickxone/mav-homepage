@@ -48,6 +48,11 @@ function createRenderer() {
     return `<div class="table-wrap"><table><thead>${header}</thead><tbody>${body}</tbody></table></div>\n`;
   };
 
+  renderer.image = function (href, title, text) {
+    const caption = text ? `<figcaption>${text}</figcaption>` : '';
+    return `<figure class="fig"><img src="${href}" alt="${text || ''}" loading="lazy">${caption}</figure>`;
+  };
+
   renderer.blockquote = function (quote) {
     // "> [要点]" as first line turns the quote into a key-points card
     const kpMatch = quote.match(/^<p>\[要点\]<\/p>\n?([\s\S]*)$/);

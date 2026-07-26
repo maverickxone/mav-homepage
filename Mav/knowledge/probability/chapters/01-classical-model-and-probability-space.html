@@ -249,6 +249,7 @@ $$</p>
 p_n = 1 - \frac{A_{365}^n}{365^n} = 1 - \frac{n! \, C_{365}^n}{365^n}.
 $$</p>
 <p>数值结果反直觉得出名：$p_{23} \approx 0.507$——<strong>23 个人就对半开</strong>；$p_{50} \approx 0.970$，$p_{60} \approx 0.994$。直觉为什么错？因为人们想的是&quot;有人和<strong>我</strong>同生日&quot;（这确实需要 253 人才过半），而题目问的是&quot;<strong>任意</strong>两人同生日&quot;——$n$ 个人有 $C_n^2$ 对，$n=23$ 时已有 253 对，每一对都是一次&quot;碰撞机会&quot;。</p>
+<p><figure class="fig"><img src="../assets/images/01-01.png" alt="图 1-1｜生日问题：$p_n$ 随人数增长，23 人即过半" loading="lazy"><figcaption>图 1-1｜生日问题：$p_n$ 随人数增长，23 人即过半</figcaption></figure></p>
 <p><strong>例 2.9（第一次用概率下判断）</strong>。春游的同学中无人同生日，甲判断&quot;至少 50 人参加&quot;，甲对吗？<strong>思路</strong>：如果甲对（$n \geq 50$），那么由生日问题，&quot;无人同生日&quot;这个已被观察到的事件发生的概率 $\leq 1 - 0.97 = 0.03$。也就是说，<strong>甲的判断与一个小概率事件的发生相矛盾</strong>。小概率事件在一次观察中一般不该发生，所以我们更愿意否定甲的判断。注意原书那句非常严谨的话：这样下结论也可能犯错，<strong>犯错的概率不超过 0.03</strong>。</p>
 <p>请给这个例子多停留一分钟，它是全书埋下的第一颗统计学种子：<strong>观察到数据（无人同生日）→ 若假设成立则数据是小概率的 → 拒绝假设，并给出犯错概率的上界</strong>。这正是数理统计中&quot;假设检验&quot;的完整逻辑，只不过那里把 0.03 叫做显著性水平。你在大二下学期或统计课上会正式重逢它。</p>
 <div class="keypoints"><div class="keypoints-label">要点</div><ul>
@@ -277,6 +278,7 @@ $$</p>
 <p>$$
 P(A) = \frac{60^2 - 40^2}{60^2} = \frac{5}{9}.
 $$</p>
+<p><figure class="fig"><img src="../assets/images/01-02.png" alt="图 1-2｜会面问题：样本空间与相遇区域" loading="lazy"><figcaption>图 1-2｜会面问题：样本空间与相遇区域</figcaption></figure></p>
 <p>这题的通用套路：<strong>把&quot;两个独立的随机时刻/位置&quot;化为平面上的一个随机点，把约束翻译成平面区域，然后算面积比</strong>。练习 1.3 的两道题、习题 1.9、1.15、1.17 全是这个套路。</p>
 <h3 id="bertrand-悖论一道裂缝">Bertrand 悖论：一道裂缝</h3>
 <p><strong>例 3.3</strong> 是本节真正的重头戏。问题：在半径为 1 的圆内&quot;任取&quot;一条弦，求弦长 $\geq \sqrt{3}$（即超过内接等边三角形边长）的概率。原书给出三种看起来都无懈可击的解法：</p>
@@ -285,6 +287,7 @@ $$</p>
 <li><strong>随机中点（按面积）</strong>：弦由其中点唯一确定，设中点等可能落在圆内。弦长 $\geq \sqrt{3}$ 当且仅当中点落在半径 $1/2$ 的同心小圆内，$P = \frac{\pi/4}{\pi} = 1/4$。</li>
 <li><strong>随机中点（沿直径）</strong>：设弦的中点等可能落在与弦垂直的直径上。弦长 $\geq \sqrt{3}$ 当且仅当中点距圆心不超过 $1/2$，$P = 1/2$。</li>
 </ol>
+<p><figure class="fig"><img src="../assets/images/01-03.png" alt="图 1-3｜Bertrand 悖论：三种随机机制给出三个不同的答案" loading="lazy"><figcaption>图 1-3｜Bertrand 悖论：三种随机机制给出三个不同的答案</figcaption></figure></p>
 <p>同一个问题，三个答案：$1/3$、$1/4$、$1/2$。哪个对？<strong>都对，也都不对</strong>——因为原问题本身没有问清楚。&quot;任取一条弦&quot;这句话并没有唯一确定一个概率模型：三种解法对应三种不同的&quot;等可能&quot;约定，也就是三种不同的随机试验（分别相当于：转两次转盘取端点、往圆内扔飞镖定中点、沿直径滚一颗珠子定中点），它们物理上就是三种不同的操作，答案不同毫不奇怪。</p>
 <p>Bertrand 悖论在 1889 年提出时确实让数学界尴尬——它暴露出&quot;等可能&quot;不是一个客观概念，而是<strong>建模者的主观选择</strong>。这道裂缝加上更技术性的一条（并非所有集合都有体积，见下节），把概率论逼向了公理化：与其争论概率&quot;应该&quot;从哪来，不如把&quot;概率从哪来&quot;从数学中剥离出去——<strong>数学只负责规定概率满足的规则，&quot;等可能性怎么设&quot;是建模问题，不是数学问题</strong>。这正是下一节的主题。</p>
 <div class="keypoints"><div class="keypoints-label">要点</div><ul>

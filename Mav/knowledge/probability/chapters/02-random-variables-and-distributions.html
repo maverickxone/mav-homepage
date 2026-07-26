@@ -179,7 +179,8 @@ $$</p>
 $$</p>
 <p>三个因子的极限分别依据：分子为 $k$ 个与 $n$ 同阶的因式，除以 $n^k$ 趋于 1；重要极限 $(1 - \lambda/n)^n \to \mathrm{e}^{-\lambda}$；固定指数 $-k$ 的因子趋于 1。</p>
 <p>这个推导同时回答了两个问题。<strong>理论上</strong>，它证明了：当 $n$ 大、$p$ 小、$np = \lambda$ 适中时，$B(n, p) \approx \mathcal{P}(\lambda)$——此即<strong>泊松逼近</strong>（大量独立的稀有机会中，成功总数近似服从泊松分布）。<strong>实践上</strong>，它解释了泊松分布无处不在的原因：单位时间内路口通过的车辆数、市场到达的顾客数、一年内某地区的重大事故数……凡是&quot;大量独立微小机会的计数&quot;，都落入泊松模型；原书例 2.2 中 1500–1931 年间每年爆发重要战争次数与 $\mathcal{P}(0.69)$ 的吻合是又一实证。尤其当 $n$ 本身无法确定时（例如&quot;潜在顾客总数&quot;没有意义），泊松分布是唯一可用的描述。原书还顺势指出：以 $N(t)$ 记 $(0, t]$ 内的粒子数，则 $N(t) \sim \mathcal{P}(\mu t)$——这一族随机变量就是第六章的泊松过程，此处已埋下伏笔。</p>
-<h3 id="d-超几何分布-math_block_216无放回抽样的计数">D. 超几何分布 $H(n, M, N)$：无放回抽样的计数</h3>
+<p><figure class="fig"><img src="../assets/images/02-01.png" alt="图 2-1｜泊松定理：$B(50,\,0.1)$ 与 $\mathcal{P}(5)$ 的逐点比较" loading="lazy"><figcaption>图 2-1｜泊松定理：$B(50,\,0.1)$ 与 $\mathcal{P}(5)$ 的逐点比较</figcaption></figure></p>
+<h3 id="d-超几何分布-math_block_218无放回抽样的计数">D. 超几何分布 $H(n, M, N)$：无放回抽样的计数</h3>
 <p><strong>生成机制</strong>：$N$ 件产品中含 $M$ 件次品，无放回任取 $n$ 件，$X$ 为取出的次品数：</p>
 <p>$$
 P(X = m) = \frac{C_M^m C_{N-M}^{n-m}}{C_N^n}. \tag{2.8}
@@ -226,9 +227,10 @@ $$</p>
 <p><strong>(3) 一般事件的概率</strong>：对任何 Borel 集 $A$，$P(X \in A) = \int_A f(x) \mathrm{d}x$。</p>
 <p>性质 (2) 要求初学者完成一次重要的观念校准。其一，$P(X = a) = 0$ <strong>不意味着</strong> $\{X = a\}$ 不可能发生——试验总会产出某个具体值，而每个具体值的概率都是零；第一章&quot;概率为零不等于不可能&quot;的论断在此成为常态而非反例。其二，<strong>密度值 $f(x)$ 不是概率</strong>：它是概率对长度的变化率，正确的读法是 $P(x < X \leq x + \mathrm{d}x) \approx f(x) \, \mathrm{d}x$。因此 $f(x) > 1$ 完全正常（例如 $\mathcal{U}(0, 0.1)$ 的密度恒为 10），单点密度值本身没有概率含义，<strong>只有积分才产生概率</strong>。其三，密度并非唯一——在有限个点上修改 $f$ 的值不改变任何积分，因而不改变分布；但若限定密度连续，则它唯一（§2.4 定理 4.1 的注）。</p>
 <p>以下四个分布是连续世界的基本骨架，仍按&quot;生成机制&quot;的线索逐一考察。</p>
-<h3 id="a-均匀分布-math_block_282几何概率的化身">A. 均匀分布 $\mathcal{U}(a, b)$：几何概率的化身</h3>
+<p><figure class="fig"><img src="../assets/images/02-02.png" alt="图 2-2｜四个基本连续分布的概率密度" loading="lazy"><figcaption>图 2-2｜四个基本连续分布的概率密度</figcaption></figure></p>
+<h3 id="a-均匀分布-math_block_284几何概率的化身">A. 均匀分布 $\mathcal{U}(a, b)$：几何概率的化身</h3>
 <p>密度 $f(x) = \frac{1}{b-a} \mathrm{I}_{(a,b)}(x)$（示性函数记法：区间内取常值 $\frac{1}{b-a}$，区间外为零）。&quot;均匀&quot;意为概率只与区间长度成正比、与位置无关：对 $(a,b)$ 的子区间 $(c, d)$，$P(c < X \leq d) = \frac{d - c}{b - a}$。这正是第一章几何概率在一维的随机变量表述；一般地，对测度有限的 Borel 集 $A$ 可定义 $\mathcal{U}(A)$，其概率计算 $P(X \in B) = m(AB)/m(A)$ 与几何概率公式完全一致。均匀分布是&quot;完全无信息&quot;的连续模型，也是 §2.6 中生成一切分布的原材料。</p>
-<h3 id="b-指数分布-math_block_291连续的无记忆等待">B. 指数分布 $\mathcal{E}(\lambda)$：连续的无记忆等待</h3>
+<h3 id="b-指数分布-math_block_293连续的无记忆等待">B. 指数分布 $\mathcal{E}(\lambda)$：连续的无记忆等待</h3>
 <p>密度 $f(x) = \lambda \mathrm{e}^{-\lambda x} \, (x \geq 0)$，参数 $\lambda > 0$。由 $P(X \leq 0) = 0$ 知 $X$ 非负，故指数分布天然适合描述<strong>寿命与等待时间</strong>。其尾概率（生存函数）有简洁的闭式：</p>
 <p>$$
 P(X > x) = \int_x^{\infty} \lambda \mathrm{e}^{-\lambda s} \mathrm{d}s = \mathrm{e}^{-\lambda x}. \tag{3.8}
@@ -249,7 +251,7 @@ $$</p>
 P(X_1 > t) = P(N(t) = 0) = \mathrm{e}^{-\mu t},
 $$</p>
 <p>与 (3.8) 比对即知 $X_1 \sim \mathcal{E}(\mu)$。<strong>计数服从泊松分布 ⟺ 等待时间服从指数分布</strong>——这对偶关系是第六章泊松过程的两个侧面，此处的一行推导（把&quot;等待超过 $t$&quot;翻译为&quot;$(0,t]$ 内计数为零&quot;）是连接它们的桥梁，值得单独记住。</p>
-<h3 id="c-正态分布-math_block_314概率论的中心对象">C. 正态分布 $N(\mu, \sigma^2)$：概率论的中心对象</h3>
+<h3 id="c-正态分布-math_block_316概率论的中心对象">C. 正态分布 $N(\mu, \sigma^2)$：概率论的中心对象</h3>
 <p>$$
 f(x) = \frac{1}{\sqrt{2\pi\sigma^2}} \exp\left(-\frac{(x-\mu)^2}{2\sigma^2}\right), \qquad x \in \mathbf{R}. \tag{3.10}
 $$</p>
@@ -275,7 +277,8 @@ $$</p>
 P(|X - \mu| \leq \sigma) = 68.27\%, \quad P(|X - \mu| \leq 2\sigma) = 95.45\%, \quad P(|X - \mu| \leq 3\sigma) = 99.73\%.
 $$</p>
 <p>正态变量落在均值三倍标准差之外的概率不足 0.3%——这是工业质量管理&quot;$3\sigma$ 原则&quot;的依据；更严格的&quot;$6\sigma$ 管理&quot;要求偏差超过 $6\sigma$ 的概率仅约 $2 \times 10^{-9}$。这些数值同时提供了实用的直觉：正态分布的概率质量高度集中，&quot;距均值几个 $\sigma$&quot;是衡量一个观测值是否异常的天然标尺（统计学中&quot;显著性&quot;概念的雏形）。</p>
-<h3 id="d-gamma-分布-math_block_339非负数据的弹性家族">D. Gamma 分布 $\Gamma(\alpha, \beta)$：非负数据的弹性家族</h3>
+<p><figure class="fig"><img src="../assets/images/02-03.png" alt="图 2-3｜正态分布的 68–95–99.7 法则" loading="lazy"><figcaption>图 2-3｜正态分布的 68–95–99.7 法则</figcaption></figure></p>
+<h3 id="d-gamma-分布-math_block_341非负数据的弹性家族">D. Gamma 分布 $\Gamma(\alpha, \beta)$：非负数据的弹性家族</h3>
 <p>先引入数学分析中的 $\Gamma$ 函数 $\Gamma(\alpha) = \int_0^{\infty} x^{\alpha-1} \mathrm{e}^{-x} \mathrm{d}x$（其基本性质 $\Gamma(\alpha+1) = \alpha\Gamma(\alpha)$、$\Gamma(n) = (n-1)!$、$\Gamma(1/2) = \sqrt{\pi}$ 见附录 B，后续计算常用）。<strong>Gamma 分布</strong> $\Gamma(\alpha, \beta)$ 的密度为</p>
 <p>$$
 f(x) = \frac{\beta^{\alpha}}{\Gamma(\alpha)} x^{\alpha - 1} \mathrm{e}^{-\beta x}, \qquad x \geq 0,
@@ -335,6 +338,7 @@ $$</p>
 \frac{F'(t)}{\bar{F}(t)} = \lambda, \quad \text{即} \quad \mathrm{d} \ln \bar{F}(t) = -\lambda \, \mathrm{d}t.
 $$</p>
 <p>积分并用初值 $\bar{F}(0) = 1$，得 $\bar{F}(t) = \mathrm{e}^{-\lambda t}$，即 $X \sim \mathcal{E}(\lambda)$。<strong>恒定失效率 ⟺ 指数寿命</strong>——这是无后效性的微分形式表述。习题 2.11 沿此思路更进一步：允许失效率随时间变化 $\lambda(t)$，则 $\bar{F}(t) = \exp(-\int_0^t \lambda(s) \mathrm{d}s)$，指数分布是其失效率恒定的特例。这一&quot;由局部（无穷小）条件概率积分出整体分布&quot;的方法，是连续时间随机模型的标准建模范式，第六章将再次依赖它。</p>
+<p><figure class="fig"><img src="../assets/images/02-04.png" alt="图 2-4｜两类分布函数：右连续阶梯与连续曲线" loading="lazy"><figcaption>图 2-4｜两类分布函数：右连续阶梯与连续曲线</figcaption></figure></p>
 <div class="keypoints"><div class="keypoints-label">要点</div><ul>
 <li>分布函数 $F(x) = P(X \leq x)$ 对一切随机变量有定义：离散型为阶梯函数（跳跃 = 分布列），连续型为连续函数（导数 = 密度）。</li>
 <li>特征性质：单调不减、右连续、$F(-\infty)=0$、$F(+\infty)=1$；三条证明皆用概率连续性。</li>

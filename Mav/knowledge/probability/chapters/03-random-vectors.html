@@ -203,6 +203,7 @@ $$</p>
 <p>$$
 f_X(x) = \frac{1}{\pi} \int_{-\sqrt{1-x^2}}^{\sqrt{1-x^2}} \mathrm{d}y = \frac{2}{\pi} \sqrt{1 - x^2}, \qquad |x| \leq 1.
 $$</p>
+<p><figure class="fig"><img src="../assets/images/03-01.png" alt="图 3-1｜边缘密度的积分限：先画支撑集，再定上下限" loading="lazy"><figcaption>图 3-1｜边缘密度的积分限：先画支撑集，再定上下限</figcaption></figure></p>
 <p>同理 $f_Y(y) = \frac{2}{\pi}\sqrt{1 - y^2}$。两个边缘都是&quot;半圆律&quot;密度，而非均匀分布——<strong>均匀分布的边缘未必均匀</strong>，因为不同的 $x$ 处铅垂弦长不同。原书使用示性函数 $\mathrm{I}_D$ 完成同一计算：将 $\mathrm{I}_{\{x^2 + y^2 \leq 1\}}$ 改写为 $\mathrm{I}_{\{|y| \leq \sqrt{1-x^2}\}}$ 再积分。示性函数法与画图法本质相同，前者便于书写严格推导，后者便于正确起手；建议画图定限、示性函数落笔，双轨并用。</p>
 <p>写边缘密度时<strong>必须同时写明自变量的范围</strong>（如 $|x| \leq 1$），范围之外密度为零。漏写范围等于把密度延拓到全轴，归一性立即被破坏，也是阅卷中最常见的扣分原因。</p>
 <h3 id="c-联合分布与联合密度的关系一个必要的反例">C. 联合分布与联合密度的关系：一个必要的反例</h3>
@@ -238,6 +239,7 @@ $$</p>
 X, Y \text{ 独立} \iff \rho = 0.
 $$</p>
 <p>充分性由 $\rho = 0$ 时密度显式分离直接可见；必要性只需在独立等式 $f_X f_Y = f$ 中代入一点 $(\mu_1, \mu_2)$ 比较常数即得。$\rho$（第四章将证明它是相关系数）为零一般只意味着&quot;不相关&quot;，远弱于独立；<strong>二元正态是&quot;不相关 $\Rightarrow$ 独立&quot;成立的著名特例</strong>，此结论在数理统计中被反复使用。另须警惕其边界：该等价性要求 $(X,Y)$ <strong>联合正态</strong>；两个边缘各自正态而联合不正态时，$\rho = 0$ 不能推出独立。</p>
+<p><figure class="fig"><img src="../assets/images/03-02.png" alt="图 3-2｜二元正态的等高线：$\rho$ 决定椭圆的倾斜" loading="lazy"><figcaption>图 3-2｜二元正态的等高线：$\rho$ 决定椭圆的倾斜</figcaption></figure></p>
 <div class="keypoints"><div class="keypoints-label">要点</div><ul>
 <li>联合密度：$P(\mathbf{X} \in B) = \int_B f$，概率即体积；$f = \partial^2 F / \partial x \partial y$。</li>
 <li>边缘密度 = 沿被遗忘变量积分；定限三步：画支撑集 → 固定一个变量作直线 → 读出相交线段。写密度必须附带自变量范围。</li>
@@ -349,7 +351,7 @@ $$</p>
 Y \mid X = x \ \sim \ N\left( \mu_2 + \rho \frac{\sigma_2}{\sigma_1}(x - \mu_1), \ (1 - \rho^2) \sigma_2^2 \right). \tag{5.9}
 $$</p>
 <p>计算是密度相除后再配方，结论则值得长期记忆。条件期望 $\mu_x = \mu_2 + \rho\frac{\sigma_2}{\sigma_1}(x - \mu_1)$ 是 $x$ 的<strong>线性函数</strong>——这条直线就是统计学中的<strong>回归直线</strong>：&quot;回归&quot;概念在数学上的最初形态即二元正态的条件均值。条件方差 $(1-\rho^2)\sigma_2^2$ 与 $x$ 无关，且比无条件方差 $\sigma_2^2$ 缩小了因子 $1 - \rho^2$：$|\rho|$ 越大，知道 $X$ 后对 $Y$ 的不确定性削减越多；$\rho = 0$ 时条件分布与无条件分布相同（独立）。定义 5.3 将条件密度逐字推广到向量对向量的情形（$f_{\mathbf{X}|\mathbf{Y}} = f / f_{\mathbf{Y}}$），无新内容。</p>
-<h3 id="c-条件概率-math_block_385把条件概率升级为随机变量选学">*C. 条件概率 $P(A \mid X)$：把条件概率升级为随机变量（选学）</h3>
+<h3 id="c-条件概率-math_block_386把条件概率升级为随机变量选学">*C. 条件概率 $P(A \mid X)$：把条件概率升级为随机变量（选学）</h3>
 <p>本小节为 <em>§4.5 条件期望作概念铺垫，初读可略，但其思想转换非常精彩。对每个取值 $x$，$g(x) = P(A \mid X = x)$ 是一个数；让 $x$ 跑遍 $X$ 的值域，$g$ 是一个普通函数；再把随机变量 $X$ 代入自身的条件概率函数，得到*<em>随机变量</em></em></p>
 <p>$$
 P(A \mid X) = g(X).
@@ -393,6 +395,7 @@ $$</p>
 P\big(X_{(k)} \in (x, x + \mathrm{d}x)\big) \approx \frac{n!}{(k-1)!(n-k)!} F^{k-1} (1 - F)^{n-k} f \, \mathrm{d}x,
 $$</p>
 <p>两边除以 $\mathrm{d}x$ 即得 (6.5)。（两个及以上样本同落微元的概率是 $(\mathrm{d}x)^2$ 阶的高阶无穷小，极限中消失——这是微元法在此严格可行的原因。）</p>
+<p><figure class="fig"><img src="../assets/images/03-03.png" alt="图 3-3｜$\mathcal{U}(0,1)$ 五个样本的次序统计量密度" loading="lazy"><figcaption>图 3-3｜$\mathcal{U}(0,1)$ 五个样本的次序统计量密度</figcaption></figure></p>
 <p>两个端点情形建议<strong>独立掌握、优先使用</strong>，因为它们经由分布函数的推导更快且不易错：</p>
 <p>$$
 P(X_{(n)} \leq x) = P(\text{全体} \leq x) = F(x)^n \ \Rightarrow \ g_n(x) = n F^{n-1}(x) f(x);

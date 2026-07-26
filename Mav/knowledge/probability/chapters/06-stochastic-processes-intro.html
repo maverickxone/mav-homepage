@@ -110,6 +110,7 @@ $$</p>
 N(t) = [0, t] \text{ 内事件发生的个数}, \qquad t \geq 0.
 $$</p>
 <p>由含义可直接读出计数过程的四条结构性质：$N(t)$ 取非负整数值；关于 $t$ 单调不减；$N(t) - N(s)$（$t > s$）恰为时间段 $(s, t]$ 内的事件数；每条轨道 $t \mapsto N(t, \omega)$ 是单调不减、右连续的<strong>阶梯函数</strong>——事件每发生一次，轨道向上跳一格。&quot;增量 $N(t) - N(s)$ 计数 $(s,t]$ 内的事件&quot;这一读法是本节一切推理的出发点。</p>
+<p><figure class="fig"><img src="../assets/images/06-01.png" alt="图 6-1｜泊松过程的阶梯轨道与到达时刻" loading="lazy"><figcaption>图 6-1｜泊松过程的阶梯轨道与到达时刻</figcaption></figure></p>
 <p>计数过程过于宽泛，需要进一步的结构假设。两条最自然的假设是：</p>
 <p><strong>独立增量性</strong>：互不相交的时间段内发生的事件个数相互独立。形式化表述：对任何 $0 < t_1 < \cdots < t_n$，增量</p>
 <p>$$
@@ -355,6 +356,7 @@ $$</p>
 Y_t = c \cdot b\cos(\omega t + U) + \eta_t, \qquad c = \frac{1}{2M+1}\sum_{j=-M}^{M} \cos(\omega j), \qquad \eta_t = \frac{1}{2M+1}\sum_{j=-M}^{M} \varepsilon_{t-j}.
 $$</p>
 <p>两个成分的命运截然不同。<strong>信号成分</strong>仍是同频率的余弦波，仅振幅乘以因子 $c$：当 $\omega$ 较小（低频）时窗口内各项近似同相，$c$ 接近 1，信号大体保留。<strong>噪声成分</strong>被平均削弱：若 $\{\varepsilon_t\}$ 为白噪声，由不相关性 $\operatorname{var}(\eta_t) = \sigma^2/(2M+1)$——方差按窗宽倒数缩小。这正是第五章大数律思想的局部应用：<strong>不相关随机项的平均衰减，而相干信号的平均不衰减</strong>。原书数值实验（$b = 1.5$，$\omega = \pi/7$，$M = 3$，正态白噪声）中，输出信噪比为输入的 $2.884$ 倍——按上述公式验证：$c = \frac{1}{7}\sum_{j=-3}^{3}\cos(\pi j/7) \approx 0.642$，信噪比放大倍数 $c^2 (2M+1) \approx 0.642^2 \times 7 \approx 2.88$，与原书一致。</p>
+<p><figure class="fig"><img src="../assets/images/06-02.png" alt="图 6-2｜滑动平均滤波：白噪声中的信号复原" loading="lazy"><figcaption>图 6-2｜滑动平均滤波：白噪声中的信号复原</figcaption></figure></p>
 <div class="keypoints"><div class="keypoints-label">要点</div><ul>
 <li>平稳序列：均值常数、协方差只依赖时间差；平稳性假设使&quot;单条数据做统计推断&quot;成为可能。</li>
 <li>自协方差函数三性质：对称、非负定（方差非负的矩阵化）、$|\gamma_k| \leq \gamma_0$（Cauchy–Schwarz）；三条恰好刻画其全体。</li>

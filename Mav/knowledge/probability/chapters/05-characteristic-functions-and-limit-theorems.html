@@ -367,6 +367,7 @@ $$</p>
 <p>$$
 \lim_{n \to \infty} \frac{S_n}{n} = \mathrm{E}\xi_1 = p. \tag{4.1}
 $$</p>
+<p><figure class="fig"><img src="../assets/images/05-01.png" alt="图 5-1｜大数律：频率随试验次数稳定到概率" loading="lazy"><figcaption>图 5-1｜大数律：频率随试验次数稳定到概率</figcaption></figure></p>
 <p>但 $S_n/n$ 是<strong>随机变量序列</strong>，&quot;收敛&quot;二字对它有不止一种含义。本节按强度递进给出两种，并各自证明一个大数律。</p>
 <h3 id="a-弱大数律依概率收敛">A. 弱大数律：依概率收敛</h3>
 <p><strong>定义 4.1（依概率收敛）</strong> 若对任何 $\varepsilon > 0$，</p>
@@ -480,6 +481,7 @@ $$</p>
 \frac{S_n - np}{\sqrt{npq}} \xrightarrow{d} N(0,1),
 $$</p>
 <p>证明只需注意 $B(n,p)$ 与 $n$ 个独立两点分布之和同分布。经验准则：$p$ 越接近 $1/2$ 逼近越快；当 $\min\{np, nq\} > 5$ 时近似方可信赖。</p>
+<p><figure class="fig"><img src="../assets/images/05-02.png" alt="图 5-2｜中心极限定理：标准化和的直方图趋于正态" loading="lazy"><figcaption>图 5-2｜中心极限定理：标准化和的直方图趋于正态</figcaption></figure></p>
 <p>实际计算二项概率时有一处必要的技术细节——<strong>连续性校正</strong>（例 5.7）。$S_n$ 取整数值，事件 $\{a \leq S_n \leq b\}$（$a, b$ 为整数）与 $\{a - 0.5 \leq S_n \leq b + 0.5\}$ 完全相同，但代入正态近似结果不同。应采用</p>
 <p>$$
 P(a \leq S_n \leq b) \approx \Phi\Big(\frac{b + 0.5 - np}{\sqrt{npq}}\Big) - \Phi\Big(\frac{a - 0.5 - np}{\sqrt{npq}}\Big). \tag{5.5}
