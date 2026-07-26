@@ -49,6 +49,11 @@ function createRenderer() {
   };
 
   renderer.blockquote = function (quote) {
+    // "> [要点]" as first line turns the quote into a key-points card
+    const kpMatch = quote.match(/^<p>\[要点\]<\/p>\n?([\s\S]*)$/);
+    if (kpMatch) {
+      return `<div class="keypoints"><div class="keypoints-label">要点</div>${kpMatch[1]}</div>\n`;
+    }
     return `<blockquote>${quote}</blockquote>\n`;
   };
 

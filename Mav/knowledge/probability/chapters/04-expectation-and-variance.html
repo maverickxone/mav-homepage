@@ -1,0 +1,671 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>数学期望和方差 — 概率论精讲</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" id="hljs-light" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+<link rel="stylesheet" id="hljs-dark" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" media="not all">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+
+</head>
+<body>
+
+<div class="progress-bar" id="progress-bar"></div>
+
+<nav class="topnav" id="topnav">
+  <div class="topnav-inner">
+    <a class="brand" href="../index.html">概率论精讲</a>
+    <div class="nav-links">
+      <a href="01-classical-model-and-probability-space.html">01</a>
+      <a href="02-random-variables-and-distributions.html">02</a>
+      <a href="03-random-vectors.html">03</a>
+      <a href="04-expectation-and-variance.html" class="active">04</a>
+      <a href="05-characteristic-functions-and-limit-theorems.html">05</a>
+      <a href="06-stochastic-processes-intro.html">06</a>
+    </div>
+    <div class="nav-controls">
+      <button class="nav-btn" id="search-btn" aria-label="搜索 (Ctrl+K)">⌘K</button>
+      <button class="nav-btn" id="settings-btn" aria-label="阅读设置">Aa</button>
+      <a class="nav-btn" href="../../index.html" aria-label="返回知识库">← 知识库</a>
+      <a class="nav-btn" href="https://github.com/maverickxone/mav-homepage" target="_blank" rel="noopener" aria-label="GitHub" style="padding: 6px 8px;"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg></a>
+    </div>
+  </div>
+</nav>
+<div class="settings-pop" id="settings-pop">
+  <h5>主题</h5>
+  <div class="row">
+    <button class="seg" data-theme-set="light">明亮</button>
+    <button class="seg" data-theme-set="dark">暗色</button>
+  </div>
+  <h5>字号</h5>
+  <div class="row">
+    <button class="seg" data-size-set="s">小</button>
+    <button class="seg" data-size-set="m">中</button>
+    <button class="seg" data-size-set="l">大</button>
+  </div>
+</div>
+
+<div class="with-sidebar">
+  <aside class="sidebar">
+  <div class="chapter-num">CHAPTER 04</div>
+  <div class="chapter-name">数学期望和方差</div>
+  <h4>目录</h4>
+  <ul>
+    <li><a href="#40-导言从完整分布到数字特征">4.0 导言：从完整分布到数字特征</a></li>
+    <li><a href="#41-数学期望分布的重心">4.1 数学期望：分布的重心</a></li>
+    <li><a href="#42-数学期望的性质线性性的威力">4.2 数学期望的性质：线性性的威力</a></li>
+    <li><a href="#43-方差围绕均值的离散程度">4.3 方差：围绕均值的离散程度</a></li>
+    <li><a href="#44-协方差和相关系数两个变量如何联动">4.4 协方差和相关系数：两个变量如何联动</a></li>
+    <li><a href="#45-条件数学期望和熵选学">4.5 条件数学期望和熵（选学）</a></li>
+    <li><a href="#本章收束数字特征的层级与它的边界">本章收束：数字特征的层级与它的边界</a></li>
+    <li><a href="#公式速查卡">公式速查卡</a></li>
+    <li><a href="#习题指引">习题指引</a></li>
+  </ul>
+</aside>
+  <article class="chapter-body">
+    <header class="chapter-head">
+  <div class="chapter-head-meta">
+    <span class="num">CHAPTER 04</span>
+    <span>≈ 130 MIN READ</span>
+  </div>
+  <h1>数学期望和方差</h1>
+
+</header>
+    <div class="callout">
+<p class="callout-title">📖 本章导读</p>
+
+<p>前三章建立了描述随机变量的完整语言——分布。本章回答一个新问题：**能否用少数几个实数概括一个分布的主要面貌？**答案是本章的四个层级：期望（位置）、方差（离散程度）、协方差与相关系数（两个变量的联动）、条件期望（已知部分信息后的最优概括）。这些&quot;数字特征&quot;是概率论通向统计学与一切应用领域的接口。对应原书第四章 §4.1–§4.5。</p>
+</div>
+
+<h2 id="40-导言从完整分布到数字特征">4.0 导言：从完整分布到数字特征</h2>
+<p>经过第二、三章的建设，我们已经拥有了描述随机变量的完备工具：分布函数、概率分布列、概率密度。原则上，关于一个随机变量的任何概率问题，都可以从它的分布中读出答案。然而&quot;完备&quot;与&quot;好用&quot;是两回事。分布函数是一个<strong>函数</strong>——一个无穷维的对象。当我们问&quot;这个软件的平均使用寿命是多少&quot;、&quot;这两套方案哪个风险更大&quot;时，期待的回答是一个<strong>实数</strong>，而不是一条曲线。工程师比较两种测量仪器的精度，投资者比较两种资产的风险，都需要把分布压缩成可以直接比较的数值指标。</p>
+<p>本章系统地建立这套压缩方案。它有清晰的层级结构，逐级回答逐级精细的问题：</p>
+<ul>
+<li><strong>数学期望 $\mathrm{E}X$</strong>（§4.1–§4.2）回答&quot;$X$ 平均取值在哪里&quot;——分布的<strong>位置</strong>；</li>
+<li><strong>方差 $\operatorname{var}(X)$</strong>（§4.3）回答&quot;$X$ 偏离平均值有多远&quot;——分布的<strong>离散程度</strong>；</li>
+<li><strong>协方差与相关系数</strong>（§4.4）回答&quot;两个随机变量如何<strong>联动</strong>&quot;——从单个变量走向变量之间的关系；</li>
+<li><strong>条件期望 $\mathrm{E}(X \mid Y)$</strong>（§4.5，选学）回答&quot;已知 $Y$ 的信息后，对 $X$ 的最优概括是什么&quot;——它不再是一个数，而是一个随机变量，是通往现代概率论与统计学习的门户。</li>
+</ul>
+<p>值得在开头就指出本章方法论上的一条主线：<strong>数字特征的威力主要来自它们良好的运算性质，而非定义本身</strong>。期望的线性性（对任意随机变量成立，不要求独立）将复杂问题拆解为简单问题之和；示性函数把概率与期望打通；Chebyshev 不等式仅凭期望与方差就能控制概率。读完本章后回头看，会发现几乎每一个漂亮的计算都是这三件工具的组合。</p>
+<p>历史注记：期望是概率论中最古老的概念之一。惠更斯（Huygens）1657 年出版的《机遇的规律》首次引入&quot;期望&quot;这一术语，其第一条命题——以概率 $1/2$ 赢 $a$ 元、概率 $1/2$ 输 $b$ 元的赌局价值 $(a-b)/2$ 元——正是数学期望的雏形。期望概念的出现早于概率的公理化近三百年，这提示我们：<strong>平均值是人类对随机性最原始也最深刻的直觉</strong>。</p>
+<div class="keypoints"><div class="keypoints-label">要点</div><ul>
+<li>分布是完整信息但维数无穷；数字特征把分布压缩为可比较、可运算的实数。</li>
+<li>层级：期望（位置）→ 方差（离散度）→ 协方差（联动）→ 条件期望（已知信息下的最优概括）。</li>
+<li>本章的三大工具：期望的线性性、示性函数方法、由矩控制概率的不等式。</li>
+</ul>
+</div>
+<hr>
+<h2 id="41-数学期望分布的重心">4.1 数学期望：分布的重心</h2>
+<p><strong>对应原书 §4.1。</strong></p>
+<h3 id="为什么是加权平均">为什么是加权平均</h3>
+<p>先从一个可以完全算清的例子提炼定义（原书例 1.1）。一个班 $n = 126$ 名学生，成绩为 $j$ 分的有 $n_j$ 人。全班平均分是</p>
+<p>$$
+\mu = \frac{1}{n}\sum_{i=1}^{n} x_i = \sum_{j=0}^{100} j \cdot \frac{n_j}{n}.
+$$</p>
+<p>右端的改写揭示了平均分的另一种读法：<strong>每个可能取值 $j$，以它出现的频率 $n_j/n$ 为权重，做加权平均</strong>。现在从班中随机抽取一名学生，以 $X$ 记其成绩，则 $P(X = j) = n_j/n$——$X$ 的概率分布恰好就是成绩的频率分布。于是&quot;$X$ 的平均取值&quot;理应定义为</p>
+<p>$$
+\mathrm{E}(X) = \sum_{j} j \, P(X = j).
+$$</p>
+<p>必须强调<strong>权重的必要性</strong>。设 $X$ 以概率 $0.01$ 取 $1$、概率 $0.99$ 取 $100$。可能取值的算术平均 $(1+100)/2 = 50.5$ 完全不能代表 $X$ 的平均水平：对 $X$ 作 $N$ 次独立重复观测，由频率与概率的关系，观测值中约 $99\%$ 是 $100$，每次观测的平均值约为 $1 \times 0.01 + 100 \times 0.99 = 99.01$。<strong>期望是以概率为权的加权平均，它预言的是大量独立重复观测的算术平均值将稳定的位置</strong>——这个&quot;预言&quot;在第五章将被严格证明为大数律，此处它是定义合理性的经验依据。</p>
+<p><strong>定义 1.1（离散型）</strong> 设 $X$ 有分布 $p_j = P(X = x_j)$，$j = 0, 1, \cdots$。若级数<strong>绝对收敛</strong>，即 $\sum_j |x_j| p_j < \infty$，则称</p>
+<p>$$
+\mathrm{E}(X) = \sum_{j=0}^{\infty} x_j p_j \tag{1.3}
+$$</p>
+<p>为 $X$ 的<strong>数学期望</strong>（或<strong>均值</strong>）。</p>
+<p><strong>定义 1.2（连续型）</strong> 设 $X$ 有概率密度 $f(x)$。若 $\int_{-\infty}^{\infty} |x| f(x) \, \mathrm{d}x < \infty$，则称</p>
+<p>$$
+\mathrm{E}(X) = \int_{-\infty}^{\infty} x f(x) \, \mathrm{d}x \tag{1.5}
+$$</p>
+<p>为 $X$ 的数学期望。</p>
+<p>两个定义形式完全平行：把&quot;求和 × 概率&quot;换成&quot;积分 × 密度&quot;。数学期望由分布唯一决定，因此<strong>同分布的随机变量必有相同的期望</strong>；也因此可以直接谈&quot;某分布的期望&quot;。</p>
+<h3 id="为什么必须要求绝对收敛">为什么必须要求绝对收敛</h3>
+<p>定义中的条件 $\sum |x_j| p_j < \infty$ 绝非技术性的谨慎，它保护的是期望作为&quot;平均值&quot;的<strong>唯一性</strong>。数学分析中的 Riemann 重排定理指出：一个条件收敛（收敛但不绝对收敛）的级数，通过重排求和次序可以收敛到<strong>任何</strong>预先指定的实数。而随机变量的取值 $x_0, x_1, x_2, \cdots$ 的编号次序是人为的——同一个分布可以按不同次序罗列其取值。如果只要求条件收敛，同一个分布按不同罗列次序会&quot;平均&quot;出不同的数值，期望就失去了意义。绝对收敛恰好是&quot;求和结果与次序无关&quot;的充分必要条件，因此是定义中不可削减的要求。</p>
+<p>有一种情形可以放宽：当 $X$ <strong>非负</strong>时，$\sum x_j p_j$ 或者收敛或者发散到 $+\infty$，两种情况都有明确含义。因此对非负随机变量，允许 $\mathrm{E}(X) = \infty$，读作&quot;平均取值为无穷&quot;。只取有限个值的随机变量期望总存在。</p>
+<h3 id="几何解释期望是分布的质心">几何解释：期望是分布的质心</h3>
+<p>把 $p_j$ 视为放置在数轴 $x_j$ 处的质量，则恒等式 $\sum_j (x_j - \mu) p_j = 0$ 说明 $\mu = \mathrm{E}X$ 是这组质点的<strong>质心</strong>；连续情形同理，$\int (x - \mu) f(x)\, \mathrm{d}x = 0$ 说明 $\mathrm{E}X$ 是密度曲线下那块&quot;薄板&quot;的质心横坐标。这个图像立即给出一个实用的对称性判据（原书例 1.5）：</p>
+<p>**若密度 $f$ 关于 $x = \mu$ 对称（$f(\mu + x) = f(\mu - x)$）且期望存在，则 $\mathrm{E}X = \mu$。**证明只需注意 $t f(t + \mu)$ 是奇函数，其积分为零。由此不加计算便知：正态分布 $N(\mu, \sigma^2)$ 的期望是 $\mu$，均匀分布 $\mathcal{U}(a,b)$ 的期望是 $(a+b)/2$。注意条件&quot;期望存在&quot;不可省略——Cauchy 分布的密度关于 $0$ 对称，但 $\int |x| f(x) \mathrm{d}x = \infty$，其期望不存在，而非等于 $0$。</p>
+<h3 id="两个警示性的应用">两个警示性的应用</h3>
+<p><strong>例 1.2（彩票）</strong>。七位数字组成一注，$10^7$ 注中一注中奖，税后奖金 240 万元，每注一元。以 $X$ 记购买一注的收益：</p>
+<p>$$
+\mathrm{E}(X) = -1 \times (1 - 10^{-7}) + 240 \times 10^4 \times 10^{-7} = -0.76 \text{ 元}.
+$$</p>
+<p>每注平均损失 0.76 元。**例 1.3（押对子）**的结构相同：从 6 副扑克 312 张中发两张，成对的概率为 $13 C_{24}^2 / C_{312}^2 \approx 0.074$，赔率十倍，下注 100 元的期望收益为 $1000 \times 0.074 - 100 \times 0.926 = -18.6$ 元。这两例说明数字特征的直接用途：<strong>面对一个随机的收益，期望给出唯一合理的&quot;公平价格&quot;基准</strong>；商业赌局的期望必为负值，其负值部分正是庄家的利润率。</p>
+<h3 id="常见分布的期望逐一推导">常见分布的期望：逐一推导</h3>
+<p>以下八个结果需要熟练掌握，推导本身也各有方法论价值。</p>
+<p><strong>（1）两点分布 $B(1,p)$</strong>：$\mathrm{E}X = 1 \cdot p + 0 \cdot (1-p) = p$。</p>
+<p><strong>（2）二项分布 $B(n,p)$</strong>：直接计算依赖组合恒等式 $j C_n^j = n C_{n-1}^{j-1}$（可由定义直接验证）：</p>
+<p>$$
+\mathrm{E}X = \sum_{j=0}^{n} j C_n^j p^j q^{n-j} = np \sum_{j=1}^{n} C_{n-1}^{j-1} p^{j-1} q^{n-j} = np (p+q)^{n-1} = np.
+$$</p>
+<p>关键一步是&quot;吸收&quot;因子 $j$ 后让二项式定理收尾。§4.2 将给出一个几乎不需计算的第二证明。</p>
+<p><strong>（3）泊松分布 $\mathcal{P}(\lambda)$</strong>：</p>
+<p>$$
+\mathrm{E}X = \sum_{k=0}^{\infty} k \frac{\lambda^k}{k!} \mathrm{e}^{-\lambda} = \lambda \sum_{k=1}^{\infty} \frac{\lambda^{k-1}}{(k-1)!} \mathrm{e}^{-\lambda} = \lambda.
+$$</p>
+<p>**参数 $\lambda$ 的概率意义至此明确：它就是平均发生次数。**第二章卢瑟福实验中 7.5 秒内平均放射 3.87 个 $\alpha$ 粒子，对应 $X \sim \mathcal{P}(3.87)$。</p>
+<p><strong>（4）几何分布</strong>（$P(X = j) = p q^{j-1}$）：技巧是把因子 $j$ 识别为幂级数逐项求导的产物：</p>
+<p>$$
+\mathrm{E}X = \sum_{j=1}^{\infty} j p q^{j-1} = p \left( \sum_{j=0}^{\infty} q^j \right)' = p \left( \frac{1}{1-q} \right)' = \frac{1}{p}.
+$$</p>
+<p>结论符合直觉：单次成功概率越小，等待首次成功所需的平均试验次数越多，且恰好互为倒数。&quot;求导生成因子 $j$&quot;的手法在第五章将升级为母函数方法。</p>
+<p><strong>（5）均匀分布 $\mathcal{U}(a,b)$</strong>：$\mathrm{E}X = \int_a^b \frac{x}{b-a} \mathrm{d}x = \frac{a+b}{2}$，即区间中点。</p>
+<p><strong>（6）指数分布 $\mathcal{E}(\lambda)$</strong>：$\mathrm{E}X = \int_0^\infty x \lambda \mathrm{e}^{-\lambda x} \mathrm{d}x = \frac{1}{\lambda}$（分部积分或化为 $\Gamma(2)/\lambda$）。参数 $\lambda$ 是单位时间的&quot;强度&quot;，平均寿命与强度互为倒数。结合第三章次序统计量的结论 $\min\{X_1,\cdots,X_n\} \sim \mathcal{E}(n\lambda)$：单只灯泡平均寿命 1500 小时，同时使用 24 只时平均每 $1500/24 = 62.5$ 小时就要更换一只——首次故障的等待时间随并联规模成反比缩短。</p>
+<p><strong>（7）正态分布 $N(\mu, \sigma^2)$</strong>：平移 $t = x - \mu$ 后，奇函数 $t \mathrm{e}^{-t^2/(2\sigma^2)}$ 的积分为零，得 $\mathrm{E}X = \mu$——即例 1.5 对称性判据的特例。</p>
+<p><strong>（8）$\Gamma(\alpha, \beta)$ 分布</strong>：换元 $t = \beta x$ 化为 $\Gamma$ 函数，</p>
+<p>$$
+\mathrm{E}X = \int_0^\infty \frac{\beta^\alpha}{\Gamma(\alpha)} x^\alpha \mathrm{e}^{-\beta x} \mathrm{d}x = \frac{\Gamma(\alpha+1)}{\Gamma(\alpha)\beta} = \frac{\alpha}{\beta},
+$$</p>
+<p>最后一步使用了 $\Gamma(\alpha + 1) = \alpha \Gamma(\alpha)$。取 $\alpha = 1$ 复原指数分布的结果 $1/\beta$。</p>
+<h3 id="一座关键的桥示性函数的期望">一座关键的桥：示性函数的期望</h3>
+<p><strong>例 1.4</strong> 篇幅极短却是全章的枢纽。事件 $A$ 的示性函数 $\mathrm{I}_A$ 服从两点分布 $B(1, P(A))$，故</p>
+<p>$$
+\mathrm{E}(\mathrm{I}_A) = P(A).
+$$</p>
+<p>这个等式把<strong>概率</strong>纳入了<strong>期望</strong>的管辖范围：任何概率都是某个示性函数的期望。§4.2 的示性函数方法、§4.3 的 Markov 不等式证明，都建立在这一行之上。</p>
+<p>最后，原书例 1.6 处理<strong>混合分布</strong>（分布函数 = 绝对连续部分 + 阶梯部分）的期望，并引入 Stieltjes 型记号 $\mathrm{E}X = \int_{-\infty}^{\infty} x \, \mathrm{d}F(x)$。初读时只需了解：这一记号把离散求和与连续积分统一为一个表达式，凡对&quot;一般随机变量&quot;陈述的定理，都可借它一次写清。测度论意义下的严格建构属于更高阶课程。</p>
+<div class="keypoints"><div class="keypoints-label">要点</div><ul>
+<li>期望 = 以概率为权的加权平均 = 分布的质心；它预言大量独立重复观测的算术平均（大数律的雏形）。</li>
+<li>绝对收敛的要求源于 Riemann 重排定理：保证&quot;平均值&quot;与取值的罗列次序无关。非负随机变量允许 $\mathrm{E}X = \infty$。</li>
+<li>密度对称 + 期望存在 $\Rightarrow$ 期望在对称中心；Cauchy 分布提醒&quot;期望存在&quot;不可省略。</li>
+<li>常见分布：$B(1,p) \to p$；$B(n,p) \to np$；$\mathcal{P}(\lambda) \to \lambda$；几何 $\to 1/p$；$\mathcal{U}(a,b) \to \frac{a+b}{2}$；$\mathcal{E}(\lambda) \to 1/\lambda$；$N(\mu,\sigma^2) \to \mu$；$\Gamma(\alpha,\beta) \to \alpha/\beta$。</li>
+<li>$\mathrm{E}(\mathrm{I}_A) = P(A)$：概率是期望的特例，此桥梁贯穿全章。</li>
+</ul>
+</div>
+<hr>
+<h2 id="42-数学期望的性质线性性的威力">4.2 数学期望的性质：线性性的威力</h2>
+<p><strong>对应原书 §4.2。本节先解决&quot;函数的期望怎么算&quot;，再给出期望的运算律，最后演示本章最优雅的计算方法——示性函数分解。</strong></p>
+<h3 id="a-随机向量函数的期望lotus">A. 随机向量函数的期望（LOTUS）</h3>
+<p>实际问题中需要的常常不是 $\mathrm{E}X$ 本身，而是某个函数的期望：$\mathrm{E}(X^2)$、$\mathrm{E}(\cos X)$、$\mathrm{E}\sqrt{X^2 + Y^2}$。按定义行事的路径是：先求出 $Y = g(X)$ 的分布，再对 $Y$ 用定义。但求 $g(X)$ 的分布正是第二、三章中最繁琐的工作（分段讨论、单调性、Jacobi 行列式）。<strong>定理 2.1 宣告这一步完全可以跳过</strong>：</p>
+<p><strong>定理 2.1</strong> 设 $\mathbf{X} = (X_1, \cdots, X_n)$ 有联合密度 $f(\mathbf{x})$，$g$ 为实函数且 $\int_{\mathbf{R}^n} |g(\mathbf{x})| f(\mathbf{x}) \, \mathrm{d}\mathbf{x} < \infty$，则</p>
+<p>$$
+\mathrm{E}\,g(\mathbf{X}) = \int_{\mathbf{R}^n} g(\mathbf{x}) f(\mathbf{x}) \, \mathrm{d}x_1 \cdots \mathrm{d}x_n. \tag{2.1}
+$$</p>
+<p>离散情形同理：$\mathrm{E}\,h(\mathbf{X}) = \sum h(\mathbf{x}) \, P(\mathbf{X} = \mathbf{x})$。</p>
+<p>一句话概括：<strong>求 $g(\mathbf{X})$ 的期望，不必求 $g(\mathbf{X})$ 的分布——直接用 $\mathbf{X}$ 自己的分布对 $g$ 加权即可</strong>。英文文献称此定理为 LOTUS（Law of the Unconscious Statistician，&quot;无意识统计学家定律&quot;）——使用者往往意识不到自己用了一条需要证明的定理，因为它太符合直觉：$g(X)$ 取值 $g(x)$ 的&quot;权重&quot;自然就是 $X$ 落在 $x$ 附近的概率。定理的严格证明需要测度论（本质是积分变量替换），原书直接采用之，我们也如此。</p>
+<p>由定理 2.1 立得一个常用判据：<strong>$\mathrm{E}X$ 存在当且仅当 $\mathrm{E}|X| < \infty$</strong>。</p>
+<p>三个计算示范，均体现&quot;选好坐标，化归 $\Gamma$ 函数&quot;的路线：</p>
+<p><strong>例 2.1</strong>：$X \sim N(0,1)$，求 $\mathrm{E}|X|^\alpha$。<strong>思路</strong>：被积函数关于原点对称，化到 $(0,\infty)$ 上后作换元 $x = \sqrt{2t}$，指数 $\mathrm{e}^{-x^2/2}$ 变为 $\mathrm{e}^{-t}$，积分立即呈 $\Gamma$ 函数形：</p>
+<p>$$
+\mathrm{E}|X|^\alpha = \sqrt{\frac{2^\alpha}{\pi}} \, \Gamma\!\left( \frac{1+\alpha}{2} \right), \qquad \alpha > -1.
+$$</p>
+<p>两个特例值得记诵：$\alpha = 2$ 时结合 $\Gamma(1/2) = \sqrt{\pi}$ 得 $\mathrm{E}X^2 = 1$（这就是标准正态的方差，§4.3 要用）；$\alpha = 1$ 时 $\mathrm{E}|X| = \sqrt{2/\pi}$。</p>
+<p><strong>例 2.3</strong>：$X, Y$ 独立同服从 $N(0,1)$，求 $\mathrm{E}(X^2 + Y^2)^\alpha$。<strong>思路</strong>：被积函数只依赖 $x^2 + y^2$，极坐标是必然选择；再换元 $r = \sqrt{2t}$，得 $\mathrm{E}(X^2+Y^2)^\alpha = 2^\alpha \Gamma(\alpha + 1)$。取 $\alpha = 1$ 即 $\mathrm{E}(X^2 + Y^2) = 2$，与逐项计算一致——这类自洽性检验应当成为习惯。</p>
+<p><strong>例 2.4</strong>：$(X,Y)$ 在单位圆内均匀分布，则由内层积分的奇函数性，$\mathrm{E}X = \mathrm{E}Y = 0$。此例为 §4.4 的&quot;不相关但不独立&quot;反例做了准备。</p>
+<h3 id="b-期望的三条运算律">B. 期望的三条运算律</h3>
+<p><strong>定理 2.2</strong> 设 $\mathrm{E}|X_j| < \infty$，$c_j$ 为常数，则：</p>
+<ol>
+<li><strong>线性性</strong>：$\mathrm{E}\left( c_0 + \sum_{j=1}^n c_j X_j \right) = c_0 + \sum_{j=1}^n c_j \mathrm{E}X_j$；</li>
+<li><strong>独立乘法</strong>：若 $X_1, \cdots, X_n$ <strong>相互独立</strong>，则 $\mathrm{E}(X_1 X_2 \cdots X_n) = \mathrm{E}X_1 \cdot \mathrm{E}X_2 \cdots \mathrm{E}X_n$；</li>
+<li><strong>单调性</strong>：若 $X_1 \leq X_2$ a.s.，则 $\mathrm{E}X_1 \leq \mathrm{E}X_2$。</li>
+</ol>
+<p>证明均由定理 2.1 直接展开：（1）是积分的线性性；（2）中独立性使联合密度分解为边缘密度之积，Fubini 定理将多重积分拆为累次积分之积；（3）化为非负随机变量期望非负。</p>
+<p>三条性质的地位需要分辨清楚。<strong>线性性对任意随机变量成立，完全不需要独立性</strong>——和的期望永远等于期望的和，无论各项如何相关。这是它威力的源泉，也是初学者最容易低估的事实。相反，<strong>乘法公式必须以独立为前提</strong>；一般情形下 $\mathrm{E}(XY) \neq \mathrm{E}X \, \mathrm{E}Y$，其差额正是 §4.4 的协方差。还需注意乘法公式的逆命题不成立：$\mathrm{E}(XY) = \mathrm{E}X\,\mathrm{E}Y$（即不相关）推不出独立，反例见 §4.4。</p>
+<p>记号约定：自此以后遵循原书惯例，在不引起混淆时省略括号，将 $\mathrm{E}(X)$ 写作 $\mathrm{E}X$，$\mathrm{E}(X^2)$ 写作 $\mathrm{E}X^2$。注意 $\mathrm{E}X^2$ 恒指 $\mathrm{E}(X^2)$ 而非 $(\mathrm{E}X)^2$。</p>
+<h3 id="c-示性函数分解化整为零的艺术">C. 示性函数分解：化整为零的艺术</h3>
+<p>线性性与 $\mathrm{E}\mathrm{I}_A = P(A)$ 联手，构成一套系统的方法：<strong>把复杂的计数型随机变量写成示性函数（两点分布变量）之和，再逐项取期望</strong>。其决定性的优势在于：<strong>线性性不要求各项独立，因此无论 $X_i$ 之间的相依结构多么复杂，$\mathrm{E}\sum X_i = \sum \mathrm{E}X_i$ 照常成立</strong>。以下四例难度递进，是本章方法论的核心。</p>
+<p><strong>例 2.5（二项分布，重证 $\mathrm{E}X = np$）</strong>。以 $X_i$ 记第 $i$ 次试验成功与否（$1$ 或 $0$），则成功总数 $X = X_1 + \cdots + X_n$，且 $\mathrm{E}X_i = p$。立得 $\mathrm{E}X = np$。与 §4.1 的组合恒等式推导对比：那里的全部计算，被&quot;分解 + 线性性&quot;两步取代。</p>
+<p><strong>例 2.6（超几何分布）</strong>。$N$ 件产品含 $M$ 件正品，<strong>无放回</strong>抽取 $n$ 件，正品数 $Y$ 的期望？以 $X_i$ 记第 $i$ 次抽得正品与否。无放回使 $X_1, \cdots, X_n$ <strong>相互依赖</strong>，但由第一章抽签问题的对称性，每次抽到正品的边缘概率都是 $M/N$，故 $\mathrm{E}X_i = M/N$，从而</p>
+<p>$$
+\mathrm{E}Y = \frac{nM}{N}.
+$$</p>
+<p><strong>依赖结构对期望完全没有影响</strong>——有放回（二项）与无放回（超几何）的期望相同。若按定义对超几何分布列直接求和，将面对一个不小的组合恒等式；示性函数方法使之成为两行推理。</p>
+<p><strong>例 2.7（配对问题的期望）</strong>。$n$ 封信随机装入 $n$ 个信封，正确配对数 $Y$ 的期望？以 $X_i$ 记第 $i$ 封信配对与否，$\mathrm{E}X_i = 1/n$，故</p>
+<p>$$
+\mathrm{E}Y = n \cdot \frac{1}{n} = 1.
+$$</p>
+<p>**无论 $n$ 多大，平均恰有一封信配对正确。**第一章曾用 Jordan 公式艰难地算出&quot;至少一封配对&quot;的概率约 $1 - \mathrm{e}^{-1}$；而&quot;平均配对数&quot;竟然一步可得——选对了问题的层次（期望而非分布），难度天差地别。</p>
+<p><strong>例 2.8（收藏问题 / 优惠券收集）</strong>。一套邮票 $N$ 张，有放回逐张抽取，集齐 $k$ 张不同邮票平均需抽多少次？<strong>思路</strong>：将总次数按&quot;新邮票&quot;到来的时刻分段。已集得 $k-1$ 张后，抽到新票的概率是 $p_k = (N-k+1)/N$，等待下一张新票的次数 $X_k$ 服从几何分布，$\mathrm{E}X_k = N/(N-k+1)$。由线性性，</p>
+<p>$$
+\mathrm{E}S_k = \sum_{j=1}^{k} \frac{N}{N-j+1}, \qquad \mathrm{E}S_N = N \sum_{j=1}^{N} \frac{1}{j} \approx N \ln(N+1).
+$$</p>
+<p>调和级数的对数增长给出定量结论：集齐一半约需 $N \ln 2 \approx 0.69N$ 次，而集齐全套需约 $N \ln N$ 次——收集的困难集中在最后几张（等待最后一张平均就需 $N$ 次）。$N = 50$ 时全套约需 197 次。</p>
+<p><strong>例 2.9（Jordan 公式的期望证明）</strong>。示性函数方法的一个理论性收获：第一章的容斥公式可由恒等式</p>
+<p>$$
+\mathrm{I}\left[ \bigcup_{j=1}^n A_j \right] = 1 - \prod_{j=1}^{n} \left( 1 - \mathrm{I}[A_j] \right)
+$$</p>
+<p>两边展开（利用 $\mathrm{I}[A]\mathrm{I}[B] = \mathrm{I}[AB]$）后逐项取期望而得。<strong>集合的容斥原理本质上是多项式展开 $\prod(1 - t_j)$ 的期望化身</strong>——这个视角比第一章的归纳法证明更能揭示正负交错系数的来源。</p>
+<h3 id="d-期望控制概率的第一步与矩的概念">D. 期望控制概率的第一步与矩的概念</h3>
+<p><strong>例 2.10</strong> 建立一个基础事实：$\mathrm{E}|X| = 0 \iff X = 0$ a.s.。证明的技巧值得学习：由 $\mathrm{I}[|X| > 1/n] \leq n|X| \, \mathrm{I}[|X| > 1/n] \leq n |X|$ 取期望得 $P(|X| > 1/n) \leq n \mathrm{E}|X| = 0$，再以概率的连续性收尾。&quot;<strong>用示性函数不等式取期望，把概率夹在矩的下方</strong>&quot;正是下一节 Markov 不等式的原型。</p>
+<p><strong>定义 2.1（矩）</strong> 若 $\mathrm{E}|X|^m < \infty$，称 $\mathrm{E}X^m$ 为 $X$ 的 <strong>$m$ 阶原点矩</strong>，$\mathrm{E}(X - \mathrm{E}X)^m$ 为 <strong>$m$ 阶中心矩</strong>。期望是一阶原点矩，下一节的方差是二阶中心矩。可以证明 $\mathrm{E}|X|^m < \infty$ 与 $\mathrm{E}|X - \mu|^m < \infty$ 等价（练习 4.2(3)）。矩的家族在第五章将被母函数与特征函数整体打包。</p>
+<div class="keypoints"><div class="keypoints-label">要点</div><ul>
+<li>LOTUS（定理 2.1）：求 $g(\mathbf{X})$ 的期望无需求其分布，直接以 $\mathbf{X}$ 的分布对 $g$ 加权。</li>
+<li>线性性<strong>不需要独立性</strong>；乘法公式<strong>必须</strong>独立。$\mathrm{E}(XY) = \mathrm{E}X\mathrm{E}Y$ 是&quot;不相关&quot;，弱于独立。</li>
+<li>示性函数分解：计数变量 = 示性函数之和 $\Rightarrow$ 期望 = 边缘概率之和，相依结构无关紧要。二项 $np$、超几何 $nM/N$、配对恒为 $1$、收集问题 $N \ln N$ 皆由此出。</li>
+<li>$\mathrm{E}|X| = 0 \iff X = 0$ a.s.；证明手法（示性函数不等式 + 取期望）是 Markov 不等式的雏形。</li>
+</ul>
+</div>
+<hr>
+<h2 id="43-方差围绕均值的离散程度">4.3 方差：围绕均值的离散程度</h2>
+<p><strong>对应原书 §4.3。</strong></p>
+<h3 id="a-定义与常见分布的方差">A. 定义与常见分布的方差</h3>
+<p>期望只回答&quot;平均在哪里&quot;。一箱 50 个苹果净重 10 千克，平均每个 0.2 千克——但这箱苹果是大小均匀，还是大小悬殊？期望对此沉默。需要第二个数字刻画<strong>取值围绕均值的散布程度</strong>。</p>
+<p>延续 §4.1 的思路（原书例 3.1）：全班成绩的整齐程度，自然用偏差平方的平均 $\sigma^2 = \frac{1}{n}\sum_i (x_i - \mu)^2$ 度量；随机抽取一名学生的成绩 $X$，其&quot;整齐程度&quot;就是 $\mathrm{E}(X - \mathrm{E}X)^2$。</p>
+<p><strong>定义 3.1</strong> 设 $\mu = \mathrm{E}X$ 有限，称</p>
+<p>$$
+\operatorname{var}(X) = \mathrm{E}(X - \mu)^2
+$$</p>
+<p>为 $X$ 的<strong>方差</strong>（variance，亦称均方误差），记作 $\operatorname{var}(X)$ 或 $\sigma_{XX}$；称 $\sigma_X = \sqrt{\operatorname{var}(X)}$ 为<strong>标准差</strong>。</p>
+<p>三点评注。<strong>其一</strong>，为何取平方而非绝对值 $\mathrm{E}|X - \mu|$？两者都能度量散布，但平方有绝对值不具备的分析性质：处处可导（便于极值论证，见定理 3.1(2)）、可展开（产生交叉项从而定义协方差）、对独立变量可加（定理 3.1(5)）。整个二阶矩理论——直至希尔伯特空间几何——都建立在平方之上。代价是方差的量纲为 $X$ 的平方，故实际报告散布时常用与 $X$ 同量纲的标准差。<strong>其二</strong>，测量误差的解释：若 $X$ 是对真值 $\mu$ 的一次测量且仪器无系统偏差（$\mathrm{E}X = \mu$），则 $\operatorname{var}(X)$ 恰为测量误差平方的平均——&quot;均方误差&quot;之名由此而来。<strong>其三</strong>，方差由分布唯一决定，且由例 2.10，$\operatorname{var}(X) = 0 \iff X = \mu$ a.s.——方差为零的随机变量退化为常数。</p>
+<p>由线性性展开平方，得到<strong>计算方差的标准公式</strong>：</p>
+<p>$$
+\operatorname{var}(X) = \mathrm{E}(X^2 - 2\mu X + \mu^2) = \mathrm{E}X^2 - (\mathrm{E}X)^2. \tag{3.2}
+$$</p>
+<p>此式顺带给出一个不显然的推论：$\mathrm{E}X^2 \geq (\mathrm{E}X)^2$ 恒成立。</p>
+<p><strong>常见分布的方差</strong>逐一推导如下（期望已在 §4.1 得到）：</p>
+<p><strong>（1）两点分布 $B(1,p)$</strong>：因 $X^2 = X$，$\operatorname{var}(X) = p - p^2 = pq$。注意 $pq$ 在 $p = 1/2$ 时最大——不偏的硬币&quot;最不确定&quot;，这一观察在 §4.5 的熵处将再现。</p>
+<p><strong>（2）二项分布 $B(n,p)$</strong>：技巧是先算<strong>阶乘矩</strong> $\mathrm{E}[X(X-1)]$（求和后化为二项式的二阶导数）：$\mathrm{E}[X(X-1)] = n(n-1)p^2$，故 $\mathrm{E}X^2 = n(n-1)p^2 + np$，</p>
+<p>$$
+\operatorname{var}(X) = n(n-1)p^2 + np - (np)^2 = npq.
+$$</p>
+<p>&quot;先算 $\mathrm{E}[X(X-1)]$ 再补回 $\mathrm{E}X$&quot;是处理含 $k!$ 分母的离散分布的通用手法，泊松与几何分布同样适用。</p>
+<p><strong>（3）泊松分布 $\mathcal{P}(\lambda)$</strong>：$\mathrm{E}[X(X-1)] = \lambda^2$，故 $\operatorname{var}(X) = \lambda^2 + \lambda - \lambda^2 = \lambda$。<strong>泊松分布期望与方差相等</strong>，这是它的指纹式特征，实际数据分析中常以&quot;均值 ≈ 方差&quot;作为泊松模型的诊断依据。</p>
+<p><strong>（4）几何分布</strong>：$\mathrm{E}[X(X-1)] = pq \left( \sum q^j \right)'' = \frac{2q}{p^2}$，故 $\operatorname{var}(X) = \frac{2q}{p^2} + \frac{1}{p} - \frac{1}{p^2} = \frac{q}{p^2}$。</p>
+<p><strong>（5）均匀分布 $\mathcal{U}(a,b)$</strong>：$\mathrm{E}X^2 = \frac{b^3 - a^3}{3(b-a)}$，整理得</p>
+<p>$$
+\operatorname{var}(X) = \frac{(b-a)^2}{12}.
+$$</p>
+<p>方差只依赖区间长度，与位置无关——符合平移不变的直觉。</p>
+<p><strong>（6）指数分布 $\mathcal{E}(\lambda)$</strong>：$\mathrm{E}X^2 = \Gamma(3)/\lambda^2 = 2/\lambda^2$，故 $\operatorname{var}(X) = 1/\lambda^2$。标准差与期望相等，也是指数分布的特征。</p>
+<p><strong>（7）正态分布 $N(\mu, \sigma^2)$</strong>：换元 $x - \mu = \sigma t$ 后化为例 2.1 的 $\mathrm{E}T^2 = 1$（$T \sim N(0,1)$），得 $\operatorname{var}(X) = \sigma^2$。<strong>至此正态分布记号中两个参数的身份完全确认：$\mu$ 是期望，$\sigma^2$ 是方差</strong>；二元正态 $N(\mu_1, \mu_2; \sigma_1^2, \sigma_2^2; \rho)$ 的前四个参数同理，第五个参数 $\rho$ 的身份将在 §4.4 揭晓。</p>
+<p><strong>（8）$\Gamma(\alpha, \beta)$ 分布</strong>：$\mathrm{E}X^2 = \frac{\Gamma(\alpha+2)}{\Gamma(\alpha)\beta^2} = \frac{\alpha(\alpha+1)}{\beta^2}$，故 $\operatorname{var}(X) = \alpha/\beta^2$。</p>
+<h3 id="b-方差的性质">B. 方差的性质</h3>
+<p><strong>定理 3.1</strong> 设各方差有限，$\mu = \mathrm{E}X$，则：</p>
+<ol>
+<li>$\operatorname{var}(a + bX) = b^2 \operatorname{var}(X)$；</li>
+<li>对任何 $c \neq \mu$，$\operatorname{var}(X) = \mathrm{E}(X - \mu)^2 < \mathrm{E}(X - c)^2$；</li>
+<li>$\operatorname{var}(X) = 0 \iff X = \mu$ a.s.；</li>
+<li>$\displaystyle \operatorname{var}\left( \sum_{j=1}^n X_j \right) = \sum_{i=1}^{n} \sum_{j=1}^{n} \left[ \mathrm{E}(X_i X_j) - \mu_i \mu_j \right]$；</li>
+<li>若 $X_1, \cdots, X_n$ <strong>相互独立</strong>，则 $\operatorname{var}\left( \sum_{j=1}^n X_j \right) = \sum_{j=1}^n \operatorname{var}(X_j)$。</li>
+</ol>
+<p>逐条消化。<strong>（1）平移不变、伸缩平方</strong>：$\operatorname{var}(a + X) = \operatorname{var}(X)$——整体平移不改变散布；$\operatorname{var}(bX) = b^2 \operatorname{var}(X)$——这正是量纲为平方的体现，也再次解释了为何实用中偏爱标准差（$\sigma_{bX} = |b| \sigma_X$，量纲正确）。<strong>（2）期望是最优的常数近似</strong>：证明中的恒等式</p>
+<p>$$
+\mathrm{E}(X - c)^2 = \operatorname{var}(X) + (\mu - c)^2
+$$</p>
+<p>值得单独记住，它说明用常数 $c$ 预测 $X$ 的均方误差分解为&quot;不可消除的固有波动&quot;加&quot;预测偏差的平方&quot;，当且仅当 $c = \mu$ 时后者为零。<strong>在均方误差准则下，期望是对随机变量的最佳常数预测</strong>——§4.5 的最佳预测定理是它的深远推广。<strong>（4）与（5）</strong>：和的方差一般<strong>不</strong>等于方差的和，展开平方产生的交叉项 $\mathrm{E}(X_iX_j) - \mu_i\mu_j$（即协方差，下节正名）度量了各项的联动；独立时交叉项全部消失，方差获得可加性。这是&quot;独立&quot;在二阶矩层面的兑现。</p>
+<p><strong>（4）的证明</strong>（原书留给读者，此处补全）：记 $Y_j = X_j - \mu_j$，则 $\sum X_j - \mathrm{E}\sum X_j = \sum Y_j$，</p>
+<p>$$
+\operatorname{var}\left(\sum_j X_j\right) = \mathrm{E}\left( \sum_j Y_j \right)^2 = \sum_{i}\sum_{j} \mathrm{E}(Y_i Y_j) = \sum_i \sum_j \left[ \mathrm{E}(X_iX_j) - \mu_i\mu_j \right],
+$$</p>
+<p>其中用到 $\mathrm{E}(Y_iY_j) = \mathrm{E}(X_iX_j) - \mu_i\mu_j$（展开并用线性性）。（5）是（4）在独立乘法公式下的直接推论。</p>
+<p><strong>例 3.2（标准化）</strong>：$Y = (X - \mathrm{E}X)/\sigma_X$ 满足 $\mathrm{E}Y = 0$、$\operatorname{var}(Y) = 1$，称为 $X$ 的<strong>标准化</strong>。它把任意随机变量归一到统一刻度，是比较不同量纲随机变量、以及第五章中心极限定理陈述的前提。正态分布在标准化下封闭：$X \sim N(\mu, \sigma^2) \Rightarrow Y \sim N(0,1)$。</p>
+<p><strong>例 3.3（算术平均的方差）</strong>：$X_1, \cdots, X_n$ 独立同方差 $\sigma^2$，则</p>
+<p>$$
+\operatorname{var}\left( \frac{1}{n} \sum_{j=1}^n X_j \right) = \frac{\sigma^2}{n}.
+$$</p>
+<p>这行短短的公式是整个实验科学的数学根基：<strong>对同一物理量作 $n$ 次独立无偏测量并取平均，均方误差缩减为原来的 $1/n$（标准差缩减 $1/\sqrt{n}$）</strong>。测量精度可以靠重复购买——只要仪器无系统偏差。它也是第五章大数律的定量前奏：$n \to \infty$ 时平均值的方差趋于零，平均值&quot;收拢&quot;到期望。</p>
+<p>**例 3.5（超几何分布的方差）**演示交叉项的实战处理。沿用例 2.6 的示性函数分解，关键是二阶量：由抽签问题的推广，$\mathrm{E}(X_iX_j) = P(X_i = 1, X_j = 1) = \frac{M}{N}\cdot\frac{M-1}{N-1}$（$i \neq j$）。代入定理 3.1(4)，整理得</p>
+<p>$$
+\operatorname{var}(Y) = n \frac{M}{N}\left(1 - \frac{M}{N}\right) \frac{N-n}{N-1}.
+$$</p>
+<p>与有放回抽取（二项分布）的方差 $n\frac{M}{N}(1 - \frac{M}{N})$ 相比，多出因子 $\frac{N-n}{N-1} < 1$，统计学中称为<strong>有限总体校正因子</strong>。结论：<strong>无放回抽样的方差更小</strong>——已抽走的样本不再重复，信息利用更充分；极端情形 $n = N$ 时方差为零（全体抽尽，$Y \equiv M$ 无随机性）。这为抽样调查偏爱无放回方案提供了理论依据。</p>
+<p><strong>例 3.6（配对问题的方差）</strong>：同样的方法给出 $\operatorname{var}(Y) = 1$。结合 $\mathrm{E}Y = 1$：正确配对数期望为 $1$、方差为 $1$，与 $n$ 无关——由下文 Chebyshev 不等式可知配对数很大的概率极小，与第一章&quot;泊松极限&quot;的图像吻合。</p>
+<p><strong>例 3.7（敏感问题调查的精度）</strong>：第一章例 8.2 的估计量 $\widehat{p}$ 满足 $\mathrm{E}\widehat{p} = p$（统计学称<strong>无偏性</strong>：估计的平均恰为真值）且</p>
+<p>$$
+\operatorname{var}(\widehat{p}) = \frac{1}{n}\left( \frac{1}{4(p_0 - q_0)^2} + p(1-p) - \frac{1}{4} \right).
+$$</p>
+<p>方差随 $|p_0 - q_0|$ 增大而减小：袋中红白球比例越悬殊，估计越精确——但隐私保护越弱。<strong>统计效率与隐私保护此消彼长</strong>，这一权衡的定量刻画正是数字特征的用武之地。推导（练习 4.3(3)）是线性性、独立方差可加与全概率公式的综合演练，建议亲手完成。</p>
+<h3 id="c-两个不等式">C. 两个不等式</h3>
+<p><strong>定理 3.2（Markov 不等式）</strong> 对任意随机变量 $X$、$\varepsilon > 0$、$\alpha > 0$，</p>
+<p>$$
+P(|X| \geq \varepsilon) \leq \frac{\mathrm{E}|X|^\alpha}{\varepsilon^\alpha}. \tag{3.3}
+$$</p>
+<p>取 $\alpha = 2$ 并以 $X - \mathrm{E}X$ 代 $X$，得 <strong>Chebyshev 不等式</strong>：</p>
+<p>$$
+P(|X - \mathrm{E}X| \geq \varepsilon) \leq \frac{\operatorname{var}(X)}{\varepsilon^2}. \tag{3.4}
+$$</p>
+<p><strong>证明</strong>只有三行，且完全复刻例 2.10 的手法——在事件 $\{|X| \geq \varepsilon\}$ 上，$|X|^\alpha / \varepsilon^\alpha \geq 1$：</p>
+<p>$$
+P(|X| \geq \varepsilon) = \mathrm{E}\,\mathrm{I}[|X| \geq \varepsilon] \leq \mathrm{E}\left( \frac{|X|^\alpha}{\varepsilon^\alpha} \mathrm{I}[|X| \geq \varepsilon] \right) \leq \frac{\mathrm{E}|X|^\alpha}{\varepsilon^\alpha}.
+$$</p>
+<p>如何评价这个不等式？<strong>例 3.8</strong> 给出诚实的对照：$X \sim N(0,1)$ 时，精确值 $P(|X| \geq 1.96) = 0.05$，而 Chebyshev 界给出 $\leq 1/1.96^2 \approx 0.26$——高估五倍有余，谈不上精确。但它的价值恰恰不在精确，而在<strong>普适</strong>：不等式对<strong>一切</strong>方差有限的分布成立，不需要知道分布的任何其他信息。&quot;仅凭期望与方差两个数字，就能对任何分布的尾部概率给出保证&quot;——这正是数字特征哲学的极致体现。Chebyshev 不等式是第五章弱大数律证明的全部技术内容；欲得更紧的界，可用单侧的 Cantelli 不等式（习题 4.44：$P(X - \mathrm{E}X > a) \leq \frac{\sigma^2}{a^2 + \sigma^2}$）或更高阶矩。</p>
+<p><strong>定理 3.3（内积不等式，即 Cauchy–Schwarz 不等式）</strong> 若 $\mathrm{E}X^2 < \infty$、$\mathrm{E}Y^2 < \infty$，则</p>
+<p>$$
+|\mathrm{E}(XY)| \leq \sqrt{\mathrm{E}X^2 \cdot \mathrm{E}Y^2}, \tag{3.5}
+$$</p>
+<p>等号成立当且仅当存在不全为零的常数 $a, b$ 使 $aX + bY = 0$ a.s.。</p>
+<p><strong>证明思路</strong>：对任意常数 $a, b$，$\mathrm{E}(aX + bY)^2 \geq 0$ 展开为关于 $(a,b)$ 的二次型，其矩阵</p>
+<p>$$
+\Sigma = \begin{pmatrix} \mathrm{E}X^2 & \mathrm{E}(XY) \\ \mathrm{E}(XY) & \mathrm{E}Y^2 \end{pmatrix}
+$$</p>
+<p>非负定，故行列式非负，即 (3.5)；等号即 $\Sigma$ 退化，即存在非零 $(a,b)$ 使 $\mathrm{E}(aX + bY)^2 = 0$，由例 2.10 即 $aX + bY = 0$ a.s.。</p>
+<p>命名&quot;内积不等式&quot;提示了正确的观察高度：$\langle X, Y \rangle = \mathrm{E}(XY)$ 在方差有限的随机变量空间上满足内积的全部公理，(3.5) 正是线性代数中 Cauchy–Schwarz 不等式的翻版，随机变量由此获得&quot;向量&quot;的身份、$\sqrt{\mathrm{E}X^2}$ 获得&quot;长度&quot;的身份。下一节的相关系数将是这个几何中的&quot;夹角余弦&quot;，§4.5 的最佳预测将是&quot;正交投影&quot;。<strong>二阶矩理论本质上是一门几何</strong>。</p>
+<div class="keypoints"><div class="keypoints-label">要点</div><ul>
+<li>$\operatorname{var}(X) = \mathrm{E}(X-\mu)^2 = \mathrm{E}X^2 - (\mathrm{E}X)^2$；取平方（而非绝对值）换来可导、可展开、独立可加。</li>
+<li>$\operatorname{var}(a+bX) = b^2\operatorname{var}(X)$；$\mathrm{E}(X-c)^2 = \operatorname{var}(X) + (\mu - c)^2$：期望是最优常数预测。</li>
+<li>和的方差 = 方差之和 + 交叉项；<strong>独立时交叉项消失</strong>。算术平均的方差为 $\sigma^2/n$：重复测量提高精度。</li>
+<li>常见分布：$B(n,p) \to npq$；$\mathcal{P}(\lambda) \to \lambda$（均值 = 方差）；几何 $\to q/p^2$；$\mathcal{U} \to (b-a)^2/12$；$\mathcal{E}(\lambda) \to 1/\lambda^2$；$N \to \sigma^2$；$\Gamma \to \alpha/\beta^2$；超几何含有限总体校正因子 $\frac{N-n}{N-1}$。</li>
+<li>Markov/Chebyshev：以矩控制尾概率，界虽不紧但<strong>分布无关</strong>，是大数律的引擎。</li>
+<li>Cauchy–Schwarz：$\mathrm{E}(XY)$ 是内积，二阶矩理论是几何。</li>
+</ul>
+</div>
+<hr>
+<h2 id="44-协方差和相关系数两个变量如何联动">4.4 协方差和相关系数：两个变量如何联动</h2>
+<p><strong>对应原书 §4.4。</strong></p>
+<h3 id="a-协方差与相关系数">A. 协方差与相关系数</h3>
+<p>定理 3.1(4) 中出现的交叉项 $\mathrm{E}(X_iX_j) - \mu_i\mu_j$ 呼唤一个正式的名字。</p>
+<p><strong>定义 4.1</strong> 设 $\mu_X = \mathrm{E}X$、$\mu_Y = \mathrm{E}Y$ 存在。</p>
+<ol>
+<li>称 $\operatorname{cov}(X, Y) = \mathrm{E}\left[ (X - \mu_X)(Y - \mu_Y) \right]$（记作 $\sigma_{XY}$）为 $X, Y$ 的<strong>协方差</strong>；$\operatorname{cov}(X,Y) = 0$ 时称 $X, Y$ <strong>不相关</strong>。</li>
+<li>当 $0 < \sigma_X \sigma_Y < \infty$ 时，称</li>
+</ol>
+<p>$$
+\rho_{XY} = \frac{\sigma_{XY}}{\sigma_X \sigma_Y}
+$$</p>
+<p>为 $X, Y$ 的<strong>相关系数</strong>。</p>
+<p>协方差的直觉：$(X - \mu_X)(Y - \mu_Y)$ 在&quot;$X, Y$ 同时高于或同时低于各自均值&quot;时为正、&quot;一高一低&quot;时为负，其期望因此度量两者<strong>同向波动的平均趋势</strong>。展开定义得计算公式</p>
+<p>$$
+\sigma_{XY} = \mathrm{E}(XY) - \mathrm{E}X \, \mathrm{E}Y, \tag{4.3}
+$$</p>
+<p>即协方差恰是&quot;乘法公式的破缺程度&quot;。协方差的量纲是 $X, Y$ 量纲之积，数值大小无法直接解读；相关系数通过标准化消去量纲——容易验证 $\rho_{XY}$ 恰为 $X, Y$ 各自标准化之后的协方差，因此它是纯数。</p>
+<p><strong>定理 4.1</strong> （1）$|\rho_{XY}| \leq 1$；（2）$|\rho_{XY}| = 1$ 当且仅当存在常数 $a, b$ 使 $P(Y = a + bX) = 1$；（3）$X, Y$ 独立 $\Rightarrow$ $X, Y$ 不相关。</p>
+<p>（1）（2）是 Cauchy–Schwarz 不等式对中心化变量 $X - \mu_X$、$Y - \mu_Y$ 的直接应用；（3）由独立乘法公式立得。在 §4.3 结尾的几何图像下，(1)(2) 的含义是：<strong>$\rho_{XY}$ 是两个中心化随机变量夹角的余弦</strong>，$|\rho| = 1$ 即两向量共线，亦即 $X, Y$ 之间存在严格的线性关系（称 $X, Y$ <strong>线性相关</strong>）。$\rho$ 接近 $1$ 时，独立重复观测的散点 $(X_i, Y_i)$ 聚拢在一条上升直线附近；接近 $-1$ 时聚拢在下降直线附近；接近 $0$ 时看不出线性趋势。</p>
+<h3 id="不相关不等于独立必须吃透的一课">不相关不等于独立：必须吃透的一课</h3>
+<p>定理 4.1(3) 的逆命题不成立，且反例俯拾皆是。</p>
+<p><strong>例 4.1</strong>：$(X, Y)$ 在单位圆内均匀分布。由对称性（例 2.4）$\mathrm{E}X = \mathrm{E}Y = 0$，而 $\mathrm{E}(XY) = \frac{1}{\pi}\int\!\!\int_{x^2+y^2 \leq 1} xy \, \mathrm{d}x\mathrm{d}y = 0$（内层对 $x$ 的积分是奇函数积分）。故 $X, Y$ 不相关。但第三章已证 $X, Y$ <strong>不独立</strong>——直观上，$|X|$ 接近 $1$ 时 $Y$ 被压缩在 $0$ 附近，两者的取值范围互相约束。</p>
+<p>概念层面的解释：<strong>独立要求联合分布在一切层面分解，而不相关只要求一个特定积分（二阶混合矩）分解</strong>。不相关只排除了<strong>线性</strong>联动；$X$ 与 $Y$ 完全可以以非线性方式严格相依而协方差为零（练习 4.4(1) 的 $X$ 与 $|X|$ 是又一例：密度为偶函数时两者不相关，却函数相依）。因此，&quot;$\rho_{XY} = 0$&quot; 应读作&quot;无线性关联&quot;，绝不能读作&quot;无关联&quot;。</p>
+<p><strong>但在两个重要情形中，不相关与独立等价</strong>，值得单独记录：</p>
+<p><strong>例 4.2（二元正态）</strong>：$(X,Y) \sim N(\mu_1, \mu_2; \sigma_1^2, \sigma_2^2; \rho)$ 时，经直接积分（配方后化为一维正态矩）可得 $\rho_{XY} = \rho$——<strong>记号中的第五个参数正是相关系数</strong>。结合第三章&quot;$\rho = 0$ 时联合密度分解&quot;的结论：<strong>二元正态分布中，独立 $\iff$ 不相关</strong>。这是正态分布诸多特权中的一项，也是它在统计学中占据中心地位的原因之一：对正态数据，排除线性关联即排除一切关联。</p>
+<p><strong>习题 4.7</strong>：两个各只取两个值的随机变量，独立 $\iff$ 不相关。（提示：两点分布的全部信息浓缩在一个概率里。）</p>
+<div class="callout callout-warn">
+<p class="callout-title">易错警示</p>
+
+<p>切勿在一般分布中混用&quot;不相关&quot;与&quot;独立&quot;。考试判断题的高频陷阱即&quot;不相关必独立&quot;（错）与&quot;独立必不相关&quot;（对，但要求二阶矩存在时才谈相关性）。正态情形的等价性是<strong>特权</strong>而非通则。</p>
+</div>
+
+<h3 id="b-协方差矩阵">B. 协方差矩阵</h3>
+<p>多个随机变量时，两两协方差自然排成矩阵。先约定向量与矩阵的期望为<strong>逐分量取期望</strong>：$\mathrm{E}\mathbf{X} = (\mathrm{E}X_1, \cdots, \mathrm{E}X_n)$，矩阵同理。由线性性直接验证（原书 (4.6)）：对常数矩阵 $A, B$，</p>
+<p>$$
+\mathrm{E}(A\mathbf{Y}) = A \, \mathrm{E}\mathbf{Y}, \qquad \mathrm{E}(\mathbf{Y}B) = (\mathrm{E}\mathbf{Y})B, \qquad \mathrm{E}(A\mathbf{Y}B) = A(\mathrm{E}\mathbf{Y})B, \qquad (\mathrm{E}\mathbf{Y})^{\mathrm{T}} = \mathrm{E}(\mathbf{Y}^{\mathrm{T}}).
+$$</p>
+<p><strong>定义 4.2</strong> 设 $\mathbf{X} = (X_1, \cdots, X_n)$ 各分量方差有限，$\boldsymbol{\mu} = \mathrm{E}\mathbf{X}$，称</p>
+<p>$$
+\Sigma = \mathrm{E}\left[ (\mathbf{X} - \boldsymbol{\mu})^{\mathrm{T}} (\mathbf{X} - \boldsymbol{\mu}) \right] = (\sigma_{ij})_{n \times n}, \qquad \sigma_{ij} = \operatorname{cov}(X_i, X_j)
+$$</p>
+<p>为 $\mathbf{X}$ 的<strong>协方差矩阵</strong>。对角元是各分量的方差，非对角元是两两协方差；$\Sigma$ 显然对称。</p>
+<p><strong>定理 4.2</strong> （1）$\Sigma$ 非负定；（2）$\Sigma$ 退化（$\det \Sigma = 0$）当且仅当存在不全为零的常数 $a_1, \cdots, a_n$ 使 $\sum_i a_i (X_i - \mu_i) = 0$ a.s.（此时称 $X_1, \cdots, X_n$ 线性相关）。</p>
+<p>证明的核心是一个应当铭记的恒等式：对任意实向量 $\mathbf{a}$，</p>
+<p>$$
+\mathbf{a} \Sigma \mathbf{a}^{\mathrm{T}} = \operatorname{var}\left( \sum_{i=1}^{n} a_i X_i \right) \geq 0.
+$$</p>
+<p>即：<strong>协方差矩阵的二次型给出任意线性组合的方差</strong>。非负定性是方差非负的直接翻译；退化即存在方差为零的非平凡线性组合，即分量间有严格线性约束。这一恒等式在应用中随处可见——组合投资的风险（收益的方差）$\mathbf{a}\Sigma\mathbf{a}^{\mathrm{T}}$、主成分分析（求 $\Sigma$ 特征向量以寻找方差最大的方向）、以及第五章多元正态分布的参数化（多元正态由 $\boldsymbol{\mu}$ 与 $\Sigma$ 完全决定），其技术核心都是它。</p>
+<div class="keypoints"><div class="keypoints-label">要点</div><ul>
+<li>$\operatorname{cov}(X,Y) = \mathrm{E}(XY) - \mathrm{E}X\mathrm{E}Y$：乘法公式的破缺程度；$\rho_{XY}$ 是标准化后的协方差，是&quot;夹角余弦&quot;，$|\rho| \leq 1$，$|\rho| = 1 \iff$ 严格线性关系。</li>
+<li>独立 $\Rightarrow$ 不相关；逆命题不成立（单位圆均匀分布、$X$ 与 $|X|$）。不相关只排除<strong>线性</strong>关联。</li>
+<li>二元正态的特权：独立 $\iff$ 不相关；参数 $\rho$ 即相关系数。</li>
+<li>协方差矩阵 $\Sigma$ 对称非负定；$\mathbf{a}\Sigma\mathbf{a}^{\mathrm{T}} = \operatorname{var}(\sum a_iX_i)$ 是它全部应用的枢纽；退化 $\iff$ 分量线性相关。</li>
+</ul>
+</div>
+<hr>
+<h2 id="45-条件数学期望和熵选学">4.5 条件数学期望和熵（选学）</h2>
+<p>*<em>对应原书 <em>§4.5。星号节。但必须指出：条件期望是现代概率论最核心的概念之一，随机过程（第六章）、统计推断、机器学习（回归本质上就是估计条件期望 $\mathrm{E}(Y \mid X)$）都以它为基石；熵则是信息论的起点。课时紧张可略去证明细节，但概念与重期望公式务必掌握。</em></em></p>
+<h3 id="a-条件期望的定义从数到随机变量">A. 条件期望的定义：从数到随机变量</h3>
+<p>第三章已定义条件密度 $f_{X\mid Y}(x \mid y) = f(x,y)/f_Y(y)$。条件密度是&quot;已知 $Y = y$ 后 $X$ 的密度&quot;，对它求加权平均即得<strong>已知 $Y = y$ 条件下 $X$ 的期望</strong>：</p>
+<p>$$
+m(y) = \mathrm{E}(X \mid Y = y) = \int_{-\infty}^{\infty} x \, f_{X \mid Y}(x \mid y) \, \mathrm{d}x
+$$</p>
+<p>（离散情形以条件分布列求和同理）。到此为止 $m(y)$ 只是一个普通的实函数：输入观测值 $y$，输出对 $X$ 的&quot;修正后平均&quot;。</p>
+<p><strong>定义 5.1</strong> 设 $\mathrm{E}|X| < \infty$。把随机变量 $Y$ 代入函数 $m$，所得<strong>随机变量</strong> $m(Y)$ 称为 $X$ 关于 $Y$ 的<strong>条件数学期望</strong>，记作 $\mathrm{E}(X \mid Y)$。</p>
+<p>这个两步定义中藏着本节最重要的概念跳跃：<strong>$\mathrm{E}(X \mid Y)$ 不是一个数，而是一个随机变量——它是 $Y$ 的函数</strong>。直觉图像：观测尚未进行时，&quot;观测到 $Y$ 后对 $X$ 的最优平均&quot;本身是不确定的（因为 $Y$ 不确定），这种不确定的&quot;修正后平均&quot;恰好由 $m(Y)$ 描述。计算上则毫无神秘：<strong>先算函数 $m(y) = \mathrm{E}(X \mid Y = y)$，再作代换 $y \mapsto Y$</strong>。</p>
+<p><strong>例 5.1（$\Gamma$ 混合的指数寿命）</strong>：环境指标 $Y \sim \Gamma(\alpha, \beta)$，已知 $Y = y$ 时计算机寿命 $X \sim \mathcal{E}(y)$。由指数分布期望公式，$\mathrm{E}(X \mid Y = y) = 1/y$，故 $\mathrm{E}(X \mid Y) = 1/Y$。反方向则需先求条件密度：联合密度 $f(x,y) = y\mathrm{e}^{-xy} \cdot \frac{\beta^\alpha}{\Gamma(\alpha)} y^{\alpha-1}\mathrm{e}^{-\beta y}$，积去 $y$ 得 $f_X(x) = \frac{\alpha\beta^\alpha}{(x+\beta)^{\alpha+1}}$，相除后识别出 $f_{Y \mid X}(y \mid x)$ 是 $\Gamma(\alpha+1,\, x+\beta)$ 的密度，故</p>
+<p>$$
+\mathrm{E}(Y \mid X) = \frac{\alpha + 1}{X + \beta}.
+$$</p>
+<p>&quot;<strong>相除之后先识别分布族，再直接引用该族的期望公式</strong>&quot;，比盲目积分高效得多，是计算条件期望的第一实战技巧。</p>
+<p><strong>例 5.2（二元正态的回归直线）</strong>：$(X,Y) \sim N(\mu_1, \mu_2; \sigma_1^2, \sigma_2^2; \rho)$。第三章已证条件分布 $Y \mid X = x \sim N\!\left( \mu_2 + \rho\frac{\sigma_2}{\sigma_1}(x - \mu_1),\; (1-\rho^2)\sigma_2^2 \right)$，故</p>
+<p>$$
+\mathrm{E}(Y \mid X) = \mu_2 + \rho \frac{\sigma_2}{\sigma_1} (X - \mu_1). \tag{5.5}
+$$</p>
+<p><strong>条件期望是 $X$ 的线性函数</strong>——这条直线就是统计学中的<strong>回归直线</strong>，斜率 $\rho\sigma_2/\sigma_1$，且条件方差 $(1-\rho^2)\sigma_2^2$ 与 $x$ 无关：$\rho^2$ 越接近 $1$，知道 $X$ 后对 $Y$ 的剩余不确定性越小。&quot;回归&quot;（regression）一词与相关系数概念本身，正是从对这条直线的研究（Galton 对父子身高的分析）中诞生的。</p>
+<h3 id="b-条件期望的性质与重期望公式">B. 条件期望的性质与重期望公式</h3>
+<p><strong>定理 5.1</strong> 设 $\mathrm{E}|g(X)| < \infty$ 等各期望存在，则：</p>
+<ol>
+<li><strong>线性性</strong>：$\mathrm{E}\left( c_0 + \sum_j c_j X_j \mid Y \right) = c_0 + \sum_j c_j \mathrm{E}(X_j \mid Y)$；</li>
+<li><strong>已知量可提出</strong>：$\mathrm{E}[h(Y) g(X) \mid Y] = h(Y) \, \mathrm{E}[g(X) \mid Y]$；</li>
+<li><strong>独立时条件失效</strong>：$X, Y$ 独立 $\Rightarrow$ $\mathrm{E}(g(X) \mid Y) = \mathrm{E}g(X)$；</li>
+<li><strong>重期望公式（全期望公式）</strong>：$\mathrm{E}\left[ \mathrm{E}(g(X) \mid Y) \right] = \mathrm{E}g(X)$。</li>
+</ol>
+<p>（1）与（3）的道理一望即知：$\mathrm{E}(\cdot \mid Y = y)$ 本身是（条件分布下的）期望，自然继承线性性；独立时条件不提供信息，条件期望退化为无条件期望。（2）值得细读：在条件 $Y = y$ 下，$h(Y) = h(y)$ 是<strong>已知常数</strong>，可提到期望号外——&quot;<strong>在 $Y$ 的条件世界里，$Y$ 的任何函数都不再随机</strong>&quot;。</p>
+<p>（4）是本节的顶梁柱。连续情形的证明是一次 Fubini 演算：</p>
+<p>$$
+\mathrm{E}\left[ \mathrm{E}(g(X) \mid Y) \right] = \int \mathrm{E}(g(X) \mid Y = y) f_Y(y) \, \mathrm{d}y = \int\!\!\int g(x) \frac{f(x,y)}{f_Y(y)} \mathrm{d}x \, f_Y(y) \mathrm{d}y = \int\!\!\int g(x) f(x,y) \, \mathrm{d}x \mathrm{d}y = \mathrm{E}g(X).
+$$</p>
+<p>它的正确读法是<strong>分层计算</strong>：&quot;先在每一层 $Y = y$ 内求平均，再对层与层加权平均，结果等于总平均。&quot;这正是第一章全概率公式在期望层面的推广——事实上取 $g(X) = \mathrm{I}_A$，注意 $P(A \mid Y) = \mathrm{E}(\mathrm{I}_A \mid Y)$，(4) 立即给出</p>
+<p>$$
+\mathrm{E}\left[ P(A \mid Y) \right] = P(A), \tag{5.7}
+$$</p>
+<p>即连续版全概率公式。实战中，重期望公式的价值在于<strong>降维</strong>：直接求 $\mathrm{E}(X)$ 困难、但固定某个变量后变容易时，先条件化再平均。</p>
+<p><strong>例 5.4（随机个数之和）</strong>：超市周日顾客数 $N \sim \mathcal{P}(\lambda)$，各顾客消费独立同分布（均值 $\mu$）且与 $N$ 独立，全天营业额 $S = X_1 + \cdots + X_N$。固定 $N = k$ 后 $S$ 是普通的 $k$ 项和，$\mathrm{E}(S \mid N = k) = k\mu$，故 $\mathrm{E}(S \mid N) = N\mu$，再取期望：</p>
+<p>$$
+\mathrm{E}S = \mathrm{E}(N\mu) = \lambda\mu.
+$$</p>
+<p>&quot;平均营业额 = 平均客流 × 客均消费&quot;——结论平凡，但注意 $S$ 的求和<strong>项数本身是随机的</strong>，绕开条件期望将无从下手。这一结果（Wald 恒等式的雏形）在保险精算（总理赔额）与排队论中是基本工具。<strong>例 5.5</strong> 结构相同：观测时长 $T$ 随机、给定 $T = t$ 时粒子数 $N \sim \mathcal{P}(t\lambda)$，则 $\mathrm{E}N = \lambda \mathrm{E}T$。<strong>例 5.3</strong> 则用 (4) 反向计算：$\mathrm{E}X = \mathrm{E}[\mathrm{E}(X \mid Y)] = \mathrm{E}(1/Y)$，对 $\Gamma$ 密度积分得 $\mathrm{E}X = \beta/(\alpha-1)$（$\alpha > 1$；$\alpha \leq 1$ 时为无穷）。</p>
+<h3 id="最佳预测条件期望的极值刻画">最佳预测：条件期望的极值刻画</h3>
+<p><strong>例 5.6（正交性）</strong>：若 $\mathrm{E}X^2 < \infty$、$\mathrm{E}h^2(Y) < \infty$，则</p>
+<p>$$
+\mathrm{E}\left[ \left( X - \mathrm{E}(X \mid Y) \right) h(Y) \right] = 0. \tag{5.8}
+$$</p>
+<p>证明由性质（2）（4）两行完成。几何读法（沿用 §4.3 的内积语言）：<strong>预测残差 $X - \mathrm{E}(X\mid Y)$ 与 $Y$ 的一切（平方可积）函数正交</strong>。</p>
+<p><strong>例 5.7（最佳预测定理）</strong>：设 $\mathrm{E}X^2 < \infty$，$m(Y) = \mathrm{E}(X \mid Y)$，则对任何实函数 $g$，</p>
+<p>$$
+\mathrm{E}\left[ X - m(Y) \right]^2 \leq \mathrm{E}\left[ X - g(Y) \right]^2,
+$$</p>
+<p>等号当且仅当 $g(Y) = m(Y)$ a.s.。证明即勾股定理：借 (5.8) 展开</p>
+<p>$$
+\mathrm{E}[X - g(Y)]^2 = \mathrm{E}[X - m(Y)]^2 + \mathrm{E}[m(Y) - g(Y)]^2.
+$$</p>
+<p>结论的分量怎么强调都不过分：<strong>在均方误差准则下，用 $Y$ 预测 $X$ 的最优方案就是条件期望 $\mathrm{E}(X \mid Y)$</strong>——它是 $X$ 在&quot;$Y$ 的函数构成的子空间&quot;上的正交投影。§4.3 定理 3.1(2)（期望是最优常数预测）是它在&quot;常数函数子空间&quot;上的特例。现代统计与机器学习中的回归问题——由特征 $Y$ 预测目标 $X$——的理论最优解正是条件期望，一切回归算法都在以各自的函数类逼近它。对二元正态（例 5.8），条件期望本身就是线性函数，故<strong>最佳预测与最佳线性预测重合</strong>（一般分布中线性预测只是退而求其次的选择，见习题 4.47–4.50）；例 5.9 进一步表明二元正态下 $\mathrm{E}(X \mid Y)$ 为常数即蕴含独立。</p>
+<p>最后一个实用公式（定理 5.2 与推论 5.3）：当 $P(A) > 0$，</p>
+<p>$$
+\mathrm{E}(X \mid A) = \frac{\mathrm{E}(X \, \mathrm{I}[A])}{P(A)}. \tag{5.13}
+$$</p>
+<p>即&quot;$A$ 条件下的期望 = 只在 $A$ 上累积的期望，除以 $A$ 的概率&quot;——条件概率公式 $P(B \mid A) = P(AB)/P(A)$ 的期望版。<strong>例 5.10</strong> 以它验证指数分布的无记忆性在期望层面的体现：$X \sim \mathcal{E}(\lambda)$ 时 $\mathrm{E}(X - a \mid X > a) = \mathrm{E}X = 1/\lambda$——已使用 $a$ 小时的设备，剩余期望寿命与全新设备相同。</p>
+<h3 id="c-概率分布的熵">C. 概率分布的熵</h3>
+<p>数字特征的最后一员回答一个不同性质的问题：**如何度量一个随机试验的&quot;不确定性总量&quot;？**掷均匀硬币与&quot;54 张牌中是否抽中梅花 A&quot;都是两结果试验，但前者的结果显然更难预料。Shannon（1948）给出的度量：</p>
+<p><strong>离散分布 $\alpha = (p_1, \cdots, p_n)$ 的熵</strong>定义为</p>
+<p>$$
+\mathrm{H}(\alpha) = -\sum_{j=1}^{n} p_j \ln p_j
+$$</p>
+<p>（约定 $0 \cdot \ln 0 = 0$）。定义的合理性由数值与性质双重印证。数值上：均匀硬币 $\mathrm{H} = \ln 2 \approx 0.693$，&quot;是否梅花 A&quot; $\mathrm{H} \approx 0.092$（几乎无悬念），均匀骰子 $\ln 6 \approx 1.792$，54 张牌均匀抽取 $\ln 54 \approx 3.989$——等可能结果越多、分布越均匀，熵越大。性质上（练习 4.5(4)）：$\mathrm{H} \geq 0$，且 $\mathrm{H} = 0$ 当且仅当某个 $p_j = 1$（毫无不确定性）；固定 $n$ 时 $\mathrm{H}$ 在均匀分布 $p_j = 1/n$ 处达到最大值 $\ln n$（<strong>等可能 = 最大不确定性</strong>，这为第一章古典概型的&quot;等可能假设&quot;提供了信息论辩护：在一无所知时假设等可能，即假设最大熵、不妄加信息）；独立试验的联合熵可加：$\mathrm{H}(S_1 S_2) = \mathrm{H}(S_1) + \mathrm{H}(S_2)$——独立信息源的不确定性直接相加，这正是定义中取对数的原因。</p>
+<p><strong>连续分布的熵</strong>类比定义为 $\mathrm{H}(X) = -\int f(x) \ln f(x) \, \mathrm{d}x$。三个最大熵刻画（原书列出，证明见其参考文献）勾勒出常见分布族的信息论身份：<strong>支撑集与体积给定时，均匀分布熵最大</strong>（$\ln m(D)$）；<strong>方差给定时，正态分布熵最大</strong>（$\ln\sqrt{2\pi\mathrm{e}\sigma^2}$）；<strong>$(0,\infty)$ 上均值给定时，指数分布熵最大</strong>（$\ln(\mu\mathrm{e})$）。这组结果给了本书的主角们第二重解读：正态分布不只是极限定理的产物（第五章），它还是&quot;给定均值方差约束下最随机、最不做多余假设的分布&quot;——最大熵原理由此成为统计建模与机器学习中选取先验分布的重要指导；而以交叉熵为损失函数训练分类模型，更是熵概念在当代最大规模的应用。</p>
+<div class="keypoints"><div class="keypoints-label">要点</div><ul>
+<li>$\mathrm{E}(X \mid Y)$ 的两步定义：先算函数 $m(y) = \mathrm{E}(X \mid Y = y)$，再代入 $Y$。<strong>它是随机变量，不是数</strong>。</li>
+<li>四条性质：线性性；$Y$ 的函数可提出；独立时条件失效；重期望公式 $\mathrm{E}[\mathrm{E}(X \mid Y)] = \mathrm{E}X$（分层平均 = 总平均，全概率公式的期望版）。</li>
+<li>随机项数求和 $\mathrm{E}S = \mathrm{E}N \cdot \mu$；条件化是处理两阶段随机性的标准降维手段。</li>
+<li>最佳预测定理：均方误差下 $\mathrm{E}(X \mid Y)$ 是用 $Y$ 预测 $X$ 的最优解（正交投影）；二元正态时它恰为线性——回归直线 $\mu_2 + \rho\frac{\sigma_2}{\sigma_1}(X - \mu_1)$。</li>
+<li>熵 $\mathrm{H} = -\sum p_j \ln p_j$ 度量不确定性：均匀分布最大熵 $\ln n$；给定方差时正态最大熵；独立可加。</li>
+</ul>
+</div>
+<hr>
+<h2 id="本章收束数字特征的层级与它的边界">本章收束：数字特征的层级与它的边界</h2>
+<p>本章完成了从&quot;完整分布&quot;到&quot;数字概括&quot;的体系建设。回望走过的路径：期望以概率为权给出分布的质心（§4.1），LOTUS 与线性性使它成为可以自由运算的对象，示性函数方法则把最棘手的计数问题化为边缘概率的求和（§4.2）；方差以二阶中心矩度量散布，其平方结构带来了独立可加性与 $\sigma^2/n$ 的测量精度定律，Markov–Chebyshev 不等式让两个数字就能约束任意分布的尾部（§4.3）；协方差与相关系数把视野扩展到变量之间，$|\rho| \leq 1$ 与协方差矩阵的非负定性揭示出二阶矩理论深处的几何——随机变量是向量，$\mathrm{E}(XY)$ 是内积（§4.4）；条件期望最终把&quot;概括&quot;提升为&quot;预测&quot;：$\mathrm{E}(X \mid Y)$ 是已知信息下的最优均方预测，重期望公式则是贯通分层结构的总账原则；熵从另一个维度概括了分布的不确定性总量（§4.5）。</p>
+<p>但也应看到数字特征的边界：期望与方差（乃至任意有限个矩）一般<strong>不能</strong>唯一决定一个分布——两个截然不同的分布可以拥有完全相同的前若干阶矩。要把&quot;全部矩&quot;打包成一个可运算、且能唯一确定分布的对象，需要一件新工具：把 $\mathrm{E}(s^X)$、$\mathrm{E}(\mathrm{e}^{\mathrm{i}tX})$ 这样的<strong>函数</strong>作为分布的&quot;变换域指纹&quot;。这就是下一章的主角——概率母函数与特征函数。它们不仅一举编码所有矩，更将成为证明本课程两大顶峰定理——大数律与中心极限定理——的决定性武器。第四章准备好了砖石，第五章开始起塔。</p>
+<hr>
+<h2 id="公式速查卡">公式速查卡</h2>
+<p><strong>期望</strong></p>
+<ul>
+<li>离散：$\mathrm{E}X = \sum_j x_j p_j$（要求 $\sum |x_j| p_j < \infty$）；连续：$\mathrm{E}X = \int x f(x)\mathrm{d}x$（要求 $\int |x| f < \infty$）</li>
+<li>LOTUS：$\mathrm{E}g(\mathbf{X}) = \int g(\mathbf{x}) f(\mathbf{x}) \mathrm{d}\mathbf{x} = \sum g(\mathbf{x}) P(\mathbf{X} = \mathbf{x})$</li>
+<li>线性性（无需独立）：$\mathrm{E}(c_0 + \sum c_j X_j) = c_0 + \sum c_j \mathrm{E}X_j$</li>
+<li>独立时：$\mathrm{E}(X_1 \cdots X_n) = \prod \mathrm{E}X_j$；单调性：$X \leq Y$ a.s. $\Rightarrow \mathrm{E}X \leq \mathrm{E}Y$</li>
+<li>$\mathrm{E}(\mathrm{I}_A) = P(A)$；密度关于 $\mu$ 对称且期望存在 $\Rightarrow \mathrm{E}X = \mu$</li>
+<li>非负整值：$\mathrm{E}X = \sum_{k=1}^\infty P(X \geq k)$；非负连续：$\mathrm{E}X = \int_0^\infty [1 - F(x)]\mathrm{d}x$</li>
+</ul>
+<p><strong>方差与协方差</strong></p>
+<ul>
+<li>$\operatorname{var}(X) = \mathrm{E}(X - \mu)^2 = \mathrm{E}X^2 - (\mathrm{E}X)^2$；$\operatorname{var}(a + bX) = b^2 \operatorname{var}(X)$</li>
+<li>$\mathrm{E}(X - c)^2 = \operatorname{var}(X) + (\mu - c)^2$（$c = \mu$ 最优）</li>
+<li>$\operatorname{var}(\sum X_j) = \sum_j \operatorname{var}(X_j) + 2\sum_{i<j} \operatorname{cov}(X_i, X_j)$；独立时后项为零</li>
+<li>$\operatorname{var}(\bar{X}) = \sigma^2 / n$（独立同方差）</li>
+<li>$\operatorname{cov}(X,Y) = \mathrm{E}(XY) - \mathrm{E}X\mathrm{E}Y$；$\rho_{XY} = \sigma_{XY}/(\sigma_X\sigma_Y) \in [-1, 1]$；$|\rho| = 1 \iff$ 线性关系 a.s.</li>
+<li>独立 $\Rightarrow$ 不相关；逆不真（二元正态与二值变量除外）</li>
+<li>协方差矩阵：对称非负定；$\mathbf{a}\Sigma\mathbf{a}^{\mathrm{T}} = \operatorname{var}(\sum a_i X_i)$</li>
+</ul>
+<p><strong>不等式</strong></p>
+<ul>
+<li>Markov：$P(|X| \geq \varepsilon) \leq \mathrm{E}|X|^\alpha / \varepsilon^\alpha$</li>
+<li>Chebyshev：$P(|X - \mathrm{E}X| \geq \varepsilon) \leq \operatorname{var}(X)/\varepsilon^2$</li>
+<li>Cauchy–Schwarz：$|\mathrm{E}(XY)| \leq \sqrt{\mathrm{E}X^2 \, \mathrm{E}Y^2}$</li>
+<li>Cantelli（单侧）：$P(X - \mathrm{E}X > a) \leq \sigma^2/(a^2 + \sigma^2)$</li>
+</ul>
+<p><strong>常见分布的期望与方差</strong></p>
+<div class="table-wrap"><table><thead><tr>
+<th>分布</th>
+<th>$\mathrm{E}X$</th>
+<th>$\operatorname{var}(X)$</th>
+</tr>
+</thead><tbody><tr>
+<td>两点 $B(1,p)$</td>
+<td>$p$</td>
+<td>$pq$</td>
+</tr>
+<tr>
+<td>二项 $B(n,p)$</td>
+<td>$np$</td>
+<td>$npq$</td>
+</tr>
+<tr>
+<td>泊松 $\mathcal{P}(\lambda)$</td>
+<td>$\lambda$</td>
+<td>$\lambda$</td>
+</tr>
+<tr>
+<td>几何（首次成功）</td>
+<td>$1/p$</td>
+<td>$q/p^2$</td>
+</tr>
+<tr>
+<td>超几何 $H(n,M,N)$</td>
+<td>$nM/N$</td>
+<td>$n\frac{M}{N}(1-\frac{M}{N})\frac{N-n}{N-1}$</td>
+</tr>
+<tr>
+<td>均匀 $\mathcal{U}(a,b)$</td>
+<td>$(a+b)/2$</td>
+<td>$(b-a)^2/12$</td>
+</tr>
+<tr>
+<td>指数 $\mathcal{E}(\lambda)$</td>
+<td>$1/\lambda$</td>
+<td>$1/\lambda^2$</td>
+</tr>
+<tr>
+<td>正态 $N(\mu, \sigma^2)$</td>
+<td>$\mu$</td>
+<td>$\sigma^2$</td>
+</tr>
+<tr>
+<td>$\Gamma(\alpha, \beta)$</td>
+<td>$\alpha/\beta$</td>
+<td>$\alpha/\beta^2$</td>
+</tr>
+</tbody></table></div>
+<p><strong>条件期望与熵</strong></p>
+<ul>
+<li>定义：$\mathrm{E}(X \mid Y) = m(Y)$，$m(y) = \mathrm{E}(X \mid Y = y)$，是随机变量</li>
+<li>重期望：$\mathrm{E}[\mathrm{E}(X \mid Y)] = \mathrm{E}X$；$\mathrm{E}[P(A \mid Y)] = P(A)$</li>
+<li>提出已知量：$\mathrm{E}[h(Y)g(X) \mid Y] = h(Y)\mathrm{E}[g(X) \mid Y]$；独立时 $\mathrm{E}(X \mid Y) = \mathrm{E}X$</li>
+<li>最佳预测：$\mathrm{E}(X \mid Y)$ 使 $\mathrm{E}[X - g(Y)]^2$ 最小；二元正态：$\mathrm{E}(Y \mid X) = \mu_2 + \rho\frac{\sigma_2}{\sigma_1}(X - \mu_1)$</li>
+<li>$\mathrm{E}(X \mid A) = \mathrm{E}(X\mathrm{I}[A])/P(A)$</li>
+<li>熵：$\mathrm{H} = -\sum p_j \ln p_j$（离散）、$-\int f \ln f$（连续）；均匀分布最大 $\ln n$；给定方差正态最大 $\ln\sqrt{2\pi\mathrm{e}\sigma^2}$；独立可加</li>
+</ul>
+<hr>
+<h2 id="习题指引">习题指引</h2>
+<p>习题四共 50 题，示性函数方法、条件期望与线性预测三个题群最成体系。分层如下（只给方向，不给解答；卡住超过 20 分钟再来讨论）。</p>
+<p><strong>第一层：打底（定义与基本计算）</strong></p>
+<ul>
+<li><strong>4.1、4.14、4.36</strong>：LOTUS 直接计算（4.14 注意&quot;落在圆周上&quot;用参数化 $X = R\cos\Theta$）。</li>
+<li><strong>4.2、4.45</strong>：期望的线性性用于重复赌局；4.45 与例 1.3 对比&quot;有放回/无放回&quot;对概率的影响。</li>
+<li><strong>4.4、4.5</strong>：独立正态变量之差仍正态（第三章结论），化为 $P(X - Y < 0)$ 查表；4.5 需先处理&quot;两条边同时装入&quot;的事件结构。</li>
+<li><strong>4.9</strong>：首次抽中前的等待次数，注意超几何背景下不是几何分布，可用 4.26 的尾和公式或对称性。</li>
+</ul>
+<p><strong>第二层：核心方法（本章主干题群）</strong></p>
+<ul>
+<li><strong>4.10、4.22、4.16</strong>：次序统计量的期望；4.10(1) 用 $P(\max \leq k) = (k/N)^n$ 与尾和公式，4.22 直接用第三章 Beta 型密度积分。</li>
+<li><strong>4.13</strong>：Lagrange 乘子或 Cauchy–Schwarz 求最优权重（答案 $a_j \propto 1/\sigma_j^2$——精度加权，统计学中的加权最小二乘思想）。</li>
+<li><strong>4.17</strong>：对称性 + 线性性的典范：诸 $\mathrm{E}\frac{X_i}{X_1 + \cdots + X_n}$ 相等且和为 $1$。</li>
+<li><strong>4.26、4.27</strong>：尾概率积分公式，期望理论的常用重写，务必掌握。</li>
+<li><strong>4.30</strong>：几何分布的两问对比；(2) 与生日问题结构相通。</li>
+<li><strong>4.35、4.38、4.39、4.40</strong>：条件期望 + 重期望公式题群。4.39 用示性函数分解（&quot;第 $j$ 站有人下车&quot;），4.38 是随机项数求和的一般化。</li>
+<li><strong>4.31–4.33</strong>：协方差基本性质的证明练习。</li>
+</ul>
+<p><strong>第三层：挑战（结构更深）</strong></p>
+<ul>
+<li><strong>4.8</strong>：$\max\{X,Y\} = \frac{X + Y + |X - Y|}{2}$ 的分解配合 $X - Y$ 的正态性。</li>
+<li><strong>4.18、4.24、4.29</strong>：矩与尾概率的相互控制，分析功底训练；4.29 是&quot;期望的离散逼近&quot;，实为测度论证明的雏形。</li>
+<li><strong>4.19、4.43、4.44</strong>：不等式专题。4.19 用 Chebyshev（注意 $f$ 是 $\Gamma(m+1,1)$ 密度）；4.44（Cantelli）技巧：对 $X + c$ 用 Markov 并对 $c$ 优化。</li>
+<li><strong>4.37、4.41、4.42</strong>：条件期望的理论性质；4.37 是&quot;方差分解/勾股定理&quot;$\mathrm{E}X^2 = \mathrm{E}[m(Y)^2] + \mathrm{E}[(X - m(Y))^2]$，统计学方差分析的原型。</li>
+<li><strong>4.47–4.50（线性预测题群）</strong>：建议连做：最小二乘解 $\widehat{b} = \sigma_{XY}/\sigma_{XX}$、残差方差 $\sigma_{YY}(1 - \rho_{XY}^2)$、无偏性、正交条件、勾股定理——这一组做完，即拥有一元线性回归的全部概率论基础。</li>
+<li><strong>4.46</strong>：用频率定义验证大数律的特例，为第五章热身。</li>
+</ul>
+<p>通用自查清单：① 用线性性前<strong>不需要</strong>检查独立性，用乘法公式与方差可加前<strong>必须</strong>检查；② $\mathrm{E}X^2$ 与 $(\mathrm{E}X)^2$ 是否混淆；③ 求函数期望时优先 LOTUS，不要先求分布；④ 计数变量优先尝试示性函数分解；⑤ 两阶段随机性（随机参数、随机项数）优先条件化 + 重期望。</p>
+
+    <nav class="pager">  <a href="03-random-vectors.html">
+    <span class="label">← 上一章</span>
+    <span class="title">随机向量及其分布</span>
+  </a>  <a href="05-characteristic-functions-and-limit-theorems.html" class="next">
+    <span class="label">下一章 →</span>
+    <span class="title">特征函数和概率极限定理</span>
+  </a></nav>
+  </article>
+</div>
+
+<footer>
+  <div class="set">
+    <span>概率论精讲</span>
+    <span>2026 · ZH-CN</span>
+  </div>
+  <div class="set">
+    <span>Mav</span>
+  </div>
+</footer>
+<div class="search-backdrop" id="search-overlay" role="dialog" aria-modal="true" aria-label="搜索" hidden>
+  <div class="search-modal">
+    <div class="search-input-wrap">
+      <input type="search" class="search-input" placeholder="搜索内容..." aria-label="搜索内容" autocomplete="off">
+      <kbd>ESC</kbd>
+    </div>
+    <div class="search-results" role="listbox" aria-label="搜索结果"></div>
+  </div>
+</div>
+
+<!-- Side Panel -->
+<div class="side-panel" id="side-panel">
+  <div class="side-panel-resize" id="side-panel-resize"></div>
+  <div class="side-panel-header">
+    <div class="side-panel-tabs">
+      <button class="side-panel-tab active" data-mode="sidenote">补充</button>
+      <button class="side-panel-tab" data-mode="notepad">笔记</button>
+    </div>
+    <button class="side-panel-close" aria-label="关闭">×</button>
+  </div>
+  <div class="side-panel-body"></div>
+</div>
+<button class="notepad-fab" id="notepad-fab" aria-label="便利贴">✎</button>
+
+<!-- Mobile TOC -->
+<button class="mtoc-fab" id="mtoc-fab" aria-label="目录">TOC</button>
+<div class="mtoc-drawer" id="mtoc-drawer">
+  <div class="mtoc-content"></div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/bash.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/typescript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/yaml.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/javascript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/json.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/python.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/css.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+<script>mermaid.initialize({startOnLoad:true, theme:'neutral', fontFamily:'Inter, sans-serif'});</script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}]});"></script>
+<script src="../assets/script.js"></script>
+
+</body>
+</html>

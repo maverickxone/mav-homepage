@@ -1,0 +1,1508 @@
+{
+  "documents": [
+    {
+      "id": "01-classical-model-and-probability-space",
+      "title": "古典概型和概率空间",
+      "chapter": "01",
+      "chapterTitle": "古典概型和概率空间",
+      "url": "chapters/01-classical-model-and-probability-space.html",
+      "body": "\n:::callout 📖 本讲义的用法\n本书是何书元《概率论》（北京大学出版社）的伴读讲义，章节编号与原书严格对应——本章 1.4 节讲解的就是原书 §1.4。原书负责严谨的定义、定理和习题；讲义负责回答原书不回答的三个问题：  这个概念为什么要被发明出来？这步推导是怎么想到的？这些零散的例题背后是什么共同的思想？   建议的读法是：先读讲义某一节，带着\"地图\"再去精读原书对应小节，最后做原书习题。\n:::\n\n   1.0 导言：这一章要建成什么\n\n打开任何一本概率论教材，第一章看起来都平平无奇：定义几个名词，数一数排列组合，算几道掷骰子的题。但何书元这本书的第一章其实在做一件相当有野心的事：  它要在一章之内，把概率从一个日常直觉改造成一门公理化的数学  。这个改造在历史上花了将近三百年——从 1654 年帕斯卡与费马通信讨论赌博问题，到 1933 年柯尔莫哥洛夫（Kolmogorov）给出公理化定义——而你要在两周的课时里走完它。所以这一章值得慢读。\n\n先把主线交代清楚。这一章回答的核心问题是：  \"事件 A 发生的概率是 P A \"这句话，在数学上到底是什么意思？  \n\n回答分三步走，恰好对应本章的三个阶段：\n\n  第一阶段（§1.1–§1.3）：朴素的定义  。先约定用集合的语言描述\"事件\"（§1.1），然后在\"每个结果等可能\"的前提下给出两个可以直接计算的概率定义——有限个结果时数个数（古典概型，§1.2），无穷多个结果时量体积（几何概率，§1.3）。这两个定义能解决很多问题，但它们的适用范围窄得令人不安：世界上大多数随机现象根本不是\"等可能\"的（明天下雨和不下雨等可能吗？），而且几何概率还会在 Bertrand 悖论上当场翻车。\n\n  第二阶段（§1.4–§1.5）：公理化  。柯尔莫哥洛夫的天才想法是：不再纠结概率\"是\"什么、\"从哪来\"，而是只规定概率必须\"满足\"什么。他从古典概型和几何概率中提炼出三条公共性质（非负、总量为 1、可列可加），宣布：任何满足这三条的函数都叫概率。这就是概率空间 $ \\Omega, \\mathcal F , P $（§1.4）。然后 §1.5 演示这套公理的威力：加法公式、Jordan 公式、概率的连续性，全部从三条公理推出来，不再依赖\"等可能\"。\n\n  第三阶段（§1.6–§1.10）：概率的演算  。有了地基，开始盖楼。条件概率回答\"信息如何改变概率\"（§1.6），独立性回答\"什么时候概率可以相乘\"（§1.7），全概率公式与贝叶斯公式给出\"分而治之\"和\"由果溯因\"两大计算模式（§1.8）。§1.9 和 §1.10 则是两扇通往深处的窗：频率与概率的关系（这是第五章大数律的预告）、赌徒破产模型（随机过程的预告）、Borel Cantelli 引理（概率论第一个真正深刻的定理）。\n\n一句话概括本章：  先造语言（集合），再立宪法（公理），然后立法（运算规则）  。下面开始。\n\n   要点 \n \n    本章的任务：把\"概率\"从直觉改造成公理化数学。\n    三阶段：朴素定义（等可能）→ 公理化（概率空间）→ 演算规则（条件概率、独立性、全概率/贝叶斯）。\n    古典概型和几何概率没有被抛弃，它们成为公理体系下的两个特例。\n\n   \n\n   1.1 试验与事件：先学会用集合说话\n\n  对应原书 §1.1。  \n\n    为什么第一节讲的是集合而不是概率\n\n概率是\"事件发生的可能性大小\"。要谈概率，得先说清楚什么是\"事件\"。而日常语言描述事件是出了名的含糊——\"明天可能下雨\"、\"这把牌不错\"——数学没法直接处理这种话。所以概率论做的第一件事，是强行给\"事件\"找一个精确的数学替身。找到的替身是：  集合  。\n\n这个翻译方案分三层：\n\n  试验（记作 $S$）  ：按一定想法去做、结果无法事先确定的事情。掷硬币、掷骰子、观测明天最高气温，都是试验。注意\"试验\"这个词的含义比日常用语宽泛得多——\"观察放学路上花的时间\"也是试验，因为结果事先不确定。\n\n  样本点（记作 $\\omega$）与样本空间（记作 $\\Omega$）  ：试验的每一个  可能结果  叫一个样本点；所有样本点收集成的集合叫样本空间：\n\n$$\n\\Omega = \\ \\omega \\mid \\omega \\text  是试验   S \\text  的样本点 \\ .\n$$\n\n掷一枚硬币，$\\Omega = \\ \\mathrm H , \\mathrm T \\ $（H = head 正面，T = tail 反面）；掷一颗骰子，$\\Omega = \\ 1,2,3,4,5,6\\ $。\n\n  事件  ：样本空间的  子集  。掷骰子时，\"掷出 3 点\"就是子集 $A = \\ 3\\ $，\"掷出偶数点\"就是子集 $B = \\ 2,4,"
+    },
+    {
+      "id": "01-classical-model-and-probability-space-10-导言这一章要建成什么",
+      "title": "1.0 导言：这一章要建成什么",
+      "chapter": "01",
+      "chapterTitle": "古典概型和概率空间",
+      "url": "chapters/01-classical-model-and-probability-space.html#10-导言这一章要建成什么",
+      "body": ""
+    },
+    {
+      "id": "01-classical-model-and-probability-space-11-试验与事件先学会用集合说话",
+      "title": "1.1 试验与事件：先学会用集合说话",
+      "chapter": "01",
+      "chapterTitle": "古典概型和概率空间",
+      "url": "chapters/01-classical-model-and-probability-space.html#11-试验与事件先学会用集合说话",
+      "body": ""
+    },
+    {
+      "id": "01-classical-model-and-probability-space-为什么第一节讲的是集合而不是概率",
+      "title": "为什么第一节讲的是集合而不是概率",
+      "chapter": "01",
+      "chapterTitle": "古典概型和概率空间",
+      "url": "chapters/01-classical-model-and-probability-space.html#为什么第一节讲的是集合而不是概率",
+      "body": ""
+    },
+    {
+      "id": "01-classical-model-and-probability-space-事件运算的quot翻译词典quot",
+      "title": "事件运算的&quot;翻译词典&quot;",
+      "chapter": "01",
+      "chapterTitle": "古典概型和概率空间",
+      "url": "chapters/01-classical-model-and-probability-space.html#事件运算的quot翻译词典quot",
+      "body": ""
+    },
+    {
+      "id": "01-classical-model-and-probability-space-值得牢记的两组恒等式",
+      "title": "值得牢记的两组恒等式",
+      "chapter": "01",
+      "chapterTitle": "古典概型和概率空间",
+      "url": "chapters/01-classical-model-and-probability-space.html#值得牢记的两组恒等式",
+      "body": ""
+    },
+    {
+      "id": "01-classical-model-and-probability-space-例-11-精讲样本空间取决于你问什么",
+      "title": "例 1.1 精讲：样本空间取决于你问什么",
+      "chapter": "01",
+      "chapterTitle": "古典概型和概率空间",
+      "url": "chapters/01-classical-model-and-probability-space.html#例-11-精讲样本空间取决于你问什么",
+      "body": ""
+    },
+    {
+      "id": "01-classical-model-and-probability-space-12-古典概型概率是quot数quot出来的",
+      "title": "1.2 古典概型：概率是&quot;数&quot;出来的",
+      "chapter": "01",
+      "chapterTitle": "古典概型和概率空间",
+      "url": "chapters/01-classical-model-and-probability-space.html#12-古典概型概率是quot数quot出来的",
+      "body": ""
+    },
+    {
+      "id": "01-classical-model-and-probability-space-从赌桌上诞生的定义",
+      "title": "从赌桌上诞生的定义",
+      "chapter": "01",
+      "chapterTitle": "古典概型和概率空间",
+      "url": "chapters/01-classical-model-and-probability-space.html#从赌桌上诞生的定义",
+      "body": ""
+    },
+    {
+      "id": "01-classical-model-and-probability-space-计数的五件武器",
+      "title": "计数的五件武器",
+      "chapter": "01",
+      "chapterTitle": "古典概型和概率空间",
+      "url": "chapters/01-classical-model-and-probability-space.html#计数的五件武器",
+      "body": ""
+    },
+    {
+      "id": "01-classical-model-and-probability-space-例题精讲",
+      "title": "例题精讲",
+      "chapter": "01",
+      "chapterTitle": "古典概型和概率空间",
+      "url": "chapters/01-classical-model-and-probability-space.html#例题精讲",
+      "body": ""
+    },
+    {
+      "id": "01-classical-model-and-probability-space-13-几何概率从数个数到量体积",
+      "title": "1.3 几何概率：从数个数到量体积",
+      "chapter": "01",
+      "chapterTitle": "古典概型和概率空间",
+      "url": "chapters/01-classical-model-and-probability-space.html#13-几何概率从数个数到量体积",
+      "body": ""
+    },
+    {
+      "id": "01-classical-model-and-probability-space-无穷多个等可能结果怎么办",
+      "title": "无穷多个等可能结果怎么办",
+      "chapter": "01",
+      "chapterTitle": "古典概型和概率空间",
+      "url": "chapters/01-classical-model-and-probability-space.html#无穷多个等可能结果怎么办",
+      "body": ""
+    },
+    {
+      "id": "01-classical-model-and-probability-space-bertrand-悖论一道裂缝",
+      "title": "Bertrand 悖论：一道裂缝",
+      "chapter": "01",
+      "chapterTitle": "古典概型和概率空间",
+      "url": "chapters/01-classical-model-and-probability-space.html#bertrand-悖论一道裂缝",
+      "body": ""
+    },
+    {
+      "id": "01-classical-model-and-probability-space-14-概率空间给概率立公理",
+      "title": "1.4 概率空间：给概率立公理",
+      "chapter": "01",
+      "chapterTitle": "古典概型和概率空间",
+      "url": "chapters/01-classical-model-and-probability-space.html#14-概率空间给概率立公理",
+      "body": ""
+    },
+    {
+      "id": "01-classical-model-and-probability-space-第一个麻烦不是所有集合都配叫quot事件quot",
+      "title": "第一个麻烦：不是所有集合都配叫&quot;事件&quot;",
+      "chapter": "01",
+      "chapterTitle": "古典概型和概率空间",
+      "url": "chapters/01-classical-model-and-probability-space.html#第一个麻烦不是所有集合都配叫quot事件quot",
+      "body": ""
+    },
+    {
+      "id": "01-classical-model-and-probability-space-第二个麻烦的解决概率的三条公理",
+      "title": "第二个麻烦的解决：概率的三条公理",
+      "chapter": "01",
+      "chapterTitle": "古典概型和概率空间",
+      "url": "chapters/01-classical-model-and-probability-space.html#第二个麻烦的解决概率的三条公理",
+      "body": ""
+    },
+    {
+      "id": "01-classical-model-and-probability-space-为什么偏偏是quot可列quot可加",
+      "title": "为什么偏偏是&quot;可列&quot;可加？",
+      "chapter": "01",
+      "chapterTitle": "古典概型和概率空间",
+      "url": "chapters/01-classical-model-and-probability-space.html#为什么偏偏是quot可列quot可加",
+      "body": ""
+    },
+    {
+      "id": "01-classical-model-and-probability-space-从公理出发的第一次演算",
+      "title": "从公理出发的第一次演算",
+      "chapter": "01",
+      "chapterTitle": "古典概型和概率空间",
+      "url": "chapters/01-classical-model-and-probability-space.html#从公理出发的第一次演算",
+      "body": ""
+    },
+    {
+      "id": "01-classical-model-and-probability-space-15-概率的性质三条公理能长出什么",
+      "title": "1.5 概率的性质：三条公理能长出什么",
+      "chapter": "01",
+      "chapterTitle": "古典概型和概率空间",
+      "url": "chapters/01-classical-model-and-probability-space.html#15-概率的性质三条公理能长出什么",
+      "body": ""
+    },
+    {
+      "id": "01-classical-model-and-probability-space-a-加法公式家族",
+      "title": "A. 加法公式家族",
+      "chapter": "01",
+      "chapterTitle": "古典概型和概率空间",
+      "url": "chapters/01-classical-model-and-probability-space.html#a-加法公式家族",
+      "body": ""
+    },
+    {
+      "id": "01-classical-model-and-probability-space-b-概率的连续性",
+      "title": "B. 概率的连续性",
+      "chapter": "01",
+      "chapterTitle": "古典概型和概率空间",
+      "url": "chapters/01-classical-model-and-probability-space.html#b-概率的连续性",
+      "body": ""
+    },
+    {
+      "id": "01-classical-model-and-probability-space-16-条件概率信息如何改变概率",
+      "title": "1.6 条件概率：信息如何改变概率",
+      "chapter": "01",
+      "chapterTitle": "古典概型和概率空间",
+      "url": "chapters/01-classical-model-and-probability-space.html#16-条件概率信息如何改变概率",
+      "body": ""
+    },
+    {
+      "id": "01-classical-model-and-probability-space-信息把样本空间quot剪小quot了",
+      "title": "信息把样本空间&quot;剪小&quot;了",
+      "chapter": "01",
+      "chapterTitle": "古典概型和概率空间",
+      "url": "chapters/01-classical-model-and-probability-space.html#信息把样本空间quot剪小quot了",
+      "body": ""
+    },
+    {
+      "id": "01-classical-model-and-probability-space-条件概率本身就是一个概率",
+      "title": "条件概率本身就是一个概率",
+      "chapter": "01",
+      "chapterTitle": "古典概型和概率空间",
+      "url": "chapters/01-classical-model-and-probability-space.html#条件概率本身就是一个概率",
+      "body": ""
+    },
+    {
+      "id": "01-classical-model-and-probability-space-乘法公式按时间顺序拆解概率",
+      "title": "乘法公式：按时间顺序拆解概率",
+      "chapter": "01",
+      "chapterTitle": "古典概型和概率空间",
+      "url": "chapters/01-classical-model-and-probability-space.html#乘法公式按时间顺序拆解概率",
+      "body": ""
+    },
+    {
+      "id": "01-classical-model-and-probability-space-17-独立性什么时候概率可以相乘",
+      "title": "1.7 独立性：什么时候概率可以相乘",
+      "chapter": "01",
+      "chapterTitle": "古典概型和概率空间",
+      "url": "chapters/01-classical-model-and-probability-space.html#17-独立性什么时候概率可以相乘",
+      "body": ""
+    },
+    {
+      "id": "01-classical-model-and-probability-space-从quot不影响quot到一个乘法等式",
+      "title": "从&quot;不影响&quot;到一个乘法等式",
+      "chapter": "01",
+      "chapterTitle": "古典概型和概率空间",
+      "url": "chapters/01-classical-model-and-probability-space.html#从quot不影响quot到一个乘法等式",
+      "body": ""
+    },
+    {
+      "id": "01-classical-model-and-probability-space-多个事件的独立一个陷阱",
+      "title": "多个事件的独立：一个陷阱",
+      "chapter": "01",
+      "chapterTitle": "古典概型和概率空间",
+      "url": "chapters/01-classical-model-and-probability-space.html#多个事件的独立一个陷阱",
+      "body": ""
+    },
+    {
+      "id": "01-classical-model-and-probability-space-两个应用小概率-大量重复",
+      "title": "两个应用：小概率 × 大量重复",
+      "chapter": "01",
+      "chapterTitle": "古典概型和概率空间",
+      "url": "chapters/01-classical-model-and-probability-space.html#两个应用小概率-大量重复",
+      "body": ""
+    },
+    {
+      "id": "01-classical-model-and-probability-space-18-全概率公式与贝叶斯公式分而治之由果溯因",
+      "title": "1.8 全概率公式与贝叶斯公式：分而治之，由果溯因",
+      "chapter": "01",
+      "chapterTitle": "古典概型和概率空间",
+      "url": "chapters/01-classical-model-and-probability-space.html#18-全概率公式与贝叶斯公式分而治之由果溯因",
+      "body": ""
+    },
+    {
+      "id": "01-classical-model-and-probability-space-全概率公式加权平均的艺术",
+      "title": "全概率公式：加权平均的艺术",
+      "chapter": "01",
+      "chapterTitle": "古典概型和概率空间",
+      "url": "chapters/01-classical-model-and-probability-space.html#全概率公式加权平均的艺术",
+      "body": ""
+    },
+    {
+      "id": "01-classical-model-and-probability-space-贝叶斯公式概率的反向流动",
+      "title": "贝叶斯公式：概率的反向流动",
+      "chapter": "01",
+      "chapterTitle": "古典概型和概率空间",
+      "url": "chapters/01-classical-model-and-probability-space.html#贝叶斯公式概率的反向流动",
+      "body": ""
+    },
+    {
+      "id": "01-classical-model-and-probability-space-19-频率赌徒破产与两个quot另类quot概率空间",
+      "title": "1.9 频率、赌徒破产与两个&quot;另类&quot;概率空间",
+      "chapter": "01",
+      "chapterTitle": "古典概型和概率空间",
+      "url": "chapters/01-classical-model-and-probability-space.html#19-频率赌徒破产与两个quot另类quot概率空间",
+      "body": ""
+    },
+    {
+      "id": "01-classical-model-and-probability-space-a-概率与频率一笔历史悬案",
+      "title": "A. 概率与频率：一笔历史悬案",
+      "chapter": "01",
+      "chapterTitle": "古典概型和概率空间",
+      "url": "chapters/01-classical-model-and-probability-space.html#a-概率与频率一笔历史悬案",
+      "body": ""
+    },
+    {
+      "id": "01-classical-model-and-probability-space-b-赌徒破产模型递推的威力",
+      "title": "B. 赌徒破产模型：递推的威力",
+      "chapter": "01",
+      "chapterTitle": "古典概型和概率空间",
+      "url": "chapters/01-classical-model-and-probability-space.html#b-赌徒破产模型递推的威力",
+      "body": ""
+    },
+    {
+      "id": "01-classical-model-and-probability-space-c-概率空间举例一个quot不是概率quot的概率",
+      "title": "C. 概率空间举例：一个&quot;不是概率&quot;的概率",
+      "chapter": "01",
+      "chapterTitle": "古典概型和概率空间",
+      "url": "chapters/01-classical-model-and-probability-space.html#c-概率空间举例一个quot不是概率quot的概率",
+      "body": ""
+    },
+    {
+      "id": "01-classical-model-and-probability-space-110-borel-cantelli-引理与遗传模型选学",
+      "title": "1.10 Borel-Cantelli 引理与遗传模型（选学）",
+      "chapter": "01",
+      "chapterTitle": "古典概型和概率空间",
+      "url": "chapters/01-classical-model-and-probability-space.html#110-borel-cantelli-引理与遗传模型选学",
+      "body": ""
+    },
+    {
+      "id": "01-classical-model-and-probability-space-a-事件的上下极限无穷多次发生",
+      "title": "A. 事件的上下极限：无穷多次发生",
+      "chapter": "01",
+      "chapterTitle": "古典概型和概率空间",
+      "url": "chapters/01-classical-model-and-probability-space.html#a-事件的上下极限无穷多次发生",
+      "body": ""
+    },
+    {
+      "id": "01-classical-model-and-probability-space-borel-cantelli-引理零一之刃",
+      "title": "Borel-Cantelli 引理：零一之刃",
+      "chapter": "01",
+      "chapterTitle": "古典概型和概率空间",
+      "url": "chapters/01-classical-model-and-probability-space.html#borel-cantelli-引理零一之刃",
+      "body": ""
+    },
+    {
+      "id": "01-classical-model-and-probability-space-b-遗传模型全概率公式的实战",
+      "title": "B. 遗传模型：全概率公式的实战",
+      "chapter": "01",
+      "chapterTitle": "古典概型和概率空间",
+      "url": "chapters/01-classical-model-and-probability-space.html#b-遗传模型全概率公式的实战",
+      "body": ""
+    },
+    {
+      "id": "01-classical-model-and-probability-space-本章收束我们建成了什么",
+      "title": "本章收束：我们建成了什么",
+      "chapter": "01",
+      "chapterTitle": "古典概型和概率空间",
+      "url": "chapters/01-classical-model-and-probability-space.html#本章收束我们建成了什么",
+      "body": ""
+    },
+    {
+      "id": "01-classical-model-and-probability-space-公式速查卡",
+      "title": "公式速查卡",
+      "chapter": "01",
+      "chapterTitle": "古典概型和概率空间",
+      "url": "chapters/01-classical-model-and-probability-space.html#公式速查卡",
+      "body": ""
+    },
+    {
+      "id": "01-classical-model-and-probability-space-习题指引",
+      "title": "习题指引",
+      "chapter": "01",
+      "chapterTitle": "古典概型和概率空间",
+      "url": "chapters/01-classical-model-and-probability-space.html#习题指引",
+      "body": ""
+    },
+    {
+      "id": "02-random-variables-and-distributions",
+      "title": "随机变量和概率分布",
+      "chapter": "02",
+      "chapterTitle": "随机变量和概率分布",
+      "url": "chapters/02-random-variables-and-distributions.html",
+      "body": "\n:::callout 📖 本章导读\n第一章结尾指出，概率空间 $ \\Omega, \\mathcal F , P $ 只提供了谈论\"事件\"的框架，而实际问题关心的往往是  数值  ——掷出的点数、放射出的粒子数、仪器的寿命。本章完成从\"事件\"到\"随机的数\"的过渡。建议先读本讲义各节把握动机与结构，再精读原书对应小节，最后按文末指引做习题二。\n:::\n\n   2.0 导言：为什么需要随机变量\n\n第一章建立的体系有一个明显的表达瓶颈。考察\"掷 $n$ 颗骰子\"这个试验：若只用事件的语言，则\"点数之和为 7\"、\"点数之和为 8\"、\"最大点数是 6\"……每个陈述都要单独定义一个事件，事件之间的算术关系（和、差、极值）在集合语言中无法直接表达。而这些陈述有一个公共的来源——它们都是关于同一个  数值   \"点数之和\" 的断言。自然的做法是：把这个数值本身作为研究对象。\n\n这就是  随机变量  的思想：在样本空间 $\\Omega$ 上定义一个实值函数 $X \\omega $，把每个试验结果 $\\omega$ 映为一个实数。于是\"点数之和为 7\"变成 $\\ X = 7\\ $，\"点数之和不超过 10\"变成 $\\ X \\leq 10\\ $——无穷多个事件被一个函数统一收纳。更重要的是，随机变量作为数  可以参与运算  ：$X + Y$、$X^2$、$\\max\\ X, Y\\ $ 都有意义，微积分的全部工具由此进入概率论。可以说，第一章造出了概率论的\"语法\"，本章引入的随机变量才是它的\"主语\"；此后各章（期望、极限定理、随机过程）研究的无一例外都是随机变量。\n\n本章的逻辑线索分四步：\n\n1.   定义对象（§2.1）  ：什么样的函数才有资格称为随机变量？答案涉及可测性——这是本章唯一的抽象难点，我们将说明这个技术条件为何必不可少。\n2.   刻画规律（§2.2–§2.4）  ：随机变量的概率规律称为它的  分布  。离散型用分布列（§2.2），连续型用概率密度（§2.3），而分布函数（§2.4）是覆盖一切类型的统一语言。沿途将系统研究八个基本分布，它们是后续所有章节的\"标准零件库\"。\n3.   变换规律（§2.5）  ：已知 $X$ 的分布，如何求 $Y = g X $ 的分布。\n4.   反向工具（§2.6，选学）  ：由分布反解数值——分位数，以及由此派生的随机数生成原理。\n\n贯穿全章的一个观念转变值得预先指出：随机变量虽被定义为 $\\Omega$ 上的函数，但概率论  并不关心这个函数的具体解析形式，只关心它的分布  （原书例 1.6 对此有专门讨论）。\"$X$ 服从什么分布\"取代\"$X \\omega $ 如何定义\"成为核心问题——这正是\"分布\"一词在本章标题中出现的原因。\n\n   要点 \n \n    随机变量把试验结果数值化，使事件的代数运算与微积分工具得以进入概率论。\n    本章主线：定义对象（可测性）→ 刻画规律（分布列 / 密度 / 分布函数）→ 变换规律（函数的分布）→ 反向工具（分位数）。\n    观念转变：研究重心从函数 $X \\omega $ 的具体形式转向它的分布。\n\n   \n\n   2.1 随机变量：把随机结果映为实数\n\n  对应原书 §2.1。  \n\n    A. 定义中的技术条件从何而来\n\n朴素地说，\"定义在样本空间 $\\Omega$ 上的实值函数就是随机变量\"。原书的三个引入例（示性函数 $\\mathrm I  A$、扑克牌的点数、收缩压的测量值）都符合这个直觉。但严格的定义多了一个限制条件：\n\n  定义 1.1   设 $ \\Omega, \\mathcal F  $ 是可测空间。若 $\\Omega$ 上的函数 $X \\omega $ 满足：对任何实数 $x$，\n\n$$\n\\ \\omega \\mid X \\omega  \\leq x\\  \\in \\mathcal F , \\tag 1.1 \n$$\n\n则称 $X$ 是 $ \\Omega, \\mathcal F  $ 上的  随机变量  。集合 $\\ \\omega \\mid X \\omega  \\leq x\\ $ 以后简记为 $\\ X \\leq x\\ $。\n\n条件  1.1  的必要性可以从概率论的目标反推出来。引入 $X$ 之后，我们必然要计算 $P X \\leq x $、$P a < X \\leq b $ 这类概率；而第一章已经确立，$P$   只对 $\\mathcal F $ 中的集合（即事件）有定义  ——$\\mathcal F $ 之外的集合根本没有概率可言。因此，若想让\"$X \\leq x$\"这句话对每个 $x$ 都有概率，就必须要求 $\\ X \\leq x\\ $ 对每个 $x$ 都落在 $\\mathcal F $ 中。条件  1.1  不是数学家的洁癖，"
+    },
+    {
+      "id": "02-random-variables-and-distributions-20-导言为什么需要随机变量",
+      "title": "2.0 导言：为什么需要随机变量",
+      "chapter": "02",
+      "chapterTitle": "随机变量和概率分布",
+      "url": "chapters/02-random-variables-and-distributions.html#20-导言为什么需要随机变量",
+      "body": ""
+    },
+    {
+      "id": "02-random-variables-and-distributions-21-随机变量把随机结果映为实数",
+      "title": "2.1 随机变量：把随机结果映为实数",
+      "chapter": "02",
+      "chapterTitle": "随机变量和概率分布",
+      "url": "chapters/02-random-variables-and-distributions.html#21-随机变量把随机结果映为实数",
+      "body": ""
+    },
+    {
+      "id": "02-random-variables-and-distributions-a-定义中的技术条件从何而来",
+      "title": "A. 定义中的技术条件从何而来",
+      "chapter": "02",
+      "chapterTitle": "随机变量和概率分布",
+      "url": "chapters/02-random-variables-and-distributions.html#a-定义中的技术条件从何而来",
+      "body": ""
+    },
+    {
+      "id": "02-random-variables-and-distributions-b-borel-集实数轴上的事件域",
+      "title": "B. Borel 集：实数轴上的事件域",
+      "chapter": "02",
+      "chapterTitle": "随机变量和概率分布",
+      "url": "chapters/02-random-variables-and-distributions.html#b-borel-集实数轴上的事件域",
+      "body": ""
+    },
+    {
+      "id": "02-random-variables-and-distributions-c-随机变量的独立性",
+      "title": "C. 随机变量的独立性",
+      "chapter": "02",
+      "chapterTitle": "随机变量和概率分布",
+      "url": "chapters/02-random-variables-and-distributions.html#c-随机变量的独立性",
+      "body": ""
+    },
+    {
+      "id": "02-random-variables-and-distributions-22-离散型随机变量五种基本分布及其生成机制",
+      "title": "2.2 离散型随机变量：五种基本分布及其生成机制",
+      "chapter": "02",
+      "chapterTitle": "随机变量和概率分布",
+      "url": "chapters/02-random-variables-and-distributions.html#22-离散型随机变量五种基本分布及其生成机制",
+      "body": ""
+    },
+    {
+      "id": "02-random-variables-and-distributions-分布列离散随机变量的全部信息",
+      "title": "分布列：离散随机变量的全部信息",
+      "chapter": "02",
+      "chapterTitle": "随机变量和概率分布",
+      "url": "chapters/02-random-variables-and-distributions.html#分布列离散随机变量的全部信息",
+      "body": ""
+    },
+    {
+      "id": "02-random-variables-and-distributions-a-两点分布-math_block_155随机性的原子",
+      "title": "A. 两点分布 $B(1, p)$：随机性的原子",
+      "chapter": "02",
+      "chapterTitle": "随机变量和概率分布",
+      "url": "chapters/02-random-variables-and-distributions.html#a-两点分布-math_block_155随机性的原子",
+      "body": ""
+    },
+    {
+      "id": "02-random-variables-and-distributions-b-二项分布-math_block_163独立重复试验的成功计数",
+      "title": "B. 二项分布 $B(n, p)$：独立重复试验的成功计数",
+      "chapter": "02",
+      "chapterTitle": "随机变量和概率分布",
+      "url": "chapters/02-random-variables-and-distributions.html#b-二项分布-math_block_163独立重复试验的成功计数",
+      "body": ""
+    },
+    {
+      "id": "02-random-variables-and-distributions-c-泊松分布-math_block_182稀有事件的计数法则",
+      "title": "C. 泊松分布 $\\mathcal{P}(\\lambda)$：稀有事件的计数法则",
+      "chapter": "02",
+      "chapterTitle": "随机变量和概率分布",
+      "url": "chapters/02-random-variables-and-distributions.html#c-泊松分布-math_block_182稀有事件的计数法则",
+      "body": ""
+    },
+    {
+      "id": "02-random-variables-and-distributions-d-超几何分布-math_block_216无放回抽样的计数",
+      "title": "D. 超几何分布 $H(n, M, N)$：无放回抽样的计数",
+      "chapter": "02",
+      "chapterTitle": "随机变量和概率分布",
+      "url": "chapters/02-random-variables-and-distributions.html#d-超几何分布-math_block_216无放回抽样的计数",
+      "body": ""
+    },
+    {
+      "id": "02-random-variables-and-distributions-e-几何分布与帕斯卡分布等待时间的分布",
+      "title": "E. 几何分布与帕斯卡分布：等待时间的分布",
+      "chapter": "02",
+      "chapterTitle": "随机变量和概率分布",
+      "url": "chapters/02-random-variables-and-distributions.html#e-几何分布与帕斯卡分布等待时间的分布",
+      "body": ""
+    },
+    {
+      "id": "02-random-variables-and-distributions-23-连续型随机变量概率密度与四个基本分布",
+      "title": "2.3 连续型随机变量：概率密度与四个基本分布",
+      "chapter": "02",
+      "chapterTitle": "随机变量和概率分布",
+      "url": "chapters/02-random-variables-and-distributions.html#23-连续型随机变量概率密度与四个基本分布",
+      "body": ""
+    },
+    {
+      "id": "02-random-variables-and-distributions-概率密度分布列的连续化身",
+      "title": "概率密度：分布列的连续化身",
+      "chapter": "02",
+      "chapterTitle": "随机变量和概率分布",
+      "url": "chapters/02-random-variables-and-distributions.html#概率密度分布列的连续化身",
+      "body": ""
+    },
+    {
+      "id": "02-random-variables-and-distributions-a-均匀分布-math_block_282几何概率的化身",
+      "title": "A. 均匀分布 $\\mathcal{U}(a, b)$：几何概率的化身",
+      "chapter": "02",
+      "chapterTitle": "随机变量和概率分布",
+      "url": "chapters/02-random-variables-and-distributions.html#a-均匀分布-math_block_282几何概率的化身",
+      "body": ""
+    },
+    {
+      "id": "02-random-variables-and-distributions-b-指数分布-math_block_291连续的无记忆等待",
+      "title": "B. 指数分布 $\\mathcal{E}(\\lambda)$：连续的无记忆等待",
+      "chapter": "02",
+      "chapterTitle": "随机变量和概率分布",
+      "url": "chapters/02-random-variables-and-distributions.html#b-指数分布-math_block_291连续的无记忆等待",
+      "body": ""
+    },
+    {
+      "id": "02-random-variables-and-distributions-c-正态分布-math_block_314概率论的中心对象",
+      "title": "C. 正态分布 $N(\\mu, \\sigma^2)$：概率论的中心对象",
+      "chapter": "02",
+      "chapterTitle": "随机变量和概率分布",
+      "url": "chapters/02-random-variables-and-distributions.html#c-正态分布-math_block_314概率论的中心对象",
+      "body": ""
+    },
+    {
+      "id": "02-random-variables-and-distributions-d-gamma-分布-math_block_339非负数据的弹性家族",
+      "title": "D. Gamma 分布 $\\Gamma(\\alpha, \\beta)$：非负数据的弹性家族",
+      "chapter": "02",
+      "chapterTitle": "随机变量和概率分布",
+      "url": "chapters/02-random-variables-and-distributions.html#d-gamma-分布-math_block_339非负数据的弹性家族",
+      "body": ""
+    },
+    {
+      "id": "02-random-variables-and-distributions-24-概率分布函数统一离散与连续的通用语言",
+      "title": "2.4 概率分布函数：统一离散与连续的通用语言",
+      "chapter": "02",
+      "chapterTitle": "随机变量和概率分布",
+      "url": "chapters/02-random-variables-and-distributions.html#24-概率分布函数统一离散与连续的通用语言",
+      "body": ""
+    },
+    {
+      "id": "02-random-variables-and-distributions-为什么还需要第三种刻画",
+      "title": "为什么还需要第三种刻画",
+      "chapter": "02",
+      "chapterTitle": "随机变量和概率分布",
+      "url": "chapters/02-random-variables-and-distributions.html#为什么还需要第三种刻画",
+      "body": ""
+    },
+    {
+      "id": "02-random-variables-and-distributions-分布函数的特征性质",
+      "title": "分布函数的特征性质",
+      "chapter": "02",
+      "chapterTitle": "随机变量和概率分布",
+      "url": "chapters/02-random-variables-and-distributions.html#分布函数的特征性质",
+      "body": ""
+    },
+    {
+      "id": "02-random-variables-and-distributions-从分布函数恢复密度",
+      "title": "从分布函数恢复密度",
+      "chapter": "02",
+      "chapterTitle": "随机变量和概率分布",
+      "url": "chapters/02-random-variables-and-distributions.html#从分布函数恢复密度",
+      "body": ""
+    },
+    {
+      "id": "02-random-variables-and-distributions-25-随机变量函数的分布分布函数法",
+      "title": "2.5 随机变量函数的分布：分布函数法",
+      "chapter": "02",
+      "chapterTitle": "随机变量和概率分布",
+      "url": "chapters/02-random-variables-and-distributions.html#25-随机变量函数的分布分布函数法",
+      "body": ""
+    },
+    {
+      "id": "02-random-variables-and-distributions-问题与基本方法",
+      "title": "问题与基本方法",
+      "chapter": "02",
+      "chapterTitle": "随机变量和概率分布",
+      "url": "chapters/02-random-variables-and-distributions.html#问题与基本方法",
+      "body": ""
+    },
+    {
+      "id": "02-random-variables-and-distributions-多分支公式",
+      "title": "多分支公式",
+      "chapter": "02",
+      "chapterTitle": "随机变量和概率分布",
+      "url": "chapters/02-random-variables-and-distributions.html#多分支公式",
+      "body": ""
+    },
+    {
+      "id": "02-random-variables-and-distributions-26-随机变量的-p-分位数选学",
+      "title": "2.6 随机变量的 p 分位数（选学）",
+      "chapter": "02",
+      "chapterTitle": "随机变量和概率分布",
+      "url": "chapters/02-random-variables-and-distributions.html#26-随机变量的-p-分位数选学",
+      "body": ""
+    },
+    {
+      "id": "02-random-variables-and-distributions-分布函数的quot反问题quot",
+      "title": "分布函数的&quot;反问题&quot;",
+      "chapter": "02",
+      "chapterTitle": "随机变量和概率分布",
+      "url": "chapters/02-random-variables-and-distributions.html#分布函数的quot反问题quot",
+      "body": ""
+    },
+    {
+      "id": "02-random-variables-and-distributions-逆变换法均匀分布生成一切分布",
+      "title": "逆变换法：均匀分布生成一切分布",
+      "chapter": "02",
+      "chapterTitle": "随机变量和概率分布",
+      "url": "chapters/02-random-variables-and-distributions.html#逆变换法均匀分布生成一切分布",
+      "body": ""
+    },
+    {
+      "id": "02-random-variables-and-distributions-本章收束单变量世界的完整地图",
+      "title": "本章收束：单变量世界的完整地图",
+      "chapter": "02",
+      "chapterTitle": "随机变量和概率分布",
+      "url": "chapters/02-random-variables-and-distributions.html#本章收束单变量世界的完整地图",
+      "body": ""
+    },
+    {
+      "id": "02-random-variables-and-distributions-公式速查卡",
+      "title": "公式速查卡",
+      "chapter": "02",
+      "chapterTitle": "随机变量和概率分布",
+      "url": "chapters/02-random-variables-and-distributions.html#公式速查卡",
+      "body": ""
+    },
+    {
+      "id": "02-random-variables-and-distributions-习题指引",
+      "title": "习题指引",
+      "chapter": "02",
+      "chapterTitle": "随机变量和概率分布",
+      "url": "chapters/02-random-variables-and-distributions.html#习题指引",
+      "body": ""
+    },
+    {
+      "id": "03-random-vectors",
+      "title": "随机向量及其分布",
+      "chapter": "03",
+      "chapterTitle": "随机向量及其分布",
+      "url": "chapters/03-random-vectors.html",
+      "body": "\n:::callout 📖 本章导读\n本章对应原书第三章。建议先读本讲义某一节获得整体图景，再精读原书对应小节，最后完成习题。本章的计算量在全书居首，多数课程的期中、期末难题也集中于此；但支撑这些计算的思想只有少数几条，本讲义的任务是把它们明确地陈述出来。\n:::\n\n   3.0 导言：从一个随机变量到一组随机变量\n\n第二章建立了单个随机变量的理论：分布函数、概率分布（离散型）与概率密度（连续型）、随机变量函数的分布。然而实际问题极少只涉及一个随机量。气温与用电负荷、弹落点的横坐标与纵坐标、一支股票的今日收益与明日收益——我们真正关心的往往是  若干随机变量之间的联合行为  ：它们如何相互制约、一个的取值如何改变另一个的分布、它们的函数（和、差、最大值）又服从什么分布。\n\n把 $n$ 个随机变量并列成 $\\mathbf X  =  X 1, X 2, \\cdots, X n $，就得到  随机向量  。本章围绕它展开五个层层递进的问题：\n\n1.   如何描述联合行为？  ——联合分布函数、联合概率分布（离散）与联合密度（连续）（§3.1–§3.3）。这里出现全章第一个核心观念：  联合分布的信息严格多于全体边缘分布的信息  。知道每个分量各自的分布，并不能确定它们作为整体的行为。\n2.   何时可以把联合拆成边缘的乘积？  ——独立性的各种等价判别（§3.2B、§3.3D）。独立是\"联合 = 边缘乘积\"这一特殊情形，它使多维问题退化为一维问题的组合。\n3.   随机向量的函数服从什么分布？  ——分布函数法与变换法（§3.4）。卷积公式、正态分布的可加性、瑞利分布与柯西分布都在此产生。\n4.   已知一部分分量的取值，其余分量的分布如何更新？  ——条件分布与条件密度（§3.5）。第一章的条件概率在这里升级为处理连续型随机变量的精细工具，并孕育出\"回归\"这一统计学的中心概念。\n5.   把观测值从小到大排序后会发生什么？  ——次序统计量（§3.6）。极值问题（最大降雨量、最短寿命）与数理统计的诸多方法都以它为基础。\n\n贯穿全章的技术主线只有一条：  概率 = 密度在区域上的积分  。边缘密度是\"把联合密度沿某些方向积掉\"，条件密度是\"把联合密度沿某条切片重新归一化\"，函数的分布是\"把密度在原像区域上积分\"。因此本章对二重积分的要求很高——确定积分限的能力，即\"先画支撑集、再定上下限\"的功夫，是本章一切计算的地基。\n\n   要点 \n \n    随机向量 = 定义在同一概率空间上的一组随机变量；研究对象从\"各自的分布\"升级为\"联合行为\"。\n    全章五问：联合描述 → 独立判别 → 函数的分布 → 条件分布 → 次序统计量。\n    技术主线：概率 = 密度的区域积分；确定积分限是本章的基本功。\n\n   \n\n   3.1 随机向量及其联合分布：一个函数管住全部信息\n\n  对应原书 §3.1。  \n\n    联合分布函数\n\n  定义 1.1–1.2   若 $X 1, X 2, \\cdots, X n$ 都是概率空间 $ \\Omega, \\mathcal F , P $ 上的随机变量，则称 $\\mathbf X  =  X 1, \\cdots, X n $ 为 $n$ 维  随机向量  ；称 $\\mathbf R ^n$ 上的函数\n\n$$\nF x 1, x 2, \\cdots, x n  = P X 1 \\leq x 1, X 2 \\leq x 2, \\cdots, X n \\leq x n  \\tag 1.1 \n$$\n\n为 $\\mathbf X $ 的  联合分布函数  （简称联合分布）。\n\n注意定义中的一个细节：所有分量必须定义在  同一个  概率空间上。这不是形式上的要求——只有生活在同一个样本空间里，\"$X 1 \\leq x 1$ 与 $X 2 \\leq x 2$ 同时发生\"才是一个合法的事件。逗号在概率记号中表示事件的交：$P X \\leq x, Y \\leq y  = P \\ X \\leq x\\  \\cap \\ Y \\leq y\\  $。\n\n联合分布函数继承了一维分布函数的基本性质（关于每个自变量单调不减、右连续、在各变元趋于 $ \\infty$ 时趋于 0、全部趋于 $+\\infty$ 时趋于 1），但二维情形多出一条一维所没有的约束。以 $n = 2$ 为例，对矩形 $D = \\  x,y  \\mid a < x \\leq b,\\ c < y \\leq d\\ $，用容斥的方式（原书例 1.1）可得\n\n$$\nP a < X \\leq b,\\ c < Y \\leq d  = F b,d    F b,c    F a,d  + F a,c  \\geq 0. \\tag 1.3–1.4 \n$$\n\n推导本身值得复现一遍："
+    },
+    {
+      "id": "03-random-vectors-30-导言从一个随机变量到一组随机变量",
+      "title": "3.0 导言：从一个随机变量到一组随机变量",
+      "chapter": "03",
+      "chapterTitle": "随机向量及其分布",
+      "url": "chapters/03-random-vectors.html#30-导言从一个随机变量到一组随机变量",
+      "body": ""
+    },
+    {
+      "id": "03-random-vectors-31-随机向量及其联合分布一个函数管住全部信息",
+      "title": "3.1 随机向量及其联合分布：一个函数管住全部信息",
+      "chapter": "03",
+      "chapterTitle": "随机向量及其分布",
+      "url": "chapters/03-random-vectors.html#31-随机向量及其联合分布一个函数管住全部信息",
+      "body": ""
+    },
+    {
+      "id": "03-random-vectors-联合分布函数",
+      "title": "联合分布函数",
+      "chapter": "03",
+      "chapterTitle": "随机向量及其分布",
+      "url": "chapters/03-random-vectors.html#联合分布函数",
+      "body": ""
+    },
+    {
+      "id": "03-random-vectors-边缘分布向低维投影",
+      "title": "边缘分布：向低维投影",
+      "chapter": "03",
+      "chapterTitle": "随机向量及其分布",
+      "url": "chapters/03-random-vectors.html#边缘分布向低维投影",
+      "body": ""
+    },
+    {
+      "id": "03-random-vectors-32-离散型随机向量概率分布表及其行列求和",
+      "title": "3.2 离散型随机向量：概率分布表及其行列求和",
+      "chapter": "03",
+      "chapterTitle": "随机向量及其分布",
+      "url": "chapters/03-random-vectors.html#32-离散型随机向量概率分布表及其行列求和",
+      "body": ""
+    },
+    {
+      "id": "03-random-vectors-联合概率分布与边缘分布",
+      "title": "联合概率分布与边缘分布",
+      "chapter": "03",
+      "chapterTitle": "随机向量及其分布",
+      "url": "chapters/03-random-vectors.html#联合概率分布与边缘分布",
+      "body": ""
+    },
+    {
+      "id": "03-random-vectors-多项分布二项分布的多维推广",
+      "title": "多项分布：二项分布的多维推广",
+      "chapter": "03",
+      "chapterTitle": "随机向量及其分布",
+      "url": "chapters/03-random-vectors.html#多项分布二项分布的多维推广",
+      "body": ""
+    },
+    {
+      "id": "03-random-vectors-离散型的独立性判别",
+      "title": "离散型的独立性判别",
+      "chapter": "03",
+      "chapterTitle": "随机向量及其分布",
+      "url": "chapters/03-random-vectors.html#离散型的独立性判别",
+      "body": ""
+    },
+    {
+      "id": "03-random-vectors-33-连续型随机向量及其联合密度概率即体积",
+      "title": "3.3 连续型随机向量及其联合密度：概率即体积",
+      "chapter": "03",
+      "chapterTitle": "随机向量及其分布",
+      "url": "chapters/03-random-vectors.html#33-连续型随机向量及其联合密度概率即体积",
+      "body": ""
+    },
+    {
+      "id": "03-random-vectors-a-联合密度从quot长度上的密度quot到quot面积上的密度quot",
+      "title": "A. 联合密度：从&quot;长度上的密度&quot;到&quot;面积上的密度&quot;",
+      "chapter": "03",
+      "chapterTitle": "随机向量及其分布",
+      "url": "chapters/03-random-vectors.html#a-联合密度从quot长度上的密度quot到quot面积上的密度quot",
+      "body": ""
+    },
+    {
+      "id": "03-random-vectors-b-边缘密度把联合密度quot压扁quot",
+      "title": "B. 边缘密度：把联合密度&quot;压扁&quot;",
+      "chapter": "03",
+      "chapterTitle": "随机向量及其分布",
+      "url": "chapters/03-random-vectors.html#b-边缘密度把联合密度quot压扁quot",
+      "body": ""
+    },
+    {
+      "id": "03-random-vectors-c-联合分布与联合密度的关系一个必要的反例",
+      "title": "C. 联合分布与联合密度的关系：一个必要的反例",
+      "chapter": "03",
+      "chapterTitle": "随机向量及其分布",
+      "url": "chapters/03-random-vectors.html#c-联合分布与联合密度的关系一个必要的反例",
+      "body": ""
+    },
+    {
+      "id": "03-random-vectors-d-连续型的独立性判别与两大分布",
+      "title": "D. 连续型的独立性判别与两大分布",
+      "chapter": "03",
+      "chapterTitle": "随机向量及其分布",
+      "url": "chapters/03-random-vectors.html#d-连续型的独立性判别与两大分布",
+      "body": ""
+    },
+    {
+      "id": "03-random-vectors-34-随机向量函数的分布分布函数法与变换法",
+      "title": "3.4 随机向量函数的分布：分布函数法与变换法",
+      "chapter": "03",
+      "chapterTitle": "随机向量及其分布",
+      "url": "chapters/03-random-vectors.html#34-随机向量函数的分布分布函数法与变换法",
+      "body": ""
+    },
+    {
+      "id": "03-random-vectors-a-分布函数法与卷积公式",
+      "title": "A. 分布函数法与卷积公式",
+      "chapter": "03",
+      "chapterTitle": "随机向量及其分布",
+      "url": "chapters/03-random-vectors.html#a-分布函数法与卷积公式",
+      "body": ""
+    },
+    {
+      "id": "03-random-vectors-b-变换法雅可比行列式",
+      "title": "B. 变换法：雅可比行列式",
+      "chapter": "03",
+      "chapterTitle": "随机向量及其分布",
+      "url": "chapters/03-random-vectors.html#b-变换法雅可比行列式",
+      "body": ""
+    },
+    {
+      "id": "03-random-vectors-35-条件分布和条件密度给定信息后的分布更新",
+      "title": "3.5 条件分布和条件密度：给定信息后的分布更新",
+      "chapter": "03",
+      "chapterTitle": "随机向量及其分布",
+      "url": "chapters/03-random-vectors.html#35-条件分布和条件密度给定信息后的分布更新",
+      "body": ""
+    },
+    {
+      "id": "03-random-vectors-a-离散型按行列重新归一化",
+      "title": "A. 离散型：按行（列）重新归一化",
+      "chapter": "03",
+      "chapterTitle": "随机向量及其分布",
+      "url": "chapters/03-random-vectors.html#a-离散型按行列重新归一化",
+      "body": ""
+    },
+    {
+      "id": "03-random-vectors-b-连续型一次不平凡的定义",
+      "title": "B. 连续型：一次不平凡的定义",
+      "chapter": "03",
+      "chapterTitle": "随机向量及其分布",
+      "url": "chapters/03-random-vectors.html#b-连续型一次不平凡的定义",
+      "body": ""
+    },
+    {
+      "id": "03-random-vectors-c-条件概率-math_block_385把条件概率升级为随机变量选学",
+      "title": "*C. 条件概率 $P(A \\mid X)$：把条件概率升级为随机变量（选学）",
+      "chapter": "03",
+      "chapterTitle": "随机向量及其分布",
+      "url": "chapters/03-random-vectors.html#c-条件概率-math_block_385把条件概率升级为随机变量选学",
+      "body": ""
+    },
+    {
+      "id": "03-random-vectors-36-次序统计量把样本从小到大排好",
+      "title": "3.6 次序统计量：把样本从小到大排好",
+      "chapter": "03",
+      "chapterTitle": "随机向量及其分布",
+      "url": "chapters/03-random-vectors.html#36-次序统计量把样本从小到大排好",
+      "body": ""
+    },
+    {
+      "id": "03-random-vectors-a-概念逐点排序",
+      "title": "A. 概念：逐点排序",
+      "chapter": "03",
+      "chapterTitle": "随机向量及其分布",
+      "url": "chapters/03-random-vectors.html#a-概念逐点排序",
+      "body": ""
+    },
+    {
+      "id": "03-random-vectors-b-三个层次的密度公式",
+      "title": "B. 三个层次的密度公式",
+      "chapter": "03",
+      "chapterTitle": "随机向量及其分布",
+      "url": "chapters/03-random-vectors.html#b-三个层次的密度公式",
+      "body": ""
+    },
+    {
+      "id": "03-random-vectors-应用竞争风险与quot灯泡悖论quot",
+      "title": "应用：竞争风险与&quot;灯泡悖论&quot;",
+      "chapter": "03",
+      "chapterTitle": "随机向量及其分布",
+      "url": "chapters/03-random-vectors.html#应用竞争风险与quot灯泡悖论quot",
+      "body": ""
+    },
+    {
+      "id": "03-random-vectors-本章收束联合行为的完整语法",
+      "title": "本章收束：联合行为的完整语法",
+      "chapter": "03",
+      "chapterTitle": "随机向量及其分布",
+      "url": "chapters/03-random-vectors.html#本章收束联合行为的完整语法",
+      "body": ""
+    },
+    {
+      "id": "03-random-vectors-公式速查卡",
+      "title": "公式速查卡",
+      "chapter": "03",
+      "chapterTitle": "随机向量及其分布",
+      "url": "chapters/03-random-vectors.html#公式速查卡",
+      "body": ""
+    },
+    {
+      "id": "03-random-vectors-习题指引",
+      "title": "习题指引",
+      "chapter": "03",
+      "chapterTitle": "随机向量及其分布",
+      "url": "chapters/03-random-vectors.html#习题指引",
+      "body": ""
+    },
+    {
+      "id": "04-expectation-and-variance",
+      "title": "数学期望和方差",
+      "chapter": "04",
+      "chapterTitle": "数学期望和方差",
+      "url": "chapters/04-expectation-and-variance.html",
+      "body": "\n:::callout 📖 本章导读\n前三章建立了描述随机变量的完整语言——分布。本章回答一个新问题：  能否用少数几个实数概括一个分布的主要面貌？  答案是本章的四个层级：期望（位置）、方差（离散程度）、协方差与相关系数（两个变量的联动）、条件期望（已知部分信息后的最优概括）。这些\"数字特征\"是概率论通向统计学与一切应用领域的接口。对应原书第四章 §4.1–§4.5。\n:::\n\n   4.0 导言：从完整分布到数字特征\n\n经过第二、三章的建设，我们已经拥有了描述随机变量的完备工具：分布函数、概率分布列、概率密度。原则上，关于一个随机变量的任何概率问题，都可以从它的分布中读出答案。然而\"完备\"与\"好用\"是两回事。分布函数是一个  函数  ——一个无穷维的对象。当我们问\"这个软件的平均使用寿命是多少\"、\"这两套方案哪个风险更大\"时，期待的回答是一个  实数  ，而不是一条曲线。工程师比较两种测量仪器的精度，投资者比较两种资产的风险，都需要把分布压缩成可以直接比较的数值指标。\n\n本章系统地建立这套压缩方案。它有清晰的层级结构，逐级回答逐级精细的问题：\n\n    数学期望 $\\mathrm E X$  （§4.1–§4.2）回答\"$X$ 平均取值在哪里\"——分布的  位置  ；\n    方差 $\\operatorname var  X $  （§4.3）回答\"$X$ 偏离平均值有多远\"——分布的  离散程度  ；\n    协方差与相关系数  （§4.4）回答\"两个随机变量如何  联动  \"——从单个变量走向变量之间的关系；\n    条件期望 $\\mathrm E  X \\mid Y $  （§4.5，选学）回答\"已知 $Y$ 的信息后，对 $X$ 的最优概括是什么\"——它不再是一个数，而是一个随机变量，是通往现代概率论与统计学习的门户。\n\n值得在开头就指出本章方法论上的一条主线：  数字特征的威力主要来自它们良好的运算性质，而非定义本身  。期望的线性性（对任意随机变量成立，不要求独立）将复杂问题拆解为简单问题之和；示性函数把概率与期望打通；Chebyshev 不等式仅凭期望与方差就能控制概率。读完本章后回头看，会发现几乎每一个漂亮的计算都是这三件工具的组合。\n\n历史注记：期望是概率论中最古老的概念之一。惠更斯（Huygens）1657 年出版的《机遇的规律》首次引入\"期望\"这一术语，其第一条命题——以概率 $1/2$ 赢 $a$ 元、概率 $1/2$ 输 $b$ 元的赌局价值 $ a b /2$ 元——正是数学期望的雏形。期望概念的出现早于概率的公理化近三百年，这提示我们：  平均值是人类对随机性最原始也最深刻的直觉  。\n\n   要点 \n \n    分布是完整信息但维数无穷；数字特征把分布压缩为可比较、可运算的实数。\n    层级：期望（位置）→ 方差（离散度）→ 协方差（联动）→ 条件期望（已知信息下的最优概括）。\n    本章的三大工具：期望的线性性、示性函数方法、由矩控制概率的不等式。\n\n   \n\n   4.1 数学期望：分布的重心\n\n  对应原书 §4.1。  \n\n    为什么是加权平均\n\n先从一个可以完全算清的例子提炼定义（原书例 1.1）。一个班 $n = 126$ 名学生，成绩为 $j$ 分的有 $n j$ 人。全班平均分是\n\n$$\n\\mu = \\frac 1  n \\sum  i=1 ^ n  x i = \\sum  j=0 ^ 100  j \\cdot \\frac n j  n .\n$$\n\n右端的改写揭示了平均分的另一种读法：  每个可能取值 $j$，以它出现的频率 $n j/n$ 为权重，做加权平均  。现在从班中随机抽取一名学生，以 $X$ 记其成绩，则 $P X = j  = n j/n$——$X$ 的概率分布恰好就是成绩的频率分布。于是\"$X$ 的平均取值\"理应定义为\n\n$$\n\\mathrm E  X  = \\sum  j  j \\, P X = j .\n$$\n\n必须强调  权重的必要性  。设 $X$ 以概率 $0.01$ 取 $1$、概率 $0.99$ 取 $100$。可能取值的算术平均 $ 1+100 /2 = 50.5$ 完全不能代表 $X$ 的平均水平：对 $X$ 作 $N$ 次独立重复观测，由频率与概率的关系，观测值中约 $99\\%$ 是 $100$，每次观测的平均值约为 $1 \\times 0.01 + 100 \\times 0.99 = 99.01$。  期望是以概率为权的加权平均，它预言的是大量独立重复观测的算术平均值将稳定的位置  ——这个\"预言\"在第五章将被严格证明为大数律，此处它是定义合理性的经验依据。\n\n  定义 1.1（离散型）   设 $X$ 有分布 $p j = P "
+    },
+    {
+      "id": "04-expectation-and-variance-40-导言从完整分布到数字特征",
+      "title": "4.0 导言：从完整分布到数字特征",
+      "chapter": "04",
+      "chapterTitle": "数学期望和方差",
+      "url": "chapters/04-expectation-and-variance.html#40-导言从完整分布到数字特征",
+      "body": ""
+    },
+    {
+      "id": "04-expectation-and-variance-41-数学期望分布的重心",
+      "title": "4.1 数学期望：分布的重心",
+      "chapter": "04",
+      "chapterTitle": "数学期望和方差",
+      "url": "chapters/04-expectation-and-variance.html#41-数学期望分布的重心",
+      "body": ""
+    },
+    {
+      "id": "04-expectation-and-variance-为什么是加权平均",
+      "title": "为什么是加权平均",
+      "chapter": "04",
+      "chapterTitle": "数学期望和方差",
+      "url": "chapters/04-expectation-and-variance.html#为什么是加权平均",
+      "body": ""
+    },
+    {
+      "id": "04-expectation-and-variance-为什么必须要求绝对收敛",
+      "title": "为什么必须要求绝对收敛",
+      "chapter": "04",
+      "chapterTitle": "数学期望和方差",
+      "url": "chapters/04-expectation-and-variance.html#为什么必须要求绝对收敛",
+      "body": ""
+    },
+    {
+      "id": "04-expectation-and-variance-几何解释期望是分布的质心",
+      "title": "几何解释：期望是分布的质心",
+      "chapter": "04",
+      "chapterTitle": "数学期望和方差",
+      "url": "chapters/04-expectation-and-variance.html#几何解释期望是分布的质心",
+      "body": ""
+    },
+    {
+      "id": "04-expectation-and-variance-两个警示性的应用",
+      "title": "两个警示性的应用",
+      "chapter": "04",
+      "chapterTitle": "数学期望和方差",
+      "url": "chapters/04-expectation-and-variance.html#两个警示性的应用",
+      "body": ""
+    },
+    {
+      "id": "04-expectation-and-variance-常见分布的期望逐一推导",
+      "title": "常见分布的期望：逐一推导",
+      "chapter": "04",
+      "chapterTitle": "数学期望和方差",
+      "url": "chapters/04-expectation-and-variance.html#常见分布的期望逐一推导",
+      "body": ""
+    },
+    {
+      "id": "04-expectation-and-variance-一座关键的桥示性函数的期望",
+      "title": "一座关键的桥：示性函数的期望",
+      "chapter": "04",
+      "chapterTitle": "数学期望和方差",
+      "url": "chapters/04-expectation-and-variance.html#一座关键的桥示性函数的期望",
+      "body": ""
+    },
+    {
+      "id": "04-expectation-and-variance-42-数学期望的性质线性性的威力",
+      "title": "4.2 数学期望的性质：线性性的威力",
+      "chapter": "04",
+      "chapterTitle": "数学期望和方差",
+      "url": "chapters/04-expectation-and-variance.html#42-数学期望的性质线性性的威力",
+      "body": ""
+    },
+    {
+      "id": "04-expectation-and-variance-a-随机向量函数的期望lotus",
+      "title": "A. 随机向量函数的期望（LOTUS）",
+      "chapter": "04",
+      "chapterTitle": "数学期望和方差",
+      "url": "chapters/04-expectation-and-variance.html#a-随机向量函数的期望lotus",
+      "body": ""
+    },
+    {
+      "id": "04-expectation-and-variance-b-期望的三条运算律",
+      "title": "B. 期望的三条运算律",
+      "chapter": "04",
+      "chapterTitle": "数学期望和方差",
+      "url": "chapters/04-expectation-and-variance.html#b-期望的三条运算律",
+      "body": ""
+    },
+    {
+      "id": "04-expectation-and-variance-c-示性函数分解化整为零的艺术",
+      "title": "C. 示性函数分解：化整为零的艺术",
+      "chapter": "04",
+      "chapterTitle": "数学期望和方差",
+      "url": "chapters/04-expectation-and-variance.html#c-示性函数分解化整为零的艺术",
+      "body": ""
+    },
+    {
+      "id": "04-expectation-and-variance-d-期望控制概率的第一步与矩的概念",
+      "title": "D. 期望控制概率的第一步与矩的概念",
+      "chapter": "04",
+      "chapterTitle": "数学期望和方差",
+      "url": "chapters/04-expectation-and-variance.html#d-期望控制概率的第一步与矩的概念",
+      "body": ""
+    },
+    {
+      "id": "04-expectation-and-variance-43-方差围绕均值的离散程度",
+      "title": "4.3 方差：围绕均值的离散程度",
+      "chapter": "04",
+      "chapterTitle": "数学期望和方差",
+      "url": "chapters/04-expectation-and-variance.html#43-方差围绕均值的离散程度",
+      "body": ""
+    },
+    {
+      "id": "04-expectation-and-variance-a-定义与常见分布的方差",
+      "title": "A. 定义与常见分布的方差",
+      "chapter": "04",
+      "chapterTitle": "数学期望和方差",
+      "url": "chapters/04-expectation-and-variance.html#a-定义与常见分布的方差",
+      "body": ""
+    },
+    {
+      "id": "04-expectation-and-variance-b-方差的性质",
+      "title": "B. 方差的性质",
+      "chapter": "04",
+      "chapterTitle": "数学期望和方差",
+      "url": "chapters/04-expectation-and-variance.html#b-方差的性质",
+      "body": ""
+    },
+    {
+      "id": "04-expectation-and-variance-c-两个不等式",
+      "title": "C. 两个不等式",
+      "chapter": "04",
+      "chapterTitle": "数学期望和方差",
+      "url": "chapters/04-expectation-and-variance.html#c-两个不等式",
+      "body": ""
+    },
+    {
+      "id": "04-expectation-and-variance-44-协方差和相关系数两个变量如何联动",
+      "title": "4.4 协方差和相关系数：两个变量如何联动",
+      "chapter": "04",
+      "chapterTitle": "数学期望和方差",
+      "url": "chapters/04-expectation-and-variance.html#44-协方差和相关系数两个变量如何联动",
+      "body": ""
+    },
+    {
+      "id": "04-expectation-and-variance-a-协方差与相关系数",
+      "title": "A. 协方差与相关系数",
+      "chapter": "04",
+      "chapterTitle": "数学期望和方差",
+      "url": "chapters/04-expectation-and-variance.html#a-协方差与相关系数",
+      "body": ""
+    },
+    {
+      "id": "04-expectation-and-variance-不相关不等于独立必须吃透的一课",
+      "title": "不相关不等于独立：必须吃透的一课",
+      "chapter": "04",
+      "chapterTitle": "数学期望和方差",
+      "url": "chapters/04-expectation-and-variance.html#不相关不等于独立必须吃透的一课",
+      "body": ""
+    },
+    {
+      "id": "04-expectation-and-variance-b-协方差矩阵",
+      "title": "B. 协方差矩阵",
+      "chapter": "04",
+      "chapterTitle": "数学期望和方差",
+      "url": "chapters/04-expectation-and-variance.html#b-协方差矩阵",
+      "body": ""
+    },
+    {
+      "id": "04-expectation-and-variance-45-条件数学期望和熵选学",
+      "title": "4.5 条件数学期望和熵（选学）",
+      "chapter": "04",
+      "chapterTitle": "数学期望和方差",
+      "url": "chapters/04-expectation-and-variance.html#45-条件数学期望和熵选学",
+      "body": ""
+    },
+    {
+      "id": "04-expectation-and-variance-a-条件期望的定义从数到随机变量",
+      "title": "A. 条件期望的定义：从数到随机变量",
+      "chapter": "04",
+      "chapterTitle": "数学期望和方差",
+      "url": "chapters/04-expectation-and-variance.html#a-条件期望的定义从数到随机变量",
+      "body": ""
+    },
+    {
+      "id": "04-expectation-and-variance-b-条件期望的性质与重期望公式",
+      "title": "B. 条件期望的性质与重期望公式",
+      "chapter": "04",
+      "chapterTitle": "数学期望和方差",
+      "url": "chapters/04-expectation-and-variance.html#b-条件期望的性质与重期望公式",
+      "body": ""
+    },
+    {
+      "id": "04-expectation-and-variance-最佳预测条件期望的极值刻画",
+      "title": "最佳预测：条件期望的极值刻画",
+      "chapter": "04",
+      "chapterTitle": "数学期望和方差",
+      "url": "chapters/04-expectation-and-variance.html#最佳预测条件期望的极值刻画",
+      "body": ""
+    },
+    {
+      "id": "04-expectation-and-variance-c-概率分布的熵",
+      "title": "C. 概率分布的熵",
+      "chapter": "04",
+      "chapterTitle": "数学期望和方差",
+      "url": "chapters/04-expectation-and-variance.html#c-概率分布的熵",
+      "body": ""
+    },
+    {
+      "id": "04-expectation-and-variance-本章收束数字特征的层级与它的边界",
+      "title": "本章收束：数字特征的层级与它的边界",
+      "chapter": "04",
+      "chapterTitle": "数学期望和方差",
+      "url": "chapters/04-expectation-and-variance.html#本章收束数字特征的层级与它的边界",
+      "body": ""
+    },
+    {
+      "id": "04-expectation-and-variance-公式速查卡",
+      "title": "公式速查卡",
+      "chapter": "04",
+      "chapterTitle": "数学期望和方差",
+      "url": "chapters/04-expectation-and-variance.html#公式速查卡",
+      "body": ""
+    },
+    {
+      "id": "04-expectation-and-variance-习题指引",
+      "title": "习题指引",
+      "chapter": "04",
+      "chapterTitle": "数学期望和方差",
+      "url": "chapters/04-expectation-and-variance.html#习题指引",
+      "body": ""
+    },
+    {
+      "id": "05-characteristic-functions-and-limit-theorems",
+      "title": "特征函数和概率极限定理",
+      "chapter": "05",
+      "chapterTitle": "特征函数和概率极限定理",
+      "url": "chapters/05-characteristic-functions-and-limit-theorems.html",
+      "body": "\n:::callout 📖 本章地位\n这是全书概率理论的顶峰。前四章的全部建设——概率空间、随机变量、独立性、数学期望与方差——都在为本章的两大定理作准备：  大数律  （频率稳定于概率）与  中心极限定理  （独立随机变量之和的分布趋于正态）。而证明这两大定理所用的核心工具——  特征函数  ，本身就是一套值得单独学习的分析方法。本章各节与原书 §5.1–§5.6 一一对应。\n:::\n\n   5.0 导言：独立随机变量之和的分析学\n\n本章的全部内容围绕一个对象展开：  独立随机变量的部分和  \n\n$$\nS n = X 1 + X 2 + \\cdots + X n.\n$$\n\n为什么这个对象值得用一整章研究？因为它是概率论联系现实的枢纽。第一章说过，概率的经验意义在于频率，而频率 $N A/N$ 正是 $n$ 个独立示性变量的算术平均；测量误差是大量微小扰动的叠加；保险公司的总赔付是各保单赔付之和；统计学里的一切估计量几乎都由样本和构成。  \"多个独立随机源的叠加行为\"是随机世界中最普遍的结构  ，而 $S n$ 就是它的数学原型。\n\n围绕 $S n$，本章回答三个层层递进的问题：\n\n  第一个问题（§5.1–§5.2）：$S n$ 的分布怎么算？  第三章已经给出卷积公式，但卷积的计算极其繁琐——两个分布卷积尚可勉强完成，$n$ 个分布的 $n 1$ 重卷积在多数情形下没有闭式解。出路是  变换方法  ：给每个分布配一个函数（母函数或特征函数），使得\"分布的卷积\"对应\"函数的乘积\"。乘法远比卷积容易，算完再变换回来即可。学过 Fourier 分析的读者会立即认出这个思路：特征函数恰是概率分布的 Fourier 变换，而\"卷积定理\"正是 Fourier 分析的核心恒等式。\n\n  第二个问题（§5.3）：正态分布如何推广到高维？  一元正态在第二章登场时只是诸多分布之一，本章将看到它在特征函数的语言下具有异常整齐的结构，并由此建立  多元正态分布  的一般理论——这既是中心极限定理的极限对象，也是数理统计全部大厦的地基。\n\n  第三个问题（§5.4–§5.6）：$n \\to \\infty$ 时 $S n$ 表现如何？  这是本章的顶峰。  大数律  断言算术平均 $S n/n$ 收敛到期望 $\\mu$——第一章\"频率趋于概率\"的直觉在此成为定理；  中心极限定理  进一步给出涨落的精确形状：$S n$ 围绕 $n\\mu$ 的偏差，除以 $\\sqrt n \\,\\sigma$ 之后趋于标准正态分布——这解释了正态分布在自然界的普遍存在。为了严格叙述这些定理，还需要辨析随机变量的几种收敛方式（依概率、几乎处处、依分布、均方），这是  §5.6 的任务。\n\n一句话概括本章：  先造变换（把卷积化为乘法），再取极限（把有限和送往无穷）  。第一章埋下的种子——频率的稳定性、Borel–Cantelli 引理、\"以概率 1\"的语言——都将在本章收获。\n\n   要点 \n \n    本章的中心对象是独立随机变量的部分和 $S n$；它是频率、测量误差、统计量的公共数学原型。\n    三步纲领：变换工具（母函数、特征函数）→ 多元正态 → 极限定理（大数律、中心极限定理）。\n    特征函数 = 概率分布的 Fourier 变换；其核心功能是把卷积化为乘法。\n\n   \n\n   5.1 概率母函数：为\"求和\"而设的第一个变换\n\n  对应原书 §5.1。本节的随机变量都取非负整数值。  \n\n    定义与三重功能\n\n在引入一般的特征函数之前，先在最简单的情形——取非负整数值的随机变量——上熟悉变换方法的运作方式。对这类 $X$ 与 $s \\in   1, 1 $，随机变量 $s^X$ 有界（$ s^X  \\leq 1$，约定 $0^0 = 1$），故期望存在，可以定义\n\n$$\ng s  = \\mathrm E \\,s^X = \\sum  j=0 ^ \\infty  s^j \\, P X = j , \\qquad s \\in   1, 1 . \\tag 1.1 \n$$\n\n称 $g s $ 为 $X$ 的  概率母函数  （简称母函数）。\n\n从形式上看，母函数就是把概率列 $\\ P X=j \\ $ 当作系数编成的幂级数——\"母\"字的含义正是\"生成\"：整个分布列被压缩进一个解析函数之中。级数在 $  1,1 $ 上绝对收敛（系数非负且和为 1），因此可以放心地逐项求导、逐项取极限，这是下面一切性质的分析学基础。\n\n  定理 1.1   设 $g s $ 是 $X$ 的母函数，则\n\n1. $P X = k  = \\dfrac g^  k   0   k! $，$k = 0, 1, \\cdots$；\n2. $\\mathrm E X = g' 1 $；\n3. 若"
+    },
+    {
+      "id": "05-characteristic-functions-and-limit-theorems-50-导言独立随机变量之和的分析学",
+      "title": "5.0 导言：独立随机变量之和的分析学",
+      "chapter": "05",
+      "chapterTitle": "特征函数和概率极限定理",
+      "url": "chapters/05-characteristic-functions-and-limit-theorems.html#50-导言独立随机变量之和的分析学",
+      "body": ""
+    },
+    {
+      "id": "05-characteristic-functions-and-limit-theorems-51-概率母函数为quot求和quot而设的第一个变换",
+      "title": "5.1 概率母函数：为&quot;求和&quot;而设的第一个变换",
+      "chapter": "05",
+      "chapterTitle": "特征函数和概率极限定理",
+      "url": "chapters/05-characteristic-functions-and-limit-theorems.html#51-概率母函数为quot求和quot而设的第一个变换",
+      "body": ""
+    },
+    {
+      "id": "05-characteristic-functions-and-limit-theorems-定义与三重功能",
+      "title": "定义与三重功能",
+      "chapter": "05",
+      "chapterTitle": "特征函数和概率极限定理",
+      "url": "chapters/05-characteristic-functions-and-limit-theorems.html#定义与三重功能",
+      "body": ""
+    },
+    {
+      "id": "05-characteristic-functions-and-limit-theorems-三大离散分布的母函数与quot可加性quot",
+      "title": "三大离散分布的母函数与&quot;可加性&quot;",
+      "chapter": "05",
+      "chapterTitle": "特征函数和概率极限定理",
+      "url": "chapters/05-characteristic-functions-and-limit-theorems.html#三大离散分布的母函数与quot可加性quot",
+      "body": ""
+    },
+    {
+      "id": "05-characteristic-functions-and-limit-theorems-52-特征函数概率分布的-fourier-变换",
+      "title": "5.2 特征函数：概率分布的 Fourier 变换",
+      "chapter": "05",
+      "chapterTitle": "特征函数和概率极限定理",
+      "url": "chapters/05-characteristic-functions-and-limit-theorems.html#52-特征函数概率分布的-fourier-变换",
+      "body": ""
+    },
+    {
+      "id": "05-characteristic-functions-and-limit-theorems-a-定义为什么是-math_block_131",
+      "title": "A. 定义：为什么是 $\\mathrm{e}^{\\mathrm{i}tX}$",
+      "chapter": "05",
+      "chapterTitle": "特征函数和概率极限定理",
+      "url": "chapters/05-characteristic-functions-and-limit-theorems.html#a-定义为什么是-math_block_131",
+      "body": ""
+    },
+    {
+      "id": "05-characteristic-functions-and-limit-theorems-唯一性逆转公式",
+      "title": "唯一性：逆转公式",
+      "chapter": "05",
+      "chapterTitle": "特征函数和概率极限定理",
+      "url": "chapters/05-characteristic-functions-and-limit-theorems.html#唯一性逆转公式",
+      "body": ""
+    },
+    {
+      "id": "05-characteristic-functions-and-limit-theorems-五条基本性质",
+      "title": "五条基本性质",
+      "chapter": "05",
+      "chapterTitle": "特征函数和概率极限定理",
+      "url": "chapters/05-characteristic-functions-and-limit-theorems.html#五条基本性质",
+      "body": ""
+    },
+    {
+      "id": "05-characteristic-functions-and-limit-theorems-常见分布的特征函数正态的两种推导",
+      "title": "常见分布的特征函数：正态的两种推导",
+      "chapter": "05",
+      "chapterTitle": "特征函数和概率极限定理",
+      "url": "chapters/05-characteristic-functions-and-limit-theorems.html#常见分布的特征函数正态的两种推导",
+      "body": ""
+    },
+    {
+      "id": "05-characteristic-functions-and-limit-theorems-依分布收敛与连续性定理",
+      "title": "依分布收敛与连续性定理",
+      "chapter": "05",
+      "chapterTitle": "特征函数和概率极限定理",
+      "url": "chapters/05-characteristic-functions-and-limit-theorems.html#依分布收敛与连续性定理",
+      "body": ""
+    },
+    {
+      "id": "05-characteristic-functions-and-limit-theorems-b-随机向量的特征函数",
+      "title": "B. 随机向量的特征函数",
+      "chapter": "05",
+      "chapterTitle": "特征函数和概率极限定理",
+      "url": "chapters/05-characteristic-functions-and-limit-theorems.html#b-随机向量的特征函数",
+      "body": ""
+    },
+    {
+      "id": "05-characteristic-functions-and-limit-theorems-53-多元正态分布以线性结构定义的分布族",
+      "title": "5.3 多元正态分布：以线性结构定义的分布族",
+      "chapter": "05",
+      "chapterTitle": "特征函数和概率极限定理",
+      "url": "chapters/05-characteristic-functions-and-limit-theorems.html#53-多元正态分布以线性结构定义的分布族",
+      "body": ""
+    },
+    {
+      "id": "05-characteristic-functions-and-limit-theorems-构造性定义正态-标准正态的线性像",
+      "title": "构造性定义：正态 = 标准正态的线性像",
+      "chapter": "05",
+      "chapterTitle": "特征函数和概率极限定理",
+      "url": "chapters/05-characteristic-functions-and-limit-theorems.html#构造性定义正态-标准正态的线性像",
+      "body": ""
+    },
+    {
+      "id": "05-characteristic-functions-and-limit-theorems-特征函数与参数的唯一性",
+      "title": "特征函数与参数的唯一性",
+      "chapter": "05",
+      "chapterTitle": "特征函数和概率极限定理",
+      "url": "chapters/05-characteristic-functions-and-limit-theorems.html#特征函数与参数的唯一性",
+      "body": ""
+    },
+    {
+      "id": "05-characteristic-functions-and-limit-theorems-五条常用性质",
+      "title": "五条常用性质",
+      "chapter": "05",
+      "chapterTitle": "特征函数和概率极限定理",
+      "url": "chapters/05-characteristic-functions-and-limit-theorems.html#五条常用性质",
+      "body": ""
+    },
+    {
+      "id": "05-characteristic-functions-and-limit-theorems-两个通往统计学的例子",
+      "title": "两个通往统计学的例子",
+      "chapter": "05",
+      "chapterTitle": "特征函数和概率极限定理",
+      "url": "chapters/05-characteristic-functions-and-limit-theorems.html#两个通往统计学的例子",
+      "body": ""
+    },
+    {
+      "id": "05-characteristic-functions-and-limit-theorems-54-大数律频率与概率悬案的了结",
+      "title": "5.4 大数律：频率与概率悬案的了结",
+      "chapter": "05",
+      "chapterTitle": "特征函数和概率极限定理",
+      "url": "chapters/05-characteristic-functions-and-limit-theorems.html#54-大数律频率与概率悬案的了结",
+      "body": ""
+    },
+    {
+      "id": "05-characteristic-functions-and-limit-theorems-a-弱大数律依概率收敛",
+      "title": "A. 弱大数律：依概率收敛",
+      "chapter": "05",
+      "chapterTitle": "特征函数和概率极限定理",
+      "url": "chapters/05-characteristic-functions-and-limit-theorems.html#a-弱大数律依概率收敛",
+      "body": ""
+    },
+    {
+      "id": "05-characteristic-functions-and-limit-theorems-b-强大数律几乎处处收敛",
+      "title": "B. 强大数律：几乎处处收敛",
+      "chapter": "05",
+      "chapterTitle": "特征函数和概率极限定理",
+      "url": "chapters/05-characteristic-functions-and-limit-theorems.html#b-强大数律几乎处处收敛",
+      "body": ""
+    },
+    {
+      "id": "05-characteristic-functions-and-limit-theorems-强大数律的回报四个应用",
+      "title": "强大数律的回报：四个应用",
+      "chapter": "05",
+      "chapterTitle": "特征函数和概率极限定理",
+      "url": "chapters/05-characteristic-functions-and-limit-theorems.html#强大数律的回报四个应用",
+      "body": ""
+    },
+    {
+      "id": "05-characteristic-functions-and-limit-theorems-55-中心极限定理正态分布普遍性的解释",
+      "title": "5.5 中心极限定理：正态分布普遍性的解释",
+      "chapter": "05",
+      "chapterTitle": "特征函数和概率极限定理",
+      "url": "chapters/05-characteristic-functions-and-limit-theorems.html#55-中心极限定理正态分布普遍性的解释",
+      "body": ""
+    },
+    {
+      "id": "05-characteristic-functions-and-limit-theorems-现象不同的分布同一个极限形状",
+      "title": "现象：不同的分布，同一个极限形状",
+      "chapter": "05",
+      "chapterTitle": "特征函数和概率极限定理",
+      "url": "chapters/05-characteristic-functions-and-limit-theorems.html#现象不同的分布同一个极限形状",
+      "body": ""
+    },
+    {
+      "id": "05-characteristic-functions-and-limit-theorems-定理与证明特征函数方法的加冕",
+      "title": "定理与证明：特征函数方法的加冕",
+      "chapter": "05",
+      "chapterTitle": "特征函数和概率极限定理",
+      "url": "chapters/05-characteristic-functions-and-limit-theorems.html#定理与证明特征函数方法的加冕",
+      "body": ""
+    },
+    {
+      "id": "05-characteristic-functions-and-limit-theorems-使用正态近似连续性校正",
+      "title": "使用正态近似：连续性校正",
+      "chapter": "05",
+      "chapterTitle": "特征函数和概率极限定理",
+      "url": "chapters/05-characteristic-functions-and-limit-theorems.html#使用正态近似连续性校正",
+      "body": ""
+    },
+    {
+      "id": "05-characteristic-functions-and-limit-theorems-独立不同分布lindebergfeller-定理",
+      "title": "独立不同分布：Lindeberg–Feller 定理",
+      "chapter": "05",
+      "chapterTitle": "特征函数和概率极限定理",
+      "url": "chapters/05-characteristic-functions-and-limit-theorems.html#独立不同分布lindebergfeller-定理",
+      "body": ""
+    },
+    {
+      "id": "05-characteristic-functions-and-limit-theorems-56-随机变量的收敛性选学",
+      "title": "5.6 随机变量的收敛性（选学）",
+      "chapter": "05",
+      "chapterTitle": "特征函数和概率极限定理",
+      "url": "chapters/05-characteristic-functions-and-limit-theorems.html#56-随机变量的收敛性选学",
+      "body": ""
+    },
+    {
+      "id": "05-characteristic-functions-and-limit-theorems-五种收敛与强弱链条",
+      "title": "五种收敛与强弱链条",
+      "chapter": "05",
+      "chapterTitle": "特征函数和概率极限定理",
+      "url": "chapters/05-characteristic-functions-and-limit-theorems.html#五种收敛与强弱链条",
+      "body": ""
+    },
+    {
+      "id": "05-characteristic-functions-and-limit-theorems-四个反例所有缺失的箭头都真的缺失",
+      "title": "四个反例：所有缺失的箭头都真的缺失",
+      "chapter": "05",
+      "chapterTitle": "特征函数和概率极限定理",
+      "url": "chapters/05-characteristic-functions-and-limit-theorems.html#四个反例所有缺失的箭头都真的缺失",
+      "body": ""
+    },
+    {
+      "id": "05-characteristic-functions-and-limit-theorems-一张总图",
+      "title": "一张总图",
+      "chapter": "05",
+      "chapterTitle": "特征函数和概率极限定理",
+      "url": "chapters/05-characteristic-functions-and-limit-theorems.html#一张总图",
+      "body": ""
+    },
+    {
+      "id": "05-characteristic-functions-and-limit-theorems-本章收束概率论的两座峰顶",
+      "title": "本章收束：概率论的两座峰顶",
+      "chapter": "05",
+      "chapterTitle": "特征函数和概率极限定理",
+      "url": "chapters/05-characteristic-functions-and-limit-theorems.html#本章收束概率论的两座峰顶",
+      "body": ""
+    },
+    {
+      "id": "05-characteristic-functions-and-limit-theorems-公式速查卡",
+      "title": "公式速查卡",
+      "chapter": "05",
+      "chapterTitle": "特征函数和概率极限定理",
+      "url": "chapters/05-characteristic-functions-and-limit-theorems.html#公式速查卡",
+      "body": ""
+    },
+    {
+      "id": "05-characteristic-functions-and-limit-theorems-习题指引",
+      "title": "习题指引",
+      "chapter": "05",
+      "chapterTitle": "特征函数和概率极限定理",
+      "url": "chapters/05-characteristic-functions-and-limit-theorems.html#习题指引",
+      "body": ""
+    },
+    {
+      "id": "06-stochastic-processes-intro",
+      "title": "随机过程简介",
+      "chapter": "06",
+      "chapterTitle": "随机过程简介",
+      "url": "chapters/06-stochastic-processes-intro.html",
+      "body": "\n:::callout 📖 本章导读\n这是全书的最后一章，也是一扇朝向后续课程的门。原书对本章的处理是\"简介\"性质的——定义与基本定理俱全，但推导从简、动机极少。本讲义按同样的节号展开，重点补足三件事：每一类过程  为什么  这样定义、各定理的证明思路、以及三种模型分别代表哪一种\"依赖结构\"。\n:::\n\n   6.0 导言：当随机变量随时间演化\n\n前五章的研究对象，本质上是  有限个  随机变量：单个随机变量的分布（第二章）、随机向量的联合分布（第三章）、数字特征（第四章）、以及一列随机变量之和的极限行为（第五章）。第五章虽然涉及无穷序列 $\\ X n\\ $，但那里的序列几乎总被假定为独立的——独立性使得序列没有\"内部结构\"，我们关心的只是求和的宏观规律。\n\n然而现实中大量随机现象天然是  随时间演化  的，且  前后相互关联  ：某时刻之前到达的顾客数、粒子在直线上的随机运动、逐日记录的气温或汇率。描述这类现象需要一族以时间为指标的随机变量\n\n$$\n\\ X t \\mid t \\in T\\ ,\n$$\n\n其中 $T$ 是时间指标集——$T$ 为连续区间（如 $ 0, \\infty $）时称为  随机过程  ，$T$ 为整数集时称为  随机序列  或  时间序列  。所有这些随机变量都定义在同一个概率空间 $ \\Omega, \\mathcal F , P $ 上；对固定的 $\\omega \\in \\Omega$，函数 $t \\mapsto X t \\omega $ 称为过程的  一次实现  或  一条轨道  。这个视角的转换值得体会：随机过程既可以看成\"一族随机变量\"（固定 $t$，看 $X t$ 的分布），也可以看成\"一个随机的函数\"（固定 $\\omega$，看整条轨道）——两种读法在本章将交替使用。\n\n一旦允许随机变量之间相关，核心问题就变成：  用什么方式刻画\"依赖结构\"？  完全一般的依赖无法研究，必须提出既有现实覆盖面、又在数学上可驾驭的结构性假设。本章的三个模型恰好代表三种经典答案：\n\n    泊松过程（§6.1）  ：不相交时间段上的增量  相互独立  ——依赖被压缩到最低限度，独立性以\"增量\"的形式保留；\n    马尔可夫链（§6.2）  ：将来只通过  现在  依赖于历史——\"给定现在，将来与过去条件独立\"；\n    平稳序列（§6.3–§6.4）  ：允许任意相关，但要求相关结构  不随时间平移改变  ——以时间上的均匀性换取统计推断的可能。\n\n三种结构分别是随机过程论、马尔可夫理论与时间序列分析这三门后续课程的起点。本章各节的定理证明大多只使用第一章的条件概率工具与第四章的期望运算，是对全书基本功的一次综合检验。\n\n   要点 \n \n    随机过程 = 以时间为指标的一族随机变量 = 一个随机的函数；固定 $\\omega$ 得轨道，固定 $t$ 得随机变量。\n    研究随机过程的关键是对依赖结构做结构性假设。\n    三个模型三种结构：泊松过程（独立增量）、马氏链（一步依赖）、平稳序列（相关结构平移不变）。\n\n   \n\n   6.1 泊松过程：完全随机的事件流\n\n  对应原书 §6.1。  \n\n    A. 计数过程：事件流的数学载体\n\n许多应用问题的原始形态是一串在随机时刻发生的事件：\"事件流\"：进入校门的汽车、到达的手机短信、商场收到的投诉。刻画事件流最自然的方式，是引入  计数过程  \n\n$$\nN t  =  0, t  \\text  内事件发生的个数 , \\qquad t \\geq 0.\n$$\n\n由含义可直接读出计数过程的四条结构性质：$N t $ 取非负整数值；关于 $t$ 单调不减；$N t    N s $（$t   s$）恰为时间段 $ s, t $ 内的事件数；每条轨道 $t \\mapsto N t, \\omega $ 是单调不减、右连续的  阶梯函数  ——事件每发生一次，轨道向上跳一格。\"增量 $N t    N s $ 计数 $ s,t $ 内的事件\"这一读法是本节一切推理的出发点。\n\n计数过程过于宽泛，需要进一步的结构假设。两条最自然的假设是：\n\n  独立增量性  ：互不相交的时间段内发生的事件个数相互独立。形式化表述：对任何 $0 < t 1 < \\cdots < t n$，增量\n\n$$\nN t 1    N 0 , \\; N t 2    N t 1 , \\; \\cdots, \\; N t n    N t  n 1  \n$$\n\n相互独立。物理含义：过去一段时间事件的多寡，不影响未来时间段的事件数——事件流\"没有记忆、没有惯性\"。\n\n  平稳增量性  ：长度相等的时间段内，事件个数的分布相同，即 $N t 2    N t 1 $ 与 $N t 2 + s    N t 1"
+    },
+    {
+      "id": "06-stochastic-processes-intro-60-导言当随机变量随时间演化",
+      "title": "6.0 导言：当随机变量随时间演化",
+      "chapter": "06",
+      "chapterTitle": "随机过程简介",
+      "url": "chapters/06-stochastic-processes-intro.html#60-导言当随机变量随时间演化",
+      "body": ""
+    },
+    {
+      "id": "06-stochastic-processes-intro-61-泊松过程完全随机的事件流",
+      "title": "6.1 泊松过程：完全随机的事件流",
+      "chapter": "06",
+      "chapterTitle": "随机过程简介",
+      "url": "chapters/06-stochastic-processes-intro.html#61-泊松过程完全随机的事件流",
+      "body": ""
+    },
+    {
+      "id": "06-stochastic-processes-intro-a-计数过程事件流的数学载体",
+      "title": "A. 计数过程：事件流的数学载体",
+      "chapter": "06",
+      "chapterTitle": "随机过程简介",
+      "url": "chapters/06-stochastic-processes-intro.html#a-计数过程事件流的数学载体",
+      "body": ""
+    },
+    {
+      "id": "06-stochastic-processes-intro-b-泊松过程为什么偏偏是泊松分布",
+      "title": "B. 泊松过程：为什么偏偏是泊松分布",
+      "chapter": "06",
+      "chapterTitle": "随机过程简介",
+      "url": "chapters/06-stochastic-processes-intro.html#b-泊松过程为什么偏偏是泊松分布",
+      "body": ""
+    },
+    {
+      "id": "06-stochastic-processes-intro-c-到达时刻的分布从计数看时间",
+      "title": "C. 到达时刻的分布：从计数看时间",
+      "chapter": "06",
+      "chapterTitle": "随机过程简介",
+      "url": "chapters/06-stochastic-processes-intro.html#c-到达时刻的分布从计数看时间",
+      "body": ""
+    },
+    {
+      "id": "06-stochastic-processes-intro-d-等待时间的分布三位一体的完成",
+      "title": "D. 等待时间的分布：三位一体的完成",
+      "chapter": "06",
+      "chapterTitle": "随机过程简介",
+      "url": "chapters/06-stochastic-processes-intro.html#d-等待时间的分布三位一体的完成",
+      "body": ""
+    },
+    {
+      "id": "06-stochastic-processes-intro-62-马尔可夫链只保留quot现在quot的依赖",
+      "title": "6.2 马尔可夫链：只保留&quot;现在&quot;的依赖",
+      "chapter": "06",
+      "chapterTitle": "随机过程简介",
+      "url": "chapters/06-stochastic-processes-intro.html#62-马尔可夫链只保留quot现在quot的依赖",
+      "body": ""
+    },
+    {
+      "id": "06-stochastic-processes-intro-a-马氏性给定现在将来与过去条件独立",
+      "title": "A. 马氏性：给定现在，将来与过去条件独立",
+      "chapter": "06",
+      "chapterTitle": "随机过程简介",
+      "url": "chapters/06-stochastic-processes-intro.html#a-马氏性给定现在将来与过去条件独立",
+      "body": ""
+    },
+    {
+      "id": "06-stochastic-processes-intro-b-kolmogorovchapman-方程演化归结为矩阵幂",
+      "title": "B. Kolmogorov–Chapman 方程：演化归结为矩阵幂",
+      "chapter": "06",
+      "chapterTitle": "随机过程简介",
+      "url": "chapters/06-stochastic-processes-intro.html#b-kolmogorovchapman-方程演化归结为矩阵幂",
+      "body": ""
+    },
+    {
+      "id": "06-stochastic-processes-intro-63-时间序列用相关结构研究随机序列",
+      "title": "6.3 时间序列：用相关结构研究随机序列",
+      "chapter": "06",
+      "chapterTitle": "随机过程简介",
+      "url": "chapters/06-stochastic-processes-intro.html#63-时间序列用相关结构研究随机序列",
+      "body": ""
+    },
+    {
+      "id": "06-stochastic-processes-intro-a-平稳序列与自协方差函数",
+      "title": "A. 平稳序列与自协方差函数",
+      "chapter": "06",
+      "chapterTitle": "随机过程简介",
+      "url": "chapters/06-stochastic-processes-intro.html#a-平稳序列与自协方差函数",
+      "body": ""
+    },
+    {
+      "id": "06-stochastic-processes-intro-b-白噪声相关结构最简单的平稳序列",
+      "title": "B. 白噪声：相关结构最简单的平稳序列",
+      "chapter": "06",
+      "chapterTitle": "随机过程简介",
+      "url": "chapters/06-stochastic-processes-intro.html#b-白噪声相关结构最简单的平稳序列",
+      "body": ""
+    },
+    {
+      "id": "06-stochastic-processes-intro-c-线性平稳序列由白噪声叠加而成",
+      "title": "C. 线性平稳序列：由白噪声叠加而成",
+      "chapter": "06",
+      "chapterTitle": "随机过程简介",
+      "url": "chapters/06-stochastic-processes-intro.html#c-线性平稳序列由白噪声叠加而成",
+      "body": ""
+    },
+    {
+      "id": "06-stochastic-processes-intro-d-线性滤波加权平均如何抑制噪声",
+      "title": "D. 线性滤波：加权平均如何抑制噪声",
+      "chapter": "06",
+      "chapterTitle": "随机过程简介",
+      "url": "chapters/06-stochastic-processes-intro.html#d-线性滤波加权平均如何抑制噪声",
+      "body": ""
+    },
+    {
+      "id": "06-stochastic-processes-intro-64-严平稳序列分布层面的平移不变",
+      "title": "6.4 严平稳序列：分布层面的平移不变",
+      "chapter": "06",
+      "chapterTitle": "随机过程简介",
+      "url": "chapters/06-stochastic-processes-intro.html#64-严平稳序列分布层面的平移不变",
+      "body": ""
+    },
+    {
+      "id": "06-stochastic-processes-intro-宽与严两种平稳性的关系",
+      "title": "宽与严：两种平稳性的关系",
+      "chapter": "06",
+      "chapterTitle": "随机过程简介",
+      "url": "chapters/06-stochastic-processes-intro.html#宽与严两种平稳性的关系",
+      "body": ""
+    },
+    {
+      "id": "06-stochastic-processes-intro-遍历性一条轨道何以代表整个分布",
+      "title": "遍历性：一条轨道何以代表整个分布",
+      "chapter": "06",
+      "chapterTitle": "随机过程简介",
+      "url": "chapters/06-stochastic-processes-intro.html#遍历性一条轨道何以代表整个分布",
+      "body": ""
+    },
+    {
+      "id": "06-stochastic-processes-intro-本章收束全书回望与去路",
+      "title": "本章收束：全书回望与去路",
+      "chapter": "06",
+      "chapterTitle": "随机过程简介",
+      "url": "chapters/06-stochastic-processes-intro.html#本章收束全书回望与去路",
+      "body": ""
+    },
+    {
+      "id": "06-stochastic-processes-intro-公式速查卡",
+      "title": "公式速查卡",
+      "chapter": "06",
+      "chapterTitle": "随机过程简介",
+      "url": "chapters/06-stochastic-processes-intro.html#公式速查卡",
+      "body": ""
+    },
+    {
+      "id": "06-stochastic-processes-intro-习题指引",
+      "title": "习题指引",
+      "chapter": "06",
+      "chapterTitle": "随机过程简介",
+      "url": "chapters/06-stochastic-processes-intro.html#习题指引",
+      "body": ""
+    }
+  ]
+}

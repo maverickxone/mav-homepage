@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>随机向量及其分布 — 概率论精讲</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" id="hljs-light" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+<link rel="stylesheet" id="hljs-dark" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" media="not all">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+
+</head>
+<body>
+
+<div class="progress-bar" id="progress-bar"></div>
+
+<nav class="topnav" id="topnav">
+  <div class="topnav-inner">
+    <a class="brand" href="../index.html">概率论精讲</a>
+    <div class="nav-links">
+      <a href="01-classical-model-and-probability-space.html">01</a>
+      <a href="02-random-variables-and-distributions.html">02</a>
+      <a href="03-random-vectors.html" class="active">03</a>
+      <a href="04-expectation-and-variance.html">04</a>
+      <a href="05-characteristic-functions-and-limit-theorems.html">05</a>
+      <a href="06-stochastic-processes-intro.html">06</a>
+    </div>
+    <div class="nav-controls">
+      <button class="nav-btn" id="search-btn" aria-label="搜索 (Ctrl+K)">⌘K</button>
+      <button class="nav-btn" id="settings-btn" aria-label="阅读设置">Aa</button>
+      <a class="nav-btn" href="../../index.html" aria-label="返回知识库">← 知识库</a>
+      <a class="nav-btn" href="https://github.com/maverickxone/mav-homepage" target="_blank" rel="noopener" aria-label="GitHub" style="padding: 6px 8px;"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg></a>
+    </div>
+  </div>
+</nav>
+<div class="settings-pop" id="settings-pop">
+  <h5>主题</h5>
+  <div class="row">
+    <button class="seg" data-theme-set="light">明亮</button>
+    <button class="seg" data-theme-set="dark">暗色</button>
+  </div>
+  <h5>字号</h5>
+  <div class="row">
+    <button class="seg" data-size-set="s">小</button>
+    <button class="seg" data-size-set="m">中</button>
+    <button class="seg" data-size-set="l">大</button>
+  </div>
+</div>
+
+<div class="with-sidebar">
+  <aside class="sidebar">
+  <div class="chapter-num">CHAPTER 03</div>
+  <div class="chapter-name">随机向量及其分布</div>
+  <h4>目录</h4>
+  <ul>
+    <li><a href="#30-导言从一个随机变量到一组随机变量">3.0 导言：从一个随机变量到一组随机变量</a></li>
+    <li><a href="#31-随机向量及其联合分布一个函数管住全部信息">3.1 随机向量及其联合分布：一个函数管住全部信息</a></li>
+    <li><a href="#32-离散型随机向量概率分布表及其行列求和">3.2 离散型随机向量：概率分布表及其行列求和</a></li>
+    <li><a href="#33-连续型随机向量及其联合密度概率即体积">3.3 连续型随机向量及其联合密度：概率即体积</a></li>
+    <li><a href="#34-随机向量函数的分布分布函数法与变换法">3.4 随机向量函数的分布：分布函数法与变换法</a></li>
+    <li><a href="#35-条件分布和条件密度给定信息后的分布更新">3.5 条件分布和条件密度：给定信息后的分布更新</a></li>
+    <li><a href="#36-次序统计量把样本从小到大排好">3.6 次序统计量：把样本从小到大排好</a></li>
+    <li><a href="#本章收束联合行为的完整语法">本章收束：联合行为的完整语法</a></li>
+    <li><a href="#公式速查卡">公式速查卡</a></li>
+    <li><a href="#习题指引">习题指引</a></li>
+  </ul>
+</aside>
+  <article class="chapter-body">
+    <header class="chapter-head">
+  <div class="chapter-head-meta">
+    <span class="num">CHAPTER 03</span>
+    <span>≈ 130 MIN READ</span>
+  </div>
+  <h1>随机向量及其分布</h1>
+
+</header>
+    <div class="callout">
+<p class="callout-title">📖 本章导读</p>
+
+<p>本章对应原书第三章。建议先读本讲义某一节获得整体图景，再精读原书对应小节，最后完成习题。本章的计算量在全书居首，多数课程的期中、期末难题也集中于此；但支撑这些计算的思想只有少数几条，本讲义的任务是把它们明确地陈述出来。</p>
+</div>
+
+<h2 id="30-导言从一个随机变量到一组随机变量">3.0 导言：从一个随机变量到一组随机变量</h2>
+<p>第二章建立了单个随机变量的理论：分布函数、概率分布（离散型）与概率密度（连续型）、随机变量函数的分布。然而实际问题极少只涉及一个随机量。气温与用电负荷、弹落点的横坐标与纵坐标、一支股票的今日收益与明日收益——我们真正关心的往往是<strong>若干随机变量之间的联合行为</strong>：它们如何相互制约、一个的取值如何改变另一个的分布、它们的函数（和、差、最大值）又服从什么分布。</p>
+<p>把 $n$ 个随机变量并列成 $\mathbf{X} = (X_1, X_2, \cdots, X_n)$，就得到<strong>随机向量</strong>。本章围绕它展开五个层层递进的问题：</p>
+<ol>
+<li><strong>如何描述联合行为？</strong>——联合分布函数、联合概率分布（离散）与联合密度（连续）（§3.1–§3.3）。这里出现全章第一个核心观念：<strong>联合分布的信息严格多于全体边缘分布的信息</strong>。知道每个分量各自的分布，并不能确定它们作为整体的行为。</li>
+<li><strong>何时可以把联合拆成边缘的乘积？</strong>——独立性的各种等价判别（§3.2B、§3.3D）。独立是&quot;联合 = 边缘乘积&quot;这一特殊情形，它使多维问题退化为一维问题的组合。</li>
+<li><strong>随机向量的函数服从什么分布？</strong>——分布函数法与变换法（§3.4）。卷积公式、正态分布的可加性、瑞利分布与柯西分布都在此产生。</li>
+<li><strong>已知一部分分量的取值，其余分量的分布如何更新？</strong>——条件分布与条件密度（§3.5）。第一章的条件概率在这里升级为处理连续型随机变量的精细工具，并孕育出&quot;回归&quot;这一统计学的中心概念。</li>
+<li><strong>把观测值从小到大排序后会发生什么？</strong>——次序统计量（§3.6）。极值问题（最大降雨量、最短寿命）与数理统计的诸多方法都以它为基础。</li>
+</ol>
+<p>贯穿全章的技术主线只有一条：<strong>概率 = 密度在区域上的积分</strong>。边缘密度是&quot;把联合密度沿某些方向积掉&quot;，条件密度是&quot;把联合密度沿某条切片重新归一化&quot;，函数的分布是&quot;把密度在原像区域上积分&quot;。因此本章对二重积分的要求很高——确定积分限的能力，即&quot;先画支撑集、再定上下限&quot;的功夫，是本章一切计算的地基。</p>
+<div class="keypoints"><div class="keypoints-label">要点</div><ul>
+<li>随机向量 = 定义在同一概率空间上的一组随机变量；研究对象从&quot;各自的分布&quot;升级为&quot;联合行为&quot;。</li>
+<li>全章五问：联合描述 → 独立判别 → 函数的分布 → 条件分布 → 次序统计量。</li>
+<li>技术主线：概率 = 密度的区域积分；确定积分限是本章的基本功。</li>
+</ul>
+</div>
+<hr>
+<h2 id="31-随机向量及其联合分布一个函数管住全部信息">3.1 随机向量及其联合分布：一个函数管住全部信息</h2>
+<p><strong>对应原书 §3.1。</strong></p>
+<h3 id="联合分布函数">联合分布函数</h3>
+<p><strong>定义 1.1–1.2</strong> 若 $X_1, X_2, \cdots, X_n$ 都是概率空间 $(\Omega, \mathcal{F}, P)$ 上的随机变量，则称 $\mathbf{X} = (X_1, \cdots, X_n)$ 为 $n$ 维<strong>随机向量</strong>；称 $\mathbf{R}^n$ 上的函数</p>
+<p>$$
+F(x_1, x_2, \cdots, x_n) = P(X_1 \leq x_1, X_2 \leq x_2, \cdots, X_n \leq x_n) \tag{1.1}
+$$</p>
+<p>为 $\mathbf{X}$ 的<strong>联合分布函数</strong>（简称联合分布）。</p>
+<p>注意定义中的一个细节：所有分量必须定义在<strong>同一个</strong>概率空间上。这不是形式上的要求——只有生活在同一个样本空间里，&quot;$X_1 \leq x_1$ 与 $X_2 \leq x_2$ 同时发生&quot;才是一个合法的事件。逗号在概率记号中表示事件的交：$P(X \leq x, Y \leq y) = P(\{X \leq x\} \cap \{Y \leq y\})$。</p>
+<p>联合分布函数继承了一维分布函数的基本性质（关于每个自变量单调不减、右连续、在各变元趋于 $-\infty$ 时趋于 0、全部趋于 $+\infty$ 时趋于 1），但二维情形多出一条一维所没有的约束。以 $n = 2$ 为例，对矩形 $D = \{(x,y) \mid a < x \leq b,\ c < y \leq d\}$，用容斥的方式（原书例 1.1）可得</p>
+<p>$$
+P(a < X \leq b,\ c < Y \leq d) = F(b,d) - F(b,c) - F(a,d) + F(a,c) \geq 0. \tag{1.3–1.4}
+$$</p>
+<p>推导本身值得复现一遍：先固定 $c < Y \leq d$ 把 $X$ 的范围拆开，再把 $Y$ 的范围拆开，四项正负相间，恰是&quot;大矩形减去两条、补回一角&quot;的容斥结构。矩形不等式 (1.4) 说明：<strong>并非任何&quot;看起来像分布函数&quot;的二元函数都能充当联合分布</strong>——它必须对一切矩形给出非负概率。这一约束在一维时自动被单调性蕴含，在高维则是独立的条件。</p>
+<h3 id="边缘分布向低维投影">边缘分布：向低维投影</h3>
+<p>从联合分布函数取部分变元趋于 $+\infty$，就得到子向量的分布：</p>
+<p>$$
+F_k(x_1, \cdots, x_k) = F(x_1, \cdots, x_k, \infty, \cdots, \infty),
+$$</p>
+<p>称为<strong>边缘分布</strong>。直观解释：$X_{k+1} \leq \infty$ 是必然事件，对它不加任何限制，等于把这些分量&quot;遗忘&quot;。二维时 $F_X(x) = F(x, \infty)$，$F_Y(y) = F(\infty, y)$。$n$ 维随机向量共有 $C_n^1 + C_n^2 + \cdots + C_n^{n-1} = 2^n - 2$ 个边缘分布（每个非空真子集对应一个）。</p>
+<p>现在陈述本章第一个核心论断：<strong>联合分布唯一决定全部边缘分布，但边缘分布一般不能决定联合分布</strong>。前半句已由上式构造性地证明；后半句将在 §3.3 用二元正态给出具体反例（$\rho$ 取不同值时联合分布不同，边缘分布却完全一样）。这个不对称性值得反复体会：边缘分布只记录每个分量&quot;独自&quot;的统计规律，而联合分布还记录它们&quot;如何联动&quot;——相关结构。从联合到边缘是投影，投影必然丢失信息。</p>
+<p>唯一的例外是独立情形。由第二章独立性的定义直接改写即得：$X_1, \cdots, X_n$ <strong>相互独立</strong>的充分必要条件是对一切 $(x_1, \cdots, x_n)$，</p>
+<p>$$
+F(x_1, x_2, \cdots, x_n) = F_1(x_1) F_2(x_2) \cdots F_n(x_n). \tag{1.6}
+$$</p>
+<p>即：<strong>独立 = 联合分布恰好等于边缘分布的乘积 = 边缘信息已是全部信息</strong>。此后两节将把这一判别分别翻译成离散语言（概率分布相乘）与连续语言（密度相乘）。</p>
+<div class="keypoints"><div class="keypoints-label">要点</div><ul>
+<li>联合分布 $F(x_1, \cdots, x_n) = P(X_1 \leq x_1, \cdots, X_n \leq x_n)$，逗号表示事件之交；各分量须在同一概率空间。</li>
+<li>矩形不等式 $F(b,d) - F(b,c) - F(a,d) + F(a,c) \geq 0$ 是高维特有的约束。</li>
+<li>令部分变元取 $\infty$ 得边缘分布；共 $2^n - 2$ 个。联合决定边缘，边缘不决定联合（投影丢失相关结构）。</li>
+<li>独立 $\iff$ 联合分布 = 边缘分布之积。</li>
+</ul>
+</div>
+<hr>
+<h2 id="32-离散型随机向量概率分布表及其行列求和">3.2 离散型随机向量：概率分布表及其行列求和</h2>
+<p><strong>对应原书 §3.2。</strong></p>
+<h3 id="联合概率分布与边缘分布">联合概率分布与边缘分布</h3>
+<p>各分量均为离散型时，随机向量的分布由<strong>联合概率分布</strong></p>
+<p>$$
+p_{j_1 j_2 \cdots j_n} = P\big(X_1 = x_1(j_1), \cdots, X_n = x_n(j_n)\big)
+$$</p>
+<p>完全刻画。它满足非负性与总和为 1（后者的证明用到第一章的语言：全体事件 $\{X_1 = x_1(j_1), \cdots\}$ 构成完备事件组，由可列可加性得总概率为 1）。求子向量的分布，则是<strong>把不关心的下标全部求和</strong>：</p>
+<p>$$
+P(X_1 = x_1(j_1), \cdots, X_k = x_k(j_k)) = \sum_{j_{k+1}, \cdots, j_n} p_{j_1 \cdots j_n}. \tag{2.3}
+$$</p>
+<p>证明的机制与第一章全概率公式完全相同：按被遗忘分量的取值作分类讨论，逐类求和。</p>
+<p>二维情形最宜用<strong>表格</strong>理解（原书例 2.1–2.2）：行标 $x_i$、列标 $y_j$、格内 $p_{ij}$。则 $X$ 的边缘分布 $p_i = \sum_j p_{ij}$ 是<strong>行和</strong>，$Y$ 的边缘分布 $q_j = \sum_i p_{ij}$ 是<strong>列和</strong>。&quot;边缘&quot;（marginal）一词正来源于此：行和、列和习惯上写在表格的边缘处。这张表是本章多数离散计算的载体，习题 3.43 即是对它的综合训练。</p>
+<h3 id="多项分布二项分布的多维推广">多项分布：二项分布的多维推广</h3>
+<p>**例 2.3（多项分布）**是最重要的离散型随机向量。设 $A_1, \cdots, A_r$ 是试验 $S$ 的完备事件组，$P(A_i) = p_i$。独立重复 $n$ 次，以 $X_i$ 记 $A_i$ 发生的次数，则</p>
+<p>$$
+P(X_1 = k_1, \cdots, X_r = k_r) = \frac{n!}{k_1! \, k_2! \cdots k_r!} \, p_1^{k_1} p_2^{k_2} \cdots p_r^{k_r}, \qquad \sum_{i=1}^r k_i = n. \tag{2.6}
+$$</p>
+<p>公式的结构可以直接读出，不必死记：指定哪些试验落入哪一类，是第一章计数武器（4）的多组分组问题，方案数为多项系数 $\frac{n!}{k_1! \cdots k_r!}$；每一种具体方案由独立性给出概率 $p_1^{k_1} \cdots p_r^{k_r}$；二者相乘。$r = 2$ 时它退化为二项分布 $B(n, p_1)$。原书采用归纳法证明（按第 $n$ 次试验落入哪一类作全概率分解），其中关键的合并步骤 $\sum_i \frac{k_i}{n} = 1$ 值得亲手验证一次。</p>
+<p>多项分布的边缘分布可以<strong>从背景直接读出</strong>而无需计算：单看 $X_j$，每次试验只有&quot;$A_j$ 发生 / 不发生&quot;两种结果，故</p>
+<p>$$
+X_j \sim B(n, p_j).
+$$</p>
+<p>这体现了一条重要的方法论：<strong>求边缘分布时，优先回到概率模型的背景解释，往往比对联合分布硬性求和更快</strong>。注意 $X_1, \cdots, X_r$ 必然不独立——它们受约束 $X_1 + \cdots + X_r = n$ 联结（练习 3.2(1)）；这是&quot;边缘各自正常、联合存在制约&quot;的又一实例。</p>
+<h3 id="离散型的独立性判别">离散型的独立性判别</h3>
+<p><strong>定理 2.1 / 推论 2.2</strong> $X, Y$ 相互独立的充分必要条件是对<strong>所有</strong>取值格点 $(x_i, y_j)$，</p>
+<p>$$
+P(X = x_i, Y = y_j) = P(X = x_i) P(Y = y_j). \tag{2.9}
+$$</p>
+<p>即表格中<strong>每一格都等于其行和与列和的乘积</strong>。证明的两个方向都有教益：由 (2.9) 推独立，是把 $\{X \leq x\}$ 拆成可列个 $\{X = x_i\}$ 之并，用可列可加性把和式分解为两个单变量和式的乘积——这是&quot;从点概率合成区间概率&quot;的标准手法；反方向则依赖第二章的定理（独立随机变量落入任意 Borel 集的事件仍独立），取单点集即可。</p>
+<div class="callout callout-warn">
+<p class="callout-title">易错提示</p>
+
+<p>判别不独立只需<strong>一个</strong>反例格点，判别独立却必须核验<strong>全部</strong>格点。一个实用的快速否定法：若表中存在某格 $p_{ij} = 0$ 而对应行和、列和均为正，则必不独立（乘积为正而联合为零）。由此立即可知：联合分布的支撑集若不是&quot;行集 × 列集&quot;的乘积形状，独立性无从谈起。这一观察在连续情形将升级为&quot;支撑集必须是矩形&quot;的判据。</p>
+</div>
+
+<div class="keypoints"><div class="keypoints-label">要点</div><ul>
+<li>离散联合分布 = 概率表；边缘分布 = 行和 / 列和；&quot;边缘&quot;一词源于表格边缘。</li>
+<li>多项分布 $\frac{n!}{k_1! \cdots k_r!} p_1^{k_1} \cdots p_r^{k_r}$：多组分组计数 × 独立试验概率；边缘为二项 $B(n, p_j)$；分量间因总数约束而不独立。</li>
+<li>独立 $\iff$ 每格 = 行和 × 列和（须全部格点成立）；一格为零而行列和为正即可否定独立。</li>
+</ul>
+</div>
+<hr>
+<h2 id="33-连续型随机向量及其联合密度概率即体积">3.3 连续型随机向量及其联合密度：概率即体积</h2>
+<p><strong>对应原书 §3.3。本节概念密度最大，分四个层次推进。</strong></p>
+<h3 id="a-联合密度从quot长度上的密度quot到quot面积上的密度quot">A. 联合密度：从&quot;长度上的密度&quot;到&quot;面积上的密度&quot;</h3>
+<p><strong>定义 3.1</strong> 若存在 $\mathbf{R}^n$ 上的非负可积函数 $f(x_1, \cdots, x_n)$，使得对任何子立方体 $D$，</p>
+<p>$$
+P(\mathbf{X} \in D) = \int_D f(x_1, \cdots, x_n) \, \mathrm{d}x_1 \cdots \mathrm{d}x_n, \tag{3.2}
+$$</p>
+<p>则称 $\mathbf{X}$ 为<strong>连续型随机向量</strong>，$f$ 为其<strong>联合概率密度</strong>。该等式可扩展到任意 Borel 集 $B$（式 3.3），且 $f$ 在全空间的积分为 1。</p>
+<p>一维密度的直觉在此完整地平移过来：$f(x, y)$ 本身不是概率，$f(x, y) \, \mathrm{d}x \, \mathrm{d}y$ 才近似地是 $(X, Y)$ 落入点 $(x,y)$ 附近小矩形的概率；概率是密度曲面下方、底为区域 $B$ 的<strong>体积</strong>。与分布函数的联系是（原书例 1.2 与式 3.10）：</p>
+<p>$$
+F(x, y) = \int_{-\infty}^{x} \int_{-\infty}^{y} f(s, t) \, \mathrm{d}s \, \mathrm{d}t, \qquad f(x, y) = \frac{\partial^2 F(x, y)}{\partial x \, \partial y} \ \text{（当 } f \text{ 连续时）}.
+$$</p>
+<p>一维时密度是分布函数的一阶导数，二维时则是<strong>混合二阶偏导</strong>——对每个方向各&quot;剥&quot;一次积分。</p>
+<p>本节还预先陈述了 <strong>Fubini 定理</strong>（定理 3.1）：非负或绝对可积函数的重积分可以化为任意次序的累次积分。本章几乎每一个计算都在默默使用它；数学分析课程中它有严格的条件，概率论的应用场景（密度非负）恰好使其无条件可用。</p>
+<h3 id="b-边缘密度把联合密度quot压扁quot">B. 边缘密度：把联合密度&quot;压扁&quot;</h3>
+<p>设 $(X, Y)$ 有联合密度 $f(x, y)$，则分量的密度为</p>
+<p>$$
+f_X(x) = \int_{-\infty}^{\infty} f(x, y) \, \mathrm{d}y, \qquad f_Y(y) = \int_{-\infty}^{\infty} f(x, y) \, \mathrm{d}x,
+$$</p>
+<p>称为<strong>边缘密度</strong>。推导（原书式 3.7–3.8）只是 Fubini 定理的一次应用：$P(X \in D_k)$ 等于对全空间中&quot;$x \in D_k$、$y$ 任意&quot;的柱形区域积分，先把 $y$ 积掉，剩下的被积函数按定义就是 $X$ 的密度。几何图像：把密度曲面沿 $y$ 方向<strong>压扁</strong>（投影并累积）到 $x$ 轴上。离散情形的&quot;行和&quot;在此变成&quot;沿行积分&quot;，二者是同一操作的两种语言。</p>
+<p><strong>积分限的确定是本章第一大失分点</strong>，必须建立规范流程。以原书例 3.3 为范本：$(X, Y)$ 在单位圆 $D = \{x^2 + y^2 \leq 1\}$ 内均匀分布，联合密度 $f = \frac{1}{\pi} \mathrm{I}_D$。求 $f_X$。</p>
+<p><strong>思路</strong>：边缘密度的公式对 $y$ 从 $-\infty$ 积到 $\infty$，但被积函数只在支撑集 $D$ 内非零，因此实际有效的积分限由&quot;固定 $x$ 时，$(x,y)$ 仍留在 $D$ 内的 $y$ 的范围&quot;决定。规范做法分三步：<strong>第一步画出支撑集</strong>（单位圆盘）；<strong>第二步固定横坐标 $x$，作铅垂线</strong>，读出它与支撑集相交的线段：$|y| \leq \sqrt{1 - x^2}$；<strong>第三步在该线段上积分</strong>：</p>
+<p>$$
+f_X(x) = \frac{1}{\pi} \int_{-\sqrt{1-x^2}}^{\sqrt{1-x^2}} \mathrm{d}y = \frac{2}{\pi} \sqrt{1 - x^2}, \qquad |x| \leq 1.
+$$</p>
+<p>同理 $f_Y(y) = \frac{2}{\pi}\sqrt{1 - y^2}$。两个边缘都是&quot;半圆律&quot;密度，而非均匀分布——<strong>均匀分布的边缘未必均匀</strong>，因为不同的 $x$ 处铅垂弦长不同。原书使用示性函数 $\mathrm{I}_D$ 完成同一计算：将 $\mathrm{I}_{\{x^2 + y^2 \leq 1\}}$ 改写为 $\mathrm{I}_{\{|y| \leq \sqrt{1-x^2}\}}$ 再积分。示性函数法与画图法本质相同，前者便于书写严格推导，后者便于正确起手；建议画图定限、示性函数落笔，双轨并用。</p>
+<p>写边缘密度时<strong>必须同时写明自变量的范围</strong>（如 $|x| \leq 1$），范围之外密度为零。漏写范围等于把密度延拓到全轴，归一性立即被破坏，也是阅卷中最常见的扣分原因。</p>
+<h3 id="c-联合分布与联合密度的关系一个必要的反例">C. 联合分布与联合密度的关系：一个必要的反例</h3>
+<p>&quot;$F$ 连续且混合偏导数几乎处处存在&quot;是否保证联合密度存在？<strong>否</strong>。原书例 3.6 的反例极具启发性：设 $X \sim \mathcal{U}(0,1)$，$Y = X$，则 $(X, Y)$ 的联合分布函数 $F(x,y) = \min\{x, y\}$（截断到 $[0,1]$）处处连续，且除若干直线外混合偏导存在、连续。但若 $(X, Y)$ 有联合密度 $f$，记对角线 $D = \{y = x\}$，则</p>
+<p>$$
+1 = P(X = Y) = \int_D f(x, y) \, \mathrm{d}x \, \mathrm{d}y = 0,
+$$</p>
+<p>矛盾——直线是二维零体积集，其上的任何积分为零。故 $(X,Y)$ 无联合密度。</p>
+<p>这个例子揭示的机理是：$(X, X)$ 的全部概率质量<strong>集中在一条一维曲线上</strong>，它在二维空间里&quot;薄&quot;到无法用密度描述——正如单点无法用一维密度描述一样。由此得到两条实用结论（练习 3.3(1)(2)）：连续型随机向量满足 $P(X = Y + c) = 0$；以及<strong>两个分量各自连续，不保证向量整体连续</strong>（习题 3.8）。&quot;连续型&quot;是对向量整体的要求，比对每个分量的要求严格得多。定理 3.2 给出了实用的正面判据：由 $F$ 求混合偏导得到候选密度 $f$ 后，<strong>验证 $\int f = 1$</strong>；积分等于 1 则 $f$ 确为联合密度（质量没有泄漏到低维集合上），小于 1 则说明存在奇异部分。</p>
+<h3 id="d-连续型的独立性判别与两大分布">D. 连续型的独立性判别与两大分布</h3>
+<p><strong>定理 3.3</strong> 各 $X_i$ 有密度 $f_i$ 时，$X_1, \cdots, X_n$ 相互独立的充分必要条件是乘积 $f_1(x_1) f_2(x_2) \cdots f_n(x_n)$ 是 $\mathbf{X}$ 的联合密度。</p>
+<p>证明双向都是 Fubini 定理：乘积形式的被积函数使累次积分逐变量分离。实际判别时常用其推论形式——<strong>若联合密度可以分解为 $f(x, y) = g(x) h(y)$（各因子只含一个变量），且支撑集是矩形（含无穷矩形），则 $X, Y$ 独立</strong>；此时 $g, h$ 各自归一化后就是边缘密度。两个条件缺一不可：</p>
+<ul>
+<li><strong>可分离</strong>：如二元标准正态 $\frac{1}{2\pi} e^{-(x^2+y^2)/2} = \frac{1}{\sqrt{2\pi}}e^{-x^2/2} \cdot \frac{1}{\sqrt{2\pi}}e^{-y^2/2}$，独立。</li>
+<li><strong>支撑集为矩形</strong>：例 3.3 的单位圆均匀分布，密度 $\frac{1}{\pi}\mathrm{I}_{\{x^2+y^2 \leq 1\}}$ 看似常数（&quot;可分离&quot;），但支撑集是圆盘而非矩形，示性函数 $\mathrm{I}_{\{x^2 + y^2 \leq 1\}}$ 无法写成 $\mathrm{I}_A(x)\mathrm{I}_B(y)$，故 $X, Y$ <strong>不独立</strong>。直观原因：知道 $X = 0.99$ 后 $Y$ 被压缩在很小的区间内——取值范围互相牵制，谈不上独立。矩形支撑条件正是离散情形&quot;支撑集 = 行集 × 列集&quot;的连续版本。</li>
+</ul>
+<p>作为对照，原书例 3.7 证明：<strong>立方体上的均匀分布分量独立</strong>（各边缘为区间上的均匀分布，乘积恰为联合密度），且逆命题亦真。均匀分布分量是否独立，完全由支撑区域的形状决定。</p>
+<p>**例 3.8–3.9（二元正态分布）**是本节压轴，也是全书最重要的连续型随机向量。$(X, Y) \sim N(\mu_1, \mu_2; \sigma_1^2, \sigma_2^2; \rho)$ 指联合密度为</p>
+<p>$$
+f(x, y) = \frac{1}{2\pi \sigma_1 \sigma_2 \sqrt{1 - \rho^2}} \exp\left\{ -\frac{1}{2(1 - \rho^2)} \left[ \frac{(x - \mu_1)^2}{\sigma_1^2} - \frac{2\rho (x - \mu_1)(y - \mu_2)}{\sigma_1 \sigma_2} + \frac{(y - \mu_2)^2}{\sigma_2^2} \right] \right\}. \tag{3.14}
+$$</p>
+<p>五个参数的含义（$\mu_i$ 为中心，$\sigma_i$ 为各方向的尺度，$\rho$ 刻画关联强弱与方向）将在第四章证明为期望、方差与相关系数。引入均值向量 $\boldsymbol{\mu}$ 与矩阵 $\Sigma = \begin{pmatrix} \sigma_1^2 & \rho \sigma_1 \sigma_2 \\ \rho \sigma_1 \sigma_2 & \sigma_2^2 \end{pmatrix}$，密度可写成与一维完全同构的形式</p>
+<p>$$
+f(\mathbf{x}) = \frac{1}{(\sqrt{2\pi})^n \sqrt{\det \Sigma}} \exp\left[ -\frac{1}{2} (\mathbf{x} - \boldsymbol{\mu}) \Sigma^{-1} (\mathbf{x} - \boldsymbol{\mu})^{\mathrm{T}} \right], \tag{3.18–3.19}
+$$</p>
+<p>由此自然推广到 $n$ 元正态 $N(\boldsymbol{\mu}, \Sigma)$（§5.3 将系统研究）。一维的 $\frac{(x-\mu)^2}{\sigma^2}$ 升级为二次型 $(\mathbf{x}-\boldsymbol{\mu})\Sigma^{-1}(\mathbf{x}-\boldsymbol{\mu})^{\mathrm{T}}$，归一化常数中的 $\sigma$ 升级为 $\sqrt{\det \Sigma}$——这种&quot;标量→矩阵&quot;的对应是学习多元统计的基本感觉。</p>
+<p>例 3.9 完成两个计算，方法都值得掌握。<strong>其一，边缘分布</strong>：对 $y$ 积分时，把指数中关于 $v = (y-\mu_2)/\sigma_2$ 的部分<strong>配方</strong>成 $(v - \rho u)^2 + (1 - \rho^2) u^2$ 的形式，前者积成高斯积分常数，剩下的恰是一维正态密度，得</p>
+<p>$$
+X \sim N(\mu_1, \sigma_1^2), \qquad Y \sim N(\mu_2, \sigma_2^2).
+$$</p>
+<p>注意：<strong>边缘分布与 $\rho$ 无关</strong>。因此固定 $\mu_i, \sigma_i$ 而变动 $\rho$，可得无穷多个联合分布不同、边缘分布完全相同的例子——这就是&quot;边缘不能决定联合&quot;的标准反例。<strong>其二，独立性判据</strong>：</p>
+<p>$$
+X, Y \text{ 独立} \iff \rho = 0.
+$$</p>
+<p>充分性由 $\rho = 0$ 时密度显式分离直接可见；必要性只需在独立等式 $f_X f_Y = f$ 中代入一点 $(\mu_1, \mu_2)$ 比较常数即得。$\rho$（第四章将证明它是相关系数）为零一般只意味着&quot;不相关&quot;，远弱于独立；<strong>二元正态是&quot;不相关 $\Rightarrow$ 独立&quot;成立的著名特例</strong>，此结论在数理统计中被反复使用。另须警惕其边界：该等价性要求 $(X,Y)$ <strong>联合正态</strong>；两个边缘各自正态而联合不正态时，$\rho = 0$ 不能推出独立。</p>
+<div class="keypoints"><div class="keypoints-label">要点</div><ul>
+<li>联合密度：$P(\mathbf{X} \in B) = \int_B f$，概率即体积；$f = \partial^2 F / \partial x \partial y$。</li>
+<li>边缘密度 = 沿被遗忘变量积分；定限三步：画支撑集 → 固定一个变量作直线 → 读出相交线段。写密度必须附带自变量范围。</li>
+<li>$(X, X)$ 型反例：质量集中在低维集合上则无联合密度；分量连续 $\nRightarrow$ 向量连续；验证 $\int f = 1$ 是正面判据。</li>
+<li>独立判别 = 密度可分离 <strong>且</strong> 支撑集为矩形；圆盘上的均匀分布不独立。</li>
+<li>二元正态：边缘 $N(\mu_i, \sigma_i^2)$ 与 $\rho$ 无关（边缘不定联合的反例）；独立 $\iff \rho = 0$（不相关推独立的特例，以联合正态为前提）。</li>
+</ul>
+</div>
+<hr>
+<h2 id="34-随机向量函数的分布分布函数法与变换法">3.4 随机向量函数的分布：分布函数法与变换法</h2>
+<p><strong>对应原书 §3.4。本节是全章计算方法的军械库。</strong></p>
+<h3 id="a-分布函数法与卷积公式">A. 分布函数法与卷积公式</h3>
+<p>设 $\mathbf{X}$ 有联合密度 $f$，$Y_i = g_i(X_1, \cdots, X_n)$。求 $(Y_1, \cdots, Y_m)$ 分布的<strong>基本公式</strong>（式 4.1）概念上极简单：</p>
+<p>$$
+F_Y(y_1, \cdots, y_m) = P\big(g_1(\mathbf{X}) \leq y_1, \cdots, g_m(\mathbf{X}) \leq y_m\big) = \int_C f(x_1, \cdots, x_n) \, \mathrm{d}x_1 \cdots \mathrm{d}x_n,
+$$</p>
+<p>其中 $C = \{\mathbf{x} \mid g_i(\mathbf{x}) \leq y_i, \forall i\}$ 是<strong>原像区域</strong>。也就是说：函数的分布函数 = 密度在原像区域上的积分；随后对 $y$ 求导（或求混合偏导并验证归一，参照定理 3.2）得密度。这一方法称为<strong>分布函数法</strong>，它不要求变换可逆，是普适的默认路径。</p>
+<p>**例 4.1（和的分布与卷积公式）**是分布函数法最重要的产出。设 $(X, Y)$ 有联合密度 $f(x,y)$，则 $Z = X + Y$ 有密度</p>
+<p>$$
+f_Z(z) = \int_{-\infty}^{\infty} f(x, z - x) \, \mathrm{d}x; \tag{4.2}
+$$</p>
+<p>当 $X, Y$ 独立时即<strong>卷积公式</strong></p>
+<p>$$
+f_Z(z) = \int_{-\infty}^{\infty} f_X(x) f_Y(z - x) \, \mathrm{d}x. \tag{4.3}
+$$</p>
+<p>原书的推导手法值得细读：对 $P(a < Z \leq b)$ 在斜带形区域 $\{a < x + y \leq b\}$ 上积分，先固定 $x$ 对 $y$ 积分，再作换元 $y = z - x$ **把斜带&quot;扶正&quot;**为 $z$ 的区间 $(a, b]$，最后交换积分次序，使表达式呈现&quot;对 $z$ 在 $(a,b]$ 上积分某个函数&quot;的形状——按定义，被积的那个函数就是 $f_Z$。这种&quot;整理成 $\int_a^b (\cdot) \, \mathrm{d}z$ 再认出密度&quot;的论证方式在本章反复出现。公式的直观读法：$Z$ 落在 $z$ 附近，要求 $X$ 取某值 $x$ 而 $Y$ 恰好补足 $z - x$，对所有分工方式 $x$ 累加。</p>
+<p><strong>例 4.2（三角分布）</strong>：$X, Y$ 独立同 $\mathcal{U}(0,1)$，卷积给出</p>
+<p>$$
+f_Z(z) = \int_0^1 \mathrm{I}_{\{0 < z - x < 1\}} \, \mathrm{d}x = \begin{cases} z, & z \in [0, 1), \\ 2 - z, & z \in [1, 2], \\ 0, & \text{其他}. \end{cases}
+$$</p>
+<p>计算的全部难点在示性函数的处理：$0 < z - x < 1$ 即 $z - 1 < x < z$，与积分区间 $(0,1)$ 取交后分 $z < 1$ 与 $z \geq 1$ 两段讨论。两个均匀分布之和不再均匀而呈三角形——中间的取值有更多的分工方式实现，两端只有唯一实现方式。这预示了中心极限定理的方向：不断卷积会使分布越来越&quot;聚中、光滑&quot;。</p>
+<p>同法可得差的公式 $f_V(v) = \int f(x, x - v) \mathrm{d}x$（例 4.3，练习 3.4(2)）。**例 4.4（瑞利分布）**演示原像区域为圆盘的情形：$X, Y$ 独立标准正态，$Z = \sqrt{X^2 + Y^2}$，用极坐标计算圆盘上的积分得</p>
+<p>$$
+F_Z(z) = \int_0^z r e^{-r^2/2} \, \mathrm{d}r, \qquad f_Z(z) = z e^{-z^2/2}, \quad z \geq 0.
+$$</p>
+<p>此即<strong>瑞利分布</strong>（射击问题中&quot;脱靶量&quot;的分布）。旋转对称的密度配极坐标，是应当形成条件反射的搭配。</p>
+<h3 id="b-变换法雅可比行列式">B. 变换法：雅可比行列式</h3>
+<p>当变换 $(X, Y) \mapsto (U, V)$ 可逆（或分片可逆）时，有比分布函数法更直接的<strong>变换法</strong>。</p>
+<p><strong>定理 4.1</strong> 设 $(X,Y)$ 有联合密度 $f$，$U = u(X,Y)$，$V = v(X,Y)$，区域 $D$ 满足 $P((U,V) \in D) = 1$。若存在反解 $x_i = x_i(u,v)$，$y_i = y_i(u,v)$（$i = 1, \cdots, m$），使得每点 $(u,v) \in D$ 的原像恰为这 $m$ 支反函数的值、各支可逆且雅可比行列式非零、各支值域互不相交，则 $(U, V)$ 有联合密度</p>
+<p>$$
+g(u, v) = \sum_{i=1}^{m} f\big(x_i(u,v),\ y_i(u,v)\big) \left| \frac{\partial(x_i, y_i)}{\partial(u, v)} \right|, \qquad (u,v) \in D. \tag{4.11}
+$$</p>
+<p>这个定理不是新原理，而是<strong>重积分换元公式的概率复述</strong>：$P((U,V) \in A) = P((X,Y) \in \text{原像})$，对右端的积分作变量替换，替换产生的体积伸缩因子正是雅可比行列式的绝对值。三点技术须知：</p>
+<ol>
+<li><strong>雅可比是&quot;旧变量对新变量&quot;求导</strong>：$\frac{\partial(x, y)}{\partial(u, v)}$，即先把 $x, y$ 反解为 $u, v$ 的函数再求导。若正向求导更方便，可利用互逆关系 $\frac{\partial(x,y)}{\partial(u,v)} = \left[\frac{\partial(u,v)}{\partial(x,y)}\right]^{-1}$。</li>
+<li><strong>取绝对值</strong>：密度必须非负，行列式的符号只反映定向。</li>
+<li><strong>多支求和</strong>：变换非单射时（典型如平方、取模），每一支原像各自贡献一项。这正是第二章 $Y = X^2$ 公式中&quot;两支相加&quot;的高维推广。</li>
+</ol>
+<p><strong>例 4.5（极坐标分解）</strong>：$X, Y$ 独立标准正态，令 $X = R\cos\Theta$，$Y = R\sin\Theta$。变换单支可逆，$\frac{\partial(x,y)}{\partial(r,\theta)} = r$，故</p>
+<p>$$
+g(r, \theta) = \frac{1}{2\pi} r e^{-r^2/2}, \qquad r > 0, \ \theta \in [0, 2\pi).
+$$</p>
+<p>密度分离且支撑为矩形（乘积区域），故 <strong>$R$ 与 $\Theta$ 独立</strong>：$R$ 服从瑞利分布，$\Theta$ 服从 $[0, 2\pi)$ 上的均匀分布。二维标准正态在方向上完全均匀、模长服从瑞利分布——这一结构是正态分布旋转对称性的解析表达。</p>
+<p>**定理 4.2 与例 4.6（Box–Muller 方法）**顺势解决一个实际问题：如何从均匀随机数生成正态随机数。定理 4.2 陈述一个&quot;同分布传递&quot;原理：同分布的输入经同一函数映射，输出同分布——分布只依赖于分布，不依赖于随机变量的具体构造。据此，取 $U_1, U_2$ 独立 $\mathcal{U}(0,1)$，令</p>
+<p>$$
+X_1 = \sqrt{-2\ln U_1} \cos(2\pi U_2), \qquad Y_1 = \sqrt{-2\ln U_1} \sin(2\pi U_2),
+$$</p>
+<p>则 $\sqrt{-2\ln U_1}$ 恰为瑞利分布（第二章分位数变换的一次应用），$2\pi U_2$ 为均匀角，二者独立，与例 4.5 的 $(R, \Theta)$ 同分布；于是 $(X_1, Y_1)$ 与独立标准正态对 $(X, Y)$ 同分布。这就是数值计算库中生成正态随机数的经典 Box–Muller 算法，也是&quot;概率论定理直接变成代码&quot;的一个佳例。</p>
+<p><strong>例 4.7（柯西分布的出现）</strong>：$X, Y$ 独立标准正态，求 $U = X/Y$，$V = X^2 + Y^2$ 的联合密度。此例集中演示<strong>双支变换</strong>：由 $(u, v)$ 反解得两支 $(x, y)$ 与 $(-x, -y)$（因分子分母同时变号不改变商，平方和亦不变），各支雅可比同为 $\frac{1}{2(1+u^2)}$，求和得</p>
+<p>$$
+g(u, v) = \frac{1}{2} e^{-v/2} \cdot \frac{1}{\pi (1 + u^2)}, \qquad v > 0, \ u \in \mathbf{R}.
+$$</p>
+<p>密度分离、支撑为矩形，故 $U, V$ 独立：$V$ 服从参数 $\frac12$ 的指数分布，$U$ 的密度 $\frac{1}{\pi(1+u^2)}$ 称为<strong>柯西分布</strong>——两个独立标准正态之商。柯西分布尾部极厚（第四章将证明其期望不存在），是概率论中最重要的&quot;病态&quot;范例，此处是它在本书的首次登场。</p>
+<p><strong>方法选择指南</strong>：只求<strong>单个</strong>函数 $Z = g(X,Y)$ 的分布，用分布函数法（或先补一个辅助变量如 $W = X$ 凑成二维可逆变换，用雅可比法算出联合密度后再积掉 $w$ 得边缘——&quot;增补变量法&quot;，习题 3.48、3.49 均可这样处理）；求<strong>联合</strong>密度且变换（分片）可逆，直接用雅可比法。线性变换是最常用特例（练习 3.4(4)）：$(U,V) = (X,Y)A^{\mathrm{T}}$ 满秩时 $g(u,v) = \frac{1}{|\det A|} f(x, y)$。</p>
+<div class="keypoints"><div class="keypoints-label">要点</div><ul>
+<li>分布函数法（普适）：$F_Y = \int_{\text{原像区域}} f$，再求导；&quot;整理成 $\int_a^b(\cdot)\mathrm{d}z$ 认出密度&quot;是标准论证。</li>
+<li>卷积：$f_{X+Y}(z) = \int f_X(x) f_Y(z-x) \mathrm{d}x$（独立时）；均匀 + 均匀 = 三角分布。</li>
+<li>雅可比法：$g(u,v) = \sum_i f(x_i, y_i) \left|\frac{\partial(x_i,y_i)}{\partial(u,v)}\right|$；旧对新求导、取绝对值、非单射分支求和。</li>
+<li>极坐标分解：标准正态对 $\Rightarrow$ 模（瑞利）与方向（均匀）独立；由此得 Box–Muller 正态随机数算法。</li>
+<li>正态之商为柯西分布；只求一维分布时可用&quot;增补变量再积掉&quot;的技巧。</li>
+</ul>
+</div>
+<hr>
+<h2 id="35-条件分布和条件密度给定信息后的分布更新">3.5 条件分布和条件密度：给定信息后的分布更新</h2>
+<p><strong>对应原书 §3.5。</strong></p>
+<h3 id="a-离散型按行列重新归一化">A. 离散型：按行（列）重新归一化</h3>
+<p>离散情形不需要任何新工具，条件概率公式直接给出：对固定的 $j$（$q_j = P(Y = y_j) > 0$），</p>
+<p>$$
+P(X = x_i \mid Y = y_j) = \frac{p_{ij}}{q_j}, \qquad i = 1, 2, \cdots \tag{5.3}
+$$</p>
+<p>称为条件 $Y = y_j$ 下 $X$ 的<strong>条件分布</strong>。在概率表上看：取出 $Y = y_j$ 所在的那一<strong>列</strong>，将其中各格除以列和——即<strong>把一列重新归一化为一个概率分布</strong>。定理 5.1 随之显然：$X, Y$ 独立当且仅当每列归一化后都与边缘分布 $\{p_i\}$ 相同（条件化不改变分布，即信息无用）。</p>
+<p>**例 5.1–5.2（几何等待时间的结构）**值得精读。射击命中率为 $p$，$S_1, S_2$ 为第一、二次命中时的射击次数，联合分布 $P(X = i, Y = j) = p^2 q^{j-2}$（$j > i \geq 1$，$q = 1 - p$）：前 $j$ 次中恰有第 $i$ 次与第 $j$ 次命中、其余 $j - 2$ 次落空。求和得边缘：$X$ 服从几何分布 $pq^{i-1}$，$Y$ 服从 $P(Y = j) = (j-1)p^2 q^{j-2}$（负二项分布的特例）。两个条件分布各有深意：</p>
+<p>$$
+P(X = i \mid Y = j) = \frac{1}{j - 1} \ (1 \leq i < j); \qquad P(Y = j \mid X = i) = p q^{j - i - 1} \ (j > i).
+$$</p>
+<p>前者表明：已知第二次命中发生在第 $j$ 次，则第一次命中的位置在 $\{1, \cdots, j-1\}$ 上<strong>均匀分布</strong>——具体位置不携带任何倾向性信息。后者表明：已知 $S_1 = i$，则还需等待的次数 $Y - i$ 仍服从同一几何分布，与 $i$ 无关——几何分布<strong>无记忆性</strong>的又一表现。例 5.2 进一步验证增量 $X_1 = S_1, X_2 = S_2 - S_1$ <strong>独立同分布</strong>（联合概率恰好分解为两个几何分布之积）。&quot;等待时间的增量独立同分布&quot;这一结构是第六章泊松过程的离散原型。</p>
+<h3 id="b-连续型一次不平凡的定义">B. 连续型：一次不平凡的定义</h3>
+<p>连续情形出现了实质困难：想定义 $P(X \leq x \mid Y = y)$，但 $P(Y = y) = 0$，条件概率公式的分母为零，<strong>第一章的定义在此完全失效</strong>。然而这一概念又有明确的实际意义（原书的例子：已知明日最高气温 $Y = y$，电网最大负荷 $X$ 的分布——气温取 35℃ 这一事件概率为零，但&quot;35℃ 那天的负荷分布&quot;显然是有内容的问题）。</p>
+<p>出路是<strong>用极限逼近</strong>：条件 $Y = y$ 理解为条件 $y - \varepsilon < Y \leq y$ 当 $\varepsilon \to 0$ 的极限。原书的推导（值得逐行复现）：设 $f_Y$ 在 $y$ 处连续且为正，</p>
+<p>$$
+\lim_{\varepsilon \to 0} P(X \leq x \mid y - \varepsilon < Y \leq y) = \lim_{\varepsilon \to 0} \frac{F(x, y) - F(x, y - \varepsilon)}{F_Y(y) - F_Y(y - \varepsilon)} = \frac{\dfrac{\partial}{\partial y} \displaystyle\int_{-\infty}^{y} \left( \int_{-\infty}^{x} f(s, t) \, \mathrm{d}s \right) \mathrm{d}t}{f_Y(y)} = \frac{\displaystyle\int_{-\infty}^{x} f(s, y) \, \mathrm{d}s}{f_Y(y)}.
+$$</p>
+<p>中间一步是&quot;分子分母同除以 $\varepsilon$ 再各自取极限&quot;：分母趋于 $f_Y(y)$（密度的定义），分子趋于 $F(x, \cdot)$ 对 $y$ 的偏导（变上限积分求导）。极限的结果被<strong>采纳为定义</strong>：</p>
+<p><strong>定义 5.2</strong> 当 $f_Y(y) > 0$ 时，称</p>
+<p>$$
+F_{X \mid Y}(x \mid y) = \frac{\int_{-\infty}^{x} f(s, y) \, \mathrm{d}s}{f_Y(y)}, \qquad f_{X \mid Y}(x \mid y) = \frac{f(x, y)}{f_Y(y)} \tag{5.7–5.8}
+$$</p>
+<p>为条件 $Y = y$ 下 $X$ 的<strong>条件分布函数</strong>与<strong>条件密度</strong>。</p>
+<p>条件密度公式 $f_{X|Y} = f / f_Y$ 的几何解释与离散的&quot;列归一化&quot;严格平行：在密度曲面上沿 $Y = y$ <strong>切一刀</strong>，得到截面曲线 $x \mapsto f(x, y)$；它非负但积分不为 1（其积分恰为 $f_Y(y)$），除以 $f_Y(y)$ 归一化后便是一条合法的一维密度。<strong>切片再归一化</strong>——这五个字概括了条件密度的全部内容。与离散情形相同，定理 5.2 给出独立性的条件语言刻画：$X, Y$ 独立 $\iff$ 一切正密度处 $f_{X|Y}(x \mid y) = f_X(x)$（切片形状与切的位置无关）。</p>
+<p>三个例题各代表一类应用：</p>
+<p><strong>例 5.3（几何截面）</strong>：单位圆内均匀分布，已知 $Y = y$ 时 $X$ 在弦 $\left(-\sqrt{1-y^2}, \sqrt{1-y^2}\right)$ 上<strong>均匀分布</strong>——均匀密度的切片仍是均匀的，但支撑随 $y$ 变化。这再次直观解释了 $X, Y$ 为何不独立。</p>
+<p><strong>例 5.4（分层建模与连续全概率公式）</strong>：环境指标 $Y \sim \Gamma(\alpha, \beta)$，给定 $Y = y$ 时软件寿命 $X \sim \mathcal{E}(y)$。这类问题给出的不是联合密度，而是&quot;边缘 + 条件&quot;的<strong>分层描述</strong>；建模的第一步是用乘法公式重构联合密度</p>
+<p>$$
+f(x, y) = f_{X \mid Y}(x \mid y) \, f_Y(y),
+$$</p>
+<p>再积掉 $y$ 得 $X$ 的边缘密度 $f_X(x) = \frac{\alpha \beta^\alpha}{(x + \beta)^{\alpha+1}}$（$x > 0$，计算中使用 $\Gamma$ 函数的换元与递推 $\Gamma(\alpha+1) = \alpha\Gamma(\alpha)$）。两点评注：其一，链条&quot;条件 × 边缘 = 联合 → 积分 = 边缘&quot;正是第一章全概率公式的连续版本，分层模型（hierarchical model）是现代贝叶斯统计的基本构件；其二，指数分布被 $\Gamma$ 分布&quot;混合&quot;后得到的是幂律尾（Pareto 型）密度——尾部远厚于指数，混合放大了不确定性。</p>
+<p><strong>例 5.5（二元正态的条件分布：回归的源头）</strong>：$(X, Y) \sim N(\mu_1, \mu_2; \sigma_1^2, \sigma_2^2; \rho)$ 时，给定 $X = x$，</p>
+<p>$$
+Y \mid X = x \ \sim \ N\left( \mu_2 + \rho \frac{\sigma_2}{\sigma_1}(x - \mu_1), \ (1 - \rho^2) \sigma_2^2 \right). \tag{5.9}
+$$</p>
+<p>计算是密度相除后再配方，结论则值得长期记忆。条件期望 $\mu_x = \mu_2 + \rho\frac{\sigma_2}{\sigma_1}(x - \mu_1)$ 是 $x$ 的<strong>线性函数</strong>——这条直线就是统计学中的<strong>回归直线</strong>：&quot;回归&quot;概念在数学上的最初形态即二元正态的条件均值。条件方差 $(1-\rho^2)\sigma_2^2$ 与 $x$ 无关，且比无条件方差 $\sigma_2^2$ 缩小了因子 $1 - \rho^2$：$|\rho|$ 越大，知道 $X$ 后对 $Y$ 的不确定性削减越多；$\rho = 0$ 时条件分布与无条件分布相同（独立）。定义 5.3 将条件密度逐字推广到向量对向量的情形（$f_{\mathbf{X}|\mathbf{Y}} = f / f_{\mathbf{Y}}$），无新内容。</p>
+<h3 id="c-条件概率-math_block_385把条件概率升级为随机变量选学">*C. 条件概率 $P(A \mid X)$：把条件概率升级为随机变量（选学）</h3>
+<p>本小节为 <em>§4.5 条件期望作概念铺垫，初读可略，但其思想转换非常精彩。对每个取值 $x$，$g(x) = P(A \mid X = x)$ 是一个数；让 $x$ 跑遍 $X$ 的值域，$g$ 是一个普通函数；再把随机变量 $X$ 代入自身的条件概率函数，得到*<em>随机变量</em></em></p>
+<p>$$
+P(A \mid X) = g(X).
+$$</p>
+<p>即：在观测到 $X$ <strong>之前</strong>，&quot;$A$ 在给定 $X$ 下的概率&quot;本身是随机的——它随 $X$ 的实现而定。例 5.6（随机个顾客的营业额）、例 5.8（$P(X \leq x \mid Y) = 1 - e^{-xY}$）演示了书写方式：先算 $P(A \mid X = x)$ 得 $g(x)$，再整体替换 $x \mapsto X$。这种&quot;条件概率作为随机变量&quot;的观点是现代概率论（鞅论、随机过程）的标准语言，第四章的条件期望 $E(Y \mid X)$ 将沿同一路线构造。</p>
+<div class="keypoints"><div class="keypoints-label">要点</div><ul>
+<li>离散条件分布 = 一列（行）除以列（行）和；独立 $\iff$ 每列归一化后同于边缘。</li>
+<li>几何等待时间：给定 $S_2 = j$ 时 $S_1$ 均匀；增量独立同分布（无记忆性）。</li>
+<li>连续情形 $P(Y = y) = 0$，条件分布经 $\varepsilon$-邻域极限定义；$f_{X|Y} = f / f_Y$ = 切片再归一化。</li>
+<li>乘法公式 $f = f_{X|Y} f_Y$ 用于分层建模；积掉条件变量 = 连续全概率公式。</li>
+<li>二元正态条件分布仍正态：条件均值为线性函数（回归直线），条件方差缩减因子 $1 - \rho^2$。</li>
+<li>（选学）$P(A \mid X) = g(X)$ 是随机变量：条件概率的现代观点。</li>
+</ul>
+</div>
+<hr>
+<h2 id="36-次序统计量把样本从小到大排好">3.6 次序统计量：把样本从小到大排好</h2>
+<p><strong>对应原书 §3.6。</strong></p>
+<h3 id="a-概念逐点排序">A. 概念：逐点排序</h3>
+<p>设 $X_1, \cdots, X_n$ 为随机变量。对每个样本点 $\omega$，把实数 $X_1(\omega), \cdots, X_n(\omega)$ 从小到大重排，所得</p>
+<p>$$
+X_{(1)} \leq X_{(2)} \leq \cdots \leq X_{(n)}
+$$</p>
+<p>称为<strong>次序统计量</strong>（定义 6.1）。要点在于排序是<strong>逐 $\omega$</strong> 进行的：$X_{(1)}$ 在不同的 $\omega$ 处可能来自不同的原变量（原书例 6.1 用三次考试成绩具体演示了这一点——最低分未必总是同一位学生）。因此每个 $X_{(k)}$ 是原变量的函数，是货真价实的随机变量。两个端点最常用：$X_{(n)} = \max\{X_1, \cdots, X_n\}$，$X_{(1)} = \min\{X_1, \cdots, X_n\}$；原书例 6.2（五十年一遇的降雨量）说明极值分布在工程与保险中的地位。</p>
+<p>以下设 $X_1, \cdots, X_n$ <strong>独立同分布</strong>，公共分布函数 $F$、密度 $f$。</p>
+<h3 id="b-三个层次的密度公式">B. 三个层次的密度公式</h3>
+<p><strong>第一层：全体次序统计量的联合密度（例 6.5）</strong></p>
+<p>$$
+g(x_1, x_2, \cdots, x_n) = \begin{cases} n! \, f(x_1) f(x_2) \cdots f(x_n), & x_1 < x_2 < \cdots < x_n, \\ 0, & \text{其他}. \end{cases} \tag{6.4}
+$$</p>
+<p>因子 $n!$ 的来源应当彻底理解。证明的骨架：连续型变量以概率 1 互不相等；事件&quot;排序后的向量落入 $D$ 且严格递增&quot;按<strong>是哪个排列实现了这个次序</strong>分解为 $n!$ 个互不相容事件之并；由独立同分布的对称性，每个排列事件的概率相同，故总概率为单个的 $n!$ 倍。直观语言：无序样本的每一种递增构型，可由原变量的 $n!$ 种指派方式实现，概率质量因此<strong>折叠</strong>到锥形区域 $\{x_1 < \cdots < x_n\}$ 上并放大 $n!$ 倍。配套的<strong>例 6.4</strong> 是一个纯积分引理：</p>
+<p>$$
+\int_{a < x_1 < \cdots < x_k < b} f(x_1) \cdots f(x_k) \, \mathrm{d}x_1 \cdots \mathrm{d}x_k = \frac{1}{k!} \big(F(b) - F(a)\big)^k,
+$$</p>
+<p>含义是：$k$ 个独立样本全落入 $(a,b)$ 且按指定次序排列的概率，等于全落入的概率 $\left(F(b)-F(a)\right)^k$ 除以次序数 $k!$——对称性使 $k!$ 种次序等可能。该引理（归纳法证明，逐层&quot;剥&quot;最外一个变量）是下面一切边缘密度计算的引擎。</p>
+<p><strong>第二层：单个 $X_{(k)}$ 的密度（例 6.6）</strong></p>
+<p>$$
+g_k(x) = \frac{n!}{(k-1)! \, (n-k)!} \, F(x)^{k-1} \big[1 - F(x)\big]^{n-k} f(x). \tag{6.5}
+$$</p>
+<p>原书由联合密度积分（配合例 6.4）严格导出。但这个公式更应当用<strong>微元法</strong>直接&quot;看&quot;出来，这也是记忆它的正确方式。$X_{(k)}$ 落在微小区间 $(x, x + \mathrm{d}x)$ 中，意味着 $n$ 个独立样本被分成三组：<strong>恰有 $k - 1$ 个落在 $x$ 左侧</strong>（每个概率 $F(x)$）、<strong>恰有 1 个落入微元</strong>（概率 $f(x)\,\mathrm{d}x$）、<strong>其余 $n - k$ 个落在右侧</strong>（每个概率 $1 - F(x)$）。三组人选的指派方式数为多项系数 $\frac{n!}{(k-1)! \, 1! \, (n-k)!}$，故</p>
+<p>$$
+P\big(X_{(k)} \in (x, x + \mathrm{d}x)\big) \approx \frac{n!}{(k-1)!(n-k)!} F^{k-1} (1 - F)^{n-k} f \, \mathrm{d}x,
+$$</p>
+<p>两边除以 $\mathrm{d}x$ 即得 (6.5)。（两个及以上样本同落微元的概率是 $(\mathrm{d}x)^2$ 阶的高阶无穷小，极限中消失——这是微元法在此严格可行的原因。）</p>
+<p>两个端点情形建议<strong>独立掌握、优先使用</strong>，因为它们经由分布函数的推导更快且不易错：</p>
+<p>$$
+P(X_{(n)} \leq x) = P(\text{全体} \leq x) = F(x)^n \ \Rightarrow \ g_n(x) = n F^{n-1}(x) f(x);
+$$</p>
+<p>$$
+P(X_{(1)} > x) = P(\text{全体} > x) = [1 - F(x)]^n \ \Rightarrow \ g_1(x) = n [1 - F(x)]^{n-1} f(x).
+$$</p>
+<p><strong>最大值走分布函数、最小值走生存函数（尾概率）</strong>——这对&quot;事件翻译&quot;（$\max \leq x \iff$ 全都 $\leq x$；$\min > x \iff$ 全都 $> x$）是次序统计量问题的第一反应。</p>
+<p><strong>第三层：两个次序统计量的联合密度（例 6.7）</strong>：对 $k_1 < k_2$，</p>
+<p>$$
+g_{k_1, k_2}(x, y) = \frac{n!}{(k_1 - 1)! (k_2 - k_1 - 1)! (n - k_2)!} F(x)^{k_1 - 1} [F(y) - F(x)]^{k_2 - k_1 - 1} [1 - F(y)]^{n - k_2} f(x) f(y), \quad x < y.
+$$</p>
+<p>不必背诵：微元法的图像自动生成它——数轴被 $x, y$ 两个微元分成三段，各段人数 $k_1 - 1$、$k_2 - k_1 - 1$、$n - k_2$，概率分别为 $F(x)$、$F(y) - F(x)$、$1 - F(y)$，再乘多项系数与两个密度微元。此公式是计算<strong>极差</strong> $R = X_{(n)} - X_{(1)}$ 分布的出发点（习题 3.29）。</p>
+<h3 id="应用竞争风险与quot灯泡悖论quot">应用：竞争风险与&quot;灯泡悖论&quot;</h3>
+<p><strong>例 6.9</strong> 以生活现象收束本节：住宅由 4 只灯泡改为 24 只后，主人感觉灯泡&quot;更容易坏&quot;。设各灯泡寿命独立同 $\mathcal{E}(\lambda)$，等待第一只烧坏的时间为最小值。由</p>
+<p>$$
+P(\min\{X_1, \cdots, X_n\} > t) = \big(e^{-\lambda t}\big)^n = e^{-n\lambda t}
+$$</p>
+<p>得 $\min \sim \mathcal{E}(n\lambda)$：<strong>独立指数变量的最小值仍是指数的，且失效率相加</strong>。于是换灯泡的等待时间从 $\mathcal{E}(4\lambda)$ 变为 $\mathcal{E}(24\lambda)$，平均缩短为原来的 $1/6$；取 $\lambda = 1/1500$（小时$^{-1}$）计算，装修前 200 小时内不换灯泡的概率为 $58.7\%$，装修后仅 $4.1\%$。单只灯泡的质量并未改变，改变的是&quot;第一次失效&quot;这一极值事件的发生率——这一结构在可靠性理论中称为<strong>竞争风险</strong>：多个失效模式并联竞争，系统失效率为各失效率之和。它也是第六章泊松过程叠加性质的雏形。</p>
+<div class="keypoints"><div class="keypoints-label">要点</div><ul>
+<li>次序统计量逐 $\omega$ 排序；$X_{(k)}$ 是随机变量，$X_{(1)}, X_{(n)}$ 为最值。</li>
+<li>联合密度 $n! \prod f(x_i)$（递增锥上）：$n!$ 来自排列对称性的折叠。</li>
+<li>$X_{(k)}$ 密度用微元法记忆：左 $k-1$（各 $F$）、微元 1（$f\,\mathrm{d}x$）、右 $n-k$（各 $1-F$）、乘多项系数。</li>
+<li>最大值配分布函数 $F^n$，最小值配尾概率 $(1-F)^n$，先算分布函数再求导最稳妥。</li>
+<li>指数最小值：失效率相加，$\min \sim \mathcal{E}(n\lambda)$（竞争风险）。</li>
+</ul>
+</div>
+<hr>
+<h2 id="本章收束联合行为的完整语法">本章收束：联合行为的完整语法</h2>
+<p>回顾本章的路径。§3.1–§3.3 建立了描述联合行为的三套等价语言——分布函数、概率分布表、联合密度——并确立了中心观念：<strong>联合 &gt; 边缘</strong>，边缘是联合的投影，独立是&quot;投影无损&quot;的特殊情形，其判别归结为&quot;可分离 + 矩形支撑&quot;。§3.4 提供了从旧变量的分布计算新变量分布的两大算法：普适的分布函数法与高效的雅可比变换法，卷积、瑞利、柯西、Box–Muller 皆是其产出。§3.5 把第一章的条件概率精细化到连续场合：条件密度 = 切片再归一化，乘法公式支撑分层建模，二元正态的条件分布则孕育了回归。§3.6 将样本排序，用对称性（$n!$ 折叠）与微元法（三段计数）掌握极值与一般次序统计量的分布。</p>
+<p>至此，描述随机向量的<strong>分布层面</strong>工具已经齐备。但分布（一张表、一个二元函数）作为信息载体过于庞大：工程与统计实践需要少数几个数字概括一个分布的位置、离散程度与关联强弱。把分布压缩为数字——期望、方差、协方差与相关系数——并研究这些数字的运算规律，是下一章的主题。本章遗留的两个悬念也将在后续解决：二元正态的五个参数的确切含义（第四章），以及多元正态的完整理论（第五章 §5.3）。</p>
+<hr>
+<h2 id="公式速查卡">公式速查卡</h2>
+<p><strong>联合与边缘</strong></p>
+<ul>
+<li>联合分布 $F(x, y) = P(X \leq x, Y \leq y)$；矩形概率 $F(b,d) - F(b,c) - F(a,d) + F(a,c) \geq 0$</li>
+<li>边缘：$F_X(x) = F(x, \infty)$；离散 $p_i = \sum_j p_{ij}$（行和）；连续 $f_X(x) = \int f(x, y) \mathrm{d}y$（沿 $y$ 积掉，定限先画支撑集）</li>
+<li>联合决定边缘；边缘 + 相关结构才决定联合</li>
+<li>$f = \partial^2 F / \partial x \partial y$（$f$ 连续时）；候选密度须验证 $\int f = 1$</li>
+</ul>
+<p><strong>独立性判别</strong></p>
+<ul>
+<li>通用：$F = \prod F_i$；离散：每格 = 行和 × 列和；连续：$f(x,y) = f_X(x) f_Y(y)$</li>
+<li>实用判据：密度可分离 <strong>且</strong> 支撑集为矩形</li>
+<li>二元正态：独立 $\iff \rho = 0$（需联合正态前提）</li>
+</ul>
+<p><strong>重要多维分布</strong></p>
+<ul>
+<li>多项分布：$\frac{n!}{k_1! \cdots k_r!} p_1^{k_1} \cdots p_r^{k_r}$；边缘 $X_j \sim B(n, p_j)$</li>
+<li>区域 $D$ 上均匀分布：$f = \frac{1}{m(D)} \mathrm{I}_D$；矩形上分量独立，圆盘上不独立</li>
+<li>二元正态 $N(\mu_1, \mu_2; \sigma_1^2, \sigma_2^2; \rho)$：边缘 $N(\mu_i, \sigma_i^2)$；矩阵形式 $f \propto \exp[-\frac12 (\mathbf{x} - \boldsymbol{\mu})\Sigma^{-1}(\mathbf{x} - \boldsymbol{\mu})^{\mathrm{T}}]$</li>
+</ul>
+<p><strong>函数的分布</strong></p>
+<ul>
+<li>分布函数法：$F_Z(z) = \int_{\{g \leq z\}} f$，再求导</li>
+<li>卷积：$f_{X+Y}(z) = \int f(x, z - x) \mathrm{d}x \overset{\text{独立}}{=} \int f_X(x) f_Y(z - x) \mathrm{d}x$；差：$f_{X-Y}(v) = \int f(x, x - v) \mathrm{d}x$</li>
+<li>雅可比法：$g(u,v) = \sum_i f(x_i(u,v), y_i(u,v)) \left| \frac{\partial(x_i, y_i)}{\partial(u,v)} \right|$（旧对新、取绝对值、多支求和）</li>
+<li>线性变换：$g(u,v) = \frac{1}{|\det A|} f(A^{-1}(u,v)^{\mathrm{T}})$</li>
+<li>$\mathcal{U}(0,1) + \mathcal{U}(0,1) \to$ 三角分布；$\sqrt{N(0,1)^2 + N(0,1)^2} \to$ 瑞利 $z e^{-z^2/2}$；$N(0,1)/N(0,1) \to$ 柯西 $\frac{1}{\pi(1+u^2)}$</li>
+<li>Box–Muller：$\sqrt{-2\ln U_1}(\cos, \sin)(2\pi U_2) \sim$ 独立 $N(0,1)$ 对</li>
+</ul>
+<p><strong>条件分布</strong></p>
+<ul>
+<li>离散：$P(X = x_i \mid Y = y_j) = p_{ij} / q_j$（列归一化）</li>
+<li>连续：$f_{X|Y}(x \mid y) = f(x, y) / f_Y(y)$（切片归一化，要求 $f_Y(y) > 0$）</li>
+<li>乘法公式：$f(x, y) = f_{X|Y}(x \mid y) f_Y(y)$；边缘 $f_X = \int f_{X|Y} f_Y \, \mathrm{d}y$（连续全概率）</li>
+<li>二元正态：$Y \mid X = x \sim N\big(\mu_2 + \rho\frac{\sigma_2}{\sigma_1}(x - \mu_1), \ (1 - \rho^2)\sigma_2^2\big)$</li>
+</ul>
+<p><strong>次序统计量</strong>（独立同分布，分布 $F$、密度 $f$）</p>
+<ul>
+<li>联合：$n! f(x_1) \cdots f(x_n)$，$x_1 < \cdots < x_n$</li>
+<li>$X_{(k)}$：$\frac{n!}{(k-1)!(n-k)!} F^{k-1} (1-F)^{n-k} f$（微元法：左 $k-1$、中 1、右 $n-k$）</li>
+<li>$\max$：$F^n \Rightarrow n F^{n-1} f$；$\min$：尾 $(1-F)^n \Rightarrow n(1-F)^{n-1} f$</li>
+<li>指数最小值：$\min\{\mathcal{E}(\lambda) \times n\} \sim \mathcal{E}(n\lambda)$</li>
+</ul>
+<hr>
+<h2 id="习题指引">习题指引</h2>
+<p>习题三共 52 题，覆盖面广、层次分明。以下按&quot;打底 → 核心方法 → 挑战&quot;给出路线与思路提示（只指方向，不给解答；卡住超过 20 分钟建议来讨论）。</p>
+<p><strong>第一层：打底（联合密度与边缘密度的基本功）</strong></p>
+<ul>
+<li><strong>3.1、3.2、3.19</strong>：求边缘密度。3.2 与 3.19 的支撑集分别是抛物线内区域与角形区域，严格按&quot;画支撑集 → 固定变量作直线 → 读线段&quot;三步定限；3.2 同时练&quot;支撑非矩形 $\Rightarrow$ 不独立&quot;的论证。</li>
+<li><strong>3.14</strong>：常数归一化 + 各类区域概率，综合检验积分基本功。</li>
+<li><strong>3.9、3.10、3.43</strong>：离散表格题。3.43 的 (2)(3) 用事件翻译 $\{\max \leq k\}$、$\{\min > k\}$ 处理。</li>
+<li><strong>3.17、3.18</strong>：两个独立指数变量的比较与最值。3.17 直接对区域 $\{x > y\}$ 积分；3.18 用 min/max 的分布函数法，注意 $\min \sim \mathcal{E}(\lambda + \mu)$。</li>
+</ul>
+<p><strong>第二层：核心方法（本章主干题型）</strong></p>
+<ul>
+<li><strong>3.27、3.28</strong>：正态可加性 $aX + bY + c \sim N(a\mu_1 + b\mu_2 + c, a^2\sigma_1^2 + b^2\sigma_2^2)$。用卷积配方法证明，结论必须熟记（第五章特征函数将给出更简洁的证明）。</li>
+<li><strong>3.32</strong>：卷积公式的直接练习（注意支撑限制 $x, y > 0$ 对积分限的影响）。</li>
+<li><strong>3.20、3.21</strong>：利用定理 4.2（同分布传递）证二项、泊松的可加性——体会&quot;不算积分也能定分布&quot;的思想。</li>
+<li><strong>3.22</strong>：重要反例——$X^2$ 与 $Y^2$ 独立而 $X, Y$ 不独立。说明&quot;函数独立&quot;弱于&quot;原变量独立&quot;。</li>
+<li><strong>3.24、3.36</strong>：条件密度双向练习。3.36 是&quot;边缘 + 条件 $\to$ 联合 $\to$ 另一边缘&quot;的分层建模标准流程（对应例 5.4）。</li>
+<li><strong>3.29</strong>：极差 $R = X_{(n)} - X_{(1)}$ 的密度：先写 $(X_{(1)}, X_{(n)})$ 的联合密度（例 6.7 取 $k_1 = 1, k_2 = n$），再作差变换。</li>
+<li><strong>3.37、3.38</strong>：min/max 的实际应用；3.38 把个数 $N$ 也随机化，需对 $N$ 用全概率公式——次序统计量与分层模型的复合。</li>
+</ul>
+<p><strong>第三层：挑战（结构更深的题）</strong></p>
+<ul>
+<li><strong>3.48、3.49</strong>：雅可比法双支变换（对应例 4.7 的手法）。3.49 注意由 $(u, v)$ 反解出四支 $(\pm x, \pm y)$。</li>
+<li><strong>3.35</strong>：指数次序统计量的间隔 $Y_k = X_{(k)} - X_{(k-1)}$ 相互独立——著名的结构定理，作变换 $(X_{(1)}, \cdots, X_{(n)}) \to (Y_1, \cdots, Y_n)$ 用雅可比法，结论在第六章泊松过程中重现。</li>
+<li><strong>3.44、3.45</strong>：次序统计量的条件密度；3.45(2) 的结论（给定最大值后其余点如同均匀样本）是&quot;均匀化&quot;思想的体现。</li>
+<li><strong>3.5、3.41</strong>：混合型（离散 × 连续）的乘积与和，检验对&quot;密度存在性&quot;的理解。</li>
+<li><strong>3.33、3.34、3.46、3.47</strong>：随机参数复合模型（家庭子女数、售票窗口、交易笔数），统一用&quot;条件 + 全概率&quot;框架处理。</li>
+<li>**<em>3.51、<em>3.52</em></em>：理论题。3.51 补定理 3.2 的证明；3.52 综合次序统计量与分位数变换（提示：$F(X_i)$ 服从 $\mathcal{U}(0,1)$）。</li>
+</ul>
+<p>通用自查清单：① 支撑集画了吗？积分限与支撑一致吗？② 写密度时附带自变量范围了吗？③ 判独立时同时核验了&quot;可分离&quot;与&quot;矩形支撑&quot;吗？④ 雅可比是&quot;旧对新&quot;求导并取了绝对值吗？非单射变换的分支都数齐了吗？⑤ 条件密度的分母 $f_Y(y) > 0$ 的范围写对了吗？</p>
+
+    <nav class="pager">  <a href="02-random-variables-and-distributions.html">
+    <span class="label">← 上一章</span>
+    <span class="title">随机变量和概率分布</span>
+  </a>  <a href="04-expectation-and-variance.html" class="next">
+    <span class="label">下一章 →</span>
+    <span class="title">数学期望和方差</span>
+  </a></nav>
+  </article>
+</div>
+
+<footer>
+  <div class="set">
+    <span>概率论精讲</span>
+    <span>2026 · ZH-CN</span>
+  </div>
+  <div class="set">
+    <span>Mav</span>
+  </div>
+</footer>
+<div class="search-backdrop" id="search-overlay" role="dialog" aria-modal="true" aria-label="搜索" hidden>
+  <div class="search-modal">
+    <div class="search-input-wrap">
+      <input type="search" class="search-input" placeholder="搜索内容..." aria-label="搜索内容" autocomplete="off">
+      <kbd>ESC</kbd>
+    </div>
+    <div class="search-results" role="listbox" aria-label="搜索结果"></div>
+  </div>
+</div>
+
+<!-- Side Panel -->
+<div class="side-panel" id="side-panel">
+  <div class="side-panel-resize" id="side-panel-resize"></div>
+  <div class="side-panel-header">
+    <div class="side-panel-tabs">
+      <button class="side-panel-tab active" data-mode="sidenote">补充</button>
+      <button class="side-panel-tab" data-mode="notepad">笔记</button>
+    </div>
+    <button class="side-panel-close" aria-label="关闭">×</button>
+  </div>
+  <div class="side-panel-body"></div>
+</div>
+<button class="notepad-fab" id="notepad-fab" aria-label="便利贴">✎</button>
+
+<!-- Mobile TOC -->
+<button class="mtoc-fab" id="mtoc-fab" aria-label="目录">TOC</button>
+<div class="mtoc-drawer" id="mtoc-drawer">
+  <div class="mtoc-content"></div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/bash.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/typescript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/yaml.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/javascript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/json.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/python.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/css.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+<script>mermaid.initialize({startOnLoad:true, theme:'neutral', fontFamily:'Inter, sans-serif'});</script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}]});"></script>
+<script src="../assets/script.js"></script>
+
+</body>
+</html>

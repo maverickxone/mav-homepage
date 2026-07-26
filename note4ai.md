@@ -162,6 +162,7 @@ infoCutoff: "..."   # 可选；章节页头部显示信息截止说明
 | `:::tabs ...` | 选项卡块 |
 | `:::collapsible 标题` | 可折叠块 |
 | `:::quiz` | 交互选择题块（常配合 `features: [quiz]` 与 quiz.css/js） |
+| `> [要点]` 起头的引用块 | 渲染为要点卡片 `<div class="keypoints">`（2026-07 加入 renderer.js + 共享 style.css；旧书重建后同样生效，此前渲染为普通 blockquote） |
 
 闭合行均为单独的 `:::`。
 
@@ -352,6 +353,7 @@ node blog-build.js   # 只生成 html/*.html 详情页（导航指向时间线�
 | ~~d2l-toolbox / d2l-cnn / d2l-rnn~~ | ~~三套独立 D2L 书稿~~ | 2026-07 合并进 `deep-learning` Series，旧源与旧产物移入废纸篓 |
 | ~~claude-d2l-to-rnn~~ | ~~深度学习讲义~~ | ~~4 章；旧版合订；`catalog: false`、`status: draft`~~ —— 2026-07 移除（内容已由深度学习 Series 承接） |
 | math-analysis | 数学分析讲义 | 6 章（第 8–13 章，下册）；“大一下学期课程讲义”折叠区；`script.js` 锁定 + `12-fourier-analysis.md` 锁定 |
+| probability | 概率论精讲 | 6 章；2026-07 新增；何书元《概率论》（北大版）**伴读讲义**，章节号与原书 § 一一对应；课程讲义折叠区（该折叠区同期由“大一下学期课程讲义”更名“本科课程讲义”）；源 md 由 Claude 撰写，底本电子版在用户 `~/Desktop/概率论-何书元.md`（不在仓库内）；无图片、无锁定条目 |
 | data-structures | 数据结构：从指针到算法 | 9 章；原始 md/c 在 `markdown-backups/Data-Structures/_source/`，装配脚本 `_source/assemble.py` |
 | thermodynamics | 热学速通 | 6 章；课程讲义折叠区；`_figures/*.py` 生成 PNG；`script.js` 锁定 |
 | money-bank | 银行体系与货币系统 | 8 章 |

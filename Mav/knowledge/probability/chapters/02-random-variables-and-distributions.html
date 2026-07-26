@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>随机变量和概率分布 — 概率论精讲</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" id="hljs-light" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+<link rel="stylesheet" id="hljs-dark" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" media="not all">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+
+</head>
+<body>
+
+<div class="progress-bar" id="progress-bar"></div>
+
+<nav class="topnav" id="topnav">
+  <div class="topnav-inner">
+    <a class="brand" href="../index.html">概率论精讲</a>
+    <div class="nav-links">
+      <a href="01-classical-model-and-probability-space.html">01</a>
+      <a href="02-random-variables-and-distributions.html" class="active">02</a>
+      <a href="03-random-vectors.html">03</a>
+      <a href="04-expectation-and-variance.html">04</a>
+      <a href="05-characteristic-functions-and-limit-theorems.html">05</a>
+      <a href="06-stochastic-processes-intro.html">06</a>
+    </div>
+    <div class="nav-controls">
+      <button class="nav-btn" id="search-btn" aria-label="搜索 (Ctrl+K)">⌘K</button>
+      <button class="nav-btn" id="settings-btn" aria-label="阅读设置">Aa</button>
+      <a class="nav-btn" href="../../index.html" aria-label="返回知识库">← 知识库</a>
+      <a class="nav-btn" href="https://github.com/maverickxone/mav-homepage" target="_blank" rel="noopener" aria-label="GitHub" style="padding: 6px 8px;"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg></a>
+    </div>
+  </div>
+</nav>
+<div class="settings-pop" id="settings-pop">
+  <h5>主题</h5>
+  <div class="row">
+    <button class="seg" data-theme-set="light">明亮</button>
+    <button class="seg" data-theme-set="dark">暗色</button>
+  </div>
+  <h5>字号</h5>
+  <div class="row">
+    <button class="seg" data-size-set="s">小</button>
+    <button class="seg" data-size-set="m">中</button>
+    <button class="seg" data-size-set="l">大</button>
+  </div>
+</div>
+
+<div class="with-sidebar">
+  <aside class="sidebar">
+  <div class="chapter-num">CHAPTER 02</div>
+  <div class="chapter-name">随机变量和概率分布</div>
+  <h4>目录</h4>
+  <ul>
+    <li><a href="#20-导言为什么需要随机变量">2.0 导言：为什么需要随机变量</a></li>
+    <li><a href="#21-随机变量把随机结果映为实数">2.1 随机变量：把随机结果映为实数</a></li>
+    <li><a href="#22-离散型随机变量五种基本分布及其生成机制">2.2 离散型随机变量：五种基本分布及其生成机制</a></li>
+    <li><a href="#23-连续型随机变量概率密度与四个基本分布">2.3 连续型随机变量：概率密度与四个基本分布</a></li>
+    <li><a href="#24-概率分布函数统一离散与连续的通用语言">2.4 概率分布函数：统一离散与连续的通用语言</a></li>
+    <li><a href="#25-随机变量函数的分布分布函数法">2.5 随机变量函数的分布：分布函数法</a></li>
+    <li><a href="#26-随机变量的-p-分位数选学">2.6 随机变量的 p 分位数（选学）</a></li>
+    <li><a href="#本章收束单变量世界的完整地图">本章收束：单变量世界的完整地图</a></li>
+    <li><a href="#公式速查卡">公式速查卡</a></li>
+    <li><a href="#习题指引">习题指引</a></li>
+  </ul>
+</aside>
+  <article class="chapter-body">
+    <header class="chapter-head">
+  <div class="chapter-head-meta">
+    <span class="num">CHAPTER 02</span>
+    <span>≈ 130 MIN READ</span>
+  </div>
+  <h1>随机变量和概率分布</h1>
+
+</header>
+    <div class="callout">
+<p class="callout-title">📖 本章导读</p>
+
+<p>第一章结尾指出，概率空间 $(\Omega, \mathcal{F}, P)$ 只提供了谈论&quot;事件&quot;的框架，而实际问题关心的往往是<strong>数值</strong>——掷出的点数、放射出的粒子数、仪器的寿命。本章完成从&quot;事件&quot;到&quot;随机的数&quot;的过渡。建议先读本讲义各节把握动机与结构，再精读原书对应小节，最后按文末指引做习题二。</p>
+</div>
+
+<h2 id="20-导言为什么需要随机变量">2.0 导言：为什么需要随机变量</h2>
+<p>第一章建立的体系有一个明显的表达瓶颈。考察&quot;掷 $n$ 颗骰子&quot;这个试验：若只用事件的语言，则&quot;点数之和为 7&quot;、&quot;点数之和为 8&quot;、&quot;最大点数是 6&quot;……每个陈述都要单独定义一个事件，事件之间的算术关系（和、差、极值）在集合语言中无法直接表达。而这些陈述有一个公共的来源——它们都是关于同一个<strong>数值</strong> &quot;点数之和&quot; 的断言。自然的做法是：把这个数值本身作为研究对象。</p>
+<p>这就是<strong>随机变量</strong>的思想：在样本空间 $\Omega$ 上定义一个实值函数 $X(\omega)$，把每个试验结果 $\omega$ 映为一个实数。于是&quot;点数之和为 7&quot;变成 $\{X = 7\}$，&quot;点数之和不超过 10&quot;变成 $\{X \leq 10\}$——无穷多个事件被一个函数统一收纳。更重要的是，随机变量作为数<strong>可以参与运算</strong>：$X + Y$、$X^2$、$\max\{X, Y\}$ 都有意义，微积分的全部工具由此进入概率论。可以说，第一章造出了概率论的&quot;语法&quot;，本章引入的随机变量才是它的&quot;主语&quot;；此后各章（期望、极限定理、随机过程）研究的无一例外都是随机变量。</p>
+<p>本章的逻辑线索分四步：</p>
+<ol>
+<li><strong>定义对象（§2.1）</strong>：什么样的函数才有资格称为随机变量？答案涉及可测性——这是本章唯一的抽象难点，我们将说明这个技术条件为何必不可少。</li>
+<li><strong>刻画规律（§2.2–§2.4）</strong>：随机变量的概率规律称为它的<strong>分布</strong>。离散型用分布列（§2.2），连续型用概率密度（§2.3），而分布函数（§2.4）是覆盖一切类型的统一语言。沿途将系统研究八个基本分布，它们是后续所有章节的&quot;标准零件库&quot;。</li>
+<li><strong>变换规律（§2.5）</strong>：已知 $X$ 的分布，如何求 $Y = g(X)$ 的分布。</li>
+<li><strong>反向工具（§2.6，选学）</strong>：由分布反解数值——分位数，以及由此派生的随机数生成原理。</li>
+</ol>
+<p>贯穿全章的一个观念转变值得预先指出：随机变量虽被定义为 $\Omega$ 上的函数，但概率论<strong>并不关心这个函数的具体解析形式，只关心它的分布</strong>（原书例 1.6 对此有专门讨论）。&quot;$X$ 服从什么分布&quot;取代&quot;$X(\omega)$ 如何定义&quot;成为核心问题——这正是&quot;分布&quot;一词在本章标题中出现的原因。</p>
+<div class="keypoints"><div class="keypoints-label">要点</div><ul>
+<li>随机变量把试验结果数值化，使事件的代数运算与微积分工具得以进入概率论。</li>
+<li>本章主线：定义对象（可测性）→ 刻画规律（分布列 / 密度 / 分布函数）→ 变换规律（函数的分布）→ 反向工具（分位数）。</li>
+<li>观念转变：研究重心从函数 $X(\omega)$ 的具体形式转向它的分布。</li>
+</ul>
+</div>
+<hr>
+<h2 id="21-随机变量把随机结果映为实数">2.1 随机变量：把随机结果映为实数</h2>
+<p><strong>对应原书 §2.1。</strong></p>
+<h3 id="a-定义中的技术条件从何而来">A. 定义中的技术条件从何而来</h3>
+<p>朴素地说，&quot;定义在样本空间 $\Omega$ 上的实值函数就是随机变量&quot;。原书的三个引入例（示性函数 $\mathrm{I}_A$、扑克牌的点数、收缩压的测量值）都符合这个直觉。但严格的定义多了一个限制条件：</p>
+<p><strong>定义 1.1</strong> 设 $(\Omega, \mathcal{F})$ 是可测空间。若 $\Omega$ 上的函数 $X(\omega)$ 满足：对任何实数 $x$，</p>
+<p>$$
+\{\omega \mid X(\omega) \leq x\} \in \mathcal{F}, \tag{1.1}
+$$</p>
+<p>则称 $X$ 是 $(\Omega, \mathcal{F})$ 上的<strong>随机变量</strong>。集合 $\{\omega \mid X(\omega) \leq x\}$ 以后简记为 $\{X \leq x\}$。</p>
+<p>条件 (1.1) 的必要性可以从概率论的目标反推出来。引入 $X$ 之后，我们必然要计算 $P(X \leq x)$、$P(a < X \leq b)$ 这类概率；而第一章已经确立，$P$ <strong>只对 $\mathcal{F}$ 中的集合（即事件）有定义</strong>——$\mathcal{F}$ 之外的集合根本没有概率可言。因此，若想让&quot;$X \leq x$&quot;这句话对每个 $x$ 都有概率，就必须要求 $\{X \leq x\}$ 对每个 $x$ 都落在 $\mathcal{F}$ 中。条件 (1.1) 不是数学家的洁癖，而是&quot;$X$ 的概率问题可以被合法提出&quot;的最低资格；满足它的函数称为<strong>可测的</strong>——可以被概率测度&quot;看见&quot;的函数。</p>
+<p>一个自然的疑问：条件 (1.1) 只保证了 $\{X \leq x\}$ 型的集合是事件，但我们同样需要谈论 $\{X = 3\}$、$\{a < X < b\}$、$\{X \in A\}$。这正是 $\sigma$ 域的封闭性发挥作用的地方。例如（原书例 1.7 与练习 2.1）：</p>
+<p>$$
+\{a < X \leq b\} = \{X \leq b\} - \{X \leq a\}, \qquad \{X = a\} = \bigcap_{n=1}^{\infty} \{a - 1/n < X \leq a\},
+$$</p>
+<p>差运算与可列交都不会越出 $\mathcal{F}$，故二者皆为事件。把这个推理系统化，就得到 Borel 集与定理 1.1。</p>
+<h3 id="b-borel-集实数轴上的事件域">B. Borel 集：实数轴上的事件域</h3>
+<p>把第一章&quot;事件域&quot;的构造施加于实数轴自身：用 $\mathcal{C}$ 表示 $\mathbf{R}$ 的全体左开右闭区间 $(a, b]$，把 $\mathcal{C}$ 中的区间经过交、余集、可列并及其反复运算所能产生的一切集合收集起来，记为 $\mathcal{B}$。$\mathcal{B}$ 是 $\mathbf{R}$ 上的 $\sigma$ 域，称为 <strong>Borel 域</strong>，其元素称为 <strong>Borel 集</strong>。单点集、开区间、闭区间、可列点集乃至高等数学中出现的一切集合都是 Borel 集；换言之，$\mathcal{B}$ 囊括了实际计算中可能遇到的所有实数集合。</p>
+<p><strong>定理 1.1</strong> 若 $X$ 是 $(\Omega, \mathcal{F})$ 上的随机变量，则对任何 Borel 集 $A$，$\{X \in A\} \in \mathcal{F}$。</p>
+<p>这个定理宣布：只要检验了 (1.1) 这<strong>一族</strong>集合，$X$ 落入<strong>任何</strong> Borel 集的概率就都自动有意义。证明的思想（原书带星号，值得了解）是一种典型的&quot;好集合方法&quot;：把所有使 $\{X \in A\} \in \mathcal{F}$ 成立的 $A$ 收集为集族 $\mathcal{A}$，利用原像运算与集合运算可交换（$X^{-1}(\bar{A}) = \overline{X^{-1}(A)}$，$X^{-1}(\bigcup A_j) = \bigcup X^{-1}(A_j)$）验证 $\mathcal{A}$ 本身构成 $\sigma$ 域；又因 $(a, b] \in \mathcal{A}$，而 $\mathcal{B}$ 是<strong>包含这些区间的最小</strong> $\sigma$ 域，故 $\mathcal{B} \subset \mathcal{A}$。&quot;验证生成元，封闭性自动传播&quot;——这个论证模式在测度论中反复出现。</p>
+<p>同样的构造推广到 $n$ 维：以 $\mathbf{R}^n$ 的子立方体为生成元得到 $n$ 维 Borel 域 $\mathcal{B}^n$。定义在 $(\mathbf{R}^n, \mathcal{B}^n)$ 上的随机变量称为 <strong>Borel 可测函数</strong>，简称可测函数。连续函数、单调函数、阶梯函数及其线性组合均可测；本书此后出现的一切函数默认可测，不再逐一声明。</p>
+<p>可测性框架的直接回报是下述封闭性定理：</p>
+<p><strong>定理 1.2</strong> 若 $X$ 是随机变量，$g$ 是可测函数，则 $Y = g(X)$ 仍是随机变量。更一般地，$g(X_1, X_2, \cdots, X_n)$ 是随机变量。</p>
+<p>证明只有一步换元：$\{g(X) \leq a\} = \{X \in B\}$，其中 $B = \{x \mid g(x) \leq a\}$ 是 Borel 集，再引用定理 1.1。这个定理的意义在于：<strong>随机变量的世界对一切常规运算封闭</strong>——$X + Y$、$X^2$、$\mathrm{e}^X$、$\max\{X,Y\}$ 都仍是随机变量，可以放心地对它们提概率问题。第五章、第六章对随机变量做的各种复杂加工，合法性均由此保证。</p>
+<p>初学者对本节的合理态度是：理解可测性所回答的问题（&quot;什么函数才配谈概率&quot;），记住结论（常见函数皆可测、运算不越界），而不必纠缠证明细节。在具体计算中可测性从不构成障碍——它是一道理论上必需、实践中自动满足的门槛。</p>
+<h3 id="c-随机变量的独立性">C. 随机变量的独立性</h3>
+<p>第一章定义了事件的独立性，现在把它提升到随机变量层面。直觉目标是：&quot;$X$ 与 $Y$ 独立&quot;应当意味着<strong>关于 $X$ 的任何信息都不影响 $Y$ 的概率规律</strong>。技术上只需对一族特殊事件提出要求：</p>
+<p><strong>定义 1.2</strong> 称随机变量 $X_1, X_2, \cdots, X_n$ <strong>相互独立</strong>，若对任何实数 $x_1, \cdots, x_n$，</p>
+<p>$$
+P(X_1 \leq x_1, X_2 \leq x_2, \cdots, X_n \leq x_n) = P(X_1 \leq x_1) \, P(X_2 \leq x_2) \cdots P(X_n \leq x_n).
+$$</p>
+<p>称序列 $\{X_j\}$ 独立，若其任何有限个成员相互独立。</p>
+<p>这里逗号表示事件的交（沿用第一章 $AB$ 的记号精神）。定义表面上只约束了 $\{X_i \leq x_i\}$ 型事件，但与定理 1.1 同样的&quot;生成元传播&quot;机制保证了远为强大的结论：</p>
+<p><strong>定理 1.3</strong> 若 $X_1, \cdots, X_n$ 相互独立，则对任何 Borel 集 $A_1, \cdots, A_n$，事件 $\{X_1 \in A_1\}, \cdots, \{X_n \in A_n\}$ 相互独立。</p>
+<p><strong>定理 1.4</strong> 若 $X_1, \cdots, X_n$ 相互独立，则 (1) $g_1(X_1), \cdots, g_n(X_n)$ 相互独立；(2) $\varphi(X_1, \cdots, X_k),\ X_{k+1}, \cdots, X_n$ 相互独立。</p>
+<p>定理 1.4 是第一章&quot;独立性在各自阵营内部的运算下保持&quot;这一原则的随机变量版本：对独立的随机变量<strong>分别</strong>施加函数不破坏独立性；把前 $k$ 个合并加工成一个新变量，它与其余各变量仍独立。其证明（原书给出 (1)）就是一次换元：令 $B_i = \{x \mid g_i(x) \leq x_i\}$，则 $\{g_i(X_i) \leq x_i\} = \{X_i \in B_i\}$，引用定理 1.3 即得乘积分解。这两个定理将在全书中被无声地反复使用——例如&quot;$X_1 + X_2$ 与 $X_3$ 独立&quot;这类断言的依据都在这里。</p>
+<p>实际建模中，随机变量的独立性与事件的独立性一样，通常<strong>依据试验的物理独立性直接假设</strong>：来自相互独立进行的试验的随机变量相互独立。另一个值得记住的事实：常数（退化随机变量）与任何随机变量独立。</p>
+<div class="keypoints"><div class="keypoints-label">要点</div><ul>
+<li>定义 $\{X \leq x\} \in \mathcal{F}$ 的动机：$P$ 只对事件有定义，可测性是&quot;概率问题可以合法提出&quot;的资格条件。</li>
+<li>Borel 域 $\mathcal{B}$ 由区间生成；定理 1.1：检验生成元 $\{X \leq x\}$ 即可保证 $\{X \in A\}$ 对一切 Borel 集 $A$ 是事件。</li>
+<li>可测函数作用于随机变量仍得随机变量：随机变量的世界对常规运算封闭。</li>
+<li>随机变量独立性由 $P(X_1 \leq x_1, \cdots) = \prod P(X_i \leq x_i)$ 定义，可自动升级到任意 Borel 集与任意各自加工（定理 1.3、1.4）。</li>
+</ul>
+</div>
+<hr>
+<h2 id="22-离散型随机变量五种基本分布及其生成机制">2.2 离散型随机变量：五种基本分布及其生成机制</h2>
+<p><strong>对应原书 §2.2。</strong></p>
+<h3 id="分布列离散随机变量的全部信息">分布列：离散随机变量的全部信息</h3>
+<p>只取有限个或可列个值的随机变量称为<strong>离散型随机变量</strong>。设其取值为 $x_1, x_2, \cdots$，则数列</p>
+<p>$$
+p_k = P(X = x_k), \qquad k \geq 1
+$$</p>
+<p>称为 $X$ 的<strong>概率分布列</strong>（简称分布列）。分布列满足且仅需满足两条：$p_k \geq 0$；$\sum_k p_k = 1$。这两条对应概率的非负性与完全性——由于 $\{X = x_k\}$ 互不相容且并为 $\Omega$（在 $X$ 的取值范围内），可列可加性把总概率 1 分派到各点上。反之，任何满足这两条的数列都定义一个合法的离散分布。</p>
+<p>分布列是离散随机变量的<strong>完备刻画</strong>：任何事件 $\{X \in A\}$ 的概率都由 $P(X \in A) = \sum_{k : x_k \in A} p_k$ 给出。因此&quot;求某离散随机变量的分布&quot;就是求出它的分布列。以下五个分布构成离散世界的基本骨架，学习它们时应把注意力放在<strong>生成机制</strong>上——什么样的随机试验产生这个分布。机制清楚了，公式无需死记，应用场景也随之明确。</p>
+<h3 id="a-两点分布-math_block_155随机性的原子">A. 两点分布 $B(1, p)$：随机性的原子</h3>
+<p>$X$ 只取 0、1 两值，$P(X = 1) = p$，$P(X = 0) = q = 1 - p$，记作 $X \sim B(1, p)$（伯努利分布）。任何试验，只要仅关心&quot;成功与否&quot;，其成功次数（0 或 1）便服从两点分布。它本身平淡，价值在于充当<strong>构件</strong>：下面的二项分布、几何分布、帕斯卡分布全部由独立的两点分布试验（称为伯努利试验序列）搭建而成。事件 $A$ 的示性函数 $\mathrm{I}_A$ 就是一个 $B(1, P(A))$ 变量——这个观察在第四章计算期望时将成为核心技巧。</p>
+<h3 id="b-二项分布-math_block_163独立重复试验的成功计数">B. 二项分布 $B(n, p)$：独立重复试验的成功计数</h3>
+<p><strong>生成机制</strong>：成功概率为 $p$ 的试验独立重复 $n$ 次，$X$ 为成功总次数，则</p>
+<p>$$
+P(X = k) = C_n^k p^k q^{n-k}, \qquad k = 0, 1, \cdots, n. \tag{2.4}
+$$</p>
+<p>原书的推导值得复述，因为它是&quot;分布列计算&quot;的范式：设 $A_j$ 为第 $j$ 次成功，则 $\{A_j\}$ 独立。事件 $\{X = k\}$ 按&quot;哪 $k$ 次成功&quot;分解为 $C_n^k$ 个互不相容的原子事件，每个形如 $A_{j_1} \cdots A_{j_k} \bar{A}_{j_{k+1}} \cdots \bar{A}_{j_n}$；由独立性，每个原子事件的概率均为 $p^k q^{n-k}$；有限可加性把它们相加，得 $C_n^k p^k q^{n-k}$。<strong>&quot;分解为等概率的互斥原子 × 计数&quot;</strong>——第一章古典概型的手法在此重现。分布列之和为 1 恰是二项展开式 $(p+q)^n = \sum_k C_n^k p^k q^{n-k}$，这也是&quot;二项分布&quot;得名的由来。</p>
+<p>等价的观点：若 $X_1, \cdots, X_n$ 独立同为 $B(1, p)$，则 $X_1 + \cdots + X_n \sim B(n, p)$。<strong>二项分布是两点分布的独立求和</strong>——这个&quot;加法结构&quot;观点在第四章（期望方差的计算）与第五章（中心极限定理）中远比公式 (2.4) 本身重要。原书图 2.2.1 显示：$n$ 增大时 $B(n, 0.6)$ 的分布折线越来越接近对称的钟形——这正是中心极限定理的图形预告。</p>
+<h3 id="c-泊松分布-math_block_182稀有事件的计数法则">C. 泊松分布 $\mathcal{P}(\lambda)$：稀有事件的计数法则</h3>
+<p>$$
+P(X = k) = \frac{\lambda^k}{k!} \mathrm{e}^{-\lambda}, \qquad k = 0, 1, 2, \cdots \tag{2.5}
+$$</p>
+<p>其中 $\lambda > 0$ 是参数。分布列之和为 1 源于指数函数的 Taylor 展开 $\sum_{k} \lambda^k / k! = \mathrm{e}^{\lambda}$。</p>
+<p>泊松分布是本节分量最重的对象，因为它并非某个简单试验的直接产物，而是一个<strong>极限规律</strong>。原书以卢瑟福–盖革 1910 年的 $\alpha$ 粒子观测数据引入：2608 次观测（每次 7.5 秒）中，观测到 $k$ 个粒子的频率与 $\mathcal{P}(3.87)$ 的分布列几乎逐项吻合（$3.87$ 为每次观测的平均粒子数）。为何放射计数恰好服从泊松分布？原书的推导是全章最精彩的论证之一，现将其逻辑完整展开。</p>
+<p><strong>建模</strong>。把时长 $t$ 等分为 $n$ 段。当 $n$ 充分大、每段充分短时，作两条物理上合理的假设：(i) 每小段内至多放出一个粒子，且放出一个粒子的概率与段长成正比：$p_n = \mu t / n$（$\mu$ 为强度常数）；(ii) 各小段是否放出粒子相互独立。于是总粒子数 $X$ 近似服从 $B(n, p_n)$，而精确分布应为 $n \to \infty$ 的极限。</p>
+<p><strong>求极限</strong>（泊松逼近定理）。记 $\lambda = \mu t = n p_n$（注意 $n$ 增大时 $p_n$ 减小，乘积保持为 $\lambda$），对固定的 $k$：</p>
+<p>$$
+C_n^k p_n^k (1 - p_n)^{n-k} = \frac{n(n-1)\cdots(n-k+1)}{k!} \left(\frac{\lambda}{n}\right)^k \left(1 - \frac{\lambda}{n}\right)^{n-k}
+$$</p>
+<p>$$
+= \frac{\lambda^k}{k!} \cdot \underbrace{\frac{n(n-1)\cdots(n-k+1)}{n^k}}_{\to\, 1} \cdot \underbrace{\left(1 - \frac{\lambda}{n}\right)^{n}}_{\to\, \mathrm{e}^{-\lambda}} \cdot \underbrace{\left(1 - \frac{\lambda}{n}\right)^{-k}}_{\to\, 1} \longrightarrow \frac{\lambda^k}{k!} \mathrm{e}^{-\lambda}.
+$$</p>
+<p>三个因子的极限分别依据：分子为 $k$ 个与 $n$ 同阶的因式，除以 $n^k$ 趋于 1；重要极限 $(1 - \lambda/n)^n \to \mathrm{e}^{-\lambda}$；固定指数 $-k$ 的因子趋于 1。</p>
+<p>这个推导同时回答了两个问题。<strong>理论上</strong>，它证明了：当 $n$ 大、$p$ 小、$np = \lambda$ 适中时，$B(n, p) \approx \mathcal{P}(\lambda)$——此即<strong>泊松逼近</strong>（大量独立的稀有机会中，成功总数近似服从泊松分布）。<strong>实践上</strong>，它解释了泊松分布无处不在的原因：单位时间内路口通过的车辆数、市场到达的顾客数、一年内某地区的重大事故数……凡是&quot;大量独立微小机会的计数&quot;，都落入泊松模型；原书例 2.2 中 1500–1931 年间每年爆发重要战争次数与 $\mathcal{P}(0.69)$ 的吻合是又一实证。尤其当 $n$ 本身无法确定时（例如&quot;潜在顾客总数&quot;没有意义），泊松分布是唯一可用的描述。原书还顺势指出：以 $N(t)$ 记 $(0, t]$ 内的粒子数，则 $N(t) \sim \mathcal{P}(\mu t)$——这一族随机变量就是第六章的泊松过程，此处已埋下伏笔。</p>
+<h3 id="d-超几何分布-math_block_216无放回抽样的计数">D. 超几何分布 $H(n, M, N)$：无放回抽样的计数</h3>
+<p><strong>生成机制</strong>：$N$ 件产品中含 $M$ 件次品，无放回任取 $n$ 件，$X$ 为取出的次品数：</p>
+<p>$$
+P(X = m) = \frac{C_M^m C_{N-M}^{n-m}}{C_N^n}. \tag{2.8}
+$$</p>
+<p>这正是第一章例 2.4 的&quot;分母总体选、分子按类选&quot;模式，如今获得了正式名称。它与二项分布的关系需要辨析清楚：同一抽样问题，<strong>有放回</strong>抽取时各次独立，次品数服从 $B(n, M/N)$；<strong>无放回</strong>时各次不独立（前面抽走次品会降低后面的次品率），次品数服从超几何分布。但当总体规模 $N$ 远大于样本量 $n$ 时，抽走几件对总体比例的扰动可以忽略，两种抽样方式趋于一致。原书 (2.9) 式严格证明了这一点：当 $N \to \infty$ 且 $M/N \to p$ 时，</p>
+<p>$$
+\frac{C_M^m C_{N-M}^{n-m}}{C_N^n} \longrightarrow C_n^m p^m (1-p)^{n-m}.
+$$</p>
+<p>（证明是纯粹的阶乘整理：把三个组合数展开，分子分母各为 $n$ 个与 $N$ 同阶的因式，逐个相除取极限。）实践含义：对大总体的抽样检验，直接用二项分布 $B(n, M/N)$ 近似计算，避免大组合数运算。这是本章第二个&quot;分布间的极限关系&quot;——连同泊松逼近，它们提示一个将在第五章达到顶峰的主题：<strong>各分布不是孤立的，而是由极限通道相互连接的家族</strong>。</p>
+<h3 id="e-几何分布与帕斯卡分布等待时间的分布">E. 几何分布与帕斯卡分布：等待时间的分布</h3>
+<p><strong>生成机制</strong>：成功概率为 $p$ 的试验独立重复进行，$X$ 为<strong>首次成功</strong>时的试验次数。首次成功发生在第 $k$ 次，当且仅当前 $k-1$ 次全部失败而第 $k$ 次成功，由独立性：</p>
+<p>$$
+P(X = k) = q^{k-1} p, \qquad k = 1, 2, \cdots \tag{2.10}
+$$</p>
+<p>称 $X$ 服从参数 $p$ 的<strong>几何分布</strong>（分布列构成几何级数，故名）。若二项分布回答&quot;定次数内成功几次&quot;，几何分布回答的是对偶问题&quot;成功一次要等多久&quot;——它是概率论中第一个<strong>等待时间</strong>分布。</p>
+<p>几何分布最深刻的性质是<strong>无记忆性</strong>：</p>
+<p><strong>定理 2.1</strong> 取正整数值的随机变量 $X$ 服从几何分布，当且仅当</p>
+<p>$$
+P(X = k + j \mid X > k) = P(X = j), \qquad j = 1, 2, \cdots \tag{2.12}
+$$</p>
+<p>左端读作：已等待 $k$ 次未成功的条件下，还需恰好再等 $j$ 次的概率。(2.12) 断言它与从头开始等待 $j$ 次的概率相同——<strong>过往的失败不积累任何信息</strong>，过程在任何时刻&quot;重新开始&quot;。</p>
+<p>两个方向的证明都具有方法论价值。<strong>必要性</strong>：由尾概率 $P(X > k) = \sum_{j > k} q^{j-1} p = q^k$（几何级数求和），条件概率化为 $q^{k+j-1} p / q^k = q^{j-1} p$。<strong>充分性</strong>更有启发性：设 $r_k = P(X > k)$，在 (2.12) 中取 $j = 1$ 得 $p = 1 - r_{k+1} / r_k$，即递推式 $r_{k+1} = (1-p) r_k$；配合 $r_0 = 1$ 解得 $r_k = q^k$，再由 $P(X = k) = r_{k-1} - r_k$ 恢复分布列。<strong>把未知分布的特征性质转化为尾概率的递推（或函数）方程</strong>——§2.3 证明指数分布的对应定理时将重演这一策略，届时递推方程升级为函数方程。</p>
+<p><strong>推广</strong>（例 2.5）：等待<strong>第 $r$ 次</strong>成功的总试验次数 $X$ 服从<strong>帕斯卡分布</strong> $P(X = k) = C_{k-1}^{r-1} q^{k-r} p^r$（$k \geq r$；组合数计&quot;前 $k-1$ 次中哪 $r-1$ 次成功&quot;）；失败总数 $Y = X - r$ 服从<strong>负二项分布</strong> (2.14)，其归一性由负指数二项级数 $(1-q)^{-r} = \sum_k C_{k+r-1}^{r-1} q^k$ 保证，这也是&quot;负二项&quot;名称的来源。原书末尾的观察同样是伏笔：把总等待拆为各次成功之间的间隔 $X_1 = S_1, X_2 = S_2 - S_1, \cdots$，则诸间隔独立且各服从几何分布——等待时间的&quot;独立增量分解&quot;将在第三章例 5.1–5.2 严格证明。</p>
+<div class="keypoints"><div class="keypoints-label">要点</div><ul>
+<li>分布列 $\{p_k\}$：非负、和为 1，完备刻画离散随机变量。</li>
+<li>五个分布的生成机制：两点 = 单次试验成败；二项 = $n$ 次独立重复的成功计数（两点分布之和）；泊松 = 稀有事件计数的极限律（$B(n,p) \to \mathcal{P}(np)$，推导须掌握）；超几何 = 无放回抽样计数（$N \to \infty$ 时归于二项）；几何 = 首次成功的等待次数。</li>
+<li>几何分布 ⟺ 离散无记忆性；证明手法&quot;尾概率递推&quot;是 §2.3 的预演。</li>
+<li>分布之间由极限通道连接：泊松逼近、超几何→二项。</li>
+</ul>
+</div>
+<hr>
+<h2 id="23-连续型随机变量概率密度与四个基本分布">2.3 连续型随机变量：概率密度与四个基本分布</h2>
+<p><strong>对应原书 §2.3。</strong></p>
+<h3 id="概率密度分布列的连续化身">概率密度：分布列的连续化身</h3>
+<p>当随机变量的取值充满一个区间（几何概率的样本空间即为此类），分布列失效：每个单点的概率为零，逐点列举不再携带任何信息。正确的做法与物理学处理连续介质的质量分布相同——从&quot;每点的质量&quot;转向&quot;单位长度的质量&quot;，即<strong>密度</strong>。</p>
+<p><strong>定义 3.1</strong> 设 $X$ 是随机变量。若存在非负函数 $f(x)$ 使得对任何 $a < b$，</p>
+<p>$$
+P(a < X \leq b) = \int_a^b f(x) \, \mathrm{d}x, \tag{3.1}
+$$</p>
+<p>则称 $X$ 为<strong>连续型随机变量</strong>，$f$ 为其<strong>概率密度函数</strong>（简称密度）。</p>
+<p>密度的三条基本性质（原书均给出证明，其中两条的证明手法值得注意）：</p>
+<p><strong>(1) 全线积分为 1</strong>：$\int_{-\infty}^{\infty} f(x) \mathrm{d}x = 1$。证明用第一章的概率连续性：事件 $A_n = \{X \in (-n, n]\}$ 单调增，故 $\int_{-n}^{n} f \, \mathrm{d}x = P(A_n) \to P(X \in \mathbf{R}) = 1$。反之，任何积分为 1 的非负函数必是某随机变量的密度（§2.6 例 6.2 将构造性地证明），因此这一条连同非负性就是密度的完整判据。</p>
+<p><strong>(2) 单点概率为零</strong>：$P(X = a) = 0$，从而 $P(a < X \leq b) = P(a \leq X \leq b) = P(a < X < b)$——<strong>区间端点的开闭对连续型随机变量的概率没有影响</strong>。证明是一行夹逼：$P(X = a) \leq \int_{a-\varepsilon}^{a} f(x) \mathrm{d}x \to 0$。</p>
+<p><strong>(3) 一般事件的概率</strong>：对任何 Borel 集 $A$，$P(X \in A) = \int_A f(x) \mathrm{d}x$。</p>
+<p>性质 (2) 要求初学者完成一次重要的观念校准。其一，$P(X = a) = 0$ <strong>不意味着</strong> $\{X = a\}$ 不可能发生——试验总会产出某个具体值，而每个具体值的概率都是零；第一章&quot;概率为零不等于不可能&quot;的论断在此成为常态而非反例。其二，<strong>密度值 $f(x)$ 不是概率</strong>：它是概率对长度的变化率，正确的读法是 $P(x < X \leq x + \mathrm{d}x) \approx f(x) \, \mathrm{d}x$。因此 $f(x) > 1$ 完全正常（例如 $\mathcal{U}(0, 0.1)$ 的密度恒为 10），单点密度值本身没有概率含义，<strong>只有积分才产生概率</strong>。其三，密度并非唯一——在有限个点上修改 $f$ 的值不改变任何积分，因而不改变分布；但若限定密度连续，则它唯一（§2.4 定理 4.1 的注）。</p>
+<p>以下四个分布是连续世界的基本骨架，仍按&quot;生成机制&quot;的线索逐一考察。</p>
+<h3 id="a-均匀分布-math_block_282几何概率的化身">A. 均匀分布 $\mathcal{U}(a, b)$：几何概率的化身</h3>
+<p>密度 $f(x) = \frac{1}{b-a} \mathrm{I}_{(a,b)}(x)$（示性函数记法：区间内取常值 $\frac{1}{b-a}$，区间外为零）。&quot;均匀&quot;意为概率只与区间长度成正比、与位置无关：对 $(a,b)$ 的子区间 $(c, d)$，$P(c < X \leq d) = \frac{d - c}{b - a}$。这正是第一章几何概率在一维的随机变量表述；一般地，对测度有限的 Borel 集 $A$ 可定义 $\mathcal{U}(A)$，其概率计算 $P(X \in B) = m(AB)/m(A)$ 与几何概率公式完全一致。均匀分布是&quot;完全无信息&quot;的连续模型，也是 §2.6 中生成一切分布的原材料。</p>
+<h3 id="b-指数分布-math_block_291连续的无记忆等待">B. 指数分布 $\mathcal{E}(\lambda)$：连续的无记忆等待</h3>
+<p>密度 $f(x) = \lambda \mathrm{e}^{-\lambda x} \, (x \geq 0)$，参数 $\lambda > 0$。由 $P(X \leq 0) = 0$ 知 $X$ 非负，故指数分布天然适合描述<strong>寿命与等待时间</strong>。其尾概率（生存函数）有简洁的闭式：</p>
+<p>$$
+P(X > x) = \int_x^{\infty} \lambda \mathrm{e}^{-\lambda s} \mathrm{d}s = \mathrm{e}^{-\lambda x}. \tag{3.8}
+$$</p>
+<p>指数分布的特征性质与几何分布严格平行：</p>
+<p><strong>定理 3.1</strong> 连续型非负随机变量 $X$ 服从指数分布，当且仅当对任何 $s, t \geq 0$，</p>
+<p>$$
+P(X > s + t \mid X > s) = P(X > t). \tag{3.7}
+$$</p>
+<p>此性质称为<strong>无后效性</strong>（无记忆性）：设备已工作 $s$ 小时的条件下再工作 $t$ 小时的概率，等于新设备工作 $t$ 小时的概率——设备&quot;不老化&quot;。电子元件、软件系统近似具备该性质（其失效源于意外冲击而非磨损积累），第一章的青花瓷盘亦然（每年被失手打破的概率恒定）。</p>
+<p>证明的两个方向再次示范了 §2.2 预告的策略。<strong>必要性</strong>由 (3.8) 直接验证：$\mathrm{e}^{-\lambda(s+t)} / \mathrm{e}^{-\lambda s} = \mathrm{e}^{-\lambda t}$。<strong>充分性</strong>：记 $G(x) = P(X > x)$，无后效性化为函数方程</p>
+<p>$$
+G(s + t) = G(s) G(t), \qquad s, t \geq 0,
+$$</p>
+<p>即 Cauchy 指数型函数方程。$G$ 连续（它是密度的积分），而连续解必为指数函数 $G(x) = \mathrm{e}^{-\lambda x}$（习题 2.43 给出完整证明路径：先由可加型方程 $f(x+y) = f(x) + f(y)$ 的连续解为线性函数，取对数归结之）。几何分布的递推方程 $r_{k+1} = q r_k$ 正是此函数方程的整数格点版本；事实上几何分布与指数分布是同一&quot;无记忆等待&quot;思想的离散与连续两个化身，这一对应在习题 3.26（指数分布的取整服从几何分布）中还会精确化。</p>
+<p><strong>例 3.1（与泊松分布的联姻）</strong>：在 $\alpha$ 粒子模型中，以 $X_1$ 记等到第一个粒子的时间。由 $\{X_1 > t\} = \{N(t) = 0\}$ 及 $N(t) \sim \mathcal{P}(\mu t)$：</p>
+<p>$$
+P(X_1 > t) = P(N(t) = 0) = \mathrm{e}^{-\mu t},
+$$</p>
+<p>与 (3.8) 比对即知 $X_1 \sim \mathcal{E}(\mu)$。<strong>计数服从泊松分布 ⟺ 等待时间服从指数分布</strong>——这对偶关系是第六章泊松过程的两个侧面，此处的一行推导（把&quot;等待超过 $t$&quot;翻译为&quot;$(0,t]$ 内计数为零&quot;）是连接它们的桥梁，值得单独记住。</p>
+<h3 id="c-正态分布-math_block_314概率论的中心对象">C. 正态分布 $N(\mu, \sigma^2)$：概率论的中心对象</h3>
+<p>$$
+f(x) = \frac{1}{\sqrt{2\pi\sigma^2}} \exp\left(-\frac{(x-\mu)^2}{2\sigma^2}\right), \qquad x \in \mathbf{R}. \tag{3.10}
+$$</p>
+<p>$\mu = 0, \sigma = 1$ 时称<strong>标准正态分布</strong> $N(0, 1)$，其密度与分布函数享有专用记号：</p>
+<p>$$
+\varphi(x) = \frac{1}{\sqrt{2\pi}} \mathrm{e}^{-x^2/2}, \qquad \Phi(a) = \int_{-\infty}^{a} \varphi(x) \, \mathrm{d}x.
+$$</p>
+<p>密度曲线为以 $x = \mu$ 为对称轴的钟形：峰值 $f(\mu) = 1/\sqrt{2\pi\sigma^2}$，拐点恰在 $\mu \pm \sigma$ 处（这给了 $\sigma$ 直观的几何读法：拐点到对称轴的距离）。$\mu$ 平移曲线位置，$\sigma$ 控制其宽窄——$\sigma$ 越小曲线越高瘦，概率越集中于 $\mu$ 附近。</p>
+<p>正态分布的历史地位源于两个事实。其一是经验性的：测量误差（高斯 1809 年在天体轨道计算中的发现，正态分布因此又名高斯分布；伽利略早在 1632 年已定性描述了误差&quot;对称分布于零的两侧、小误差比大误差频繁&quot;的特征）、生理指标、工业产品的质量指标等大量实际数据呈正态。其二是理论性的，也是对其一的解释：<strong>大量独立同分布随机变量之和近似服从正态分布</strong>——此即第五章的中心极限定理。§2.2 中二项分布折线随 $n$ 增大趋于钟形，正是该定理最早被观察到的实例（de Moivre–Laplace 定理）。在本章，读者暂可把正态分布当作一个给定的密度来操作；它何以&quot;中心&quot;，第五章自会分晓。</p>
+<p>两项基本技术必须熟练：</p>
+<p><strong>归一性的验证</strong>——著名的极坐标技巧。一维积分 $I = \int \mathrm{e}^{-x^2/2} \mathrm{d}x$ 无初等原函数，但其平方可化为二重积分：</p>
+<p>$$
+I^2 = \int_{-\infty}^{\infty}\!\!\int_{-\infty}^{\infty} \mathrm{e}^{-(x^2+y^2)/2} \mathrm{d}x \, \mathrm{d}y = \int_0^{2\pi}\!\!\mathrm{d}\theta \int_0^{\infty} \mathrm{e}^{-r^2/2} r \, \mathrm{d}r = 2\pi,
+$$</p>
+<p>故 $I = \sqrt{2\pi}$——正态密度中 $\sqrt{2\pi}$ 因子的唯一来源。一般 $N(\mu, \sigma^2)$ 的归一性经换元 $t = (x-\mu)/\sigma$ 归结为标准情形。</p>
+<p><strong>标准化</strong>——一切正态概率计算的通用路径。对 $X \sim N(\mu, \sigma^2)$，在积分中作同一换元可得</p>
+<p>$$
+P(X \leq a) = \Phi\!\left(\frac{a - \mu}{\sigma}\right), \tag{3.14}
+$$</p>
+<p>配合对称性 $\Phi(x) + \Phi(-x) = 1$（负值查表的依据），任何正态概率均可归结为查标准正态分布表（附录 D）。§2.5 例 5.2 将从随机变量的角度重述这一事实：$(X - \mu)/\sigma \sim N(0,1)$。</p>
+<p>标准化的直接应用是几个应当熟记的数值：</p>
+<p>$$
+P(|X - \mu| \leq \sigma) = 68.27\%, \quad P(|X - \mu| \leq 2\sigma) = 95.45\%, \quad P(|X - \mu| \leq 3\sigma) = 99.73\%.
+$$</p>
+<p>正态变量落在均值三倍标准差之外的概率不足 0.3%——这是工业质量管理&quot;$3\sigma$ 原则&quot;的依据；更严格的&quot;$6\sigma$ 管理&quot;要求偏差超过 $6\sigma$ 的概率仅约 $2 \times 10^{-9}$。这些数值同时提供了实用的直觉：正态分布的概率质量高度集中，&quot;距均值几个 $\sigma$&quot;是衡量一个观测值是否异常的天然标尺（统计学中&quot;显著性&quot;概念的雏形）。</p>
+<h3 id="d-gamma-分布-math_block_339非负数据的弹性家族">D. Gamma 分布 $\Gamma(\alpha, \beta)$：非负数据的弹性家族</h3>
+<p>先引入数学分析中的 $\Gamma$ 函数 $\Gamma(\alpha) = \int_0^{\infty} x^{\alpha-1} \mathrm{e}^{-x} \mathrm{d}x$（其基本性质 $\Gamma(\alpha+1) = \alpha\Gamma(\alpha)$、$\Gamma(n) = (n-1)!$、$\Gamma(1/2) = \sqrt{\pi}$ 见附录 B，后续计算常用）。<strong>Gamma 分布</strong> $\Gamma(\alpha, \beta)$ 的密度为</p>
+<p>$$
+f(x) = \frac{\beta^{\alpha}}{\Gamma(\alpha)} x^{\alpha - 1} \mathrm{e}^{-\beta x}, \qquad x \geq 0,
+$$</p>
+<p>归一性正是 $\Gamma$ 函数定义（换元 $t = \beta x$）。两个参数各司其职：$\beta$ 是尺度（拉伸横轴），$\alpha$ 是形状——$\alpha = 1$ 时退化为指数分布 $\mathcal{E}(\beta)$；$\alpha$ 增大时密度从单调递减变为单峰，峰形渐趋对称。这种形状弹性使它成为非负数据（降水量、风速、寿命）的常用模型，历史上皮尔逊正是为了刻画&quot;非正态的单峰分布&quot;而系统研究了这类曲线族。</p>
+<p>Gamma 分布与前述分布的结构性联系（例 3.2，证明留待第三章）：泊松流中<strong>等到第 $k$ 个粒子的总时间 $S_k \sim \Gamma(k, \mu)$</strong>。与例 3.1 合观，一幅完整的图景浮现：单个间隔服从指数分布，$k$ 个独立指数间隔之和服从 Gamma 分布，而给定时段的计数服从泊松分布——三个分布是同一随机机制（泊松流）的三个观察角度。另一个重要成员将在统计学中出现：$\Gamma(n/2, 1/2)$ 即自由度为 $n$ 的 $\chi^2$ 分布，§2.5 例 5.4 将得到其 $n = 1$ 的情形。</p>
+<div class="keypoints"><div class="keypoints-label">要点</div><ul>
+<li>密度是概率的变化率而非概率：$P(x < X \leq x+\mathrm{d}x) \approx f(x)\mathrm{d}x$；$f$ 可大于 1；单点概率恒为零，区间端点开闭无关紧要；判据 = 非负 + 积分为 1。</li>
+<li>均匀分布 = 几何概率；指数分布 = 连续无记忆等待（特征定理经函数方程 $G(s+t)=G(s)G(t)$ 证明），与几何分布互为离散/连续对应。</li>
+<li>泊松计数 ⟺ 指数等待：$\{X_1 > t\} = \{N(t) = 0\}$。</li>
+<li>正态分布：$\sqrt{2\pi}$ 出自极坐标技巧；一切计算经标准化 $\Phi((a-\mu)/\sigma)$ 归于查表；$1\sigma/2\sigma/3\sigma \approx 68\%/95\%/99.7\%$ 应熟记。</li>
+<li>$\Gamma(\alpha,\beta)$：$\alpha=1$ 为指数分布；$k$ 个独立指数和为 $\Gamma(k,\cdot)$；$\chi^2$ 分布是其特例。</li>
+</ul>
+</div>
+<hr>
+<h2 id="24-概率分布函数统一离散与连续的通用语言">2.4 概率分布函数：统一离散与连续的通用语言</h2>
+<p><strong>对应原书 §2.4。</strong></p>
+<h3 id="为什么还需要第三种刻画">为什么还需要第三种刻画</h3>
+<p>分布列服务于离散型，密度服务于连续型，但随机变量并不只有这两类（二者的混合即是反例：一个以 $1/2$ 概率取 0、以 $1/2$ 概率在 $(0,1)$ 上均匀分布的变量，既无分布列也无密度）。理论的完整性要求一种<strong>对一切随机变量皆有定义</strong>的刻画。答案在随机变量定义 (1.1) 中早已现身——那里被要求为事件的集合 $\{X \leq x\}$，其概率作为 $x$ 的函数：</p>
+<p><strong>定义 4.1</strong> 称 $F(x) = P(X \leq x)$，$x \in \mathbf{R}$，为 $X$ 的<strong>概率分布函数</strong>（简称分布函数）。</p>
+<p>$F(x)$ 的含义是概率的<strong>累积</strong>：数轴上从 $-\infty$ 扫到 $x$ 所收集到的全部概率。两种已知类型纳入统一框架的方式：</p>
+<ul>
+<li><strong>离散型</strong>：$F(x) = \sum_{j: x_j \leq x} p_j$，为单调不减的<strong>阶梯函数</strong>，在每个取值点 $x_j$ 处跳跃，跳跃高度恰为 $p_j$，跳跃点之间取常值。</li>
+<li><strong>连续型</strong>：$F(x) = \int_{-\infty}^{x} f(t) \mathrm{d}t$，为连续函数，且在 $f$ 的连续点处 $F'(x) = f(x)$（微积分基本定理）。</li>
+</ul>
+<p>于是分布列是 $F$ 的跳跃记录，密度是 $F$ 的导数——<strong>分布函数以其&quot;增长方式&quot;（跳跃或连续攀升）统一了两种旧刻画</strong>，并覆盖一切混合情形。知道 $F$ 就能算出任何区间概率：$P(a < X \leq b) = F(b) - F(a)$。</p>
+<h3 id="分布函数的特征性质">分布函数的特征性质</h3>
+<p><strong>性质</strong> (1) $F$ 单调不减且右连续；(2) $F(-\infty) = 0$，$F(+\infty) = 1$。</p>
+<p>三项论断的证明全部依托第一章的概率连续性定理，是该定理最重要的常规应用，逐一拆解：</p>
+<p><strong>单调性</strong>是平凡的：$F(y) - F(x) = P(x < X \leq y) \geq 0$。</p>
+<p><strong>右连续性</strong>：需证 $F(x + 1/n) \to F(x)$。事件列 $\{X \leq x + 1/n\}$ 单调减，其交集为 $\{X \leq x\}$（&quot;对每个 $n$ 都有 $X \leq x + 1/n$&quot;等价于&quot;$X \leq x$&quot;），由概率连续性</p>
+<p>$$
+\lim_{n \to \infty} F(x + 1/n) = P\Big(\bigcap_{n=1}^{\infty} \{X \leq x + 1/n\}\Big) = P(X \leq x) = F(x).
+$$</p>
+<p><strong>极限值</strong>：$\{X \leq n\}$ 单调增至 $\{X < \infty\} = \Omega$，故 $F(+\infty) = 1$；对称论证给出 $F(-\infty) = 0$。</p>
+<p>右连续性值得多停留片刻，因为它是初学者的高频困惑点。**为何右连续而非左连续？**根源纯粹是定义中不等号的方向：$F(x) = P(X \leq x)$ <strong>含端点</strong> $x$。从右侧逼近时，$\{X \leq x + 1/n\}$ 收缩的极限仍含 $x$，与 $F(x)$ 无缝衔接；从左侧逼近时，$\{X \leq x - 1/n\}$ 膨胀的极限是 $\{X < x\}$——<strong>不含</strong> $x$。由此得到一组必须熟记的关系（练习 2.4）：</p>
+<p>$$
+F(x - 0) = P(X < x), \qquad P(X = x) = F(x) - F(x - 0).
+$$</p>
+<p>即：<strong>$F$ 在 $x$ 处的跳跃高度恰为单点概率 $P(X = x)$</strong>。$F$ 在 $x$ 连续 ⟺ $P(X = x) = 0$；$F$ 处处连续 ⟺ 一切单点概率为零（例 4.4）。若教材约定 $F(x) = P(X < x)$（部分苏联传统教材如此），则 $F$ 左连续——两种约定实质等价，读不同参考书时须先核对定义。</p>
+<p>性质 (1)(2) 不仅必要而且充分：任何满足二者的函数都是某个随机变量的分布函数（§2.6 定理 6.1 将构造性证明）。因此这两条构成&quot;分布函数&quot;的完整判据，凡满足者皆径称分布函数。</p>
+<p>**例 4.2（分布：从名词到测度）**原书借此例完成一次理论上的闭环：定义集函数 $F(A) = P(X \in A)$，$A \in \mathcal{B}$，则逐条验证（非负性、$F(\mathbf{R}) = 1$、可列可加性——各条均从 $P$ 的对应性质经原像运算继承）表明 $F(\cdot)$ 是可测空间 $(\mathbf{R}, \mathcal{B})$ 上的概率，$(\mathbf{R}, \mathcal{B}, F)$ 自身构成概率空间。这揭示了&quot;分布&quot;一词的严格身份：<strong>随机变量 $X$ 把抽象概率空间 $(\Omega, \mathcal{F}, P)$ 上的概率&quot;搬运&quot;到实数轴上，搬运所得的概率测度就是 $X$ 的分布</strong>。此后&quot;$X$ 的一切概率性质由其分布决定&quot;这句话有了精确含义；同时也应注意其反面：<strong>分布相同不意味着随机变量相同</strong>——若 $X \sim N(0,1)$，则 $-X$ 与 $X$ 分布完全相同，但作为 $\Omega$ 上的函数二者处处相反。分布刻画的是统计规律，不是逐点取值。</p>
+<h3 id="从分布函数恢复密度">从分布函数恢复密度</h3>
+<p>实际问题的典型流程是：先通过概率关系求得 $F$，再由 $F$ 求密度。求导即可——但需要一个允许例外点的正规表述：</p>
+<p><strong>定理 4.1</strong> 设 $X$ 的分布函数 $F$ <strong>连续</strong>，$A$ 为一列相互距离大于某正数 $\delta$ 的点（允许有限个极限点）。若在 $A$ 之外 $F'$ 存在且连续，则</p>
+<p>$$
+f(x) = \begin{cases} F'(x), & x \notin A, \\ 0, & x \in A \end{cases}
+$$</p>
+<p>是 $X$ 的密度。</p>
+<p>证明思路：对任意 $(a, b]$，以 $A$ 中的点把它分割为有限段，每段内部 $F' = f$ 连续，用 Newton–Leibniz 公式逐段积分再相加，得 $P(a < X \leq b) = \int_a^b f$，恰为密度的定义。定理中&quot;<strong>$F$ 连续</strong>&quot;这一前提不可省略：若 $F$ 有跳跃（如二项分布的阶梯函数，其导数几乎处处为零），逐段积分会漏掉跳跃处的概率，$F'$ 的积分不足 1，$X$ 根本不是连续型。因此正确的操作顺序是：<strong>先确认 $F$ 连续，再放心求导</strong>；求导困难的孤立点（分段连接点、原点等）直接归零即可，不影响结果。</p>
+<p>**例 4.3（失效率恒定的寿命）**是&quot;由概率关系求 $F$&quot;的完整示范，其思想在可靠性理论中具有奠基地位。设某热敏电阻已用 $t$ 小时后，在紧邻的 $\Delta t$ 时间内失效的条件概率为 $\lambda \Delta t + o(\Delta t)$（失效率与使用历史无关，恒为 $\lambda$），求寿命分布。<strong>思路</strong>：目标是 $F(t) = P(X \leq t)$，已知条件是一个关于条件概率的无穷小陈述，故应把条件概率用 $F$ 表出，令 $\Delta t \to 0$ 得到 $F$ 的微分方程。记生存函数 $\bar{F} = 1 - F$，题设化为</p>
+<p>$$
+\frac{F(t + \Delta t) - F(t)}{\bar{F}(t)} = \lambda \Delta t + o(\Delta t),
+$$</p>
+<p>两端除以 $\Delta t$ 取极限（左右两侧分别处理以获得双侧导数），得</p>
+<p>$$
+\frac{F'(t)}{\bar{F}(t)} = \lambda, \quad \text{即} \quad \mathrm{d} \ln \bar{F}(t) = -\lambda \, \mathrm{d}t.
+$$</p>
+<p>积分并用初值 $\bar{F}(0) = 1$，得 $\bar{F}(t) = \mathrm{e}^{-\lambda t}$，即 $X \sim \mathcal{E}(\lambda)$。<strong>恒定失效率 ⟺ 指数寿命</strong>——这是无后效性的微分形式表述。习题 2.11 沿此思路更进一步：允许失效率随时间变化 $\lambda(t)$，则 $\bar{F}(t) = \exp(-\int_0^t \lambda(s) \mathrm{d}s)$，指数分布是其失效率恒定的特例。这一&quot;由局部（无穷小）条件概率积分出整体分布&quot;的方法，是连续时间随机模型的标准建模范式，第六章将再次依赖它。</p>
+<div class="keypoints"><div class="keypoints-label">要点</div><ul>
+<li>分布函数 $F(x) = P(X \leq x)$ 对一切随机变量有定义：离散型为阶梯函数（跳跃 = 分布列），连续型为连续函数（导数 = 密度）。</li>
+<li>特征性质：单调不减、右连续、$F(-\infty)=0$、$F(+\infty)=1$；三条证明皆用概率连续性。</li>
+<li>右连续源于定义含端点；$F(x-0) = P(X < x)$，跳跃高度 $= P(X = x)$。</li>
+<li>$X$ 的分布是被 $X$ 搬运到 $(\mathbf{R}, \mathcal{B})$ 上的概率测度；分布相同 ≠ 随机变量相同。</li>
+<li>求密度的流程：确认 $F$ 连续 → 求导（孤立例外点归零）；$F$ 不连续则非连续型。</li>
+<li>例 4.3 范式：局部条件概率 → 微分方程 → 分布；恒定失效率 ⟺ 指数分布。</li>
+</ul>
+</div>
+<hr>
+<h2 id="25-随机变量函数的分布分布函数法">2.5 随机变量函数的分布：分布函数法</h2>
+<p><strong>对应原书 §2.5。</strong></p>
+<h3 id="问题与基本方法">问题与基本方法</h3>
+<p>已知 $X$ 的分布，求 $Y = g(X)$ 的分布——这是本章技术性最强、也是考试与应用中最常调用的一节。问题的普遍性显而易见：测得电流 $I$ 的分布，要功率 $W = 2I^2$ 的分布；有了标准正态变量，要 $X^2$ 的分布。</p>
+<p><strong>离散情形</strong>原理平凡：枚举 $Y$ 的每个可能取值 $y$，把映射到 $y$ 的诸 $X$ 值的概率归并相加。原书例 5.1（$Y = X^2$）中 $P(Y = 1) = P(X = -1) + P(X = 1)$ 即是全部要领——唯一须留心的是<strong>多对一的归并</strong>不能遗漏。</p>
+<p><strong>连续情形</strong>的标准方法称为<strong>分布函数法</strong>，流程固定：</p>
+<ol>
+<li>写出 $F_Y(y) = P(g(X) \leq y)$；</li>
+<li>把事件 $\{g(X) \leq y\}$ <strong>反解</strong>为关于 $X$ 的区间（或区间的并）；</li>
+<li>用 $X$ 的已知分布表出该事件概率，得 $F_Y$ 的表达式；</li>
+<li>确认 $F_Y$ 连续后对 $y$ 求导得密度（定理 4.1）。</li>
+</ol>
+<p>方法的实质是：<strong>概率的语言只认事件，故一切变换先在事件层面完成</strong>——$\{g(X) \leq y\}$ 与某个 $\{X \in B_y\}$ 是同一事件，概率自然相等。三个例题覆盖了三种典型形态，每题的&quot;反解&quot;一步是关键。</p>
+<p><strong>例 5.2（线性变换与标准化）</strong>。$X \sim N(\mu, \sigma^2)$，$Y = (X - \mu)/\sigma$。反解：$\{Y \leq y\} = \{X \leq y\sigma + \mu\}$（单调增的线性变换，不等号方向不变），故 $F_Y(y) = F_X(y\sigma + \mu)$；求导（复合函数链式法则带出因子 $\sigma$）：</p>
+<p>$$
+f_Y(y) = \sigma F_X'(y\sigma + \mu) = \frac{\sigma}{\sqrt{2\pi\sigma^2}} \exp\left(-\frac{y^2}{2}\right) = \varphi(y).
+$$</p>
+<p>即 $Y \sim N(0, 1)$：<strong>任何正态变量经标准化变为标准正态变量</strong>——§2.3 查表公式 (3.14) 的随机变量层面依据。同法可证更一般的结论：正态变量的任何非退化线性变换仍是正态变量（$aX + b \sim N(a\mu + b, a^2\sigma^2)$），正态族对线性变换封闭。</p>
+<p><strong>例 5.4（平方变换：$\chi^2$ 分布的诞生）</strong>。$X \sim N(0,1)$，$Y = X^2$。反解需注意 $g(x) = x^2$ <strong>不单调</strong>：对 $y > 0$，$\{Y \leq y\} = \{-\sqrt{y} \leq X \leq \sqrt{y}\}$，故</p>
+<p>$$
+F_Y(y) = \Phi(\sqrt{y}) - \Phi(-\sqrt{y}) = 2\Phi(\sqrt{y}) - 1,
+$$</p>
+<p>求导得</p>
+<p>$$
+f_Y(y) = 2\varphi(\sqrt{y}) \cdot \frac{1}{2\sqrt{y}} = \frac{1}{\sqrt{2\pi y}} \mathrm{e}^{-y/2}, \qquad y > 0.
+$$</p>
+<p>对照 §2.3 的 Gamma 密度并利用 $\Gamma(1/2) = \sqrt{\pi}$，可识别出 $Y \sim \Gamma(1/2, 1/2)$——统计学中的 $\chi^2(1)$ 分布。数理统计三大抽样分布之一在此首次登场。</p>
+<p><strong>例 5.3（反函数变换）</strong>。$X \sim \mathcal{U}(0,1)$，$Y = \Phi^{-1}(X)$。由 $\Phi$ 严格增，$\{Φ^{-1}(X) \leq y\} = \{X \leq \Phi(y)\}$，而均匀分布满足 $P(X \leq u) = u$，故 $F_Y(y) = \Phi(y)$，即 $Y \sim N(0,1)$。此例展示了一个方向相反的应用：<strong>不是由已知变量求函数的分布，而是设计函数使结果服从指定分布</strong>——用均匀随机数制造正态随机数。其一般原理在 §2.6 定理 6.1 中完成。</p>
+<h3 id="多分支公式">多分支公式</h3>
+<p>当 $g$ 分段单调时，逐次使用分布函数法虽可行但繁琐，原书定理 5.1 将其封装为公式。设 $Y = g(X)$ 的值域（概率意义下）为 $D$，且对每个 $y \in D$，方程 $g(x) = y$ 的解可列为 $x = h_i(y)$（$i = 1, \cdots, n$），各 $h_i$ 是 $D$ 到其值域 $D_i$ 的可逆映射、连续可微、且 $D_1, \cdots, D_n$ <strong>互不相交</strong>（各分支来自 $g$ 的不同单调段），则</p>
+<p>$$
+f_Y(y) = \sum_{i=1}^{n} f\big(h_i(y)\big) \, \big|h_i'(y)\big|, \qquad y \in D. \tag{5.1}
+$$</p>
+<p>公式的每个成分都可读出含义：$Y$ 落在 $y$ 附近可经由 $n$ 条互斥的路径实现（$X$ 落在某个 $h_i(y)$ 附近），各路径贡献相加；每条路径的贡献是 $X$ 在该处的密度乘以尺度因子 $|h_i'(y)|$——它是一维的 Jacobi 行列式，度量反函数把 $y$ 轴上的微小区间拉伸为 $x$ 轴上多长的区间（$P(y < Y \leq y + \mathrm{d}y) \approx f(h_i(y)) \cdot |h_i'(y)| \mathrm{d}y$）。取绝对值是因为单调减的分支导数为负而概率必须为正。原书 (5.2) 给出便于记忆的等价形式 $f_Y(y) = \sum_i \left| \frac{\mathrm{d}}{\mathrm{d}y} F_X(h_i(y)) \right|$。证明即分布函数法的一般化：把 $\{Y \in (a,b]\}$ 拆到各分支，逐支作积分换元后相加。</p>
+<p><strong>例 5.5（两分支示范）</strong>。$X \sim \mathcal{U}(0, 2\pi)$，$Y = r\cos X$。对 $y \in (-r, r)$，方程 $\cos x = y/r$ 在 $(0, 2\pi)$ 内恰有两解：$h_1(y) = \arccos(y/r) \in (0, \pi)$ 与 $h_2(y) = 2\pi - \arccos(y/r) \in (\pi, 2\pi)$，两分支值域不相交，条件齐备。代入 (5.1)（$f_X \equiv 1/2\pi$，$|h_i'(y)| = \frac{1}{\sqrt{r^2 - y^2}}$ 对两支相同）：</p>
+<p>$$
+f_Y(y) = 2 \cdot \frac{1}{2\pi} \cdot \frac{1}{\sqrt{r^2 - y^2}} = \frac{1}{\pi\sqrt{r^2 - y^2}}, \qquad |y| < r.
+$$</p>
+<p>所得为<strong>反正弦律</strong>：随机相位的余弦投影在端点 $\pm r$ 附近密度反而最大（分母趋零）——转动的指针在水平投影的两端&quot;停留&quot;最久。该密度在振动与信号分析中有实际身份。使用公式 (5.1) 的自查清单：分支是否找全？各分支值域是否互不相交？（习题 2.38 中 $X \sim \mathcal{U}(0, 6\pi)$ 时分支增至六条，正是对这两问的检验。）</p>
+<div class="keypoints"><div class="keypoints-label">要点</div><ul>
+<li>分布函数法四步：写 $F_Y$ → 在事件层面反解 → 用 $X$ 的分布表出 → 验连续后求导。反解时严防非单调映射（平方、余弦）的分支遗漏。</li>
+<li>标准化 $(X-\mu)/\sigma \sim N(0,1)$；正态族对线性变换封闭。</li>
+<li>$N(0,1)$ 的平方 $\sim \chi^2(1) = \Gamma(1/2, 1/2)$。</li>
+<li>多分支公式 $f_Y(y) = \sum_i f(h_i(y)) |h_i'(y)|$：各分支贡献相加，$|h_i'|$ 是一维 Jacobi 因子。</li>
+<li>反向应用：设计 $g$ 使 $g(U)$ 服从指定分布（§2.6 完成一般理论）。</li>
+</ul>
+</div>
+<hr>
+<h2 id="26-随机变量的-p-分位数选学">2.6 随机变量的 p 分位数（选学）</h2>
+<p>*<em>对应原书 <em>§2.6。星号节。本节前半（分位数的定义与含义）在数理统计中不可或缺，后半（定理 6.1 与随机数生成）是现代随机模拟的理论基础，建议至少掌握结论。</em></em></p>
+<h3 id="分布函数的quot反问题quot">分布函数的&quot;反问题&quot;</h3>
+<p>分布函数回答&quot;给定数值 $x$，概率累积了多少&quot;；实际问题常问反向的问题：&quot;概率要累积到 $p$，数值须到多少&quot;——考试成绩的前 10% 分数线、洪水的百年一遇水位、正态检验的临界值，皆属此类。这就是<strong>分位数</strong>：分布函数的某种反函数。</p>
+<p>困难在于 $F$ 未必严格增（有平台段）也未必连续（有跳跃），通常意义的反函数可能不存在，需要一个对一切分布函数皆有效的广义定义：</p>
+<p><strong>定义 6.1</strong> 对 $p \in (0, 1)$，称</p>
+<p>$$
+F^{-1}(p) = \sup\{x \mid F(x) < p\}
+$$</p>
+<p>为 $F$（或 $X$）的 <strong>$p$ 分位数</strong>，记作 $\xi_p$；$\xi_{1/2}$ 称为<strong>中位数</strong>。</p>
+<p>定义的几何读法：把水平线 $y = p$ 与 $F$ 的图像相交，&quot;$F$ 尚未达到 $p$ 的最右端&quot;即 $\xi_p$。当 $F$ 严格增且连续时它就是普通反函数；$F$ 有跳跃越过 $p$ 时取跳跃点；$F$ 在高度 $p$ 有平台时取平台<strong>左</strong>端点。由定义经右连续性推出的核心等价关系（原书 (6.3)(6.4)）是本节一切论证的枢纽，应当熟记：</p>
+<p>$$
+x \geq F^{-1}(p) \iff F(x) \geq p. \tag{6.4}
+$$</p>
+<p>（&quot;$F^{-1}$ 与 $F$ 在不等式两侧互换&quot;——形式上与普通反函数的运算规则一致。）由此得到分位数的概率含义 (6.5)：$P(X \leq \xi_p) \geq p$ 且 $P(X \geq \xi_p) \geq 1 - p$——$\xi_p$ 左侧至少累积 $p$ 的概率、右侧至少 $1-p$。取等号可能失败（离散分布的跳跃所致，原书例 6.1 的中位数处 $P(X \leq 2) = 3/5 > 1/2$），这正是不等式形式的原因；满足这对不等式的点可能不止一个，$F^{-1}(p)$ 是其中最小者。定理 6.2 汇集了 $F^{-1}$ 的运算性质（单调不减、左连续、$F^{-1}(F(x)) \leq x$、$F(F^{-1}(p)) \geq p$，$F$ 连续时取等），均由 (6.4) 机械推出，用到时查阅即可。</p>
+<h3 id="逆变换法均匀分布生成一切分布">逆变换法：均匀分布生成一切分布</h3>
+<p>本节真正影响深远的结果是：</p>
+<p><strong>定理 6.1</strong> 设 $F$ 是任一分布函数，$U \sim \mathcal{U}(0, 1)$，则 $Y = F^{-1}(U)$ 的分布函数恰为 $F$。</p>
+<p>证明用 (6.4) 一步完成：$P(F^{-1}(U) \leq x) = P(U \leq F(x)) = F(x)$（末一等号是均匀分布的定义性质）。</p>
+<p>该定理的分量体现在三个层面。<strong>理论上</strong>，它构造性地证明了 §2.4 悬置的命题：任何满足单调不减、右连续、两端极限为 0 与 1 的函数确实是某个随机变量的分布函数——所需的随机变量被明白写出为 $F^{-1}(U)$；顺带地，任何积分为 1 的非负函数确为某变量的密度（例 6.2）。<strong>实践上</strong>，它是<strong>随机模拟（Monte Carlo 方法）的第一原理</strong>：计算机只会产生 $(0,1)$ 均匀伪随机数，而定理给出把均匀随机数转换为任意指定分布随机数的通用算法——逆变换法。例如欲生成 $\mathcal{E}(\lambda)$ 随机数：$F(x) = 1 - \mathrm{e}^{-\lambda x}$ 的反函数为 $F^{-1}(u) = -\frac{1}{\lambda}\ln(1-u)$，故 $-\frac{1}{\lambda}\ln(1 - U)$（或等价地 $-\frac{1}{\lambda}\ln U$，因 $1-U$ 亦均匀）即所求（练习 2.6(1)）；§2.5 例 5.3 生成正态随机数是同一原理。<strong>对偶地</strong>，定理 6.2(6) 给出反方向：若 $F$ 连续，则 $F(X) \sim \mathcal{U}(0,1)$——任何连续分布经其自身分布函数变换后&quot;抹平&quot;为均匀分布。这一对互逆的变换在数理统计（p 值的分布、拟合优度检验）中还将多次现身。</p>
+<p>均匀分布由此获得了它在连续分布家族中的特殊地位：它是<strong>分布的通用原料</strong>——一切分布都是 $\mathcal{U}(0,1)$ 的一个函数像。</p>
+<div class="keypoints"><div class="keypoints-label">要点</div><ul>
+<li>$\xi_p = F^{-1}(p) = \sup\{x \mid F(x) < p\}$：对任意分布函数皆有定义的广义反函数；核心等价 $x \geq F^{-1}(p) \iff F(x) \geq p$。</li>
+<li>概率含义：左侧累积至少 $p$、右侧至少 $1-p$（跳跃使等号可能失败；$\xi_p$ 是满足者中最小的）。</li>
+<li>逆变换法：$F^{-1}(U) \sim F$——均匀随机数生成任意分布，Monte Carlo 模拟的第一原理；反向地 $F$ 连续时 $F(X) \sim \mathcal{U}(0,1)$。</li>
+</ul>
+</div>
+<hr>
+<h2 id="本章收束单变量世界的完整地图">本章收束：单变量世界的完整地图</h2>
+<p>本章完成了概率论对象的一次决定性升级。§2.1 以可测性为门槛引入随机变量，并确认这一世界对函数运算与独立性操作封闭；§2.2–§2.3 建立了刻画分布的两种局部语言——分布列与密度，并沿&quot;生成机制&quot;的线索检阅了八个基本分布：二项（独立重复计数）、泊松（稀有事件极限）、几何（无记忆等待）、超几何（无放回抽样）；均匀（几何概率）、指数（连续无记忆等待）、正态（误差与和的极限，地位待第五章加冕）、Gamma（指数间隔的累积）。§2.4 的分布函数把两种语言统一于一个单调右连续函数的增长方式之中，§2.5 给出分布在函数变换下的演算规则，§2.6 的分位数与逆变换法则补上了&quot;由分布反造随机变量&quot;的最后一块拼图。</p>
+<p>沿途反复出现的三条线索值得带走：<strong>生成机制优先于公式</strong>（知道分布从何而来，便知道它用于何处）；<strong>分布之间由极限与变换相互连接</strong>（泊松逼近、超几何→二项、正态的平方→$\chi^2$、均匀→一切）；<strong>特征性质经函数方程刻画分布</strong>（无记忆性 ⟺ 几何/指数）。</p>
+<p>然而单个随机变量的理论有其天然边界：它无法表达&quot;身高与体重如何<strong>联动</strong>&quot;、&quot;两次测量<strong>相关</strong>到什么程度&quot;这类问题——现实中的随机量极少孤立出现。把若干随机变量并置为一个整体 $(X_1, \cdots, X_n)$，研究其<strong>联合</strong>分布、边缘分布与条件分布，是下一章&quot;随机向量&quot;的任务；本章多次预支的结论（泊松流的间隔独立性、指数和服从 Gamma 分布）也将在那里兑现。</p>
+<hr>
+<h2 id="公式速查卡">公式速查卡</h2>
+<p><strong>随机变量与独立性</strong></p>
+<ul>
+<li>定义：$\{X \leq x\} \in \mathcal{F}$（对一切 $x$）⟹ $\{X \in A\} \in \mathcal{F}$（对一切 Borel 集 $A$）</li>
+<li>$g$ 可测 ⟹ $g(X)$ 是随机变量；$X_i$ 独立 ⟹ $g_i(X_i)$ 独立、$\varphi(X_1,\cdots,X_k)$ 与 $X_{k+1},\cdots$ 独立</li>
+<li>独立：$P(X_1 \leq x_1, \cdots, X_n \leq x_n) = \prod_i P(X_i \leq x_i)$</li>
+</ul>
+<p><strong>离散分布</strong>（分布列：$p_k \geq 0$，$\sum p_k = 1$）</p>
+<div class="table-wrap"><table><thead><tr>
+<th>分布</th>
+<th>分布列</th>
+<th>生成机制</th>
+</tr>
+</thead><tbody><tr>
+<td>$B(1,p)$</td>
+<td>$P(X{=}1) = p$</td>
+<td>单次试验成败</td>
+</tr>
+<tr>
+<td>$B(n,p)$</td>
+<td>$C_n^k p^k q^{n-k}$，$0 \leq k \leq n$</td>
+<td>$n$ 次独立重复的成功数</td>
+</tr>
+<tr>
+<td>$\mathcal{P}(\lambda)$</td>
+<td>$\frac{\lambda^k}{k!}\mathrm{e}^{-\lambda}$，$k \geq 0$</td>
+<td>稀有事件计数；$B(n,p) \to \mathcal{P}(np)$</td>
+</tr>
+<tr>
+<td>$H(n,M,N)$</td>
+<td>$\frac{C_M^m C_{N-M}^{n-m}}{C_N^n}$</td>
+<td>无放回抽样；$N \to \infty$ 归于二项</td>
+</tr>
+<tr>
+<td>几何</td>
+<td>$q^{k-1}p$，$k \geq 1$</td>
+<td>首次成功等待；无记忆</td>
+</tr>
+<tr>
+<td>负二项</td>
+<td>$C_{k+r-1}^{r-1} q^k p^r$，$k \geq 0$</td>
+<td>第 $r$ 次成功前的失败数</td>
+</tr>
+</tbody></table></div>
+<p><strong>连续分布</strong>（密度：$f \geq 0$，$\int f = 1$；$P(X = a) = 0$）</p>
+<div class="table-wrap"><table><thead><tr>
+<th>分布</th>
+<th>密度</th>
+<th>要点</th>
+</tr>
+</thead><tbody><tr>
+<td>$\mathcal{U}(a,b)$</td>
+<td>$\frac{1}{b-a}$，$x \in (a,b)$</td>
+<td>几何概率；分布的通用原料</td>
+</tr>
+<tr>
+<td>$\mathcal{E}(\lambda)$</td>
+<td>$\lambda \mathrm{e}^{-\lambda x}$，$x \geq 0$</td>
+<td>$P(X > x) = \mathrm{e}^{-\lambda x}$；无后效</td>
+</tr>
+<tr>
+<td>$N(\mu, \sigma^2)$</td>
+<td>$\frac{1}{\sqrt{2\pi\sigma^2}}\mathrm{e}^{-(x-\mu)^2/2\sigma^2}$</td>
+<td>标准化 $\frac{X-\mu}{\sigma} \sim N(0,1)$</td>
+</tr>
+<tr>
+<td>$\Gamma(\alpha,\beta)$</td>
+<td>$\frac{\beta^\alpha}{\Gamma(\alpha)} x^{\alpha-1}\mathrm{e}^{-\beta x}$，$x \geq 0$</td>
+<td>$\Gamma(1,\lambda) = \mathcal{E}(\lambda)$；$\chi^2(n) = \Gamma(\frac{n}{2},\frac{1}{2})$</td>
+</tr>
+</tbody></table></div>
+<p><strong>正态计算</strong></p>
+<ul>
+<li>$P(X \leq a) = \Phi\big(\frac{a-\mu}{\sigma}\big)$；$\Phi(-x) = 1 - \Phi(x)$</li>
+<li>$1\sigma / 2\sigma / 3\sigma$：$68.27\% / 95.45\% / 99.73\%$</li>
+</ul>
+<p><strong>分布函数</strong></p>
+<ul>
+<li>$F(x) = P(X \leq x)$：单调不减、右连续、$F(-\infty)=0$、$F(+\infty)=1$</li>
+<li>$F(x-0) = P(X < x)$；$P(X = x) = F(x) - F(x-0)$（跳跃高度）</li>
+<li>$F$ 连续时求导得密度（孤立例外点归零）；$F$ 不连续则非连续型</li>
+<li>失效率 $\lambda(t)$ ⟹ $\bar{F}(t) = \exp(-\int_0^t \lambda)$；恒定失效率 ⟺ 指数分布</li>
+</ul>
+<p><strong>函数的分布</strong></p>
+<ul>
+<li>分布函数法：$F_Y(y) = P(g(X) \leq y)$ → 反解 → 求导</li>
+<li>多分支公式：$f_Y(y) = \sum_i f(h_i(y)) \, |h_i'(y)|$（各 $h_i$ 可逆、值域互斥）</li>
+<li>$X \sim N(0,1) \Rightarrow X^2 \sim \chi^2(1)$；$aX + b \sim N(a\mu+b, a^2\sigma^2)$</li>
+</ul>
+<p><strong>分位数与模拟</strong></p>
+<ul>
+<li>$\xi_p = F^{-1}(p) = \sup\{x \mid F(x) < p\}$；$x \geq F^{-1}(p) \iff F(x) \geq p$</li>
+<li>逆变换法：$U \sim \mathcal{U}(0,1) \Rightarrow F^{-1}(U) \sim F$；$F$ 连续时 $F(X) \sim \mathcal{U}(0,1)$</li>
+<li>指数随机数：$-\frac{1}{\lambda}\ln U \sim \mathcal{E}(\lambda)$</li>
+</ul>
+<hr>
+<h2 id="习题指引">习题指引</h2>
+<p>习题二共 43 题，覆盖面广、层次分明。按以下路线刷题，附思路提示（只指方向，不给解答；卡住超过 20 分钟再来逐题讨论）。</p>
+<p><strong>第一层：打底（分布的识别与直接计算）</strong></p>
+<ul>
+<li><strong>2.1–2.3、2.22</strong>：几何、二项分布的直接应用。2.1 求&quot;首中在偶数次&quot;，对分布列的偶数项求几何级数；2.3 先算单次观测大于 3 的概率（均匀分布），再套二项。</li>
+<li><strong>2.19、2.20</strong>：正态查表基本功。全部化为 $\Phi$，注意 2.20 是反向问题（由概率反解 $\sigma$）。</li>
+<li><strong>2.24</strong>：离散函数分布，注意 $X^2$ 的取值归并（$\pm 1$、$\pm 2$ 各并为一项）。</li>
+<li><strong>2.13</strong>：单调变换求密度的标准流程（$W = 2I^2$ 在 $I > 0$ 上单调）。</li>
+</ul>
+<p><strong>第二层：核心方法（本章主干题型）</strong></p>
+<ul>
+<li><strong>2.5</strong>：几何分布的变体——&quot;已通过的路口数&quot;从 0 起计数，分布列相应平移。</li>
+<li><strong>2.6、2.7</strong>：求分布列最大值点的标准技巧：考察相邻项比值 $p_{k+1}/p_k$ 与 1 的大小关系，定出由升转降的位置。</li>
+<li><strong>2.15</strong>：$\max$ 与 $\min$ 的分布——先求 $P(M \leq k)$（&quot;全都 $\leq k$&quot;，独立连乘）与 $P(m > k)$，再差分。此法在第三章次序统计量中将系统化。</li>
+<li><strong>2.21</strong>：名题。两种维修方案的比较，各归结为二项概率；用泊松近似（$\lambda = np$）可大幅简化计算，并体会&quot;集中服务优于分散服务&quot;的结论。</li>
+<li><strong>2.23</strong>：验收方案——二项/超几何计算与全概率公式的综合。</li>
+<li><strong>2.26</strong>：麻雀问题。无记忆者是有放回试验（几何分布），有记忆者是无放回试验（分布列逐项写出），(3) 的比较需要联合枚举。</li>
+<li><strong>2.30、2.31</strong>：重要结构性结论——两个独立泊松变量在给定和的条件下，其一服从二项分布。结论本身值得记住（第三章条件分布的先声）。</li>
+<li><strong>2.38、2.39</strong>：定理 5.1 的多分支练习。2.38 中 $(0, 6\pi)$ 上余弦有六个单调段，检验&quot;分支找全&quot;的功夫。</li>
+</ul>
+<p><strong>第三层：挑战（结构更深的题）</strong></p>
+<ul>
+<li><strong>2.8</strong>：两代分裂的粒子总数——按第一代结果作全概率分解，注意独立分裂的卷积。</li>
+<li><strong>2.28、2.32、2.33</strong>：随机游动与赌徒破产的定量续篇。2.32 把第一章的差分方程推广到 $p \neq q$（等差数列换为等比数列）；2.33 的数值结果（胜率仅差 0.001，破产概率天壤之别）极具冲击力，建议实际算出。</li>
+<li><strong>2.34</strong>：弱收敛的 Pólya 型定理——单调函数列逐点收敛于连续函数则一致收敛的概率版，练分析功底。</li>
+<li><strong>2.36</strong>：概率空间的信息容量——$2^n$ 个样本点至多支撑 $n$ 个独立的非退化事件，理解&quot;独立性消耗样本点&quot;的深意。</li>
+<li><strong>2.37</strong>：两两独立 + 不能同时发生 ⟹ $p \leq 1/2$，与第一章四象限反例呼应。</li>
+<li>*<strong>2.41</strong>：耦合（coupling）初试——在同一概率空间上构造 $U \leq V$ 且边缘分布指定，提示用同一个均匀变量作逆变换。</li>
+<li>*<strong>2.43</strong>：Cauchy 函数方程的完整证明（先有理数、后实数），补齐定理 3.1 充分性的分析细节。</li>
+</ul>
+<p>通用自查清单：① 识别分布先问生成机制（独立重复？等待？无放回？稀有计数？）；② 连续型求密度前先确认分布函数连续；③ 非单调变换的分支是否找全、值域是否互斥；④ 正态问题一律标准化后查表；⑤ 泊松/二项近似的适用条件（$n$ 大 $p$ 小 / $N \gg n$）是否满足。</p>
+
+    <nav class="pager">  <a href="01-classical-model-and-probability-space.html">
+    <span class="label">← 上一章</span>
+    <span class="title">古典概型和概率空间</span>
+  </a>  <a href="03-random-vectors.html" class="next">
+    <span class="label">下一章 →</span>
+    <span class="title">随机向量及其分布</span>
+  </a></nav>
+  </article>
+</div>
+
+<footer>
+  <div class="set">
+    <span>概率论精讲</span>
+    <span>2026 · ZH-CN</span>
+  </div>
+  <div class="set">
+    <span>Mav</span>
+  </div>
+</footer>
+<div class="search-backdrop" id="search-overlay" role="dialog" aria-modal="true" aria-label="搜索" hidden>
+  <div class="search-modal">
+    <div class="search-input-wrap">
+      <input type="search" class="search-input" placeholder="搜索内容..." aria-label="搜索内容" autocomplete="off">
+      <kbd>ESC</kbd>
+    </div>
+    <div class="search-results" role="listbox" aria-label="搜索结果"></div>
+  </div>
+</div>
+
+<!-- Side Panel -->
+<div class="side-panel" id="side-panel">
+  <div class="side-panel-resize" id="side-panel-resize"></div>
+  <div class="side-panel-header">
+    <div class="side-panel-tabs">
+      <button class="side-panel-tab active" data-mode="sidenote">补充</button>
+      <button class="side-panel-tab" data-mode="notepad">笔记</button>
+    </div>
+    <button class="side-panel-close" aria-label="关闭">×</button>
+  </div>
+  <div class="side-panel-body"></div>
+</div>
+<button class="notepad-fab" id="notepad-fab" aria-label="便利贴">✎</button>
+
+<!-- Mobile TOC -->
+<button class="mtoc-fab" id="mtoc-fab" aria-label="目录">TOC</button>
+<div class="mtoc-drawer" id="mtoc-drawer">
+  <div class="mtoc-content"></div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/bash.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/typescript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/yaml.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/javascript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/json.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/python.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/css.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+<script>mermaid.initialize({startOnLoad:true, theme:'neutral', fontFamily:'Inter, sans-serif'});</script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}]});"></script>
+<script src="../assets/script.js"></script>
+
+</body>
+</html>
