@@ -8,7 +8,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="../assets/style.css">
-<link rel="stylesheet" href="../assets/projects.css">
+<link rel="stylesheet" href="../assets/knowledge-index.css">
 </head>
 <body>
 
@@ -33,88 +33,24 @@
 
   <!-- View Toggle -->
   <div class="view-toggle">
-    <button class="active" data-view="projects">Projects</button>
-    <button data-view="all">全部书籍</button>
+    <button class="active" data-view="single">独立书籍</button>
+    <button data-view="series">系列讲义</button>
     <button data-view="notes">手记</button>
   </div>
 
-  <!-- ═══════════ Projects View ═══════════ -->
-  <div class="view-projects" id="view-projects">
+  <!-- ═══════════ 单册 View ═══════════ -->
+  <div class="view-single" id="view-single">
 
-    <div class="projects-list">
-      <!-- AUTO:PROJECTS:START -->
-      <a class="project-card" href="projects/how-computer-works/index.html">
-        <h3>计算机是怎么工作的</h3>
-        <p class="project-card-desc">从晶体管到浏览器，一路向上——理解你每天用的这台机器</p>
-        <div class="path-dots">
-          <div class="path-dot-item"></div>
-          <div class="path-dot-line"></div>
-          <div class="path-dot-item"></div>
-          <div class="path-dot-line"></div>
-          <div class="path-dot-item"></div>
-        </div>
-        <div class="path-dots-labels">
-          <span class="path-dot-label">硬件篇</span>
-          <span class="path-dot-label">服务器</span>
-          <span class="path-dot-label">浏览器</span>
-        </div>
-        <div class="project-card-meta">3 本书 · 21 章 · 预计 10 小时</div>
-      </a>
-
-      <a class="project-card" href="projects/digital-formats/index.html">
-        <h3>数字世界的底层格式</h3>
-        <p class="project-card-desc">文件、视频、网页——你每天接触的数字内容，底层到底长什么样</p>
-        <div class="path-dots">
-          <div class="path-dot-item"></div>
-          <div class="path-dot-line"></div>
-          <div class="path-dot-item"></div>
-          <div class="path-dot-line"></div>
-          <div class="path-dot-item"></div>
-        </div>
-        <div class="path-dots-labels">
-          <span class="path-dot-label">PDF</span>
-          <span class="path-dot-label">视频</span>
-          <span class="path-dot-label">浏览器</span>
-        </div>
-        <div class="project-card-meta">3 本书 · 22 章 · 预计 8 小时</div>
-      </a>
-      <!-- AUTO:PROJECTS:END -->
-    </div>
-
-    <!-- Series: 单主题长讲义（深度学习、强化学习…） -->
-    <div class="standalone-section dl-series-section">
-      <div class="section-label">系列讲义</div>
-      <div class="knowledge-grid dl-series-grid">
-        <a class="knowledge-card dl-series-card" href="deep-learning/index.html">
-          <span class="tag">Series · DeepLearning</span>
-          <h3>深度学习系列讲义</h3>
-          <p>三篇递进：数学与 PyTorch 工具 → 卷积与视觉 → 序列与自然语言处理。21 章，约 22 小时。</p>
-          <div class="dl-series-parts">
-            <span class="dl-series-part">PART&nbsp;I · 数学与 PyTorch 工具</span>
-            <span class="dl-series-part">PART&nbsp;II · 卷积与视觉</span>
-            <span class="dl-series-part">PART&nbsp;III · 序列与自然语言处理</span>
-          </div>
-        </a>
-        <a class="knowledge-card dl-series-card" href="large-language-models/index.html">
-          <span class="tag">Series · LLM</span>
-          <h3>Large Language Models</h3>
-          <p>从只会续写的 GPT-3 到 2026 年的推理与编程模型，这六年发生了什么。全六卷完结：架构演化、预训练、强化学习、后训练、算力与推理、产业地图，34 章，约 26 小时。</p>
-          <div class="dl-series-parts">
-            <span class="dl-series-part">PART&nbsp;I · 架构演化</span>
-            <span class="dl-series-part">PART&nbsp;II · 预训练</span>
-            <span class="dl-series-part">PART&nbsp;III · 强化学习速成</span>
-            <span class="dl-series-part">PART&nbsp;IV · 后训练</span>
-            <span class="dl-series-part">PART&nbsp;V · 算力与推理</span>
-            <span class="dl-series-part">PART&nbsp;VI · 2026 产业地图</span>
-          </div>
-        </a>
-      </div>
-    </div>
-
-    <!-- Standalone books (not in any project) -->
-    <div class="standalone-section">
+    <div class="standalone-section" style="margin-top: 0;">
       <div class="section-label">独立阅读</div>
+      <p class="section-note">标了「图文单页」的书是单页图文阅读，其余是侧栏目录的分章节书。</p>
       <div class="knowledge-grid">
+
+        <a class="knowledge-card" href="bluetooth-airpods/index.html">
+          <span class="tag">课外 · 图文单页 · 试读</span>
+          <h3>从 AirPods 讲蓝牙耳机</h3>
+          <p>名字里的丹麦国王、配对时的私有捷径——从一副耳机讲透蓝牙这项技术。</p>
+        </a>
 
         <a class="knowledge-card" href="rag/index.html">
           <span class="tag">AI · 工程实践 · 7 章</span>
@@ -152,6 +88,12 @@
           <p>写给刚满 18 岁的大学生：股票、上市、债券、黄金、基金，九章回答一个问题——收益从哪里来？</p>
         </a>
 
+        <a class="knowledge-card" href="bite-to-byte-硬件篇/index.html">
+          <span class="tag">课外 · 计算机</span>
+          <h3>电脑怎么工作的</h3>
+          <p>给大一新生的计算机原理课，从存储、CPU、GPU 到操作系统和硬件选购。</p>
+        </a>
+
         <a class="knowledge-card" href="blockchain-crypto/index.html">
           <span class="tag">课外 · 金融科技 · 8 章</span>
           <h3>区块链与加密货币</h3>
@@ -170,10 +112,65 @@
           <p>面向新生的 Git 与 GitHub 入门指南，从概念、命令到协作和排错。</p>
         </a>
 
+        <a class="knowledge-card" href="server-frontend-backend/index.html">
+          <span class="tag">课外 · Web</span>
+          <h3>服务器，前端与后端</h3>
+          <p>面向大一学生的科普指南：从浏览器里的三件套，到服务器上跑起来的完整链路。</p>
+        </a>
+
+        <a class="knowledge-card" href="video-screen/index.html">
+          <span class="tag">课外 · 数字媒体</span>
+          <h3>视频与屏幕技术</h3>
+          <p>从像素、分辨率、编解码器到 HDR、高刷和设备选择的完整指南。</p>
+        </a>
+
+        <a class="knowledge-card" href="browser-war/index.html">
+          <span class="tag">课外 · Web</span>
+          <h3>浏览器：从战争到垄断</h3>
+          <p>从 1990 年第一个浏览器到 Chromium 一统天下，讲清浏览器的历史、原理与隐私博弈。</p>
+        </a>
+
         <a class="knowledge-card" href="euv-lithography/index.html">
           <span class="tag">课外 · 半导体</span>
           <h3>EUV 光刻机：一束光如何造出芯片</h3>
           <p>跟着一束 13.5nm 的极紫外光，走进人类有史以来最精密的机器。</p>
+        </a>
+
+        <a class="knowledge-card" href="pdf-explained/index.html">
+          <span class="tag">课外 · 文档技术</span>
+          <h3>PDF：最熟悉的陌生人</h3>
+          <p>从 PostScript 到 AI 时代，拆解你每天都在用却从未真正理解的文件格式——历史、结构、渲染与未来困境。</p>
+        </a>
+
+      </div>
+    </div>
+
+    <div class="standalone-section standalone-section--divided">
+      <div class="section-label">课程教材</div>
+      <div class="knowledge-grid">
+
+        <a class="knowledge-card" href="thermodynamics/index.html">
+          <span class="tag">物理 · 热学</span>
+          <h3>热学速通</h3>
+          <p>六章梳理热力学定律、熵、统计分布、输运过程与相变。</p>
+        </a>
+
+        <a class="knowledge-card" href="math-analysis/index.html">
+          <span class="tag">数学 · 数学分析</span>
+          <h3>数学分析讲义</h3>
+          <p>下册第 8～13 章：多元微分、重积分、曲线曲面积分、Fourier 与含参积分。</p>
+        </a>
+
+        <a class="knowledge-card" href="probability/index.html">
+          <span class="tag">数学 · 概率论</span>
+          <h3>概率论精讲</h3>
+          <p>何书元《概率论》伴读讲义：六章对照原书补动机与推导，从概率空间公理化到特征函数、极限定理与随机过程。</p>
+        </a>
+
+        <a class="knowledge-card" href="ai-math-principles/index.html">
+          <span class="tag">AI · 数学原理</span>
+          <h3>人工智能与数学原理</h3>
+          <p>USTC 课程期末复习笔记：从概率论与 MLE 到 Transformer 与大语言模型，侧重数学推导。</p>
         </a>
 
       </div>
@@ -181,131 +178,40 @@
 
   </div>
 
-  <!-- ═══════════ All Books View ═══════════ -->
-  <div class="view-all hidden" id="view-all">
+  <!-- ═══════════ 系列讲义 View ═══════════ -->
+  <div class="view-series hidden" id="view-series">
 
-    <div class="knowledge-grid">
-
-      <a class="knowledge-card dl-series-card" href="deep-learning/index.html">
-        <span class="tag">Series · DeepLearning</span>
-        <h3>深度学习系列讲义</h3>
-        <p>三篇递进：数学与 PyTorch 工具 → 卷积与视觉 → 序列与自然语言处理。21 章，约 22 小时。</p>
-        <div class="dl-series-parts">
-          <span class="dl-series-part">PART&nbsp;I · 数学与 PyTorch 工具</span>
-          <span class="dl-series-part">PART&nbsp;II · 卷积与视觉</span>
-          <span class="dl-series-part">PART&nbsp;III · 序列与自然语言处理</span>
-        </div>
-      </a>
-
-      <a class="knowledge-card dl-series-card" href="large-language-models/index.html">
-        <span class="tag">Series · LLM</span>
-        <h3>Large Language Models</h3>
-        <p>从只会续写的 GPT-3 到 2026 年的推理与编程模型，这六年发生了什么。全六卷完结：架构演化、预训练、强化学习、后训练、算力与推理、产业地图，34 章，约 26 小时。</p>
-        <div class="dl-series-parts">
-          <span class="dl-series-part">PART&nbsp;I · 架构演化</span>
-          <span class="dl-series-part">PART&nbsp;II · 预训练</span>
-          <span class="dl-series-part">PART&nbsp;III · 强化学习速成</span>
-          <span class="dl-series-part">PART&nbsp;IV · 后训练</span>
-          <span class="dl-series-part">PART&nbsp;V · 算力与推理</span>
-          <span class="dl-series-part">PART&nbsp;VI · 2026 产业地图</span>
-        </div>
-      </a>
-
-      <a class="knowledge-card" href="rag/index.html">
-        <span class="tag">AI · 工程实践 · 7 章</span>
-        <h3>检索增强生成（RAG）</h3>
-        <p>从大语言模型的知识边界讲到检索、切块、重排与评估，回望 2026 年的 agentic 检索与长上下文之争，最后两百行代码手搓一个知识库问答系统。</p>
-      </a>
-
-      <a class="knowledge-card" href="data-structures/index.html">
-        <span class="tag">课内 · 数据结构</span>
-        <h3>数据结构：从指针到算法</h3>
-        <p>面向期末与考研的数据结构讲义——从 C 指针地基到线性表、树、图、查找排序与算法策略，配手算专项、考前速查和可直接编译的核心代码合订。</p>
-      </a>
-
-      <a class="knowledge-card" href="robogame2026/index.html">
-        <span class="tag">工程实践 · 嵌入式 · 机器人</span>
-        <h3>RoboGame 2026：从命令到车轮</h3>
-        <p>跟随一条运动命令，读懂 STM32 下位机的通信、协议、麦轮控制、项目进度与后续开发。</p>
-      </a>
-
-      <a class="knowledge-card" href="claude-code/index.html">
-        <span class="tag">课外 · 工具</span>
-        <h3>Claude Code 入门指南</h3>
-        <p>6 章 + 速查表，从零开始理解这个终端里的 AI agent。</p>
-      </a>
-
-      <a class="knowledge-card" href="money-bank/index.html">
-        <span class="tag">课外 · 金融</span>
-        <h3>银行体系与货币系统</h3>
-        <p>从中国银行体系到美元、欧洲与全球金融博弈，建立理解现实经济的框架。</p>
-      </a>
-
-      <a class="knowledge-card" href="investing-101/index.html">
-        <span class="tag">课外 · 金融 · 9 章</span>
-        <h3>投资入门：从一股股票到一套认知</h3>
-        <p>写给刚满 18 岁、第一次可以合法开户的大学生：股票、上市、交易所、债券、黄金、基金、风险与骗局，九章回答一个问题——收益从哪里来？以 SpaceX、OpenAI、苹果等真实公司为例。</p>
-      </a>
-
-      <a class="knowledge-card" href="bite-to-byte-硬件篇/index.html">
-        <span class="tag">课外 · 计算机</span>
-        <h3>电脑怎么工作的</h3>
-        <p>给大一新生的计算机原理课，从存储、CPU、GPU 到操作系统和硬件选购。</p>
-      </a>
-
-      <a class="knowledge-card" href="blockchain-crypto/index.html">
-        <span class="tag">课外 · 金融科技 · 8 章</span>
-        <h3>区块链与加密货币</h3>
-        <p>从货币与信任讲到比特币、以太坊、DeFi、NFT、Web3 与安全实战。</p>
-      </a>
-
-      <a class="knowledge-card" href="rust-book/index.html">
-        <span class="tag">课外 · 编程语言</span>
-        <h3>Rust</h3>
-        <p>写给使用 Zed 后开始好奇 Rust 的读者，理解它解决的问题和适用边界。</p>
-      </a>
-
-      <a class="knowledge-card" href="git-guide/index.html">
-        <span class="tag">工具 · 工程实践</span>
-        <h3>Git：概念讲解与实操</h3>
-        <p>面向新生的 Git 与 GitHub 入门指南，从概念、命令到协作和排错。</p>
-      </a>
-
-      <a class="knowledge-card" href="server-frontend-backend/index.html">
-        <span class="tag">课外 · Web</span>
-        <h3>服务器，前端与后端</h3>
-        <p>面向大一学生的科普指南：从浏览器里的三件套，到服务器上跑起来的完整链路。</p>
-      </a>
-
-      <a class="knowledge-card" href="video-screen/index.html">
-        <span class="tag">课外 · 数字媒体</span>
-        <h3>视频与屏幕技术</h3>
-        <p>从像素、分辨率、编解码器到 HDR、高刷和设备选择的完整指南。</p>
-      </a>
-
-      <a class="knowledge-card" href="browser-war/index.html">
-        <span class="tag">课外 · Web</span>
-        <h3>浏览器：从战争到垄断</h3>
-        <p>从 1990 年第一个浏览器到 Chromium 一统天下，讲清浏览器的历史、原理与隐私博弈。</p>
-      </a>
-
-      <a class="knowledge-card" href="euv-lithography/index.html">
-        <span class="tag">课外 · 半导体</span>
-        <h3>EUV 光刻机：一束光如何造出芯片</h3>
-        <p>跟着一束 13.5nm 的极紫外光，走进人类有史以来最精密的机器——从锡液滴到纳米晶圆台。</p>
-      </a>
-
-      <a class="knowledge-card" href="pdf-explained/index.html">
-        <span class="tag">课外 · 文档技术</span>
-        <h3>PDF：最熟悉的陌生人</h3>
-        <p>从 PostScript 到 AI 时代，拆解你每天都在用却从未真正理解的文件格式——历史、结构、渲染与未来困境。</p>
-      </a>
-
+    <div class="standalone-section" style="margin-top: 0;">
+      <div class="knowledge-grid dl-series-grid">
+        <a class="knowledge-card dl-series-card" href="deep-learning/index.html">
+          <span class="tag">Series · DeepLearning</span>
+          <h3>深度学习系列讲义</h3>
+          <p>三篇递进：数学与 PyTorch 工具 → 卷积与视觉 → 序列与自然语言处理。21 章，约 22 小时。</p>
+          <div class="dl-series-parts">
+            <span class="dl-series-part">PART&nbsp;I · 数学与 PyTorch 工具</span>
+            <span class="dl-series-part">PART&nbsp;II · 卷积与视觉</span>
+            <span class="dl-series-part">PART&nbsp;III · 序列与自然语言处理</span>
+          </div>
+        </a>
+        <a class="knowledge-card dl-series-card" href="large-language-models/index.html">
+          <span class="tag">Series · LLM</span>
+          <h3>Large Language Models</h3>
+          <p>从只会续写的 GPT-3 到 2026 年的推理与编程模型，这六年发生了什么。全六卷完结：架构演化、预训练、强化学习、后训练、算力与推理、产业地图，34 章，约 26 小时。</p>
+          <div class="dl-series-parts">
+            <span class="dl-series-part">PART&nbsp;I · 架构演化</span>
+            <span class="dl-series-part">PART&nbsp;II · 预训练</span>
+            <span class="dl-series-part">PART&nbsp;III · 强化学习速成</span>
+            <span class="dl-series-part">PART&nbsp;IV · 后训练</span>
+            <span class="dl-series-part">PART&nbsp;V · 算力与推理</span>
+            <span class="dl-series-part">PART&nbsp;VI · 2026 产业地图</span>
+          </div>
+        </a>
+      </div>
     </div>
 
   </div>
 
-  <!-- ═══════════ Notes View ═══════════ -->
+  <!-- ═══════════ 手记 View ═══════════ -->
   <div class="view-notes hidden" id="view-notes">
 
     <div class="standalone-section" style="margin-top: 0;">
@@ -331,45 +237,6 @@
 
   </div>
 
-  <details class="draft-shelf course-shelf">
-    <summary>
-      <span class="draft-shelf-heading">
-        <span class="draft-shelf-label">课程讲义</span>
-        <span class="draft-shelf-title">本科课程讲义</span>
-        <span class="draft-shelf-meta">4 本书</span>
-      </span>
-      <span class="draft-shelf-toggle" aria-hidden="true"></span>
-    </summary>
-
-    <div class="draft-shelf-body">
-      <div class="knowledge-grid course-grid">
-        <a class="knowledge-card course-card" href="thermodynamics/index.html">
-          <span class="tag">物理 · 热学</span>
-          <h3>热学速通</h3>
-          <p>六章梳理热力学定律、熵、统计分布、输运过程与相变。</p>
-        </a>
-
-        <a class="knowledge-card course-card" href="math-analysis/index.html">
-          <span class="tag">数学 · 数学分析</span>
-          <h3>数学分析讲义</h3>
-          <p>下册第 8～13 章：多元微分、重积分、曲线曲面积分、Fourier 与含参积分。</p>
-        </a>
-
-        <a class="knowledge-card course-card" href="probability/index.html">
-          <span class="tag">数学 · 概率论</span>
-          <h3>概率论精讲</h3>
-          <p>何书元《概率论》伴读讲义：六章对照原书补动机与推导，从概率空间公理化到特征函数、极限定理与随机过程。</p>
-        </a>
-
-        <a class="knowledge-card course-card" href="ai-math-principles/index.html">
-          <span class="tag">AI · 数学原理</span>
-          <h3>人工智能与数学原理</h3>
-          <p>USTC 课程期末复习笔记：从概率论与 MLE 到 Transformer 与大语言模型，侧重数学推导。</p>
-        </a>
-      </div>
-    </div>
-  </details>
-
   <p style="margin-top: var(--space-7); font-family: var(--mono); font-size: 11px; letter-spacing: 0.06em; color: var(--muted); text-align: center;">
     所有知识库的 Markdown 源文件和网站源码均开源 · <a href="https://github.com/maverickxone/mav-homepage" target="_blank" rel="noopener" style="color: var(--ink-soft); border-bottom: 1px solid var(--line-2);">GitHub ⭐</a>
   </p>
@@ -387,8 +254,8 @@
 // Tab switching
 const buttons = document.querySelectorAll('.view-toggle button');
 const views = {
-  projects: document.getElementById('view-projects'),
-  all: document.getElementById('view-all'),
+  single: document.getElementById('view-single'),
+  series: document.getElementById('view-series'),
   notes: document.getElementById('view-notes')
 };
 

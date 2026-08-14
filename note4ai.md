@@ -1,6 +1,6 @@
 # note4ai.md
 
-> 最后更新：2026.07.20
+> 最后更新：2026.08.15
 
 本文件面向接手本项目的 AI agent，不是给人类线性阅读的文档。目标是让你读完之后对项目结构、构建系统、约束规则了如指掌。
 
@@ -28,11 +28,7 @@ mav-homepage/
 │   │   ├── blog-build.js        ← 只生成详情页（不再改 index/主页）
 │   │   └── index.html           ← 手写的「已并入时间线」提示页
 │   ├── knowledge/               ← 知识库输出（每本书或 Series 一个子目录）
-│   │   ├── index.html           ← 知识库入口页（三模式：Projects / 全部书籍 / 手记）
-│   │   ├── projects/            ← Project 详情页输出
-│   │   │   ├── manifest.json    ← 所有 project 的元数据（备用；首页不 fetch）
-│   │   │   ├── how-computer-works/index.html
-│   │   │   └── digital-formats/index.html
+│   │   ├── index.html           ← 知识库入口页（三 tab：独立书籍 / 系列讲义 / 手记）
 │   │   ├── notes/               ← Notes（手记）输出：列表页 + 平铺的 note 页
 │   │   │   ├── index.html       ← 手记列表（标签筛选 + 搜索）
 │   │   │   ├── <slug>.html      ← 单篇手记（平铺，不在 chapters/ 下）
@@ -44,10 +40,11 @@ mav-homepage/
 │   │   ├── robogame2026/        ← RoboGame 2026 讲义
 │   │   ├── rag/                 ← RAG 书（7 章）
 │   │   ├── claude-code/         ← ⚠️ 纯手写 HTML，无 Markdown 源码
+│   │   ├── bluetooth-airpods/   ← ⚠️ 图文单页科普书，纯手写，无 Markdown 源码（见下方专节）
 │   │   └── ...
 │   └── assets/                  ← 全站共享 CSS/JS
 │       ├── style.css            ← 主样式（首页 / about / 知识库入口）
-│       ├── projects.css         ← Project 功能专用样式
+│       ├── knowledge-index.css  ← 知识库入口页专用样式（tab、书籍网格、分组）
 │       ├── about.css            ← About 页轻量覆盖
 │       └── script.js            ← 全站脚本（含知识库入口 tab 等）
 ├── markdown-backups/            ← 知识库 Markdown 源文件
@@ -69,13 +66,9 @@ mav-homepage/
 │   │   ├── 01-architecture/ … 06-industry-map/
 │   │   └── _research/           ← 写作调研素材（未进 series parts；计划作附录）
 │   ├── RAG/                     ← RAG 书源
-│   ├── projects/                ← Project 数据源（YAML）
-│   │   ├── how-computer-works.yaml
-│   │   └── digital-formats.yaml
 │   └── EUV-Lithography/
 ├── md2HTML/                     ← 静态站点生成器
 │   ├── build.js                 ← 主构建入口（Book + Series）
-│   ├── build-projects.js        ← Project 构建脚本
 │   ├── build-notes.js           ← Notes（手记）构建脚本
 │   ├── build-all.sh             ← shell 包装（⚠️ `--all` 已禁用，传入会 exit 1）
 │   ├── build-lock.yaml          ← 白名单/锁定列表
@@ -189,7 +182,7 @@ infoCutoff: "..."   # 可选；章节页头部显示信息截止说明
 | `catalog` | | `false` 时 suppress build 的「无首页入口」警告（`warnIfBookHasNoEntry` **只认 `catalog === false`**，`status` **不能**替代） |
 | `features` | | 数组，控制章节页额外加载的资源。当前 **仅 `quiz` 会真正注入** |
 | `infoCutoff` | | 部分书写了书级字段；**构建只消费章节 front-matter 的 `infoCutoff`**，书级目前无效 |
-| `statusNote` | | 元数据；书籍构建不用。Project 草稿详情页会用 |
+| `statusNote` | | 元数据；书籍构建不用（原为 Project 草稿详情页使用，该功能已于 2026-08 移除） |
 
 `features` 示例：
 
@@ -377,140 +370,96 @@ node blog-build.js   # 只生成 html/*.html 详情页（导航指向时间线�
 | browser-war | 浏览器：从战争到垄断 | 8 章；第 01/02/04/05 章锁定；有 HTML 定制；**assets 未锁定** |
 | euv-lithography | EUV 光刻机 | 7 章；**01–06 锁定，`00-preface` 未锁**；`assets/style.css` + `script.js` 锁定；图片自动加载 **未生效**；KaTeX 为全局模板能力 |
 | pdf-explained | PDF：最熟悉的陌生人 | 9 章；01–03 锁定 |
-| robogame2026 | RoboGame 2026：从一条命令到四个车轮 | 8 章；`status: published`；v1.0.0；工程实践/嵌入式；已进入首页「独立阅读」与「全部书籍」 |
+| robogame2026 | RoboGame 2026：从一条命令到四个车轮 | 8 章；`status: published`；v1.0.0；工程实践/嵌入式；已进入首页「独立书籍」tab 的「独立阅读」分组 |
 | claude-code | Claude Code 入门指南 | ⚠️ 纯手写 HTML，无 Markdown 源码（约 6 章 + `reference.html`） |
+| bluetooth-airpods | 从 AirPods 讲蓝牙耳机 | ⚠️ 纯手写 HTML，无 Markdown 源码；2026-08 新增，**图文单页科普书**首个样例（试读片段，仅 2 节）；详见下方「图文单页科普书」专节 |
 
 ---
 
-## Project 系统
+## 知识库首页 (index.html)
+
+路径 `Mav/knowledge/index.html`。三个 tab（`.view-toggle`），默认打开第一个：
+
+1. **独立书籍**（`data-view="single"`，默认 active；按钮文案是"独立书籍"，`data-view` 属性值仍是历史遗留的 `single`，改文案时没必要同步改属性名）——独立成册的书，分两组网格，中间隔一条灰色分割线（`.standalone-section--divided`）：
+   - **独立阅读**（上）：bluetooth-airpods、rag、data-structures、robogame2026、claude-code、money-bank、investing-101、bite-to-byte-硬件篇、blockchain-crypto、rust-book、git-guide、server-frontend-backend、video-screen、browser-war、euv-lithography、pdf-explained。这组标题下方有一行 `.section-note`："标了「图文单页」的书是单页图文阅读，其余是侧栏目录的分章节书"——新增图文单页书时不用改这行，只要卡片 `tag` 里带「图文单页」四个字即可
+   - **课程教材**（下）：thermodynamics、math-analysis、probability、ai-math-principles
+2. **系列讲义**（`data-view="series"`）——`deep-learning`、`large-language-models` 两张 `dl-series-card`，展示 PART 分卷。
+3. **手记**（`data-view="notes"`）——最新 2 篇 note 预览卡片（`AUTO:NOTES` 自动回填）+「查看全部手记」链接。
+
+**维护边界**：三个 tab 的卡片内容全部**手动**维护，直接改 `Mav/knowledge/index.html`；只有手记预览区（`AUTO:NOTES` 标记之间）由 `build-notes.js` 自动回填最新 6 篇。新增/移动书籍时务必同步改首页 HTML。
+
+**（2026-08 移除）Project 系统**：曾经存在一个"书之上的聚合层"，把相关书按学习路径串起来（`markdown-backups/projects/*.yaml` → `build-projects.js` → `Mav/knowledge/projects/`，首页第一个 tab 展示带路径圆点动画的卡片）。经确认实际使用中从未通过这个入口浏览过——真实使用路径永远是直接点开某一本书——已连同数据源、构建脚本、输出目录和专用样式（`Mav/assets/projects.css`）一起删除。**系列讲义**（`series.yaml`）是不同的东西，保留：它是同一大领域下多本书的真实结构化编排（Part 顺序、全系列连续编号），不是策展层。
+
+---
+
+## 图文单页科普书（Magazine 格式）
 
 ### 概念
 
-Project 是知识库中**书之上的聚合层**——把相关的书按阅读顺序串成一条学习路径。一本书可以属于多个 project（多对多），也可以不属于任何 project（作为「独立阅读」展示）。
+2026-08 起，知识库有**两种平行的书籍形态**，对应两种阅读模式，不是谁取代谁：
 
-### 数据源
+| | 教材查阅型（原有） | 图文单页科普型（新增） |
+|---|---|---|
+| 用途 | 考试复习/公式速查，反复跳转定位 | 叙事型科普，从头读到尾一次性读完 |
+| 构建方式 | md2HTML 流水线：`markdown-backups/*.md` → `build.js` → HTML | **手写 HTML/CSS，无 Markdown 源，无 build 脚本** |
+| 导航 | 左侧栏常驻 TOC | 顶部窄 nav + 页内锚点跳转，不占内容宽度 |
+| 正文 | 大段文字为主，图极少（多为公式/matplotlib 图表） | 图文交替，`.mz-*` 组件（hero/hook/split/figure/stats/myth） |
+| 例子 | thermodynamics、probability、browser-war 等现有全部书籍 | `bluetooth-airpods`（首个样例，2026-08） |
 
-位置：`markdown-backups/projects/*.yaml`
+选题判断标准：这本书是"被查"还是"被读"？前者留在 md2HTML 流水线，后者才用这个新格式。**不要把现有书迁移过来**——这个格式只用于新选题，已完成的书不动。
 
-```yaml
-title: "计算机是怎么工作的"
-slug: how-computer-works
-description: "从晶体管到浏览器，一路向上"
-order: 2
-books:
-  - slug: bite-to-byte-硬件篇
-    role: "起点：硬件和操作系统是怎么协作的"
-    label: "硬件篇"
-  - slug: server-frontend-backend
-    role: "网络：请求怎么跑通的"
-    label: "服务器"
-  - slug: browser-war
-    role: "终点：浏览器的 30 年战争"
-    label: "浏览器"
-transitions:
-  - "理解了硬件之后，下一步是看数据怎么通过网络流动..."
-  - "知道了请求怎么跑通之后，来看浏览器本身..."
-sidebar:
-  prerequisites:
-    - "会用电脑上网"
-  concepts:
-    - "CPU 与指令周期"
-    - "HTTP 请求/响应"
-    - "渲染引擎"
-  outcomes:
-    - "能解释从按下回车到页面显示经历了什么"
-```
+### ⚠️ 没有 Markdown 源，不进锁定机制
 
-### 字段说明
+这类书**不在** `markdown-backups/` 下建文件夹，**不写** `book.yaml`，**不跑** `node build.js`。`build-lock.yaml` 的锁定机制是为"md 会覆盖手动定制的 HTML"这个风险设计的——这类书从第一天起就是纯手写 HTML，没有这个风险，所以**不需要、也不应该**往 `build-lock.yaml` 里加锁定条目。以后遇到这类书，直接改 `Mav/knowledge/<slug>/` 下的文件即可，不必找对应的 md 源（找不到，也不该去找）。
 
-| 字段 | 必需 | 说明 |
-|------|------|------|
-| `title` | ✓ | Project 标题 |
-| `slug` | ✓ | URL slug，用于输出路径 |
-| `description` | ✓ | 一句话描述 |
-| `order` | 推荐 | 首页 Project 卡片排序（数字越小越靠前） |
-| `status` | 可选 | `draft` 表示待整理路线；**构建会自动过滤**，不进入 `AUTO:PROJECTS` 主列表。缺省视为 published |
-| `statusNote` | 可选 | 草稿路线在详情页显示的状态说明 |
-| `books` | ✓ | 书的数组，按顺序排列 |
-| `books[].slug` | ✓ | 对应 `markdown-backups/<Dir>` 的 lowercase slug |
-| `books[].role` | ✓ | 该书在路径中的角色/定位 |
-| `books[].label` | 推荐 | 首页路径圆点/短标签文案 |
-| `transitions` | 可选 | 书与书之间的过渡文案（数组，长度 = books.length - 1） |
-| `sidebar.prerequisites` | 可选 | 前置知识列表 |
-| `sidebar.concepts` | 可选 | 涉及的核心概念 |
-| `sidebar.outcomes` | 可选 | 读完之后你能做到什么 |
-
-### 构建命令
-
-```bash
-cd md2HTML
-node build-projects.js              # 构建全部 project
-node build-projects.js <slug>       # 构建单个 project
-```
-
-### 输出
+### 目录结构范式
 
 ```
-Mav/knowledge/projects/
-├── manifest.json                          ← 所有 project 的元数据（首页不动态 fetch，仅备用）
-├── how-computer-works/index.html
-└── digital-formats/index.html
+Mav/knowledge/<slug>/
+├── index.html          ← 单页正文（多节可用页内锚点分隔，不拆多个 HTML 文件）
+└── assets/
+    ├── style.css        ← 从 md2HTML/assets/style.css 原样复制，不改
+    ├── magazine.css     ← 本书专属的图文布局组件
+    └── images/          ← 下载好的图片（已裁剪压缩到网页可用体积）
 ```
 
-### 当前 Project 列表
+### 设计铁律：共享 token 层，布局层自由
 
-| slug | 标题 | 状态 | 包含书籍 |
-|------|------|------|----------|
-| how-computer-works | 计算机是怎么工作的 | published | 硬件篇 → 服务器 → 浏览器 |
-| digital-formats | 数字世界的底层格式 | published | PDF → 视频 → 浏览器 |
+这是这个格式能跟极简教材类书"衔接不突兀"的核心机制，**新书必须遵守，不允许自创**：
 
-旧的 `from-zero-to-transformer` 与 `deep-learning-path` 已由 `deep-learning` Series 取代，配置和输出页面移入废纸篓。
+- **色板**：`--ink` / `--ink-soft` / `--muted` / `--line` / `--bg` / `--bg-soft` 等变量原样沿用 `style.css`，**不引入新颜色、不用彩色 accent**
+- **字体**：Inter（正文/标题）+ JetBrains Mono（标签/数据），不引入衬线字体等新字体
+- **边角**：直角或最多 4px 圆角，1px 细边框（`var(--line)`），**不用大圆角卡片**
+- **顶部 nav**：直接复用 `style.css` 里的 `.topnav` / `.topnav-inner` / `.brand` / `.nav-links` / `.nav-btn`，样式不改；因为这类页面通常没有 `script.js`（见下），`.topnav` 默认的"滚动后才显示分隔线"效果不会触发，需要在 `magazine.css` 里加一行 `.topnav { border-bottom-color: var(--line); }` 让分隔线常驻显示
+- **开场"气闸"**：正文顶部先用 `.chapter-head`（`style.css` 自带组件：mono 小标签 + `<h1>` + 一句话简介）保持纯排版、不放图，图片从这一屏之后才开始出现——避免"卡片点进去直接摔进满屏大图"的突兀感
+- 布局层完全自由：要不要 hero、要不要 split、图片摆多少，这些由内容决定，不受上面几条约束
 
-### 知识库首页 (index.html)
+### `magazine.css` 组件小抄
 
-路径 `Mav/knowledge/index.html`。三个 tab：
+| 类名 | 解决什么问题 |
+|---|---|
+| `.mz-hero` | 开篇整页宽度的主图 + caption |
+| `.mz-hook` | 每节开头的问题式引子（斜体，左边一条粗线） |
+| `.mz-split` / `.mz-split.reverse` | 文字+图片左右对照，reverse 换边；窄屏自动堆叠为单栏 |
+| `.mz-figure` | 单独一张带 caption 的配图 |
+| `.mz-inline-icon` | 小尺寸图标 + 一段说明文字并排（如 logo 讲解） |
+| `.mz-stats` | 数据速览网格（几个数字 + 标签） |
+| `.mz-myth` / `.mz-myth-row.false` / `.mz-myth-row.true` | 「传说 vs 实际」两行对照卡，纠正常见误解 |
 
-1. **Projects** — 展示 published project 卡片（带路径圆点动画）+ Series（`deep-learning`、`large-language-models`）+ 独立阅读区
-2. **全部书籍** — 顶部展示 Series 卡片（深度学习 + LLM），之后平铺主书卡片（不含课程讲义）：
-   rag、data-structures、robogame2026、claude-code、money-bank、bite-to-byte-硬件篇、blockchain-crypto、rust-book、git-guide、server-frontend-backend、video-screen、browser-war、euv-lithography、pdf-explained
-3. **手记** — 最新 6 篇 note 预览卡片（`AUTO:NOTES` 自动回填）+ 「查看全部手记」链接
+这些类名是 `bluetooth-airpods/assets/magazine.css` 里已经写好的实现，新书可以直接复制这个文件当起点，按需增删组件，但改动要遵守上面的设计铁律。
 
-三个视图下方共用一个原生 `<details>` 折叠区：**本科课程讲义**，包含 `thermodynamics`、`math-analysis`、`probability`、`ai-math-principles`。
+### 取图规范
 
-新增 project 后需要：
+图片一律从 **Wikimedia Commons** 下载，不要用 Apple/品牌方官方宣传图这类版权图：
 
-1. 在 `markdown-backups/projects/` 创建 YAML  
-2. 运行 `node build-projects.js`
+1. 用 Commons API 搜索候选（`action=query&generator=search&gsrnamespace=6&prop=imageinfo&iiprop=url|extmetadata`），检查 `LicenseShortName`（CC0 / CC BY / CC BY-SA 都可用；带 SA 的要署名）
+2. `curl` 下载原图（带 UA header，标明身份和联系方式）
+3. `sips -Z <width>` 缩小尺寸 + `sips -s formatOptions <quality>` 压缩体积，网页用图没必要保留几千像素原图
+4. 在页面底部加一行 mono 小字，署上作者名和协议（CC BY-SA 系列**必须**署名；CC0 可省略但建议保留来源）
 
-Project 卡片由构建脚本根据 YAML 自动回填到：
+### portal 接入规则
 
-```html
-<!-- AUTO:PROJECTS:START -->
-<!-- AUTO:PROJECTS:END -->
-```
-
-`order` 控制顺序，`books[].label` 控制路径短标签，`status: draft` 的 Project **会在 build 时**从主列表过滤（`isCatalogProject`）。
-
-**维护边界（重要）**：
-
-| 内容 | 是否自动 |
-|------|----------|
-| Project 主列表（`AUTO:PROJECTS`） | **自动**（`build-projects.js`；draft 过滤） |
-| 手记预览区（`AUTO:NOTES`） | **自动**（`build-notes.js`；最新 6 篇） |
-| Series、独立阅读、全部书籍、课程折叠区的卡片 | **手动**改 `Mav/knowledge/index.html` |
-| 书级 `book.yaml` 的 `status: draft` | **不**自动挪卡片；只作元数据 + 人工约定 |
-
-新增/移动书籍时务必同步改首页 HTML。
-
-### Project 详情页布局
-
-双栏布局（桌面端）：
-
-- **左侧**：header（PROJECT 标签 + 标题 + 描述 + 统计）+ 时间线（书卡片 + 过渡文案）
-- **右侧 sticky sidebar**：前置知识 / 涉及概念 / 读完之后你能
-- **底部**：路径完成提示 + 返回知识库入口
-
-移动端（< 900px）自动堆叠为单栏。样式在 `Mav/assets/projects.css`。
+新书卡片放进「独立书籍」tab 的「独立阅读」分组（`Mav/knowledge/index.html`），`tag` 里**必须**包含「图文单页」四个字，例如 `课外 · 图文单页 · 试读`——这是目前唯一区分"这本书阅读体验不一样"的信号，纯靠人工写进 tag，没有自动化检测。分组标题下方已经有一行 `.section-note` 做统一说明，新增书籍不需要再改这行。
 
 ---
 
@@ -602,9 +551,8 @@ note 页面是简化版的章节页：无侧边栏、无上下章翻页（note �
 | 新建 Series | `markdown-backups/` 下建文件夹 + `series.yaml` + Part 子目录中的 `.md` |
 | 构建 Series | `cd md2HTML && node build.js --series <Series-Name>` |
 | 构建 Series 单章 | `cd md2HTML && node build.js --series <Series-Name>/part/chapter.md` |
-| 增加独立书籍入口卡片 | 编辑 `Mav/knowledge/index.html` 的独立阅读和全部书籍区域（目前仍需手动） |
-| 新建 Project | `markdown-backups/projects/` 下建 `.yaml`，然后 `node build-projects.js` |
-| 构建 Project | `cd md2HTML && node build-projects.js` |
+| 增加独立书籍入口卡片 | 编辑 `Mav/knowledge/index.html`「独立书籍」tab 的独立阅读/课程教材分组，或「系列讲义」tab（目前仍需手动） |
+| 新建图文单页科普书 | 不建 md 源；直接在 `Mav/knowledge/<slug>/` 手写 `index.html` + `assets/`，规范见「图文单页科普书」专节 |
 | 新建手记 | `markdown-backups/notes/` 下写 `.md`（front-matter: title/date/description/tags） |
 | 构建手记 | `cd md2HTML && node build-notes.js <file.md>`（或无参数构建全部） |
 | 发长文 | `Mav/blog/posts/` 下写 `.md`，`cd Mav/blog && node blog-build.js`，再手动在时间线加条目 |

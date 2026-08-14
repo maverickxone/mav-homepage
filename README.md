@@ -62,15 +62,6 @@
 |------|:----:|
 | 数据结构：从指针到算法 | 9 |
 
-## Projects（学习路径）
-
-把多本书串成一条有顺序的阅读路线。
-
-**已发布**
-
-- **计算机是怎么工作的** — 硬件篇 → 服务器 → 浏览器
-- **数字世界的底层格式** — PDF → 视频 → 浏览器
-
 ## 手记（Notes）
 
 不成书的疑问与知识点——短则一段，长则几节，先记下来再说。
@@ -103,7 +94,6 @@ node build.js --book <Book-Name>             # 构建单本书
 node build.js --book <Book-Name>/ch.md       # 只构建书籍的一章
 node build.js --series <Series-Name>         # 构建完整系列讲义
 node build.js --series <Series-Name>/part/ch.md # 只构建系列的一章
-node build-projects.js            # 构建 Project 页面
 node build-notes.js               # 构建手记（全部）
 node build-notes.js <file.md>     # 构建单篇手记
 ```
