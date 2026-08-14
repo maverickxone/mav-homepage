@@ -28,11 +28,15 @@ mav-homepage/
 │   │   ├── blog-build.js        ← 只生成详情页（不再改 index/主页）
 │   │   └── index.html           ← 手写的「已并入时间线」提示页
 │   ├── knowledge/               ← 知识库输出（每本书或 Series 一个子目录）
-│   │   ├── index.html           ← 知识库入口页（双模式：Projects / 全部书籍）
+│   │   ├── index.html           ← 知识库入口页（三模式：Projects / 全部书籍 / 手记）
 │   │   ├── projects/            ← Project 详情页输出
 │   │   │   ├── manifest.json    ← 所有 project 的元数据（备用；首页不 fetch）
 │   │   │   ├── how-computer-works/index.html
 │   │   │   └── digital-formats/index.html
+│   │   ├── notes/               ← Notes（手记）输出：列表页 + 平铺的 note 页
+│   │   │   ├── index.html       ← 手记列表（标签筛选 + 搜索）
+│   │   │   ├── <slug>.html      ← 单篇手记（平铺，不在 chapters/ 下）
+│   │   │   └── assets/          ← style.css / script.js / notes.css / search-index.json
 │   │   ├── deep-learning/       ← 深度学习 Series 输出（3 篇、21 章）
 │   │   ├── large-language-models/ ← LLM Series 输出（6 篇、34 章；v1.0.0）
 │   │   ├── browser-war/         ← 示例书（有前端定制）
@@ -51,6 +55,9 @@ mav-homepage/
 │   │   ├── book.yaml            ← 元数据（title/author/description/language/status）
 │   │   ├── 01-chapter.md        ← 章节文件（带 front-matter）
 │   │   └── ...
+│   ├── notes/                   ← Notes（手记）源目录
+│   │   ├── notes.yaml           ← 集合元数据（title/slug/description/author）
+│   │   └── <slug>.md            ← 每篇手记一个 .md（带 front-matter：title/date/readTime/description/tags）
 │   ├── RoboGame2026/            ← 工程实践讲义
 │   ├── Deep-Learning/           ← Series 源目录
 │   │   ├── series.yaml          ← Series 元数据与 Part 顺序
@@ -69,13 +76,15 @@ mav-homepage/
 ├── md2HTML/                     ← 静态站点生成器
 │   ├── build.js                 ← 主构建入口（Book + Series）
 │   ├── build-projects.js        ← Project 构建脚本
+│   ├── build-notes.js           ← Notes（手记）构建脚本
 │   ├── build-all.sh             ← shell 包装（⚠️ `--all` 已禁用，传入会 exit 1）
 │   ├── build-lock.yaml          ← 白名单/锁定列表
 │   ├── inject-quiz.js           ← 遗留 quiz 注入脚本（兼容用，新书勿依赖）
 │   ├── convert-ai-lessons.js    ← AI 讲义转换辅助（非日常构建路径）
 │   ├── assets/                  ← 模板 CSS/JS（新书默认 style.css + script.js）
 │   ├── series-assets/           ← Series 专用 CSS（series.css）
-│   ├── templates/               ← Book 与 Series 的封面/章节模板
+│   ├── notes-assets/            ← Notes 专用 CSS（notes.css）
+│   ├── templates/               ← Book、Series 与 Note 的封面/章节模板
 │   └── lib/                     ← 核心模块
 │       ├── reader.js            ← 读取 book.yaml / series.yaml + .md 文件
 │       ├── renderer.js          ← Markdown → HTML（基于 marked）
@@ -459,13 +468,14 @@ Mav/knowledge/projects/
 
 ### 知识库首页 (index.html)
 
-路径 `Mav/knowledge/index.html`。两个 tab：
+路径 `Mav/knowledge/index.html`。三个 tab：
 
 1. **Projects** — 展示 published project 卡片（带路径圆点动画）+ Series（`deep-learning`、`large-language-models`）+ 独立阅读区
 2. **全部书籍** — 顶部展示 Series 卡片（深度学习 + LLM），之后平铺主书卡片（不含课程讲义）：
    rag、data-structures、robogame2026、claude-code、money-bank、bite-to-byte-硬件篇、blockchain-crypto、rust-book、git-guide、server-frontend-backend、video-screen、browser-war、euv-lithography、pdf-explained
+3. **手记** — 最新 6 篇 note 预览卡片（`AUTO:NOTES` 自动回填）+ 「查看全部手记」链接
 
-两个视图下方共用一个原生 `<details>` 折叠区：**大一下学期课程讲义**，包含 `thermodynamics`、`math-analysis`、`ai-math-principles`。旧的“深度学习相关书稿”折叠区已移除。
+三个视图下方共用一个原生 `<details>` 折叠区：**本科课程讲义**，包含 `thermodynamics`、`math-analysis`、`probability`、`ai-math-principles`。
 
 新增 project 后需要：
 
@@ -486,6 +496,7 @@ Project 卡片由构建脚本根据 YAML 自动回填到：
 | 内容 | 是否自动 |
 |------|----------|
 | Project 主列表（`AUTO:PROJECTS`） | **自动**（`build-projects.js`；draft 过滤） |
+| 手记预览区（`AUTO:NOTES`） | **自动**（`build-notes.js`；最新 6 篇） |
 | Series、独立阅读、全部书籍、课程折叠区的卡片 | **手动**改 `Mav/knowledge/index.html` |
 | 书级 `book.yaml` 的 `status: draft` | **不**自动挪卡片；只作元数据 + 人工约定 |
 
@@ -503,6 +514,84 @@ Project 卡片由构建脚本根据 YAML 自动回填到：
 
 ---
 
+## Notes 系统（手记）
+
+### 概念
+
+Notes 是知识库中**短小内容的收容所**——生活中遇到的小疑问、值得记录但不够一本书的知识点（1-2 节）。每篇 note 是一个独立的 `.md` 文件，不需要 book.yaml、不需要章节编号，按日期倒序展示。
+
+与 Book 的关系：note 是「不成书的碎片」；某篇 note 如果越写越长（4-5 节以上），应该升级为独立的 Book。
+
+### 数据源
+
+位置：`markdown-backups/notes/`
+
+```
+markdown-backups/notes/
+├── notes.yaml              ← 集合元数据（title/slug/description/author/language）
+├── example-note-format.md  ← 每篇手记一个 .md
+└── placeholder-dns-udp.md
+```
+
+单篇 note 的 front-matter：
+
+```markdown
+---
+title: "为什么 DNS 默认用 UDP"     # 必需
+date: 2026-07-28                  # 必需；YYYY-MM-DD，用于排序（新在前）
+readTime: 3                       # 可选；预计阅读分钟数
+description: "一句话描述"          # 必需；列表页展示 + 搜索用
+tags: [网络, 协议]                # 可选；列表页标签筛选用
+---
+
+正文（支持所有扩展语法：callout/tabs/collapsible/KaTeX/Mermaid…）
+```
+
+### 构建命令
+
+```bash
+cd md2HTML
+node build-notes.js                  # 构建全部 note + 列表页 + assets + 搜索索引 + 首页预览
+node build-notes.js <file.md>        # 只构建一篇（自动刷新列表页/搜索/首页预览）
+node build-notes.js --index          # 只重建列表页
+node build-notes.js --force [...]    # 忽略锁定
+```
+
+Lock 路径格式（与 Book 共用 `build-lock.yaml`）：
+
+| 格式 | 效果 |
+|------|------|
+| `notes/<file.md>` | 跳过该 note 的 HTML 重新生成 |
+| `notes/index.html` | 跳过列表页重新生成 |
+| `notes/assets/<filename>` | copyAssets 跳过该文件 |
+
+### 输出
+
+```
+Mav/knowledge/notes/
+├── index.html              ← 列表页（日期倒序 + 标签筛选 + ⌘K 搜索）
+├── <slug>.html             ← 单篇 note（平铺，无 chapters/ 子目录）
+└── assets/
+    ├── style.css / script.js   ← 从 md2HTML/assets/ 复制（阅读主题/搜索/sidenote 全支持）
+    ├── notes.css               ← 从 md2HTML/notes-assets/ 复制
+    └── search-index.json
+```
+
+note 页面是简化版的章节页：无侧边栏、无上下章翻页（note 之间独立），保留进度条、阅读设置、⌘K 搜索、sidenote side panel。底部是「返回手记 / 知识库」导航。
+
+### 首页集成
+
+`build-notes.js` 自动把最新 6 篇 note 回填到 `Mav/knowledge/index.html` 的「手记」tab：
+
+```html
+<!-- AUTO:NOTES:START -->
+<!-- AUTO:NOTES:END -->
+```
+
+日常流程：写 `.md` → `node build-notes.js <file.md>` → 完成（首页预览自动更新，无需手改 HTML）。
+
+---
+
 ## 常见操作速查
 
 | 需求 | 命令/位置 |
@@ -516,6 +605,8 @@ Project 卡片由构建脚本根据 YAML 自动回填到：
 | 增加独立书籍入口卡片 | 编辑 `Mav/knowledge/index.html` 的独立阅读和全部书籍区域（目前仍需手动） |
 | 新建 Project | `markdown-backups/projects/` 下建 `.yaml`，然后 `node build-projects.js` |
 | 构建 Project | `cd md2HTML && node build-projects.js` |
+| 新建手记 | `markdown-backups/notes/` 下写 `.md`（front-matter: title/date/description/tags） |
+| 构建手记 | `cd md2HTML && node build-notes.js <file.md>`（或无参数构建全部） |
 | 发长文 | `Mav/blog/posts/` 下写 `.md`，`cd Mav/blog && node blog-build.js`，再手动在时间线加条目 |
 | 更新时间线 | 手改 `Mav/timeline/index.html`（条目模板在页内注释里），同步主页 `recent-list` |
 | 锁定文件 | `cd md2HTML && node build.js --lock <path>` |

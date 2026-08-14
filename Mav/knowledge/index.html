@@ -35,6 +35,7 @@
   <div class="view-toggle">
     <button class="active" data-view="projects">Projects</button>
     <button data-view="all">全部书籍</button>
+    <button data-view="notes">手记</button>
   </div>
 
   <!-- ═══════════ Projects View ═══════════ -->
@@ -304,6 +305,32 @@
 
   </div>
 
+  <!-- ═══════════ Notes View ═══════════ -->
+  <div class="view-notes hidden" id="view-notes">
+
+    <div class="standalone-section" style="margin-top: 0;">
+      <div class="section-label">最近的手记</div>
+      <!-- AUTO:NOTES:START -->
+      <div class="knowledge-grid notes-grid">
+        <a class="knowledge-card" href="notes/example-note-format.html">
+          <span class="tag">NOTE · 2026-07-30 · 示例 / 系统</span>
+          <h3>示例：一篇手记长什么样</h3>
+          <p>手记系统的格式演示——front-matter 字段、正文结构、扩展语法，写完删掉即可。</p>
+        </a>
+
+        <a class="knowledge-card" href="notes/placeholder-dns-udp.html">
+          <span class="tag">NOTE · 2026-07-28 · 网络 / 协议</span>
+          <h3>占位：为什么 DNS 默认用 UDP</h3>
+          <p>占位示例——UDP 快、无握手开销，DNS 查询天然短小；超过 512 字节才回退 TCP。</p>
+        </a>
+      </div>
+
+        <a class="notes-all-link" href="notes/index.html">查看全部 2 篇手记 →</a>
+      <!-- AUTO:NOTES:END -->
+    </div>
+
+  </div>
+
   <details class="draft-shelf course-shelf">
     <summary>
       <span class="draft-shelf-heading">
@@ -361,7 +388,8 @@
 const buttons = document.querySelectorAll('.view-toggle button');
 const views = {
   projects: document.getElementById('view-projects'),
-  all: document.getElementById('view-all')
+  all: document.getElementById('view-all'),
+  notes: document.getElementById('view-notes')
 };
 
 buttons.forEach(btn => {

@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>手记 — Mav</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/style.css">
+<link rel="stylesheet" href="assets/notes.css">
+</head>
+<body>
+
+<nav class="topnav" id="topnav">
+  <div class="topnav-inner">
+    <a class="brand" href="index.html">手记</a>
+    <div class="nav-links"></div>
+    <div class="nav-controls">
+      <button class="nav-btn" id="search-btn" aria-label="搜索 (Ctrl+K)">⌘K</button>
+      <button class="nav-btn" id="settings-btn" aria-label="阅读设置">Aa</button>
+      <a class="nav-btn" href="../index.html" aria-label="返回知识库">← 知识库</a>
+    </div>
+  </div>
+</nav>
+<div class="settings-pop" id="settings-pop">
+  <h5>主题</h5>
+  <div class="row">
+    <button class="seg" data-theme-set="light">明亮</button>
+    <button class="seg" data-theme-set="dark">暗色</button>
+  </div>
+  <h5>字号</h5>
+  <div class="row">
+    <button class="seg" data-size-set="s">小</button>
+    <button class="seg" data-size-set="m">中</button>
+    <button class="seg" data-size-set="l">大</button>
+  </div>
+</div>
+
+<main class="notes-page">
+  <header class="notes-header">
+    <span class="eyebrow">NOTES</span>
+    <h1>手记</h1>
+    <p class="notes-desc">不成书的疑问与知识点——短则一段，长则几节，先记下来再说。</p>
+    <div class="notes-stats">2 篇 · 持续更新</div>
+  </header>
+
+  <div class="notes-filter" id="notes-filter">
+    <button class="filter-pill active" data-tag="all">全部</button>
+    <button class="filter-pill" data-tag="示例">示例</button>
+    <button class="filter-pill" data-tag="系统">系统</button>
+    <button class="filter-pill" data-tag="网络">网络</button>
+    <button class="filter-pill" data-tag="协议">协议</button>
+  </div>
+
+  <div class="notes-list" id="notes-list">
+    <a class="note-card" href="example-note-format.html" data-tags="示例,系统">
+      <div class="note-card-side">
+        <span class="note-card-date">2026-07-30</span>
+        <span class="note-card-time">2 min</span>
+      </div>
+      <div class="note-card-main">
+        <h3 class="note-card-title">示例：一篇手记长什么样</h3>
+        <p class="note-card-desc">手记系统的格式演示——front-matter 字段、正文结构、扩展语法，写完删掉即可。</p>
+      <div class="note-card-tags"><span>示例</span><span>系统</span></div>
+      </div>
+    </a>
+    <a class="note-card" href="placeholder-dns-udp.html" data-tags="网络,协议">
+      <div class="note-card-side">
+        <span class="note-card-date">2026-07-28</span>
+        <span class="note-card-time">3 min</span>
+      </div>
+      <div class="note-card-main">
+        <h3 class="note-card-title">占位：为什么 DNS 默认用 UDP</h3>
+        <p class="note-card-desc">占位示例——UDP 快、无握手开销，DNS 查询天然短小；超过 512 字节才回退 TCP。</p>
+      <div class="note-card-tags"><span>网络</span><span>协议</span></div>
+      </div>
+    </a>
+  </div>
+
+  <p class="notes-empty" id="notes-empty" hidden>没有匹配的手记。</p>
+</main>
+
+<footer>
+  <div class="set">
+    <span>手记</span>
+    <span>2026 · ZH-CN</span>
+  </div>
+  <div class="set">
+    <span>Mav</span>
+  </div>
+</footer>
+<div class="search-backdrop" id="search-overlay" role="dialog" aria-modal="true" aria-label="搜索" hidden>
+  <div class="search-modal">
+    <div class="search-input-wrap">
+      <input type="search" class="search-input" placeholder="搜索内容..." aria-label="搜索内容" autocomplete="off">
+      <kbd>ESC</kbd>
+    </div>
+    <div class="search-results" role="listbox" aria-label="搜索结果"></div>
+  </div>
+</div>
+
+<script>
+// Tag filtering
+(function () {
+  const filter = document.getElementById('notes-filter');
+  const list = document.getElementById('notes-list');
+  const empty = document.getElementById('notes-empty');
+  if (!filter || !list) return;
+
+  filter.addEventListener('click', function (e) {
+    const pill = e.target.closest('.filter-pill');
+    if (!pill) return;
+
+    filter.querySelectorAll('.filter-pill').forEach(p => p.classList.remove('active'));
+    pill.classList.add('active');
+
+    const tag = pill.dataset.tag;
+    let visible = 0;
+    list.querySelectorAll('.note-card').forEach(card => {
+      const tags = (card.dataset.tags || '').split(',');
+      const show = tag === 'all' || tags.includes(tag);
+      card.style.display = show ? '' : 'none';
+      if (show) visible++;
+    });
+    empty.hidden = visible > 0;
+  });
+})();
+</script>
+<script src="assets/script.js"></script>
+</body>
+</html>

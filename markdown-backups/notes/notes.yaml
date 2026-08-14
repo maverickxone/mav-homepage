@@ -1,0 +1,9 @@
+# notes.yaml — 手记集合元数据
+# 每篇手记是 notes/ 目录下的一个独立 .md 文件（带 front-matter）。
+# 构建命令：cd md2HTML && node build-notes.js
+
+title: "手记"
+slug: notes
+description: "不成书的疑问与知识点——短则一段，长则几节，先记下来再说。"
+author: "Mav"
+language: "ZH-CN"

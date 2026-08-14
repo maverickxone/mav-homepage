@@ -1,0 +1,60 @@
+{
+  "documents": [
+    {
+      "id": "example-note-format",
+      "title": "示例：一篇手记长什么样",
+      "chapter": "2026-07-30",
+      "chapterTitle": "示例：一篇手记长什么样",
+      "url": "example-note-format.html",
+      "body": "\n   这是什么\n\n这是一篇  占位手记  ，用来演示手记系统的格式与构建流程。正式写作时可以删除本文件。\n\n   格式说明\n\n每篇手记是  markdown backups/notes/  下的一个  .md  文件，头部 front matter 包含：\n\n  字段   必需   说明  \n        :    :        \n   title    ✓   标题  \n   date    ✓   写作日期（YYYY MM DD），用于排序  \n   readTime      预计阅读分钟数  \n   description    ✓   一句话描述（列表页展示 + 搜索用）  \n   tags      标签数组，用于列表页筛选  \n\n   扩展语法同样可用\n\n:::callout tip 提示\n书籍里能用的  :::callout 、 :::tabs 、 :::collapsible  等扩展语法，手记里一样能用。\n:::\n\n行内公式 $e^ i\\pi  + 1 = 0$ 和代码块也正常渲染：\n\n   python\nprint \"hello, notes\" \n   \n"
+    },
+    {
+      "id": "example-note-format-这是什么",
+      "title": "这是什么",
+      "chapter": "2026-07-30",
+      "chapterTitle": "示例：一篇手记长什么样",
+      "url": "example-note-format.html#这是什么",
+      "body": ""
+    },
+    {
+      "id": "example-note-format-格式说明",
+      "title": "格式说明",
+      "chapter": "2026-07-30",
+      "chapterTitle": "示例：一篇手记长什么样",
+      "url": "example-note-format.html#格式说明",
+      "body": ""
+    },
+    {
+      "id": "example-note-format-扩展语法同样可用",
+      "title": "扩展语法同样可用",
+      "chapter": "2026-07-30",
+      "chapterTitle": "示例：一篇手记长什么样",
+      "url": "example-note-format.html#扩展语法同样可用",
+      "body": ""
+    },
+    {
+      "id": "placeholder-dns-udp",
+      "title": "占位：为什么 DNS 默认用 UDP",
+      "chapter": "2026-07-28",
+      "chapterTitle": "占位：为什么 DNS 默认用 UDP",
+      "url": "placeholder-dns-udp.html",
+      "body": "\n   核心结论\n\nDNS 查询通常一问一答、报文极小（< 512 字节），UDP 无需三次握手，延迟最低。\n\n   什么时候用 TCP\n\n  响应超过 512 字节（如 DNSSEC、大量记录）时，服务器置 TC 标志，客户端用 TCP 重试\n  区域传送（AXFR）直接走 TCP\n\n:::callout 一句话版本\nUDP 是默认快路径，TCP 是兜底大通道。\n:::\n\n  本篇为占位示例，正式内容待补充。\n"
+    },
+    {
+      "id": "placeholder-dns-udp-核心结论",
+      "title": "核心结论",
+      "chapter": "2026-07-28",
+      "chapterTitle": "占位：为什么 DNS 默认用 UDP",
+      "url": "placeholder-dns-udp.html#核心结论",
+      "body": ""
+    },
+    {
+      "id": "placeholder-dns-udp-什么时候用-tcp",
+      "title": "什么时候用 TCP",
+      "chapter": "2026-07-28",
+      "chapterTitle": "占位：为什么 DNS 默认用 UDP",
+      "url": "placeholder-dns-udp.html#什么时候用-tcp",
+      "body": ""
+    }
+  ]
+}

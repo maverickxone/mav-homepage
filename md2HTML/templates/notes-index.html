@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{{title}} — Mav</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/style.css">
+<link rel="stylesheet" href="assets/notes.css">
+</head>
+<body>
+
+<nav class="topnav" id="topnav">
+  <div class="topnav-inner">
+    <a class="brand" href="index.html">{{title}}</a>
+    <div class="nav-links"></div>
+    <div class="nav-controls">
+      <button class="nav-btn" id="search-btn" aria-label="搜索 (Ctrl+K)">⌘K</button>
+      <button class="nav-btn" id="settings-btn" aria-label="阅读设置">Aa</button>
+      <a class="nav-btn" href="../index.html" aria-label="返回知识库">← 知识库</a>
+    </div>
+  </div>
+</nav>
+{{settings_pop}}
+
+<main class="notes-page">
+  <header class="notes-header">
+    <span class="eyebrow">NOTES</span>
+    <h1>{{title}}</h1>
+    <p class="notes-desc">{{description}}</p>
+    <div class="notes-stats">{{note_count}} 篇 · 持续更新</div>
+  </header>
+
+  <div class="notes-filter" id="notes-filter">
+    <button class="filter-pill active" data-tag="all">全部</button>
+{{filter_pills}}
+  </div>
+
+  <div class="notes-list" id="notes-list">
+{{notes_list}}
+  </div>
+
+  <p class="notes-empty" id="notes-empty" hidden>没有匹配的手记。</p>
+</main>
+
+{{footer}}
+{{search_overlay}}
+
+<script>
+// Tag filtering
+(function () {
+  const filter = document.getElementById('notes-filter');
+  const list = document.getElementById('notes-list');
+  const empty = document.getElementById('notes-empty');
+  if (!filter || !list) return;
+
+  filter.addEventListener('click', function (e) {
+    const pill = e.target.closest('.filter-pill');
+    if (!pill) return;
+
+    filter.querySelectorAll('.filter-pill').forEach(p => p.classList.remove('active'));
+    pill.classList.add('active');
+
+    const tag = pill.dataset.tag;
+    let visible = 0;
+    list.querySelectorAll('.note-card').forEach(card => {
+      const tags = (card.dataset.tags || '').split(',');
+      const show = tag === 'all' || tags.includes(tag);
+      card.style.display = show ? '' : 'none';
+      if (show) visible++;
+    });
+    empty.hidden = visible > 0;
+  });
+})();
+</script>
+<script src="assets/script.js"></script>
+</body>
+</html>
