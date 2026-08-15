@@ -1,6 +1,6 @@
 # note4ai.md
 
-> 最后更新：2026.08.15
+> 最后更新：2026.08.16
 
 本文件面向接手本项目的 AI agent，不是给人类线性阅读的文档。目标是让你读完之后对项目结构、构建系统、约束规则了如指掌。
 
@@ -41,6 +41,7 @@ mav-homepage/
 │   │   ├── rag/                 ← RAG 书（7 章）
 │   │   ├── claude-code/         ← ⚠️ 纯手写 HTML，无 Markdown 源码
 │   │   ├── bluetooth-airpods/   ← ⚠️ 图文单页科普书，纯手写，无 Markdown 源码（见下方专节）
+│   │   ├── guns-terrorism/      ← ⚠️ 图文单页科普书，纯手写，无 Markdown 源码
 │   │   └── ...
 │   └── assets/                  ← 全站共享 CSS/JS
 │       ├── style.css            ← 主样式（首页 / about / 知识库入口）
@@ -372,7 +373,8 @@ node blog-build.js   # 只生成 html/*.html 详情页（导航指向时间线�
 | pdf-explained | PDF：最熟悉的陌生人 | 9 章；01–03 锁定 |
 | robogame2026 | RoboGame 2026：从一条命令到四个车轮 | 8 章；`status: published`；v1.0.0；工程实践/嵌入式；已进入首页「独立书籍」tab 的「独立阅读」分组 |
 | claude-code | Claude Code 入门指南 | ⚠️ 纯手写 HTML，无 Markdown 源码（约 6 章 + `reference.html`） |
-| bluetooth-airpods | 从 AirPods 讲蓝牙耳机 | ⚠️ 纯手写 HTML，无 Markdown 源码；2026-08 新增，**图文单页科普书**首个样例（试读片段，仅 2 节）；详见下方「图文单页科普书」专节 |
+| bluetooth-airpods | 从 AirPods 讲蓝牙耳机 | ⚠️ 纯手写 HTML，无 Markdown 源码；2026-08 新增，**图文单页科普书**首个样例；五章全本（协议与起源 / AirPods 与苹果生态 / 工程难点 / 竞品全景 / 入耳式 vs 头戴式），个人体验（FreeBuds→AirPods 4 降噪落差）作全书主线；~9700 中文字（2026-08 第二次扩写后，用户反馈初版"太单薄"尤其第四章敷衍，加了蓝牙版本史/H1H2芯片细节/空间音频机制/AirPods市场文化争议/传感器防水工程等题外话，第四章竞品从3家扩到5家含新增 Google Pixel Buds）；内容与配图调研由并行 subagent 完成，图片来自 Wikimedia Commons；详见下方「图文单页科普书」专节 |
+| guns-terrorism | 从格洛克讲枪械与恐怖袭击 | ⚠️ 纯手写 HTML，无 Markdown 源码；2026-08 新增，**图文单页科普书**；六章全本（靶场体验 / 枪械分类 / 掩体与战术 / 人质围攻 / 全球枪支制度 / 电影与现实判断），从美国靶场第一次打格洛克和左轮出发，串起手枪、步枪、冲锋枪、狙击枪、警察战术、慕尼黑/莫斯科/别斯兰/巴塔克兰等案例，以及中美和其他国家枪支管控差异；图片来自 Wikimedia Commons；已进入首页「独立书籍」tab 的「独立阅读」分组 |
 
 ---
 
@@ -381,7 +383,7 @@ node blog-build.js   # 只生成 html/*.html 详情页（导航指向时间线�
 路径 `Mav/knowledge/index.html`。三个 tab（`.view-toggle`），默认打开第一个：
 
 1. **独立书籍**（`data-view="single"`，默认 active；按钮文案是"独立书籍"，`data-view` 属性值仍是历史遗留的 `single`，改文案时没必要同步改属性名）——独立成册的书，分两组网格，中间隔一条灰色分割线（`.standalone-section--divided`）：
-   - **独立阅读**（上）：bluetooth-airpods、rag、data-structures、robogame2026、claude-code、money-bank、investing-101、bite-to-byte-硬件篇、blockchain-crypto、rust-book、git-guide、server-frontend-backend、video-screen、browser-war、euv-lithography、pdf-explained。这组标题下方有一行 `.section-note`："标了「图文单页」的书是单页图文阅读，其余是侧栏目录的分章节书"——新增图文单页书时不用改这行，只要卡片 `tag` 里带「图文单页」四个字即可
+   - **独立阅读**（上）：bluetooth-airpods、guns-terrorism、rag、data-structures、robogame2026、claude-code、money-bank、investing-101、bite-to-byte-硬件篇、blockchain-crypto、rust-book、git-guide、server-frontend-backend、video-screen、browser-war、euv-lithography、pdf-explained。这组标题下方有一行 `.section-note`："标了「图文单页」的书是单页图文阅读，其余是侧栏目录的分章节书"——新增图文单页书时不用改这行，只要卡片 `tag` 里带「图文单页」四个字即可
    - **课程教材**（下）：thermodynamics、math-analysis、probability、ai-math-principles
 2. **系列讲义**（`data-view="series"`）——`deep-learning`、`large-language-models` 两张 `dl-series-card`，展示 PART 分卷。
 3. **手记**（`data-view="notes"`）——最新 2 篇 note 预览卡片（`AUTO:NOTES` 自动回填）+「查看全部手记」链接。
@@ -404,7 +406,7 @@ node blog-build.js   # 只生成 html/*.html 详情页（导航指向时间线�
 | 构建方式 | md2HTML 流水线：`markdown-backups/*.md` → `build.js` → HTML | **手写 HTML/CSS，无 Markdown 源，无 build 脚本** |
 | 导航 | 左侧栏常驻 TOC | 顶部窄 nav + 页内锚点跳转，不占内容宽度 |
 | 正文 | 大段文字为主，图极少（多为公式/matplotlib 图表） | 图文交替，`.mz-*` 组件（hero/hook/split/figure/stats/myth） |
-| 例子 | thermodynamics、probability、browser-war 等现有全部书籍 | `bluetooth-airpods`（首个样例，2026-08） |
+| 例子 | thermodynamics、probability、browser-war 等现有全部书籍 | `bluetooth-airpods`、`guns-terrorism` |
 
 选题判断标准：这本书是"被查"还是"被读"？前者留在 md2HTML 流水线，后者才用这个新格式。**不要把现有书迁移过来**——这个格式只用于新选题，已完成的书不动。
 
@@ -431,20 +433,28 @@ Mav/knowledge/<slug>/
 - **字体**：Inter（正文/标题）+ JetBrains Mono（标签/数据），不引入衬线字体等新字体
 - **边角**：直角或最多 4px 圆角，1px 细边框（`var(--line)`），**不用大圆角卡片**
 - **顶部 nav**：直接复用 `style.css` 里的 `.topnav` / `.topnav-inner` / `.brand` / `.nav-links` / `.nav-btn`，样式不改；因为这类页面通常没有 `script.js`（见下），`.topnav` 默认的"滚动后才显示分隔线"效果不会触发，需要在 `magazine.css` 里加一行 `.topnav { border-bottom-color: var(--line); }` 让分隔线常驻显示
-- **开场"气闸"**：正文顶部先用 `.chapter-head`（`style.css` 自带组件：mono 小标签 + `<h1>` + 一句话简介）保持纯排版、不放图，图片从这一屏之后才开始出现——避免"卡片点进去直接摔进满屏大图"的突兀感
+- **开场封面**（2026-08 更新，取代早期"纯排版气闸"约定）：正文顶部用 `.mz-cover`——`<main>` 的直接子元素（`.magazine-body` 的兄弟，不嵌在其内部，这样天然铺满视口宽度，不需要 vw 破格 hack）。左栏大标题 + mono 小标签 + 一句话简介，右栏一张大图（`aspect-ratio` 裁切），窄屏自动堆叠（图在上）；底部一行 `.mz-cover-scroll-cue` 提示继续下滑。往下滑之后才进入 `.magazine-body` 正文（第一段个人化开场白 + 后续章节）。背景用 `--bg-soft` 与正文区分，不引入新色板——"有颜色"这件事完全靠照片本身，不是靠 UI accent。旧版"气闸"（`.chapter-head`，纯排版不放图）仍是 `style.css` 自带组件，其他书如果不需要封面式开篇可以继续用它，但 2026-08 后新的图文单页书默认用 `.mz-cover`
+- **正文宽度**：`.magazine-body { max-width: 1040px }`（2026-08 从 920px 调宽，早期版本偏窄）
+- **锚点跳转不被 sticky nav 遮住标题**：全局 `style.css` 已有 `html { scroll-padding-top: 72px }`，图文单页书应在 `magazine.css` 里针对被跳转的 `h2[id]` 额外加 `scroll-margin-top: 88px`（两者会取较大值生效），比只依赖全局 72px 更保险
 - 布局层完全自由：要不要 hero、要不要 split、图片摆多少，这些由内容决定，不受上面几条约束
 
 ### `magazine.css` 组件小抄
 
 | 类名 | 解决什么问题 |
 |---|---|
-| `.mz-hero` | 开篇整页宽度的主图 + caption |
+| `.mz-cover` / `.mz-cover-inner` / `.mz-cover-text` / `.mz-cover-figure` / `.mz-cover-scroll-cue` | 开场封面：大标题+简介（左）+ 大图（右），窄屏堆叠；`.mz-cover` 需放在 `.magazine-body` 外层（`<main>` 的兄弟节点） |
+| `.mz-hero` | 封面之后、正文内的整页宽度大图 + caption（不与 `.mz-cover` 重复用同一张图） |
 | `.mz-hook` | 每节开头的问题式引子（斜体，左边一条粗线） |
 | `.mz-split` / `.mz-split.reverse` | 文字+图片左右对照，reverse 换边；窄屏自动堆叠为单栏 |
 | `.mz-figure` | 单独一张带 caption 的配图 |
 | `.mz-inline-icon` | 小尺寸图标 + 一段说明文字并排（如 logo 讲解） |
-| `.mz-stats` | 数据速览网格（几个数字 + 标签） |
+| `.mz-stats` | 数据速览网格（几个数字/短词 + 标签，也可当协议名/编解码器速查表用） |
 | `.mz-myth` / `.mz-myth-row.false` / `.mz-myth-row.true` | 「传说 vs 实际」两行对照卡，纠正常见误解 |
+| `.mz-chapter-eyebrow` | 章节序号小标签（如"第一章"），放在每章 `h2` 正上方 |
+| `.mz-further` | 「延伸阅读」虚线框，内容讲深了收住时指向外部资源 |
+| `.mz-timeline` | 产品世代时间线（左侧竖线+圆点，年份+标题+描述，可选配小图） |
+| `.mz-device-compare` | 两栏对照（如"设备 A 已覆盖" vs "设备 B 才有"），跟 `.mz-myth` 的二元叙事不同，这个是并列清单 |
+| `.mz-compare-grid` / `.mz-compare-card` | 多个同类事物的卡片网格（图+标题+一句 tag+描述），`auto-fit minmax` 布局，3 张或 4 张都能摆好看 |
 
 这些类名是 `bluetooth-airpods/assets/magazine.css` 里已经写好的实现，新书可以直接复制这个文件当起点，按需增删组件，但改动要遵守上面的设计铁律。
 
