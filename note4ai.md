@@ -42,6 +42,7 @@ mav-homepage/
 │   │   ├── claude-code/         ← ⚠️ 纯手写 HTML，无 Markdown 源码
 │   │   ├── bluetooth-airpods/   ← ⚠️ 图文单页科普书，纯手写，无 Markdown 源码（见下方专节）
 │   │   ├── guns-terrorism/      ← ⚠️ 图文单页科普书，纯手写，无 Markdown 源码
+│   │   ├── exchange-rate-purchasing-power/ ← ⚠️ 图文单页科普书，纯手写，无 Markdown 源码
 │   │   └── ...
 │   └── assets/                  ← 全站共享 CSS/JS
 │       ├── style.css            ← 主样式（首页 / about / 知识库入口）
@@ -374,6 +375,7 @@ node blog-build.js   # 只生成 html/*.html 详情页（导航指向时间线�
 | robogame2026 | RoboGame 2026：从一条命令到四个车轮 | 8 章；`status: published`；v1.0.0；工程实践/嵌入式；已进入首页「独立书籍」tab 的「独立阅读」分组 |
 | claude-code | Claude Code 入门指南 | ⚠️ 纯手写 HTML，无 Markdown 源码（约 6 章 + `reference.html`） |
 | bluetooth-airpods | 从 AirPods 讲蓝牙耳机 | ⚠️ 纯手写 HTML，无 Markdown 源码；2026-08 新增，**图文单页科普书**首个样例；五章全本（协议与起源 / AirPods 与苹果生态 / 工程难点 / 竞品全景 / 入耳式 vs 头戴式），个人体验（FreeBuds→AirPods 4 降噪落差）作全书主线；~9700 中文字（2026-08 第二次扩写后，用户反馈初版"太单薄"尤其第四章敷衍，加了蓝牙版本史/H1H2芯片细节/空间音频机制/AirPods市场文化争议/传感器防水工程等题外话，第四章竞品从3家扩到5家含新增 Google Pixel Buds）；内容与配图调研由并行 subagent 完成，图片来自 Wikimedia Commons；详见下方「图文单页科普书」专节 |
+| exchange-rate-purchasing-power | 从一瓶矿泉水讲汇率、物价与工资 | ⚠️ 纯手写 HTML，无 Markdown 源码；2026-08 新增，**图文单页科普书**；九章 + 尾声，约 2.2 万中文字（目前该格式里最长的一本）；从旅行中"对不上账"的价格出发，讲汇率制度与面值幻觉 / 一价定律与巨无霸指数 / 可贸易品与不可贸易品（巴拉萨-萨缪尔森效应，全书主轴）/ 新加坡可乐与星巴克的比价之谜 / 日元贬值与"安いニッポン" / 中美日新四国工资数据横评 / **时间价格**（本书自创的收尾工具）/ 中美隐形账单对照 / 逐条回访开篇收据。数据时点 2026-08（汇率 6.79、巨无霸指数 8/10、IMF WEO 2026-04、BLS 2025、统计局 2025、国税厅 2024、新加坡人力部 2025），来源清单写在文末 `.mz-further` 里。新增 CSS 组件：`.mz-receipts/.mz-receipt`（开篇收据卡）、`.mz-calc`（换算式）、`.mz-rulers/.mz-ruler`（三把尺子）、`.mz-credits`（图片署名，注意需写成 `.magazine-body p.mz-credits` 才压得过 `.magazine-body p` 的字号）、`td.n`（等宽数字列）|
 | guns-terrorism | 从格洛克讲枪械与恐怖袭击 | ⚠️ 纯手写 HTML，无 Markdown 源码；2026-08 新增，**图文单页科普书**；六章全本（靶场体验 / 枪械分类 / 掩体与战术 / 人质围攻 / 全球枪支制度 / 电影与现实判断），从美国靶场第一次打格洛克和左轮出发，串起手枪、步枪、冲锋枪、狙击枪、警察战术、慕尼黑/莫斯科/别斯兰/巴塔克兰等案例，以及中美和其他国家枪支管控差异；图片来自 Wikimedia Commons；已进入首页「独立书籍」tab 的「独立阅读」分组 |
 
 ---
@@ -383,7 +385,7 @@ node blog-build.js   # 只生成 html/*.html 详情页（导航指向时间线�
 路径 `Mav/knowledge/index.html`。三个 tab（`.view-toggle`），默认打开第一个：
 
 1. **独立书籍**（`data-view="single"`，默认 active；按钮文案是"独立书籍"，`data-view` 属性值仍是历史遗留的 `single`，改文案时没必要同步改属性名）——独立成册的书，分两组网格，中间隔一条灰色分割线（`.standalone-section--divided`）：
-   - **独立阅读**（上）：bluetooth-airpods、guns-terrorism、rag、data-structures、robogame2026、claude-code、money-bank、investing-101、bite-to-byte-硬件篇、blockchain-crypto、rust-book、git-guide、server-frontend-backend、video-screen、browser-war、euv-lithography、pdf-explained。这组标题下方有一行 `.section-note`："标了「图文单页」的书是单页图文阅读，其余是侧栏目录的分章节书"——新增图文单页书时不用改这行，只要卡片 `tag` 里带「图文单页」四个字即可
+   - **独立阅读**（上）：exchange-rate-purchasing-power、bluetooth-airpods、guns-terrorism、rag、data-structures、robogame2026、claude-code、money-bank、investing-101、bite-to-byte-硬件篇、blockchain-crypto、rust-book、git-guide、server-frontend-backend、video-screen、browser-war、euv-lithography、pdf-explained。这组标题下方有一行 `.section-note`："标了「图文单页」的书是单页图文阅读，其余是侧栏目录的分章节书"——新增图文单页书时不用改这行，只要卡片 `tag` 里带「图文单页」四个字即可
    - **课程教材**（下）：thermodynamics、math-analysis、probability、ai-math-principles
 2. **系列讲义**（`data-view="series"`）——`deep-learning`、`large-language-models` 两张 `dl-series-card`，展示 PART 分卷。
 3. **手记**（`data-view="notes"`）——最新 2 篇 note 预览卡片（`AUTO:NOTES` 自动回填）+「查看全部手记」链接。
@@ -406,7 +408,7 @@ node blog-build.js   # 只生成 html/*.html 详情页（导航指向时间线�
 | 构建方式 | md2HTML 流水线：`markdown-backups/*.md` → `build.js` → HTML | **手写 HTML/CSS，无 Markdown 源，无 build 脚本** |
 | 导航 | 左侧栏常驻 TOC | 顶部窄 nav + 页内锚点跳转，不占内容宽度 |
 | 正文 | 大段文字为主，图极少（多为公式/matplotlib 图表） | 图文交替，`.mz-*` 组件（hero/hook/split/figure/stats/myth） |
-| 例子 | thermodynamics、probability、browser-war 等现有全部书籍 | `bluetooth-airpods`、`guns-terrorism` |
+| 例子 | thermodynamics、probability、browser-war 等现有全部书籍 | `bluetooth-airpods`、`guns-terrorism`、`exchange-rate-purchasing-power` |
 
 选题判断标准：这本书是"被查"还是"被读"？前者留在 md2HTML 流水线，后者才用这个新格式。**不要把现有书迁移过来**——这个格式只用于新选题，已完成的书不动。
 
@@ -450,13 +452,31 @@ Mav/knowledge/<slug>/
 | `.mz-inline-icon` | 小尺寸图标 + 一段说明文字并排（如 logo 讲解） |
 | `.mz-stats` | 数据速览网格（几个数字/短词 + 标签，也可当协议名/编解码器速查表用） |
 | `.mz-myth` / `.mz-myth-row.false` / `.mz-myth-row.true` | 「传说 vs 实际」两行对照卡，纠正常见误解 |
-| `.mz-chapter-eyebrow` | 章节序号小标签（如"第一章"），放在每章 `h2` 正上方 |
+| `.mz-chapter-marker`（内含 `.mz-chapter-num` + `.mz-chapter-label`） | 章节序号大标签（如"01" + "第一章"），放在每章 `h2` 正上方、独占一行；`h2[id]` 自身的顶部分隔线职责已转移给这个组件，不要重复加线 |
 | `.mz-further` | 「延伸阅读」虚线框，内容讲深了收住时指向外部资源 |
 | `.mz-timeline` | 产品世代时间线（左侧竖线+圆点，年份+标题+描述，可选配小图） |
 | `.mz-device-compare` | 两栏对照（如"设备 A 已覆盖" vs "设备 B 才有"），跟 `.mz-myth` 的二元叙事不同，这个是并列清单 |
 | `.mz-compare-grid` / `.mz-compare-card` | 多个同类事物的卡片网格（图+标题+一句 tag+描述），`auto-fit minmax` 布局，3 张或 4 张都能摆好看 |
+| `.mz-receipts` / `.mz-receipt`（含 `.where`/`.what`/`.price`/`.puzzle`） | 开篇并列摆几个"待解释的具体案例"卡片（地点 + 事物 + 数字 + 一句悬念）；`exchange-rate-purchasing-power` 新增 |
+| `.mz-calc`（内含多行 `.line`，可选 `.note`） | 一步步摆出来的换算式/推导链，等宽字体、`white-space: nowrap` + 自身横向滚动，窄屏不会撑破页面；`<em>` 在里面渲染成灰色的运算符/旁注；同上书新增 |
+| `.mz-rulers` / `.mz-ruler`（含 `.idx`/`h4`/`.use`） | 三到四个并列的"方法/工具"卡片，末行 `.use` 用虚线分隔写适用场景；同上书新增 |
+| `.magazine-body p.mz-credits` | 文末图片来源署名。**注意必须写成 `.magazine-body p.mz-credits`**，否则被 `.magazine-body p` 的 `font-size` 压过去（早期几本书是用行内 style 解决的，这个类是它的复用版） |
+| `.magazine-body td.n` / `th.n` / `td.hi` | 表格里的等宽数字列（`.n`，带 `nowrap`）和强调的首列（`.hi`）；数据密集的书很需要 |
 
-这些类名是 `bluetooth-airpods/assets/magazine.css` 里已经写好的实现，新书可以直接复制这个文件当起点，按需增删组件，但改动要遵守上面的设计铁律。
+这些类名是 `bluetooth-airpods/assets/magazine.css` 里已经写好的实现（后四个在 `exchange-rate-purchasing-power/assets/magazine.css`），新书可以直接复制这个文件当起点，按需增删组件，但改动要遵守上面的设计铁律。
+
+### 叙事结构范式（观察到的模式，不是强制规则）
+
+对比 `bluetooth-airpods` 和 `guns-terrorism` 两本内容完全不相关的书，谋篇布局上独立收敛出了同一套习惯，值得记录下来供新书参考，但**不是必须照做的模板**——布局层自由这条铁律同样适用于叙事结构：
+
+- **个人化开场白**：`.mz-cover` 之后，正文第一段不是背景介绍，而是作者第一人称的具体经历（"我自己用了很久的是华为 FreeBuds…"／"美国大多数持牌枪店都附带室内靶场…"），用一个真实细节制造反差或困惑，全书要回答的核心问题从这个反差里自然引出，结尾章节再回扣它
+- **每章开局用 `.mz-hook` 提问**：不是每章都用，但重要转折章节习惯用一句设问开场（"给一项无线技术起名字，为什么会想到一个死了一千年的国王？"），把读者的好奇心先勾出来再展开解释
+- **`.mz-myth` 安插在读者最可能被电影/流言带偏的地方**：不是固定位置，而是content-driven——出现在某个常见误解最集中的段落之后，及时纠偏
+- **章节内部有"回扣"习惯**：新知识点常主动挂回前一章或本章前文提到过的细节（"这也是第一章那张辟谣卡片的答案来源"），让读者感觉框架在持续累积而不是章节割裂
+- **收尾章节回访全书引用过的具体例子**：不是单纯总结知识点，而是把开场和正文里提到的电影/产品/事件逐一"回访"一遍，用学到的框架重新解释它们，形成首尾闭环
+- **图片说明区分两种密度**：`.mz-figure`/`.mz-split` 里的 `figcaption` 一两句话点出图里的关键信息；文末统一放一段小字（`var(--mono)`, 11px）逐张署名图片来源和协议，不分散在正文里
+
+这套结构不是靠 CSS 强制的，纯粹是内容组织习惯，新书作者（人类或 AI）想突破也完全可以，但按这个骨架写通常更省心、也更容易维持"从头读到尾"的阅读节奏。
 
 ### 取图规范
 
