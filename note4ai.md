@@ -43,6 +43,7 @@ mav-homepage/
 │   │   ├── bluetooth-airpods/   ← ⚠️ 图文单页科普书，纯手写，无 Markdown 源码（见下方专节）
 │   │   ├── guns-terrorism/      ← ⚠️ 图文单页科普书，纯手写，无 Markdown 源码
 │   │   ├── exchange-rate-purchasing-power/ ← ⚠️ 图文单页科普书，纯手写，无 Markdown 源码
+│   │   ├── boarding-pass-aviation/ ← ⚠️ 图文单页科普书，纯手写，无 Markdown 源码（最长的一本）
 │   │   └── ...
 │   └── assets/                  ← 全站共享 CSS/JS
 │       ├── style.css            ← 主样式（首页 / about / 知识库入口）
@@ -376,6 +377,7 @@ node blog-build.js   # 只生成 html/*.html 详情页（导航指向时间线�
 | claude-code | Claude Code 入门指南 | ⚠️ 纯手写 HTML，无 Markdown 源码（约 6 章 + `reference.html`） |
 | bluetooth-airpods | 从 AirPods 讲蓝牙耳机 | ⚠️ 纯手写 HTML，无 Markdown 源码；2026-08 新增，**图文单页科普书**首个样例；五章全本（协议与起源 / AirPods 与苹果生态 / 工程难点 / 竞品全景 / 入耳式 vs 头戴式），个人体验（FreeBuds→AirPods 4 降噪落差）作全书主线；~9700 中文字（2026-08 第二次扩写后，用户反馈初版"太单薄"尤其第四章敷衍，加了蓝牙版本史/H1H2芯片细节/空间音频机制/AirPods市场文化争议/传感器防水工程等题外话，第四章竞品从3家扩到5家含新增 Google Pixel Buds）；内容与配图调研由并行 subagent 完成，图片来自 Wikimedia Commons；详见下方「图文单页科普书」专节 |
 | exchange-rate-purchasing-power | 从一瓶矿泉水讲汇率、物价与工资 | ⚠️ 纯手写 HTML，无 Markdown 源码；2026-08 新增，**图文单页科普书**；九章 + 尾声，约 2.2 万中文字（目前该格式里最长的一本）；从旅行中"对不上账"的价格出发，讲汇率制度与面值幻觉 / 一价定律与巨无霸指数 / 可贸易品与不可贸易品（巴拉萨-萨缪尔森效应，全书主轴）/ 新加坡可乐与星巴克的比价之谜 / 日元贬值与"安いニッポン" / 中美日新四国工资数据横评 / **时间价格**（本书自创的收尾工具）/ 中美隐形账单对照 / 逐条回访开篇收据。数据时点 2026-08（汇率 6.79、巨无霸指数 8/10、IMF WEO 2026-04、BLS 2025、统计局 2025、国税厅 2024、新加坡人力部 2025），来源清单写在文末 `.mz-further` 里。新增 CSS 组件：`.mz-receipts/.mz-receipt`（开篇收据卡）、`.mz-calc`（换算式）、`.mz-rulers/.mz-ruler`（三把尺子）、`.mz-credits`（图片署名，注意需写成 `.magazine-body p.mz-credits` 才压得过 `.magazine-body p` 的字号）、`td.n`（等宽数字列）|
+| boarding-pass-aviation | 从一张登机牌讲航司、舱位与里程 | ⚠️ 纯手写 HTML，无 Markdown 源码；2026-08 新增，**图文单页科普书**；七章 + 开篇与尾声，约 6.7 万中文字（**目前该格式里最长的一本**，是《汇率》的三倍）；主线是"一张真实登机牌上的每个字段都对应一章"——标本是韩亚航空 OZ223（JFK→ICN，A380-800，2026-08-13，座位 60J，舱位 Y）+ OZ361（ICN→PVG，A330-300）。七章：航线网络与航权（第六航权/枢纽波次/俄领空关闭）/ 世界航司地图（40+ 家逐区名录 + 三大联盟 + 廉航四板斧）/ 舱位票价与超售（头等舱衰落 + fare class + 收益管理嵌套 + 三地超售监管对比）/ 飞机图鉴（波音空客全谱系 + 识别法 + ETOPS + A380 深挖 + 协和）/ 里程与联盟（两种货币 + 按票价转向 + 里程计划估值 + 燃油附加费）/ 机场行李与舱内（ICN T1T2 + 休息室权益转让条款 + 行李分拣 + 腹舱货运与顺丰鄂州 + 飞机餐研究 + 90 秒撤离）/ 飞行与该不该怕（气流载荷 + 复飞 + 风切变 + **三种统计口径对比表** + 空难纪录片选材偏差 + 737 MAX）。**数据时点 2026-08**，三个调研 agent 交叉核实（报告曾写在 scratchpad，含"不要写"的负面清单）；来源清单与时点说明写在文末 `.mz-credits`。**新增 CSS 组件见下方组件小抄**（`.mz-bp` 登机牌复刻是全书视觉主轴，`.mz-tablewrap` 是本书踩坑后补的必需项） |
 | guns-terrorism | 从格洛克讲枪械与恐怖袭击 | ⚠️ 纯手写 HTML，无 Markdown 源码；2026-08 新增，**图文单页科普书**；六章全本（靶场体验 / 枪械分类 / 掩体与战术 / 人质围攻 / 全球枪支制度 / 电影与现实判断），从美国靶场第一次打格洛克和左轮出发，串起手枪、步枪、冲锋枪、狙击枪、警察战术、慕尼黑/莫斯科/别斯兰/巴塔克兰等案例，以及中美和其他国家枪支管控差异；图片来自 Wikimedia Commons；已进入首页「独立书籍」tab 的「独立阅读」分组 |
 
 ---
@@ -408,7 +410,7 @@ node blog-build.js   # 只生成 html/*.html 详情页（导航指向时间线�
 | 构建方式 | md2HTML 流水线：`markdown-backups/*.md` → `build.js` → HTML | **手写 HTML/CSS，无 Markdown 源，无 build 脚本** |
 | 导航 | 左侧栏常驻 TOC | 顶部窄 nav + 页内锚点跳转，不占内容宽度 |
 | 正文 | 大段文字为主，图极少（多为公式/matplotlib 图表） | 图文交替，`.mz-*` 组件（hero/hook/split/figure/stats/myth） |
-| 例子 | thermodynamics、probability、browser-war 等现有全部书籍 | `bluetooth-airpods`、`guns-terrorism`、`exchange-rate-purchasing-power` |
+| 例子 | thermodynamics、probability、browser-war 等现有全部书籍 | `bluetooth-airpods`、`guns-terrorism`、`exchange-rate-purchasing-power`、`boarding-pass-aviation` |
 
 选题判断标准：这本书是"被查"还是"被读"？前者留在 md2HTML 流水线，后者才用这个新格式。**不要把现有书迁移过来**——这个格式只用于新选题，已完成的书不动。
 
@@ -462,8 +464,19 @@ Mav/knowledge/<slug>/
 | `.mz-rulers` / `.mz-ruler`（含 `.idx`/`h4`/`.use`） | 三到四个并列的"方法/工具"卡片，末行 `.use` 用虚线分隔写适用场景；同上书新增 |
 | `.magazine-body p.mz-credits` | 文末图片来源署名。**注意必须写成 `.magazine-body p.mz-credits`**，否则被 `.magazine-body p` 的 `font-size` 压过去（早期几本书是用行内 style 解决的，这个类是它的复用版） |
 | `.magazine-body td.n` / `th.n` / `td.hi` | 表格里的等宽数字列（`.n`，带 `nowrap`）和强调的首列（`.hi`）；数据密集的书很需要 |
+| **`.mz-tablewrap`** | ⚠️ **数据密集的书必加**。包住每一个 `<table>` 的横向滚动容器（`overflow-x:auto`）。**不加会在 375px 窄屏下让整个页面横向滚动**——`.magazine-body table` 有 min-content 宽度下限，不会自己缩小。`boarding-pass-aviation` 有 24 张表，是踩了这个坑之后补的；批量包裹可以用 `perl -0pi -e 's\|(\s*)<table>\|$1<div class="mz-tablewrap"><table>\|g; s\|</table>\|</table></div>\|g'` |
+| `.mz-bp` / `.mz-bp-head` / `.mz-bp-grid` / `.mz-bp-cell`（`.wide` / `.full` / `.marked`）/ `.mz-bp-ref` / `.mz-bp-foot` / `.mz-bp-caption` | **登机牌/票据复刻**：等宽字体的字段网格，`.marked` 给灰底 + 右上角 `.mz-bp-ref` 章节角标（`.marked .k` 已留 66px 右内边距避免压住字段名）。`.wide` 跨 2 列、`.full` 跨整行（`grid-column: 1/-1`）。`boarding-pass-aviation` 新增，开篇与尾声各用一次形成闭环 |
+| `.mz-itin` / `.mz-itin-row`（`.leg`）/ `.mz-itin-time` / `.mz-itin-body` | 行程时间线：左侧等宽时刻 + 右侧说明，`.leg` 行加底色表示"飞行段"。同上书新增 |
+| `.mz-cabins` / `.mz-cabin`（含 `.code` / `h4` / `.price`） | 等分栏卡片，用于四舱位对照（大号等宽字母 + 标题 + 说明 + 虚线分隔的末行）。同上书新增 |
+| `.mz-seatmaps` / `.mz-seatmap`（含 `.row` / `.s` / `.s.wide` / `.aisle` / `.cfg` / `.where`） | 纯 CSS 方块画客舱横截面座位排布（3-4-3 / 2-4-2 / 3-3-3）。同上书新增 |
+| `.mz-tiers` / `.mz-tier`（含 `.amt` / `.got`） | 左窄右宽的分档表（"加多少钱能买到什么"、"哪个阶段做什么"），窄屏堆叠。同上书新增 |
+| `.mz-alliances` / `.mz-alliance`（含 `.sub` / `ul` / `.tail`） | 三栏并列的阵营/分类卡片，末行 `.tail` 虚线分隔写小结。同上书新增 |
+| `.mz-bars` / `.mz-bar`（含 `.name` / `.track` / `.fill`（`.hi`）/ `.val`） | 纯 CSS 横条对比图，宽度写在行内 `style="width:N%"`。用于同一组对象在不同口径下的排序翻转（本书用它展示航空/铁路/汽车在三种统计分母下的对比）。同上书新增 |
+| `.mz-toc` | 开篇的章节路线图，每行"序号 + 标题 + 一句话副标"，整行可点跳锚点。同上书新增 |
+| `.mz-terms` / `.mz-term`（含 `.t` + `.t small` / `.d`） | 术语表：左侧等宽名词（可带英文小字）+ 右侧一段解释，窄屏堆叠。适合成组的名词科普。同上书新增 |
+| `.mz-asof` | 数据时点/免责标注：左侧一条细线的小字块。比 `.mz-credits` 轻，用于在正文中途就地声明某段数据的时点或来源分歧。同上书新增 |
 
-这些类名是 `bluetooth-airpods/assets/magazine.css` 里已经写好的实现（后四个在 `exchange-rate-purchasing-power/assets/magazine.css`），新书可以直接复制这个文件当起点，按需增删组件，但改动要遵守上面的设计铁律。
+这些类名是 `bluetooth-airpods/assets/magazine.css` 里已经写好的实现（`.mz-receipts` 等四个在 `exchange-rate-purchasing-power/`，`.mz-bp` 起以下十一个在 `boarding-pass-aviation/`），新书可以直接复制其中一个文件当起点，按需增删组件，但改动要遵守上面的设计铁律。**数据密集的新书建议直接从 `boarding-pass-aviation/assets/magazine.css` 复制**，因为它已经包含 `.mz-tablewrap` 与表格数字列这些必需项。
 
 ### 叙事结构范式（观察到的模式，不是强制规则）
 
