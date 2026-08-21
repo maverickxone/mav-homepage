@@ -32,6 +32,10 @@ const BOOKS_DIR = path.resolve(ROOT, '..', 'markdown-backups');
 const OUTPUT_BASE = path.resolve(ROOT, '..', 'Mav', 'knowledge');
 const KNOWLEDGE_INDEX = path.join(OUTPUT_BASE, 'index.html');
 
+// 已迁移为手写图文单页书的源（Mav/knowledge/investing-101/），md 源仅作备份：
+// 任何构建都会覆盖手写单页，必须在入口硬拦截。
+const FORBIDDEN_SOURCES = new Set(['Investing-101']);
+
 function warnIfBookHasNoEntry(slug, book) {
   if (book.catalog === false || !fs.existsSync(KNOWLEDGE_INDEX)) return;
   const indexHtml = fs.readFileSync(KNOWLEDGE_INDEX, 'utf-8');
@@ -161,7 +165,13 @@ function listAvailableSources() {
   });
 
   console.log('\nAvailable books:');
-  books.forEach(name => console.log(`  ${name}`));
+  books.forEach(name => {
+    if (FORBIDDEN_SOURCES.has(name)) {
+      console.warn(`  ⚠ ${name} — 已迁移为手写图文单页书，禁止构建（md 源仅作备份）`);
+    } else {
+      console.log(`  ${name}`);
+    }
+  });
   console.log('\nAvailable series:');
   series.forEach(name => console.log(`  ${name}`));
 }
@@ -492,6 +502,16 @@ function buildSeriesIndex(seriesDir, seriesName, force) {
 // ============================================================
 function main() {
   const args = parseArgs();
+
+  // 硬拦截：禁止构建已迁移为手写图文单页书的源。
+  // lock/unlock/list-lock/help 命令不设 sourceName，不受影响；
+  // build-all.sh 是转发 wrapper（--all 已禁用），同样会走到这里。
+  if (args.sourceName && FORBIDDEN_SOURCES.has(args.sourceName)) {
+    console.error(
+      '❌ ' + args.sourceName + ' 已迁移为图文单页书，禁止构建（会覆盖手写单页）。见 markdown-backups/Investing-101/README.md'
+    );
+    process.exit(1);
+  }
 
   switch (args.command) {
     case 'help':

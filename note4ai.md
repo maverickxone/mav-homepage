@@ -120,6 +120,8 @@ node build.js --force --book <Book-Name>             # 忽略锁定强制构建
 
 旧命令 `node build.js <Book-Name>` 继续按 Book 构建，等价于显式传入 `--book`。
 
+⚠️ **`Investing-101` 已于 2026-08-21 脱离构建管线，禁止构建**（包括 `--force` 与任何构建本书的命令）：buildBook 会无条件重写手写单页 `Mav/knowledge/investing-101/index.html`，锁机制防不住。其 md 源仅作内容备份，见 `markdown-backups/Investing-101/README.md`。
+
 `./build-all.sh` 只是对 `node build.js "$@"` 的薄包装；**传入 `--all` 会被脚本拒绝并 exit 1**（故意移除批量全量构建）。
 
 ### 构建流程
@@ -363,7 +365,7 @@ node blog-build.js   # 只生成 html/*.html 详情页（导航指向时间线�
 | data-structures | 数据结构：从指针到算法 | 9 章；原始 md/c 在 `markdown-backups/Data-Structures/_source/`，装配脚本 `_source/assemble.py` |
 | thermodynamics | 热学速通 | 6 章；课程讲义折叠区；`_figures/*.py` 生成 PNG；`script.js` 锁定 |
 | money-bank | 银行体系与货币系统 | 8 章 |
-| investing-101 | 投资入门：从一股股票到一套认知 | 9 章；2026-07 新增；面向刚满 18 岁大学生的投资科普（股票/上市/交易所/涨跌/债券/黄金/基金/风险骗局/实操路线），主线"收益从哪里来"；以 SpaceX 2026-06 IPO、OpenAI/Anthropic/DeepSeek 融资、苹果 1980 IPO 等真实案例贯穿；行情与价格数据核实时点 2026-07（三个调研 agent 交叉核实）；与 money-bank、blockchain-crypto 构成金融三部曲 |
+| investing-101 | 投资入门：从一股股票到一套认知 | ⚠️ **2026-08-21 已迁移为图文单页科普书**（手写 `Mav/knowledge/investing-101/index.html`，Magazine 格式）；原 9 章 md 源保留于 `markdown-backups/Investing-101/` **仅作内容备份（经客观口吻改写），禁止构建**——buildBook 会无条件覆盖手写单页，锁机制防不住（见该目录 README.md）；旧 chapters/ 产物与 script.js、search-index.json 已删。历史：2026-07 新增教材版；面向刚满 18 岁大学生的投资科普（股票/上市/交易所/涨跌/债券/黄金/基金/风险骗局/实操路线），主线"收益从哪里来"；以 SpaceX 2026-06 IPO、OpenAI/Anthropic/DeepSeek 融资、苹果 1980 IPO 等真实案例贯穿；行情与价格数据核实时点 2026-07（三个调研 agent 交叉核实）；与 money-bank、blockchain-crypto 构成金融三部曲 |
 | bite-to-byte-硬件篇 | 电脑怎么工作的 | 8 章 |
 | blockchain-crypto | 区块链与加密货币 | 8 章；`status: published`；v3.0（信任/比特币设计与网络/以太坊/共识/生态/Web3/安全实战） |
 | rust-book | Rust | 7 章 |
@@ -387,8 +389,8 @@ node blog-build.js   # 只生成 html/*.html 详情页（导航指向时间线�
 路径 `Mav/knowledge/index.html`。三个 tab（`.view-toggle`），默认打开第一个：
 
 1. **独立书籍**（`data-view="single"`，默认 active；按钮文案是"独立书籍"，`data-view` 属性值仍是历史遗留的 `single`，改文案时没必要同步改属性名）——独立成册的书，分两组网格，中间隔一条灰色分割线（`.standalone-section--divided`）：
-   - **独立阅读**（上）：exchange-rate-purchasing-power、bluetooth-airpods、guns-terrorism、rag、data-structures、robogame2026、claude-code、money-bank、investing-101、bite-to-byte-硬件篇、blockchain-crypto、rust-book、git-guide、server-frontend-backend、video-screen、browser-war、euv-lithography、pdf-explained。这组标题下方有一行 `.section-note`："标了「图文单页」的书是单页图文阅读，其余是侧栏目录的分章节书"——新增图文单页书时不用改这行，只要卡片 `tag` 里带「图文单页」四个字即可
-   - **课程教材**（下）：thermodynamics、math-analysis、probability、ai-math-principles
+   - **独立阅读**（上）：exchange-rate-purchasing-power、bluetooth-airpods、guns-terrorism、rag、robogame2026、claude-code、money-bank、investing-101、bite-to-byte-硬件篇、blockchain-crypto、rust-book、git-guide、server-frontend-backend、video-screen、browser-war、euv-lithography、pdf-explained。这组标题下方有一行 `.section-note`："标了「图文单页」的书是单页图文阅读，其余是侧栏目录的分章节书"——新增图文单页书时不用改这行，只要卡片 `tag` 里带「图文单页」四个字即可
+   - **课程教材**（下）：data-structures、thermodynamics、math-analysis、probability、ai-math-principles
 2. **系列讲义**（`data-view="series"`）——`deep-learning`、`large-language-models` 两张 `dl-series-card`，展示 PART 分卷。
 3. **手记**（`data-view="notes"`）——最新 2 篇 note 预览卡片（`AUTO:NOTES` 自动回填）+「查看全部手记」链接。
 
@@ -410,9 +412,9 @@ node blog-build.js   # 只生成 html/*.html 详情页（导航指向时间线�
 | 构建方式 | md2HTML 流水线：`markdown-backups/*.md` → `build.js` → HTML | **手写 HTML/CSS，无 Markdown 源，无 build 脚本** |
 | 导航 | 左侧栏常驻 TOC | 顶部窄 nav + 页内锚点跳转，不占内容宽度 |
 | 正文 | 大段文字为主，图极少（多为公式/matplotlib 图表） | 图文交替，`.mz-*` 组件（hero/hook/split/figure/stats/myth） |
-| 例子 | thermodynamics、probability、browser-war 等现有全部书籍 | `bluetooth-airpods`、`guns-terrorism`、`exchange-rate-purchasing-power`、`boarding-pass-aviation` |
+| 例子 | thermodynamics、probability、browser-war 等现有全部书籍 | `bluetooth-airpods`、`guns-terrorism`、`exchange-rate-purchasing-power`、`boarding-pass-aviation`、`investing-101`（唯一一本从教材版迁移来的，见下方例外） |
 
-选题判断标准：这本书是"被查"还是"被读"？前者留在 md2HTML 流水线，后者才用这个新格式。**不要把现有书迁移过来**——这个格式只用于新选题，已完成的书不动。
+选题判断标准：这本书是"被查"还是"被读"？前者留在 md2HTML 流水线，后者才用这个新格式。**不要把现有书迁移过来**——这个格式只用于新选题，已完成的书不动。（唯一例外：investing-101，2026-08-21 经用户明确确认从教材版迁移为图文单页；先决条件：内容基本不变、口吻客观化、md 源原位保留为备份且禁止构建。除此之外不存在其他例外，后续 agent 不要"好心恢复"教材版、也不要主动迁移任何别的书。）
 
 ### ⚠️ 没有 Markdown 源，不进锁定机制
 
