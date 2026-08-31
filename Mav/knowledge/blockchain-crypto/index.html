@@ -3,13 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>区块链与加密货币：从原理到生态</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<title>区块链与加密货币：从原理到生态 — Mav</title>
+<meta name="description" content="从 Alice 给 Bob 转账的故事出发，八章讲透区块链：信任与密码学、比特币设计与网络、以太坊与智能合约、共识机制、加密货币生态、边界与 Web3、安全实战。写给想理解而非盲信的人。">
 <link rel="stylesheet" href="assets/style.css">
-<link rel="stylesheet" id="hljs-light" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
-<link rel="stylesheet" id="hljs-dark" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" media="not all">
+<link rel="stylesheet" href="assets/magazine.css">
 </head>
 <body>
 
@@ -17,143 +14,1034 @@
 
 <nav class="topnav" id="topnav">
   <div class="topnav-inner">
-    <a class="brand" href="index.html">区块链与加密货币：从原理到生态</a>
+    <a class="brand" href="index.html">区块链与加密货币</a>
     <div class="nav-links">
-      <a href="chapters/01-trust-and-cryptography.html">01</a>
-      <a href="chapters/02-bitcoin-design.html">02</a>
-      <a href="chapters/03-bitcoin-network.html">03</a>
-      <a href="chapters/04-ethereum-and-contracts.html">04</a>
-      <a href="chapters/05-consensus.html">05</a>
-      <a href="chapters/06-crypto-ecosystem.html">06</a>
-      <a href="chapters/07-boundaries-and-web3.html">07</a>
-      <a href="chapters/08-security-practice.html">08</a>
+      <a href="#ch1">01 信任</a>
+      <a href="#ch2">02 设计</a>
+      <a href="#ch3">03 网络</a>
+      <a href="#ch4">04 以太坊</a>
+      <a href="#ch5">05 共识</a>
+      <a href="#ch6">06 生态</a>
+      <a href="#ch7">07 边界</a>
+      <a href="#ch8">08 安全</a>
     </div>
     <div class="nav-controls">
-      <button class="nav-btn" id="search-btn" aria-label="搜索 (Ctrl+K)">⌘K</button>
-      <button class="nav-btn" id="settings-btn" aria-label="阅读设置">Aa</button>
       <a class="nav-btn" href="../index.html" aria-label="返回知识库">← 知识库</a>
       <a class="nav-btn" href="https://github.com/maverickxone/mav-homepage" target="_blank" rel="noopener" aria-label="GitHub" style="padding: 6px 8px;"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg></a>
     </div>
   </div>
 </nav>
-<div class="settings-pop" id="settings-pop">
-  <h5>主题</h5>
-  <div class="row">
-    <button class="seg" data-theme-set="light">明亮</button>
-    <button class="seg" data-theme-set="dark">暗色</button>
-  </div>
-  <h5>字号</h5>
-  <div class="row">
-    <button class="seg" data-size-set="s">小</button>
-    <button class="seg" data-size-set="m">中</button>
-    <button class="seg" data-size-set="l">大</button>
-  </div>
-</div>
 
-<main class="cover">
-  <section class="cover-hero">
-    <div class="cover-title-block">
-      <h1>区块链与加密货币：从原理到生态</h1>
-    </div>
-    <div class="cover-lede-row">
-      <div>
-        <p class="cover-lede">从货币与信任讲到比特币、以太坊、DeFi、NFT、Web3 与安全实战。</p>
-      </div>
-      <div>
-        <div class="num">Mav</div>
-      </div>
-    </div>
-  </section>
+<main>
 
-  <section>
-    <div class="toc-grid">
-      <a class="toc-card" href="chapters/01-trust-and-cryptography.html">
-        <div class="num"><strong>01</strong><span>CH. 01</span></div>
-        <div>
-          <h3>信任与密码学</h3>
-          <p>从 Alice 给 Bob 转账的故事出发，理解数字货币、信任、签名与公开账本。</p>
+  <div class="mz-cover">
+    <div class="mz-cover-inner">
+      <div class="mz-cover-text">
+        <div class="mz-cover-meta">KNOWLEDGE / 图文单页 · 区块链 · 全八章</div>
+        <h1>区块链与加密货币：从原理到生态</h1>
+        <p class="mz-cover-lede">从 Alice 给 Bob 转账的故事出发，八章讲透区块链：信任与密码学、比特币设计与网络、以太坊与智能合约、共识机制、加密货币生态、边界与 Web3、安全实战。写给想理解而非盲信的人。</p>
+      </div>
+      <figure class="mz-cover-figure">
+        <img src="assets/images/cover-blockchain.jpg" alt="Burstcoin 第一个智能合约的汇编代码" width="946" height="1600" loading="eager" fetchpriority="high" decoding="async">
+      </figure>
+    </div>
+    <div class="mz-cover-scroll-cue">往下滑，从 Alice 为什么不能直接给 Bob 转 100 元讲起 ↓</div>
+  </div>
+
+  <article class="magazine-body">
+
+    <div class="mz-hook">这本书不做投资建议，也不推荐任何代币。它要做的事情朴素得多：把"区块链到底是什么、能做什么、不能做什么"讲清楚。读完这本书的正确状态，不是"我知道该买什么了"，而是"我知道每一层技术解决了什么问题、引入了什么新代价，以及为什么看到'区块链'三个字不能默认一切可信"。</div>
+
+    <p>Alice 和 Bob 是同校学生。Alice 欠 Bob 100 元饭钱，她想直接通过手机转过去，不经过微信、不经过支付宝、也不经过银行 App。这个看似简单的动作，拆开后会引出数字货币最基础的问题：在没有银行参与的情况下，怎么让一群互不信任的人共同承认一份余额记录？</p>
+
+    <p>这本书从这个问题出发，用八章的篇幅走完从密码学工具到比特币网络、从以太坊智能合约到共识机制、从稳定币和 DeFi 到中国监管与安全实战的完整路线。全书涉及法规和技术细节的数字，核实时点均为 2026 年 7 月，之后必然变化——变的是数字，不变的是机制。</p>
+
+    <div class="mz-toc">
+      <a href="#ch1"><span class="n">01</span><span class="t">信任与密码学<small>从 Alice 为什么不能直接给 Bob 转 100 元说起：谁记账、双花、女巫攻击，以及哈希、公私钥与数字签名三件工具</small></span></a>
+      <a href="#ch2"><span class="n">02</span><span class="t">比特币的设计<small>从 2008 年金融危机到中本聪白皮书：交易、区块、链、Merkle 树与工作量证明的完整直觉</small></span></a>
+      <a href="#ch3"><span class="n">03</span><span class="t">比特币网络<small>跟随一笔付款从钱包出发，走完内存池、Gossip 传播、矿工打包、PoW 竞争、确认数与分叉的完整旅程</small></span></a>
+      <a href="#ch4"><span class="n">04</span><span class="t">以太坊与智能合约<small>从比特币脚本的局限到可编程区块链：账户模型、Gas、Solidity 合约、ERC-20 授权风险与 The DAO 重入攻击</small></span></a>
+      <a href="#ch5"><span class="n">05</span><span class="t">共识机制<small>对比工作量证明与权益证明：以太坊 The Merge、Pectra 升级、验证者经济学、nothing-at-stake 与 MEV</small></span></a>
+      <a href="#ch6"><span class="n">06</span><span class="t">加密货币生态<small>从稳定币、DeFi 到 NFT：USDT/USDC 的发行与赎回、AMM 与流动性池、CryptoPunks 与 BAYC 的简史</small></span></a>
+      <a href="#ch7"><span class="n">07</span><span class="t">边界与 Web3<small>判断哪些场景真正需要区块链：不可能三角、Layer 2 扩容、Web1/2/3 的演进与泡沫中的真实进步</small></span></a>
+      <a href="#ch8"><span class="n">08</span><span class="t">安全实战<small>中国监管时间线、42 号文核心边界、Sepolia 测试网零风险练习、USDT 假代币识别与常见骗局应对</small></span></a>
+    </div>
+
+    <!-- ═══════════ 第一章 · 信任与密码学 ═══════════ -->
+
+    <section class="mz-chapter" id="ch1">
+      <div class="mz-chapter-marker">
+        <span class="mz-chapter-num">01</span>
+        <span class="mz-chapter-label">第一章</span>
+      </div>
+      <h2 id="ch1-title">信任与密码学</h2>
+
+      <h3>1.1 银行做了什么：清算、账本、信任</h3>
+
+      <p>在讨论"去掉银行"之前，先仔细看看银行到底做了什么。银行最核心的资产是一份<strong>账本</strong>（ledger）——数据库里的一系列记录：每个人的账户余额、每一笔收入和支出。账本的关键特征是：银行保存着唯一被认可的版本。</p>
+
+      <p>当用手机银行给 Bob 转 100 元时，银行会做<strong>清算</strong>（settlement）：检查余额是否足够、扣款、入账、记录交易的时间和金额。这个过程中，银行实际上回答了三个问题：这笔钱存在吗？这笔钱属于付款人吗？这笔钱之前有没有被花掉？</p>
+
+      <p>之所以敢把钱放在银行，并不是因为银行用了什么神奇的密码学，而是因为信任一整套制度：法律、存款保险、监管、客服和司法救济。数字货币不是要消灭所有信任，而是在某些场景下，把"必须信任某一家机构"变成"可以依据公开规则自行核查"。</p>
+
+      <div class="mz-stats">
+        <div class="mz-stat"><span class="num">账本保管者</span><span class="label">银行保存唯一被认可的余额版本</span></div>
+        <div class="mz-stat"><span class="num">交易执行者</span><span class="label">检查、扣款、入账、记录</span></div>
+        <div class="mz-stat"><span class="num">纠纷仲裁者</span><span class="label">申诉、冻结、撤销的制度保障</span></div>
+      </div>
+
+      <h3>1.2 没有银行时的问题：谁记账、双花、女巫攻击</h3>
+
+      <p>把银行拿掉后，三个核心困难立刻出现。</p>
+
+      <div class="mz-terms">
+        <div class="mz-term">
+          <div class="t">谁记账<small>Who keeps the ledger</small></div>
+          <div class="d">去掉银行后，没有单一可信账本。让很多人各自保存副本，大家看到的更新顺序可能不同，有人可能故意广播假消息。</div>
         </div>
-        <div class="read"><span>开始阅读</span><span>→</span></div>
-      </a>
-      <a class="toc-card" href="chapters/02-bitcoin-design.html">
-        <div class="num"><strong>02</strong><span>CH. 02</span></div>
-        <div>
-          <h3>比特币的设计</h3>
-          <p>从 2008 年金融危机到中本聪白皮书，理解比特币如何用区块和链解决双重支付问题。</p>
+        <div class="mz-term">
+          <div class="t">双花<small>Double Spending</small></div>
+          <div class="d">数字文件可复制，同一份"价值 100 元"的数字记录可以被复制十次发给十个人。签名只能证明授权，不能单独决定哪一笔先发生。</div>
         </div>
-        <div class="read"><span>开始阅读</span><span>→</span></div>
-      </a>
-      <a class="toc-card" href="chapters/03-bitcoin-network.html">
-        <div class="num"><strong>03</strong><span>CH. 03</span></div>
-        <div>
-          <h3>比特币网络</h3>
-          <p>理解工作量证明、挖矿竞争、难度调整、节点分工与交易如何被确认。</p>
+        <div class="mz-term">
+          <div class="t">女巫攻击<small>Sybil Attack</small></div>
+          <div class="d">公开网络允许任何人创建成千上万个身份。如果"一台电脑一票"，攻击者只需批量注册账号就能伪装成多数。网络身份很便宜，不能直接用来衡量意见的分量。</div>
         </div>
-        <div class="read"><span>开始阅读</span><span>→</span></div>
-      </a>
-      <a class="toc-card" href="chapters/04-ethereum-and-contracts.html">
-        <div class="num"><strong>04</strong><span>CH. 04</span></div>
-        <div>
-          <h3>以太坊与智能合约</h3>
-          <p>从比特币脚本的局限到以太坊的可编程区块链，理解账户模型、Gas、智能合约与常见风险。</p>
+      </div>
+
+      <h3>1.3 比特币的全景答案</h3>
+
+      <p>比特币给出的方案可以压缩成一段话：Alice 用自己的<strong>私钥</strong>对交易做<strong>数字签名</strong>，把交易发给比特币网络。网络中的<strong>全节点</strong>分别检查交易是否合法。<strong>矿工</strong>从有效交易中组织<strong>候选区块</strong>，并通过<strong>工作量证明</strong>竞争记账机会。某个候选区块胜出后，全节点再次独立检查它；符合规则的区块被接到当前账本后面。</p>
+
+      <div class="mz-calc">
+        <span class="line">Alice 的钱包</span>
+        <span class="line">    ↓ 生成私钥 / 公钥 / 地址，组织交易并签名</span>
+        <span class="line">广播到 P2P 网络</span>
+        <span class="line">    ↓ 全节点检查签名、资金来源、金额关系</span>
+        <span class="line">有效交易进入内存池</span>
+        <span class="line">    ↓ 矿工挑选交易、组织候选区块、做工作量证明</span>
+        <span class="line">某个区块被网络接受</span>
+        <span class="line">    ↓ 新区块接入账本，所有节点更新状态</span>
+        <p class="note">用户负责授权，节点负责检查，矿工负责排序和竞争，公开规则负责统一标准。这四件事分别对应四类参与者。</p>
+      </div>
+
+      <h3>1.4 四类参与者</h3>
+
+      <p>比特币网络中有四类角色。同一台电脑可以同时承担多个角色，但职责要分开理解。</p>
+
+      <div class="mz-device-compare">
+        <div class="mz-dc-col">
+          <div class="mz-dc-head">用户与钱包</div>
+          <ul>
+            <li>生成并保管私钥、公钥和地址</li>
+            <li>组织交易，填写收款地址和金额</li>
+            <li>用私钥对交易做数字签名</li>
+            <li>把签名后的交易广播到网络</li>
+          </ul>
         </div>
-        <div class="read"><span>开始阅读</span><span>→</span></div>
-      </a>
-      <a class="toc-card" href="chapters/05-consensus.html">
-        <div class="num"><strong>05</strong><span>CH. 05</span></div>
-        <div>
-          <h3>共识机制</h3>
-          <p>对比工作量证明与权益证明，理解以太坊 The Merge 与 Pectra 升级后的验证者经济学。</p>
+        <div class="mz-dc-col highlight">
+          <div class="mz-dc-head">全节点</div>
+          <ul>
+            <li>保存完整的账本副本</li>
+            <li>检查每笔交易：签名、资金来源、金额平衡</li>
+            <li>检查每个区块：PoW、矿工奖励、交易集合</li>
+            <li>只把合法内容加入账本，转发给邻居</li>
+          </ul>
         </div>
-        <div class="read"><span>开始阅读</span><span>→</span></div>
-      </a>
-      <a class="toc-card" href="chapters/06-crypto-ecosystem.html">
-        <div class="num"><strong>06</strong><span>CH. 06</span></div>
-        <div>
-          <h3>加密货币生态</h3>
-          <p>从稳定币、DeFi 到 NFT，理解加密货币世界的主要应用形态与它们的风险边界。</p>
+      </div>
+
+      <div class="mz-device-compare">
+        <div class="mz-dc-col">
+          <div class="mz-dc-head">矿工</div>
+          <ul>
+            <li>从内存池收集待处理交易</li>
+            <li>组织候选区块</li>
+            <li>大量哈希计算寻找合格区块头</li>
+            <li>找到后广播，希望全节点接受</li>
+          </ul>
         </div>
-        <div class="read"><span>开始阅读</span><span>→</span></div>
-      </a>
-      <a class="toc-card" href="chapters/07-boundaries-and-web3.html">
-        <div class="num"><strong>07</strong><span>CH. 07</span></div>
-        <div>
-          <h3>边界与 Web3</h3>
-          <p>判断哪些场景真正需要区块链，理解 Web3 的承诺、炒作与价值判断。</p>
+        <div class="mz-dc-col">
+          <div class="mz-dc-head">矿池（可选）</div>
+          <ul>
+            <li>集中大量矿机算力</li>
+            <li>统一分配任务、共享收益</li>
+            <li>提高中小矿工收入稳定性</li>
+            <li>引入新信任问题：矿池管理者选择交易</li>
+          </ul>
         </div>
-        <div class="read"><span>开始阅读</span><span>→</span></div>
-      </a>
-      <a class="toc-card" href="chapters/08-security-practice.html">
-        <div class="num"><strong>08</strong><span>CH. 08</span></div>
-        <div>
-          <h3>安全实战</h3>
-          <p>从中国监管时间线到测试网练习、USDT 账单识别与常见骗局应对，理智接触加密货币。</p>
+      </div>
+
+      <div class="mz-myth">
+        <div class="mz-myth-row false">
+          <div class="label">误解</div>
+          <div class="body">矿工决定比特币规则。</div>
         </div>
-        <div class="read"><span>开始阅读</span><span>→</span></div>
-      </a>
-</div>
-  </section>
+        <div class="mz-myth-row true">
+          <div class="label">实际</div>
+          <div class="body">矿工决定的是<strong>哪个候选区块被提交</strong>，但全节点决定<strong>这个区块是否合法</strong>。规则写在软件里，由运行全节点的人共同执行。</div>
+        </div>
+      </div>
+
+      <h3>1.5 哈希函数：数字指纹</h3>
+
+      <p><strong>哈希函数</strong>（hash function）接收任意长度的数据，输出固定长度的结果。可以把它想象成一台"数字指纹机"：把任何文件放进去，都会得到一个长度固定的指纹字符串；文件只要改一个字，指纹通常会完全不同。比特币大量使用 <strong>SHA-256</strong> 哈希算法。</p>
+
+      <p>哈希有几个重要性质：<strong>确定性</strong>（同样输入同样输出）、<strong>敏感性</strong>（微小变化导致大范围输出变化）、<strong>单向性</strong>（从哈希值倒推原文极其困难）、<strong>抗碰撞性</strong>（很难找到两个不同输入产生相同输出）。哈希和加密的区别：加密是"可逆的隐藏"，哈希是"不可逆的指纹"。</p>
+
+      <p>在比特币里，哈希承担几项工作：交易标识（唯一交易 ID）、区块标识、Merkle 根（交易汇总）、工作量证明（矿工反复计算）、链式连接（每个区块包含前一个的哈希）。哈希让"数据是否被改动"变成一件可以快速核查的事。</p>
+
+      <h3>1.6 私钥、公钥、地址</h3>
+
+      <p>Alice 的钱包第一次使用时，会生成一个足够随机的巨大整数作为<strong>私钥</strong>。比特币私钥是一个 256 位随机数，可能的取值比宇宙中所有原子数量还多。<strong>掌握私钥的人可以授权花费相应资金</strong>。</p>
+
+      <p>钱包通过椭圆曲线运算，从私钥推导出<strong>公钥</strong>。正向计算高效，反向从公钥推私钥在现实算力下不可行。公钥经过处理后生成<strong>地址</strong>——收款用的"门牌号"。</p>
+
+      <div class="mz-calc">
+        <span class="line">足够随机的私钥</span>
+        <span class="line">    ↓ 单向推导（椭圆曲线）</span>
+        <span class="line">公钥</span>
+        <span class="line">    ↓ 与花费脚本组合，编码</span>
+        <span class="line">对外使用的地址（如 bc1q...）</span>
+        <p class="note">现代钱包通常为不同收款生成不同地址。反复使用同一地址会让别人把多笔交易关联起来。</p>
+      </div>
+
+      <h3>1.7 数字签名：授权与完整性</h3>
+
+      <p>有了私钥和公钥，Alice 就可以对一笔交易做<strong>数字签名</strong>。签名同时完成两件事：<strong>授权证明</strong>（证明交易由私钥持有者发起）和<strong>完整性证明</strong>（证明交易内容在签名后未被改动）。节点用 Alice 的公钥验证签名。</p>
+
+      <p>签名不隐藏交易内容——金额、输入和输出仍可被网络读取。签名能证明"某个私钥授权了这笔交易"，但<strong>不能</strong>证明屏幕前操作的人一定是现实中的 Alice、商品真实交付、或 Alice 不是被胁迫签名的。私钥一旦被盗，攻击者也能生成有效签名。</p>
+
+      <h3>1.8 Alice 如何签署一笔交易</h3>
+
+      <p>假设 Alice 的钱包显示有 0.5 BTC。比特币账本并没有保存一行"Alice 余额：0.5 BTC"，而是保存着一份尚未被花费的交易输出，简称 <strong>UTXO</strong>。可以把 UTXO 理解成一张面额为 0.5 BTC、带有特定开锁条件的数字钞票。</p>
+
+      <p>Alice 想给 Bob 支付 0.3 BTC。钱包创建一笔新交易：</p>
+
+      <div class="mz-calc">
+        <span class="line">旧输出：0.500 BTC，满足 Alice 的签名条件才能花费</span>
+        <span class="line">新交易：</span>
+        <span class="line">  输入  0.500 BTC</span>
+        <span class="line">  输出  0.300 BTC → Bob</span>
+        <span class="line">  输出  0.199 BTC → Alice 的找零地址</span>
+        <span class="line">  差额  0.001 BTC → 作为手续费留给矿工</span>
+        <p class="note">很像用现金买东西：拿出一张 50 元钞票买 30 元的咖啡，店员找给 20 元。在比特币里，输入 0.5 BTC 必须全部花掉。</p>
+      </div>
+
+      <p>钱包随后对交易生成签名，收款条件和全部输出金额都受到保护。如果有人把 Bob 的 0.3 BTC 改成自己的地址，原签名将无法通过验证。交易通过检查后进入节点的<strong>内存池</strong>（mempool），并继续传给邻居节点。</p>
+
+      <h3>1.9 Merkle 树：把交易压成指纹</h3>
+
+      <p>一个区块可能包含大量交易。全节点需要一个简洁方法，证明区块中的交易集合没有被悄悄修改。<strong>Merkle 树</strong>把每笔交易的哈希两两组合并继续哈希，最终得到一个根哈希。任何一笔交易发生变化，根哈希也会变。区块头只需保存这个根哈希，就能为整批交易提供统一指纹。</p>
+
+      <p>Merkle 树还可以提供简短的成员证明：想证明某笔交易位于区块中，不必传输全部交易，只需给出通向根节点的少量相邻哈希。轻量钱包会利用这类证明减少数据需求。</p>
+
+      <h3>1.10 密码学的边界</h3>
+
+      <p>数字签名可以检查授权与完整性，哈希可以检查数据变化。但这些保证都有明确边界：不能阻止主动把私钥交给诈骗者、不能自动修复钱包软件漏洞、不能判断链外商品是否真实交付、不能替代现实中的法律责任。</p>
+
+      <div class="mz-further">
+        <div class="mz-further-label">本章要点</div>
+        <ul>
+          <li>银行扮演账本保管者、交易执行者、纠纷仲裁者三个角色。数字货币在某些场景下把"必须信任机构"变成"可以依据公开规则自行核查"。</li>
+          <li>没有银行时的三个核心困难：谁记账（没有单一可信账本）、双花（数字文件可复制）、女巫攻击（网络身份廉价）。</li>
+          <li>比特币的全景答案：用户签名授权 → 全节点检查 → 矿工 PoW 竞争 → 全节点验收 → 区块接入账本。</li>
+          <li>三种密码学工具：哈希函数（单向指纹）、私钥/公钥/地址（单向推导链）、数字签名（授权 + 完整性）。</li>
+          <li>UTXO 模型：输入必须全部花掉，差额找零回自己地址，剩余给矿工。签名只证明授权，不能单独解决双花。</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- ═══════════ 第二章 · 比特币的设计 ═══════════ -->
+
+    <section class="mz-chapter" id="ch2">
+      <div class="mz-chapter-marker">
+        <span class="mz-chapter-num">02</span>
+        <span class="mz-chapter-label">第二章</span>
+      </div>
+      <h2 id="ch2-title">比特币的设计</h2>
+
+      <h3>2.1 2008 年金融危机与中本聪的邮件</h3>
+
+      <p>2008 年 9 月 15 日，美国第四大投资银行雷曼兄弟申请破产保护。房贷泡沫破裂、信用评级失灵、银行间互相不再信任。这场危机暴露了一个被长期默认的前提：把钱交给银行，是因为相信银行不会出错。</p>
+
+      <p>2008 年 10 月 31 日，一个化名<strong>中本聪</strong>的人在密码学邮件列表里贴出一篇只有九页的论文：《Bitcoin: A Peer-to-Peer Electronic Cash System》。论文开头就点明了目标：一种纯粹的点对点电子现金版本，将允许在线支付直接从一方发送到另一方，而无需通过金融机构。</p>
+
+      <figure class="mz-figure">
+        <img src="assets/images/satoshi-nakamoto.jpg" alt="布达佩斯的中本聪雕像" width="1057" height="1200" loading="lazy" decoding="async">
+        <figcaption>布达佩斯的中本聪雕像</figcaption>
+      </figure>
+
+      <p>中本聪提出的核心问题并不大却很刁钻：Alice 和 Bob 互不认识，Alice 怎样在互联网上直接把一笔数字货币付给 Bob，同时让全世界都承认这笔钱的归属已经转移？难点不是伪造签名——数字签名能证明授权——而是<strong>同一份数字资产可以被复制，Alice 完全可能同时授权两笔付款</strong>。这就是<strong>双重支付</strong>（Double Spending）问题。</p>
+
+      <h3>2.2 交易 → 区块 → 链</h3>
+
+      <p>比特币把日志拆成三层：<strong>交易</strong>记录资金流转，<strong>区块</strong>把交易按批打包，<strong>链</strong>通过哈希把区块串起来让历史难以被事后篡改。工作量证明决定谁能给链增加下一个区块，用计算成本替代"管理员批准"。</p>
+
+      <div class="mz-calc">
+        <span class="line">Alice 的钱包构造交易并签名</span>
+        <span class="line">    ↓</span>
+        <span class="line">相邻全节点检查并转发交易</span>
+        <span class="line">    ↓</span>
+        <span class="line">矿工从待确认交易中选择一批，组成候选区块</span>
+        <span class="line">    ↓</span>
+        <span class="line">全网矿工进行工作量证明（PoW）竞争</span>
+        <span class="line">    ↓</span>
+        <span class="line">某位矿工找到合格哈希，把完整区块传播出去</span>
+        <span class="line">    ↓</span>
+        <span class="line">全节点逐个验收新区块</span>
+        <span class="line">    ↓</span>
+        <span class="line">矿工接着新区块开始下一轮</span>
+        <p class="note">Alice 的交易进入当前账本中的区块后，获得第一次确认。后续每增加一个区块，改写这段历史所需追赶的工作量就更多。</p>
+      </div>
+
+      <h3>2.3 UTXO：不是余额，而是"数字钞票"</h3>
+
+      <p>比特币使用 <strong>UTXO</strong> 模型。UTXO 全称"未花费交易输出"（Unspent Transaction Output）。直觉上，可以把 UTXO 理解成一张张不同面额的数字钞票。付款时，必须完整消耗某一张或几张"钞票"，然后创建新的"钞票"作为输出。</p>
+
+      <p>假设 Alice 控制着一个 0.5 BTC 的 UTXO，想付给 Bob 0.3 BTC，并支付 0.001 BTC 手续费。钱包构造的交易：输入 0.500 BTC → 输出 0.300 BTC 给 Bob + 0.199 BTC 找零给 Alice + 0.001 BTC 差额给矿工。原来的 0.5 BTC 输出被完整花费掉，不再属于任何人。</p>
+
+      <div class="mz-myth">
+        <div class="mz-myth-row false">
+          <div class="label">误解</div>
+          <div class="body">比特币里有一个叫 AliceCoin 的文件可以从 Alice 的电脑复制到 Bob 的电脑。</div>
+        </div>
+        <div class="mz-myth-row true">
+          <div class="label">实际</div>
+          <div class="body">网络保存的是一系列<strong>交易记录</strong>。"余额"不是某个字段里的数字，而是钱包扫描账本后，把所有能控制的未花费输出加起来的结果。UTXO 让"余额"可以通过公开交易记录重新计算出来，不需要维护中央账户表。</div>
+        </div>
+      </div>
+
+      <h3>2.4 区块头和区块体</h3>
+
+      <p>一个区块分成两部分。<strong>区块体</strong>保存交易列表，第一笔固定是 Coinbase 交易（矿工申领奖励），后面才是普通用户交易。<strong>区块头</strong>只有 80 字节，保存六项关键信息：</p>
+
+      <div class="mz-tablewrap">
+        <table>
+          <thead><tr><th>字段</th><th>内容</th></tr></thead>
+          <tbody>
+            <tr><td>Version</td><td>协议与规则版本信息</td></tr>
+            <tr><td>Previous Block Hash</td><td>父区块的哈希</td></tr>
+            <tr><td>Merkle Root</td><td>本区块全部交易的总指纹</td></tr>
+            <tr><td>Timestamp</td><td>矿工填写的时间</td></tr>
+            <tr><td>Bits</td><td>当前难度目标的压缩表示</td></tr>
+            <tr><td>Nonce</td><td>挖矿时反复改变的 32 位数字</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p>区块头设计得非常小，是为了让工作量证明只反复哈希 80 字节，而不是每次把整个区块体都哈希一遍。这个细节让专用矿机可以把算力推到极高。</p>
+
+      <h3>2.5 链：用哈希把区块串起来</h3>
+
+      <p>每个候选区块都写入父区块的哈希。新区块通过验证后，就像接在父区块后面的一节链条。如果攻击者修改旧区块中的交易，该区块的 Merkle Root 和哈希都会改变，后续区块保存的父哈希随即对不上，工作量证明也需要重新完成。与此同时，诚实矿工会继续扩展公开的有效链。攻击者追赶历史时，既要重做旧工作，也要面对新工作不断增加。</p>
+
+      <figure class="mz-figure">
+        <img src="assets/images/blockchain-diagram.png" alt="区块链结构示意图：区块通过哈希指针串联" width="1524" height="281" loading="lazy" decoding="async">
+        <figcaption>区块链结构示意图：每个区块包含前一个区块的哈希，形成不可篡改的链条</figcaption>
+      </figure>
+
+      <p>节点选择链时，先排除违反协议规则的区块，再在有效分支中选择<strong>累计工作量最大</strong>的一条。</p>
+
+      <h3>2.6 难度与工作量证明</h3>
+
+      <p>比特币要求区块头的双重 SHA-256 哈希小于当前<strong>目标值</strong>（Target）。Target 越小，符合条件的结果越少，挖矿难度越高。矿工反复改变区块头里的 Nonce 字段并重新计算哈希。每次哈希互相独立，失败一亿次并不会积累"完成进度"。</p>
+
+      <p>Nonce 只有 32 位，高速矿机很快就能遍历完。于是矿工改变 Coinbase 里的 extraNonce、时间戳等字段，生成新的 Merkle Root 和区块头，再继续搜索。</p>
+
+      <p>比特币每 <strong>2016 个区块</strong>调整一次目标值（约两周）。核心关系：新 Target = 旧 Target × (实际耗时 / 预期耗时)。实际耗时较短则变难，较长则变易。协议限制单次调整幅度。</p>
+
+      <h3>2.7 创世区块与减半</h3>
+
+      <p>2009 年 1 月 3 日，比特币<strong>创世区块</strong>产生。中本聪在 Coinbase 交易里留下了一句话："The Times 03/Jan/2009 Chancellor on brink of second bailout for banks."——引用当天《泰晤士报》头条，既是时间戳证明，也带着对银行救助的讽刺。</p>
+
+      <figure class="mz-figure">
+        <img src="assets/images/genesis-block.jpg" alt="比特币创世区块截图" width="800" height="552" loading="lazy" decoding="async">
+        <figcaption>比特币创世区块（Block 0），注意 Coinbase 中留下的泰晤士报头条信息</figcaption>
+      </figure>
+
+      <div class="mz-timeline">
+        <div class="mz-tl-item">
+          <div class="mz-tl-year">2009</div>
+          <h3>创世</h3>
+          <p>每个区块补贴 50 BTC</p>
+        </div>
+        <div class="mz-tl-item">
+          <div class="mz-tl-year">2012</div>
+          <h3>第一次减半</h3>
+          <p>补贴降至 25 BTC</p>
+        </div>
+        <div class="mz-tl-item">
+          <div class="mz-tl-year">2016</div>
+          <h3>第二次减半</h3>
+          <p>补贴降至 12.5 BTC</p>
+        </div>
+        <div class="mz-tl-item">
+          <div class="mz-tl-year">2020</div>
+          <h3>第三次减半</h3>
+          <p>补贴降至 6.25 BTC</p>
+        </div>
+        <div class="mz-tl-item">
+          <div class="mz-tl-year">2024</div>
+          <h3>第四次减半</h3>
+          <p>补贴降至 3.125 BTC（区块高度 840,000）</p>
+        </div>
+      </div>
+
+      <p>比特币最初每个区块补贴 50 BTC，此后每 21 万个区块减半一次。补贴按几何级数下降，总发行量逐步接近 <strong>2100 万 BTC</strong>。减半解决的核心问题是：把比特币的总供给写入协议，让节点可以独立验证每个高度允许发行多少。</p>
+
+      <div class="mz-further">
+        <div class="mz-further-label">本章要点</div>
+        <ul>
+          <li>中本聪 2008 年白皮书回答的核心问题：互不认识的人如何在互联网上直接转移数字资产，同时防止双重支付。</li>
+          <li>比特币三层结构：交易（资金流转）→ 区块（交易打包）→ 链（哈希串联，防篡改）。</li>
+          <li>UTXO 模型：输入必须完整消耗，输出创建新"钞票"，差额给矿工。余额通过公开记录重新计算。</li>
+          <li>区块头 80 字节，包含父区块哈希、Merkle Root、Nonce 等六项。工作量证明要求双重 SHA-256 小于 Target。</li>
+          <li>每 2016 个区块调整难度，维持约 10 分钟平均出块。区块补贴每 21 万区块减半，当前 3.125 BTC。</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- ═══════════ 第三章 · 比特币网络 ═══════════ -->
+
+    <section class="mz-chapter" id="ch3">
+      <div class="mz-chapter-marker">
+        <span class="mz-chapter-num">03</span>
+        <span class="mz-chapter-label">第三章</span>
+      </div>
+      <h2 id="ch3-title">比特币网络</h2>
+
+      <h3>3.1 一笔交易发出后发生了什么</h3>
+
+      <p>周五晚上，Alice 在宿舍用比特币向 Bob 转 0.3 BTC。她在钱包里输入 Bob 的地址和金额，点击"发送"。几秒钟后，Bob 的手机弹出通知："收到一笔待确认付款"。十分钟后，Bob 说："已经 1 次确认了。"这中间到底发生了什么？</p>
+
+      <p>比特币没有中央银行，也没有唯一的"官方服务器"。Alice 的付款指令发出后，要在全世界成千上万台互不隶属的计算机之间传播、排队、竞争、被验证，最后才写进一份大家共同认可的公共账本。</p>
+
+      <h3>3.2 内存池与交易传播</h3>
+
+      <p>Alice 的钱包只连接了几个全节点，把签好名的交易发过去。收到交易的第一个节点会立刻做独立检查：格式对不对？输入引用的 UTXO 还存在吗？签名能通过验证吗？输入总额够覆盖输出总额吗？检查通过后，交易进入该节点的<strong>内存池</strong>（Mempool）——每个节点本地保存的"待确认交易池"。</p>
+
+      <p>进入内存池的交易会被继续转发给相邻节点。每个节点都记得自己见过哪些交易 ID，避免重复广播。这种"我把消息告诉邻居，邻居再告诉邻居"的方式叫做 <strong>Gossip 协议</strong>（八卦式传播）。几秒钟之内，大量节点和矿工都会看到 Alice 的交易。</p>
+
+      <div class="mz-myth">
+        <div class="mz-myth-row false">
+          <div class="label">误解</div>
+          <div class="body">Bob 在手机里看到"0.3 BTC 待确认"，说明钱已经到账了。</div>
+        </div>
+        <div class="mz-myth-row true">
+          <div class="label">实际</div>
+          <div class="body">待确认不等于到账。Bob 看到的只是节点已经收到 Alice 的签名提案。这笔交易仍有可能因为冲突交易、手续费太低或网络分叉而被替换或延迟。</div>
+        </div>
+      </div>
+
+      <h3>3.3 矿工如何组织候选区块</h3>
+
+      <p>矿工从本地内存池里挑选交易，优先选择手续费率高的。不同矿工的内存池和选择策略不同，候选区块内容也经常不同。矿工在交易列表最前面放上一笔 <strong>Coinbase 交易</strong>，直接申领本区块奖励（当前区块补贴 + 全部普通交易手续费之和）。截至 2026 年 7 月，区块补贴为 3.125 BTC。</p>
+
+      <p>然后矿工把 Coinbase 交易和普通交易按顺序排列，计算 Merkle Root，填写 80 字节的区块头。至此，一个候选区块准备好了——但它还没有合格的工作量证明。</p>
+
+      <h3>3.4 工作量证明：一场哈希抽签</h3>
+
+      <p>比特币要求：对候选区块头计算两次 SHA-256，结果必须小于当前目标值。矿工反复改变 Nonce 字段并重新计算哈希。每次哈希都是一次独立抽签——前一亿次失败不会给下一次带来任何"进度加成"。算力的本质就是每秒能抽签多少次。</p>
+
+      <p>从 CPU、GPU 到专用集成电路 <strong>ASIC</strong>，比特币挖矿硬件已经高度专业化。单台矿机占全网算力比例极小，于是出现了<strong>矿池</strong>：矿池服务器负责选择交易、生成区块模板；大量矿机拿到模板后高速尝试哈希；找到合格结果后，收益按内部规则分配。</p>
+
+      <figure class="mz-figure">
+        <img src="assets/images/mining.jpg" alt="浸没式冷却 cryptocurrency 矿场" width="1200" height="887" loading="lazy" decoding="async">
+        <figcaption>使用浸没式冷却的 cryptocurrency 矿场</figcaption>
+      </figure>
+
+      <h3>3.5 区块确认与 6 次确认</h3>
+
+      <p>找到合格 PoW 的矿工把完整区块广播出去，全节点逐项验收。通过全部检查后，区块进入节点维护的区块树。Alice 的交易一旦被包含在这个区块里，就获得 <strong>1 次确认</strong>。每增加一个后续区块，确认数加 1。</p>
+
+      <p>确认数表示交易在当前链中的深度。攻击者若想改写交易，必须从更早的位置建立另一条有效分支，并且累计工作量超过当前链。后续区块越多，攻击者需要重做的工作就越多。"等待 6 次确认"是比特币社区常见的经验值，不是协议强制要求。</p>
+
+      <div class="mz-myth">
+        <div class="mz-myth-row false">
+          <div class="label">误解</div>
+          <div class="body">6 次确认意味着绝对安全。</div>
+        </div>
+        <div class="mz-myth-row true">
+          <div class="label">实际</div>
+          <div class="body">确认数反映的是"改写难度"，不是"绝对安全"。理论上，只要攻击者掌握足够多算力并愿意承担成本，任何确认数都可能被逆转。只是随着确认数增加，成本会指数级上升。</div>
+        </div>
+      </div>
+
+      <h3>3.6 全节点、轻节点与 SPV</h3>
+
+      <p><strong>全节点</strong>保存并检查比特币账本，独立验证从区块到交易的全部规则，维护当前 UTXO 集合。运行全节点的最大意义在于：不必信任任何第三方，可以直接依照协议规则判断收款和链状态。</p>
+
+      <p>手机等资源有限的设备通常运行<strong>轻节点</strong>，主要通过区块头和 Merkle 证明来确认与自己相关的交易。<strong>SPV</strong>（简单支付验证）不需要下载完整区块，只需一条从交易通向 Merkle Root 的哈希路径。但安全模型更依赖连接方式和提供数据的节点。</p>
+
+      <h3>3.7 分叉与最长链规则</h3>
+
+      <p>假设矿工 A 和矿工 B 几乎同时找到了下一个区块的合格 PoW。网络暂时出现两个分支。矿工通常在自己看到的累计工作量最大的分支上继续工作。如果下一个区块 C 先接在 A 块后面，A 分支的累计工作量更大，B 块变成<strong>陈旧块</strong>（Stale Block）。</p>
+
+      <p>分叉机制也解释了双花攻击：攻击者可以在秘密分支里构造冲突交易的私有链，等它积累的累计工作量超过公开链后再发布。但即使攻击者掌握全网一半以上算力，也只能做重组、延迟或双花自己已能支配的币——不能伪造别人的签名，不能超发货币，全节点依然会按规则拒绝非法交易。</p>
+
+      <div class="mz-further">
+        <div class="mz-further-label">本章要点</div>
+        <ul>
+          <li>交易从钱包签名后进入相邻节点的内存池，通过 Gossip 协议传播到整个网络。</li>
+          <li>矿工从内存池选择交易，创建 Coinbase 交易申领奖励，组装候选区块，计算 Merkle Root，反复改变 Nonce 寻找合格 PoW。</li>
+          <li>全节点逐项验收新区块，选择累计工作量最大的有效链。交易获得 1 次确认后，后续每增加一个区块确认数加 1。</li>
+          <li>每 2016 个区块调整难度目标，维持约 10 分钟平均出块。当前补贴 3.125 BTC，下一次减半预计约 2028 年。</li>
+          <li>分叉由"累计工作量最大"规则自动解决。全节点独立执行全部规则，轻节点通过 SPV 做简化验证。</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- ═══════════ 第四章 · 以太坊与智能合约 ═══════════ -->
+
+    <section class="mz-chapter" id="ch4">
+      <div class="mz-chapter-marker">
+        <span class="mz-chapter-num">04</span>
+        <span class="mz-chapter-label">第四章</span>
+      </div>
+      <h2 id="ch4-title">以太坊与智能合约</h2>
+
+      <h3>4.1 比特币脚本不够用时，Vitalik 看到了什么</h3>
+
+      <p>2013 年，还在给比特币杂志写稿的 Vitalik Buterin 注意到：比特币的脚本精巧又安全，却像一把只能开锁的螺丝刀——它能规定"这笔钱谁能花"，却很难表达"如果众筹目标没达到，就把钱退回去"。比特币脚本的设计哲学是<strong>刻意限制</strong>：只处理签名验证、时间锁、多签等简单逻辑。代价是，任何稍微复杂的规则都得在链外实现。</p>
+
+      <p>Vitalik 想：如果区块链不仅能记录"谁转给谁多少钱"，还能保存一段程序，并且让全网节点都按同一段程序执行，会怎么样？这个想法直接催生了<strong>以太坊</strong>。以太坊解决的核心问题是：怎样让区块链从"转账账本"升级成"公开可验证的通用计算平台"。</p>
+
+      <figure class="mz-figure">
+        <img src="assets/images/vitalik-buterin.jpg" alt="Vitalik Buterin，以太坊创始人" width="785" height="1200" loading="lazy" decoding="async">
+        <figcaption>Vitalik Buterin，以太坊创始人</figcaption>
+      </figure>
+
+      <div class="mz-myth">
+        <div class="mz-myth-row false">
+          <div class="label">误解</div>
+          <div class="body">比特币是不可篡改的账本，以太坊也是不可篡改的账本，两者差不多。</div>
+        </div>
+        <div class="mz-myth-row true">
+          <div class="label">实际</div>
+          <div class="body">比特币是"不可篡改的账本"，以太坊是"不可篡改的账本 + <strong>不可篡改的程序运行环境</strong>"。ETH 不只是币，也是驱动这台世界计算机的燃料。</div>
+        </div>
+      </div>
+
+      <h3>4.2 账户模型 vs UTXO</h3>
+
+      <p>比特币用 UTXO 模型：Alice 的余额不是一行数字，而是一堆"还没花出去的输出"，每张像固定面额的数字钞票。以太坊采用<strong>账户模型</strong>：每个地址对应一条账户记录，里面直接保存余额、交易序号和其他数据。当 Alice 给 Bob 转账 0.9 ETH 时，链上的状态变化非常直接——Alice 余额从 2.0 变成 1.1，Bob 从 1.0 变成 1.9。</p>
+
+      <div class="mz-device-compare">
+        <div class="mz-dc-col">
+          <div class="mz-dc-head">UTXO（比特币）</div>
+          <ul>
+            <li>像现金钱包，付款要找零</li>
+            <li>余额通过公开记录重新计算</li>
+            <li>每张"钞票"只能花一次</li>
+            <li>天然防止双重支付</li>
+          </ul>
+        </div>
+        <div class="mz-dc-col highlight">
+          <div class="mz-dc-head">账户模型（以太坊）</div>
+          <ul>
+            <li>像银行账户，余额直接扣</li>
+            <li>余额直接保存在账户记录中</li>
+            <li>合约能长期保存复杂数据</li>
+            <li>nonce 防止交易重放或乱序</li>
+          </ul>
+        </div>
+      </div>
+
+      <h3>4.3 以太坊交易与 Gas</h3>
+
+      <p>Alice 打开网页钱包，点击"计数加一"。从这一秒到计数器从 7 变成 8，背后会发生一连串事情：钱包构造交易并签名 → 交易进入交易池（mempool）→ 区块提议者选择交易 → EVM 执行合约 → 其他节点独立复核 → 结果写入新的世界状态。</p>
+
+      <p><strong>Gas</strong> 是衡量链上计算资源消耗的统一单位。一次简单转账消耗的 Gas 较少；写入合约存储、创建合约或执行复杂逻辑会消耗更多。Gas 还设置了明确边界：如果循环太久或操作太多，执行会耗尽 Gas 并停止，避免某个程序把网络拖垮。</p>
+
+      <p>每单位 Gas 的价格主要分成两部分：<strong>Base Fee</strong>（基础费，由协议根据拥堵程度自动调整，会被销毁）和 <strong>Priority Fee</strong>（优先费，用户额外付给区块提议者的小费）。失败交易也要付费——节点已经完成的签名检查和指令执行仍然占用资源。</p>
+
+      <div class="mz-calc">
+        <span class="line">假设计数器调用用了 43,000 Gas</span>
+        <span class="line">每单位 Gas 价格 = 20 Gwei</span>
+        <span class="line">费用 = 43,000 × 20 Gwei = 860,000 Gwei = 0.00086 ETH</span>
+        <p class="note">Gwei 是 ETH 的较小单位，1 Gwei = 10⁻⁹ ETH。钱包还会设置 Gas Limit 作为安全边界——超过则失败，但只按实际用量收费。</p>
+      </div>
+
+      <h3>4.4 智能合约：从自动售货机开始</h3>
+
+      <p>"智能合约"在以太坊里的实际形态更像一台<strong>自动售货机</strong>：投入足够金额并选择商品，机器就按照固定规则出货。代码部署后，所有人都能看到它的逻辑；调用时，网络会按代码执行，而不是按某个运营人员的心情执行。</p>
+
+      <p>用户日常接触的去中心化应用（DApp）通常由三层组成：<strong>网页层</strong>（展示界面和组织操作）、<strong>钱包层</strong>（用私钥签名交易）、<strong>合约层</strong>（链上的规则与状态）。真正改变资产状态的步骤发生在钱包签名和合约执行之后。</p>
+
+      <p>EVM 只能稳定处理所有节点都能复现的数据。天气、汇率、比赛结果来自链外，合约无法自行访问网页或 API。<strong>预言机（Oracle）</strong>解决的是"怎样把链外可信数据送上链"的问题：多个数据提供者提交报价，预言机网络聚合后更新链上价格。</p>
+
+      <h3>4.5 Solidity 示例：一个可运行的计数器</h3>
+
+      <p>下面的合约保留一个数字，允许任何人加一，同时只允许部署者把数字归零。它包含理解智能合约所需的主要元素：状态变量（长期保存在链上）、构造函数（部署时执行一次）、msg.sender（当前调用发起者）、require（条件检查，不满足时回滚）、event（在交易收据中写入日志）。</p>
+
+      <p>从源代码到一次成功调用的完整链路：网页组织操作 → 钱包展示并签名 → 合约执行规则 → 收据记录结果 → 网页刷新状态。智能合约还可以在一笔交易中连续调用其他合约，中途失败时所有状态修改一起回滚——这种性质叫作<strong>原子性</strong>。</p>
+
+      <h3>4.6 ERC-20 与授权风险</h3>
+
+      <p>以太坊上的代币通常是一份合约状态。<strong>ERC-20</strong> 是一种通用代币标准，规定了合约应该提供哪些函数和事件。ETH 本身是协议层的原生资产；ERC-20 代币的余额由各自合约管理。</p>
+
+      <p>当 Alice 想在去中心化交易所兑换代币时，交易所合约不能直接从 Alice 钱包拿钱，必须先让 Alice 调用 <code>approve</code> 函数进行授权。授权成功后，交易所合约可以在额度范围内调用 <code>transferFrom</code> 转出代币。</p>
+
+      <div class="mz-myth">
+        <div class="mz-myth-row false">
+          <div class="label">误解</div>
+          <div class="body">网页关闭、钱包断开连接后，授权就自动失效了。</div>
+        </div>
+        <div class="mz-myth-row true">
+          <div class="label">实际</div>
+          <div class="body">链上授权权限长期存在，不会因为关闭网页而消失。钓鱼网站最常见的获利方式是骗用户给恶意地址无限 approve，之后在用户不知情的情况下转走资产。授权前务必核对网页域名、spender 地址、代币种类和额度。</div>
+        </div>
+      </div>
+
+      <h3>4.7 真实漏洞：The DAO 与重入攻击</h3>
+
+      <p>2016 年，The DAO 是以太坊上一个去中心化风险投资基金。一名攻击者利用合约漏洞，把基金里的 ETH 大量转走，最终导致以太坊第一次硬分叉，也催生了 ETC 与 ETH 两条链。</p>
+
+      <p>漏洞的核心是<strong>重入攻击</strong>：金库合约先发送 ETH 给用户，最后才扣减余额。接收 ETH 的地址可以是一份合约，它收到 ETH 时立刻再次调用提款函数，此时旧余额尚未扣减，第二次检查仍可通过。更稳妥的顺序是<strong>检查—更新—交互</strong>：先扣减余额，最后发送 ETH。</p>
+
+      <div class="mz-further">
+        <div class="mz-further-label">本章要点</div>
+        <ul>
+          <li>以太坊在比特币基础上增加智能合约：链上保存程序和数据，全网节点共同执行同一段代码。</li>
+          <li>账户模型让余额和 nonce 直接挂在地址下，与 UTXO 的"数字钞票"思路形成对照。</li>
+          <li>Gas 衡量链上计算成本。Base Fee 动态调节拥堵并被销毁，Priority Fee 激励优先打包。失败交易也收费。</li>
+          <li>ERC-20 授权把 spender 和额度长期写入合约，网页关闭后权限依然存在——最常见的被盗路径之一。</li>
+          <li>The DAO 事件展示重入攻击的破坏力：先更新状态、再与外部交互，是合约设计的重要纪律。</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- ═══════════ 第五章 · 共识机制 ═══════════ -->
+
+    <section class="mz-chapter" id="ch5">
+      <div class="mz-chapter-marker">
+        <span class="mz-chapter-num">05</span>
+        <span class="mz-chapter-label">第五章</span>
+      </div>
+      <h2 id="ch5-title">共识机制</h2>
+
+      <h3>5.1 为什么 PoW 耗电</h3>
+
+      <p>某个夏天的晚上，宿舍楼跳闸了。走廊尽头那间宿舍插了四台"矿机"——机箱轰鸣，显卡发烫，电费账单比房租还厚。那台机器正在做的工作，翻译成一句话就是：反复尝试一个数字，让区块头的哈希值小于某个目标。</p>
+
+      <p><strong>工作量证明</strong>（PoW）想解决的问题很直接：在开放网络里，下一批交易该由谁来打包？PoW 的回答是：想获得提议权，先付出真实的计算成本和电力成本。创建一个身份免费，但获得"抽签次数"需要矿机和电费，这让"一人多号"无法改变游戏规则。</p>
+
+      <p>但全球矿工全年消耗的电力相当于一个中等国家的用电量。有没有办法用另一种"稀缺资源"替代电力？<strong>权益证明</strong>（PoS）把抵押品从"电费+矿机"换成了"锁定在链上的资产+违规即罚没"。以太坊在 2022 年完成 The Merge，正是从 PoW 切换到了 PoS。</p>
+
+      <h3>5.2 共识问题：开放网络如何达成一致</h3>
+
+      <p><strong>共识机制</strong>是一套让互不信任的节点对"交易顺序和共同历史"收敛到同一版本的规则。它要处理三类现实麻烦：消息到达顺序不同、节点会掉线、有人故意作恶（双花）。在去中心化系统里，共识机制必须同时完成两件事：选出下一个区块的提议者；让其他节点能够独立验证并在多条分支里选出共同认可的那一条。</p>
+
+      <h3>5.3 PoW 的直觉与代价</h3>
+
+      <p>比特币矿工的工作是一个循环：拿到当前链头 → 选一批交易组成候选区块 → 不断改 Nonce 算哈希 → 谁先找到合格哈希就广播新区块。每次哈希都是独立抽奖，拥有全网 10% 算力的矿工长期来看大约能找到 10% 的区块。</p>
+
+      <p>PoW 的安全不是来自"算题难"，而是来自<strong>重做历史很贵</strong>。攻击者想把已确认的交易回滚，必须从那个区块开始重新计算一条工作量更大的链。节点先排除违规区块，再选择累计工作量最大的有效链。</p>
+
+      <p>PoW 的代价：为了让"攻击历史"变得昂贵，诚实网络必须持续消耗真实的电力和硬件。偶尔出现两名矿工几乎同时找到合格区块时，网络短暂分叉，随后由累计工作量自动解决。</p>
+
+      <h3>5.4 PoS 的直觉：押金 + 惩罚</h3>
+
+      <p>PoW 用电力当抵押品，PoS 换了一种思路：用锁定的资产当抵押品，用惩罚规则防止作弊。要参与共识，先往协议里锁定一定数量的 ETH 作为<strong>质押</strong>（Stake）。诚实履行职责获得奖励；作恶或严重失职，协议会扣掉部分甚至全部押金——<strong>罚没</strong>（Slashing）。</p>
+
+      <p>以太坊 PoS 把时间切成约 12 秒一个的<strong>时隙</strong>（Slot）。协议为每个 Slot 指定一名区块提议者，并把一部分验证者分配到委员会。32 个 Slot 组成一个<strong>纪元</strong>（Epoch），约 6.4 分钟。</p>
+
+      <div class="mz-calc">
+        <span class="line">Slot 开始</span>
+        <span class="line">  ├─ 1 名提议者：收集交易、执行、提出区块</span>
+        <span class="line">  ├─ 委员会：检查区块、签署证明票</span>
+        <span class="line">  ├─ 所有节点：按质押权重更新链头</span>
+        <span class="line">  └─ 下一个 Slot 继续</span>
+        <p class="note">当某个检查点获得至少三分之二总质押权重的支持时，它先成为"已证明"；后继检查点再次获得足够支持后，它就成为"已最终确定"。回滚一个已最终确定的检查点，攻击者必须让大量验证者面临罚没。</p>
+      </div>
+
+      <h3>5.5 以太坊 The Merge</h3>
+
+      <p>以太坊 2015 年上线时采用 PoW。2022 年 9 月完成 <strong>The Merge</strong>（合并）：执行层继续处理交易和运行 EVM，共识层（信标链）负责 PoS 的提议、投票和最终性。以太坊基金会当时估算，协议相关能耗下降约 99.95%。Gas 机制保留——Gas 衡量执行和存储资源，由执行层负责，与 PoW 还是 PoS 没有直接关系。</p>
+
+      <h3>5.6 Pectra 升级与验证者经济学</h3>
+
+      <p>以太坊 <strong>Pectra 升级</strong>于 2025 年 5 月 7 日激活。最受关注的改动是 EIP-7251：把单个验证者的<strong>最大有效余额</strong>从 32 ETH 提高到 2048 ETH。但<strong>最低激活余额仍然是 32 ETH</strong>——进入门槛没有降低，只是允许已在集合里的验证者合并质押。</p>
+
+      <div class="mz-tablewrap">
+        <table>
+          <thead><tr><th>维度</th><th>PoW（比特币）</th><th>PoS（以太坊）</th></tr></thead>
+          <tbody>
+            <tr><td>争取提议权</td><td>矿工竞争计算哈希</td><td>协议按随机性安排提议者</td></tr>
+            <tr><td>主要稀缺资源</td><td>矿机、电力和算力</td><td>锁定并承担风险的 ETH</td></tr>
+            <tr><td>分支选择</td><td>累计工作量最大的有效链</td><td>证明票的质押权重（LMD-GHOST）</td></tr>
+            <tr><td>作恶代价</td><td>浪费电力、失去奖励</td><td>质押被 Slashing、强制退出</td></tr>
+            <tr><td>最终稳定</td><td>后续区块叠加工作量</td><td>检查点获三分之二质押支持</td></tr>
+            <tr><td>能源消耗</td><td>高</td><td>低</td></tr>
+            <tr><td>集中化风险</td><td>大型矿场、矿池</td><td>大型质押服务</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>5.7 共识的边界</h3>
+
+      <p>共识机制能解决"共同历史"问题，但不能解决所有问题。<strong>Nothing-at-stake</strong>：在朴素 PoS 里，验证者对多个分叉都投票没有损失。以太坊用 Slashing 应对——"两边下注"不再免费。<strong>长程攻击</strong>：攻击者掌握很久以前的验证者私钥，从旧检查点构造长链。以太坊采用弱主观性缓解——新节点使用近期可信检查点开始同步。<strong>MEV</strong>（最大可提取价值）：区块提议者通过控制交易顺序获得的额外收益。提议者-构建者分离（PBS）是常见缓解方向。</p>
+
+      <div class="mz-further">
+        <div class="mz-further-label">本章要点</div>
+        <ul>
+          <li>PoW 用电力和硬件成本让攻击历史变得昂贵。PoS 用锁定的 ETH 和罚没规则替代电力。</li>
+          <li>以太坊 The Merge 在保留执行层状态的前提下切换共识，能耗下降约 99.95%。</li>
+          <li>Pectra 升级（2025-05-07）把最大有效余额从 32 ETH 提高到 2048 ETH，但最低激活余额仍为 32 ETH。</li>
+          <li>共识边界：能惩罚仍在系统中的作恶者，需要弱主观性抵御长程攻击，无法消除 MEV 的排序权力影响。</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- ═══════════ 第六章 · 加密货币生态 ═══════════ -->
+
+    <section class="mz-chapter" id="ch6">
+      <div class="mz-chapter-marker">
+        <span class="mz-chapter-num">06</span>
+        <span class="mz-chapter-label">第六章</span>
+      </div>
+      <h2 id="ch6-title">加密货币生态</h2>
+
+      <h3>6.1 为什么需要稳定币</h3>
+
+      <p>比特币可以在一天之内涨跌 10%。对投机者来说是机会；对真正想用加密货币付款、借贷或结算的人来说，这是噩梦。稳定币试图解决这个问题：它锚定法币（最常见是美元），让一枚代币尽量等于一美元。</p>
+
+      <p>目前主流稳定币大致分三类：</p>
+
+      <div class="mz-tiers">
+        <div class="mz-tier">
+          <div class="amt">法币抵押型<small>USDT、USDC</small></div>
+          <div class="got">
+            <p>发行商在银行里存着美元或短期国债，链上每发行一枚稳定币，背后就有一美元储备。赌的是发行商有没有真钱。</p>
+          </div>
+        </div>
+        <div class="mz-tier">
+          <div class="amt">加密资产抵押型<small>DAI</small></div>
+          <div class="got">
+            <p>用户把 ETH 等波动资产锁进智能合约，按低于抵押品价值的比例生成稳定币。赌的是抵押品会不会暴跌。</p>
+          </div>
+        </div>
+        <div class="mz-tier">
+          <div class="amt">算法型<small>UST/LUNA（已崩）</small></div>
+          <div class="got">
+            <p>不依赖外部抵押，通过一套规则和两个代币之间的兑换关系维持价格。赌的是市场愿不愿意一直接盘。</p>
+          </div>
+        </div>
+      </div>
+
+      <h3>6.2 USDT 与 USDC：谁发行了链上的美元</h3>
+
+      <p>USDT 由 Tether 公司发行，USDC 由 Circle 公司发行。它们都是法币抵押型稳定币，但储备构成、披露方式和合规路径并不相同。一次大额发行大致是这样发生的：机构汇款到发行商银行账户 → 链上铸造相应数量代币 → 发送到机构链上地址。银行体系里多了储备，区块链上多了代币。</p>
+
+      <p>这套系统包含两个市场：<strong>一级市场</strong>连接发行商和合格客户，负责铸造与赎回；<strong>二级市场</strong>连接普通买家和卖家，价格由交易所订单和链上资金池共同形成。</p>
+
+      <p>同一个 USDT 为什么会出现在多条网络？USDT 可以按照不同区块网络的规则存在。Ethereum、Tron、Solana 等网络各自维护账本。钱包里都显示“USDT”，背后的记录可能位于完全不同的网络。发送方使用的网络、收款平台支持的网络和对应代币必须一致。</p>
+      
+      <figure class="mz-figure">
+        <img src="assets/images/stablecoin.png" alt="Tether (USDT) 标志" width="960" height="960" loading="lazy" decoding="async">
+        <figcaption>Tether (USDT) 标志——目前市值最大的稳定币</figcaption>
+      </figure>
+      
+      <h3>6.3 DAI：为什么要抵押更多才能借出更少</h3>
+
+      <p>假设 ETH 市价 2,000 美元，持有者看好长期价值但需要 1,000 美元稳定资金。可以把 ETH 锁进 Maker 协议的金库，生成 1,000 枚 DAI。为什么价值 2,000 美元的 ETH 只能支持较少的 DAI？因为 ETH 会波动，协议只能依靠已锁住的抵押品保护债权。假设金库要求抵押率至少 150%，借出 1,000 DAI 需要至少值 1,500 美元的抵押品，多出来的部分是价格下跌的缓冲垫。</p>
+
+      <p>当预言机报告 ETH 跌到 1,450 美元，抵押率降到 145%，低于清算线。Maker 协议把这类金库标记为可清算，按规则拍卖抵押品。2020 年 3 月的市场剧烈波动就曾让 Maker 出现坏账。</p>
+
+      <h3>6.4 算法稳定币：当稳定依赖另一枚波动代币</h3>
+
+      <p>TerraUSD（UST）曾使用 UST 和 LUNA 之间的兑换机制维持价格。2022 年 5 月，UST 出现大规模卖压，越来越多持有人用 UST 换取 LUNA，大量新 LUNA 进入市场。LUNA 价格下跌后，同样一美元的赎回需要生成更多 LUNA，卖压继续增加。两枚代币一起进入了死亡螺旋。这个案例给出了一个清楚的判断方法：稳定机制承诺支付一美元价值时，要继续追问这份价值来自什么资产，谁愿意接手，以及恐慌时兑换通道还能否工作。</p>
+
+      <h3>6.5 DeFi：从银行借贷到智能合约借贷</h3>
+
+      <p>去中心化金融（DeFi）用智能合约代替银行的部分功能。存款人提供资金，借款人提供超额抵押，预言机报告价格，清算人处理危险债务。协议持续从预言机获得市场价格，借款利率随资金池的紧张程度变化。</p>
+
+      <figure class="mz-figure">
+        <img src="assets/images/defi.jpg" alt="DeFi 技术栈架构图" width="1200" height="617" loading="lazy" decoding="async">
+        <figcaption>DeFi 技术栈架构（by Fabian Schär）</figcaption>
+      </figure>
+
+      <div class="mz-calc">
+        <span class="line">利用率 = 已借出资金 / 资金池总存款</span>
+        <p class="note">资金越紧张，借款通常越贵。真实协议会使用更复杂的分段曲线和治理参数。</p>
+      </div>
+
+      <h3>6.6 AMM 与流动性池</h3>
+
+      <p>自动做市商（AMM）让用户可以直接与资金池交易，无需等待指定对手方。池中预先放着两种资产，交易者直接和池子交换。Uniswap V2 一类资金池常用恒定乘积：x × y = k。交易改变两边数量，公式自动给出新的兑换比例。交易量接近池子规模时，价格会明显移动，这叫<strong>价格影响</strong>。</p>
+
+      <p>资金池由<strong>流动性提供者</strong>（LP）出资。他们按份额获得交易手续费，也承担资产比例变化带来的风险。当 ETH 大涨时，LP 最终持有的 ETH 变少、USDC 变多，与单纯持有原资产相比的组合价值差额常被称为<strong>无常损失</strong>。</p>
+
+      <h3>6.7 NFT：所有权记录 vs 图片本身</h3>
+
+      <p><strong>NFT</strong>（非同质化代币）给数字物品提供了一个链上凭证。每个代币都有自己的编号，可以分别记录持有人。准确身份由"区块链网络、合约地址和 tokenId"共同确定。一枚比特币的最小单位与另一枚通常可以互换，NFT 的编号各不相同，适合表示门票、会员凭证或某件作品的链上登记。</p>
+
+      <p>把大图片直接存进区块链成本很高。常见 NFT 合约会在链上保存一个元数据地址，元数据再指向图片、视频或其他文件。这个地址可能指向普通网站（关闭后链接失效），也可能指向 IPFS（需要持续有节点保存文件）。购买前应看清代币指向哪里、文件由谁长期保存。</p>
+
+      <figure class="mz-figure">
+        <img src="assets/images/nft.jpg" alt="NFT 概念艺术" width="800" height="432" loading="lazy" decoding="async">
+        <figcaption>NFT 概念艺术——链上凭证不等于文件本身</figcaption>
+      </figure>
+
+      <div class="mz-timeline">
+        <div class="mz-tl-item">
+          <div class="mz-tl-year">2017</div>
+          <h3>CryptoPunks</h3>
+          <p>一万个 24×24 像素头像，免费领取。证明了区块链可以给数字物品赋予稀缺编号和所有权记录。</p>
+        </div>
+        <div class="mz-tl-item">
+          <div class="mz-tl-year">2021</div>
+          <h3>BAYC</h3>
+          <p>把 NFT 从"像素头像"升级为"社区会员证"。购买一只无聊猿不仅获得图片，还获得进入专属社群的门票。</p>
+        </div>
+        <div class="mz-tl-item">
+          <div class="mz-tl-year">2021–2022</div>
+          <h3>OpenSea 与市场波动</h3>
+          <p>降低交易门槛，也暴露了假货、洗盘交易和版税绕开等问题。高价成交、名人宣传和稀缺叙事吸引了大量买家，也出现了项目方离场和盗用作品。</p>
+        </div>
+      </div>
+
+      <div class="mz-further">
+        <div class="mz-further-label">本章要点</div>
+        <ul>
+          <li>稳定币在波动的加密世界里提供稳定的计价和转账工具。法币抵押型依赖储备和赎回通道，加密资产型依赖超额抵押和清算，算法型依赖市场信心。</li>
+          <li>DeFi 用智能合约代替银行部分功能。可组合性让协议像积木一样拼接，也把风险一层层传递。闪电贷把"借、用、还"压缩到一笔交易里。</li>
+          <li>NFT 是链上凭证，不等于文件、不等于版权、不等于市场价值。真正决定 NFT 价值的是代币连接了哪些持续权益、内容能否长期访问。</li>
+          <li>沿着资金流和权利链追踪：钱从谁那里来，经过哪个合约，由什么价格决定安全线，出现亏损时由谁先承担。</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- ═══════════ 第七章 · 边界与 Web3 ═══════════ -->
+
+    <section class="mz-chapter" id="ch7">
+      <div class="mz-chapter-marker">
+        <span class="mz-chapter-num">07</span>
+        <span class="mz-chapter-label">第七章</span>
+      </div>
+      <h2 id="ch7-title">边界与 Web3</h2>
+
+      <h3>7.1 远航公司真的需要区块链吗</h3>
+
+      <p>小林是中国科大软件学院的大二学生。期末作业要求他给一家虚构的供应链公司设计"数字化改造方案"。他的第一个念头是：给公司做一条联盟链，把提单、报关单、物流节点都写上去。助教问了三个问题：客户之间真的互不信任到没法指定一个共同维护的数据库管理员吗？货物状态上链之前谁保证它真实？如果海关临时要求改一笔报关数据，区块链不允许回滚，怎么办？</p>
+
+      <p>小林发现"用区块链"和"需要区块链"之间，还隔着一整片需要仔细判断的边界。<strong>技术选型应该由问题结构决定，而不是由流行词决定。</strong></p>
+
+      <h3>7.2 区块链适合什么</h3>
+
+      <p>区块链最适合的场景：多方需要共享状态，各方互不信任，又难以指定一个共同接受的中心维护者。它还有另一个价值：<strong>公开可验证</strong>——任何人都可以运行全节点独立验证，不满意规则可以带着私钥和资产"退出"。</p>
+
+      <div class="mz-calc">
+        <span class="line">第四层：法律与市场</span>
+        <span class="line">    ↓ 处理链外权利、合同、监管和资产交割</span>
+        <span class="line">第三层：用户入口</span>
+        <span class="line">    ↓ 钱包、交易所、稳定币发行商、网页前端</span>
+        <span class="line">第二层：应用与桥接</span>
+        <span class="line">    ↓ 智能合约、跨链桥、预言机</span>
+        <span class="line">第一层：共识网络</span>
+        <span class="line">    ↓ 节点、共识规则、区块历史</span>
+        <p class="note">一层表现良好，无法自动替其他层担保。比特币的共识规则可以正常运行，同时某家交易所仍可能挪用客户资产。</p>
+      </div>
+
+      <h3>7.3 区块链不适合什么</h3>
+
+      <div class="mz-terms">
+        <div class="mz-term">
+          <div class="t">速度边界<small>Speed</small></div>
+          <div class="d">公开区块链让许多节点共同保存和验证数据，带来重复计算和网络传播成本。比特币每秒处理个位数交易，远低于中心化支付网络。Layer 2 把大量执行移到链下，但增加了桥接、排序器和退出规则等新依赖。</div>
+        </div>
+        <div class="mz-term">
+          <div class="t">隐私边界<small>Privacy</small></div>
+          <div class="d">地址本身通常没有姓名，但交易历史长期公开。一旦地址与个人建立联系，分析者可以沿着历史资金流追踪。区块链常被称为"伪匿名"系统——不是完全匿名，而是"匿名到被关联为止"。</div>
+        </div>
+        <div class="mz-term">
+          <div class="t">链外信息边界<small>Oracle Problem</small></div>
+          <div class="d">智能合约只能处理所有节点都能复现的数据。天气、汇率、货物是否真实到港都来自链外。区块链不能自动让链外世界变真实——它可以记录"某一方声称货物已签收"，但不能代替签收行为本身。</div>
+        </div>
+        <div class="mz-term">
+          <div class="t">用户边界<small>User Responsibility</small></div>
+          <div class="d">自托管钱包把资产控制权交给用户。助记词丢失后通常缺少统一的找回机构，泄露后攻击者可以直接转走资产。账户抽象尝试通过智能合约定义账户规则，支持社交恢复等更灵活的操作。</div>
+        </div>
+      </div>
+
+      <h3>7.4 不可能三角</h3>
+
+      <p>区块链社区常提到：<strong>去中心化、安全、可扩展性，三者只能同时满足两个</strong>。这不是严格的数学定理，而是一种工程观察。比特币押注去中心化和安全，代价是交易量和确认速度。高性能公链押注可扩展性和安全，代价是用户更难独立验证。Layer 2 试图把"结算安全"留在主链，把"执行速度"放到上层。</p>
+
+      <h3>7.5 Web3 的承诺与炒作</h3>
+
+      <p><strong>Web1</strong>（1990s–2000s）是"只读"互联网。<strong>Web2</strong>（2000s 中期至今）是"读写"互联网，但数据、关系、收入和规则都掌握在平台手里。<strong>Web3</strong> 最早由 Gavin Wood 在 2014 年提出，愿景是用户直接控制数字资产和数据，用开放协议在应用之间转移。</p>
+
+      <p>区块链项目常在产品成熟前发行可交易代币，代币价格会把未来预期提前变成今天的数字。2000 年互联网泡沫破裂，但宽带、搜索引擎和电子商务的技术进步是真实的；2017 年 ICO 泡沫中很多项目归零，但稳定币、自动做市商等基础设施的原型也开始出现。<strong>泡沫能够与技术进步同时存在。</strong></p>
+
+      <div class="mz-further">
+        <div class="mz-further-label">本章要点</div>
+        <ul>
+          <li>区块链最适合的场景：多方需要共享状态、互不信任、难以指定中心维护者。不适合追求高速度、强隐私、大量链外信息或传统数据库可高效完成的场景。</li>
+          <li>四层视角：共识网络 → 应用与桥接 → 用户入口 → 法律与市场。一层表现良好无法替其他层担保。</li>
+          <li>不可能三角是工程观察，不是数学定理。不同项目做不同取舍，没有 universally 最优答案。</li>
+          <li>Web3 愿景回应了真实问题，但被大量炒作和投机包裹。判断项目要看技术能力、真实使用和权力分布。</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- ═══════════ 第八章 · 安全实战 ═══════════ -->
+
+    <section class="mz-chapter" id="ch8">
+      <div class="mz-chapter-marker">
+        <span class="mz-chapter-num">08</span>
+        <span class="mz-chapter-label">第八章</span>
+      </div>
+      <h2 id="ch8-title">安全实战</h2>
+
+      <h3>8.1 小周收到一条私信</h3>
+
+      <p>小周是大二学生。一天晚上，他在技术论坛问了一个问题："如果商家只收 USDT，TRC20 是什么意思？"十分钟后，一条私信弹出来。对方头像带有某交易平台的蓝色标志："检测到您的订单卡在链上，请在十五分钟内完成钱包验证，否则账户会被冻结。"后面附着一个网址，域名和平台官网很像，只是多了一个短横线。</p>
+
+      <p>小周没有点下去。他想起了自己给自己定过的一条规矩：任何需要立刻执行、不能截图给别人看、不能在官网独立找到入口的操作，先停下来。</p>
+
+      <h3>8.2 中国监管时间线</h3>
+
+      <figure class="mz-figure">
+        <img src="assets/images/china-regulation.jpg" alt="中国人民银行总部大楼（北京）" width="800" height="600" loading="lazy" decoding="async">
+        <figcaption>中国人民银行总部大楼（北京）——中国加密货币监管的主要制定者</figcaption>
+      </figure>
+
+      <div class="mz-timeline">
+        <div class="mz-tl-item">
+          <div class="mz-tl-year">2013 年 12 月</div>
+          <h3>比特币被定性为"特定虚拟商品"</h3>
+          <p>五部委发布通知：比特币不是真正货币，而是特定虚拟商品。金融机构不得开展相关业务。</p>
+        </div>
+        <div class="mz-tl-item">
+          <div class="mz-tl-year">2017 年 9 月</div>
+          <h3>ICO 被全面叫停</h3>
+          <p>七部门公告：ICO 定性为"非法公开融资"，涉嫌非法发售代币、非法集资等。</p>
+        </div>
+        <div class="mz-tl-item">
+          <div class="mz-tl-year">2021 年 9 月</div>
+          <h3>全面禁止虚拟货币交易炒作</h3>
+          <p>十部门通知：虚拟货币不具有法偿性，相关业务活动属于非法金融活动。境外交易所向境内提供服务同样非法。</p>
+        </div>
+        <div class="mz-tl-item">
+          <div class="mz-tl-year">2024 年</div>
+          <h3>虚拟资产进入反洗钱视野</h3>
+          <p>两高司法解释：通过虚拟资产交易转移犯罪所得列为洗钱方式之一。反洗钱法修订自 2025 年 1 月 1 日施行。</p>
+        </div>
+        <div class="mz-tl-item">
+          <div class="mz-tl-year">2026 年 2 月</div>
+          <h3>银发〔2026〕42 号文</h3>
+          <p>八部门发布新规，废止 2021 年 237 号文。新增 RWA 代币化监管。截至 2026 年 7 月 13 日的现行核心文件。</p>
+        </div>
+      </div>
+
+      <h3>8.3 42 号文的核心边界</h3>
+
+      <p>42 号文直接列出比特币、以太币、泰达币等虚拟货币，明确它们<strong>不具有法偿性</strong>，不应且不能作为货币在市场上流通使用。以下业务被明确列为非法金融活动：境内法币与虚拟货币兑换、虚拟货币之间兑换、作为中央对手方买卖、信息中介和定价服务、代币发行融资、相关金融产品交易等。</p>
+
+      <div class="mz-myth">
+        <div class="mz-myth-row false">
+          <div class="label">误解</div>
+          <div class="body">普通大学生持有钱包、偶尔转账就会被认定为"经营"。</div>
+        </div>
+        <div class="mz-myth-row true">
+          <div class="label">实际</div>
+          <div class="body">关键不在于有没有钱包，而在于有没有把虚拟货币相关活动当作业务反复开展、面向不特定对象并从中获利。出于学习目的在测试网练习、阅读白皮书、持有少量虚拟货币但不用于交易炒作，通常被理解为个人行为。但长期反复为他人兑换、发布广告撮合、代收代付等则偏向经营行为。</div>
+        </div>
+      </div>
+
+      <h3>8.4 Sepolia 测试网：零风险的第一次接触</h3>
+
+      <figure class="mz-figure">
+        <img src="assets/images/hardware-wallet.jpg" alt="Trezor Safe 7 硬件钱包" width="600" height="800" loading="lazy" decoding="async">
+        <figcaption>Trezor Safe 7 硬件钱包——私钥始终保存在硬件设备内</figcaption>
+      </figure>
+
+      <p>小周决定先不碰真实资金，用 <strong>Ethereum Sepolia 测试网</strong>练习。测试网按照与主网相近的方式处理账户、签名、Gas 和区块，但测试资产没有现实价值。</p>
+
+      <p>他安装官方钱包、创建两个账户（Sepolia-A 和 Sepolia-B）、从水龙头领取测试 ETH、从 A 向 B 发送 0.001 测试 ETH、用区块浏览器逐项核对。然后继续完成一笔测试 USDC 转账，看到交易的 To 字段显示 USDC 合约地址，Token Transfers 区域才列出代币转移。</p>
+
+      <div class="mz-further">
+        <div class="mz-further-label">本章要点</div>
+        <ul>
+          <li>这个练习建立了三个重要认识：代币符号可以重复，网络与合约地址共同确定具体资产；代币余额由合约保存；发送代币仍需所在网络的原生资产支付 Gas。</li>
+          <li>助记词是恢复钱包的"总密码"。离线备份、分离存放、在干净设备验证。任何索要助记词的人都是骗子。</li>
+          <li>识别假代币：不要信任名称和图标，要信任"网络 + 官方合约地址 + 发行方声明"的组合。</li>
+          <li>Tether 找回政策门槛很高：最低 1,000 美元，费用最高为找回金额的 10% 或 1,000 美元。不是撤销按钮。</li>
+          <li>常见骗局：假客服（主动私信 + 紧迫感 + 索要凭证）、钓鱼网站、地址投毒、貔貅盘、虚假兼职、二次追回骗局。第一反应永远是停止。</li>
+        </ul>
+      </div>
+
+      <div class="mz-tablewrap">
+        <table>
+          <thead><tr><th>当前情况</th><th>立即执行的动作</th></tr></thead>
+          <tbody>
+            <tr><td>只收到陌生消息或链接</td><td>停止交流，从自己找到的官网重新核实</td></tr>
+            <tr><td>网页索要助记词、私钥或付款</td><td>关闭网页，不输入、不签名、不付款</td></tr>
+            <tr><td>已连接陌生网页</td><td>断开连接，检查待处理交易和已有授权</td></tr>
+            <tr><td>已签署看不懂的授权</td><td>停止后续操作，从钱包官方入口检查授权对象</td></tr>
+            <tr><td>助记词或私钥已泄露</td><td>把旧钱包视为失去控制，在干净环境中建立新钱包</td></tr>
+            <tr><td>已发生资金损失</td><td>停止追加付款，保存原始证据，通过正式渠道求助</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="mz-asof">数据核实时点：2026 年 7 月。主要依据银发〔2026〕42 号文及中国人民银行答记者问。法规可能继续变化，真实事项应重新查看最新官方文本。USDT 资料来自 Tether 官方服务条款、费用页面、支持网络页面与找回规则。测试网练习依据 Ethereum 官方网络说明、Circle 测试网水龙头与测试 USDC 合约地址。测试资产只用于学习。</div>
+    </section>
+
+    <p class="mz-credits">本书为个人知识整理性质的科普读物，不构成任何投资建议（not financial advice）。文中提及的一切技术、协议、代币均为教学示例，不构成推荐。区块链和加密货币领域存在显著的技术风险、法律风险和市场风险，决策须独立。<br>数据核实时点：2026 年 7 月（个别更早时点已在正文标注）。</p>
+
+  </article>
 </main>
 
-<footer>
-  <div class="set">
-    <span>区块链与加密货币：从原理到生态</span>
-    <span>2026 · ZH-CN</span>
-  </div>
-  <div class="set">
-    <span>Mav</span>
-  </div>
-</footer>
-<div class="search-backdrop" id="search-overlay" role="dialog" aria-modal="true" aria-label="搜索" hidden>
-  <div class="search-modal">
-    <div class="search-input-wrap">
-      <input type="search" class="search-input" placeholder="搜索内容..." aria-label="搜索内容" autocomplete="off">
-      <kbd>ESC</kbd>
-    </div>
-    <div class="search-results" role="listbox" aria-label="搜索结果"></div>
-  </div>
-</div>
+<script>
+(function () {
+  var bar = document.getElementById('progress-bar');
+  var links = Array.prototype.slice.call(
+    document.querySelectorAll('.nav-links a[href^="#"]')
+  );
+  var sections = links
+    .map(function (a) {
+      return { link: a, el: document.getElementById(a.getAttribute('href').slice(1)) };
+    })
+    .filter(function (s) { return s.el; });
 
-<script src="assets/script.js"></script>
+  var NAV_OFFSET = 96;
+  var ticking = false;
+
+  function update() {
+    ticking = false;
+    var h = document.documentElement;
+
+    if (bar) {
+      var max = h.scrollHeight - h.clientHeight;
+      var pct = max > 0 ? (h.scrollTop / max) * 100 : 0;
+      bar.style.width = pct + '%';
+    }
+
+    if (!sections.length) return;
+    var current = null;
+    for (var i = 0; i < sections.length; i++) {
+      if (sections[i].el.getBoundingClientRect().top <= NAV_OFFSET) current = sections[i];
+      else break;
+    }
+    if (h.scrollTop + h.clientHeight >= h.scrollHeight - 4) {
+      current = sections[sections.length - 1];
+    }
+    for (var j = 0; j < sections.length; j++) {
+      sections[j].link.classList.toggle('active', sections[j] === current);
+    }
+  }
+
+  function onScroll() {
+    if (!ticking) { ticking = true; requestAnimationFrame(update); }
+  }
+
+  window.addEventListener('scroll', onScroll, { passive: true });
+  window.addEventListener('resize', onScroll, { passive: true });
+  update();
+})();
+</script>
+
 </body>
 </html>

@@ -34,7 +34,7 @@ const KNOWLEDGE_INDEX = path.join(OUTPUT_BASE, 'index.html');
 
 // 已迁移为手写图文单页书的源（Mav/knowledge/investing-101/），md 源仅作备份：
 // 任何构建都会覆盖手写单页，必须在入口硬拦截。
-const FORBIDDEN_SOURCES = new Set(['Investing-101']);
+const FORBIDDEN_SOURCES = new Set(['Investing-101', 'Blockchain-Crypto']);
 
 function warnIfBookHasNoEntry(slug, book) {
   if (book.catalog === false || !fs.existsSync(KNOWLEDGE_INDEX)) return;
