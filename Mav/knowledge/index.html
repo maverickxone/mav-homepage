@@ -31,11 +31,17 @@
     课内课外学过的东西，整理成可读的形式。每个主题是一个独立的小站，点进去就能读。
   </p>
 
-  <!-- View Toggle -->
-  <div class="view-toggle">
-    <button class="active" data-view="single">独立书籍</button>
-    <button data-view="series">系列讲义</button>
-    <button data-view="notes">手记</button>
+  <!-- View Toggle and Search -->
+  <div class="view-toggle-container">
+    <div class="view-toggle">
+      <button class="active" data-view="single">独立书籍</button>
+      <button data-view="series">系列讲义</button>
+      <button data-view="notes">手记</button>
+    </div>
+    <div class="knowledge-search">
+      <svg class="search-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+      <input type="text" id="knowledge-search-input" placeholder="搜索书名..." autocomplete="off">
+    </div>
   </div>
 
   <!-- ═══════════ 单册 View ═══════════ -->
@@ -46,109 +52,109 @@
       <p class="section-note">标了「图文单页」的书是单页图文阅读，其余是侧栏目录的分章节书。</p>
       <div class="knowledge-grid">
 
-        <a class="knowledge-card" href="boarding-pass-aviation/index.html">
+        <a class="knowledge-card" href="boarding-pass-aviation/index.html" data-keywords="飞机 航班 航空 机票 飞行 民航 机场">
           <span class="tag">课外 · 图文单页 · 七章</span>
           <h3>从一张登机牌讲航司、舱位与里程</h3>
           <p>一张登机牌上印着十几个字段，大多数人只看三个。从航班号前那两个字母、ECONOMY 旁边孤零零的一个 Y、右下角空着的 MILES 栏出发，讲全球航线网络与航权、四十多家航空公司的身世、舱位与票价的真相、机型识别与巨无霸的黄昏、里程与联盟这门真正赚钱的生意、行李与货运，以及坐飞机到底该不该怕。</p>
         </a>
 
-        <a class="knowledge-card" href="exchange-rate-purchasing-power/index.html">
+        <a class="knowledge-card" href="exchange-rate-purchasing-power/index.html" data-keywords="经济 货币 购买力 宏观 价格 钱 财务 钱怎么花">
           <span class="tag">课外 · 图文单页 · 九章</span>
           <h3>从一瓶矿泉水讲汇率、物价与工资</h3>
           <p>东京两千日元的出租车、新加坡二十块的可乐、美国超市里低得离谱的标价——这些对不上账的价格背后是同一套机制。从汇率到底是什么讲到购买力平价、可贸易品与不可贸易品，用中美日新四国的真实工资数据，给出一把能跨国比较的尺子：时间价格。</p>
         </a>
 
-        <a class="knowledge-card" href="bluetooth-airpods/index.html">
+        <a class="knowledge-card" href="bluetooth-airpods/index.html" data-keywords="耳机 苹果 降噪 硬件 tws 听歌 数码 科技 音质">
           <span class="tag">课外 · 图文单页 · 五章</span>
           <h3>从 AirPods 讲蓝牙耳机</h3>
           <p>从一次华为 FreeBuds 换 AirPods 的降噪落差出发，讲透蓝牙协议、AirPods 六代与苹果生态、真无线耳机的工程难点、几大品牌的设计哲学，最后聊清入耳式和头戴式的物理天花板。</p>
         </a>
 
-        <a class="knowledge-card" href="guns-terrorism/index.html">
+        <a class="knowledge-card" href="guns-terrorism/index.html" data-keywords="武器 战争 军事 射击 安全 治安 防暴 警察">
           <span class="tag">课外 · 图文单页 · 六章</span>
           <h3>从格洛克讲枪械与恐怖袭击</h3>
           <p>从美国靶场第一次打格洛克和左轮出发，讲透手枪、步枪、冲锋枪、狙击枪的分类与精度取舍，警察为什么蹲在门后、门到底挡不挡子弹，慕尼黑、莫斯科、别斯兰、巴塔克兰几场人质围攻，最后拆一遍中美及各国的枪支管控现实。</p>
         </a>
 
-        <a class="knowledge-card" href="rag/index.html">
+        <a class="knowledge-card" href="rag/index.html" data-keywords="大模型 llm 人工智能 向量 数据库 prompt 提示词 开发">
           <span class="tag">AI · 工程实践 · 7 章</span>
           <h3>检索增强生成（RAG）</h3>
           <p>从大语言模型的知识边界讲到检索、切块、重排与评估，最后两百行代码手搓一个知识库问答系统。</p>
         </a>
 
-        <a class="knowledge-card" href="robogame2026/index.html">
+        <a class="knowledge-card" href="robogame2026/index.html" data-keywords="单片机 硬件 比赛 控制 自动 电路 机械 c语言 底层">
           <span class="tag">工程实践 · 嵌入式 · 机器人</span>
           <h3>RoboGame 2026：从命令到车轮</h3>
           <p>跟随一条运动命令，读懂 STM32 下位机的通信、协议、麦轮控制、项目进度与后续开发。</p>
         </a>
 
-        <a class="knowledge-card" href="claude-code/index.html">
+        <a class="knowledge-card" href="claude-code/index.html" data-keywords="ai 编程 助手 终端 命令行 效率 自动化 开发">
           <span class="tag">课外 · 工具</span>
           <h3>Claude Code 入门指南</h3>
           <p>6 章 + 速查表，从零开始理解这个终端里的 AI agent。</p>
         </a>
 
-        <a class="knowledge-card" href="money-bank/index.html">
+        <a class="knowledge-card" href="money-bank/index.html" data-keywords="经济 宏观 央行 降息 存款 贷款 准备金 钱 财务">
           <span class="tag">课外 · 金融</span>
           <h3>银行体系与货币系统</h3>
           <p>从中国银行体系到美元、欧洲与全球金融博弈，建立理解现实经济的框架。</p>
         </a>
 
-        <a class="knowledge-card" href="investing-101/index.html">
+        <a class="knowledge-card" href="investing-101/index.html" data-keywords="理财 搞钱 财富 股市 收益 风险 财务 基金 挣钱">
           <span class="tag">课外 · 金融 · 图文单页</span>
           <h3>投资入门：从一股股票到一套认知</h3>
           <p>写给刚满 18 岁的大学生：股票、上市、债券、黄金、基金，一路回答一个问题——收益从哪里来？</p>
         </a>
 
-        <a class="knowledge-card" href="bite-to-byte-硬件篇/index.html">
+        <a class="knowledge-card" href="bite-to-byte-硬件篇/index.html" data-keywords="电脑 硬件 显卡 内存 固态 硬盘 科普 组装 冯诺依曼">
           <span class="tag">课外 · 计算机</span>
           <h3>电脑怎么工作的</h3>
           <p>给大一新生的计算机原理课，从存储、CPU、GPU 到操作系统和硬件选购。</p>
         </a>
 
-        <a class="knowledge-card" href="blockchain-crypto/index.html">
+        <a class="knowledge-card" href="blockchain-crypto/index.html" data-keywords="币圈 炒币 虚拟币 挖矿 智能合约 密码学 btc eth">
           <span class="tag">课外 · 金融科技 · 图文单页</span>
           <h3>区块链与加密货币</h3>
           <p>从密码学基础讲到比特币、以太坊、DeFi、NFT、Web3 与安全实战。图文单页科普版。</p>
         </a>
 
-        <a class="knowledge-card" href="rust-book/index.html">
+        <a class="knowledge-card" href="rust-book/index.html" data-keywords="编程 代码 后端 系统 内存安全 c++ 开发">
           <span class="tag">课外 · 编程语言</span>
           <h3>Rust</h3>
           <p>写给使用 Zed 后开始好奇 Rust 的读者，理解它解决的问题和适用边界。</p>
         </a>
 
-        <a class="knowledge-card" href="git-guide/index.html">
+        <a class="knowledge-card" href="git-guide/index.html" data-keywords="代码 管理 版本控制 程序员 开发 开源 协作">
           <span class="tag">工具 · 工程实践</span>
           <h3>Git：概念讲解与实操</h3>
           <p>面向新生的 Git 与 GitHub 入门指南，从概念、命令到协作和排错。</p>
         </a>
 
-        <a class="knowledge-card" href="server-frontend-backend/index.html">
+        <a class="knowledge-card" href="server-frontend-backend/index.html" data-keywords="网站 网页 开发 全栈 互联网 客户端 架构 编程">
           <span class="tag">课外 · Web</span>
           <h3>服务器，前端与后端</h3>
           <p>面向大一学生的科普指南：从浏览器里的三件套，到服务器上跑起来的完整链路。</p>
         </a>
 
-        <a class="knowledge-card" href="video-screen/index.html">
+        <a class="knowledge-card" href="video-screen/index.html" data-keywords="显示器 电视 4k 8k 码率 帧率 视听 电影 多媒体">
           <span class="tag">课外 · 数字媒体</span>
           <h3>视频与屏幕技术</h3>
           <p>从像素、分辨率、编解码器到 HDR、高刷和设备选择的完整指南。</p>
         </a>
 
-        <a class="knowledge-card" href="browser-war/index.html">
+        <a class="knowledge-card" href="browser-war/index.html" data-keywords="上网 网页 谷歌 谷歌浏览器 历史 垄断 前端 互联网">
           <span class="tag">课外 · Web</span>
           <h3>浏览器：从战争到垄断</h3>
           <p>从 1990 年第一个浏览器到 Chromium 一统天下，讲清浏览器的历史、原理与隐私博弈。</p>
         </a>
 
-        <a class="knowledge-card" href="euv-lithography/index.html">
+        <a class="knowledge-card" href="euv-lithography/index.html" data-keywords="芯片 硬件 半导体 制造 摩尔定律 阿斯麦 asml 台积电 科技">
           <span class="tag">课外 · 半导体</span>
           <h3>EUV 光刻机：一束光如何造出芯片</h3>
           <p>跟着一束 13.5nm 的极紫外光，走进人类有史以来最精密的机器。</p>
         </a>
 
-        <a class="knowledge-card" href="pdf-explained/index.html">
+        <a class="knowledge-card" href="pdf-explained/index.html" data-keywords="文档 格式 打印 排版 历史 软件 办公">
           <span class="tag">课外 · 文档技术</span>
           <h3>PDF：最熟悉的陌生人</h3>
           <p>从 PostScript 到 AI 时代，拆解你每天都在用却从未真正理解的文件格式——历史、结构、渲染与未来困境。</p>
@@ -161,31 +167,31 @@
       <div class="section-label">课程教材</div>
       <div class="knowledge-grid">
 
-        <a class="knowledge-card" href="data-structures/index.html">
+        <a class="knowledge-card" href="data-structures/index.html" data-keywords="代码 算法 编程 基础 必修 cs 树 链表 考研">
           <span class="tag">计算机 · 数据结构</span>
           <h3>数据结构：从指针到算法</h3>
           <p>从 C 指针地基到线性表、树、图、查找排序与算法策略，配手算专项、考前速查和核心代码。</p>
         </a>
 
-        <a class="knowledge-card" href="thermodynamics/index.html">
+        <a class="knowledge-card" href="thermodynamics/index.html" data-keywords="理科 必修 考试 能量 温度 热力学 物理学">
           <span class="tag">物理 · 热学</span>
           <h3>热学速通</h3>
           <p>六章梳理热力学定律、熵、统计分布、输运过程与相变。</p>
         </a>
 
-        <a class="knowledge-card" href="math-analysis/index.html">
+        <a class="knowledge-card" href="math-analysis/index.html" data-keywords="微积分 高数 极限 导数 积分 必修 考试 数学系">
           <span class="tag">数学 · 数学分析</span>
           <h3>数学分析讲义</h3>
           <p>下册第 8～13 章：多元微分、重积分、曲线曲面积分、Fourier 与含参积分。</p>
         </a>
 
-        <a class="knowledge-card" href="probability/index.html">
+        <a class="knowledge-card" href="probability/index.html" data-keywords="概统 统计 随机 期望 方差 必修 考试 数学系">
           <span class="tag">数学 · 概率论</span>
           <h3>概率论精讲</h3>
           <p>何书元《概率论》伴读讲义：六章对照原书补动机与推导，从概率空间公理化到特征函数、极限定理与随机过程。</p>
         </a>
 
-        <a class="knowledge-card" href="ai-math-principles/index.html">
+        <a class="knowledge-card" href="ai-math-principles/index.html" data-keywords="人工智能 机器学习 深度学习 理论 必修 考试 神经网络 算法">
           <span class="tag">AI · 数学原理</span>
           <h3>人工智能与数学原理</h3>
           <p>USTC 课程期末复习笔记：从概率论与 MLE 到 Transformer 与大语言模型，侧重数学推导。</p>
@@ -201,7 +207,7 @@
 
     <div class="standalone-section" style="margin-top: 0;">
       <div class="knowledge-grid dl-series-grid">
-        <a class="knowledge-card dl-series-card" href="deep-learning/index.html">
+        <a class="knowledge-card dl-series-card" href="deep-learning/index.html" data-keywords="ai 人工智能 神经网络 机器视觉 语言模型 pytorch cv nlp 算法">
           <span class="tag">Series · DeepLearning</span>
           <h3>深度学习系列讲义</h3>
           <p>三篇递进：数学与 PyTorch 工具 → 卷积与视觉 → 序列与自然语言处理。21 章，约 22 小时。</p>
@@ -211,7 +217,7 @@
             <span class="dl-series-part">PART&nbsp;III · 序列与自然语言处理</span>
           </div>
         </a>
-        <a class="knowledge-card dl-series-card" href="large-language-models/index.html">
+        <a class="knowledge-card dl-series-card" href="large-language-models/index.html" data-keywords="ai 聊天机器人 chatgpt transformer 大模型 提示词 训练 生成式">
           <span class="tag">Series · LLM</span>
           <h3>Large Language Models</h3>
           <p>从只会续写的 GPT-3 到 2026 年的推理与编程模型，这六年发生了什么。全六卷完结：架构演化、预训练、强化学习、后训练、算力与推理、产业地图，34 章，约 26 小时。</p>
@@ -279,6 +285,13 @@ const views = {
 
 buttons.forEach(btn => {
   btn.addEventListener('click', () => {
+    // If search is active, clear it when switching tabs to avoid confusion
+    const searchInput = document.getElementById('knowledge-search-input');
+    if (searchInput.value) {
+      searchInput.value = '';
+      searchInput.dispatchEvent(new Event('input'));
+    }
+
     buttons.forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
 
@@ -291,6 +304,53 @@ buttons.forEach(btn => {
       }
     });
   });
+});
+
+// Search functionality
+const searchInput = document.getElementById('knowledge-search-input');
+const allCards = document.querySelectorAll('.knowledge-card');
+const allSections = document.querySelectorAll('.standalone-section');
+const allViews = Object.values(views);
+
+searchInput.addEventListener('input', (e) => {
+  const query = e.target.value.toLowerCase().trim();
+  
+  if (query) {
+    // Show all views temporarily so user can find books across tabs
+    allViews.forEach(v => v.classList.remove('hidden'));
+    
+    // Filter cards
+    allCards.forEach(card => {
+      // 提取卡片内所有可见文本（标题、简介、标签）以及我们隐藏的关键词
+      const textContent = card.textContent.toLowerCase();
+      const keywords = (card.dataset.keywords || '').toLowerCase();
+      
+      // 只要查询词包含在文本内容或关键词中，就命中
+      if (textContent.includes(query) || keywords.includes(query)) {
+        card.style.display = '';
+      } else {
+        card.style.display = 'none';
+      }
+    });
+
+    // Hide sections that have no visible cards
+    allSections.forEach(section => {
+      const visibleCards = Array.from(section.querySelectorAll('.knowledge-card')).filter(c => c.style.display !== 'none');
+      section.style.display = visibleCards.length === 0 ? 'none' : '';
+    });
+  } else {
+    // Restore tab state
+    const activeBtn = document.querySelector('.view-toggle button.active');
+    const activeViewId = 'view-' + activeBtn.dataset.view;
+    allViews.forEach(v => {
+      if (v.id === activeViewId) v.classList.remove('hidden');
+      else v.classList.add('hidden');
+    });
+
+    // Reset card and section visibility
+    allCards.forEach(c => c.style.display = '');
+    allSections.forEach(s => s.style.display = '');
+  }
 });
 </script>
 

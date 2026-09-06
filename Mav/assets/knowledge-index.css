@@ -3,12 +3,19 @@
    ============================================================ */
 
 /* ── View Toggle (单册 / 系列讲义 / 手记 tabs) ─────────────── */
-.view-toggle {
+.view-toggle-container {
   display: flex;
-  gap: var(--space-7);
+  align-items: center;
+  justify-content: space-between;
   margin-bottom: var(--space-7);
   border-bottom: 1px solid var(--line);
   padding-bottom: var(--space-4);
+  gap: var(--space-4);
+}
+
+.view-toggle {
+  display: flex;
+  gap: var(--space-7);
 }
 .view-toggle button {
   font-family: var(--sans);
@@ -43,6 +50,38 @@
 }
 .view-toggle button.active::before {
   background: var(--ink);
+}
+
+/* ── Search Bar ────────────────────────────────────────────── */
+.knowledge-search {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  background: var(--bg-soft);
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  padding: 6px 12px;
+  width: 220px;
+  transition: border-color 0.2s ease, background 0.2s ease;
+}
+.knowledge-search:focus-within {
+  border-color: var(--ink-soft);
+  background: var(--bg);
+}
+.knowledge-search .search-icon {
+  color: var(--muted);
+}
+.knowledge-search input {
+  border: none;
+  background: transparent;
+  outline: none;
+  font-family: var(--sans);
+  font-size: var(--text-sm);
+  color: var(--ink);
+  width: 100%;
+}
+.knowledge-search input::placeholder {
+  color: var(--muted-2);
 }
 
 /* ── Tab panels ────────────────────────────────────────────── */
@@ -112,5 +151,13 @@
 @media (max-width: 768px) {
   .notes-grid {
     grid-template-columns: 1fr;
+  }
+  .view-toggle-container {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-4);
+  }
+  .knowledge-search {
+    width: 100%;
   }
 }
