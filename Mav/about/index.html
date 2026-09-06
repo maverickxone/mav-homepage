@@ -23,114 +23,118 @@
   </div>
 </nav>
 
-<main class="about-main">
+<main class="page-wrap about-main">
 
-  <!-- ── Hero ── -->
-  <section class="about-hero">
-    <div class="about-hero-inner">
-      <span class="about-eyebrow">ABOUT</span>
-      <h1 class="about-name">Mav</h1>
-      <p class="about-tagline">
-        学计算机、AI，以及一切觉得有意思的东西。<br>
-        好奇心驱动，持续在建。
-      </p>
+  <h1>关于我</h1>
+
+  <p class="about-lede">学计算机、AI，以及一切觉得有意思的东西。好奇心驱动，持续在建。</p>
+
+  <h2>教育经历</h2>
+  <dl class="about-edu-list">
+    <div class="about-edu-row">
+      <dt>学历</dt>
+      <dd>本科</dd>
     </div>
-  </section>
+    <div class="about-edu-row">
+      <dt>学校</dt>
+      <dd>中国科学技术大学</dd>
+    </div>
+    <div class="about-edu-row">
+      <dt>时间</dt>
+      <dd>2025.09 — 至今</dd>
+    </div>
+  </dl>
 
-  <!-- ── Body ── -->
-  <div class="about-body">
+  <div class="about-section-header">
+    <h2>最近在做的事</h2>
+    <span class="about-updated">最近修改 2026.09.01</span>
+  </div>
+  <ol class="about-now-list">
+    <li>
+      <span class="about-now-index">01</span>
+      <span class="about-now-text">学习本学期课程</span>
+    </li>
+    <li>
+      <span class="about-now-index">02</span>
+      <span class="about-now-text">了解学习深度学习和强化学习的知识</span>
+    </li>
+    <li>
+      <span class="about-now-index">03</span>
+      <span class="about-now-text">准备 RoboGame</span>
+    </li>
+    <li>
+      <span class="about-now-index">04</span>
+      <span class="about-now-text">学习其他我可能感兴趣的东西 <span class="about-now-note">（详见知识库更新）</span></span>
+    </li>
+    <li>
+      <span class="about-now-index">05</span>
+      <span class="about-now-text">探索世界模型和具身智能 <span class="about-now-note">（兴趣）</span></span>
+    </li>
+  </ol>
 
-    <!-- 教育 -->
-    <section class="about-section">
-      <div class="about-section-label">EDUCATION</div>
-      <div class="about-edu">
-        <div class="about-edu-row">
-          <div class="about-edu-meta">
-            <span class="about-edu-level">本科</span>
-          </div>
-          <div class="about-edu-detail">
-            <span class="about-edu-school">中国科学技术大学</span>
-            <span class="about-edu-period">2025.09 — 至今</span>
-          </div>
+  <h2>项目</h2>
+  <ul class="about-project-list">
+    <li class="about-project-item">
+      <span class="about-project-index">01</span>
+      <div class="about-project-body">
+        <div class="about-project-head">
+          <span class="about-project-name">Homework-IC-Network</span>
+          <a class="about-project-link" href="https://github.com/maverickxone/Homework-IC-Network" target="_blank" rel="noopener">GitHub ↗</a>
         </div>
+        <p class="about-project-desc">大一上学期《集成电路导论》课程大作业网站，个人搭建。</p>
       </div>
-    </section>
-
-    <!-- 最近在做的事 -->
-    <section class="about-section">
-      <div class="about-section-header">
-        <div class="about-section-label">NOW</div>
-        <span class="about-updated">最近修改 2026.09.01</span>
-      </div>
-      <ol class="about-now-list">
-        <li>学习本学期课程</li>
-        <li>了解学习深度学习和强化学习的知识</li>
-        <li>准备 RoboGame</li>
-        <li>学习其他我可能感兴趣的东西<span class="about-note">（详见知识库更新）</span></li>
-      </ol>
-    </section>
-
-    <!-- 项目 -->
-    <section class="about-section">
-      <div class="about-section-label">PROJECTS</div>
-      <div class="about-projects">
-        <div class="about-project-row">
-          <div class="about-project-name">Homework-IC-Network</div>
-          <div class="about-project-desc">大一上学期《集成电路导论》课程大作业网站，个人搭建。</div>
-          <div class="about-project-action">
-            <a href="https://github.com/maverickxone/Homework-IC-Network" target="_blank" rel="noopener">GitHub ↗</a>
-          </div>
+    </li>
+    <li class="about-project-item">
+      <span class="about-project-index">02</span>
+      <div class="about-project-body">
+        <div class="about-project-head">
+          <span class="about-project-name">Notion2api</span>
+          <a class="about-project-link" href="https://github.com/maverickxone/Notion2api" target="_blank" rel="noopener">GitHub ↗</a>
         </div>
-        <div class="about-project-row">
-          <div class="about-project-name">Notion2api</div>
-          <div class="about-project-desc">和 Claude 一起构建的 Notion2API 工具。</div>
-          <div class="about-project-action">
-            <a href="https://github.com/maverickxone/Notion2api" target="_blank" rel="noopener">GitHub ↗</a>
-          </div>
-        </div>
-        <div class="about-project-row">
-          <div class="about-project-name">RoboGame</div>
-          <div class="about-project-desc">大一下至大二上的校内机器人比赛。</div>
-          <div class="about-project-action"></div>
-        </div>
+        <p class="about-project-desc">和 Claude 一起构建的 Notion2API 工具。</p>
       </div>
-    </section>
-
-    <!-- 兴趣 -->
-    <section class="about-section">
-      <div class="about-section-label">INTERESTS</div>
-      <div class="about-tags">
-        <span class="about-tag">深度学习</span>
-        <span class="about-tag">AI</span>
-        <span class="about-tag">计算机</span>
-        <span class="about-tag">Apple</span>
-        <span class="about-tag">经济 · 金融</span>
-        <span class="about-tag">半导体</span>
-        <span class="about-tag">机器人 · 嵌入式</span>
-        <span class="about-tag">Minecraft</span>
-        <span class="about-tag">音乐</span>
+    </li>
+    <li class="about-project-item">
+      <span class="about-project-index">03</span>
+      <div class="about-project-body">
+        <div class="about-project-head">
+          <span class="about-project-name">RoboGame</span>
+        </div>
+        <p class="about-project-desc">大一下至大二上的校内机器人比赛。</p>
       </div>
-    </section>
+    </li>
+  </ul>
 
-    <!-- 联系 -->
-    <section class="about-section about-section--last">
-      <div class="about-section-label">CONTACT</div>
-      <h2 class="about-contact-heading">如何联系我？</h2>
-      <div class="about-contact-links">
-        <a class="about-contact-item" href="https://github.com/maverickxone" target="_blank" rel="noopener">
+  <h2>兴趣</h2>
+  <p>深度学习、AI、计算机、Apple、经济与金融、机器人与嵌入式、Minecraft、音乐。</p>
+
+  <h2>如何联系我？</h2>
+  <ul class="about-contact-list">
+    <li>
+      <a class="about-contact-item" href="https://github.com/maverickxone" target="_blank" rel="noopener">
+        <span class="about-contact-icon">
+          <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+        </span>
+        <span class="about-contact-body">
           <span class="about-contact-label">GitHub</span>
           <span class="about-contact-value">@maverickxone</span>
-          <span class="about-contact-arrow">↗</span>
-        </a>
-        <a class="about-contact-item" href="mailto:maverickxone@mail.ustc.edu.cn">
+        </span>
+        <span class="about-contact-arrow">↗</span>
+      </a>
+    </li>
+    <li>
+      <a class="about-contact-item" href="mailto:maverickxone@mail.ustc.edu.cn">
+        <span class="about-contact-icon">
+          <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3"><rect x="1.5" y="3" width="13" height="10" rx="1"/><path d="M2 4l6 5 6-5"/></svg>
+        </span>
+        <span class="about-contact-body">
           <span class="about-contact-label">Email</span>
           <span class="about-contact-value">maverickxone@mail.ustc.edu.cn</span>
-          <span class="about-contact-arrow">→</span>
-        </a>
-      </div>
-    </section>
-
-  </div>
+        </span>
+        <span class="about-contact-arrow">→</span>
+      </a>
+    </li>
+  </ul>
 
 </main>
 

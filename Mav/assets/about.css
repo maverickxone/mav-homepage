@@ -1,285 +1,258 @@
 /* ============================================================
-   About page — redesigned
-   Black/white minimalist, structured like a résumé, not prose.
+   About page
    ============================================================ */
 
-/* ── Layout ── */
 .about-main {
-  /* No page-wrap; each section controls its own width */
+  max-width: 750px;
 }
 
-/* ── Hero ── */
-.about-hero {
-  border-bottom: 1px solid var(--line);
-  padding: var(--space-9) 0 var(--space-8);
-}
-.about-hero-inner {
-  max-width: var(--maxw);
-  margin: 0 auto;
-  padding: 0 var(--gutter);
-}
-.about-eyebrow {
-  display: block;
-  font-family: var(--mono);
-  font-size: 11px;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  color: var(--muted);
-  margin-bottom: var(--space-6);
-}
-.about-name {
-  font-size: clamp(52px, 9vw, 88px);
+/* ── Heading scale ── */
+.about-main h1 {
+  font-size: var(--text-4xl);
   font-weight: var(--weight-semibold);
-  letter-spacing: -0.04em;
-  line-height: 1;
-  color: var(--ink);
-  margin-bottom: var(--space-6);
+  letter-spacing: -0.03em;
+  margin-bottom: var(--space-5);
 }
-.about-tagline {
+.about-main .about-lede {
   font-size: var(--text-lg);
-  color: var(--ink-soft);
-  line-height: 1.7;
-  max-width: 480px;
-}
-
-/* ── Body container ── */
-.about-body {
-  max-width: 880px;
-  margin: 0 auto;
-  padding: 0 var(--gutter) var(--space-9);
-}
-
-/* ── Sections ── */
-.about-section {
-  padding: var(--space-7) 0;
-  border-bottom: 1px solid var(--line);
-}
-.about-section--last {
-  border-bottom: none;
-}
-.about-section-label {
-  font-family: var(--mono);
-  font-size: 11px;
-  letter-spacing: 0.22em;
-  text-transform: uppercase;
-  color: var(--muted);
+  line-height: 1.75;
+  color: var(--ink);
+  max-width: 100%;
   margin-bottom: var(--space-6);
 }
-.about-section-header {
+
+/* 移除原有的边框和巨大的 padding/margin 堆叠 */
+.about-main h2 {
+  font-size: var(--text-xl);
+  font-weight: var(--weight-semibold);
+  margin: var(--space-6) 0 var(--space-4);
+  color: var(--ink);
+}
+
+/* ── Section header with trailing meta (最近在做的事 + 日期) ── */
+.about-main .about-section-header {
   display: flex;
   align-items: baseline;
   justify-content: space-between;
   gap: var(--space-4);
-  margin-bottom: var(--space-6);
+  margin: var(--space-6) 0 var(--space-4);
 }
-.about-section-header .about-section-label {
-  margin-bottom: 0;
+.about-main .about-section-header h2 {
+  margin: 0;
 }
-.about-updated {
+.about-main .about-updated {
   font-family: var(--mono);
-  font-size: 11px;
-  letter-spacing: 0.06em;
+  font-size: 12px;
+  letter-spacing: 0.04em;
   color: var(--muted);
   white-space: nowrap;
 }
 
-/* ── Education ── */
-.about-edu-row {
-  display: grid;
-  grid-template-columns: 72px 1fr;
+/* ── 教育经历 (移除横线，精简间距) ── */
+.about-main .about-edu-list {
+  margin-bottom: var(--space-5);
+}
+.about-main .about-edu-row {
+  display: flex;
   gap: var(--space-6);
-  align-items: start;
-  padding-top: var(--space-5);
-  border-top: 1px solid var(--line);
+  padding: var(--space-2) 0;
 }
-.about-edu-level {
+.about-main .about-edu-row dt {
+  flex: 0 0 60px;
   font-family: var(--mono);
-  font-size: 11px;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
+  font-size: 12px;
+  letter-spacing: 0.08em;
   color: var(--muted);
-  padding-top: 4px;
+  padding-top: 2px;
 }
-.about-edu-school {
-  display: block;
-  font-size: var(--text-xl);
-  font-weight: var(--weight-medium);
-  letter-spacing: -0.015em;
+.about-main .about-edu-row dd {
+  font-size: var(--text-base);
   color: var(--ink);
-  line-height: 1.2;
 }
-.about-edu-period {
-  display: block;
+
+/* ── 最近在做的事 (移除横线) ── */
+.about-main .about-now-list {
+  list-style: none;
+  padding-left: 0;
+  margin-bottom: var(--space-5);
+}
+.about-main .about-now-list li {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-4);
+  padding: var(--space-2) 0;
+  margin-bottom: 0;
+}
+.about-main .about-now-index {
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--muted);
+  flex-shrink: 0;
+  width: 24px;
+}
+.about-main .about-now-text {
+  font-size: var(--text-base);
+  color: var(--ink-2);
+  line-height: 1.6;
+}
+.about-main .about-now-note {
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--muted);
+  margin-left: var(--space-1);
+}
+
+/* ── 项目 (移除横线) ── */
+.about-main .about-project-list {
+  list-style: none;
+  padding-left: 0;
+  margin-bottom: var(--space-6); /* Add some space at the bottom */
+}
+.about-main .about-project-item {
+  display: flex;
+  gap: var(--space-4);
+  padding: var(--space-3) 0;
+  margin-bottom: var(--space-2); /* Spacing between projects instead of border */
+}
+.about-main .about-project-index {
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--muted);
+  flex-shrink: 0;
+  padding-top: 3px;
+  width: 24px;
+}
+.about-main .about-project-body {
+  flex: 1;
+  min-width: 0;
+}
+.about-main .about-project-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-3);
+  margin-bottom: var(--space-1);
+}
+.about-main .about-project-name {
+  font-family: var(--mono);
+  font-size: var(--text-base);
+  font-weight: var(--weight-medium);
+  color: var(--ink);
+}
+.about-main .about-project-link {
   font-family: var(--mono);
   font-size: 12px;
   letter-spacing: 0.06em;
-  color: var(--muted);
-  margin-top: var(--space-3);
-}
-
-/* ── Now list ── */
-.about-now-list {
-  list-style: none;
-  counter-reset: now-counter;
-}
-.about-now-list li {
-  counter-increment: now-counter;
-  display: grid;
-  grid-template-columns: 36px 1fr;
-  gap: var(--space-4);
-  align-items: baseline;
-  padding: var(--space-4) 0;
-  border-top: 1px solid var(--line);
-  font-size: var(--text-base);
-  color: var(--ink-2);
-  line-height: 1.65;
-}
-.about-now-list li::before {
-  content: counter(now-counter, decimal-leading-zero);
-  font-family: var(--mono);
-  font-size: 11px;
-  letter-spacing: 0.08em;
-  color: var(--muted);
-  padding-top: 3px;
-}
-.about-note {
-  font-family: var(--mono);
-  font-size: 12px;
-  letter-spacing: 0.02em;
-  color: var(--muted);
-  margin-left: var(--space-2);
-}
-
-/* ── Projects ── */
-.about-projects {
-  /* container; rows have borders */
-}
-.about-project-row {
-  display: grid;
-  grid-template-columns: 220px 1fr auto;
-  gap: var(--space-5);
-  align-items: baseline;
-  padding: var(--space-5) 0;
-  border-top: 1px solid var(--line);
-}
-.about-project-name {
-  font-family: var(--mono);
-  font-size: var(--text-sm);
-  font-weight: var(--weight-medium);
-  letter-spacing: 0.02em;
-  color: var(--ink);
-}
-.about-project-desc {
-  font-size: var(--text-sm);
-  color: var(--ink-soft);
-  line-height: 1.55;
-}
-.about-project-action a {
-  font-family: var(--mono);
-  font-size: 11px;
-  letter-spacing: 0.08em;
   color: var(--muted);
   white-space: nowrap;
   transition: color 0.15s ease;
 }
-.about-project-action a:hover {
+.about-main .about-project-link:hover {
   color: var(--ink);
 }
 
-/* ── Interests / Tags ── */
-.about-tags {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-2);
-}
-.about-tag {
-  display: inline-block;
-  font-family: var(--mono);
-  font-size: 12px;
-  letter-spacing: 0.06em;
+/* 修复：提升选择器优先级，覆盖全局 .page-wrap p 带来的 24px 底部巨大空白 */
+.about-main p.about-project-desc {
+  font-size: var(--text-sm);
   color: var(--ink-soft);
-  border: 1px solid var(--line);
-  padding: 6px var(--space-3);
-  line-height: 1;
-  transition: border-color 0.15s ease, color 0.15s ease;
+  line-height: 1.6;
+  margin: 0;
 }
-.about-tag:hover {
+
+/* ── 如何联系我 (改为无边线、带圆角悬浮背景的块) ── */
+.about-main .about-contact-list {
+  list-style: none;
+  padding-left: 0;
+  margin-bottom: var(--space-8);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+.about-main .about-contact-list li {
+  margin-bottom: 0;
+}
+.about-main .about-contact-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  padding: var(--space-3) var(--space-4);
+  margin-left: calc(var(--space-4) * -1); /* 整体左移对齐正文 */
+  border-radius: 8px;
+  color: var(--ink);
+  text-decoration: none;
+  transition: background 0.2s ease;
+}
+.about-main .about-contact-item:hover {
+  background: var(--bg-soft);
+}
+.about-main .about-contact-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  color: var(--ink-soft);
+  flex-shrink: 0;
+  transition: all 0.2s ease;
+  background: var(--bg);
+}
+.about-main .about-contact-item:hover .about-contact-icon {
   border-color: var(--line-2);
   color: var(--ink);
 }
-
-/* ── Contact ── */
-.about-contact-heading {
-  font-size: var(--text-2xl);
-  font-weight: var(--weight-medium);
-  letter-spacing: -0.025em;
-  color: var(--ink);
-  margin-bottom: var(--space-6);
+.about-main .about-contact-body {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+  min-width: 0;
 }
-.about-contact-links {
-  border-top: 1px solid var(--line);
-}
-.about-contact-item {
-  display: grid;
-  grid-template-columns: 72px 1fr auto;
-  gap: var(--space-5);
-  align-items: center;
-  padding: var(--space-5) 0;
-  border-bottom: 1px solid var(--line);
-  color: var(--ink);
-  text-decoration: none;
-  transition: none;
-}
-.about-contact-label {
+.about-main .about-contact-label {
   font-family: var(--mono);
   font-size: 11px;
-  letter-spacing: 0.14em;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
   color: var(--muted);
-  flex-shrink: 0;
 }
-.about-contact-value {
+.about-main .about-contact-value {
   font-size: var(--text-sm);
-  color: var(--ink-soft);
+  font-weight: var(--weight-medium);
+  color: var(--ink-2);
   overflow-wrap: anywhere;
-  transition: color 0.15s ease;
+  transition: color 0.2s ease;
 }
-.about-contact-arrow {
-  font-family: var(--mono);
-  font-size: var(--text-sm);
-  color: var(--muted);
-  transition: color 0.15s ease, transform 0.15s ease;
-}
-.about-contact-item:hover .about-contact-value,
-.about-contact-item:hover .about-contact-arrow {
+.about-main .about-contact-item:hover .about-contact-value {
   color: var(--ink);
+}
+.about-main .about-contact-arrow {
+  font-family: var(--mono);
+  font-size: var(--text-base);
+  color: var(--muted);
+  transition: color 0.2s ease, transform 0.2s ease;
+}
+.about-main .about-contact-item:hover .about-contact-arrow {
+  color: var(--ink);
+  transform: translateX(4px);
 }
 
 /* ── Responsive ── */
 @media (max-width: 640px) {
-  .about-name {
-    font-size: 52px;
-  }
-  .about-edu-row {
-    grid-template-columns: 1fr;
-    gap: var(--space-2);
-  }
-  .about-edu-level {
-    padding-top: 0;
-  }
-  .about-project-row {
-    grid-template-columns: 1fr;
-    gap: var(--space-2);
-  }
-  .about-project-action {
-    padding-bottom: var(--space-2);
-  }
-  .about-contact-item {
-    grid-template-columns: 60px 1fr auto;
-    gap: var(--space-3);
-  }
-  .about-section-header {
+  .about-main .about-project-item {
     flex-direction: column;
     gap: var(--space-2);
+  }
+  .about-main .about-project-index {
+    display: none;
+  }
+  .about-main .about-section-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-2);
+  }
+  .about-main .about-contact-item {
+    margin-left: 0;
+    padding: var(--space-3);
   }
 }
