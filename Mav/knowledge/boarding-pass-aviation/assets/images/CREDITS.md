@@ -1,6 +1,6 @@
 # 图片来源清单
 
-《从一张登机牌讲航司、舱位与里程》配图，全部来自 Wikimedia Commons。
+《航司、舱位与里程》配图，全部来自 Wikimedia Commons。
 
 格式：文件名 | 内容 | 作者 | 协议 | Commons 文件页
 

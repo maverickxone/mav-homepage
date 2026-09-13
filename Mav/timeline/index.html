@@ -255,38 +255,28 @@ a.tl-card:hover .tl-arrow { transform: translateX(3px); color: var(--ink); }
   <span class="eyebrow">Timeline</span>
   <h1>时间线</h1>
   <p class="tl-sub">
-    按学期串起来的一切——发生的事、做过的项目、写下的东西。
-    不是 commit log，是给人看的版本。
+    本页是对大学生活、参与的项目等做的一个回顾。
   </p>
-
-  <!-- ════ NOW：现在进行时，每学期改一次 ════ -->
-  <div class="now-box">
-    <div class="now-head">
-      <span class="now-dot"></span>
-      <span>Now · 2026 暑假</span>
-    </div>
-    <p>
-      这个暑假的三条线：RoboGame 备赛、强化学习、预习大二上的课程。
-      暑假后半程开出图文单页系列，知识库也完成了一轮大改版。
-    </p>
-  </div>
 
   <!-- ════ 时间轴主体 ════
        维护方式：手写。以「事件」为条目单位，书只是事件的产物，
-       合并列在 note 里；学期内新的在上。
-       口吻：第三人称客观记录（「上线」「完结」），不用第一人称自述。
+       同月的书合并成一条；学期内新的在上。
+       口吻：第一人称，像随口跟朋友讲。不写通稿——「上线 / 完结 /
+       开辟 / 聚合层」这类词不要用在书上；书只给《》+ 链接，
+       内容复述是知识库的事。口吻基准：博客《广州签证之旅》。
+       站点自身的功能改版（tab、后端、大扫除）不记在这里。
        左轨前缀「月份 · 类型」，类型：书 / 文 / 事。
 
-       ── L 重点（每学期至多一两个）────────────────
+       ── L 重点（每学期至多一两个，只放人生级事件）────
        <li class="tl-entry tl-entry--card">
          <span class="tl-meta">07 · 事</span>
          <div class="tl-body">
            <a class="tl-card" href="...">
              <span class="tl-title"><span class="tl-title-text">标题</span><span class="tl-arrow">→</span></span>
-             <p class="tl-card-desc">两三句描述，讲清来龙去脉。</p>
-             <div class="tl-card-meta">meta · meta · meta</div>
+             <p class="tl-card-desc">两三句大白话，讲清是什么、为什么值得记。</p>
+             <div class="tl-card-meta">meta · meta</div>
            </a>
-           <p class="tl-aside">可选：一句第三人称旁白。</p>
+           <p class="tl-aside">可选：一句当事人旁白。</p>
          </div>
        </li>
 
@@ -333,60 +323,11 @@ a.tl-card:hover .tl-arrow { transform: translateX(3px); color: var(--ink); }
         <li class="tl-entry">
           <span class="tl-meta">08 · 书</span>
           <div class="tl-body">
-            <a class="tl-title" href="../knowledge/boarding-pass-aviation/index.html">
-              <span class="tl-title-text">《从一张登机牌讲航司、舱位与里程》上线（7 章）</span><span class="tl-arrow">→</span>
-            </a>
-            <p class="tl-note">图文单页新作。从登机牌上的字段代号、孤零零的 Y 和空着的 MILES 栏出发，讲航线网络与航权、四十多家航空公司的身世、舱位与票价的真相、机型识别与里程这门生意。</p>
-          </div>
-        </li>
-
-        <li class="tl-entry">
-          <span class="tl-meta">08 · 书</span>
-          <div class="tl-body">
-            <a class="tl-title" href="../knowledge/exchange-rate-purchasing-power/index.html">
-              <span class="tl-title-text">《从一瓶矿泉水讲汇率、物价与工资》上线（9 章）</span><span class="tl-arrow">→</span>
-            </a>
-            <p class="tl-note">图文单页新作。从中美日新四国对不上账的物价讲起，拆解汇率、购买力平价与可贸易品，给出一把能跨国比较的尺子：时间价格。</p>
-          </div>
-        </li>
-
-        <li class="tl-entry">
-          <span class="tl-meta">08 · 书</span>
-          <div class="tl-body">
-            <span class="tl-title"><span class="tl-title-text">图文单页系列上线</span></span>
+            <span class="tl-title"><span class="tl-title-text">新写四本图文单页</span></span>
             <p class="tl-note">
-              <a href="../knowledge/bluetooth-airpods/index.html">从 AirPods 讲蓝牙耳机</a>（5 章）与<a href="../knowledge/guns-terrorism/index.html">从格洛克讲枪械与恐怖袭击</a>（6 章）上线，开辟单页图文阅读的新形式。
+              <a href="../knowledge/bluetooth-airpods/index.html">从 AirPods 讲蓝牙耳机</a>、<a href="../knowledge/guns-terrorism/index.html">枪械与恐怖袭击</a>、<a href="../knowledge/exchange-rate-purchasing-power/index.html">汇率、物价与工资</a>、<a href="../knowledge/boarding-pass-aviation/index.html">航司、舱位与里程</a>。
+              这些是一页到底、配满插图的长文，在做暑假美国旅行攻略发现这种格式对于简单科普很合适，让人更想阅读。
             </p>
-          </div>
-        </li>
-
-        <li class="tl-entry">
-          <span class="tl-meta">08 · 事</span>
-          <div class="tl-body">
-            <a class="tl-title" href="../knowledge/notes/index.html">
-              <span class="tl-title-text">手记系统上线，知识库首页改版为三 tab</span><span class="tl-arrow">→</span>
-            </a>
-            <p class="tl-note">短内容有了收容所；知识库首页改为独立书籍 / 系列讲义 / 手记三个 tab，Project 功能同步移除。</p>
-          </div>
-        </li>
-
-        <li class="tl-entry">
-          <span class="tl-meta">07 · 书</span>
-          <div class="tl-body">
-            <a class="tl-title" href="../knowledge/investing-101/index.html">
-              <span class="tl-title-text">《投资入门：从一股股票到一套认知》上线（9 章）</span><span class="tl-arrow">→</span>
-            </a>
-            <p class="tl-note">写给刚满 18 岁、第一次可以合法开户的大学生。九章回答一个问题：收益从哪里来——从股票与上市（SpaceX 十三年不上市到史上最大 IPO）讲到债券、黄金、基金、骗局图鉴与一份大二学生的实操路线。</p>
-          </div>
-        </li>
-
-        <li class="tl-entry">
-          <span class="tl-meta">07 · 书</span>
-          <div class="tl-body">
-            <a class="tl-title" href="../knowledge/probability/index.html">
-              <span class="tl-title-text">《概率论精讲》上线：何书元《概率论》伴读讲义（6 章）</span><span class="tl-arrow">→</span>
-            </a>
-            <p class="tl-note">预习大二上概率论。章节与原书一一对应，补足动机、直觉与推导：从古典概型的公理化一路讲到特征函数、极限定理与随机过程。</p>
           </div>
         </li>
 
@@ -394,15 +335,13 @@ a.tl-card:hover .tl-arrow { transform: translateX(3px); color: var(--ink); }
           <span class="tl-meta">07 · 书</span>
           <div class="tl-body">
             <a class="tl-card" href="../knowledge/large-language-models/index.html">
-              <span class="tl-title"><span class="tl-title-text">《Large Language Models》系列讲义全六卷完结</span><span class="tl-arrow">→</span></span>
+              <span class="tl-title"><span class="tl-title-text">LLM 系列讲义写完了：六卷 34 章</span><span class="tl-arrow">→</span></span>
               <p class="tl-card-desc">
-                从只会续写的 GPT-3 讲到 2026 年的推理与编程模型。六卷主线：
-                架构演化 → 预训练 → 强化学习速成 → 后训练 → 算力与推理 → 产业地图。
-                全系列 34 章，约 26 小时。
+                最长的一套，涵盖架构、预训练、强化学习、后训练、算力、
+                产业地图，我还没校对完（
               </p>
-              <div class="tl-card-meta">Series · 6 卷 · 34 章 · v1.0.0</div>
+              <div class="tl-card-meta">6 卷 · 34 章 · 读完约 26 小时</div>
             </a>
-            <p class="tl-aside">暑假最大的一本书——把「模型长什么样、怎么炼、跑在哪、谁在做」串成一条线。</p>
           </div>
         </li>
 
@@ -412,57 +351,23 @@ a.tl-card:hover .tl-arrow { transform: translateX(3px); color: var(--ink); }
             <a class="tl-card" href="../knowledge/robogame2026/index.html">
               <span class="tl-title"><span class="tl-title-text">RoboGame 2026 备赛</span><span class="tl-arrow">→</span></span>
               <p class="tl-card-desc">
-                暑假的主线项目。负责下位机——串口通信、协议栈、麦克纳姆轮
-                运动控制的固件开发与维护。把整条链路整理成了八章讲义
-                《从命令到车轮》，正赛在大二上学期。
+                讲解小车的下位机：串口通信、协议栈、
+                四个麦轮怎么转。调通的部分写成了八章讲义。
               </p>
-              <div class="tl-card-meta">下位机固件 · 通信协议 · 麦轮控制 · 讲义 8 章</div>
             </a>
-            <p class="tl-aside">第一次把「写代码」和「轮子真的转起来」连在了一起。</p>
           </div>
         </li>
 
         <li class="tl-entry">
           <span class="tl-meta">07 · 书</span>
           <div class="tl-body">
-            <a class="tl-title" href="../knowledge/rag/index.html">
-              <span class="tl-title-text">《检索增强生成（RAG）》上线：从幻觉讲到手搓问答系统（7 章）</span><span class="tl-arrow">→</span>
-            </a>
-            <p class="tl-note">把上学期折腾 RAG 的经验整理成讲义，最后一章两百行 Python 不用框架从零搭一个。</p>
-          </div>
-        </li>
-
-        <li class="tl-entry">
-          <span class="tl-meta">07 · 事</span>
-          <div class="tl-body">
-            <a class="tl-title" href="../knowledge/large-language-models/index.html#part-rl-crash-course">
-              <span class="tl-title-text">强化学习补课：并入 LLM 系列第三卷</span><span class="tl-arrow">→</span>
-            </a>
-            <p class="tl-note">原计划单独成书；后来发现后训练（RLHF / GRPO）绕不开，直接写成 Series 的 PART III「强化学习速成」五章。</p>
-          </div>
-        </li>
-
-        <li class="tl-entry">
-          <span class="tl-meta">07 · 事</span>
-          <div class="tl-body">
-            <span class="tl-title"><span class="tl-title-text">预习大二上：计算机原理与嵌入式系统</span></span>
-            <p class="tl-note">提前啃下学期的课，相关讲义随后上线知识库。</p>
-          </div>
-        </li>
-
-        <li class="tl-entry tl-entry--mini">
-          <span class="tl-meta">07 · 书</span>
-          <div class="tl-body">
-            <a class="tl-title" href="../knowledge/deep-learning/index.html">
-              <span class="tl-title-text">把旧的深度学习书稿合并成《深度学习系列讲义》（3 篇 21 章）</span><span class="tl-arrow">→</span>
-            </a>
-          </div>
-        </li>
-
-        <li class="tl-entry tl-entry--mini">
-          <span class="tl-meta">07 · 事</span>
-          <div class="tl-body">
-            <span class="tl-title"><span class="tl-title-text">知识库大扫除：下架部分早期书稿，书目分级整理</span></span>
+            <span class="tl-title"><span class="tl-title-text">一个月写了四本讲义</span></span>
+            <p class="tl-note">
+              预习大二概率论的《<a href="../knowledge/probability/index.html">概率论精讲</a>》，
+              写给刚能开户的大学生的《<a href="../knowledge/investing-101/index.html">投资入门</a>》，
+              上学期折腾 RAG 的《<a href="../knowledge/rag/index.html">检索增强生成</a>》，
+              还有旧稿子合并出来的《<a href="../knowledge/deep-learning/index.html">深度学习系列讲义</a>》。
+            </p>
           </div>
         </li>
 
@@ -476,38 +381,24 @@ a.tl-card:hover .tl-arrow { transform: translateX(3px); color: var(--ink); }
         <span class="tl-term-label">大一下</span>
         <span class="tl-term-meta">2026.02 — 2026.06</span>
       </div>
-      <p class="tl-term-theme">这学期遇到了 Claude Code——从此笔记都长成了书。</p>
       <div class="tl-courses">课程 — 热学 · 数学分析 B2 · 人工智能导论 …</div>
       <ul class="tl-entries">
 
         <li class="tl-entry">
           <span class="tl-meta">06 · 事</span>
           <div class="tl-body">
-            <span class="tl-title"><span class="tl-title-text">第一台 MacBook Air</span></span>
-            <p class="tl-note">从 Windows 切换到 macOS 生态，一次久违的「用得开心」。</p>
-            <p class="tl-aside">这件事值得单独写一篇博客，尚未动笔。</p>
+            <span class="tl-title"><span class="tl-title-text">换了一台 MacBook Air</span></span>
+            <p class="tl-note">从 Windows 跳到 macOS，体验很舒服！</p>
           </div>
         </li>
 
         <li class="tl-entry">
           <span class="tl-meta">06 · 书</span>
           <div class="tl-body">
-            <span class="tl-title"><span class="tl-title-text">期末周：四门课的复习都做成了书</span></span>
+            <span class="tl-title"><span class="tl-title-text">期末周，四门课的复习都做成了讲义</span></span>
             <p class="tl-note">
-              <a href="../knowledge/thermodynamics/index.html">热学速通</a>、<a href="../knowledge/math-analysis/index.html">数学分析讲义（下册）</a>、<a href="../knowledge/ai-math-principles/index.html">人工智能与数学原理</a>、<a href="../knowledge/data-structures/index.html">数据结构：从指针到算法</a>。
-            </p>
-          </div>
-        </li>
-
-        <li class="tl-entry">
-          <span class="tl-meta">05 · 事</span>
-          <div class="tl-body">
-            <a class="tl-title" href="../knowledge/index.html">
-              <span class="tl-title-text">知识库上线 Project 功能</span><span class="tl-arrow">→</span>
-            </a>
-            <p class="tl-note">
-              书之上的聚合层：把相关的书按阅读顺序串成学习路径，配上前置知识、
-              核心概念和「读完你能做到什么」。知识库从书架变成了路线图。
+              <a href="../knowledge/thermodynamics/index.html">热学</a>、<a href="../knowledge/math-analysis/index.html">数学分析（下）</a>、<a href="../knowledge/ai-math-principles/index.html">人工智能与数学</a>、<a href="../knowledge/data-structures/index.html">数据结构</a>，
+              这些是速通留下的笔记讲义，仅供参考，质量参差不齐。
             </p>
           </div>
         </li>
@@ -515,18 +406,10 @@ a.tl-card:hover .tl-arrow { transform: translateX(3px); color: var(--ink); }
         <li class="tl-entry">
           <span class="tl-meta">05 · 书</span>
           <div class="tl-body">
-            <span class="tl-title"><span class="tl-title-text">课余的兴趣探索</span></span>
+            <span class="tl-title"><span class="tl-title-text">好奇什么就写什么</span></span>
             <p class="tl-note">
-              课余好奇的主题各成了一本书：<a href="../knowledge/pdf-explained/index.html">PDF 文件格式</a>、<a href="../knowledge/euv-lithography/index.html">EUV 光刻机</a>、<a href="../knowledge/browser-war/index.html">浏览器战争史</a>。
+              遇到好奇的主题，各写了一本：<a href="../knowledge/pdf-explained/index.html">PDF 文件格式</a>、<a href="../knowledge/euv-lithography/index.html">EUV 光刻机</a>、<a href="../knowledge/browser-war/index.html">浏览器战争史</a>。
             </p>
-          </div>
-        </li>
-
-        <li class="tl-entry">
-          <span class="tl-meta">05 · 事</span>
-          <div class="tl-body">
-            <span class="tl-title"><span class="tl-title-text">阅读体验升级</span></span>
-            <p class="tl-note">章节页加入侧边笔记面板和 Tips，上线评论与点赞后端（Express + SQLite）。</p>
           </div>
         </li>
 
@@ -545,12 +428,11 @@ a.tl-card:hover .tl-arrow { transform: translateX(3px); color: var(--ink); }
             <a class="tl-card" href="../blog/html/2026-05-16-build-journey.html">
               <span class="tl-title"><span class="tl-title-text">mav-ustc.dev 上线</span><span class="tl-arrow">→</span></span>
               <p class="tl-card-desc">
-                和 Claude Code 一起，从零搭起这个网站：自研静态生成器
-                md2HTML、首发的 8 本书稿（Claude Code 指南、区块链、Git、Rust……）、
-                博客与部署链路。从此写下的东西有了固定的家。
-                完整踩坑记录在《个人主页搭建历程》。
+                和 Claude Code 一起从零搭建这个网站：最早是用 markdown 转 HTML
+                的小工具，首发 8 本书。
+                全过程写在《个人主页搭建历程》里，感兴趣可以看看。
               </p>
-              <div class="tl-card-meta">首发 8 本书 · 自建静态生成器 · Nginx 自部署 · 全站开源</div>
+              <div class="tl-card-meta">8 本书 · 自写生成器 · 自己部署</div>
             </a>
           </div>
         </li>
@@ -581,8 +463,7 @@ a.tl-card:hover .tl-arrow { transform: translateX(3px); color: var(--ink); }
           <div class="tl-body">
             <span class="tl-title"><span class="tl-title-text">开始学习深度学习</span></span>
             <p class="tl-note">
-              从 MLP 和卷积神经网络起步。这条线一直延伸到今天，也还没有走完——
-              起点记在这里。
+              从 MLP 和卷积网络起步，keep ongoing.
             </p>
           </div>
         </li>
@@ -593,7 +474,7 @@ a.tl-card:hover .tl-arrow { transform: translateX(3px); color: var(--ink); }
             <a class="tl-title" href="https://github.com/maverickxone/Homework-IC-Network" target="_blank" rel="noopener">
               <span class="tl-title-text">集成电路导论课程网站</span><span class="tl-arrow">↗</span>
             </a>
-            <p class="tl-note">课程大作业，第一个独立上线的网站。一切的起点。</p>
+            <p class="tl-note">课程大作业，第一个独立上线、部署在 GitHub Pages 的网站。</p>
           </div>
         </li>
 

@@ -28,7 +28,9 @@
   <h1>知识库</h1>
 
   <p>
-    课内课外学过的东西，整理成可读的形式。每个主题是一个独立的小站，点进去就能读。
+    “独立阅读”部分是我的个人兴趣爱好，借助 AI 学习科普的知识，
+
+    “课程教材”部分是科大的课程速通讲义，仅供参考。
   </p>
 
   <!-- View Toggle and Search -->
@@ -54,13 +56,13 @@
 
         <a class="knowledge-card" href="boarding-pass-aviation/index.html" data-keywords="飞机 航班 航空 机票 飞行 民航 机场">
           <span class="tag">课外 · 图文单页 · 七章</span>
-          <h3>从一张登机牌讲航司、舱位与里程</h3>
+          <h3>航司、舱位与里程</h3>
           <p>一张登机牌上印着十几个字段，大多数人只看三个。从航班号前那两个字母、ECONOMY 旁边孤零零的一个 Y、右下角空着的 MILES 栏出发，讲全球航线网络与航权、四十多家航空公司的身世、舱位与票价的真相、机型识别与巨无霸的黄昏、里程与联盟这门真正赚钱的生意、行李与货运，以及坐飞机到底该不该怕。</p>
         </a>
 
         <a class="knowledge-card" href="exchange-rate-purchasing-power/index.html" data-keywords="经济 货币 购买力 宏观 价格 钱 财务 钱怎么花">
           <span class="tag">课外 · 图文单页 · 九章</span>
-          <h3>从一瓶矿泉水讲汇率、物价与工资</h3>
+          <h3>汇率、物价与工资</h3>
           <p>东京两千日元的出租车、新加坡二十块的可乐、美国超市里低得离谱的标价——这些对不上账的价格背后是同一套机制。从汇率到底是什么讲到购买力平价、可贸易品与不可贸易品，用中美日新四国的真实工资数据，给出一把能跨国比较的尺子：时间价格。</p>
         </a>
 
@@ -72,7 +74,7 @@
 
         <a class="knowledge-card" href="guns-terrorism/index.html" data-keywords="武器 战争 军事 射击 安全 治安 防暴 警察">
           <span class="tag">课外 · 图文单页 · 六章</span>
-          <h3>从格洛克讲枪械与恐怖袭击</h3>
+          <h3>枪械与恐怖袭击</h3>
           <p>从美国靶场第一次打格洛克和左轮出发，讲透手枪、步枪、冲锋枪、狙击枪的分类与精度取舍，警察为什么蹲在门后、门到底挡不挡子弹，慕尼黑、莫斯科、别斯兰、巴塔克兰几场人质围攻，最后拆一遍中美及各国的枪支管控现实。</p>
         </a>
 
@@ -84,7 +86,7 @@
 
         <a class="knowledge-card" href="robogame2026/index.html" data-keywords="单片机 硬件 比赛 控制 自动 电路 机械 c语言 底层">
           <span class="tag">工程实践 · 嵌入式 · 机器人</span>
-          <h3>RoboGame 2026：从命令到车轮</h3>
+          <h3>RoboGame 2026</h3>
           <p>跟随一条运动命令，读懂 STM32 下位机的通信、协议、麦轮控制、项目进度与后续开发。</p>
         </a>
 
@@ -108,7 +110,7 @@
 
         <a class="knowledge-card" href="bite-to-byte-硬件篇/index.html" data-keywords="电脑 硬件 显卡 内存 固态 硬盘 科普 组装 冯诺依曼">
           <span class="tag">课外 · 计算机</span>
-          <h3>电脑怎么工作的</h3>
+          <h3>电脑是怎么工作的</h3>
           <p>给大一新生的计算机原理课，从存储、CPU、GPU 到操作系统和硬件选购。</p>
         </a>
 
@@ -156,7 +158,7 @@
 
         <a class="knowledge-card" href="pdf-explained/index.html" data-keywords="文档 格式 打印 排版 历史 软件 办公">
           <span class="tag">课外 · 文档技术</span>
-          <h3>PDF：最熟悉的陌生人</h3>
+          <h3>PDF，格式与发展历程</h3>
           <p>从 PostScript 到 AI 时代，拆解你每天都在用却从未真正理解的文件格式——历史、结构、渲染与未来困境。</p>
         </a>
 
@@ -314,17 +316,17 @@ const allViews = Object.values(views);
 
 searchInput.addEventListener('input', (e) => {
   const query = e.target.value.toLowerCase().trim();
-  
+
   if (query) {
     // Show all views temporarily so user can find books across tabs
     allViews.forEach(v => v.classList.remove('hidden'));
-    
+
     // Filter cards
     allCards.forEach(card => {
       // 提取卡片内所有可见文本（标题、简介、标签）以及我们隐藏的关键词
       const textContent = card.textContent.toLowerCase();
       const keywords = (card.dataset.keywords || '').toLowerCase();
-      
+
       // 只要查询词包含在文本内容或关键词中，就命中
       if (textContent.includes(query) || keywords.includes(query)) {
         card.style.display = '';
