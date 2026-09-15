@@ -1,0 +1,9 @@
+{
+  "name": "mav-homepage",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Mav's Homepage — 知识库静态站点。npm run dev 本地预览 Mav/ 目录。",
+  "scripts": {
+    "dev": "node scripts/dev-server.js"
+  }
+}
